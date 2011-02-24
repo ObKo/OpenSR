@@ -1,0 +1,36 @@
+Done:
+  - Basic graphics engine
+  - Resource manager
+    - RPKG format archive loading
+  - HAI animation loader
+  - Engine console
+  - Font loading
+  - Unicode support
+
+Partially done:
+  - Engine logger - need timestap writing, color console output on linux, log file output - WIP
+  - Resource manager 
+    - FS Directory loading on Windows - WIP
+  - PKG to RPKG converter - some PKG files aren't loading.
+  - GI texture loading - One of frametypes aren't loading.
+  - GAI animation loader - Need support for GAI with external background image (Government and pilot animations)
+  - Resource viewer - now supports only GAI, HAI, and GI files from FS - WIP
+ 
+Not done:
+  - Configuration file - WIP
+  - Lua scripting - WIP
+    - Lua widgets
+    - Lua game scripting
+  - Resource manager
+    - 7z archive loading
+  - MacOS X support - WIP
+  - Original quest loading
+  - l10n using gettext
+  - Original script loading
+  - Some texture formats support
+    - PNG
+  - Animation formats support
+    - APNG
+  - Main Game
+  - Quest Game
+  - Black Hole Game 
