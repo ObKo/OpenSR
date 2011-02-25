@@ -143,7 +143,8 @@ boost::shared_ptr< Font > ResourceManager::loadFont(const std::wstring& name, in
     }
     else
         logger() << LERROR << "Unknown font format: " << sfx << LEND;
-    
+
+    return boost::shared_ptr<Font>();
 }
 
 

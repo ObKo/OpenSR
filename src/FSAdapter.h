@@ -32,8 +32,13 @@ public:
     char* loadData(const std::wstring& name, size_t& size);
 
 private:
+
+#ifdef WIN32
+    void doScan(const std::wstring& path);
+#else
     void doScan(const std::string& path);
-    
+#endif
+
     std::wstring dirPath;
     std::list<std::wstring> files;
 };

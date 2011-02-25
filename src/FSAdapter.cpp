@@ -17,10 +17,15 @@
 */
 
 #include "FSAdapter.h"
+#ifdef WIN32
+#include <windows.h>
+#include <wchar.h>
+#else
 #include <sys/types.h>
 #include <dirent.h>
 #include <sys/stat.h>
-#include <sys/errno.h>
+#endif
+#include <errno.h>
 #include <libRanger.h>
 #include "Log.h"
 
@@ -35,20 +40,47 @@ list< wstring > FSAdapter::getFiles() const
 
 void FSAdapter::load(const std::wstring& path)
 {
-#ifdef WIN32
-#else
     dirPath = path;
     if(dirPath.at(path.length() - 1) != '/')
-      dirPath += '/';
+        dirPath += '/';
+#ifdef WIN32
+    doScan(L"");
+#else
     doScan("");
-    logger() << LINFO << "Loaded " << files.size() << " files from directory " << path << LEND;
 #endif
+    logger() << LINFO << "Loaded " << files.size() << " files from directory " << path << LEND;
 }
 
+#ifdef WIN32
+void FSAdapter::doScan(const wstring& path)
+{
+    wstring localPath = dirPath + path;
+    WIN32_FIND_DATAW fd;
+    HANDLE fh = FindFirstFileW((LPCWSTR)(localPath + L"*").c_str(), &fd);
+
+    if(fh == INVALID_HANDLE_VALUE)
+    {
+	    logger() << LERROR << "Cannot open directory " << localPath << ": " << fromLocal(strerror(errno)) << LEND;
+	    return;
+    }
+    do
+    {
+        if(!wcscmp(fd.cFileName, L".") || !wcscmp(fd.cFileName, L".."))
+	    {
+	        continue;
+	    }            
+        if(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+            doScan(path + fd.cFileName + L'\\');
+        else 
+            files.push_back(path + fd.cFileName);
+        //else
+        //    logger() << LDEBUG << localPath + fd.cFileName << " unknown entry type"  << LEND;
+    } 
+    while(FindNextFileW(fh, &fd));
+}
+#else
 void FSAdapter::doScan(const string& path)
 {
-#ifdef WIN32
-#else
     string localPath = toLocal(dirPath) + path;
     DIR* dir = opendir(localPath.c_str());
     if(!dir)
@@ -86,9 +118,8 @@ void FSAdapter::doScan(const string& path)
 	}
     }
     closedir(dir);
-#endif
 }
-
+#endif
 
 char* FSAdapter::loadData(const std::wstring& name, size_t& size)
 {
