@@ -1,0 +1,16 @@
+$#include "../Engine.h"
+
+namespace Rangers
+{
+class Engine
+{
+public:
+    void quit(int code);
+    void execCommand(const std::wstring& what);
+
+   
+    int screenHeight(void) const;
+    int screenWidth(void) const;
+};
+Engine *getEngine(void);
+};
