@@ -2,15 +2,17 @@ Done:
   - Basic graphics engine
   - Resource manager
     - RPKG format archive loading
+    - FS Directory loading
   - HAI animation loader
   - Engine console
   - Font loading
   - Unicode support
+  - Startup scripts
 
 Partially done:
   - Engine logger - need timestap writing, color console output on linux, log file output - WIP
   - Resource manager 
-    - FS Directory loading on Windows - WIP
+    - Cache
   - PKG to RPKG converter - some PKG files aren't loading.
   - GI texture loading - One of frametypes aren't loading.
   - GAI animation loader - Need support for GAI with external background image (Government and pilot animations)
@@ -31,6 +33,7 @@ Not done:
     - PNG
   - Animation formats support
     - APNG
+  - Sound
   - Main Game
   - Quest Game
   - Black Hole Game 
