@@ -30,22 +30,32 @@ AnimatedSprite::AnimatedSprite(boost::shared_ptr<AnimatedTexture> texture,  Obje
 {
     t = 0;
     animFrame= 0;
+    singleShot = false;
+    started = true;
+    frameTime = texture->seek() > 1000 ? 50 : 100;
 }
 
 AnimatedSprite::AnimatedSprite(const Rangers::AnimatedSprite& other): Sprite(other)
 {
     t = other.t;
     animFrame = other.animFrame;
+    singleShot = other.singleShot;
+    started = other.started;
+    frameTime = other.frameTime;
 }
 
 AnimatedSprite& AnimatedSprite::operator=(const Rangers::AnimatedSprite& other)
 {
-    t = other.t;
-    animFrame = other.animFrame;
-    
     if (this == &other)
         return *this;
     
+    t = other.t;
+    animFrame = other.animFrame;
+    singleShot = other.singleShot;
+    started = other.started;
+    animFrame = other.animFrame;
+    frameTime = other.frameTime;
+      
     ::Sprite::operator=(other);
     return *this;
 }
@@ -56,10 +66,10 @@ void AnimatedSprite::processLogic(int dt)
 {
     AnimatedTexture *texture = static_cast<AnimatedTexture *>(spriteTexture.get());
 
-    while (t > texture->seek()/4)
+    while (t > frameTime)
     {
         animFrame = (animFrame + 1) % texture->count();
-        t -= texture->seek()/4;
+        t -= frameTime;
     }
 
     t += dt;
@@ -73,6 +83,21 @@ void AnimatedSprite::draw() const
     prepareDraw();
 
     glBindTexture(GL_TEXTURE_2D, ((AnimatedTexture*)spriteTexture.get())->openGLTexture(animFrame));
+    if (textureScaling == TEXTURE_TILE_X)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    else
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+
+    if (textureScaling == TEXTURE_TILE_Y)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    else
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+    
+    if (textureScaling == TEXTURE_TILE)
+    {
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    }   
 
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -97,7 +122,47 @@ int AnimatedSprite::currentFrame() const
     return animFrame;
 }
 
+float AnimatedSprite::fps() const
+{
+    return 1000.0f / frameTime;
+}
+
 void AnimatedSprite::setFrame(int f)
 {
     animFrame = f;
 }
+
+void AnimatedSprite::setFPS(float f)
+{
+    if(f <= 0.0f)
+        frameTime = INT_MAX;
+    frameTime = 1000.0f / f;
+}
+
+void AnimatedSprite::setSingleShot(bool ss)
+{
+    singleShot = ss;
+}
+
+bool AnimatedSprite::isSingleShot() const
+{
+    return singleShot;
+}
+
+bool AnimatedSprite::isStarted() const
+{
+    return started;
+}
+
+void AnimatedSprite::start()
+{
+    started = true;
+    animFrame = 0;
+}
+
+void AnimatedSprite::stop()
+{
+    started = false;
+    animFrame = 0;
+}
+

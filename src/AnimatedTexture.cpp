@@ -76,28 +76,6 @@ AnimatedTexture::AnimatedTexture(GAIAnimation a)
     }
 }
 
-/*!
- * \param tx tile on the x
- * \param ty tile on the y
- */
-void AnimatedTexture::setTiling(bool tx, bool ty)
-{
-    for (int i = 0; i < frameCount; i++)
-    {
-        glBindTexture(GL_TEXTURE_2D, textureIDs[i]);
-
-        if (!tx)
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-        else
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-
-        if (!ty)
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-        else
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    }
-}
-
 AnimatedTexture::~AnimatedTexture()
 {
     textureID = textureIDs[0];

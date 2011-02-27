@@ -31,6 +31,7 @@
 #include "Log.h"
 #include "ResourceManager.h"
 #include <sstream>
+#include "LuaBindings.h"
 
 using namespace Rangers;
 using namespace std;
@@ -55,6 +56,11 @@ long long getTicks()
     return GetTickCount();
 }
 #endif
+
+Engine* Rangers::getEngine()
+{
+    return Engine::instance();
+}
 
 Engine::Engine(int argc, char **argv): argc(argc), argv(argv)
 {
@@ -168,13 +174,16 @@ void Engine::init(int w, int h, bool fullscreen)
     glOrtho(0.0f, width, height, 0.0f, -1.0f, 1.0f);
     
     std::ifstream startupScript("opensrrc");
-    char str[255];
-    while(!startupScript.eof())
+    if(startupScript.is_open())
     {
-        startupScript.getline(str, 255);
-        execCommand(fromUTF8(str));
+	char str[255];
+	while(!startupScript.eof())
+	{
+	    startupScript.getline(str, 255);
+	    execCommand(fromUTF8(str));
+	}
+	startupScript.close();
     }
-    startupScript.close();
 
     engineFont = ResourceManager::instance()->loadFont(L"DroidSans.ttf", 13);
     monospaceFont = ResourceManager::instance()->loadFont(L"DroidSansMono.ttf", 13);
@@ -187,6 +196,22 @@ void Engine::init(int w, int h, bool fullscreen)
     fpsLabel.setPosition(5, 5);
 
     consoleWidget = ConsoleWidget(width, 168);
+    
+    lua_State *L = lua_open();
+    luaopen_base(L);
+    luaopen_table(L);
+    tolua_Engine_open(L);
+    tolua_libRanger_open(L);
+    tolua_Object_open(L);
+    tolua_Types_open(L);
+    tolua_ResourceManager_open(L);
+    tolua_Sprite_open(L);
+    tolua_AnimatedSprite_open(L);
+    tolua_LuaBindings_open(L);
+    tolua_AnimatedTexture_open(L);
+    if(luaL_dofile(L, "data/test.lua"))
+	cerr << lua_tostring(L, -1) << endl;
+
 }
 
 boost::shared_ptr<Font> Engine::defaultFont() const
@@ -283,13 +308,19 @@ void Engine::focusWidget(Widget* w)
 
 std::wstring Engine::addObject(Object* object, const std::wstring& name)
 {
+    if(!object)
+	return wstring();
+    
     wstring objectName;
     
     if(name.empty())
 	objectName = L"object";
     else
         objectName = name;
-         
+    
+    if(!(object->parent()))
+	mainNode.addChild(object);
+    
     std::map<std::wstring, Object*>::iterator it = objects.find(objectName);
     if(it != objects.end())
     {
@@ -304,7 +335,7 @@ std::wstring Engine::addObject(Object* object, const std::wstring& name)
 	    it = objects.find(n);
 	    i++;
 	}
-	logger() << LWARNING << L"Object \"" << name << "\" exists. Renamed to \"" << n << "\"" << LEND; 
+	logger() << LWARNING << L"Object \"" << objectName << "\" exists. Renamed to \"" << n << "\"" << LEND; 
 	objects[n] = object;
 	return n;
     }

@@ -1,0 +1,25 @@
+$#include <Types.h>
+
+namespace Rangers
+{
+class Vector
+{
+public:
+    Vector();
+    Vector(float x, float y);
+
+    float x, y;
+};
+
+struct Vertex
+{
+    float x, y;
+    float u, w;
+};
+
+struct Rect
+{
+    float x1, y1;
+    float x2, y2;
+};
+};

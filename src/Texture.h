@@ -37,7 +37,6 @@ public:
     GLuint openGLTexture() const;
 
     void setRawData(int width, int height, TextureType type, unsigned char *rawData);
-    virtual void setTiling(bool tx, bool ty);
 
 protected:
     int realWidth, realHeight;

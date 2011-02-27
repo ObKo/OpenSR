@@ -86,17 +86,3 @@ void Texture::setRawData(int width, int height, TextureType type, unsigned char 
     realWidth = width;
     realHeight = height;
 }
-
-void Texture::setTiling(bool tx, bool ty)
-{
-    glBindTexture(GL_TEXTURE_2D, textureID);
-    if (!tx)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-    else
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-
-    if (!ty)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-    else
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-}

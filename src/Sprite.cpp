@@ -99,6 +99,22 @@ void Sprite::draw() const
     prepareDraw();
 
     glBindTexture(GL_TEXTURE_2D, spriteTexture->openGLTexture());
+    
+    if (textureScaling == TEXTURE_TILE_X)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    else
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+
+    if (textureScaling == TEXTURE_TILE_Y)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    else
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+    
+    if (textureScaling == TEXTURE_TILE)
+    {
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    }   
 
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -136,6 +152,25 @@ void Sprite::setGeometry(float width, float height)
     spriteHeight = height;
     markToUpdate();
 }
+
+void Sprite::setHeight(float height)
+{
+    if (height <= 0)
+        height = spriteTexture->height();
+
+    spriteHeight = height;
+    markToUpdate();
+}
+
+void Sprite::setWidth(float width)
+{
+     if (width <= 0)
+        width = spriteTexture->width();
+     
+     spriteWidth = width;
+     markToUpdate();
+}
+
 
 void Sprite::setTextureScaling(TextureScaling ts)
 {
@@ -201,14 +236,12 @@ void Sprite::processMain()
     switch (textureScaling)
     {
     case TEXTURE_NO:
-        spriteTexture->setTiling(false, false);
         u1 = 0;
         w1 = 0;
         u2 = spriteWidth / spriteTexture->width();
         w2 = spriteHeight / spriteTexture->height();
         break;
     case TEXTURE_NORMAL:
-        spriteTexture->setTiling(false, false);
         u1 = 0;
         w1 = 0;
         u2 = 1;
@@ -218,21 +251,18 @@ void Sprite::processMain()
         //TODO: keep aspect
         break;
     case TEXTURE_TILE_X:
-        spriteTexture->setTiling(true, false);
         u1 = 0;
         w1 = 0;
         u2 = spriteWidth / spriteTexture->width();
         w2 = 1;
         break;
     case TEXTURE_TILE_Y:
-        spriteTexture->setTiling(false, true);
         u1 = 0;
         w1 = 0;
         u2 = 1;
         w2 = spriteHeight / spriteTexture->height();
         break;
     case TEXTURE_TILE:
-        spriteTexture->setTiling(true, true);
         u1 = 0;
         w1 = 0;
         u2 = spriteWidth / spriteTexture->width();

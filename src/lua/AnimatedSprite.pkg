@@ -1,0 +1,30 @@
+$#include <AnimatedTexture.h>
+$#include <AnimatedSprite.h>
+$pfile "Sprite.pkg"
+
+namespace Rangers
+{
+class AnimatedSprite: public Sprite
+{
+public:
+    AnimatedSprite(boost::shared_ptr<Rangers::AnimatedTexture> texture, Rangers::Object *parent = 0);
+    AnimatedSprite(const AnimatedSprite& other);
+
+    void processLogic(int dt);
+    void draw() const;
+    
+    void setSingleShot(bool ss);
+    void start();
+    void stop();
+    
+    bool isStarted() const;
+    bool isSingleShot() const;
+    
+    int currentFrame() const;
+    float fps() const;
+    void setFrame(int f);
+    void setFPS(float f);
+};
+};
+
+#endif

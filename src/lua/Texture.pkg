@@ -1,0 +1,19 @@
+$#include <Types.h>
+$#include <Texture.h>
+
+namespace Rangers
+{
+enum TextureType {TEXTURE_A8, TEXTURE_R8G8B8A8};
+
+class Texture
+{
+public:
+    int width() const;
+    int height() const;
+    GLuint openGLTexture() const;
+
+    void setRawData(int width, int height, TextureType type, unsigned char *rawData);
+};
+};
+
+#endif

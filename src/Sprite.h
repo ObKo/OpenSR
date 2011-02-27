@@ -43,6 +43,8 @@ public:
 
     void setSpriteOrigin(SpriteXPosition xpos, SpriteYPosition ypos);
     void setGeometry(float width, float height);
+    void setWidth(float width);
+    void setHeight(float height);
     void setTextureScaling(TextureScaling  ts);
     
     Sprite& operator=(const Sprite& other);

@@ -1,0 +1,33 @@
+$#include <Object.h>
+$#include <Types.h>
+
+namespace Rangers
+{
+class Object
+{
+public:
+    virtual void draw() const;
+
+    virtual void processMain();
+    virtual void processLogic(int dt);
+
+    void setPosition(float x, float y);
+    void setPosition(const Rangers::Vector& pos);
+    void setRotation(float angle);
+    void setColor(float r, float g, float b, float a = 1.0f);
+
+    void addChild(Rangers::Object *object);
+    void removeChild(Rangers::Object *object);
+    void setParent(Rangers::Object *parent);
+
+    const Rangers::Vector& position() const;
+    float rotation() const;
+    SDL_mutex* mutex() const;
+    int layer() const;
+    Rangers::Object* parent() const;
+
+    void setLayer(int layer);
+};
+}
+
+#endif

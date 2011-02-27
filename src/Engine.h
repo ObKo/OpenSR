@@ -116,6 +116,7 @@ private:
     boost::shared_ptr<Font> engineFont;
     boost::shared_ptr<Font> monospaceFont;
 };
+Engine *getEngine();
 };
 
 #endif

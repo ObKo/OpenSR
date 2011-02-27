@@ -53,6 +53,7 @@ private:
     std::map<std::wstring, boost::shared_ptr<AnimatedTexture> > animations;
     std::map<std::wstring, boost::shared_ptr<Font> > fonts;
 };
+ResourceManager *getResourceManager();
 };
 
 #endif // RESOURCEMANAGER_H
