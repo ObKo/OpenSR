@@ -25,6 +25,9 @@
 #include <windows.h>
 #include <GL/glew.h>
 #include <GL/gl.h>
+#elif __APPLE__
+#include <OpenGL/gl.h>
+#include <OpenGL/glext.h>
 #else
 #include <GL/gl.h>
 #include <GL/glext.h>

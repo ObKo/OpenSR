@@ -39,7 +39,13 @@ using namespace std;
 static Engine *engineInstance = 0;
 FT_Library trueTypeLibrary;
 
-#ifdef __linux__
+#ifdef WIN32
+#include <windows.h>
+long long getTicks()
+{
+    return GetTickCount();
+}
+#else
 #include <sys/time.h>
 
 struct timeval tv;
@@ -48,12 +54,6 @@ long long getTicks()
 {
     gettimeofday(&tv, &tz);
     return tv.tv_sec * 1000 + tv.tv_usec / 1000;
-}
-#elif WIN32
-#include <windows.h>
-long long getTicks()
-{
-    return GetTickCount();
 }
 #endif
 

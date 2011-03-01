@@ -17,7 +17,6 @@
 */
 
 #include "Label.h"
-#include <GL/gl.h>
 #include <string>
 #include "Engine.h"
 
