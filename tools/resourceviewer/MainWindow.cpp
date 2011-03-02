@@ -117,8 +117,7 @@ void MainWindow::loadFile(const QString& fileName)
         }
         else if(fileInfo.suffix().toLower() == "hai")
         {
-            size_t offset = 0;
-            Rangers::HAIAnimation anim = Rangers::loadHAI(f, offset);
+            Rangers::HAIAnimation anim = Rangers::loadHAI(f);
             for(int i = 0; i < anim.frameCount; i++)
             {
                 unsigned char *data = revert(anim.frames + i * anim.width * anim.height * 4, anim.width, anim.height);

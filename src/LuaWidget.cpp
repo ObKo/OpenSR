@@ -16,41 +16,46 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef RANGERS_WIDGET_H
-#define RANGERS_WIDGET_H
+#include "LuaWidget.h"
 
-#include "Object.h"
+using namespace Rangers;
 
-namespace Rangers
+LuaWidget::LuaWidget(std::wstring fileName, Rangers::Object* parent): Widget(parent)
 {
-class Widget: public Object
-{
-public:
-    Widget(Object *parent = 0);
-    Widget(float w, float h, Object *parent = 0);
-    Widget(const Widget& other);
 
-    virtual void draw() const = 0;
-
-    virtual Rect getBoundingRect() const;
-    virtual void mouseMove(int x, int y);
-    virtual void mouseEnter();
-    virtual void mouseLeave();
-    virtual void keyPressed(SDL_keysym key);
-    
-    int width() const;
-    int height() const;
-    
-    Widget& operator=(const Widget& other);
-    
-    void addWidget(Widget *w);
-    void removeWidget(Widget *w);
-
-protected:
-    std::list<Widget *> childWidgets;
-    Widget *currentChildWidget;
-    int widgetWidth, widgetHeight;
-};
 }
 
-#endif // WIDGET_H
+LuaWidget::LuaWidget(Rangers::Object* parent): Widget(parent)
+{
+
+}
+
+void LuaWidget::draw() const
+{
+
+}
+
+Rect LuaWidget::getBoundingRect() const
+{
+    
+}
+
+void LuaWidget::keyPressed(SDL_keysym key)
+{
+    
+}
+ 
+void LuaWidget::mouseEnter()
+{
+    
+}
+
+void LuaWidget::mouseLeave()
+{
+    
+}
+
+void LuaWidget::mouseMove(int x, int y)
+{
+    
+}

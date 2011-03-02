@@ -16,41 +16,28 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef RANGERS_WIDGET_H
-#define RANGERS_WIDGET_H
+#ifndef LUAWIDGET_H
+#define LUAWIDGET_H
 
-#include "Object.h"
+#include "Widget.h"
 
 namespace Rangers
 {
-class Widget: public Object
+class LuaWidget: public Widget
 {
 public:
-    Widget(Object *parent = 0);
-    Widget(float w, float h, Object *parent = 0);
-    Widget(const Widget& other);
+    //TODO: Remove this
+    LuaWidget(std::wstring fileName, Object *parent = 0);
+    LuaWidget(Object *parent = 0);
 
-    virtual void draw() const = 0;
+    void draw() const;
 
-    virtual Rect getBoundingRect() const;
-    virtual void mouseMove(int x, int y);
-    virtual void mouseEnter();
-    virtual void mouseLeave();
-    virtual void keyPressed(SDL_keysym key);
-    
-    int width() const;
-    int height() const;
-    
-    Widget& operator=(const Widget& other);
-    
-    void addWidget(Widget *w);
-    void removeWidget(Widget *w);
-
-protected:
-    std::list<Widget *> childWidgets;
-    Widget *currentChildWidget;
-    int widgetWidth, widgetHeight;
+    Rect getBoundingRect() const;
+    void mouseMove(int x, int y);
+    void mouseEnter();
+    void mouseLeave();
+    void keyPressed(SDL_keysym key);
 };
-}
+};
 
-#endif // WIDGET_H
+#endif // LUAWIDGET_H

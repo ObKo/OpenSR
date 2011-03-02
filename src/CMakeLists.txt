@@ -21,6 +21,7 @@ SET(SOURCES
 	ResourceManager.cpp 
 	FSAdapter.cpp
 	LuaBindings.cpp
+	LuaWidget.cpp
 )
 
 SET(HEADERS 
@@ -45,6 +46,7 @@ SET(HEADERS
 	ResourceManager.h
 	FSAdapter.h
 	LuaBindings.h
+	LuaWidget.h
 )
 
 SET(LUA_PACKAGES
@@ -58,6 +60,7 @@ SET(LUA_PACKAGES
 	lua/LuaBindings.pkg
 	lua/Texture.pkg
 	lua/AnimatedTexture.pkg
+	lua/Widget.pkg
 )
 
 INCLUDE_DIRECTORIES(

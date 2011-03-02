@@ -1,0 +1,25 @@
+$#include <Widget.h> 
+$#include <Types.h>
+$#include <SDL.h>
+$pfile "Object.pkg"
+
+namespace Rangers
+{
+class Widget: public Object
+{
+public:
+    void draw() const;
+
+    Rangers::Rect getBoundingRect() const;
+    void mouseMove(int x, int y);
+    void mouseEnter();
+    void mouseLeave();
+    void keyPressed(SDL_keysym key);
+    
+    int width() const;
+    int height() const;
+    
+    void addWidget(Rangers::Widget *w);
+    void removeWidget(Rangers::Widget *w);
+};
+}

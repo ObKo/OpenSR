@@ -46,24 +46,29 @@ Widget::Widget(const Rangers::Widget& other): Object(other)
     markToUpdate();
 }
 
-Widget& Widget::operator=(const Rangers::Widget& other)
-{
-    if(this == &other)
-	return *this;
-    
-    widgetWidth = other.widgetWidth;
-    widgetHeight = other.widgetHeight;
-    markToUpdate();
-    
-    ::Object::operator=(other);    
-    return *this;
-}
-
-
 
 void Widget::mouseMove(int x, int y)
 {
-
+    for (std::list<Widget*>::const_reverse_iterator i = childWidgets.rbegin(); i != childWidgets.rend(); i++)
+    {
+        Rect bb = (*i)->getBoundingRect();
+	Vector pos = (*i)->position();
+        if ((bb.x1 + pos.x < x) && (bb.x2 + pos.x > x) && (bb.y1 + pos.y < y) && (bb.y2 + pos.y > y))
+        {
+            if ((*i) != currentChildWidget)
+            {
+                if (currentChildWidget)
+                    currentChildWidget->mouseLeave();
+                currentChildWidget = *i;
+                currentChildWidget->mouseEnter();
+            }
+            (*i)->mouseMove(x - bb.x1 - pos.x, y - bb.y1 - pos.y);
+            return;
+        }
+    }
+    if (currentChildWidget)
+        currentChildWidget->mouseLeave();
+    currentChildWidget = 0;
 }
 
 void Widget::mouseEnter()
@@ -81,13 +86,57 @@ void Widget::keyPressed(SDL_keysym key)
 
 }
 
-float Widget::height() const
+void Widget::addWidget(Widget* w)
+{
+    if(w->parent() == this)
+        return;
+    lock();
+    addChild(w);
+    for (std::list<Widget*>::iterator i = childWidgets.begin(); i != childWidgets.end(); i++)
+    {
+        if ((*i)->layer() > w->layer())
+        {
+            childWidgets.insert(i, w);
+            unlock();
+            return;
+        }
+    }
+    objectChilds.push_back(w);
+    unlock();
+}
+
+void Widget::removeWidget(Widget* w)
+{
+    lock();
+    childWidgets.remove(w);
+    removeChild(w);
+    if(currentChildWidget == w)
+	currentChildWidget = 0;
+    unlock();
+}
+
+int Widget::height() const
 {
     return widgetHeight;
 }
 
-float Widget::width() const
+int Widget::width() const
 {
     return widgetWidth;
 }
+
+Widget& Widget::operator=(const Rangers::Widget& other)
+{
+    if(this == &other)
+	return *this;
+    
+    widgetWidth = other.widgetWidth;
+    widgetHeight = other.widgetHeight;
+    markToUpdate();
+    
+    ::Object::operator=(other);    
+    return *this;
+}
+
+
 
