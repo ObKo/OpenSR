@@ -14,11 +14,21 @@ int tolua_AnimatedSprite_open(lua_State* tolua_S);*/
 
 std::wstring fromLua @ L(const char *s);
 
+struct SDL_keysym
+{
+    Uint8 scancode;
+    SDLKey sym;
+    SDLMod mod;
+    short unicode;
+}
+
 namespace Rangers
 {
 Rangers::Font *getPointer(boost::shared_ptr<Rangers::Font> sp);
 Rangers::Texture *getPointer(boost::shared_ptr<Rangers::Texture> sp);
 Rangers::AnimatedTexture *getPointer(boost::shared_ptr<Rangers::AnimatedTexture> sp);
+
+void luaDebug(std::wstring s);
 }
 
 #endif

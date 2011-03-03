@@ -20,6 +20,7 @@
 #define LUAWIDGET_H
 
 #include "Widget.h"
+#include "LuaBindings.h"
 
 namespace Rangers
 {
@@ -37,6 +38,9 @@ public:
     void mouseEnter();
     void mouseLeave();
     void keyPressed(SDL_keysym key);
+
+private:
+    lua_State *luaState;
 };
 };
 

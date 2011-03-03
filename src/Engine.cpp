@@ -32,6 +32,7 @@
 #include "ResourceManager.h"
 #include <sstream>
 #include "LuaBindings.h"
+#include "LuaWidget.h"
 
 using namespace Rangers;
 using namespace std;
@@ -197,20 +198,8 @@ void Engine::init(int w, int h, bool fullscreen)
 
     consoleWidget = ConsoleWidget(width, 168);
     
-    lua_State *L = lua_open();
-    luaopen_base(L);
-    luaopen_table(L);
-    tolua_Engine_open(L);
-    tolua_libRanger_open(L);
-    tolua_Object_open(L);
-    tolua_Types_open(L);
-    tolua_ResourceManager_open(L);
-    tolua_Sprite_open(L);
-    tolua_AnimatedSprite_open(L);
-    tolua_LuaBindings_open(L);
-    tolua_AnimatedTexture_open(L);
-    if(luaL_dofile(L, "data/test.lua"))
-	cerr << lua_tostring(L, -1) << endl;
+    LuaWidget *lw = new LuaWidget(L"data/test.lua");
+    this->addWidget(lw);
 
 }
 

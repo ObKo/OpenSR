@@ -22,40 +22,63 @@ using namespace Rangers;
 
 LuaWidget::LuaWidget(std::wstring fileName, Rangers::Object* parent): Widget(parent)
 {
-
+    luaState = lua_open();
+    luaopen_base(luaState);
+    luaopen_table(luaState);
+    tolua_Engine_open(luaState);
+    tolua_libRanger_open(luaState);
+    tolua_Object_open(luaState);
+    tolua_Types_open(luaState);
+    tolua_ResourceManager_open(luaState);
+    tolua_Sprite_open(luaState);
+    tolua_AnimatedSprite_open(luaState);
+    tolua_LuaBindings_open(luaState);
+    tolua_AnimatedTexture_open(luaState);
+    if(luaL_dofile(luaState, toLocal(fileName).c_str()))
+	std::cerr << lua_tostring(luaState, -1) << std::endl;
 }
 
-LuaWidget::LuaWidget(Rangers::Object* parent): Widget(parent)
+LuaWidget::LuaWidget(Rangers::Object* parent): Widget(parent), luaState()
 {
 
 }
 
 void LuaWidget::draw() const
 {
-
+    lua_getglobal(luaState, "draw");
+    lua_pcall(luaState, 0, 0, 0);
 }
 
 Rect LuaWidget::getBoundingRect() const
 {
-    
+    lua_getglobal(luaState, "getBoundingRect");
+    lua_pcall(luaState, 0, 1, 0);
+    return *((Rect*)(lua_topointer(luaState, 0)));
 }
 
 void LuaWidget::keyPressed(SDL_keysym key)
 {
-    
+    lua_getglobal(luaState, "keyPressed");
+    lua_pushlightuserdata(luaState, &key);
+    lua_pcall(luaState, 1, 0, 0);
 }
  
 void LuaWidget::mouseEnter()
 {
-    
+    lua_getglobal(luaState, "mouseEnter");
+    lua_pcall(luaState, 0, 0, 0);
 }
 
 void LuaWidget::mouseLeave()
 {
-    
+    lua_getglobal(luaState, "mouseLeave");
+    lua_pcall (luaState, 0, 0, 0);
 }
 
 void LuaWidget::mouseMove(int x, int y)
 {
-    
+    lua_getglobal(luaState, "mouseMove");
+    lua_pushinteger(luaState, x);
+    lua_pushinteger(luaState, y);
+    lua_pcall (luaState, 2, 0, 0);
 }

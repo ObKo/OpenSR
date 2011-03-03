@@ -1,5 +1,6 @@
 #include "LuaBindings.h"
 #include "libRanger.h"
+#include "Log.h"
 
 using namespace Rangers;
 
@@ -21,4 +22,9 @@ Texture* Rangers::getPointer(boost::shared_ptr<Texture> sp)
 AnimatedTexture* Rangers::getPointer(boost::shared_ptr<AnimatedTexture> sp)
 {
     return sp.get();
+}
+
+void Rangers::luaDebug(std::wstring s)
+{
+    logger() << LDEBUG << L"Lua: " << s << LEND;
 }

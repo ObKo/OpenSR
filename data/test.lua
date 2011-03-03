@@ -1,12 +1,33 @@
 engine = Rangers.getEngine()
 resources = Rangers.getResourceManager()
-startexture = resources:loadAnimation(L("DATA/Star/Terron_Transform.gai"))
-robottexture = resources:loadAnimation(L("DATA/Items/2RepairRobot0a.gai"))
-if Rangers.getPointer(startexture) then
-    star = Rangers.AnimatedSprite:new(startexture)
-    engine:addObject(star)
+texture = resources:loadTexture(L"DATA/Star/Star00.gi")
+star = Rangers.Sprite:new(texture)
+
+function draw()
+  star:draw()
 end
-if Rangers.getPointer(robottexture) then
-    robot = Rangers.AnimatedSprite:new(robottexture)
-    engine:addObject(robot)
+
+function keyPressed(k)
+  l = key.unicode
+end
+
+function getBoundingRect()
+  r = Rangers.Rect:new()
+  r.x1 = 0
+  r.x2 = 1024
+  r.y1 = 0
+  r.y2 = 768
+  return r
+end
+
+function mouseEnter()
+  
+end
+
+function mouseLeave()
+  
+end
+
+function mouseMove(x, y)
+  luaDebug(L("X: " + x))
 end

@@ -49,6 +49,8 @@ namespace Rangers
 Font *getPointer(boost::shared_ptr<Font> sp);
 Texture *getPointer(boost::shared_ptr<Texture> sp);
 AnimatedTexture *getPointer(boost::shared_ptr<AnimatedTexture> sp);
+
+void luaDebug(std::wstring s);
 }
 
 #endif
