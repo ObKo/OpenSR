@@ -36,11 +36,6 @@ ResourceManager* ResourceManager::instance()
     return manager;
 }
 
-ResourceManager* Rangers::getResourceManager()
-{
-    return ResourceManager::instance();
-}
-
 void ResourceManager::addRPKG(const std::wstring& path)
 {
     boost::shared_ptr<RPKGAdapter> a = boost::shared_ptr<RPKGAdapter>(new RPKGAdapter());

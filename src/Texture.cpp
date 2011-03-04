@@ -17,6 +17,7 @@
 */
 
 #include "Texture.h"
+#include "Engine.h"
 
 using namespace Rangers;
 
@@ -69,14 +70,15 @@ GLuint Texture::openGLTexture() const
 void Texture::setRawData(int width, int height, TextureType type, unsigned char *rawData)
 {
     glBindTexture(GL_TEXTURE_2D, textureID);
+    GLint internalFormat = Engine::instance()->textureInternalFormat(type);
 
     switch (type)
     {
     case TEXTURE_R8G8B8A8:
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, rawData);
+        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, rawData);
         break;
     case TEXTURE_A8:
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA8, width, height, 0, GL_ALPHA, GL_UNSIGNED_BYTE, rawData);
+        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, GL_ALPHA, GL_UNSIGNED_BYTE, rawData);
         break;
     }
 

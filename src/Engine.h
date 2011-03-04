@@ -83,6 +83,9 @@ public:
     void removeObject(const std::wstring& name);
     //! Add object. Engine becomes owner of object.
     std::wstring addObject(Object* object, const std::wstring& name = std::wstring());
+    
+    //! Get current OpenGL texture format
+    GLint textureInternalFormat(TextureType t) const;
 
 private:
     int argc;
@@ -116,7 +119,6 @@ private:
     boost::shared_ptr<Font> engineFont;
     boost::shared_ptr<Font> monospaceFont;
 };
-Engine *getEngine();
 };
 
 #endif

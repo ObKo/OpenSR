@@ -19,6 +19,8 @@ public:
 
     boost::shared_ptr<Rangers::Font> defaultFont() const;
     boost::shared_ptr<Rangers::Font> serviceFont() const;
+
+    static Engine *instance();
    
     int screenHeight(void) const;
     int screenWidth(void) const;
@@ -28,5 +30,4 @@ public:
     std::wstring addObject(Rangers::Object* object, const std::wstring& name);
     std::wstring addObject(Rangers::Object* object);
 };
-Engine *getEngine();
 };

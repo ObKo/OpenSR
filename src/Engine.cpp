@@ -58,11 +58,6 @@ long long getTicks()
 }
 #endif
 
-Engine* Rangers::getEngine()
-{
-    return Engine::instance();
-}
-
 Engine::Engine(int argc, char **argv): argc(argc), argv(argv)
 {
     if (engineInstance)
@@ -165,7 +160,6 @@ void Engine::init(int w, int h, bool fullscreen)
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glEnable(GL_LINE_SMOOTH);
     glEnable(GL_ARB_texture_non_power_of_two);
-    glEnable(GL_ARB_texture_compression);
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -283,6 +277,20 @@ int Engine::screenHeight() const
 int Engine::screenWidth() const
 {
     return width;
+}
+
+GLint Engine::textureInternalFormat(TextureType t) const
+{
+    switch(t)
+    {
+    case TEXTURE_A8:
+        return GL_COMPRESSED_ALPHA_ARB;
+        break;
+    case TEXTURE_R8G8B8A8:
+        return GL_COMPRESSED_RGBA_ARB;
+        break;
+    }
+    //GL_COMPRESSED_RGBA_S3TC_DXT5_EXT
 }
 
 Engine *Engine::instance()
