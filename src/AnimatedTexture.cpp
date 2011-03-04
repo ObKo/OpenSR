@@ -41,7 +41,7 @@ AnimatedTexture::AnimatedTexture(HAIAnimation a)
     {
         glBindTexture(GL_TEXTURE_2D, textureIDs[i]);
 
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, a.width, a.height, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, a.frames + a.width * a.height * 4 * i);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_COMPRESSED_RGBA_S3TC_DXT5_EXT, a.width, a.height, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, a.frames + a.width * a.height * 4 * i);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -69,7 +69,8 @@ AnimatedTexture::AnimatedTexture(GAIAnimation a)
     {
         glBindTexture(GL_TEXTURE_2D, textureIDs[i]);
 
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, a.frames[i].width, a.frames[i].height, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, a.frames[i].data);
+	//glTexImage2D(GL_TEXTURE_2D, 0, GL_COMPRESSED_RGBA_ARB, a.width, a.height, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, a.frames + a.width * a.height * 4 * i);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_COMPRESSED_RGBA_S3TC_DXT5_EXT, a.frames[i].width, a.frames[i].height, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, a.frames[i].data);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);

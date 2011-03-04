@@ -61,6 +61,7 @@ SET(LUA_PACKAGES
 	lua/Texture.pkg
 	lua/AnimatedTexture.pkg
 	lua/Widget.pkg
+	lua/LuaWidget.pkg
 )
 
 INCLUDE_DIRECTORIES(

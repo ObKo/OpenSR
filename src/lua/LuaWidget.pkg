@@ -1,0 +1,27 @@
+$#include <LuaWidget.h>
+$#include <Types.h>
+
+$pfile "Widget.pkg"
+
+namespace Rangers
+{
+class LuaWidget: public Widget
+{
+public:
+    //TODO: Remove this
+    LuaWidget(std::wstring fileName, Object *parent = 0);
+
+    void draw() const;
+
+    Rangers::Rect getBoundingRect() const;
+    void mouseMove(int x, int y);
+    void mouseEnter();
+    void mouseLeave();
+    void keyPressed(SDL_keysym key);
+    
+    void processMain();
+    void processLogic(int dt);
+};
+};
+
+#endif // LUAWIDGET_H

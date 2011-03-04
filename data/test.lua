@@ -1,7 +1,7 @@
 engine = Rangers.getEngine()
 resources = Rangers.getResourceManager()
-texture = resources:loadTexture(L"DATA/Star/Star00.gi")
-star = Rangers.Sprite:new(texture)
+texture = resources:loadAnimation(L"DATA/Star/Star00.gai")
+star = Rangers.AnimatedSprite:new(texture)
 
 function draw()
   star:draw()
@@ -13,21 +13,28 @@ end
 
 function getBoundingRect()
   r = Rangers.Rect:new()
-  r.x1 = 0
-  r.x2 = 1024
-  r.y1 = 0
-  r.y2 = 768
+  r.x1 = 0.0
+  r.x2 = star:width()
+  r.y1 = 0.0
+  r.y2 = star:height()
   return r
 end
 
 function mouseEnter()
-  
+  star:start()
 end
 
 function mouseLeave()
-  
+  star:stop()
 end
 
 function mouseMove(x, y)
-  luaDebug(L("X: " + x))
+end
+
+function processMain()
+  star:processMain()
+end
+
+function processLogic(dt)
+  star:processLogic(dt)
 end

@@ -66,20 +66,23 @@ void AnimatedSprite::processLogic(int dt)
 {
     AnimatedTexture *texture = static_cast<AnimatedTexture *>(spriteTexture.get());
 
-    while (t > frameTime)
+    if(started)
     {
-        animFrame = (animFrame + 1) % texture->count();
-        t -= frameTime;
-    }
+	while (t > frameTime)
+	{
+	    animFrame = (animFrame + 1) % texture->count();
+	    t -= frameTime;
+	}
 
-    t += dt;
+	t += dt;
+    }
 }
 
 void AnimatedSprite::draw() const
 {
     if (!spriteTexture)
         return;
-    SDL_mutexP(objectMutex);
+    lock();
     prepareDraw();
 
     glBindTexture(GL_TEXTURE_2D, ((AnimatedTexture*)spriteTexture.get())->openGLTexture(animFrame));
@@ -114,7 +117,7 @@ void AnimatedSprite::draw() const
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     glDisableClientState(GL_VERTEX_ARRAY);
     endDraw();
-    SDL_mutexV(objectMutex);
+    unlock();
 }
 
 int AnimatedSprite::currentFrame() const
@@ -157,12 +160,18 @@ bool AnimatedSprite::isStarted() const
 void AnimatedSprite::start()
 {
     started = true;
-    animFrame = 0;
 }
 
 void AnimatedSprite::stop()
 {
     started = false;
-    animFrame = 0;
 }
+
+void AnimatedSprite::reset()
+{
+    started = false;
+    animFrame = 0;
+    t = 0;
+}
+
 

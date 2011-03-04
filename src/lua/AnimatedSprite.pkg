@@ -16,6 +16,7 @@ public:
     void setSingleShot(bool ss);
     void start();
     void stop();
+    void reset();
     
     bool isStarted() const;
     bool isSingleShot() const;

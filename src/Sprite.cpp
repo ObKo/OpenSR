@@ -293,3 +293,14 @@ void Sprite::processMain()
     glUnmapBuffer(GL_ARRAY_BUFFER);
     SDL_mutexV(objectMutex);
 }
+
+float Sprite::height() const
+{
+    return spriteHeight;
+}
+
+float Sprite::width() const
+{
+    return spriteWidth;
+}
+

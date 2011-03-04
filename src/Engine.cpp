@@ -165,6 +165,7 @@ void Engine::init(int w, int h, bool fullscreen)
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glEnable(GL_LINE_SMOOTH);
     glEnable(GL_ARB_texture_non_power_of_two);
+    glEnable(GL_ARB_texture_compression);
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -199,7 +200,7 @@ void Engine::init(int w, int h, bool fullscreen)
     consoleWidget = ConsoleWidget(width, 168);
     
     LuaWidget *lw = new LuaWidget(L"data/test.lua");
-    this->addWidget(lw);
+    addWidget(lw);
 
 }
 

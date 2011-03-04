@@ -23,6 +23,7 @@
 #include <Font.h>
 #include <Texture.h>
 #include <AnimatedTexture.h>
+#include <tolua++.h>
 
 extern "C"
 {
@@ -41,6 +42,7 @@ int tolua_AnimatedSprite_open(lua_State* tolua_S);
 int tolua_LuaBindings_open(lua_State* tolua_S);
 int tolua_Texture_open(lua_State* tolua_S);
 int tolua_AnimatedTexture_open(lua_State* tolua_S);
+int tolua_LuaWidget_open(lua_State* tolua_S);
 
 std::wstring fromLua(const char *s);
 

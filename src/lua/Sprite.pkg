@@ -30,6 +30,9 @@ public:
     void setWidth(float width);
     void setHeight(float height);
     void setTextureScaling(TextureScaling  ts);
+
+    float width() const;
+    float height() const;
 };
 };
 

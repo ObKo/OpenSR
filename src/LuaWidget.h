@@ -38,6 +38,9 @@ public:
     void mouseEnter();
     void mouseLeave();
     void keyPressed(SDL_keysym key);
+    
+    void processMain();
+    void processLogic(int dt);
 
 private:
     lua_State *luaState;

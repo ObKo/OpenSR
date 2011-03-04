@@ -47,6 +47,9 @@ public:
     void setHeight(float height);
     void setTextureScaling(TextureScaling  ts);
     
+    float width() const;
+    float height() const;
+    
     Sprite& operator=(const Sprite& other);
 
 protected:

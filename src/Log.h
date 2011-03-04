@@ -49,6 +49,7 @@ public:
 
     Log& operator <<(const std::wstring& v);
     Log& operator <<(int v);
+    Log& operator <<(float v);
     Log& operator <<(size_t v);
     Log& operator <<(bool v);
     Log& operator <<(const std::string& v);

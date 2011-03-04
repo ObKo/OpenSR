@@ -131,6 +131,12 @@ Log& Log::operator<<(int v)
     return *this;
 }
 
+Log& Log::operator<<(float v)
+{
+    currentStream << v;
+    return *this;
+}
+
 Log& Log::operator<<(bool v)
 {
     currentStream << v;
