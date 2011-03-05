@@ -84,7 +84,7 @@ boost::shared_ptr<Texture> ResourceManager::loadTexture(const std::wstring& name
     return boost::shared_ptr<Texture>();
 }
 
-boost::shared_ptr<AnimatedTexture> ResourceManager::loadAnimation(const std::wstring& name)
+boost::shared_ptr<AnimatedTexture> ResourceManager::loadAnimation(const std::wstring& name, bool needBackground)
 {
     map<wstring, boost::shared_ptr<AnimatedTexture> >::const_iterator it = animations.find(name);
     if(it != animations.end())
@@ -99,7 +99,21 @@ boost::shared_ptr<AnimatedTexture> ResourceManager::loadAnimation(const std::wst
         if (!data)
             return boost::shared_ptr<AnimatedTexture>();
 
-        GAIAnimation a = loadGAIAnimation(data);
+	GIFrame *bg = 0;
+	
+	if(needBackground)
+	{
+	    size_t size;
+	    char *frameData = loadData(directory(name) + L"/" + basename(name) + L".gi", size);
+	    if(frameData)
+	    {
+		bg = new GIFrame();
+		(*bg) = loadGIFile(frameData);
+	    }
+	    delete frameData;
+	}
+
+        GAIAnimation a = loadGAIAnimation(data, bg);
 
         delete data;
         AnimatedTexture *t = new AnimatedTexture(a);

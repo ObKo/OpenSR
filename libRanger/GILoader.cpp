@@ -286,6 +286,130 @@ void DrawRGBIToRGBA(unsigned char * bufdes, int bufdesll, unsigned char * graphb
     }
 }
 
+void DrawF5ToRGBA(unsigned char * bufdes, int bufdesll, unsigned char * graphbuf) 
+{
+	int i,cnt,cnt2,shlc;
+	int shlca[4];
+	unsigned char byte;
+
+	byte=graphbuf[12];
+	shlc=shlca[0]=8-(byte & 15);
+	shlca[1]=8-(byte >> 4);
+	byte=graphbuf[13];
+	shlca[2]=8-(byte & 15);
+	shlca[3]=8-(byte >> 4);
+
+	graphbuf+=16+(((uint32_t *)graphbuf)[2]<<2);
+	
+	unsigned char * bufdesrow=(unsigned char *)bufdes;
+
+	uint32_t channel=0;
+	while(true) {
+		byte=*graphbuf; graphbuf++;
+
+		if((byte & 0x80)!=0) {
+			cnt=(byte & 0xf)+1;
+			byte=(byte>>4) & 7;
+			if(byte==0) {
+				do {
+					cnt2=(cnt>8)?8:cnt;
+					byte=*graphbuf; graphbuf++;
+					for(i=0;i<cnt2;i++) {
+						*bufdesrow=*bufdesrow+(((byte & 1)+1)<<shlc);
+						byte>>=1;
+						bufdesrow+=4;
+					}
+					cnt-=cnt2;
+				} while(cnt>0);
+			} else if(byte==1) {
+				do {
+					cnt2=(cnt>4)?4:cnt;
+					byte=*graphbuf; graphbuf++;
+					for(i=0;i<cnt2;i++) {
+						*bufdesrow=*bufdesrow+(((byte & 3)+1)<<shlc);
+						byte>>=2;
+						bufdesrow+=4;
+					}
+					cnt-=cnt2;
+				} while(cnt>0);
+			} else if(byte==2) {
+				do {
+					cnt2=(cnt>2)?2:cnt;
+					byte=*graphbuf; graphbuf++;
+					for(i=0;i<cnt2;i++) {
+						*bufdesrow=*bufdesrow+(((byte & 15)+1)<<shlc);
+						byte>>=4;
+						bufdesrow+=4;
+					}
+					cnt-=cnt2;
+				} while(cnt>0);
+			} else if(byte==3) {
+				for(i=0;i<cnt;i++) {
+					byte=*graphbuf; graphbuf++;
+					*bufdesrow=*bufdesrow+((byte+1)<<shlc);
+					bufdesrow+=4;
+				}
+			} else if(byte==4) {
+				do {
+					cnt2=(cnt>8)?8:cnt;
+					byte=*graphbuf; graphbuf++;
+					for(i=0;i<cnt2;i++) {
+						*bufdesrow=*bufdesrow-(((byte & 1)+1)<<shlc);
+						byte>>=1;
+						bufdesrow+=4;
+					}
+					cnt-=cnt2;
+				} while(cnt>0);
+			} else if(byte==5) {
+				do {
+					cnt2=(cnt>4)?4:cnt;
+					byte=*graphbuf; graphbuf++;
+					for(i=0;i<cnt2;i++) {
+						*bufdesrow=*bufdesrow-(((byte & 3)+1)<<shlc);
+						byte>>=2;
+						bufdesrow+=4;
+					}
+					cnt-=cnt2;
+				} while(cnt>0);
+			} else if(byte==6) {
+				do {
+					cnt2=(cnt>2)?2:cnt;
+					byte=*graphbuf; graphbuf++;
+					for(i=0;i<cnt2;i++) {
+						*bufdesrow=*bufdesrow-(((byte & 15)+1)<<shlc);
+						byte>>=4;
+						bufdesrow+=4;
+					}
+					cnt-=cnt2;
+				} while(cnt>0);
+			} else if(byte==7) {
+				for(i=0;i<cnt;i++) {
+					byte=*graphbuf; graphbuf++;
+					*bufdesrow=*bufdesrow-((byte+1)<<shlc);
+					bufdesrow+=4;
+				}
+			}
+		} else if(byte==0) {
+			channel++;
+			if(channel<4) {
+				bufdesrow=((unsigned char *)bufdes)+channel;
+			} else {
+				channel=0;
+				bufdes=((unsigned char *)bufdes)+bufdesll;
+				bufdesrow=(unsigned char *)bufdes;
+			}
+			shlc=shlca[channel];
+		} else if(byte==0x03f) {
+			bufdesrow+=uint32_t(*((uint16_t *)graphbuf))<<2;
+			graphbuf+=2;
+		} else if((byte & 0xc0)==0) {
+			bufdesrow+=uint32_t(byte)<<2;
+		} else if(byte==0x40) {
+			break;
+		}
+	}
+}
+
 void FillARGBToRGBA(unsigned char *bufdes, int destwidth, int x, int y, int w, int h, unsigned char *graphbuf)
 {
     uint32_t j;
@@ -337,7 +461,7 @@ void FillARGBItoRGBA(unsigned char *bufdes, unsigned char *bufsrc, unsigned char
  * \param image input image data from GI file.
  * \return loaded frame.
  */
-GIFrame Rangers::loadGIImageData(const GIFrameHeader& image)
+GIFrame Rangers::loadGIImageData(const GIFrameHeader& image, GIFrame *background)
 {
     GIFrame resultFrame;
 
@@ -363,16 +487,16 @@ GIFrame Rangers::loadGIImageData(const GIFrameHeader& image)
     case 4:
         resultFrame = loadFrameType4(image);
         break;
-        //case 5:
-        //resultFrame = loadFrameType5(image);
-        //    break;
+    case 5:
+        resultFrame = loadFrameType5(image, background);
+        break;
 
     default:
         cout << "Unknown GI frame type: " << image.type << endl;
         resultFrame = GIFrame();
         break;
     }
-
+    
     return resultFrame;
 }
 
@@ -408,6 +532,75 @@ GIFrame Rangers::loadFrameType2(const GIFrameHeader& image)
 
     if (image.layers[2].size)
         DrawA6ToRGBA(rgba + (image.layers[2].startY * width + image.layers[2].startX)*4,  width * 4, (unsigned char *)image.layers[2].data);
+
+    result.data = rgba;
+
+    return result;
+}
+
+/*!
+ * \param image input image data from GI file.
+ * \return loaded frame.
+ */
+GIFrame Rangers::loadFrameType5(const GIFrameHeader& image, GIFrame *background)
+{
+    GIFrame result;
+
+    if (image.type != 5)
+        return result;
+    
+    int width;
+    int height;
+    
+    if(background)
+    {
+	width = background->width;
+	height = background->height;
+    }
+    else
+    {
+        width = image.finishX;
+	height = image.finishY;
+    }
+    result.width = width;
+    result.height = height;
+
+    unsigned char *rgba = new unsigned char[width * height * 4];
+
+    if(background)
+	memcpy(rgba, background->data, width * height * 4);
+    else
+	memset(rgba, 0x0, width * height * 4);
+    
+    for(int i = 0; i < width * height; i++)
+    {
+	unsigned char a = rgba[i * 4];
+	unsigned char b = rgba[i * 4 + 1];
+	unsigned char g = rgba[i * 4 + 2];
+	unsigned char r = rgba[i * 4 + 3];
+	
+	rgba[i * 4] = a;
+	rgba[i * 4 + 1] = r;
+	rgba[i * 4 + 2] = g;
+	rgba[i * 4 + 3] = b;
+    }
+    
+
+    if (image.layers[0].size)
+        DrawF5ToRGBA(rgba + (image.layers[0].startY * width + image.layers[0].startX)*4, width * 4, (unsigned char *)image.layers[0].data);
+    
+    for(int i = 0; i < width * height; i++)
+    {
+	unsigned char a = rgba[i * 4];
+	unsigned char r = 0;//rgba[i * 4 + 1];
+	unsigned char g = 0;//rgba[i * 4 + 2];
+	unsigned char b = 0;//rgba[i * 4 + 3];
+	
+	rgba[i * 4] = a;
+	rgba[i * 4 + 1] = b;
+	rgba[i * 4 + 2] = g;
+	rgba[i * 4 + 3] = r;
+    }
 
     result.data = rgba;
 
@@ -559,9 +752,10 @@ GIFrame Rangers::loadFrameType0(const GIFrameHeader& image)
  * \param offset current file offset
  * \param finishX max. image width 0 - doesn't matter
  * \param finishY max. image height 0 - doesn't matter
+ * \param background background image
  * \return loaded frame.
  */
-GIFrame Rangers::loadGIFrame(const char *data, size_t &offset, int finishX, int finishY)
+GIFrame Rangers::loadGIFrame(const char *data, size_t &offset, GIFrame *background, int finishX, int finishY)
 {
     const char *buffer = data + offset;
     GIFrameHeader image;
@@ -594,7 +788,7 @@ GIFrame Rangers::loadGIFrame(const char *data, size_t &offset, int finishX, int 
 
     offset += delta;
 
-    GIFrame resultFrame = loadGIImageData(image);
+    GIFrame resultFrame = loadGIImageData(image, background);
 
     for (int i = 0; i < image.layerCount; i++)
     {
@@ -611,9 +805,10 @@ GIFrame Rangers::loadGIFrame(const char *data, size_t &offset, int finishX, int 
  * \param offset current file offset
  * \param finishX max. image width 0 - doesn't matter
  * \param finishY max. image height 0 - doesn't matter
+ * \param background background image
  * \return loaded frame.
  */
-GIFrame Rangers::loadGIFrame(std::istream& stream, size_t &offset, int finishX, int finishY)
+GIFrame Rangers::loadGIFrame(std::istream& stream, size_t &offset, GIFrame *background, int finishX, int finishY)
 {
     GIFrameHeader image;
 
@@ -646,7 +841,7 @@ GIFrame Rangers::loadGIFrame(std::istream& stream, size_t &offset, int finishX, 
 
     offset += delta;
 
-    GIFrame resultFrame = loadGIImageData(image);
+    GIFrame resultFrame = loadGIImageData(image, background);
 
     for (int i = 0; i < image.layerCount; i++)
     {

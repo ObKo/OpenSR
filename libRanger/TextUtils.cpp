@@ -220,7 +220,7 @@ std::vector<std::wstring> Rangers::split(const std::wstring& s, wchar_t c)
 }
 
 /*!
- * \param s string
+ * \param s file path
  * \return file extension
  */
 std::wstring Rangers::suffix(const std::wstring& s)
@@ -230,4 +230,42 @@ std::wstring Rangers::suffix(const std::wstring& s)
         return std::wstring();
     else
 	return s.substr(pos + 1);
+}
+
+/*!
+ * \param s file path
+ * \return file basename
+ */
+std::wstring Rangers::basename(const std::wstring& s)
+{
+    int endpos = s.rfind(L'.');
+    int startpos = s.rfind(L'/');
+    
+    if(endpos == std::wstring::npos)
+    {
+	if(startpos == std::wstring::npos)
+	    return s;
+	else
+	    return s.substr(startpos + 1);
+    }
+    else
+    {
+        if(startpos == std::wstring::npos)
+	    return s.substr(0, endpos);
+	else
+	    return s.substr(startpos + 1, endpos - startpos - 1);
+    }
+}
+
+/*!
+ * \param s file path
+ * \return file directory
+ */
+std::wstring Rangers::directory(const std::wstring& s)
+{
+    int pos;
+    if((pos = s.rfind(L'/')) == std::wstring::npos)
+        return s;
+    else
+	return s.substr(0, pos);
 }

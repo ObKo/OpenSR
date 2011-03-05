@@ -28,7 +28,7 @@ using namespace std;
  * \param offset offset in file
  * \return GAI animation
  */
-GAIAnimation Rangers::loadGAIAnimation(std::istream& stream, size_t &offset)
+GAIAnimation Rangers::loadGAIAnimation(std::istream& stream, size_t &offset, GIFrame *background)
 {
     GAIHeader header;
 
@@ -74,13 +74,13 @@ GAIAnimation Rangers::loadGAIAnimation(std::istream& stream, size_t &offset)
                 unsigned char *gi = unpackZL01((unsigned char *)buffer, giSize, outsize);
                 delete buffer;
                 size_t offset = 0;
-                header.frames[i] = loadGIFrame((char *)gi, offset, header.finishX, header.finishY);
+                header.frames[i] = loadGIFrame((char *)gi, offset, background, header.finishX, header.finishY);
                 delete gi;
             }
             else
             {
                 stream.seekg(giOffset, ios_base::beg);
-                header.frames[i] = loadGIFrame(stream, giOffset, header.finishX, header.finishY);
+                header.frames[i] = loadGIFrame(stream, giOffset, background, header.finishX, header.finishY);
             }
         }
         else
@@ -89,6 +89,9 @@ GAIAnimation Rangers::loadGAIAnimation(std::istream& stream, size_t &offset)
             frame.width = width;
             frame.height = height;
             frame.data = new unsigned char[width*height*4];
+	    memset(frame.data, 0, width*height*4);
+	    if(background)
+		memcpy(frame.data, background->data, width*height*4);
             header.frames[i] = frame;
         }
 
@@ -108,7 +111,7 @@ GAIAnimation Rangers::loadGAIAnimation(std::istream& stream, size_t &offset)
     return result;
 }
 
-GAIAnimation Rangers::loadGAIAnimation(const char *data)
+GAIAnimation Rangers::loadGAIAnimation(const char *data, GIFrame *background)
 {
     GAIHeader header = *((GAIHeader *)data);
 
@@ -145,14 +148,14 @@ GAIAnimation Rangers::loadGAIAnimation(const char *data)
                 unsigned char *gi = unpackZL01(buffer, giSize, outsize);
                 delete buffer;
                 size_t offset = 0;
-                header.frames[i] = loadGIFrame((char *)gi, offset, header.finishX, header.finishY);
+                header.frames[i] = loadGIFrame((char *)gi, offset, background, header.finishX, header.finishY);
                 delete gi;
             }
             else
             {
                 p = data + giOffset;
                 size_t offset = 0;
-                header.frames[i] = loadGIFrame(p, offset, header.finishX, header.finishY);
+                header.frames[i] = loadGIFrame(p, offset, background, header.finishX, header.finishY);
             }
         }
         else
@@ -160,7 +163,10 @@ GAIAnimation Rangers::loadGAIAnimation(const char *data)
             GIFrame frame;
             frame.width = width;
             frame.height = height;
-            frame.data = new unsigned char[width*height*4];
+	    frame.data = new unsigned char[width*height*4];
+	    memset(frame.data, 0, width*height*4);
+	    if(background)
+		memcpy(frame.data, background->data, width*height*4);
             header.frames[i] = frame;
         }
     }

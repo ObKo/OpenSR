@@ -7,14 +7,33 @@ if Rangers.getPointer(backgroundTexture) then
   background = Rangers.Sprite:new(backgroundTexture)
 end
 
+shipAnimation = resources:loadAnimation(L"DATA/FormMain3/2Ship1.gai", true)
+ship = nil
+if Rangers.getPointer(shipAnimation) then
+  ship = Rangers.AnimatedSprite:new(shipAnimation)
+end
+
+stop = false;
+
+engine:focusWidget(this)
+
 function draw()
   if background then
     background:draw()
   end
+  if ship then
+    ship:draw()
+  end
 end
 
 function keyPressed(k)
-  
+  if stop then
+    ship:start()
+    stop = false
+  else
+    ship:stop()
+    stop = true
+  end
 end
 
 function getBoundingRect()
@@ -38,9 +57,13 @@ function mouseMove(x, y)
 end
 
 function processMain()
-  
+  if ship then
+    ship:processMain()
+  end
 end
 
 function processLogic(dt)
-  
+  if ship then
+    ship:processLogic(dt)
+  end
 end

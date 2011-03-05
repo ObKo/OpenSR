@@ -216,14 +216,14 @@ LIBRANGER_DIRECTIVE GIFrame loadFrameType3(const GIFrameHeader& image);
 //! Load GI frame type 4
 LIBRANGER_DIRECTIVE GIFrame loadFrameType4(const GIFrameHeader& image);
 //! Load GI frame type 5 - dummy
-LIBRANGER_DIRECTIVE GIFrame loadFrameType5(const GIFrameHeader& image);
+LIBRANGER_DIRECTIVE GIFrame loadFrameType5(const GIFrameHeader& image, GIFrame *background = 0);
 //! Load GI frame
-LIBRANGER_DIRECTIVE GIFrame loadGIImageData(const GIFrameHeader& image);
+LIBRANGER_DIRECTIVE GIFrame loadGIImageData(const GIFrameHeader& image, GIFrame *background = 0);
 
 //! Load GI frame from file
-LIBRANGER_DIRECTIVE GIFrame loadGIFrame(std::istream& stream, size_t &offset, int finishX = 0, int finishY = 0);
+LIBRANGER_DIRECTIVE GIFrame loadGIFrame(std::istream& stream, size_t &offset, GIFrame *background = 0, int finishX = 0, int finishY = 0);
 //! Load GI frame from memory
-LIBRANGER_DIRECTIVE GIFrame loadGIFrame(const char *buffer, size_t &offset, int finishX = 0, int finishY = 0);
+LIBRANGER_DIRECTIVE GIFrame loadGIFrame(const char *buffer, size_t &offset, GIFrame *background = 0, int finishX = 0, int finishY = 0);
 
 //! Load HAI animation from file
 LIBRANGER_DIRECTIVE HAIAnimation loadHAI(std::istream& stream);
@@ -234,9 +234,9 @@ LIBRANGER_DIRECTIVE GIFrame loadGIFile(std::istream& stream);
 LIBRANGER_DIRECTIVE GIFrame loadGIFile(const char *data);
 
 //! Load GAI animation file
-LIBRANGER_DIRECTIVE GAIAnimation loadGAIAnimation(std::istream& stream, size_t &offset);
+LIBRANGER_DIRECTIVE GAIAnimation loadGAIAnimation(std::istream& stream, size_t &offset, GIFrame *background = 0);
 //! Load GAI animation from memory
-LIBRANGER_DIRECTIVE GAIAnimation loadGAIAnimation(const char *data);
+LIBRANGER_DIRECTIVE GAIAnimation loadGAIAnimation(const char *data, GIFrame *background = 0);
 
 //! Unpack ZL01 - compressed file
 LIBRANGER_DIRECTIVE unsigned char *unpackZL01(unsigned char * src, size_t srclen, size_t& destlen);
@@ -293,6 +293,10 @@ LIBRANGER_DIRECTIVE std::string toLocal(const std::wstring& text);
 LIBRANGER_DIRECTIVE std::vector<std::wstring> split(const std::wstring& s, wchar_t c);
 //! Get file extension
 LIBRANGER_DIRECTIVE std::wstring suffix(const std::wstring& s);
+//! Get file basename
+LIBRANGER_DIRECTIVE std::wstring basename(const std::wstring& s);
+//! Get file dir
+LIBRANGER_DIRECTIVE std::wstring directory(const std::wstring& s);
 };
 
 #endif
