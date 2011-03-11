@@ -115,11 +115,14 @@ boost::shared_ptr<AnimatedTexture> ResourceManager::loadAnimation(const std::wst
 
         GAIAnimation a = loadGAIAnimation(data, bg);
 
-        delete data;
+        delete[] data;
         AnimatedTexture *t = new AnimatedTexture(a);
         for (int i = 0; i < a.frameCount; i++)
-            delete a.frames[i].data;
+            delete[] a.frames[i].data;
         delete[] a.frames;
+	delete[] bg->data;
+        delete bg;
+	
 	animations[name] = boost::shared_ptr<AnimatedTexture>(t);
         return animations[name];
     }

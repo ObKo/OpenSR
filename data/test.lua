@@ -7,7 +7,7 @@ if Rangers.getPointer(backgroundTexture) then
   background = Rangers.Sprite:new(backgroundTexture)
 end
 
-shipAnimation = resources:loadAnimation(L"DATA/FormMain3/2Ship1.gai", true)
+shipAnimation = resources:loadAnimation(L"DATA/Gov/2PelengAnim1.gai", true)
 ship = nil
 if Rangers.getPointer(shipAnimation) then
   ship = Rangers.AnimatedSprite:new(shipAnimation)
@@ -63,7 +63,7 @@ function processMain()
 end
 
 function processLogic(dt)
-  if ship then
+ if ship then
     ship:processLogic(dt)
   end
 end

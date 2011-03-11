@@ -552,12 +552,12 @@ GIFrame Rangers::loadFrameType5(const GIFrameHeader& image, GIFrame *background)
     int width;
     int height;
     
-    if(background)
+    /*if(background)
     {
-	width = background->width;
-	height = background->height;
+	width = image.finishX > background->width ? width = image.finishX : background->width;
+	height = image.finishY > background->height ? image.finishY : background->height;
     }
-    else
+    else*/
     {
         width = image.finishX;
 	height = image.finishY;
@@ -579,10 +579,10 @@ GIFrame Rangers::loadFrameType5(const GIFrameHeader& image, GIFrame *background)
 	unsigned char g = rgba[i * 4 + 2];
 	unsigned char r = rgba[i * 4 + 3];
 	
-	rgba[i * 4] = a;
-	rgba[i * 4 + 1] = r;
-	rgba[i * 4 + 2] = g;
-	rgba[i * 4 + 3] = b;
+	rgba[i * 4] = b;
+	rgba[i * 4 + 1] = g;
+	rgba[i * 4 + 2] = r;
+	rgba[i * 4 + 3] = a;
     }
     
 
@@ -591,10 +591,10 @@ GIFrame Rangers::loadFrameType5(const GIFrameHeader& image, GIFrame *background)
     
     for(int i = 0; i < width * height; i++)
     {
-	unsigned char a = rgba[i * 4];
-	unsigned char r = 0;//rgba[i * 4 + 1];
-	unsigned char g = 0;//rgba[i * 4 + 2];
-	unsigned char b = 0;//rgba[i * 4 + 3];
+	unsigned char b = rgba[i * 4];
+	unsigned char g = rgba[i * 4 + 1];
+	unsigned char r = rgba[i * 4 + 2];
+	unsigned char a = rgba[i * 4 + 3];
 	
 	rgba[i * 4] = a;
 	rgba[i * 4 + 1] = b;
@@ -792,7 +792,7 @@ GIFrame Rangers::loadGIFrame(const char *data, size_t &offset, GIFrame *backgrou
 
     for (int i = 0; i < image.layerCount; i++)
     {
-        delete image.layers[i].data;
+        delete[] image.layers[i].data;
     }
 
     delete[] image.layers;
