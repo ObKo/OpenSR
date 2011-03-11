@@ -755,7 +755,7 @@ GIFrame Rangers::loadFrameType0(const GIFrameHeader& image)
  * \param background background image
  * \return loaded frame.
  */
-GIFrame Rangers::loadGIFrame(const char *data, size_t &offset, GIFrame *background, int finishX, int finishY)
+GIFrame Rangers::loadGIFrame(const char *data, size_t &offset, GIFrame *background, int startX, int startY, int finishX, int finishY)
 {
     const char *buffer = data + offset;
     GIFrameHeader image;
@@ -770,6 +770,11 @@ GIFrame Rangers::loadGIFrame(const char *data, size_t &offset, GIFrame *backgrou
 
     if (finishY)
         image.finishY = finishY;
+    
+    image.startX -= startX;
+    image.startY -= startY;
+    image.finishX -= startX;
+    image.finishY -= startY;
 
     for (int i = 0; i < image.layerCount; i++)
     {
@@ -780,10 +785,10 @@ GIFrame Rangers::loadGIFrame(const char *data, size_t &offset, GIFrame *backgrou
         memcpy((char*)image.layers[i].data, buffer, image.layers[i].size);
         delta += image.layers[i].size + 32;
 
-        //image.layers[i].startX -= image.startX;
-        //image.layers[i].startY -= image.startY;
-        //image.layers[i].finishX -= image.startX;
-        //image.layers[i].finishY -= image.startY;
+        image.layers[i].startX -= startX;
+        image.layers[i].startY -= startY;
+        image.layers[i].finishX -= startX;
+        image.layers[i].finishY -= startY;
     }
 
     offset += delta;
@@ -808,7 +813,7 @@ GIFrame Rangers::loadGIFrame(const char *data, size_t &offset, GIFrame *backgrou
  * \param background background image
  * \return loaded frame.
  */
-GIFrame Rangers::loadGIFrame(std::istream& stream, size_t &offset, GIFrame *background, int finishX, int finishY)
+GIFrame Rangers::loadGIFrame(std::istream& stream, size_t &offset, GIFrame *background, int startX, int startY, int finishX, int finishY)
 {
     GIFrameHeader image;
 
@@ -822,7 +827,11 @@ GIFrame Rangers::loadGIFrame(std::istream& stream, size_t &offset, GIFrame *back
 
     if (finishY)
         image.finishY = finishY;
-
+    
+    image.startX -= startX;
+    image.startY -= startY;
+    image.finishX -= startX;
+    image.finishY -= startY;
 
     for (int i = 0; i < image.layerCount; i++)
     {
@@ -833,10 +842,10 @@ GIFrame Rangers::loadGIFrame(std::istream& stream, size_t &offset, GIFrame *back
         stream.read((char*)image.layers[i].data, image.layers[i].size);
         delta += image.layers[i].size + 32;
 
-        //image.layers[i].startX -= image.startX;
-        //image.layers[i].startY -= image.startY;
-        //image.layers[i].finishX -= image.startX;
-        //image.layers[i].finishY -= image.startY;
+	image.layers[i].startX -= startX;
+        image.layers[i].startY -= startY;
+        image.layers[i].finishX -= startX;
+        image.layers[i].finishY -= startY;
     }
 
     offset += delta;

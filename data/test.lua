@@ -7,10 +7,11 @@ if Rangers.getPointer(backgroundTexture) then
   background = Rangers.Sprite:new(backgroundTexture)
 end
 
-shipAnimation = resources:loadAnimation(L"DATA/Gov/2PelengAnim1.gai", true)
+shipAnimation = resources:loadAnimation(L"DATA/FormMain3/2Ship3.gai", true)
 ship = nil
 if Rangers.getPointer(shipAnimation) then
   ship = Rangers.AnimatedSprite:new(shipAnimation)
+  --ship:setWidth(ship:width()*2)
 end
 
 stop = false;

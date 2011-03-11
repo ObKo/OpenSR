@@ -166,14 +166,14 @@ GAIAnimation Rangers::loadGAIAnimation(const char *data, GIFrame *background)
                 unsigned char *gi = unpackZL01(buffer, giSize, outsize);
                 delete[] buffer;
                 size_t offset = 0;
-                header.frames[i] = loadGIFrame((char *)gi, offset, background, header.finishX, header.finishY);
+                header.frames[i] = loadGIFrame((char *)gi, offset, background, header.startX, header.startY, header.finishX, header.finishY);
                 delete[] gi;
             }
             else
             {
                 p = data + giOffset;
                 size_t offset = 0;
-                header.frames[i] = loadGIFrame(p, offset, background, header.finishX, header.finishY);
+                header.frames[i] = loadGIFrame(p, offset, background, header.startX, header.startY, header.finishX, header.finishY);
             }
             if(background)
 		background = &(header.frames[i]);
@@ -181,12 +181,12 @@ GAIAnimation Rangers::loadGAIAnimation(const char *data, GIFrame *background)
         else
         {
             GIFrame frame;
-            frame.width = header.finishX;
-            frame.height = header.finishY;
+            frame.width = width;
+            frame.height = height;
             frame.data = new unsigned char[frame.width*frame.height*4];
 	    memset(frame.data, 0, frame.width*frame.height*4);
 	    if(background)
-		copyImageData(frame.data, frame.width, header.startX, header.startY, background->width, background->height, background->data);
+		copyImageData(frame.data, frame.width, 0, 0, background->width, background->height, background->data);
             
 	    header.frames[i] = frame;
 	    background = &(header.frames[i]);

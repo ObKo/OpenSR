@@ -221,9 +221,9 @@ LIBRANGER_DIRECTIVE GIFrame loadFrameType5(const GIFrameHeader& image, GIFrame *
 LIBRANGER_DIRECTIVE GIFrame loadGIImageData(const GIFrameHeader& image, GIFrame *background = 0);
 
 //! Load GI frame from file
-LIBRANGER_DIRECTIVE GIFrame loadGIFrame(std::istream& stream, size_t &offset, GIFrame *background = 0, int finishX = 0, int finishY = 0);
+LIBRANGER_DIRECTIVE GIFrame loadGIFrame(std::istream& stream, size_t &offset, GIFrame *background = 0, int startX = 0, int startY = 0, int finishX = 0, int finishY = 0);
 //! Load GI frame from memory
-LIBRANGER_DIRECTIVE GIFrame loadGIFrame(const char *buffer, size_t &offset, GIFrame *background = 0, int finishX = 0, int finishY = 0);
+LIBRANGER_DIRECTIVE GIFrame loadGIFrame(const char *buffer, size_t &offset, GIFrame *background = 0, int startX = 0, int startY = 0, int finishX = 0, int finishY = 0);
 
 //! Load HAI animation from file
 LIBRANGER_DIRECTIVE HAIAnimation loadHAI(std::istream& stream);
