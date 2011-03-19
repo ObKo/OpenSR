@@ -18,13 +18,14 @@
 
 #include "AnimatedTexture.h"
 #include "Engine.h"
+#include "Log.h"
 
 using namespace Rangers;
 
 /*!
  * \param a hai animation
  */
-AnimatedTexture::AnimatedTexture(HAIAnimation a)
+AnimatedTexture::AnimatedTexture(const HAIAnimation& a)
 {
     ::Texture();
 
@@ -52,7 +53,7 @@ AnimatedTexture::AnimatedTexture(HAIAnimation a)
 /*!
  * \param a gai animation
  */
-AnimatedTexture::AnimatedTexture(GAIAnimation a)
+AnimatedTexture::AnimatedTexture(const GAIAnimation& a)
 {
     ::Texture();
 
@@ -66,14 +67,24 @@ AnimatedTexture::AnimatedTexture(GAIAnimation a)
     textureIDs[0] = textureID;
     glGenTextures(frameCount - 1, textureIDs + 1);
 
+    size_t s = 0;
+    
     for (int i = 0; i < frameCount; i++)
     {
         glBindTexture(GL_TEXTURE_2D, textureIDs[i]);
-
+	
+	s+= 4 * a.frames[i].width * a.frames[i].height;
         glTexImage2D(GL_TEXTURE_2D, 0, Engine::instance()->textureInternalFormat(TEXTURE_R8G8B8A8), a.frames[i].width, a.frames[i].height, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, a.frames[i].data);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	//delete a.frames[i].data;
+    }
+    logger() << LDEBUG << "Animation size: " << s/1024/1204 << "Mb" << LEND;
+    for(int i = 0; i < frameCount; i++)
+    {
+	glBindTexture(GL_TEXTURE_2D, textureIDs[i]);
+	delete a.frames[i].data;
     }
 }
 

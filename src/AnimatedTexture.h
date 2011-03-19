@@ -29,9 +29,9 @@ class AnimatedTexture: public Texture
 {
 public:
     //! Create texture from HAI animation
-    AnimatedTexture(HAIAnimation a);
+    AnimatedTexture(const HAIAnimation& a);
     //! Create texture from GAI animation
-    AnimatedTexture(GAIAnimation a);
+    AnimatedTexture(const GAIAnimation& a);
     ~AnimatedTexture();
 
     //! Get OpenGL texture id
