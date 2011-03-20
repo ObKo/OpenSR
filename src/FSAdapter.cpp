@@ -28,6 +28,7 @@
 #include <errno.h>
 #include <libRanger.h>
 #include "Log.h"
+#include <algorithm>
 
 
 using namespace Rangers;
@@ -72,9 +73,11 @@ void FSAdapter::doScan(const wstring& path)
         if(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
             doScan(path + fd.cFileName + L'\\');
         else 
-            files.push_back(path + fd.cFileName);
-        //else
-        //    logger() << LDEBUG << localPath + fd.cFileName << " unknown entry type"  << LEND;
+		{
+			wstring fileName = path + fd.cFileName;
+			std::replace(fileName.begin(), fileName.end(), L'\\', L'/');
+            files.push_back(fileName);
+		}
     } 
     while(FindNextFileW(fh, &fd));
 }

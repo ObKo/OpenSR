@@ -73,18 +73,10 @@ AnimatedTexture::AnimatedTexture(const GAIAnimation& a)
     {
         glBindTexture(GL_TEXTURE_2D, textureIDs[i]);
 	
-	s+= 4 * a.frames[i].width * a.frames[i].height;
         glTexImage2D(GL_TEXTURE_2D, 0, Engine::instance()->textureInternalFormat(TEXTURE_R8G8B8A8), a.frames[i].width, a.frames[i].height, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, a.frames[i].data);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	//delete a.frames[i].data;
-    }
-    logger() << LDEBUG << "Animation size: " << s/1024/1204 << "Mb" << LEND;
-    for(int i = 0; i < frameCount; i++)
-    {
-	glBindTexture(GL_TEXTURE_2D, textureIDs[i]);
-	delete a.frames[i].data;
     }
 }
 

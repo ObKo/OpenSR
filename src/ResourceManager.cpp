@@ -117,9 +117,11 @@ boost::shared_ptr<AnimatedTexture> ResourceManager::loadAnimation(const std::wst
 
         delete[] data;
         AnimatedTexture *t = new AnimatedTexture(a);
-//        cleanupGAI(a);
+		for(int i = 0; i < a.frameCount; i++)
+			delete a.frames[i].data;
+		delete[] a.frames;
 	
-	animations[name] = boost::shared_ptr<AnimatedTexture>(t);
+		animations[name] = boost::shared_ptr<AnimatedTexture>(t);
         return animations[name];
     }
     else

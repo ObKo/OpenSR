@@ -129,15 +129,6 @@ GAIAnimation Rangers::loadGAIAnimation(std::istream& stream, size_t &offset, GIF
     return result;
 }
 
-void Rangers::cleanupGAI(GAIAnimation& a)
-{
-  for(int i = 0; i < a.frameCount; i++)
-      delete[] a.frames[i].data;
-  delete[] a.frames;
-  a.frameCount = 0;
-  a.frames = 0;
-}
-
 GAIAnimation Rangers::loadGAIAnimation(const char *data, GIFrame *background)
 {
     GAIHeader header = *((GAIHeader *)data);

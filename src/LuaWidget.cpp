@@ -64,7 +64,7 @@ Rect LuaWidget::getBoundingRect() const
     Rect *bb = (Rect*)(tolua_tousertype(luaState, -1, NULL));
     lua_pop(luaState, 1);
     unlock();
-    return *bb;
+    return Rect();
 }
 
 void LuaWidget::keyPressed(SDL_keysym key)
