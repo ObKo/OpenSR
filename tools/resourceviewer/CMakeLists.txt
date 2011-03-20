@@ -4,11 +4,13 @@ INCLUDE(${QT_USE_FILE})
 
 SET(RW_HEADERS
     MainWindow.h
+    PKGModel.h
 )
 
 SET(RW_SOURCES
     main.cpp
     MainWindow.cpp
+    PKGModel.cpp
 )
 
 SET(RW_UI
@@ -17,6 +19,7 @@ SET(RW_UI
 
 INCLUDE_DIRECTORIES(
   ${CMAKE_CURRENT_BINARY_DIR}
+  ${CMAKE_SOURCE_DIR}/libRanger
 )
 
 QT4_WRAP_CPP(RW_MOC_SOURCES ${RW_HEADERS})

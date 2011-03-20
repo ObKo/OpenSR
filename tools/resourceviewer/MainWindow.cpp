@@ -3,7 +3,9 @@
 #include <QFileDialog>
 #include <QFileInfo>
 #include <fstream>
-#include "../../libRanger/libRanger.h"
+#include <libRanger.h>
+
+using namespace Rangers;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -98,15 +100,22 @@ void MainWindow::loadFile(const QString& fileName)
         }
         else if(fileInfo.suffix().toLower() == "gai")
         {
-            size_t offset = 0;
-            Rangers::GAIAnimation anim = Rangers::loadGAIAnimation(f, offset);
+            f.seekg(0, std::ios_base::end);
+	    size_t fileSize = f.tellg();
+	    f.seekg(0, std::ios_base::beg);
+	    char *fileData = new char[fileSize];
+	    f.read(fileData, fileSize);
+	    f.close();
+            Rangers::GAIAnimation anim = Rangers::loadGAIAnimation(fileData);
             for(int i = 0; i < anim.frameCount; i++)
             {
                 unsigned char *data = revert(anim.frames[i].data, anim.frames[i].width, anim.frames[i].height);
                 frames.append(QPixmap::fromImage(QImage(data, anim.frames[i].width, anim.frames[i].height, QImage::Format_ARGB32)));
-                delete data;
-                delete anim.frames[i].data;
+                delete[] data;
+                delete[] anim.frames[i].data;
             }
+            delete[] anim.frames;
+	    delete[] fileData;
             currentFrame = 0;
             item.setPixmap(frames.at(currentFrame));
             animationTimer.setInterval(60);
@@ -135,8 +144,11 @@ void MainWindow::loadFile(const QString& fileName)
         }
         else if(fileInfo.suffix().toLower() == "pkg")
         {
-	    QString outDir = QFileDialog::getExistingDirectory(this, tr("Select output folder"));
-	    extractPKG(0, outDir, f);
+	    PKGItem *root = Rangers::loadPKG(f);
+	    model = new PKGModel(root, this);
+	    ui->fileTreeView->setModel(model);
+	    //QString outDir = QFileDialog::getExistingDirectory(this, tr("Select output folder"));
+	    //extractPKG(0, outDir, f);
 	}
 }
 

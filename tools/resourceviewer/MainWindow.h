@@ -5,11 +5,14 @@
 #include <QGraphicsScene>
 #include <QGraphicsPixmapItem>
 #include <QTimer>
+#include "PKGModel.h"
 
 namespace Ui {
     class MainWindow;
 }
 
+namespace Rangers
+{
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -28,10 +31,11 @@ private:
     int currentFrame;
 
     void loadFile(const QString& fileName);
+    PKGModel *model;
 
 private Q_SLOTS:
     void openFile();
     void nextFrame();
 };
-
+};
 #endif // MAINWINDOW_H

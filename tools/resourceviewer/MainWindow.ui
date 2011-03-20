@@ -16,7 +16,13 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
-     <widget class="QGraphicsView" name="graphicsView"/>
+     <widget class="QSplitter" name="splitter">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <widget class="QTreeView" name="fileTreeView"/>
+      <widget class="QGraphicsView" name="graphicsView"/>
+     </widget>
     </item>
    </layout>
   </widget>
