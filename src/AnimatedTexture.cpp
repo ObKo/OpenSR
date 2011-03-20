@@ -48,6 +48,7 @@ AnimatedTexture::AnimatedTexture(const HAIAnimation& a)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     }
+    loadedAnimationFrames = frameCount;
 }
 
 /*!
@@ -78,6 +79,7 @@ AnimatedTexture::AnimatedTexture(const GAIAnimation& a)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     }
+    loadedAnimationFrames = frameCount;
 }
 
 AnimatedTexture::~AnimatedTexture()
@@ -92,7 +94,9 @@ AnimatedTexture::~AnimatedTexture()
  */
 GLuint AnimatedTexture::openGLTexture(int i) const
 {
-    return textureIDs[i % frameCount];
+    if(!loadedAnimationFrames)
+        return 0;
+    return textureIDs[i % (frameCount > loadedAnimationFrames ? loadedAnimationFrames : frameCount)];
 }
 
 /*!
@@ -118,3 +122,48 @@ int AnimatedTexture::count() const
 {
     return frameCount;
 }
+
+AnimatedTexture::AnimatedTexture(int width, int height, int seek, int size, int count)
+{
+    ::Texture();
+
+    waitSeek = seek;
+    waitSize = size;
+    realWidth = width;
+    realHeight = height;
+    frameCount = count;
+
+    textureIDs = new GLuint[frameCount];
+    textureIDs[0] = textureID;
+    glGenTextures(frameCount - 1, textureIDs + 1);
+    loadedAnimationFrames = 0;
+}
+
+int AnimatedTexture::loadedFrames() const
+{
+    return loadedAnimationFrames;
+}
+
+void AnimatedTexture::loadFrame(const char* data, int width, int height, TextureType type)
+{
+	if(loadedAnimationFrames == frameCount)
+	    return;
+	
+        glBindTexture(GL_TEXTURE_2D, textureIDs[loadedAnimationFrames]);
+	
+	switch(type)
+	{
+	case TEXTURE_A8: 
+	    glTexImage2D(GL_TEXTURE_2D, 0, Engine::instance()->textureInternalFormat(TEXTURE_A8), width, height, 0, GL_ALPHA, GL_UNSIGNED_BYTE, data);
+	    break;
+	case TEXTURE_R8G8B8A8:
+	    glTexImage2D(GL_TEXTURE_2D, 0, Engine::instance()->textureInternalFormat(TEXTURE_R8G8B8A8), width, height, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, data);
+	    break;
+	}
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	
+	loadedAnimationFrames++;
+}
+

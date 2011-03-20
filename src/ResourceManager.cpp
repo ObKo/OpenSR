@@ -60,9 +60,9 @@ void ResourceManager::addDir(const std::wstring& path)
 boost::shared_ptr<Texture> ResourceManager::loadTexture(const std::wstring& name)
 {
     map<wstring, boost::shared_ptr<Texture> >::const_iterator it = textures.find(name);
-    if(it != textures.end())
-	return it->second;
-    
+    if (it != textures.end())
+        return it->second;
+
     wstring sfx = suffix(name);
     transform(sfx.begin(), sfx.end(), sfx.begin(), towlower);
     if (sfx == L"gi")
@@ -75,7 +75,7 @@ boost::shared_ptr<Texture> ResourceManager::loadTexture(const std::wstring& name
         delete data;
         Texture *t = new Texture(frame.width, frame.height, Rangers::TEXTURE_R8G8B8A8, frame.data);
         delete frame.data;
-	textures[name] = boost::shared_ptr<Texture>(t);
+        textures[name] = boost::shared_ptr<Texture>(t);
         return textures[name];
     }
     else
@@ -84,12 +84,12 @@ boost::shared_ptr<Texture> ResourceManager::loadTexture(const std::wstring& name
     return boost::shared_ptr<Texture>();
 }
 
-boost::shared_ptr<AnimatedTexture> ResourceManager::loadAnimation(const std::wstring& name, bool needBackground)
+boost::shared_ptr<AnimatedTexture> ResourceManager::loadAnimation(const std::wstring& name, bool backgroundLoading, bool needBackground)
 {
     map<wstring, boost::shared_ptr<AnimatedTexture> >::const_iterator it = animations.find(name);
-    if(it != animations.end())
-	return it->second;
-    
+    if (it != animations.end())
+        return it->second;
+
     wstring sfx = suffix(name);
     transform(sfx.begin(), sfx.end(), sfx.begin(), towlower);
     if (sfx == L"gai")
@@ -99,29 +99,40 @@ boost::shared_ptr<AnimatedTexture> ResourceManager::loadAnimation(const std::wst
         if (!data)
             return boost::shared_ptr<AnimatedTexture>();
 
-	GIFrame *bg = 0;
-	
-	if(needBackground)
-	{
-	    size_t size;
-	    char *frameData = loadData(directory(name) + L"/" + basename(name) + L".gi", size);
-	    if(frameData)
-	    {
-		bg = new GIFrame();
-		(*bg) = loadGIFile(frameData);
-	    }
-	    delete frameData;
-	}
+        GIFrame *bg = 0;
+
+        if (needBackground)
+        {
+            size_t size;
+            char *frameData = loadData(directory(name) + L"/" + basename(name) + L".gi", size);
+            if (frameData)
+            {
+                bg = new GIFrame();
+                (*bg) = loadGIFile(frameData);
+            }
+            delete frameData;
+        }
 
         GAIAnimation a = loadGAIAnimation(data, bg);
-
         delete[] data;
-        AnimatedTexture *t = new AnimatedTexture(a);
-		for(int i = 0; i < a.frameCount; i++)
-			delete a.frames[i].data;
-		delete[] a.frames;
-	
-		animations[name] = boost::shared_ptr<AnimatedTexture>(t);
+
+        AnimatedTexture *t;
+
+        if (!backgroundLoading)
+        {
+            t = new AnimatedTexture(a);
+            for (int i = 0; i < a.frameCount; i++)
+                delete a.frames[i].data;
+            delete[] a.frames;
+	    animations[name] = boost::shared_ptr<AnimatedTexture>(t);
+        }
+        else
+	{
+	    t = new AnimatedTexture(a.width, a.height, a.waitSeek, a.waitSize, a.frameCount);
+	    animations[name] = boost::shared_ptr<AnimatedTexture>(t);
+	    onDemandGAIQueue[animations[name]] = a;
+	}
+
         return animations[name];
     }
     else
@@ -136,25 +147,25 @@ boost::shared_ptr< Font > ResourceManager::loadFont(const std::wstring& name, in
     s.seekp(0, ios_base::end);
     s << size;
     wstring mapName = s.str();
-    
+
     map<wstring, boost::shared_ptr<Font> >::const_iterator it = fonts.find(mapName);
-    if(it != fonts.end())
-	return it->second;
-    
+    if (it != fonts.end())
+        return it->second;
+
     wstring sfx = suffix(name);
     transform(sfx.begin(), sfx.end(), sfx.begin(), towlower);
-    
+
     if (sfx == L"ttf")
     {
         size_t dataSize;
-	char *data = loadData(name, dataSize);
-	if(!data)
-	    return boost::shared_ptr<Font>();
-	
-	Font *f = new Font(data, dataSize, size);
-	delete data;
-	fonts[mapName] = boost::shared_ptr<Font>(f);
-	return fonts[mapName];
+        char *data = loadData(name, dataSize);
+        if (!data)
+            return boost::shared_ptr<Font>();
+
+        Font *f = new Font(data, dataSize, size);
+        delete data;
+        fonts[mapName] = boost::shared_ptr<Font>(f);
+        return fonts[mapName];
     }
     else
         logger() << LERROR << "Unknown font format: " << sfx << LEND;
@@ -165,13 +176,27 @@ boost::shared_ptr< Font > ResourceManager::loadFont(const std::wstring& name, in
 
 void ResourceManager::processMain()
 {
-    for(map<std::wstring, boost::shared_ptr<Texture> >::iterator i = textures.begin(); i != textures.end(); i++)
-	if((*i).second.use_count() < 2)
-	    textures.erase(i);
+    for (map<std::wstring, boost::shared_ptr<Texture> >::iterator i = textures.begin(); i != textures.end(); i++)
+        if ((*i).second.use_count() < 2)
+            textures.erase(i);
+
+    for (map<std::wstring, boost::shared_ptr<AnimatedTexture> >::iterator i = animations.begin(); i != animations.end(); i++)
+        if ((*i).second.use_count() < 2)
+            animations.erase(i);
 	
-    for(map<std::wstring, boost::shared_ptr<AnimatedTexture> >::iterator i = animations.begin(); i != animations.end(); i++)
-	if((*i).second.use_count() < 2)
-	    animations.erase(i);
+    for(std::map<boost::shared_ptr<AnimatedTexture>, GAIAnimation>::iterator i = onDemandGAIQueue.begin(); i != onDemandGAIQueue.end(); i++)
+    {
+        boost::shared_ptr<AnimatedTexture> t =(*i).first;
+	GAIAnimation a = (*i).second;
+	int f = t->loadedFrames();
+	t->loadFrame((char *)a.frames[f].data, a.frames[f].width, a.frames[f].height, TEXTURE_R8G8B8A8);
+	delete[] a.frames[f].data;
+	if(t->loadedFrames() >= t->count())
+	{
+	    delete[] a.frames;
+	    onDemandGAIQueue.erase(i);
+	}
+    }
 }
 
 char* ResourceManager::loadData(const std::wstring& name, size_t &size)

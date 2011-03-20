@@ -32,6 +32,8 @@ public:
     AnimatedTexture(const HAIAnimation& a);
     //! Create texture from GAI animation
     AnimatedTexture(const GAIAnimation& a);
+    //! Create empty animation for background loading
+    AnimatedTexture(int width, int height, int seek, int size, int count);
     ~AnimatedTexture();
 
     //! Get OpenGL texture id
@@ -41,13 +43,18 @@ public:
     int size() const;
     //! Get frame count
     int count() const;
+    //! Number of loaded frames (background loading)
+    int loadedFrames() const;
 
     //! Set texture tiling
     void setTiling(bool tx, bool ty);
+    //! Append frame (on-demand loading)
+    void loadFrame(const char *data, int width, int height, TextureType type);
 
 private:
     int waitSeek, waitSize;
     int frameCount;
+    int loadedAnimationFrames;
 
     GLuint *textureIDs;
 };

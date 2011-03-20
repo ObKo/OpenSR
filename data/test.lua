@@ -7,12 +7,12 @@ if Rangers.getPointer(backgroundTexture) then
   background = Rangers.Sprite:new(backgroundTexture)
 end
 
--- shipAnimation = resources:loadAnimation(L"DATA/FormMain3/2Ship1.gai", true)
-shipAnimation = resources:loadTexture(L"DATA/FormMain3/2Ship1.gi")
+shipAnimation = resources:loadAnimation(L"DATA/FormMain3/2Ship1.gai", true, true)
+-- shipAnimation = resources:loadTexture(L"DATA/FormMain3/2Ship1.gi")
 ship = nil
 if Rangers.getPointer(shipAnimation) then
---   ship = Rangers.AnimatedSprite:new(shipAnimation)
-  ship = Rangers.Sprite:new(shipAnimation)
+  ship = Rangers.AnimatedSprite:new(shipAnimation)
+--   ship = Rangers.Sprite:new(shipAnimation)
   ship:setPosition(0, engine:screenHeight() - ship:height())
 end
 

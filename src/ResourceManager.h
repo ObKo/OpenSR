@@ -28,6 +28,7 @@ namespace Rangers
 class Texture;
 class AnimatedTexture;
 class Font;
+struct GAIAnimation;
 
 class ResourceManager
 {
@@ -37,7 +38,7 @@ public:
 
     char* loadData(const std::wstring& name, size_t &size);
     boost::shared_ptr<Texture> loadTexture(const std::wstring& name);
-    boost::shared_ptr<AnimatedTexture> loadAnimation(const std::wstring& name, bool needBackground = false);
+    boost::shared_ptr<AnimatedTexture> loadAnimation(const std::wstring& name, bool backgroundLoading = false, bool needBackground = false);
     boost::shared_ptr<Font> loadFont(const std::wstring& name, int size);
 
     static ResourceManager *instance();
@@ -52,6 +53,7 @@ private:
     std::map<std::wstring, boost::shared_ptr<Texture> > textures;
     std::map<std::wstring, boost::shared_ptr<AnimatedTexture> > animations;
     std::map<std::wstring, boost::shared_ptr<Font> > fonts;
+    std::map<boost::shared_ptr<AnimatedTexture>, GAIAnimation> onDemandGAIQueue;
 };
 };
 
