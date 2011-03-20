@@ -77,7 +77,7 @@ void MainWindow::loadFile(const QString& fileName)
         if(!fileInfo.exists())
             return;
 
-        std::ifstream f(fileName.toLocal8Bit().data());
+		std::ifstream f(fileName.toLocal8Bit().data(), std::ios::binary);
 
         if(!frames.isEmpty())
         {
