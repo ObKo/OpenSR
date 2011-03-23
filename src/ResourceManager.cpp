@@ -184,6 +184,8 @@ void ResourceManager::processMain()
         if ((*i).second.use_count() < 2)
             animations.erase(i);
 	
+    std::list<boost::shared_ptr<AnimatedTexture> > animationsToRemove;
+	
     for(std::map<boost::shared_ptr<AnimatedTexture>, GAIAnimation>::iterator i = onDemandGAIQueue.begin(); i != onDemandGAIQueue.end(); i++)
     {
         boost::shared_ptr<AnimatedTexture> t =(*i).first;
@@ -194,9 +196,12 @@ void ResourceManager::processMain()
 	if(t->loadedFrames() >= t->count())
 	{
 	    delete[] a.frames;
-	    onDemandGAIQueue.erase(i);
+	    animationsToRemove.push_back(i->first);
 	}
     }
+    for(std::list<boost::shared_ptr<AnimatedTexture> >::const_iterator i = animationsToRemove.begin(); i != animationsToRemove.end(); i++)
+        onDemandGAIQueue.erase(*i);
+    animationsToRemove.clear();
 }
 
 char* ResourceManager::loadData(const std::wstring& name, size_t &size)
