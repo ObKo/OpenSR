@@ -27,6 +27,7 @@ LuaWidget::LuaWidget(std::wstring fileName, Rangers::Object* parent): Widget(par
     luaState = lua_open();
     luaopen_base(luaState);
     luaopen_table(luaState);
+    luaopen_math(luaState);
     tolua_Engine_open(luaState);
     tolua_libRanger_open(luaState);
     tolua_Object_open(luaState);

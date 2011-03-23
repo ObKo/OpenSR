@@ -57,8 +57,16 @@ Sprite::Sprite(boost::shared_ptr<Texture> texture,  Object *parent, TextureScali
     vertexCount = 0;
     spriteTexture = texture;
     textureScaling = ts;
-    spriteWidth = texture->width();
-    spriteHeight = texture->height();
+    if(!texture)
+    {
+        spriteWidth = 0;
+        spriteHeight = 0;
+    }
+    else
+    {
+        spriteWidth = texture->width();
+        spriteHeight = texture->height();
+    }
     xPos = xpos;
     yPos = ypos;
     markToUpdate();
@@ -66,7 +74,8 @@ Sprite::Sprite(boost::shared_ptr<Texture> texture,  Object *parent, TextureScali
 
 Sprite::~Sprite()
 {
-    glDeleteBuffers(1, &vertexBuffer);
+    if(vertexBuffer)
+	glDeleteBuffers(1, &vertexBuffer);
 }
 
 Sprite& Sprite::operator=(const Rangers::Sprite& other)
@@ -95,7 +104,7 @@ void Sprite::draw() const
 {
     if (!spriteTexture)
         return;
-    SDL_mutexP(objectMutex);
+    lock();
     prepareDraw();
 
     glBindTexture(GL_TEXTURE_2D, spriteTexture->openGLTexture());
@@ -131,7 +140,7 @@ void Sprite::draw() const
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     glDisableClientState(GL_VERTEX_ARRAY);
     endDraw();
-    SDL_mutexV(objectMutex);
+    unlock();
 }
 
 void Sprite::setSpriteOrigin(SpriteXPosition xpos, SpriteYPosition ypos)
@@ -143,10 +152,13 @@ void Sprite::setSpriteOrigin(SpriteXPosition xpos, SpriteYPosition ypos)
 
 void Sprite::setGeometry(float width, float height)
 {
-    if (width <= 0)
-        width = spriteTexture->width();
-    if (height <= 0)
-        height = spriteTexture->height();
+    if(spriteTexture)
+    {
+      if (width <= 0)
+	width = spriteTexture->width();
+       if (height <= 0)
+	height = spriteTexture->height();
+    }
 
     spriteWidth = width;
     spriteHeight = height;
@@ -155,8 +167,9 @@ void Sprite::setGeometry(float width, float height)
 
 void Sprite::setHeight(float height)
 {
-    if (height <= 0)
-        height = spriteTexture->height();
+    if (spriteTexture)
+        if (height <= 0)
+            height = spriteTexture->height();
 
     spriteHeight = height;
     markToUpdate();
@@ -164,8 +177,9 @@ void Sprite::setHeight(float height)
 
 void Sprite::setWidth(float width)
 {
-     if (width <= 0)
-        width = spriteTexture->width();
+    if (spriteTexture)
+       if (width <= 0)
+          width = spriteTexture->width();
      
      spriteWidth = width;
      markToUpdate();
@@ -181,7 +195,9 @@ void Sprite::setTextureScaling(TextureScaling ts)
 
 void Sprite::processMain()
 {
-    SDL_mutexP(objectMutex);
+    if (!spriteTexture)
+        return;
+    lock();
     ::Object::processMain();
     if (!vertexBuffer)
     {
@@ -291,7 +307,7 @@ void Sprite::processMain()
     vertex[3].w = w2;
 
     glUnmapBuffer(GL_ARRAY_BUFFER);
-    SDL_mutexV(objectMutex);
+    unlock();
 }
 
 float Sprite::height() const

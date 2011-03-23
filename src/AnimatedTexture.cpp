@@ -96,9 +96,7 @@ GLuint AnimatedTexture::openGLTexture(int i) const
 {
     if(!loadedAnimationFrames)
         return 0;
-    if((i >= loadedAnimationFrames) && (loadedAnimationFrames != frameCount))
-        return textureIDs[loadedAnimationFrames - 1];
-    return textureIDs[i % frameCount];
+    return textureIDs[i % loadedAnimationFrames];
 }
 
 /*!

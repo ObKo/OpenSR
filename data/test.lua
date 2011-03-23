@@ -1,32 +1,27 @@
 engine = Rangers.Engine:instance()
 resources = Rangers.ResourceManager:instance()
 
-backgroundTexture = resources:loadTexture(L"DATA/FormMain2/2main.gi")
-background = nil
-if Rangers.getPointer(backgroundTexture) then
-  background = Rangers.Sprite:new(backgroundTexture)
-end
+backgroundTexture = resources:loadTexture(L"DATA/FormMain3/2bg.gi")
+background = Rangers.Sprite:new(backgroundTexture)
+background:setWidth(background:width()/(engine:screenHeight()/background:height()))
+background:setHeight(engine:screenHeight())
 
-shipAnimation = resources:loadAnimation(L"DATA/FormMain3/2Ship1.gai", true, true)
--- shipAnimation = resources:loadTexture(L"DATA/FormMain3/2Ship1.gi")
-ship = nil
-if Rangers.getPointer(shipAnimation) then
-  ship = Rangers.AnimatedSprite:new(shipAnimation)
---   ship = Rangers.Sprite:new(shipAnimation)
-  ship:setPosition(0, engine:screenHeight() - ship:height())
-end
+-- shipAnimation = resources:loadAnimation(L"DATA/FormMain3/2Ship1.gai", true, true)
+shipAnimation = resources:loadTexture(L"DATA/FormMain3/2Ship1.gi")
+-- ship = Rangers.AnimatedSprite:new(shipAnimation)
+ship = Rangers.Sprite:new(shipAnimation)
+ship:setPosition(0, engine:screenHeight() - ship:height())
 
-stop = false;
+stop = false
+t = 0
+bgspeed = 5/1000
+bgforward = true
 
 engine:focusWidget(this)
 
 function draw()
-  if background then
-    background:draw()
-  end
-  if ship then
-    ship:draw()
-  end
+  background:draw()
+  ship:draw()
 end
 
 function keyPressed(k)
@@ -42,9 +37,9 @@ end
 function getBoundingRect()
   r = Rangers.Rect:new()
   r.x1 = 0.0
-  r.x2 = background:width()
+  r.x2 = ship:width()
   r.y1 = 0.0
-  r.y2 = background:height()
+  r.y2 = ship:height()
   return r
 end
 
@@ -60,13 +55,20 @@ function mouseMove(x, y)
 end
 
 function processMain()
-  if ship then
-    ship:processMain()
-  end
+  ship:processMain()
+  background:processMain()
 end
 
 function processLogic(dt)
-  if ship then
-    ship:processLogic(dt)
+  if math.abs(t * bgspeed) >= background:width() - engine:screenWidth() then
+    t = 0
+    bgforward = not bgforward
   end
+  if bgforward then
+    background:setPosition(- t * bgspeed, 0)
+  else 
+    background:setPosition(-background:width() + engine:screenWidth() + t * bgspeed, 0)
+  end
+  ship:processLogic(dt)
+  t = t + dt
 end

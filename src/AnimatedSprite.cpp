@@ -31,8 +31,16 @@ AnimatedSprite::AnimatedSprite(boost::shared_ptr<AnimatedTexture> texture,  Obje
     t = 0;
     animFrame= 0;
     singleShot = false;
-    started = true;
-    frameTime = texture->seek() > 1000 ? 50 : 100;
+    if(!texture)
+    {
+        started = false;
+	frameTime = 0;
+    }
+    else
+    {
+        started = true;
+        frameTime = texture->seek() > 1000 ? 50 : 100;
+    }
 }
 
 AnimatedSprite::AnimatedSprite(const Rangers::AnimatedSprite& other): Sprite(other)
@@ -64,13 +72,16 @@ AnimatedSprite& AnimatedSprite::operator=(const Rangers::AnimatedSprite& other)
 
 void AnimatedSprite::processLogic(int dt)
 {
+    if(!spriteTexture)
+        return;
     AnimatedTexture *texture = static_cast<AnimatedTexture *>(spriteTexture.get());
 
     if(started)
     {
 	while (t > frameTime)
 	{
-	    animFrame = (animFrame + 1) % texture->count();
+	    if((texture->loadedFrames() == texture->count()) || (animFrame < texture->loadedFrames() - 1))
+		animFrame = (animFrame + 1) % texture->count();
 	    t -= frameTime;
 	}
 
