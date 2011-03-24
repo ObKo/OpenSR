@@ -47,6 +47,8 @@ public:
 
 
 private:
+    void processGAIQueue();
+    void cleanupUnused();
     std::map<std::wstring, boost::shared_ptr<ResourceAdapter> > files;
     std::list<boost::shared_ptr<ResourceAdapter> > adaptors;
     

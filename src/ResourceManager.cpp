@@ -176,32 +176,8 @@ boost::shared_ptr< Font > ResourceManager::loadFont(const std::wstring& name, in
 
 void ResourceManager::processMain()
 {
-    for (map<std::wstring, boost::shared_ptr<Texture> >::iterator i = textures.begin(); i != textures.end(); i++)
-        if ((*i).second.use_count() < 2)
-            textures.erase(i);
-
-    for (map<std::wstring, boost::shared_ptr<AnimatedTexture> >::iterator i = animations.begin(); i != animations.end(); i++)
-        if ((*i).second.use_count() < 2)
-            animations.erase(i);
-	
-    std::list<boost::shared_ptr<AnimatedTexture> > animationsToRemove;
-	
-    for(std::map<boost::shared_ptr<AnimatedTexture>, GAIAnimation>::iterator i = onDemandGAIQueue.begin(); i != onDemandGAIQueue.end(); i++)
-    {
-        boost::shared_ptr<AnimatedTexture> t =(*i).first;
-	GAIAnimation a = (*i).second;
-	int f = t->loadedFrames();
-	t->loadFrame((char *)a.frames[f].data, a.frames[f].width, a.frames[f].height, TEXTURE_R8G8B8A8);
-	delete[] a.frames[f].data;
-	if(t->loadedFrames() >= t->count())
-	{
-	    delete[] a.frames;
-	    animationsToRemove.push_back(i->first);
-	}
-    }
-    for(std::list<boost::shared_ptr<AnimatedTexture> >::const_iterator i = animationsToRemove.begin(); i != animationsToRemove.end(); i++)
-        onDemandGAIQueue.erase(*i);
-    animationsToRemove.clear();
+    cleanupUnused();
+    processGAIQueue();
 }
 
 char* ResourceManager::loadData(const std::wstring& name, size_t &size)
@@ -212,4 +188,46 @@ char* ResourceManager::loadData(const std::wstring& name, size_t &size)
         return 0;
     }
     return files[name]->loadData(name, size);
+}
+
+void ResourceManager::processGAIQueue()
+{
+    std::list<boost::shared_ptr<AnimatedTexture> > animationsToRemove;
+	
+    for(std::map<boost::shared_ptr<AnimatedTexture>, GAIAnimation>::iterator i = onDemandGAIQueue.begin(); i != onDemandGAIQueue.end(); i++)
+    {
+        boost::shared_ptr<AnimatedTexture> t =(*i).first;
+        GAIAnimation a = (*i).second;
+        int f = t->loadedFrames();
+        t->loadFrame((char *)a.frames[f].data, a.frames[f].width, a.frames[f].height, TEXTURE_R8G8B8A8);
+        delete[] a.frames[f].data;
+        if(t->loadedFrames() >= t->count())
+        {
+        	delete[] a.frames;
+	    	animationsToRemove.push_back(i->first);
+        }
+    }
+    for(std::list<boost::shared_ptr<AnimatedTexture> >::const_iterator i = animationsToRemove.begin(); i != animationsToRemove.end(); i++)
+        onDemandGAIQueue.erase(*i);
+    animationsToRemove.clear();
+}
+
+void ResourceManager::cleanupUnused()
+{
+	std::list<std::wstring> animationsToRemove;
+	std::list<std::wstring> texturesToRemove;
+
+	for (map<std::wstring, boost::shared_ptr<Texture> >::iterator i = textures.begin(); i != textures.end(); i++)
+		if ((*i).second.use_count() < 2)
+			texturesToRemove.push_back(i->first);
+
+	for (map<std::wstring, boost::shared_ptr<AnimatedTexture> >::iterator i = animations.begin(); i != animations.end(); i++)
+	    if ((*i).second.use_count() < 2)
+	    	animationsToRemove.push_back(i->first);
+
+
+	for (std::list<std::wstring>::const_iterator i = animationsToRemove.begin(); i != animationsToRemove.end(); i++)
+		animations.erase(*i);
+	for (std::list<std::wstring>::const_iterator i = texturesToRemove.begin(); i != texturesToRemove.end(); i++)
+		textures.erase(*i);
 }
