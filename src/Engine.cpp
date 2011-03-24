@@ -20,6 +20,7 @@
 #include <cstdlib>
 #include <stdexcept>
 #include <SDL.h>
+#include <SDL_mouse.h>
 #include <fstream>
 #include <boost/shared_ptr.hpp>
 #include <ft2build.h>
@@ -402,6 +403,14 @@ void Engine::processEvents()
         case SDL_MOUSEMOTION:
             processMouseMove(event.motion);
             break;
+        case SDL_MOUSEBUTTONDOWN:
+        	if (currentWidget)
+        		currentWidget->mouseDown(event.button.button, event.button.x, event.button.y);
+        	break;
+        case SDL_MOUSEBUTTONUP:
+            if (currentWidget)
+                currentWidget->mouseUp(event.button.button, event.button.x, event.button.y);
+            break;
         case SDL_QUIT:
             quit();
             break;
@@ -411,7 +420,6 @@ void Engine::processEvents()
 
 void Engine::processMouseMove(SDL_MouseMotionEvent e)
 {
-    //cout << "X: " << e.x << " Y: " << e.y << endl;
     for (std::list<Widget*>::iterator i = widgets.begin(); i != widgets.end(); i++)
     {
         Rect bb = (*i)->getBoundingRect();

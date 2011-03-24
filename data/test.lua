@@ -2,14 +2,14 @@ engine = Rangers.Engine:instance()
 resources = Rangers.ResourceManager:instance()
 
 backgroundTexture = resources:loadTexture(L"DATA/FormMain3/2bg.gi")
-background = Rangers.Sprite:new(backgroundTexture)
+background = Rangers.Sprite:new(backgroundTexture, this)
 background:setWidth(background:width()/(engine:screenHeight()/background:height()))
 background:setHeight(engine:screenHeight())
 
 -- shipAnimation = resources:loadAnimation(L"DATA/FormMain3/2Ship1.gai", true, true)
 shipAnimation = resources:loadTexture(L"DATA/FormMain3/2Ship1.gi")
--- ship = Rangers.AnimatedSprite:new(shipAnimation)
-ship = Rangers.Sprite:new(shipAnimation)
+-- ship = Rangers.AnimatedSprite:new(shipAnimation, this)
+ship = Rangers.Sprite:new(shipAnimation, this)
 ship:setPosition(0, engine:screenHeight() - ship:height())
 
 stop = false
@@ -50,6 +50,17 @@ function mouseLeave()
 end
 
 function mouseMove(x, y)
+end
+
+function mouseUp(key, x, y)
+end
+
+function mouseDown(key, x, y)
+end
+
+function mouseClick(x, y)
+  ship:delete()
+  ship = nil
 end
 
 function processMain()

@@ -39,6 +39,10 @@ public:
     void mouseLeave();
     void keyPressed(SDL_keysym key);
     
+    void mouseDown(uint8_t key, int x, int y);
+    void mouseUp(uint8_t key, int x, int y);
+    void mouseClick(int x, int y);
+
     void processMain();
     void processLogic(int dt);
 

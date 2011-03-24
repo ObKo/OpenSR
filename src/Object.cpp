@@ -31,6 +31,8 @@ Object::Object(Object *parent): objectLayer(0)
     alpha = 1.0f;
     marked = false;
     objectParent = parent;
+    objPosition.x = 0;
+    objPosition.y = 0;
 
     if (parent)
         parent->addChild(this);

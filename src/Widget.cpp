@@ -31,11 +31,11 @@ Rect Widget::getBoundingRect() const
     return r;
 }
 
-Widget::Widget(Object *parent): Object(parent)
+Widget::Widget(Object *parent): Object(parent), currentChildWidget(0)
 {
 }
 
-Widget::Widget(float w, float h,  Object *parent): widgetWidth(w), widgetHeight(h), Object(parent)
+Widget::Widget(float w, float h,  Object *parent): widgetWidth(w), widgetHeight(h), Object(parent), currentChildWidget(0)
 {
 }
 
@@ -49,10 +49,11 @@ Widget::Widget(const Rangers::Widget& other): Object(other)
 
 void Widget::mouseMove(int x, int y)
 {
-    for (std::list<Widget*>::const_reverse_iterator i = childWidgets.rbegin(); i != childWidgets.rend(); i++)
+	lock();
+    /*for (std::list<Widget*>::const_reverse_iterator i = childWidgets.rbegin(); i != childWidgets.rend(); i++)
     {
         Rect bb = (*i)->getBoundingRect();
-	Vector pos = (*i)->position();
+	    Vector pos = (*i)->position();
         if ((bb.x1 + pos.x < x) && (bb.x2 + pos.x > x) && (bb.y1 + pos.y < y) && (bb.y2 + pos.y > y))
         {
             if ((*i) != currentChildWidget)
@@ -63,25 +64,47 @@ void Widget::mouseMove(int x, int y)
                 currentChildWidget->mouseEnter();
             }
             (*i)->mouseMove(x - bb.x1 - pos.x, y - bb.y1 - pos.y);
+            unlock();
             return;
         }
-    }
+    }*/
     if (currentChildWidget)
         currentChildWidget->mouseLeave();
     currentChildWidget = 0;
+    unlock();
 }
 
 void Widget::mouseEnter()
 {
-
+	leftMouseButtonPressed = false;
 }
 
 void Widget::mouseLeave()
 {
-
+	leftMouseButtonPressed = false;
 }
 
 void Widget::keyPressed(SDL_keysym key)
+{
+
+}
+
+void Widget::mouseDown(uint8_t key, int x, int y)
+{
+	if(key == SDL_BUTTON_LEFT)
+		leftMouseButtonPressed = true;
+}
+
+void Widget::mouseUp(uint8_t key, int x, int y)
+{
+	if(leftMouseButtonPressed && (key == SDL_BUTTON_LEFT))
+	{
+		leftMouseButtonPressed = false;
+		mouseClick(x, y);
+	}
+}
+
+void Widget::mouseClick(int x, int y)
 {
 
 }

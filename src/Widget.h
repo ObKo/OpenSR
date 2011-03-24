@@ -37,6 +37,10 @@ public:
     virtual void mouseEnter();
     virtual void mouseLeave();
     virtual void keyPressed(SDL_keysym key);
+
+    virtual void mouseDown(uint8_t key, int x, int y);
+    virtual void mouseUp(uint8_t key, int x, int y);
+    virtual void mouseClick(int x, int y);
     
     int width() const;
     int height() const;
@@ -50,6 +54,7 @@ protected:
     std::list<Widget *> childWidgets;
     Widget *currentChildWidget;
     int widgetWidth, widgetHeight;
+    bool leftMouseButtonPressed;
 };
 }
 
