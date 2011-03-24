@@ -23,6 +23,7 @@ using namespace Rangers;
 
 void LineEditWidget::draw() const
 {
+	lock();
     prepareDraw();
     label.draw();
     glBindTexture(GL_TEXTURE_2D, 0);
@@ -44,6 +45,7 @@ void LineEditWidget::draw() const
     glDisableClientState(GL_ARRAY_BUFFER);
     glDisableClientState(GL_VERTEX_ARRAY);
     endDraw();
+    unlock();
 }
 
 LineEditWidget::LineEditWidget(float w, float h, boost::shared_ptr< Font > font, Object* parent):

@@ -38,10 +38,10 @@ LuaWidget::LuaWidget(std::wstring fileName, Rangers::Object* parent): Widget(par
     tolua_LuaBindings_open(luaState);
     tolua_AnimatedTexture_open(luaState);
     tolua_LuaWidget_open(luaState);
-    if(luaL_dofile(luaState, toLocal(fileName).c_str()))
-	std::cerr << lua_tostring(luaState, -1) << std::endl;
     tolua_pushusertype(luaState, this, "Rangers::LuaWidget");
     lua_setglobal(luaState, "this");
+    if(luaL_dofile(luaState, toLocal(fileName).c_str()))
+    	std::cerr << lua_tostring(luaState, -1) << std::endl;
 }
 
 LuaWidget::LuaWidget(Rangers::Object* parent): Widget(parent), luaState()
@@ -52,8 +52,10 @@ LuaWidget::LuaWidget(Rangers::Object* parent): Widget(parent), luaState()
 void LuaWidget::draw() const
 {
     lock();
+    prepareDraw();
     lua_getglobal(luaState, "draw");
     lua_pcall(luaState, 0, 0, 0);
+    endDraw();
     unlock();
 }
 
@@ -62,15 +64,16 @@ Rect LuaWidget::getBoundingRect() const
     lock();
     lua_getglobal(luaState, "getBoundingRect");
     lua_pcall(luaState, 0, 1, 0);
-    Rect *bb = (Rect*)(tolua_tousertype(luaState, -1, NULL));
+    Rect bb = *((Rect*)(tolua_tousertype(luaState, -1, NULL)));
     lua_pop(luaState, 1);
     unlock();
-    return Rect();
+    return bb;
 }
 
 void LuaWidget::keyPressed(SDL_keysym key)
 {
     lock();
+    logger() << LDEBUG << "key" << LEND;
     lua_getglobal(luaState, "keyPressed");
     tolua_pushusertype(luaState, &key, "SDL_keysym");
     if(lua_pcall(luaState, 1, 0, 0))

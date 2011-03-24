@@ -44,11 +44,9 @@ function getBoundingRect()
 end
 
 function mouseEnter()
-  
 end
 
 function mouseLeave()
- 
 end
 
 function mouseMove(x, y)

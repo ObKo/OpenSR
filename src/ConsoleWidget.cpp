@@ -81,6 +81,7 @@ ConsoleWidget& ConsoleWidget::operator=(const Rangers::ConsoleWidget& other)
 
 void ConsoleWidget::draw() const
 {
+	lock();
     prepareDraw();
     lineEdit.draw();
     logLabel.draw();
@@ -102,6 +103,7 @@ void ConsoleWidget::draw() const
     glDisableClientState(GL_VERTEX_ARRAY);
 
     endDraw();
+    unlock();
 }
 
 void ConsoleWidget::keyPressed(SDL_keysym key)
