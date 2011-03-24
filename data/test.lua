@@ -6,10 +6,10 @@ background = Rangers.Sprite:new(backgroundTexture, this)
 background:setWidth(background:width()/(engine:screenHeight()/background:height()))
 background:setHeight(engine:screenHeight())
 
--- shipAnimation = resources:loadAnimation(L"DATA/FormMain3/2Ship1.gai", true, true)
-shipAnimation = resources:loadTexture(L"DATA/FormMain3/2Ship1.gi")
--- ship = Rangers.AnimatedSprite:new(shipAnimation, this)
-ship = Rangers.Sprite:new(shipAnimation, this)
+shipAnimation = resources:loadAnimation(L"DATA/FormMain3/2Ship1.gai", true, true)
+-- shipAnimation = resources:loadTexture(L"DATA/FormMain3/2Ship1.gi")
+ship = Rangers.AnimatedSprite:new(shipAnimation, this)
+-- ship = Rangers.Sprite:new(shipAnimation, this)
 ship:setPosition(0, engine:screenHeight() - ship:height())
 
 stop = false
@@ -21,7 +21,9 @@ engine:focusWidget(this)
 
 function draw()
   background:draw()
+  if ship then
   ship:draw()
+  end
 end
 
 function keyPressed(k)
@@ -36,6 +38,9 @@ end
 
 function getBoundingRect()
   r = Rangers.Rect:new()
+  if not ship then
+    return r
+  end
   r.x1 = 0.0
   r.x2 = ship:width()
   r.y1 = 0.0
@@ -61,6 +66,8 @@ end
 function mouseClick(x, y)
   ship:delete()
   ship = nil
+  Rangers.freePointer(shipAnimation)
+  shipAnimation = nil
 end
 
 function processMain()
@@ -78,6 +85,8 @@ function processLogic(dt)
   else 
     background:setPosition(-background:width() + engine:screenWidth() + t * bgspeed, 0)
   end
+  if ship then
   ship:processLogic(dt)
+  end
   t = t + dt
 end

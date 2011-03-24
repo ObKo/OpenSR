@@ -28,3 +28,18 @@ void Rangers::luaDebug(std::wstring s)
 {
     logger() << LDEBUG << L"Lua: " << s << LEND;
 }
+
+void Rangers::freePointer(boost::shared_ptr<Font> *sp)
+{
+    delete sp;
+}
+
+void Rangers::freePointer(boost::shared_ptr<Texture> *sp)
+{
+    delete sp;
+}
+
+void Rangers::freePointer(boost::shared_ptr<AnimatedTexture> *sp)
+{
+    delete sp;
+}

@@ -28,6 +28,10 @@ Rangers::Font *getPointer(boost::shared_ptr<Rangers::Font> sp);
 Rangers::Texture *getPointer(boost::shared_ptr<Rangers::Texture> sp);
 Rangers::AnimatedTexture *getPointer(boost::shared_ptr<Rangers::AnimatedTexture> sp);
 
+void freePointer(boost::shared_ptr<Rangers::Font> *sp);
+void freePointer(boost::shared_ptr<Rangers::Texture> *sp);
+void freePointer(boost::shared_ptr<Rangers::AnimatedTexture> *sp);
+
 void luaDebug(std::wstring s);
 }
 

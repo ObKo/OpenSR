@@ -85,7 +85,7 @@ AnimatedTexture::AnimatedTexture(const GAIAnimation& a)
 AnimatedTexture::~AnimatedTexture()
 {
     textureID = textureIDs[0];
-    glDeleteTextures(frameCount - 1, textureIDs + 1);
+    glDeleteTextures(frameCount - 1, &textureIDs[1]);
 }
 
 /*!

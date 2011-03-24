@@ -52,6 +52,10 @@ Font *getPointer(boost::shared_ptr<Font> sp);
 Texture *getPointer(boost::shared_ptr<Texture> sp);
 AnimatedTexture *getPointer(boost::shared_ptr<AnimatedTexture> sp);
 
+void freePointer(boost::shared_ptr<Font> *sp);
+void freePointer(boost::shared_ptr<Texture> *sp);
+void freePointer(boost::shared_ptr<AnimatedTexture> *sp);
+
 void luaDebug(std::wstring s);
 }
 
