@@ -24,13 +24,12 @@ using namespace boost;
 
 void Node::draw() const
 {
+    lock();
     prepareDraw();
-    glBegin(GL_POINTS);
-    glVertex2f(0.0f, 0.0f);
-    glEnd();
     for (std::list<Object*>::const_iterator i = objectChilds.begin(); i != objectChilds.end(); i++)
         (*i)->draw();
     endDraw();
+    unlock();
 }
 
 void Node::processLogic(int dt)

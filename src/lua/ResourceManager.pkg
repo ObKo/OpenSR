@@ -3,6 +3,9 @@ $#include <Texture.h>
 $#include <AnimatedTexture.h>
 $#include <Font.h>
 $#include <ResourceManager.h>
+$#include <AnimatedSprite.h>
+$#include <Sprite.h>
+$#include <Object.h>
 
 namespace Rangers
 {
@@ -18,6 +21,13 @@ public:
     boost::shared_ptr<Rangers::AnimatedTexture> loadAnimation(const std::wstring& name, bool onDemand);
     boost::shared_ptr<Rangers::AnimatedTexture> loadAnimation(const std::wstring& name);
     boost::shared_ptr<Rangers::Font> loadFont(const std::wstring& name, int size);
+
+    Rangers::Sprite getSprite(const std::wstring& name);
+    Rangers::Sprite getSprite(const std::wstring& name, Rangers::Object *parent = 0);
+    Rangers::AnimatedSprite getAnimatedSprite(const std::wstring& name);
+    Rangers::AnimatedSprite getAnimatedSprite(const std::wstring& name, bool backgroundLoading = false);
+    Rangers::AnimatedSprite getAnimatedSprite(const std::wstring& name, bool backgroundLoading = false, bool needBackground = false);
+    Rangers::AnimatedSprite getAnimatedSprite(const std::wstring& name, bool backgroundLoading = false, bool needBackground = false,  Rangers::Object *parent = 0);
     
     static ResourceManager *instance();
 };

@@ -24,6 +24,8 @@
 #include "Log.h"
 #include "Font.h"
 #include <algorithm>
+#include "AnimatedSprite.h"
+#include "Object.h"
 
 using namespace Rangers;
 using namespace std;
@@ -231,3 +233,16 @@ void ResourceManager::cleanupUnused()
 	for (std::list<std::wstring>::const_iterator i = texturesToRemove.begin(); i != texturesToRemove.end(); i++)
 		textures.erase(*i);
 }
+
+AnimatedSprite ResourceManager::getAnimatedSprite(const std::wstring& name, bool backgroundLoading, bool needBackground, Object *parent)
+{
+    return AnimatedSprite(loadAnimation(name, backgroundLoading, needBackground), parent);
+}
+
+Sprite ResourceManager::getSprite(const std::wstring& name, Object *parent)
+{
+    return Sprite(loadTexture(name), parent); 
+}
+
+
+

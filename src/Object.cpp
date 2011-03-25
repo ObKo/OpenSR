@@ -77,6 +77,7 @@ Object::Object(const Rangers::Object& other)
 
 Object::~Object()
 {
+    lock();
     for (std::list<Object*>::iterator i = objectChilds.begin(); i != objectChilds.end(); i++)
         (*i)->setParent(0);
 
@@ -86,6 +87,7 @@ Object::~Object()
     if(Engine::instance())    
 	Engine::instance()->unmarkToUpdate(this);
 
+    unlock();
     SDL_DestroyMutex(objectMutex);
 }
 
@@ -144,34 +146,34 @@ void Object::draw() const
 
 void Object::setColor(float r, float g, float b, float a)
 {
-    SDL_mutexP(objectMutex);
+    lock();
     red = r;
     green = g;
     blue = b;
     alpha = a;
-    SDL_mutexV(objectMutex);
+    unlock();
 }
 
 void Object::setPosition(float x, float y)
 {
-    SDL_mutexP(objectMutex);
+    lock();
     objPosition.x = x;
     objPosition.y = y;
-    SDL_mutexV(objectMutex);
+    unlock();
 }
 
 void Object::setPosition(const Vector& pos)
 {
-    SDL_mutexP(objectMutex);
+    lock();
     objPosition = pos;
-    SDL_mutexV(objectMutex);
+    unlock();
 }
 
 void Object::setRotation(float angle)
 {
-    SDL_mutexP(objectMutex);
+    lock();
     objRotation = angle;
-    SDL_mutexV(objectMutex);
+    unlock();
 }
 
 const Vector& Object::position() const
@@ -201,7 +203,7 @@ Object* Object::parent() const
 
 void Object::addChild(Object* object)
 {
-    SDL_mutexP(objectMutex);
+    lock();
     object->setParent(this);
     for (std::list<Object*>::iterator i = objectChilds.begin(); i != objectChilds.end(); i++)
     {
@@ -213,7 +215,7 @@ void Object::addChild(Object* object)
         }
     }
     objectChilds.push_back(object);
-    SDL_mutexV(objectMutex);
+    unlock();
 }
 
 void Object::setParent(Object *parent)
@@ -223,22 +225,22 @@ void Object::setParent(Object *parent)
 
 void Object::removeChild(Object* object)
 {
-    SDL_mutexP(objectMutex);
+    lock();
     object->setParent(0);
     objectChilds.remove(object);
-    SDL_mutexV(objectMutex);
+    unlock();
 }
 
 void Object::setLayer(int layer)
 {
-    SDL_mutexP(objectMutex);
+    lock();
     objectLayer = layer;
     if (objectParent)
     {
         objectParent->removeChild(this);
         objectParent->addChild(this);
     }
-    SDL_mutexV(objectMutex);
+    unlock();
 }
 
 

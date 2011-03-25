@@ -320,3 +320,7 @@ float Sprite::width() const
     return spriteWidth;
 }
 
+boost::shared_ptr< Texture > Sprite::texture() const
+{
+    return spriteTexture;
+}

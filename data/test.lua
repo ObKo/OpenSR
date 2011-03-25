@@ -6,13 +6,19 @@ background = Rangers.Sprite:new(backgroundTexture, this)
 background:setWidth(background:width()/(engine:screenHeight()/background:height()))
 background:setHeight(engine:screenHeight())
 
-shipAnimation = resources:loadAnimation(L"DATA/FormMain3/2Ship1.gai", true, true)
--- shipAnimation = resources:loadTexture(L"DATA/FormMain3/2Ship1.gi")
-ship = Rangers.AnimatedSprite:new(shipAnimation, this)
--- ship = Rangers.Sprite:new(shipAnimation, this)
+bgPlanetTexture = resources:loadTexture(L"DATA/FormMain3/2Planet.gi")
+bgPlanet = Rangers.Sprite:new(bgPlanetTexture, this, Rangers.TEXTURE_NORMAL,
+    Rangers.POSITION_X_LEFT, Rangers.POSITION_Y_BOTTOM)
+bgPlanet:setPosition(0, engine:screenHeight())
+
+bgAnimLine = resources:getAnimatedSprite(L"DATA/FormMain2/2AnimLine.gai", true, true, this)
+
+-- shipAnimation = resources:loadAnimation(L"DATA/FormMain3/2Ship1.gai", true, true)
+shipAnimation = resources:loadTexture(L"DATA/FormMain3/2Ship1.gi")
+-- ship = Rangers.AnimatedSprite:new(shipAnimation, this)
+ship = Rangers.Sprite:new(shipAnimation, this)
 ship:setPosition(0, engine:screenHeight() - ship:height())
 
-stop = false
 t = 0
 bgspeed = 5/1000
 bgforward = true
@@ -21,26 +27,18 @@ engine:focusWidget(this)
 
 function draw()
   background:draw()
-  if ship then
+  bgPlanet:draw()
+--   bgAnimLine:draw()
   ship:draw()
-  end
 end
 
 function keyPressed(k)
-  if stop then
-    ship:start()
-    stop = false
-  else
-    ship:stop()
-    stop = true
-  end
+  bgAnimLine:delete()
+  bgAnimLine = nil
 end
 
 function getBoundingRect()
   r = Rangers.Rect:new()
-  if not ship then
-    return r
-  end
   r.x1 = 0.0
   r.x2 = ship:width()
   r.y1 = 0.0
@@ -64,15 +62,14 @@ function mouseDown(key, x, y)
 end
 
 function mouseClick(x, y)
-  ship:delete()
-  ship = nil
-  Rangers.freePointer(shipAnimation)
-  shipAnimation = nil
+
 end
 
 function processMain()
   ship:processMain()
+  bgPlanet:processMain()
   background:processMain()
+--   bgAnimLine:processMain()
 end
 
 function processLogic(dt)
@@ -85,8 +82,7 @@ function processLogic(dt)
   else 
     background:setPosition(-background:width() + engine:screenWidth() + t * bgspeed, 0)
   end
-  if ship then
   ship:processLogic(dt)
-  end
+--   bgAnimLine:processLogic(dt)
   t = t + dt
 end

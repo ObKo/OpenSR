@@ -49,6 +49,7 @@ public:
     
     float width() const;
     float height() const;
+    boost::shared_ptr<Texture> texture() const;
     
     Sprite& operator=(const Sprite& other);
 
