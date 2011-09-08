@@ -28,7 +28,6 @@ Log *logInstance = 0;
 
 Log::Log()
 {
-    bufferMutex = SDL_CreateMutex();
     isNew = false;
     currentEntry.level = LEND;
     currentEntry.timestap = time(0);
@@ -36,10 +35,10 @@ Log::Log()
 
 void Log::writeLogEntry(const LogEntry& s)
 {
-    SDL_mutexP(bufferMutex);
+    bufferMutex.lock();
     logs.push_back(s);
     isNew = true;
-    
+
     switch(s.level)
     {
     case LDEBUG:
@@ -57,7 +56,7 @@ void Log::writeLogEntry(const LogEntry& s)
     }
     cout << toLocal(s.text) << endl;
     
-    SDL_mutexV(bufferMutex);
+    bufferMutex.unlock();
 }
 
 bool Log::checkForUpdate()
@@ -70,7 +69,7 @@ bool Log::checkForUpdate()
 
 Log::~Log()
 {
-    SDL_DestroyMutex(bufferMutex);
+    
 }
 
 Log& Rangers::logger()

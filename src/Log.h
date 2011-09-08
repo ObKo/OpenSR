@@ -20,7 +20,7 @@
 #define RANGERS_LOG_H
 #include <sstream>
 #include <list>
-#include <SDL_mutex.h>
+#include <boost/thread/recursive_mutex.hpp>
 
 namespace Rangers
 {
@@ -59,7 +59,7 @@ public:
 private:
     bool isNew;
     std::list<LogEntry> logs;
-    SDL_mutex *bufferMutex;
+    boost::recursive_mutex bufferMutex;
 
     LogEntry currentEntry;
     std::wostringstream currentStream;
