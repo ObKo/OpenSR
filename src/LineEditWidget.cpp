@@ -21,10 +21,11 @@
 
 using namespace Rangers;
 
-void LineEditWidget::draw() const
+void LineEditWidget::draw()
 {
-	lock();
-    prepareDraw();
+    if(!prepareDraw())
+        return;
+    
     label.draw();
     glBindTexture(GL_TEXTURE_2D, 0);
     glColor3f(1, 1, 1);
@@ -45,7 +46,6 @@ void LineEditWidget::draw() const
     glDisableClientState(GL_ARRAY_BUFFER);
     glDisableClientState(GL_VERTEX_ARRAY);
     endDraw();
-    unlock();
 }
 
 LineEditWidget::LineEditWidget(float w, float h, boost::shared_ptr< Font > font, Object* parent):
@@ -140,8 +140,8 @@ void LineEditWidget::processMain()
 
     glUnmapBuffer(GL_ARRAY_BUFFER);
 
-    Widget::processMain();
     unlock();
+    Widget::processMain();
 }
 
 void LineEditWidget::processLogic(int dt)

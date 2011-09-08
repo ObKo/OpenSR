@@ -31,7 +31,7 @@ public:
     LineEditWidget(Object* parent = 0);
     LineEditWidget(const LineEditWidget& other);
 
-    void draw() const;
+    void draw();
     void processMain();
     void processLogic(int dt);
 

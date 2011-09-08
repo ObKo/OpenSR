@@ -100,12 +100,13 @@ Sprite& Sprite::operator=(const Rangers::Sprite& other)
 }
 
 
-void Sprite::draw() const
+void Sprite::draw()
 {
     if (!spriteTexture)
         return;
-    lock();
-    prepareDraw();
+    
+    if(!prepareDraw())
+        return;
 
     glBindTexture(GL_TEXTURE_2D, spriteTexture->openGLTexture());
     
@@ -140,7 +141,6 @@ void Sprite::draw() const
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     glDisableClientState(GL_VERTEX_ARRAY);
     endDraw();
-    unlock();
 }
 
 void Sprite::setSpriteOrigin(SpriteXPosition xpos, SpriteYPosition ypos)
@@ -195,10 +195,12 @@ void Sprite::setTextureScaling(TextureScaling ts)
 
 void Sprite::processMain()
 {
+    ::Object::processMain();
+    
     if (!spriteTexture)
         return;
+    
     lock();
-    ::Object::processMain();
     if (!vertexBuffer)
     {
         vertex = new Vertex[4];

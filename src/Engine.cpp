@@ -80,7 +80,7 @@ Engine::~Engine()
     engineInstance = 0;
 }
 
-int Engine::fpsCounter(void *data)
+int Engine::fpsCounter()
 {
     while (engineInstance->gameRunning)
     {
@@ -112,9 +112,8 @@ void Engine::addWidget(Widget *w)
     widgets.push_back(w);
 }
 
-int Engine::logic(void *data)
+int Engine::logic()
 {
-    SDL_mutexP(engineInstance->logicMutex);
     long t = getTicks();
     while (engineInstance->gameRunning)
     {
@@ -130,7 +129,6 @@ int Engine::logic(void *data)
             engineInstance->consoleWidget.processLogic(dt);
         t = getTicks();
     }
-    SDL_mutexV(engineInstance->logicMutex);
     return 0;
 }
 
@@ -144,10 +142,7 @@ void Engine::init(int w, int h, bool fullscreen)
 
     SDL_EnableKeyRepeat(660, 40);
     SDL_EnableUNICODE(1);
-
-    updateMutex = SDL_CreateMutex();
-    logicMutex = SDL_CreateMutex();
-
+    
     width = screen->w;
     height = screen->h;
 
@@ -196,7 +191,6 @@ void Engine::init(int w, int h, bool fullscreen)
     
     LuaWidget *lw = new LuaWidget(L"data/test.lua");
     addWidget(lw);
-
 }
 
 boost::shared_ptr<Font> Engine::defaultFont() const
@@ -230,15 +224,15 @@ void Engine::paint()
 int Engine::run()
 {
     gameRunning = true;
-    fpsThread = SDL_CreateThread(&fpsCounter, NULL);
-    logicThread = SDL_CreateThread(&logic, NULL);
+    fpsThread = new boost::thread(fpsCounter);
+    logicThread = new boost::thread(logic);
     while (gameRunning)
     {
-        SDL_mutexP(updateMutex);
+        updateMutex.lock();
         for (std::list<Object *>::const_iterator i = updateList.begin(); i != updateList.end(); i++)
             (*i)->processMain();
         updateList.clear();
-        SDL_mutexV(updateMutex);
+        updateMutex.unlock();
 	
 	ResourceManager::instance()->processMain();
 
@@ -250,24 +244,24 @@ int Engine::run()
 
 void Engine::markToUpdate(Object* object)
 {
-    SDL_mutexP(updateMutex);
+    updateMutex.lock();
     updateList.push_back(object);
-    SDL_mutexV(updateMutex);
+    updateMutex.unlock();
 }
 
 void Engine::unmarkToUpdate(Object* object)
 {
-    SDL_mutexP(updateMutex);
+    updateMutex.lock();
     updateList.remove(object);
-    SDL_mutexV(updateMutex);
+    updateMutex.unlock();
 }
 
 void Engine::quit(int code)
 {
     gameRunning = false;
     exitCode = code;
-    SDL_WaitThread(logicThread, 0);
-    SDL_WaitThread(fpsThread, 0);
+    logicThread->join();
+    fpsThread->interrupt();
 }
 
 int Engine::screenHeight() const

@@ -6,7 +6,7 @@ namespace Rangers
 class Object
 {
 public:
-    virtual void draw() const;
+    virtual void draw();
 
     virtual void processMain();
     virtual void processLogic(int dt);
@@ -22,7 +22,6 @@ public:
 
     const Rangers::Vector& position() const;
     float rotation() const;
-    SDL_mutex* mutex() const;
     int layer() const;
     Rangers::Object* parent() const;
 

@@ -51,18 +51,17 @@ LuaWidget::LuaWidget(Rangers::Object* parent): Widget(parent), luaState()
 
 }
 
-void LuaWidget::draw() const
+void LuaWidget::draw()
 {
-    lock();
-    prepareDraw();
+    if(!prepareDraw())
+        return;
     lua_getglobal(luaState, "draw");
     if(!lua_isnil(luaState, -1))
     	lua_pcall(luaState, 0, 0, 0);
     endDraw();
-    unlock();
 }
 
-Rect LuaWidget::getBoundingRect() const
+Rect LuaWidget::getBoundingRect()
 {
     lock();
     lua_getglobal(luaState, "getBoundingRect");
@@ -91,8 +90,8 @@ void LuaWidget::keyPressed(SDL_keysym key)
     }
 
     tolua_pushusertype(luaState, &key, "SDL_keysym");
-   	if(lua_pcall(luaState, 1, 0, 0))
-   		logger() << LWARNING << "Lua: " << lua_tostring(luaState, -1) << LEND;
+    if(lua_pcall(luaState, 1, 0, 0))
+        logger() << LWARNING << "Lua: " << lua_tostring(luaState, -1) << LEND;
     unlock();
 }
  
@@ -154,8 +153,8 @@ void LuaWidget::mouseDown(uint8_t key, int x, int y)
     lua_pushinteger(luaState, y);
     if(lua_pcall(luaState, 3, 0, 0))
     	logger() << LWARNING << "Lua: " << lua_tostring(luaState, -1) << LEND;
-    Widget::mouseDown(key, x, y);
     unlock();
+    Widget::mouseDown(key, x, y);
 }
 
 void LuaWidget::mouseUp(uint8_t key, int x, int y)
@@ -172,8 +171,8 @@ void LuaWidget::mouseUp(uint8_t key, int x, int y)
     lua_pushinteger(luaState, y);
    	if(lua_pcall(luaState, 3, 0, 0))
    		logger() << LWARNING << "Lua: " << lua_tostring(luaState, -1) << LEND;
-    Widget::mouseUp(key, x, y);
     unlock();
+    Widget::mouseUp(key, x, y);
 }
 
 void LuaWidget::mouseClick(int x, int y)
@@ -189,8 +188,8 @@ void LuaWidget::mouseClick(int x, int y)
     lua_pushinteger(luaState, y);
     if(lua_pcall(luaState, 2, 0, 0))
     	logger() << LWARNING << "Lua: " << lua_tostring(luaState, -1) << LEND;
-    Widget::mouseClick(x, y);
     unlock();
+    Widget::mouseClick(x, y);
 }
 
 void LuaWidget::processLogic(int dt)

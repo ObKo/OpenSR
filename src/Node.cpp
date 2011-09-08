@@ -22,14 +22,15 @@
 using namespace Rangers;
 using namespace boost;
 
-void Node::draw() const
+void Node::draw()
 {
-    lock();
-    prepareDraw();
+    if(!prepareDraw())
+        return;
+    
     for (std::list<Object*>::const_iterator i = objectChilds.begin(); i != objectChilds.end(); i++)
         (*i)->draw();
+    
     endDraw();
-    unlock();
 }
 
 void Node::processLogic(int dt)

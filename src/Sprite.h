@@ -37,7 +37,7 @@ public:
     
     ~Sprite();
 
-    void draw() const;
+    void draw();
 
     void processMain();
 

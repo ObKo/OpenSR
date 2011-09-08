@@ -73,10 +73,8 @@ void ColorLabel::processMain()
         spriteWidth = spriteTexture->width();
         spriteHeight = spriteTexture->height();
     }
-
-    Sprite::processMain();
-
     unlock();
+    Sprite::processMain();
 }
 
 void ColorLabel::setColor(float r, float g, float b, float a)

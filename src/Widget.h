@@ -30,7 +30,7 @@ public:
     Widget(float w, float h, Object *parent = 0);
     Widget(const Widget& other);
 
-    virtual void draw() const = 0;
+    virtual void draw() = 0;
 
     virtual Rect getBoundingRect() const;
     virtual void mouseMove(int x, int y);

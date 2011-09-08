@@ -8,7 +8,7 @@ namespace Rangers
 class Widget: public Object
 {
 public:
-    void draw() const;
+    void draw();
 
     Rangers::Rect getBoundingRect() const;
     void mouseMove(int x, int y);

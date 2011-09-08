@@ -89,12 +89,13 @@ void AnimatedSprite::processLogic(int dt)
     }
 }
 
-void AnimatedSprite::draw() const
+void AnimatedSprite::draw()
 {
     if (!spriteTexture)
         return;
-    lock();
-    prepareDraw();
+    
+    if(!prepareDraw())
+        return;
 
     glBindTexture(GL_TEXTURE_2D, ((AnimatedTexture*)spriteTexture.get())->openGLTexture(animFrame));
     if (textureScaling == TEXTURE_TILE_X)
@@ -128,7 +129,6 @@ void AnimatedSprite::draw() const
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     glDisableClientState(GL_VERTEX_ARRAY);
     endDraw();
-    unlock();
 }
 
 int AnimatedSprite::currentFrame() const

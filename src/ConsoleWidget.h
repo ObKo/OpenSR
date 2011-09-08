@@ -33,7 +33,7 @@ public:
     ConsoleWidget(const ConsoleWidget& other);
     ConsoleWidget(Object *parent = 0);
 
-    void draw() const;
+    void draw();
     void processMain();
     void processLogic(int dt);
 

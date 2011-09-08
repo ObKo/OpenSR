@@ -24,7 +24,6 @@ using namespace Rangers;
 Object::Object(Object *parent): objectLayer(0)
 {
     objRotation = 0;
-    objectMutex = SDL_CreateMutex();
     red = 1.0f;
     green = 1.0f;
     blue = 1.0f;
@@ -42,7 +41,6 @@ Object::Object(const Vector& pos, float rot, int layer, Object *parent): objectL
 {
     objPosition = pos;
     objRotation = rot;
-    objectMutex = SDL_CreateMutex();
     red = 1.0f;
     green = 1.0f;
     blue = 1.0f;
@@ -55,7 +53,6 @@ Object::Object(const Vector& pos, float rot, int layer, Object *parent): objectL
 
 Object::Object(const Rangers::Object& other)
 {
-    objectMutex = SDL_CreateMutex();
     red = other.red;
     green = other.green;
     blue = other.blue;
@@ -88,7 +85,6 @@ Object::~Object()
 	Engine::instance()->unmarkToUpdate(this);
 
     unlock();
-    SDL_DestroyMutex(objectMutex);
 }
 
 Object& Object::operator=(const Rangers::Object& other)
@@ -117,12 +113,14 @@ Object& Object::operator=(const Rangers::Object& other)
 }
 
 
-void Object::prepareDraw() const
+bool Object::prepareDraw()
 {
+    lock();
     glPushMatrix();
     glTranslatef(objPosition.x, objPosition.y, 0);
     glRotatef(objRotation, 0, 0, -1);
     glColor4f(red, green, blue, alpha);
+    return true;
 }
 
 void Object::processMain()
@@ -134,12 +132,13 @@ void Object::processLogic(int dt)
 {
 }
 
-void Object::endDraw() const
+void Object::endDraw()
 {
     glPopMatrix();
+    unlock();
 }
 
-void Object::draw() const
+void Object::draw()
 {
 
 }
@@ -191,11 +190,6 @@ int Object::layer() const
     return objectLayer;
 }
 
-SDL_mutex* Object::mutex() const
-{
-    return objectMutex;
-}
-
 Object* Object::parent() const
 {
     return objectParent;
@@ -210,7 +204,7 @@ void Object::addChild(Object* object)
         if ((*i)->layer() > object->layer())
         {
             objectChilds.insert(i, object);
-            SDL_mutexV(objectMutex);
+            unlock();
             return;
         }
     }
@@ -253,13 +247,13 @@ void Object::markToUpdate()
     }
 }
 
-void Object::lock() const
+void Object::lock()
 {
-    SDL_mutexP(objectMutex);
+    objectMutex.lock();
 }
 
-void Object::unlock() const
+void Object::unlock()
 {
-    SDL_mutexV(objectMutex);
+    objectMutex.unlock();
 }
 

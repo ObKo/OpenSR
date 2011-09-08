@@ -28,6 +28,8 @@
 #include <list>
 #include "ConsoleWidget.h"
 #include <map>
+#include <boost/thread.hpp>
+#include <boost/thread/recursive_mutex.hpp>
 
 namespace Rangers
 {
@@ -73,9 +75,9 @@ public:
     static Engine *instance();
 
     //! Engine fps counter loop
-    static int fpsCounter(void *data);
+    static int fpsCounter();
     //! Logic loop
-    static int logic(void *data);
+    static int logic();
     
     //! Get object by name
     Object* getObject(const std::wstring& name);
@@ -93,8 +95,8 @@ private:
     int height;
     int width;
 
-    SDL_mutex *updateMutex, *logicMutex;
-    SDL_Thread *fpsThread, *logicThread;
+    boost::recursive_mutex updateMutex;
+    boost::thread *fpsThread, *logicThread;
 
     int exitCode;
     bool gameRunning;

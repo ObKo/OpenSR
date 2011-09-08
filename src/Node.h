@@ -28,7 +28,7 @@ namespace Rangers
 class Node: public Object
 {
 public:
-    void draw() const;
+    void draw();
     void processLogic(int dt);
     void processMain();
 };

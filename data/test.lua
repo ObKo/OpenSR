@@ -13,10 +13,10 @@ bgPlanet:setPosition(0, engine:screenHeight())
 
 bgAnimLine = resources:getAnimatedSprite(L"DATA/FormMain2/2AnimLine.gai", true, true, this)
 
--- shipAnimation = resources:loadAnimation(L"DATA/FormMain3/2Ship1.gai", true, true)
-shipAnimation = resources:loadTexture(L"DATA/FormMain3/2Ship1.gi")
--- ship = Rangers.AnimatedSprite:new(shipAnimation, this)
-ship = Rangers.Sprite:new(shipAnimation, this)
+shipAnimation = resources:loadAnimation(L"DATA/FormMain3/2Ship1.gai", true, true)
+-- shipAnimation = resources:loadTexture(L"DATA/FormMain3/2Ship1.gi")
+ship = Rangers.AnimatedSprite:new(shipAnimation, this)
+-- ship = Rangers.Sprite:new(shipAnimation, this)
 ship:setPosition(0, engine:screenHeight() - ship:height())
 
 t = 0

@@ -33,7 +33,7 @@ public:
     AnimatedSprite(const AnimatedSprite& other);
 
     void processLogic(int dt);
-    void draw() const;
+    void draw();
     
     void setSingleShot(bool ss);
     void start();

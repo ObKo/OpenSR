@@ -11,9 +11,9 @@ public:
     //TODO: Remove this
     LuaWidget(std::wstring fileName, Object *parent = 0);
 
-    void draw() const;
+    void draw();
 
-    Rangers::Rect getBoundingRect() const;
+    Rangers::Rect getBoundingRect();
     void mouseMove(int x, int y);
     void mouseEnter();
     void mouseLeave();

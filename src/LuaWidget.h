@@ -31,9 +31,9 @@ public:
     LuaWidget(std::wstring fileName, Object *parent = 0);
     LuaWidget(Object *parent = 0);
 
-    void draw() const;
+    void draw();
 
-    Rect getBoundingRect() const;
+    Rect getBoundingRect();
     void mouseMove(int x, int y);
     void mouseEnter();
     void mouseLeave();

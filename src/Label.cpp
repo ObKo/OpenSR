@@ -124,10 +124,9 @@ void Label::processMain()
         spriteWidth = spriteTexture->width();
         spriteHeight = spriteTexture->height();
     }
-
-    ::Sprite::processMain();
-
+    
     unlock();
+    ::Sprite::processMain();
 }
 
 float Label::height() const

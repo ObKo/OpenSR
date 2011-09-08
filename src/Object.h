@@ -20,7 +20,7 @@
 #define RANGERS_OBJECT_H
 
 #include "Types.h"
-#include <SDL_mutex.h>
+#include <boost/thread/recursive_mutex.hpp>
 #include <list>
 
 namespace Rangers
@@ -34,7 +34,7 @@ public:
 
     ~Object();
 
-    virtual void draw() const;
+    virtual void draw();
 
     //Function to process all needed OpenGL functions
     virtual void processMain();
@@ -52,7 +52,6 @@ public:
 
     const Vector& position() const;
     float rotation() const;
-    SDL_mutex* mutex() const;
     int layer() const;
     Object* parent() const;
 
@@ -64,7 +63,7 @@ private:
     int objectLayer;
 
 protected:
-    SDL_mutex *objectMutex;
+    boost::recursive_mutex objectMutex;
     float red, green, blue, alpha;
     bool marked;
     Object *objectParent;
@@ -72,10 +71,10 @@ protected:
     Vector objPosition;
     float objRotation;
 
-    void prepareDraw() const;
-    void endDraw() const;
-    void lock() const;
-    void unlock() const;
+    bool prepareDraw();
+    void endDraw();
+    void lock();
+    void unlock();
     void markToUpdate();
 };
 }
