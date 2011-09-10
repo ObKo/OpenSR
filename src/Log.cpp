@@ -29,8 +29,15 @@ Log *logInstance = 0;
 Log::Log()
 {
     isNew = false;
-    currentEntry.level = LEND;
     currentEntry.timestap = time(0);
+}
+
+Log* Log::instance()
+{
+    if (!logInstance)
+        logInstance = new Log();
+    
+    return logInstance;
 }
 
 void Log::writeLogEntry(const LogEntry& s)
@@ -38,23 +45,45 @@ void Log::writeLogEntry(const LogEntry& s)
     bufferMutex.lock();
     logs.push_back(s);
     isNew = true;
-
+    
+    wstring prefix;
+    
     switch(s.level)
     {
     case LDEBUG:
-	cout << "[--] ";
+	prefix = L"[--] ";
 	break;
     case LINFO:
-	cout << "[II] ";
+	prefix = L"[II] ";
 	break;
     case LWARNING:
-	cout << "[WW] ";
+	prefix = L"[WW] ";
 	break;
     case LERROR:
-	cout << "[EE] ";
+	prefix = L"[EE] ";
 	break;
     }
-    cout << toLocal(s.text) << endl;
+    
+#ifdef __unix__
+    switch(s.level)
+    {
+    case LINFO:
+	prefix = L"\e[0;32m" + prefix;
+	break;
+    case LWARNING:
+	prefix = L"\e[0;33m" + prefix;
+	break;
+    case LERROR:
+	prefix = L"\e[0;31m" + prefix;
+	break;
+    }
+    cout << toLocal(prefix + s.text) << "\e[0m" << endl;
+#elif _WIN32
+    cout << toLocal(prefix + s.text) << endl;
+#else
+    cout << toLocal(prefix + s.text) << endl;
+#endif
+    
     
     bufferMutex.unlock();
 }
@@ -66,18 +95,24 @@ bool Log::checkForUpdate()
     return r;
 }
 
-
-Log::~Log()
+Log::Logger Log::debug()
 {
-    
+    return Log::Logger(LDEBUG);
 }
 
-Log& Rangers::logger()
+Log::Logger Log::info()
 {
-    if (!logInstance)
-        logInstance = new Log();
+    return Log::Logger(LINFO);
+}
 
-    return *logInstance;
+Log::Logger Log::warning()
+{
+    return Log::Logger(LWARNING);
+}
+
+Log::Logger Log::error()
+{
+    return Log::Logger(LERROR);
 }
 
 std::list<LogEntry> Log::lines(int n) const
@@ -103,94 +138,76 @@ LogEntry::LogEntry(): level(LDEBUG), text(L""), timestap(0)
 {
 }
 
-Log& Log::operator<<(LogLevel l)
+Log::Logger::Logger(LogLevel level)
 {
-    if ((currentStream.str() != L"") && (currentEntry.level != LEND))
-    {
-        currentEntry.text = currentStream.str();
-        writeLogEntry(currentEntry);
-    }
+    m_logLevel = level;
+    loggerStream = boost::shared_ptr<std::wostringstream>(new std::wostringstream());
+}
 
-    currentEntry.level = l;
-    currentEntry.text = L"";
-    currentEntry.timestap = time(0);
-    currentStream.str(L"");
+Log::Logger::Logger(const Rangers::Log::Logger& other)
+{
+    m_logLevel = other.m_logLevel;
+    loggerStream = other.loggerStream;
+}
+
+Log::Logger::~Logger()
+{
+    if(loggerStream.use_count() == 1)
+        Log::instance()->writeLogEntry(LogEntry(m_logLevel, loggerStream->str(), time(0)));
+}
+
+Log::Logger& Log::Logger::operator<<(const std::wstring& v)
+{
+    *loggerStream << v;
     return *this;
 }
 
-Log& Log::operator<<(const std::wstring& v)
+Log::Logger& Log::Logger::operator<<(int v)
 {
-    currentStream << v;
+    *loggerStream << v;
     return *this;
 }
 
-Log& Log::operator<<(int v)
+Log::Logger& Log::Logger::operator<<(float v)
 {
-    currentStream << v;
+    *loggerStream << v;
     return *this;
 }
 
-Log& Log::operator<<(float v)
+Log::Logger& Log::Logger::operator<<(bool v)
 {
-    currentStream << v;
+    *loggerStream << v;
     return *this;
 }
 
-Log& Log::operator<<(bool v)
-{
-    currentStream << v;
-    return *this;
-}
-
-Log& Log::operator<<(const std::string& v)
+Log::Logger& Log::Logger::operator<<(const std::string& v)
 {
     wstring w;
     w.assign(v.length(), '\0');
     std::copy(v.begin(), v.end(), w.begin());
-    currentStream << w;
+    *loggerStream << w;
     return *this;
 }
 
-Log& Log::operator<<(const char *s)
+Log::Logger& Log::Logger::operator<<(const char *s)
 {
     wstring w;
     string v(s);
     w.assign(v.length(), '\0');
     std::copy(v.begin(), v.end(), w.begin());
-    currentStream << w;
+    *loggerStream << w;
     return *this;
 }
 
-Log& Log::operator<<(const wchar_t *v)
+Log::Logger& Log::Logger::operator<<(const wchar_t *v)
 {
-    currentStream << v;
+    *loggerStream << v;
     return *this;
 }
 
-Log& Log::operator<<(size_t v)
+Log::Logger& Log::Logger::operator<<(size_t v)
 {
-    currentStream << v;
+    *loggerStream << v;
     return *this;
 }
-
-
-/*LogEntry Rangers::Debug(const std::wstring& s)
-{
-    return LogEntry(DEBUG, s, time(0));
-}
-
-LogEntry Rangers::Error(const std::wstring& s)
-{
-    return LogEntry(ERROR, s, time(0));
-}
-
-LogEntry Rangers::Info(const std::wstring& s)
-{
-    return LogEntry(INFO, s, time(0));
-}
-
-LogEntry Rangers::Warning(const std::wstring& s)
-{
-    return LogEntry(WARNING, s, time(0));
-}*/
 

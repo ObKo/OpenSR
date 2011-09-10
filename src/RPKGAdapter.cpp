@@ -30,7 +30,7 @@ void RPKGAdapter::load(const wstring& fileName)
     rpkgArchive.open(toLocal(fileName).c_str(), ios::binary | ios::in);
     if (!rpkgArchive.is_open())
     {
-        logger() << LERROR << "Cannot RPKG archive " << fileName << ": " << fromLocal(strerror(errno)) << LEND;
+        Log::error() << "Cannot RPKG archive " << fileName << ": " << fromLocal(strerror(errno));
         return;
     }
     std::list<RPKGEntry> l = loadRPKG(rpkgArchive);
@@ -38,7 +38,7 @@ void RPKGAdapter::load(const wstring& fileName)
     for (std::list<RPKGEntry>::const_iterator i = l.begin(); i != l.end(); i++)
         files[i->name] = *i;
 
-    logger() << LINFO << "Loaded " << files.size() << " files from RPKG archive " << fileName << LEND;
+    Log::error() << "Loaded " << files.size() << " files from RPKG archive " << fileName;
 }
 
 RPKGAdapter::~RPKGAdapter()
@@ -60,7 +60,7 @@ char* RPKGAdapter::loadData(const wstring& name, size_t& size)
 {
     if (files.find(name) == files.end())
     {
-        logger() << LERROR << "No such file " << name << LEND;
+        Log::error() << "No such file " << name;
         return 0;
     }
     return extractFile(files[name], rpkgArchive, size);

@@ -91,7 +91,7 @@ void LuaWidget::keyPressed(SDL_keysym key)
 
     tolua_pushusertype(luaState, &key, "SDL_keysym");
     if(lua_pcall(luaState, 1, 0, 0))
-        logger() << LWARNING << "Lua: " << lua_tostring(luaState, -1) << LEND;
+         Log::warning() << "Lua: " << lua_tostring(luaState, -1);
     unlock();
 }
  
@@ -105,7 +105,7 @@ void LuaWidget::mouseEnter()
     	return;
     }
     if(lua_pcall(luaState, 0, 0, 0))
-    	logger() << LWARNING << "Lua: " << lua_tostring(luaState, -1) << LEND;
+    	Log::warning() << "Lua: " << lua_tostring(luaState, -1);
     unlock();
 }
 
@@ -119,7 +119,7 @@ void LuaWidget::mouseLeave()
     	return;
     }
     if(lua_pcall (luaState, 0, 0, 0))
-    	logger() << LWARNING << "Lua: " << lua_tostring(luaState, -1) << LEND;
+    	Log::warning() << "Lua: " << lua_tostring(luaState, -1);
     unlock();
 }
 
@@ -152,7 +152,7 @@ void LuaWidget::mouseDown(uint8_t key, int x, int y)
     lua_pushinteger(luaState, x);
     lua_pushinteger(luaState, y);
     if(lua_pcall(luaState, 3, 0, 0))
-    	logger() << LWARNING << "Lua: " << lua_tostring(luaState, -1) << LEND;
+    	Log::warning() << "Lua: " << lua_tostring(luaState, -1);
     unlock();
     Widget::mouseDown(key, x, y);
 }
@@ -170,7 +170,7 @@ void LuaWidget::mouseUp(uint8_t key, int x, int y)
     lua_pushinteger(luaState, x);
     lua_pushinteger(luaState, y);
    	if(lua_pcall(luaState, 3, 0, 0))
-   		logger() << LWARNING << "Lua: " << lua_tostring(luaState, -1) << LEND;
+   		Log::warning() << "Lua: " << lua_tostring(luaState, -1);
     unlock();
     Widget::mouseUp(key, x, y);
 }
@@ -187,7 +187,7 @@ void LuaWidget::mouseClick(int x, int y)
     lua_pushinteger(luaState, x);
     lua_pushinteger(luaState, y);
     if(lua_pcall(luaState, 2, 0, 0))
-    	logger() << LWARNING << "Lua: " << lua_tostring(luaState, -1) << LEND;
+    	Log::warning() << "Lua: " << lua_tostring(luaState, -1);
     unlock();
     Widget::mouseClick(x, y);
 }

@@ -21,10 +21,11 @@
 #include <sstream>
 #include <list>
 #include <boost/thread/recursive_mutex.hpp>
+#include <boost/shared_ptr.hpp>
 
 namespace Rangers
 {
-enum LogLevel {LEND, LDEBUG, LINFO, LWARNING, LERROR};
+enum LogLevel {LDEBUG, LINFO, LWARNING, LERROR};
 
 struct LogEntry
 {
@@ -37,40 +38,52 @@ struct LogEntry
 
 class Log
 {
+class Logger;
+
 public:
     Log();
-    ~Log();
+    
+    static Log *instance();   
+    static Logger debug();
+    static Logger info();
+    static Logger warning();
+    static Logger error();
 
     bool checkForUpdate();
     std::list<LogEntry> lines(int n = -1) const;
     void writeLogEntry(const LogEntry& s);
-
-    Log& operator <<(LogLevel l);
-
-    Log& operator <<(const std::wstring& v);
-    Log& operator <<(int v);
-    Log& operator <<(float v);
-    Log& operator <<(size_t v);
-    Log& operator <<(bool v);
-    Log& operator <<(const std::string& v);
-    Log& operator <<(const char *v);
-    Log& operator <<(const wchar_t *v);
-
+    
 private:
     bool isNew;
+    bool colorOutput;
     std::list<LogEntry> logs;
     boost::recursive_mutex bufferMutex;
 
     LogEntry currentEntry;
-    std::wostringstream currentStream;
 };
 
-Log &logger();
+class Log::Logger
+{
+public:
+    Logger(LogLevel level);
+    Logger(const Logger& other);
+    ~Logger();
 
-/*LogEntry Error(const std::wstring& s);
-LogEntry Warning(const std::wstring& s);
-LogEntry Info(const std::wstring& s);
-LogEntry Debug(const std::wstring& s);*/
+    Logger& operator <<(LogLevel l);
+
+    Logger& operator <<(const std::wstring& v);
+    Logger& operator <<(int v);
+    Logger& operator <<(float v);
+    Logger& operator <<(size_t v);
+    Logger& operator <<(bool v);
+    Logger& operator <<(const std::string& v);
+    Logger& operator <<(const char *v);
+    Logger& operator <<(const wchar_t *v);
+
+private:
+    LogLevel m_logLevel;
+    boost::shared_ptr<std::wostringstream> loggerStream;
+};
 
 };
 

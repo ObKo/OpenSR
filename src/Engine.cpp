@@ -328,7 +328,7 @@ std::wstring Engine::addObject(Object* object, const std::wstring& name)
 	    it = objects.find(n);
 	    i++;
 	}
-	logger() << LWARNING << L"Object \"" << objectName << "\" exists. Renamed to \"" << n << "\"" << LEND; 
+	Log::warning() << L"Object \"" << objectName << "\" exists. Renamed to \"" << n << "\""; 
 	objects[n] = object;
 	return n;
     }
@@ -345,7 +345,7 @@ Object* Engine::getObject(const std::wstring& name)
         return (*it).second;
     else
     {
-        logger() << LWARNING << L"No such object: " << name << LEND; 
+        Log::warning() << L"No such object: " << name; 
         return 0;
     }
 }
@@ -362,7 +362,7 @@ void Engine::removeObject(const std::wstring& name)
         objects.erase(it);
     }
     else
-        logger() << LWARNING << L"No such object: " << name << LEND; 
+        Log::warning() << L"No such object: " << name; 
 }
 
 void Engine::processEvents()
@@ -453,7 +453,7 @@ void Engine::execCommand(const std::wstring& what)
         if (!args.fail())
         {
             showFPS = enable;
-            logger() << LINFO << L"FPS label " << (showFPS ? (L"enabled") : (L"disabled")) << LEND;
+            Log::info() << L"FPS label " << (showFPS ? (L"enabled") : (L"disabled"));
         }
     }
     else if (command == L"add_rpkg")
@@ -496,7 +496,7 @@ void Engine::execCommand(const std::wstring& what)
 		wstring objName = addObject(s, fileName);
                 s->setGeometry(w, h);
                 s->setPosition(x, y);
-		logger() << LINFO << "Sprite \"" << objName << "\" loaded" << LEND;
+		Log::info() << "Sprite \"" << objName << "\" loaded";
             }
         }
     }
@@ -527,7 +527,7 @@ void Engine::execCommand(const std::wstring& what)
                 s->setGeometry(w, h);
                 s->setPosition(x, y);
                 s->setTextureScaling((TextureScaling)scaling);
-		logger() << LINFO << "Animation \"" << objName << "\" loaded" << LEND;
+		Log::info() << "Animation \"" << objName << "\" loaded";
             }
         }
     }
@@ -538,9 +538,9 @@ void Engine::execCommand(const std::wstring& what)
 	removeObject(name);
     }
     else
-        logger() << LERROR << wstring(L"Unknown command: ") << command << LEND;
+        Log::error() << wstring(L"Unknown command: ") << command;
 
     if (args.fail())
-        logger() << LERROR << L"Invalid arguments" << LEND;
+        Log::error() << L"Invalid arguments";
 }
 

@@ -49,7 +49,7 @@ void FSAdapter::load(const std::wstring& path)
 #else
     doScan("");
 #endif
-    logger() << LINFO << "Loaded " << files.size() << " files from directory " << path << LEND;
+    Log::info() << "Loaded " << files.size() << " files from directory " << path;
 }
 
 #ifdef WIN32
@@ -88,7 +88,7 @@ void FSAdapter::doScan(const string& path)
     DIR* dir = opendir(localPath.c_str());
     if(!dir)
     {
-	logger() << LERROR << "Cannot open directory " << fromLocal(localPath.c_str()) << ": " << fromLocal(strerror(errno)) << LEND;
+	Log::error() << "Cannot open directory " << fromLocal(localPath.c_str()) << ": " << fromLocal(strerror(errno));
 	return;
     }
     dirent *current;
@@ -112,12 +112,12 @@ void FSAdapter::doScan(const string& path)
 	        files.push_back(fromLocal((path + current->d_name).c_str()));
 		break;
 	    default:
-	        logger() << LDEBUG << fromLocal(fullPath.c_str()) << " unknown entry type"  << LEND;
+	        Log::debug() << fromLocal(fullPath.c_str()) << " unknown entry type";
 	    }
 	}
 	else
 	{
-	    logger() << LDEBUG << "Cannot lstat: " << fromLocal(strerror(errno)) << LEND;
+	     Log::debug() << "Cannot lstat: " << fromLocal(strerror(errno));
 	}
     }
     closedir(dir);
@@ -129,7 +129,7 @@ char* FSAdapter::loadData(const std::wstring& name, size_t& size)
     ifstream s(toLocal(dirPath + name).c_str(), ios::in | ios::binary);
     if(!s.is_open())
     {
-	logger() << LERROR << "Cannot load file from FS: " << fromLocal(strerror(errno)) << LEND;
+	Log::error() << "Cannot load file from FS: " << fromLocal(strerror(errno));
 	size = 0;
 	return 0;
     }

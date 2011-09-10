@@ -81,7 +81,7 @@ boost::shared_ptr<Texture> ResourceManager::loadTexture(const std::wstring& name
         return textures[name];
     }
     else
-        logger() << LERROR << "Unknown texture format: " << sfx << LEND;
+        Log::error() << "Unknown texture format: " << sfx;
 
     return boost::shared_ptr<Texture>();
 }
@@ -138,7 +138,7 @@ boost::shared_ptr<AnimatedTexture> ResourceManager::loadAnimation(const std::wst
         return animations[name];
     }
     else
-        logger() << LERROR << "Unknown animation format: " << sfx << LEND;
+        Log::error() << "Unknown animation format: " << sfx;
 
     return boost::shared_ptr<AnimatedTexture>();
 }
@@ -170,7 +170,7 @@ boost::shared_ptr< Font > ResourceManager::loadFont(const std::wstring& name, in
         return fonts[mapName];
     }
     else
-        logger() << LERROR << "Unknown font format: " << sfx << LEND;
+        Log::error() << "Unknown font format: " << sfx;
 
     return boost::shared_ptr<Font>();
 }
@@ -186,7 +186,7 @@ char* ResourceManager::loadData(const std::wstring& name, size_t &size)
 {
     if (files.find(name) == files.end())
     {
-        logger() << LERROR << "No such file: " << name << LEND;
+        Log::error() << "No such file: " << name;
         return 0;
     }
     return files[name]->loadData(name, size);

@@ -162,9 +162,9 @@ void ConsoleWidget::processLogic(int dt)
 {
     lineEdit.processLogic(dt);
 
-    if (logger().checkForUpdate())
+    if (Log::instance()->checkForUpdate())
     {
-        std::list<LogEntry> l = logger().lines(lines);
+        std::list<LogEntry> l = Log::instance()->lines(lines);
         std::wstring text;
 
         for (std::list<LogEntry>::const_iterator i = l.begin(); i != l.end(); i++)
