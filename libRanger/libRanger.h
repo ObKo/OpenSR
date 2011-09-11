@@ -237,6 +237,10 @@ LIBRANGER_DIRECTIVE GIFrame loadGIFile(const char *data);
 LIBRANGER_DIRECTIVE GAIAnimation loadGAIAnimation(std::istream& stream, size_t &offset, GIFrame *background = 0);
 //! Load GAI animation from memory
 LIBRANGER_DIRECTIVE GAIAnimation loadGAIAnimation(const char *data, GIFrame *background = 0);
+//! Load GAI header from file
+LIBRANGER_DIRECTIVE GAIHeader loadGAIHeader(std::istream& stream, size_t &offset);
+//! Load GAI header from memory
+LIBRANGER_DIRECTIVE GAIHeader loadGAIHeader(const char *data);
 
 //! Unpack ZL01 - compressed file
 LIBRANGER_DIRECTIVE unsigned char *unpackZL01(unsigned char * src, size_t srclen, size_t& destlen);

@@ -31,6 +31,27 @@ using namespace Rangers;
 using namespace std;
 ResourceManager *manager = 0;
 
+class ResourceManager::GAIWorker
+{
+public:
+    GAIWorker(char *gaiData, char *bgData);
+    ~GAIWorker();
+    void run();
+    
+    GAIAnimation animation() const;
+    bool loaded() const;
+    void cleanFrame(int i);
+    
+    static void loadAnimation(GAIWorker *worker);
+    
+private:
+    char *m_gaiData;
+    char *m_bgFrameData;
+    GAIAnimation m_animation;
+    boost::thread *m_thread;
+    bool m_loaded;
+};
+
 ResourceManager* ResourceManager::instance()
 {
     if (!manager)
@@ -100,8 +121,39 @@ boost::shared_ptr<AnimatedTexture> ResourceManager::loadAnimation(const std::wst
         char *data = loadData(name, s);
         if (!data)
             return boost::shared_ptr<AnimatedTexture>();
+	
+	char *bgFrameData = 0;
 
-        GIFrame *bg = 0;
+	if (needBackground)
+	{
+	    size_t size;
+	    bgFrameData = loadData(directory(name) + L"/" + basename(name) + L".gi", size);
+	    if (!bgFrameData)
+                return boost::shared_ptr<AnimatedTexture>();
+	}
+	
+	if(backgroundLoading)
+	{
+	    GAIHeader header = loadGAIHeader(data);
+	    
+	    AnimatedTexture *t = new AnimatedTexture(header.finishX - header.startX, 
+						     header.finishY - header.startY, 
+					             header.waitSeek, header.waitSize, 
+					             header.frameCount);
+	    
+	    animations[name] = boost::shared_ptr<AnimatedTexture>(t);
+	    GAIWorker *worker = new GAIWorker(data, bgFrameData);
+	    onDemandGAIQueue[animations[name]] = worker;
+	    worker->run();
+	}
+	else
+	{
+	    GAIWorker worker(data, bgFrameData);
+	    worker.loadAnimation(&worker);
+	    animations[name] = boost::shared_ptr<AnimatedTexture>(new AnimatedTexture(worker.animation()));
+	}
+
+        /*GIFrame *bg = 0;
 
         if (needBackground)
         {
@@ -133,7 +185,7 @@ boost::shared_ptr<AnimatedTexture> ResourceManager::loadAnimation(const std::wst
 	    t = new AnimatedTexture(a.width, a.height, a.waitSeek, a.waitSize, a.frameCount);
 	    animations[name] = boost::shared_ptr<AnimatedTexture>(t);
 	    onDemandGAIQueue[animations[name]] = a;
-	}
+	}*/
 
         return animations[name];
     }
@@ -196,16 +248,21 @@ void ResourceManager::processGAIQueue()
 {
     std::list<boost::shared_ptr<AnimatedTexture> > animationsToRemove;
 	
-    for(std::map<boost::shared_ptr<AnimatedTexture>, GAIAnimation>::iterator i = onDemandGAIQueue.begin(); i != onDemandGAIQueue.end(); i++)
+    for(std::map<boost::shared_ptr<AnimatedTexture>, GAIWorker*>::iterator i = onDemandGAIQueue.begin(); i != onDemandGAIQueue.end(); i++)
     {
         boost::shared_ptr<AnimatedTexture> t =(*i).first;
-        GAIAnimation a = (*i).second;
+        GAIWorker *w = (*i).second;
+        if(!w->loaded())
+            continue;
+        
         int f = t->loadedFrames();
-        t->loadFrame((char *)a.frames[f].data, a.frames[f].width, a.frames[f].height, TEXTURE_R8G8B8A8);
-        delete[] a.frames[f].data;
+        t->loadFrame((char *)w->animation().frames[f].data, 
+		     w->animation().frames[f].width, 
+		     w->animation().frames[f].height, TEXTURE_R8G8B8A8);
+	w->cleanFrame(f);
         if(t->loadedFrames() >= t->count())
         {
-        	delete[] a.frames;
+	        delete w;
 	    	animationsToRemove.push_back(i->first);
         }
     }
@@ -242,6 +299,60 @@ AnimatedSprite ResourceManager::getAnimatedSprite(const std::wstring& name, bool
 Sprite ResourceManager::getSprite(const std::wstring& name, Object *parent)
 {
     return Sprite(loadTexture(name), parent); 
+}
+
+ResourceManager::GAIWorker::GAIWorker(char* gaiData, char* bgData)
+{
+    m_bgFrameData = bgData;
+    m_gaiData = gaiData;
+    m_loaded = false;
+    m_thread = 0;
+}
+
+void ResourceManager::GAIWorker::run()
+{
+    m_thread = new boost::thread(loadAnimation, this);
+}
+
+void ResourceManager::GAIWorker::loadAnimation(GAIWorker *w)
+{
+    GIFrame *bg = 0;
+    if(w->m_bgFrameData)
+    {
+        bg = new GIFrame();
+        (*bg) = loadGIFile(w->m_bgFrameData);
+        delete w->m_bgFrameData;
+    }
+
+    w->m_animation = loadGAIAnimation(w->m_gaiData, bg);
+    delete[] w->m_gaiData;
+    
+    w->m_loaded = true;
+}
+
+ResourceManager::GAIWorker::~GAIWorker()
+{
+    m_thread->join();
+    delete m_thread;
+    for (int i = 0; i < m_animation.frameCount; i++)
+        cleanFrame(i);
+    delete[] m_animation.frames;
+}
+
+GAIAnimation ResourceManager::GAIWorker::animation() const
+{
+    return m_animation;
+}
+
+bool ResourceManager::GAIWorker::loaded() const
+{
+    return m_loaded;
+}
+
+void ResourceManager::GAIWorker::cleanFrame(int i)
+{
+    delete[] m_animation.frames[i % m_animation.frameCount].data;
+    m_animation.frames[i % m_animation.frameCount].data = 0;
 }
 
 

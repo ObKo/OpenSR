@@ -209,3 +209,15 @@ GAIAnimation Rangers::loadGAIAnimation(const char *data, GIFrame *background)
     return result;
 }
 
+GAIHeader Rangers::loadGAIHeader(const char *data)
+{
+    return *((GAIHeader *)data);
+}
+
+GAIHeader Rangers::loadGAIHeader(std::istream& stream, size_t &offset)
+{
+    GAIHeader header;
+    stream.seekg(offset, ios_base::beg);
+    stream.read((char *)&header, 48);
+    return header;
+}

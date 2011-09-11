@@ -97,7 +97,12 @@ void AnimatedSprite::draw()
     if(!prepareDraw())
         return;
 
-    glBindTexture(GL_TEXTURE_2D, ((AnimatedTexture*)spriteTexture.get())->openGLTexture(animFrame));
+    GLuint texture = ((AnimatedTexture*)spriteTexture.get())->openGLTexture(animFrame);
+    
+    if(!texture)
+        return;
+    
+    glBindTexture(GL_TEXTURE_2D, texture);
     if (textureScaling == TEXTURE_TILE_X)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     else

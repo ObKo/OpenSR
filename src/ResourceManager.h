@@ -19,9 +19,11 @@
 #ifndef RANGERS_RESOURCEMANAGER_H
 #define RANGERS_RESOURCEMANAGER_H
 #include "ResourceAdapter.h"
+#include <libRanger.h>
 #include <map>
 #include <list>
 #include <boost/shared_ptr.hpp>
+#include <boost/thread.hpp>
 
 namespace Rangers
 {
@@ -53,6 +55,7 @@ public:
 
 
 private:
+    class GAIWorker;
     void processGAIQueue();
     void cleanupUnused();
     std::map<std::wstring, boost::shared_ptr<ResourceAdapter> > files;
@@ -61,7 +64,7 @@ private:
     std::map<std::wstring, boost::shared_ptr<Texture> > textures;
     std::map<std::wstring, boost::shared_ptr<AnimatedTexture> > animations;
     std::map<std::wstring, boost::shared_ptr<Font> > fonts;
-    std::map<boost::shared_ptr<AnimatedTexture>, GAIAnimation> onDemandGAIQueue;
+    std::map<boost::shared_ptr<AnimatedTexture>, GAIWorker *> onDemandGAIQueue;
 };
 };
 
