@@ -73,6 +73,9 @@ public:
 
     //! Engine instance
     static Engine *instance();
+    
+    //! Current ticks
+    static long long getTicks();
 
     //! Engine fps counter loop
     static int fpsCounter();

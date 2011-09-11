@@ -43,7 +43,7 @@ FT_Library trueTypeLibrary;
 
 #ifdef WIN32
 #include <windows.h>
-long long getTicks()
+long long Engine::getTicks()
 {
     return GetTickCount();
 }
@@ -52,7 +52,7 @@ long long getTicks()
 
 struct timeval tv;
 struct timezone tz;
-long long getTicks()
+long long Engine::getTicks()
 {
     gettimeofday(&tv, &tz);
     return tv.tv_sec * 1000 + tv.tv_usec / 1000;
