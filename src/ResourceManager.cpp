@@ -107,7 +107,7 @@ boost::shared_ptr<Texture> ResourceManager::loadTexture(const std::wstring& name
     return boost::shared_ptr<Texture>();
 }
 
-boost::shared_ptr<AnimatedTexture> ResourceManager::loadAnimation(const std::wstring& name, bool backgroundLoading, bool needBackground)
+boost::shared_ptr<AnimatedTexture> ResourceManager::loadAnimation(const std::wstring& name, bool backgroundLoading)
 {
     map<wstring, boost::shared_ptr<AnimatedTexture> >::const_iterator it = animations.find(name);
     if (it != animations.end())
@@ -123,8 +123,9 @@ boost::shared_ptr<AnimatedTexture> ResourceManager::loadAnimation(const std::wst
             return boost::shared_ptr<AnimatedTexture>();
 	
 	char *bgFrameData = 0;
+	GAIHeader header = loadGAIHeader(data);
 
-	if (needBackground)
+	if (header.haveBackground)
 	{
 	    size_t size;
 	    bgFrameData = loadData(directory(name) + L"/" + basename(name) + L".gi", size);
@@ -133,9 +134,7 @@ boost::shared_ptr<AnimatedTexture> ResourceManager::loadAnimation(const std::wst
 	}
 	
 	if(backgroundLoading)
-	{
-	    GAIHeader header = loadGAIHeader(data);
-	    
+	{    
 	    AnimatedTexture *t = new AnimatedTexture(header.finishX - header.startX, 
 						     header.finishY - header.startY, 
 					             header.waitSeek, header.waitSize, 
@@ -152,41 +151,6 @@ boost::shared_ptr<AnimatedTexture> ResourceManager::loadAnimation(const std::wst
 	    worker.loadAnimation(&worker);
 	    animations[name] = boost::shared_ptr<AnimatedTexture>(new AnimatedTexture(worker.animation()));
 	}
-
-        /*GIFrame *bg = 0;
-
-        if (needBackground)
-        {
-            size_t size;
-            char *frameData = loadData(directory(name) + L"/" + basename(name) + L".gi", size);
-            if (frameData)
-            {
-                bg = new GIFrame();
-                (*bg) = loadGIFile(frameData);
-            }
-            delete frameData;
-        }
-
-        GAIAnimation a = loadGAIAnimation(data, bg);
-        delete[] data;
-
-        AnimatedTexture *t;
-
-        if (!backgroundLoading)
-        {
-            t = new AnimatedTexture(a);
-            for (int i = 0; i < a.frameCount; i++)
-                delete a.frames[i].data;
-            delete[] a.frames;
-	    animations[name] = boost::shared_ptr<AnimatedTexture>(t);
-        }
-        else
-	{
-	    t = new AnimatedTexture(a.width, a.height, a.waitSeek, a.waitSize, a.frameCount);
-	    animations[name] = boost::shared_ptr<AnimatedTexture>(t);
-	    onDemandGAIQueue[animations[name]] = a;
-	}*/
-
         return animations[name];
     }
     else
@@ -291,9 +255,9 @@ void ResourceManager::cleanupUnused()
 		textures.erase(*i);
 }
 
-AnimatedSprite ResourceManager::getAnimatedSprite(const std::wstring& name, bool backgroundLoading, bool needBackground, Object *parent)
+AnimatedSprite ResourceManager::getAnimatedSprite(const std::wstring& name, bool backgroundLoading, Object *parent)
 {
-    return AnimatedSprite(loadAnimation(name, backgroundLoading, needBackground), parent);
+    return AnimatedSprite(loadAnimation(name, backgroundLoading), parent);
 }
 
 Sprite ResourceManager::getSprite(const std::wstring& name, Object *parent)

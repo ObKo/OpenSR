@@ -17,7 +17,6 @@ public:
 
     char* loadData(const std::wstring& name, size_t &size);
     boost::shared_ptr<Rangers::Texture> loadTexture(const std::wstring& name);
-    boost::shared_ptr<Rangers::AnimatedTexture> loadAnimation(const std::wstring& name, bool onDemand, bool needBackground);
     boost::shared_ptr<Rangers::AnimatedTexture> loadAnimation(const std::wstring& name, bool onDemand);
     boost::shared_ptr<Rangers::AnimatedTexture> loadAnimation(const std::wstring& name);
     boost::shared_ptr<Rangers::Font> loadFont(const std::wstring& name, int size);
@@ -26,8 +25,7 @@ public:
     Rangers::Sprite getSprite(const std::wstring& name, Rangers::Object *parent = 0);
     Rangers::AnimatedSprite getAnimatedSprite(const std::wstring& name);
     Rangers::AnimatedSprite getAnimatedSprite(const std::wstring& name, bool backgroundLoading = false);
-    Rangers::AnimatedSprite getAnimatedSprite(const std::wstring& name, bool backgroundLoading = false, bool needBackground = false);
-    Rangers::AnimatedSprite getAnimatedSprite(const std::wstring& name, bool backgroundLoading = false, bool needBackground = false,  Rangers::Object *parent = 0);
+    Rangers::AnimatedSprite getAnimatedSprite(const std::wstring& name, bool backgroundLoading = false, Rangers::Object *parent = 0);
     
     static ResourceManager *instance();
 };

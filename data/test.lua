@@ -11,9 +11,9 @@ bgPlanet = Rangers.Sprite:new(bgPlanetTexture, this, Rangers.TEXTURE_NORMAL,
     Rangers.POSITION_X_LEFT, Rangers.POSITION_Y_BOTTOM)
 bgPlanet:setPosition(0, engine:screenHeight())
 
-bgAnimLine = resources:getAnimatedSprite(L"DATA/FormMain2/2AnimLine.gai", true, true, this)
+bgAnimLine = resources:getAnimatedSprite(L"DATA/FormMain2/2AnimLine.gai", true, this)
 
-shipAnimation = resources:loadAnimation(L"DATA/FormMain3/2Ship1.gai", true, true)
+shipAnimation = resources:loadAnimation(L"DATA/FormMain3/2Ship1.gai", true)
 -- shipAnimation = resources:loadTexture(L"DATA/FormMain3/2Ship1.gi")
 ship = Rangers.AnimatedSprite:new(shipAnimation, this)
 -- ship = Rangers.Sprite:new(shipAnimation, this)
@@ -28,13 +28,13 @@ engine:focusWidget(this)
 function draw()
   background:draw()
   bgPlanet:draw()
---   bgAnimLine:draw()
+   bgAnimLine:draw()
   ship:draw()
 end
 
 function keyPressed(k)
-  bgAnimLine:delete()
-  bgAnimLine = nil
+--   bgAnimLine:delete()
+--   bgAnimLine = nil
 end
 
 function getBoundingRect()
@@ -69,7 +69,7 @@ function processMain()
   ship:processMain()
   bgPlanet:processMain()
   background:processMain()
---   bgAnimLine:processMain()
+  bgAnimLine:processMain()
 end
 
 function processLogic(dt)
@@ -83,6 +83,6 @@ function processLogic(dt)
     background:setPosition(-background:width() + engine:screenWidth() + t * bgspeed, 0)
   end
   ship:processLogic(dt)
---   bgAnimLine:processLogic(dt)
+  bgAnimLine:processLogic(dt)
   t = t + dt
 end
