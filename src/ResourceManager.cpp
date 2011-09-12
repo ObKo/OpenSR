@@ -299,8 +299,11 @@ void ResourceManager::GAIWorker::loadAnimation(GAIWorker *w)
 
 ResourceManager::GAIWorker::~GAIWorker()
 {
-    m_thread->join();
-    delete m_thread;
+    if(m_thread)
+    {
+        m_thread->join();
+        delete m_thread;
+    }
     for (int i = 0; i < m_animation.frameCount; i++)
         cleanFrame(i);
     delete[] m_animation.frames;
