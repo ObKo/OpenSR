@@ -49,6 +49,7 @@ AnimatedTexture::AnimatedTexture(const HAIAnimation& a)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     }
     loadedAnimationFrames = frameCount;
+    m_needFrames = false;
 }
 
 /*!
@@ -80,6 +81,7 @@ AnimatedTexture::AnimatedTexture(const GAIAnimation& a)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     }
     loadedAnimationFrames = frameCount;
+    m_needFrames = false;
 }
 
 AnimatedTexture::~AnimatedTexture()
@@ -92,11 +94,22 @@ AnimatedTexture::~AnimatedTexture()
  * \param i frame index
  * \return OpenGL texture id
  */
-GLuint AnimatedTexture::openGLTexture(int i) const
+GLuint AnimatedTexture::openGLTexture(int i)
 {
     if(!loadedAnimationFrames)
+    {
+        m_needFrames = true;
         return 0;
-    return textureIDs[i % loadedAnimationFrames];
+    }
+    if(i >= loadedAnimationFrames - 2)
+        m_needFrames = true;
+    else
+        m_needFrames = false;
+    
+    if(i >= loadedAnimationFrames)
+        return textureIDs[loadedAnimationFrames - 1];
+    else
+        return textureIDs[i];
 }
 
 /*!
@@ -137,6 +150,7 @@ AnimatedTexture::AnimatedTexture(int width, int height, int seek, int size, int 
     textureIDs[0] = textureID;
     glGenTextures(frameCount - 1, textureIDs + 1);
     loadedAnimationFrames = 0;
+    m_needFrames = true;
 }
 
 int AnimatedTexture::loadedFrames() const
@@ -165,5 +179,10 @@ void AnimatedTexture::loadFrame(const char* data, int width, int height, Texture
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	
 	loadedAnimationFrames++;
+ 	m_needFrames = false;
 }
 
+bool AnimatedTexture::needFrames() const
+{
+    return m_needFrames;
+}

@@ -62,7 +62,7 @@ int Texture::height() const
     return realHeight;
 }
 
-GLuint Texture::openGLTexture() const
+GLuint Texture::openGLTexture()
 {
     return textureID;
 }

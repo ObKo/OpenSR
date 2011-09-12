@@ -8,8 +8,6 @@ namespace Rangers
 class AnimatedTexture: public Texture
 {
 public:
-    GLuint openGLTexture(int i) const;
-
     int seek() const;
     int size() const;
     int count() const;

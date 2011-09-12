@@ -37,7 +37,7 @@ public:
     ~AnimatedTexture();
 
     //! Get OpenGL texture id
-    GLuint openGLTexture(int i) const;
+    GLuint openGLTexture(int i);
 
     int seek() const;
     int size() const;
@@ -45,6 +45,8 @@ public:
     int count() const;
     //! Number of loaded frames (background loading)
     int loadedFrames() const;
+    //! Animation need frames to loaded
+    bool needFrames() const;
 
     //! Set texture tiling
     void setTiling(bool tx, bool ty);
@@ -55,6 +57,7 @@ private:
     int waitSeek, waitSize;
     int frameCount;
     int loadedAnimationFrames;
+    bool m_needFrames;
 
     GLuint *textureIDs;
 };
