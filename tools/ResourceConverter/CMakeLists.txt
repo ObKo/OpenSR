@@ -1,6 +1,11 @@
 INCLUDE_DIRECTORIES(
-	${CMAKE_SOURCE_DIR}/libRanger
+    ${CMAKE_SOURCE_DIR}/libRanger
 )
 
-ADD_EXECUTABLE(rangersresconv main.cpp)
+SET(RESOURCE_CONVERTER_SRCS
+    main.cpp
+    pkg2rpkg.cpp
+)
+
+ADD_EXECUTABLE(rangersresconv ${RESOURCE_CONVERTER_SRCS})
 TARGET_LINK_LIBRARIES(rangersresconv ranger)
