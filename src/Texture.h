@@ -34,7 +34,7 @@ public:
 
     int width() const;
     int height() const;
-    GLuint openGLTexture() const;
+    GLuint openGLTexture();
 
     void setRawData(int width, int height, TextureType type, unsigned char *rawData);
 

@@ -219,6 +219,8 @@ void ResourceManager::processGAIQueue()
         if(!w->loaded())
             continue;
         
+	if(t->needFrames())
+	{
         int f = t->loadedFrames();
         t->loadFrame((char *)w->animation().frames[f].data, 
 		     w->animation().frames[f].width, 
@@ -229,6 +231,7 @@ void ResourceManager::processGAIQueue()
 	        delete w;
 	    	animationsToRemove.push_back(i->first);
         }
+	}
     }
     for(std::list<boost::shared_ptr<AnimatedTexture> >::const_iterator i = animationsToRemove.begin(); i != animationsToRemove.end(); i++)
         onDemandGAIQueue.erase(*i);
@@ -296,8 +299,11 @@ void ResourceManager::GAIWorker::loadAnimation(GAIWorker *w)
 
 ResourceManager::GAIWorker::~GAIWorker()
 {
-    m_thread->join();
-    delete m_thread;
+    if(m_thread)
+    {
+        m_thread->join();
+        delete m_thread;
+    }
     for (int i = 0; i < m_animation.frameCount; i++)
         cleanFrame(i);
     delete[] m_animation.frames;
@@ -318,6 +324,7 @@ void ResourceManager::GAIWorker::cleanFrame(int i)
     delete[] m_animation.frames[i % m_animation.frameCount].data;
     m_animation.frames[i % m_animation.frameCount].data = 0;
 }
+
 
 
 

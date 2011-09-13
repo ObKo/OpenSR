@@ -81,7 +81,7 @@ void AnimatedSprite::processLogic(int dt)
 	while (t > frameTime)
 	{
 	    if((texture->loadedFrames() == texture->count()) || (animFrame < texture->loadedFrames() - 1))
-		animFrame = (animFrame + 1) % texture->count();
+                animFrame = (animFrame + 1) % texture->count();
 	    t -= frameTime;
 	}
 
