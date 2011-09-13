@@ -37,13 +37,13 @@ public:
     GAIWorker(char *gaiData, char *bgData);
     ~GAIWorker();
     void run();
-    
+
     GAIAnimation animation() const;
     bool loaded() const;
     void cleanFrame(int i);
-    
+
     static void loadAnimation(GAIWorker *worker);
-    
+
 private:
     char *m_gaiData;
     char *m_bgFrameData;
@@ -121,36 +121,36 @@ boost::shared_ptr<AnimatedTexture> ResourceManager::loadAnimation(const std::wst
         char *data = loadData(name, s);
         if (!data)
             return boost::shared_ptr<AnimatedTexture>();
-	
-	char *bgFrameData = 0;
-	GAIHeader header = loadGAIHeader(data);
 
-	if (header.haveBackground)
-	{
-	    size_t size;
-	    bgFrameData = loadData(directory(name) + L"/" + basename(name) + L".gi", size);
-	    if (!bgFrameData)
+        char *bgFrameData = 0;
+        GAIHeader header = loadGAIHeader(data);
+
+        if (header.haveBackground)
+        {
+            size_t size;
+            bgFrameData = loadData(directory(name) + L"/" + basename(name) + L".gi", size);
+            if (!bgFrameData)
                 return boost::shared_ptr<AnimatedTexture>();
-	}
-	
-	if(backgroundLoading)
-	{    
-	    AnimatedTexture *t = new AnimatedTexture(header.finishX - header.startX, 
-						     header.finishY - header.startY, 
-					             header.waitSeek, header.waitSize, 
-					             header.frameCount);
-	    
-	    animations[name] = boost::shared_ptr<AnimatedTexture>(t);
-	    GAIWorker *worker = new GAIWorker(data, bgFrameData);
-	    onDemandGAIQueue[animations[name]] = worker;
-	    worker->run();
-	}
-	else
-	{
-	    GAIWorker worker(data, bgFrameData);
-	    worker.loadAnimation(&worker);
-	    animations[name] = boost::shared_ptr<AnimatedTexture>(new AnimatedTexture(worker.animation()));
-	}
+        }
+
+        if (backgroundLoading)
+        {
+            AnimatedTexture *t = new AnimatedTexture(header.finishX - header.startX,
+                    header.finishY - header.startY,
+                    header.waitSeek, header.waitSize,
+                    header.frameCount);
+
+            animations[name] = boost::shared_ptr<AnimatedTexture>(t);
+            GAIWorker *worker = new GAIWorker(data, bgFrameData);
+            onDemandGAIQueue[animations[name]] = worker;
+            worker->run();
+        }
+        else
+        {
+            GAIWorker worker(data, bgFrameData);
+            worker.loadAnimation(&worker);
+            animations[name] = boost::shared_ptr<AnimatedTexture>(new AnimatedTexture(worker.animation()));
+        }
         return animations[name];
     }
     else
@@ -211,51 +211,51 @@ char* ResourceManager::loadData(const std::wstring& name, size_t &size)
 void ResourceManager::processGAIQueue()
 {
     std::list<boost::shared_ptr<AnimatedTexture> > animationsToRemove;
-	
-    for(std::map<boost::shared_ptr<AnimatedTexture>, GAIWorker*>::iterator i = onDemandGAIQueue.begin(); i != onDemandGAIQueue.end(); i++)
+
+    for (std::map<boost::shared_ptr<AnimatedTexture>, GAIWorker*>::iterator i = onDemandGAIQueue.begin(); i != onDemandGAIQueue.end(); i++)
     {
-        boost::shared_ptr<AnimatedTexture> t =(*i).first;
+        boost::shared_ptr<AnimatedTexture> t = (*i).first;
         GAIWorker *w = (*i).second;
-        if(!w->loaded())
+        if (!w->loaded())
             continue;
-        
-	if(t->needFrames())
-	{
-        int f = t->loadedFrames();
-        t->loadFrame((char *)w->animation().frames[f].data, 
-		     w->animation().frames[f].width, 
-		     w->animation().frames[f].height, TEXTURE_R8G8B8A8);
-	w->cleanFrame(f);
-        if(t->loadedFrames() >= t->count())
+
+        if (t->needFrames())
         {
-	        delete w;
-	    	animationsToRemove.push_back(i->first);
+            int f = t->loadedFrames();
+            t->loadFrame((char *)w->animation().frames[f].data,
+                         w->animation().frames[f].width,
+                         w->animation().frames[f].height, TEXTURE_R8G8B8A8);
+            w->cleanFrame(f);
+            if (t->loadedFrames() >= t->count())
+            {
+                delete w;
+                animationsToRemove.push_back(i->first);
+            }
         }
-	}
     }
-    for(std::list<boost::shared_ptr<AnimatedTexture> >::const_iterator i = animationsToRemove.begin(); i != animationsToRemove.end(); i++)
+    for (std::list<boost::shared_ptr<AnimatedTexture> >::const_iterator i = animationsToRemove.begin(); i != animationsToRemove.end(); i++)
         onDemandGAIQueue.erase(*i);
     animationsToRemove.clear();
 }
 
 void ResourceManager::cleanupUnused()
 {
-	std::list<std::wstring> animationsToRemove;
-	std::list<std::wstring> texturesToRemove;
+    std::list<std::wstring> animationsToRemove;
+    std::list<std::wstring> texturesToRemove;
 
-	for (map<std::wstring, boost::shared_ptr<Texture> >::iterator i = textures.begin(); i != textures.end(); i++)
-		if ((*i).second.use_count() < 2)
-			texturesToRemove.push_back(i->first);
+    for (map<std::wstring, boost::shared_ptr<Texture> >::iterator i = textures.begin(); i != textures.end(); i++)
+        if ((*i).second.use_count() < 2)
+            texturesToRemove.push_back(i->first);
 
-	for (map<std::wstring, boost::shared_ptr<AnimatedTexture> >::iterator i = animations.begin(); i != animations.end(); i++)
-	    if ((*i).second.use_count() < 2)
-	    	animationsToRemove.push_back(i->first);
+    for (map<std::wstring, boost::shared_ptr<AnimatedTexture> >::iterator i = animations.begin(); i != animations.end(); i++)
+        if ((*i).second.use_count() < 2)
+            animationsToRemove.push_back(i->first);
 
 
-	for (std::list<std::wstring>::const_iterator i = animationsToRemove.begin(); i != animationsToRemove.end(); i++)
-		animations.erase(*i);
-	for (std::list<std::wstring>::const_iterator i = texturesToRemove.begin(); i != texturesToRemove.end(); i++)
-		textures.erase(*i);
+    for (std::list<std::wstring>::const_iterator i = animationsToRemove.begin(); i != animationsToRemove.end(); i++)
+        animations.erase(*i);
+    for (std::list<std::wstring>::const_iterator i = texturesToRemove.begin(); i != texturesToRemove.end(); i++)
+        textures.erase(*i);
 }
 
 AnimatedSprite ResourceManager::getAnimatedSprite(const std::wstring& name, bool backgroundLoading, Object *parent)
@@ -265,7 +265,7 @@ AnimatedSprite ResourceManager::getAnimatedSprite(const std::wstring& name, bool
 
 Sprite ResourceManager::getSprite(const std::wstring& name, Object *parent)
 {
-    return Sprite(loadTexture(name), parent); 
+    return Sprite(loadTexture(name), parent);
 }
 
 ResourceManager::GAIWorker::GAIWorker(char* gaiData, char* bgData)
@@ -284,7 +284,7 @@ void ResourceManager::GAIWorker::run()
 void ResourceManager::GAIWorker::loadAnimation(GAIWorker *w)
 {
     GIFrame *bg = 0;
-    if(w->m_bgFrameData)
+    if (w->m_bgFrameData)
     {
         bg = new GIFrame();
         (*bg) = loadGIFile(w->m_bgFrameData);
@@ -293,13 +293,13 @@ void ResourceManager::GAIWorker::loadAnimation(GAIWorker *w)
 
     w->m_animation = loadGAIAnimation(w->m_gaiData, bg);
     delete[] w->m_gaiData;
-    
+
     w->m_loaded = true;
 }
 
 ResourceManager::GAIWorker::~GAIWorker()
 {
-    if(m_thread)
+    if (m_thread)
     {
         m_thread->join();
         delete m_thread;

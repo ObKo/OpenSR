@@ -42,7 +42,7 @@ list< wstring > FSAdapter::getFiles() const
 void FSAdapter::load(const std::wstring& path)
 {
     dirPath = path;
-    if(dirPath.at(path.length() - 1) != '/')
+    if (dirPath.at(path.length() - 1) != '/')
         dirPath += '/';
 #ifdef WIN32
     doScan(L"");
@@ -59,66 +59,66 @@ void FSAdapter::doScan(const wstring& path)
     WIN32_FIND_DATAW fd;
     HANDLE fh = FindFirstFileW((LPCWSTR)(localPath + L"*").c_str(), &fd);
 
-    if(fh == INVALID_HANDLE_VALUE)
+    if (fh == INVALID_HANDLE_VALUE)
     {
-	    Log::error() << "Cannot open directory " << localPath << ": " << fromLocal(strerror(errno));
-	    return;
+        Log::error() << "Cannot open directory " << localPath << ": " << fromLocal(strerror(errno));
+        return;
     }
     do
     {
-        if(!wcscmp(fd.cFileName, L".") || !wcscmp(fd.cFileName, L".."))
-	    {
-	        continue;
-	    }            
-        if(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+        if (!wcscmp(fd.cFileName, L".") || !wcscmp(fd.cFileName, L".."))
+        {
+            continue;
+        }
+        if (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
             doScan(path + fd.cFileName + L'\\');
-        else 
-		{
-			wstring fileName = path + fd.cFileName;
-			std::replace(fileName.begin(), fileName.end(), L'\\', L'/');
+        else
+        {
+            wstring fileName = path + fd.cFileName;
+            std::replace(fileName.begin(), fileName.end(), L'\\', L'/');
             files.push_back(fileName);
-		}
-    } 
-    while(FindNextFileW(fh, &fd));
+        }
+    }
+    while (FindNextFileW(fh, &fd));
 }
 #else
 void FSAdapter::doScan(const string& path)
 {
     string localPath = toLocal(dirPath) + path;
     DIR* dir = opendir(localPath.c_str());
-    if(!dir)
+    if (!dir)
     {
-	Log::error() << "Cannot open directory " << fromLocal(localPath.c_str()) << ": " << fromLocal(strerror(errno));
-	return;
+        Log::error() << "Cannot open directory " << fromLocal(localPath.c_str()) << ": " << fromLocal(strerror(errno));
+        return;
     }
     dirent *current;
-    while(current = readdir(dir))
+    while (current = readdir(dir))
     {
-	if(!strcmp(current->d_name,".") || !strcmp(current->d_name,".."))
-	{
-	    continue;
-	}
-	string fullPath = localPath + current->d_name;
-	struct stat entry;
-	if(!lstat(fullPath.c_str(), &entry))
-	{
-	    
-	    switch(entry.st_mode & S_IFMT)
-	    {
-	    case S_IFDIR:
-	        doScan(path + current->d_name + '/');
-		break;
-	    case S_IFREG:
-	        files.push_back(fromLocal((path + current->d_name).c_str()));
-		break;
-	    default:
-	        Log::debug() << fromLocal(fullPath.c_str()) << " unknown entry type";
-	    }
-	}
-	else
-	{
-	     Log::debug() << "Cannot lstat: " << fromLocal(strerror(errno));
-	}
+        if (!strcmp(current->d_name, ".") || !strcmp(current->d_name, ".."))
+        {
+            continue;
+        }
+        string fullPath = localPath + current->d_name;
+        struct stat entry;
+        if (!lstat(fullPath.c_str(), &entry))
+        {
+
+            switch (entry.st_mode & S_IFMT)
+            {
+            case S_IFDIR:
+                doScan(path + current->d_name + '/');
+                break;
+            case S_IFREG:
+                files.push_back(fromLocal((path + current->d_name).c_str()));
+                break;
+            default:
+                Log::debug() << fromLocal(fullPath.c_str()) << " unknown entry type";
+            }
+        }
+        else
+        {
+            Log::debug() << "Cannot lstat: " << fromLocal(strerror(errno));
+        }
     }
     closedir(dir);
 }
@@ -127,11 +127,11 @@ void FSAdapter::doScan(const string& path)
 char* FSAdapter::loadData(const std::wstring& name, size_t& size)
 {
     ifstream s(toLocal(dirPath + name).c_str(), ios::in | ios::binary);
-    if(!s.is_open())
+    if (!s.is_open())
     {
-	Log::error() << "Cannot load file from FS: " << fromLocal(strerror(errno));
-	size = 0;
-	return 0;
+        Log::error() << "Cannot load file from FS: " << fromLocal(strerror(errno));
+        size = 0;
+        return 0;
     }
     s.seekg(0, ios_base::end);
     size = s.tellg();

@@ -32,7 +32,7 @@ public:
     Label(const std::string& text, Object *parent = 0, boost::shared_ptr<Font> font = boost::shared_ptr<Font>(), SpriteXPosition xpos = POSITION_X_CENTER, SpriteYPosition ypos = POSITION_Y_CENTER);
     Label(const std::wstring& text, Object *parent = 0, boost::shared_ptr<Font> font = boost::shared_ptr<Font>(), SpriteXPosition xpos = POSITION_X_CENTER, SpriteYPosition ypos = POSITION_Y_CENTER);
     Label(const Label& other);
-    
+
     void setText(const std::string& text);
     void setText(const std::wstring& text);
 
@@ -44,7 +44,7 @@ public:
     void setFixedSize(float w, float h);
 
     void processMain();
-    
+
     Label& operator=(const Label& other);
 
 protected:

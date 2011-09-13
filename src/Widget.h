@@ -41,12 +41,12 @@ public:
     virtual void mouseDown(uint8_t key, int x, int y);
     virtual void mouseUp(uint8_t key, int x, int y);
     virtual void mouseClick(int x, int y);
-    
+
     int width() const;
     int height() const;
-    
+
     Widget& operator=(const Widget& other);
-    
+
     void addWidget(Widget *w);
     void removeWidget(Widget *w);
 

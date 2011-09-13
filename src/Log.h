@@ -38,12 +38,12 @@ struct LogEntry
 
 class Log
 {
-class Logger;
+    class Logger;
 
 public:
     Log();
-    
-    static Log *instance();   
+
+    static Log *instance();
     static Logger debug();
     static Logger info();
     static Logger warning();
@@ -52,7 +52,7 @@ public:
     bool checkForUpdate();
     std::list<LogEntry> lines(int n = -1) const;
     void writeLogEntry(const LogEntry& s);
-    
+
 private:
     bool isNew;
     bool colorOutput;

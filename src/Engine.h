@@ -65,7 +65,7 @@ public:
     int screenHeight() const;
     //! Current screen width
     int screenWidth() const;
-    
+
     //! Default engine font
     boost::shared_ptr<Font> defaultFont() const;
     //! Default engine service font (e.g. console font)
@@ -73,7 +73,7 @@ public:
 
     //! Engine instance
     static Engine *instance();
-    
+
     //! Current ticks
     static long long getTicks();
 
@@ -81,14 +81,14 @@ public:
     static int fpsCounter();
     //! Logic loop
     static int logic();
-    
+
     //! Get object by name
     Object* getObject(const std::wstring& name);
     //! Remove object.
     void removeObject(const std::wstring& name);
     //! Add object. Engine becomes owner of object.
     std::wstring addObject(Object* object, const std::wstring& name = std::wstring());
-    
+
     //! Get current OpenGL texture format
     GLint textureInternalFormat(TextureType t) const;
 
@@ -106,7 +106,7 @@ private:
     bool consoleOpenned;
     bool showFPS;
     long frames;
-    
+
     std::map<std::wstring, Object*> objects;
 
     void processEvents();

@@ -58,15 +58,15 @@ Object::Object(const Rangers::Object& other)
     blue = other.blue;
     alpha = other.alpha;
     marked = false;
-    
+
     objectParent = other.parent();
-    
+
     if (objectParent)
         objectParent->addChild(this);
-    
+
     //for(std::list<Object*>::const_iterator it = other.objectChilds.begin(); it < other.objectChilds.end(); it++)
     //	objectChilds.push_back(new Object(*(*it)));
-	
+
     objPosition = other.objPosition;
     objRotation = other.objRotation;
 }
@@ -80,9 +80,9 @@ Object::~Object()
 
     if (objectParent)
         objectParent->removeChild(this);
-    
-    if(Engine::instance())    
-	Engine::instance()->unmarkToUpdate(this);
+
+    if (Engine::instance())
+        Engine::instance()->unmarkToUpdate(this);
 
     unlock();
 }
@@ -91,22 +91,22 @@ Object& Object::operator=(const Rangers::Object& other)
 {
     if (this == &other)
         return *this;
-    
+
     //objectMutex = SDL_CreateMutex();
     red = other.red;
     green = other.green;
     blue = other.blue;
     alpha = other.alpha;
     marked = false;
-    
+
     objectParent = other.parent();
-    
+
     if (objectParent)
         objectParent->addChild(this);
-    
+
     //for(std::list<Object*>::const_iterator it = other.objectChilds.begin(); it < other.objectChilds.end(); it++)
     //	objectChilds.push_back(new Object(*(*it)));
-	
+
     objPosition = other.objPosition;
     objRotation = other.objRotation;
     return *this;

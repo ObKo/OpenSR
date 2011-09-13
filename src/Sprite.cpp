@@ -45,7 +45,7 @@ Sprite::Sprite(const Rangers::Sprite& other): Object(other)
     yPos = other.yPos;
     textureScaling = other.textureScaling;
     spriteTexture = other.spriteTexture;
-    
+
     markToUpdate();
 }
 
@@ -57,7 +57,7 @@ Sprite::Sprite(boost::shared_ptr<Texture> texture,  Object *parent, TextureScali
     vertexCount = 0;
     spriteTexture = texture;
     textureScaling = ts;
-    if(!texture)
+    if (!texture)
     {
         spriteWidth = 0;
         spriteHeight = 0;
@@ -74,15 +74,15 @@ Sprite::Sprite(boost::shared_ptr<Texture> texture,  Object *parent, TextureScali
 
 Sprite::~Sprite()
 {
-    if(vertexBuffer)
-	glDeleteBuffers(1, &vertexBuffer);
+    if (vertexBuffer)
+        glDeleteBuffers(1, &vertexBuffer);
 }
 
 Sprite& Sprite::operator=(const Rangers::Sprite& other)
 {
     if (this == &other)
         return *this;
-    
+
     vertexBuffer = 0;
     vertex = 0;
     vertexCount = 0;
@@ -93,7 +93,7 @@ Sprite& Sprite::operator=(const Rangers::Sprite& other)
     yPos = other.yPos;
     textureScaling = other.textureScaling;
     spriteTexture = other.spriteTexture;
-    
+
     markToUpdate();
     ::Object::operator=(other);
     return *this;
@@ -104,27 +104,27 @@ void Sprite::draw()
 {
     if (!spriteTexture)
         return;
-    
-    if(!prepareDraw())
+
+    if (!prepareDraw())
         return;
 
     glBindTexture(GL_TEXTURE_2D, spriteTexture->openGLTexture());
-    
+
     if (textureScaling == TEXTURE_TILE_X)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     else
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 
     if (textureScaling == TEXTURE_TILE_Y)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     else
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-    
+
     if (textureScaling == TEXTURE_TILE)
     {
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    }   
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    }
 
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -133,7 +133,7 @@ void Sprite::draw()
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
 
     glVertexPointer(2, GL_FLOAT, sizeof(Vertex), 0);
-    glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), BUFFER_OFFSET(sizeof(float)*2));
+    glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), BUFFER_OFFSET(sizeof(float) * 2));
 
     glDrawArrays(GL_QUADS, 0, vertexCount);
 
@@ -152,12 +152,12 @@ void Sprite::setSpriteOrigin(SpriteXPosition xpos, SpriteYPosition ypos)
 
 void Sprite::setGeometry(float width, float height)
 {
-    if(spriteTexture)
+    if (spriteTexture)
     {
-      if (width <= 0)
-	width = spriteTexture->width();
-       if (height <= 0)
-	height = spriteTexture->height();
+        if (width <= 0)
+            width = spriteTexture->width();
+        if (height <= 0)
+            height = spriteTexture->height();
     }
 
     spriteWidth = width;
@@ -178,11 +178,11 @@ void Sprite::setHeight(float height)
 void Sprite::setWidth(float width)
 {
     if (spriteTexture)
-       if (width <= 0)
-          width = spriteTexture->width();
-     
-     spriteWidth = width;
-     markToUpdate();
+        if (width <= 0)
+            width = spriteTexture->width();
+
+    spriteWidth = width;
+    markToUpdate();
 }
 
 
@@ -196,16 +196,16 @@ void Sprite::setTextureScaling(TextureScaling ts)
 void Sprite::processMain()
 {
     ::Object::processMain();
-    
+
     if (!spriteTexture)
         return;
-    
+
     lock();
     if (!vertexBuffer)
     {
         vertex = new Vertex[4];
         vertexCount = 4;
-        memset(vertex, 0, vertexCount*sizeof(Vertex));
+        memset(vertex, 0, vertexCount * sizeof(Vertex));
 
         glGenBuffers(1, &vertexBuffer);
         glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);

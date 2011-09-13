@@ -45,12 +45,12 @@ public:
     boost::shared_ptr<Texture> loadTexture(const std::wstring& name);
     boost::shared_ptr<AnimatedTexture> loadAnimation(const std::wstring& name, bool backgroundLoading = false);
     boost::shared_ptr<Font> loadFont(const std::wstring& name, int size);
-    
+
     Sprite getSprite(const std::wstring& name, Object *parent = 0);
     AnimatedSprite getAnimatedSprite(const std::wstring& name, bool backgroundLoading = false, Object *parent = 0);
 
     static ResourceManager *instance();
-    
+
     void processMain();
 
 
@@ -60,7 +60,7 @@ private:
     void cleanupUnused();
     std::map<std::wstring, boost::shared_ptr<ResourceAdapter> > files;
     std::list<boost::shared_ptr<ResourceAdapter> > adaptors;
-    
+
     std::map<std::wstring, boost::shared_ptr<Texture> > textures;
     std::map<std::wstring, boost::shared_ptr<AnimatedTexture> > animations;
     std::map<std::wstring, boost::shared_ptr<Font> > fonts;

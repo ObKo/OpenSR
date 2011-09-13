@@ -70,11 +70,11 @@ AnimatedTexture::AnimatedTexture(const GAIAnimation& a)
     glGenTextures(frameCount - 1, textureIDs + 1);
 
     size_t s = 0;
-    
+
     for (int i = 0; i < frameCount; i++)
     {
         glBindTexture(GL_TEXTURE_2D, textureIDs[i]);
-	
+
         glTexImage2D(GL_TEXTURE_2D, 0, Engine::instance()->textureInternalFormat(TEXTURE_R8G8B8A8), a.frames[i].width, a.frames[i].height, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, a.frames[i].data);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -96,17 +96,17 @@ AnimatedTexture::~AnimatedTexture()
  */
 GLuint AnimatedTexture::openGLTexture(int i)
 {
-    if(!loadedAnimationFrames)
+    if (!loadedAnimationFrames)
     {
         m_needFrames = true;
         return 0;
     }
-    if(i >= loadedAnimationFrames - 2)
+    if (i >= loadedAnimationFrames - 2)
         m_needFrames = true;
     else
         m_needFrames = false;
-    
-    if(i >= loadedAnimationFrames)
+
+    if (i >= loadedAnimationFrames)
         return textureIDs[loadedAnimationFrames - 1];
     else
         return textureIDs[i];
@@ -160,26 +160,26 @@ int AnimatedTexture::loadedFrames() const
 
 void AnimatedTexture::loadFrame(const char* data, int width, int height, TextureType type)
 {
-	if(loadedAnimationFrames == frameCount)
-	    return;
-	
-        glBindTexture(GL_TEXTURE_2D, textureIDs[loadedAnimationFrames]);
-	
-	switch(type)
-	{
-	case TEXTURE_A8: 
-	    glTexImage2D(GL_TEXTURE_2D, 0, Engine::instance()->textureInternalFormat(TEXTURE_A8), width, height, 0, GL_ALPHA, GL_UNSIGNED_BYTE, data);
-	    break;
-	case TEXTURE_R8G8B8A8:
-	    glTexImage2D(GL_TEXTURE_2D, 0, Engine::instance()->textureInternalFormat(TEXTURE_R8G8B8A8), width, height, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, data);
-	    break;
-	}
+    if (loadedAnimationFrames == frameCount)
+        return;
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	
-	loadedAnimationFrames++;
- 	m_needFrames = false;
+    glBindTexture(GL_TEXTURE_2D, textureIDs[loadedAnimationFrames]);
+
+    switch (type)
+    {
+    case TEXTURE_A8:
+        glTexImage2D(GL_TEXTURE_2D, 0, Engine::instance()->textureInternalFormat(TEXTURE_A8), width, height, 0, GL_ALPHA, GL_UNSIGNED_BYTE, data);
+        break;
+    case TEXTURE_R8G8B8A8:
+        glTexImage2D(GL_TEXTURE_2D, 0, Engine::instance()->textureInternalFormat(TEXTURE_R8G8B8A8), width, height, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, data);
+        break;
+    }
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+    loadedAnimationFrames++;
+    m_needFrames = false;
 }
 
 bool AnimatedTexture::needFrames() const

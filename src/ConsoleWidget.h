@@ -38,7 +38,7 @@ public:
     void processLogic(int dt);
 
     void keyPressed(SDL_keysym key);
-    
+
     ConsoleWidget& operator=(const ConsoleWidget& other);
 
 private:

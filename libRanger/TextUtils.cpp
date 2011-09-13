@@ -45,16 +45,16 @@
 char *Rangers::convertText(const char *to, const char *from, const char *what, int srcLength, int &destLength)
 {
     iconv_t codec = iconv_open(to, from);
-    if(codec == (iconv_t)-1)
+    if (codec == (iconv_t) - 1)
     {
         std::cerr << "Cannot open text codec: " << strerror(errno) << std::endl;
-	char *r = new char[srcLength + 1];
-	destLength = srcLength + 1;
-	memcpy(r, what, srcLength + 1);
+        char *r = new char[srcLength + 1];
+        destLength = srcLength + 1;
+        memcpy(r, what, srcLength + 1);
         return r;
     }
-    if(srcLength < 0)
-	srcLength = strlen(what);
+    if (srcLength < 0)
+        srcLength = strlen(what);
     char *result = new char[4 * (srcLength + 1)];
 
     size_t inbuflength = srcLength + 1;
@@ -67,13 +67,13 @@ char *Rangers::convertText(const char *to, const char *from, const char *what, i
     iconv(codec, inp, &inbuflength, &pointer, &outbuflength);
 #endif
     size_t l = 4 * (srcLength + 1) - outbuflength;
-    
+
     //if(result[l])
     //{
     //  result[l] = '\0';
     //  outbuflength--;
     //}
-    
+
     result = (char *)realloc(result, l);
     iconv_close(codec);
     destLength = 4 * (srcLength + 1) - outbuflength;
@@ -88,21 +88,21 @@ char *Rangers::convertText(const char *to, const char *from, const char *what, i
  */
 std::wstring Rangers::fromCodec(const char *codec, const char *text, int length)
 {
-    if(length < 0)
-      length = strlen(text);
-    
+    if (length < 0)
+        length = strlen(text);
+
     int outl;
-    
-	//FIXME: Workaround about not working WCHAR_T on Windows XP
+
+    //FIXME: Workaround about not working WCHAR_T on Windows XP
 #ifdef WIN32
     char *data = convertText("UCS-2LE", codec, text, length, outl);
 #else
-	char *data = convertText("WCHAR_T", codec, text, length, outl);
+    char *data = convertText("WCHAR_T", codec, text, length, outl);
 #endif
-    
-    if(!data)
-	return std::wstring();
-    
+
+    if (!data)
+        return std::wstring();
+
     std::wstring result = std::wstring((wchar_t *)data);
     delete data;
     return result;
@@ -125,12 +125,12 @@ std::wstring Rangers::fromASCII(const char *text, int length)
  * \return converted string
  */
 char* Rangers::toCodec(const char *codec, const std::wstring& text, int& resultLength)
-{ 
+{
 //FIXME: Workaround about not working WCHAR_T on Windows XP
 #ifdef WIN32
     return convertText(codec, "UCS-2LE", (char *)text.c_str(), (text.length() + 1) * sizeof(wchar_t), resultLength);
 #else
-	return convertText(codec, "WCHAR_T", (char *)text.c_str(), (text.length() + 1) * sizeof(wchar_t), resultLength);
+    return convertText(codec, "WCHAR_T", (char *)text.c_str(), (text.length() + 1) * sizeof(wchar_t), resultLength);
 #endif
 }
 
@@ -139,12 +139,12 @@ char* Rangers::toCodec(const char *codec, const std::wstring& text, int& resultL
  * \return converted string
  */
 std::string Rangers::toASCII(const std::wstring& text)
-{  
-   int resultLength;
-   char *s = toCodec("ASCII", text, resultLength);
-   std::string r(s, resultLength - 1);
-   delete s;
-   return r;
+{
+    int resultLength;
+    char *s = toCodec("ASCII", text, resultLength);
+    std::string r(s, resultLength - 1);
+    delete s;
+    return r;
 }
 
 /*!
@@ -152,12 +152,12 @@ std::string Rangers::toASCII(const std::wstring& text)
  * \return converted string
  */
 std::string Rangers::toUTF8(const std::wstring& text)
-{  
-   int resultLength;
-   char *s = toCodec("UTF-8", text, resultLength);
-   std::string r(s, resultLength - 1);
-   delete s;
-   return r;
+{
+    int resultLength;
+    char *s = toCodec("UTF-8", text, resultLength);
+    std::string r(s, resultLength - 1);
+    delete s;
+    return r;
 }
 
 /*!
@@ -166,7 +166,7 @@ std::string Rangers::toUTF8(const std::wstring& text)
  */
 std::string Rangers::toLocal(const std::wstring& text)
 {
-	std::string codec;
+    std::string codec;
 #ifdef WIN32
     int cp = GetACP();
     std::ostringstream ss;
@@ -176,11 +176,11 @@ std::string Rangers::toLocal(const std::wstring& text)
     setlocale(LC_ALL, "");
     codec = nl_langinfo(CODESET);
 #endif
-   int resultLength;
-   char *s = toCodec(codec.c_str(), text, resultLength);
-   std::string r(s, resultLength - 1);
-   delete s;
-   return r;
+    int resultLength;
+    char *s = toCodec(codec.c_str(), text, resultLength);
+    std::string r(s, resultLength - 1);
+    delete s;
+    return r;
 }
 
 std::wstring Rangers::fromLocal(const char *text, int length)
@@ -206,15 +206,15 @@ std::wstring Rangers::fromLocal(const char *text, int length)
 std::vector<std::wstring> Rangers::split(const std::wstring& s, wchar_t c)
 {
     std::vector<std::wstring> array;
-    for(std::wstring::const_iterator it = s.begin(); it != s.end();)
+    for (std::wstring::const_iterator it = s.begin(); it != s.end();)
     {
-	while(((*it) == c) && (it != s.end()))
-	    it++;
-	std::wstring::const_iterator begin = it;
-	while(((*it) != c) && (it != s.end()))
-	    it++;
-	if(it != begin)
-	    array.push_back(s.substr(begin - s.begin(), it - begin));
+        while (((*it) == c) && (it != s.end()))
+            it++;
+        std::wstring::const_iterator begin = it;
+        while (((*it) != c) && (it != s.end()))
+            it++;
+        if (it != begin)
+            array.push_back(s.substr(begin - s.begin(), it - begin));
     }
     return array;
 }
@@ -226,10 +226,10 @@ std::vector<std::wstring> Rangers::split(const std::wstring& s, wchar_t c)
 std::wstring Rangers::suffix(const std::wstring& s)
 {
     int pos;
-    if((pos = s.rfind(L'.')) == std::wstring::npos)
+    if ((pos = s.rfind(L'.')) == std::wstring::npos)
         return std::wstring();
     else
-	return s.substr(pos + 1);
+        return s.substr(pos + 1);
 }
 
 /*!
@@ -240,20 +240,20 @@ std::wstring Rangers::basename(const std::wstring& s)
 {
     int endpos = s.rfind(L'.');
     int startpos = s.rfind(L'/');
-    
-    if(endpos == std::wstring::npos)
+
+    if (endpos == std::wstring::npos)
     {
-	if(startpos == std::wstring::npos)
-	    return s;
-	else
-	    return s.substr(startpos + 1);
+        if (startpos == std::wstring::npos)
+            return s;
+        else
+            return s.substr(startpos + 1);
     }
     else
     {
-        if(startpos == std::wstring::npos)
-	    return s.substr(0, endpos);
-	else
-	    return s.substr(startpos + 1, endpos - startpos - 1);
+        if (startpos == std::wstring::npos)
+            return s.substr(0, endpos);
+        else
+            return s.substr(startpos + 1, endpos - startpos - 1);
     }
 }
 
@@ -264,8 +264,8 @@ std::wstring Rangers::basename(const std::wstring& s)
 std::wstring Rangers::directory(const std::wstring& s)
 {
     int pos;
-    if((pos = s.rfind(L'/')) == std::wstring::npos)
+    if ((pos = s.rfind(L'/')) == std::wstring::npos)
         return s;
     else
-	return s.substr(0, pos);
+        return s.substr(0, pos);
 }

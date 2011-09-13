@@ -67,28 +67,26 @@ void DrawA6ToRGBA(unsigned char * bufdes, int bufdesll, unsigned char * graphbuf
             bufdes += bufdesll;
             bufdesrow = bufdes;
         }
-        else
-            if (byte > 0x80)
-            {
-                //pixels found
-                cnt = byte & 0x7f;
-                size -= cnt;
+        else if (byte > 0x80)
+        {
+            //pixels found
+            cnt = byte & 0x7f;
+            size -= cnt;
 
-                do
-                {
-                    *(bufdesrow) = 4 * (63 - *graphbuf);
-                    bufdesrow += 4;
-                    graphbuf++;
-                    cnt--;
-                }
-                while (cnt > 0);
+            do
+            {
+                *(bufdesrow) = 4 * (63 - *graphbuf);
+                bufdesrow += 4;
+                graphbuf++;
+                cnt--;
             }
-            else
-                if (byte < 0x80)
-                {
-                    //shift to right
-                    bufdesrow += byte * 4;
-                }
+            while (cnt > 0);
+        }
+        else if (byte < 0x80)
+        {
+            //shift to right
+            bufdesrow += byte * 4;
+        }
 
         size--;
     }
@@ -116,32 +114,30 @@ void DrawR5G6B5ToRGBA(unsigned char * bufdes, int bufdesll, unsigned char * grap
             bufdes += bufdesll;
             bufdesrow = bufdes;
         }
-        else
-            if (byte > 0x80)
-            {
-                //pixels found
-                cnt = byte & 0x7f;
-                size -= cnt * 2;
+        else if (byte > 0x80)
+        {
+            //pixels found
+            cnt = byte & 0x7f;
+            size -= cnt * 2;
 
-                do
-                {
-                    j = *(uint16_t *)graphbuf;
-                    *(bufdesrow + 0) = 0xff;
-                    *(bufdesrow + 1) = B_565(j);
-                    *(bufdesrow + 2) = G_565(j);
-                    *(bufdesrow + 3) = R_565(j);
-                    bufdesrow += 4;
-                    graphbuf += 2;
-                    cnt--;
-                }
-                while (cnt > 0);
+            do
+            {
+                j = *(uint16_t *)graphbuf;
+                *(bufdesrow + 0) = 0xff;
+                *(bufdesrow + 1) = B_565(j);
+                *(bufdesrow + 2) = G_565(j);
+                *(bufdesrow + 3) = R_565(j);
+                bufdesrow += 4;
+                graphbuf += 2;
+                cnt--;
             }
-            else
-                if (byte < 0x80)
-                {
-                    //shift to right
-                    bufdesrow += byte * 4;
-                }
+            while (cnt > 0);
+        }
+        else if (byte < 0x80)
+        {
+            //shift to right
+            bufdesrow += byte * 4;
+        }
 
         size--;
     }
@@ -165,7 +161,7 @@ void DrawAIToRGBA(unsigned char * bufdes, int bufdesll, unsigned char * graphbuf
     for (i = 0; i < palsize; i++)
     {
         j = *(uint16_t *)graphbuf;
-        alpha = 4 * (63 - *(graphbuf + 2));
+        alpha = 4 * (63 - * (graphbuf + 2));
 
         if (alpha > 0)
         {
@@ -195,29 +191,27 @@ void DrawAIToRGBA(unsigned char * bufdes, int bufdesll, unsigned char * graphbuf
             bufdes += bufdesll;
             bufdesrow = bufdes;
         }
-        else
-            if (byte > 0x80)
-            {
-                //pixels found
-                cnt = byte & 0x7f;
-                size -= cnt;
+        else if (byte > 0x80)
+        {
+            //pixels found
+            cnt = byte & 0x7f;
+            size -= cnt;
 
-                do
-                {
-                    i = *graphbuf; //index of color in palette
-                    *(uint32_t *)bufdesrow = Pal[i];
-                    bufdesrow += 4;
-                    graphbuf++;
-                    cnt--;
-                }
-                while (cnt > 0);
+            do
+            {
+                i = *graphbuf; //index of color in palette
+                *(uint32_t *)bufdesrow = Pal[i];
+                bufdesrow += 4;
+                graphbuf++;
+                cnt--;
             }
-            else
-                if (byte < 0x80)
-                {
-                    //shift to right
-                    bufdesrow += byte * 4;
-                }
+            while (cnt > 0);
+        }
+        else if (byte < 0x80)
+        {
+            //shift to right
+            bufdesrow += byte * 4;
+        }
 
         size--;
     }
@@ -258,156 +252,211 @@ void DrawRGBIToRGBA(unsigned char * bufdes, int bufdesll, unsigned char * graphb
             bufdes += bufdesll;
             bufdesrow = bufdes;
         }
-        else
-            if (byte > 0x80)
-            {
-                //pixels found
-                cnt = byte & 0x7f;
-                size -= cnt;
+        else if (byte > 0x80)
+        {
+            //pixels found
+            cnt = byte & 0x7f;
+            size -= cnt;
 
-                do
-                {
-                    i = *graphbuf; //index of color in palette
-                    *(uint32_t *)bufdesrow = Pal[i];
-                    bufdesrow += 4;
-                    graphbuf++;
-                    cnt--;
-                }
-                while (cnt > 0);
+            do
+            {
+                i = *graphbuf; //index of color in palette
+                *(uint32_t *)bufdesrow = Pal[i];
+                bufdesrow += 4;
+                graphbuf++;
+                cnt--;
             }
-            else
-                if (byte < 0x80)
-                {
-                    //shift to right
-                    bufdesrow += byte * 4;
-                }
+            while (cnt > 0);
+        }
+        else if (byte < 0x80)
+        {
+            //shift to right
+            bufdesrow += byte * 4;
+        }
 
         size--;
     }
 }
 
-void DrawF5ToRGBA(unsigned char * bufdes, int bufdesll, unsigned char * graphbuf) 
+void DrawF5ToRGBA(unsigned char * bufdes, int bufdesll, unsigned char * graphbuf)
 {
-	int i,cnt,cnt2,shlc;
-	int shlca[4];
-	unsigned char byte;
+    int i, cnt, cnt2, shlc;
+    int shlca[4];
+    unsigned char byte;
 
-	byte=graphbuf[12];
-	shlc=shlca[0]=8-(byte & 15);
-	shlca[1]=8-(byte >> 4);
-	byte=graphbuf[13];
-	shlca[2]=8-(byte & 15);
-	shlca[3]=8-(byte >> 4);
+    byte = graphbuf[12];
+    shlc = shlca[0] = 8 - (byte & 15);
+    shlca[1] = 8 - (byte >> 4);
+    byte = graphbuf[13];
+    shlca[2] = 8 - (byte & 15);
+    shlca[3] = 8 - (byte >> 4);
 
-	graphbuf+=16+(((uint32_t *)graphbuf)[2]<<2);
-	
-	unsigned char * bufdesrow=(unsigned char *)bufdes;
+    graphbuf += 16 + (((uint32_t *)graphbuf)[2] << 2);
 
-	uint32_t channel=0;
-	while(true) {
-		byte=*graphbuf; graphbuf++;
+    unsigned char * bufdesrow = (unsigned char *)bufdes;
 
-		if((byte & 0x80)!=0) {
-			cnt=(byte & 0xf)+1;
-			byte=(byte>>4) & 7;
-			if(byte==0) {
-				do {
-					cnt2=(cnt>8)?8:cnt;
-					byte=*graphbuf; graphbuf++;
-					for(i=0;i<cnt2;i++) {
-						*bufdesrow=*bufdesrow+(((byte & 1)+1)<<shlc);
-						byte>>=1;
-						bufdesrow+=4;
-					}
-					cnt-=cnt2;
-				} while(cnt>0);
-			} else if(byte==1) {
-				do {
-					cnt2=(cnt>4)?4:cnt;
-					byte=*graphbuf; graphbuf++;
-					for(i=0;i<cnt2;i++) {
-						*bufdesrow=*bufdesrow+(((byte & 3)+1)<<shlc);
-						byte>>=2;
-						bufdesrow+=4;
-					}
-					cnt-=cnt2;
-				} while(cnt>0);
-			} else if(byte==2) {
-				do {
-					cnt2=(cnt>2)?2:cnt;
-					byte=*graphbuf; graphbuf++;
-					for(i=0;i<cnt2;i++) {
-						*bufdesrow=*bufdesrow+(((byte & 15)+1)<<shlc);
-						byte>>=4;
-						bufdesrow+=4;
-					}
-					cnt-=cnt2;
-				} while(cnt>0);
-			} else if(byte==3) {
-				for(i=0;i<cnt;i++) {
-					byte=*graphbuf; graphbuf++;
-					*bufdesrow=*bufdesrow+((byte+1)<<shlc);
-					bufdesrow+=4;
-				}
-			} else if(byte==4) {
-				do {
-					cnt2=(cnt>8)?8:cnt;
-					byte=*graphbuf; graphbuf++;
-					for(i=0;i<cnt2;i++) {
-						*bufdesrow=*bufdesrow-(((byte & 1)+1)<<shlc);
-						byte>>=1;
-						bufdesrow+=4;
-					}
-					cnt-=cnt2;
-				} while(cnt>0);
-			} else if(byte==5) {
-				do {
-					cnt2=(cnt>4)?4:cnt;
-					byte=*graphbuf; graphbuf++;
-					for(i=0;i<cnt2;i++) {
-						*bufdesrow=*bufdesrow-(((byte & 3)+1)<<shlc);
-						byte>>=2;
-						bufdesrow+=4;
-					}
-					cnt-=cnt2;
-				} while(cnt>0);
-			} else if(byte==6) {
-				do {
-					cnt2=(cnt>2)?2:cnt;
-					byte=*graphbuf; graphbuf++;
-					for(i=0;i<cnt2;i++) {
-						*bufdesrow=*bufdesrow-(((byte & 15)+1)<<shlc);
-						byte>>=4;
-						bufdesrow+=4;
-					}
-					cnt-=cnt2;
-				} while(cnt>0);
-			} else if(byte==7) {
-				for(i=0;i<cnt;i++) {
-					byte=*graphbuf; graphbuf++;
-					*bufdesrow=*bufdesrow-((byte+1)<<shlc);
-					bufdesrow+=4;
-				}
-			}
-		} else if(byte==0) {
-			channel++;
-			if(channel<4) {
-				bufdesrow=((unsigned char *)bufdes)+channel;
-			} else {
-				channel=0;
-				bufdes=((unsigned char *)bufdes)+bufdesll;
-				bufdesrow=(unsigned char *)bufdes;
-			}
-			shlc=shlca[channel];
-		} else if(byte==0x03f) {
-			bufdesrow+=uint32_t(*((uint16_t *)graphbuf))<<2;
-			graphbuf+=2;
-		} else if((byte & 0xc0)==0) {
-			bufdesrow+=uint32_t(byte)<<2;
-		} else if(byte==0x40) {
-			break;
-		}
-	}
+    uint32_t channel = 0;
+    while (true)
+    {
+        byte = *graphbuf;
+        graphbuf++;
+
+        if ((byte & 0x80) != 0)
+        {
+            cnt = (byte & 0xf) + 1;
+            byte = (byte >> 4) & 7;
+            if (byte == 0)
+            {
+                do
+                {
+                    cnt2 = (cnt > 8) ? 8 : cnt;
+                    byte = *graphbuf;
+                    graphbuf++;
+                    for (i = 0; i < cnt2; i++)
+                    {
+                        *bufdesrow = *bufdesrow + (((byte & 1) + 1) << shlc);
+                        byte >>= 1;
+                        bufdesrow += 4;
+                    }
+                    cnt -= cnt2;
+                }
+                while (cnt > 0);
+            }
+            else if (byte == 1)
+            {
+                do
+                {
+                    cnt2 = (cnt > 4) ? 4 : cnt;
+                    byte = *graphbuf;
+                    graphbuf++;
+                    for (i = 0; i < cnt2; i++)
+                    {
+                        *bufdesrow = *bufdesrow + (((byte & 3) + 1) << shlc);
+                        byte >>= 2;
+                        bufdesrow += 4;
+                    }
+                    cnt -= cnt2;
+                }
+                while (cnt > 0);
+            }
+            else if (byte == 2)
+            {
+                do
+                {
+                    cnt2 = (cnt > 2) ? 2 : cnt;
+                    byte = *graphbuf;
+                    graphbuf++;
+                    for (i = 0; i < cnt2; i++)
+                    {
+                        *bufdesrow = *bufdesrow + (((byte & 15) + 1) << shlc);
+                        byte >>= 4;
+                        bufdesrow += 4;
+                    }
+                    cnt -= cnt2;
+                }
+                while (cnt > 0);
+            }
+            else if (byte == 3)
+            {
+                for (i = 0; i < cnt; i++)
+                {
+                    byte = *graphbuf;
+                    graphbuf++;
+                    *bufdesrow = *bufdesrow + ((byte + 1) << shlc);
+                    bufdesrow += 4;
+                }
+            }
+            else if (byte == 4)
+            {
+                do
+                {
+                    cnt2 = (cnt > 8) ? 8 : cnt;
+                    byte = *graphbuf;
+                    graphbuf++;
+                    for (i = 0; i < cnt2; i++)
+                    {
+                        *bufdesrow = *bufdesrow - (((byte & 1) + 1) << shlc);
+                        byte >>= 1;
+                        bufdesrow += 4;
+                    }
+                    cnt -= cnt2;
+                }
+                while (cnt > 0);
+            }
+            else if (byte == 5)
+            {
+                do
+                {
+                    cnt2 = (cnt > 4) ? 4 : cnt;
+                    byte = *graphbuf;
+                    graphbuf++;
+                    for (i = 0; i < cnt2; i++)
+                    {
+                        *bufdesrow = *bufdesrow - (((byte & 3) + 1) << shlc);
+                        byte >>= 2;
+                        bufdesrow += 4;
+                    }
+                    cnt -= cnt2;
+                }
+                while (cnt > 0);
+            }
+            else if (byte == 6)
+            {
+                do
+                {
+                    cnt2 = (cnt > 2) ? 2 : cnt;
+                    byte = *graphbuf;
+                    graphbuf++;
+                    for (i = 0; i < cnt2; i++)
+                    {
+                        *bufdesrow = *bufdesrow - (((byte & 15) + 1) << shlc);
+                        byte >>= 4;
+                        bufdesrow += 4;
+                    }
+                    cnt -= cnt2;
+                }
+                while (cnt > 0);
+            }
+            else if (byte == 7)
+            {
+                for (i = 0; i < cnt; i++)
+                {
+                    byte = *graphbuf;
+                    graphbuf++;
+                    *bufdesrow = *bufdesrow - ((byte + 1) << shlc);
+                    bufdesrow += 4;
+                }
+            }
+        }
+        else if (byte == 0)
+        {
+            channel++;
+            if (channel < 4)
+            {
+                bufdesrow = ((unsigned char *)bufdes) + channel;
+            }
+            else
+            {
+                channel = 0;
+                bufdes = ((unsigned char *)bufdes) + bufdesll;
+                bufdesrow = (unsigned char *)bufdes;
+            }
+            shlc = shlca[channel];
+        }
+        else if (byte == 0x03f)
+        {
+            bufdesrow += uint32_t(*((uint16_t *)graphbuf)) << 2;
+            graphbuf += 2;
+        }
+        else if ((byte & 0xc0) == 0)
+        {
+            bufdesrow += uint32_t(byte) << 2;
+        }
+        else if (byte == 0x40)
+        {
+            break;
+        }
+    }
 }
 
 void FillARGBToRGBA(unsigned char *bufdes, int destwidth, int x, int y, int w, int h, unsigned char *graphbuf)
@@ -433,8 +482,8 @@ void FillR5G6B5ToRGBA(unsigned char *bufdes, int destwidth, int x, int y, int w,
 
     for (int i = 0; i < w * h; i++)
     {
-        dest[destwidth * (i/w + y) + x + i % w] = R5G6B5ToR8G8B8(src[i]);
-        dest[destwidth * (i/w + y) + x + i % w] |= 0xff;
+        dest[destwidth * (i / w + y) + x + i % w] = R5G6B5ToR8G8B8(src[i]);
+        dest[destwidth * (i / w + y) + x + i % w] |= 0xff;
     }
 }
 
@@ -496,7 +545,7 @@ GIFrame Rangers::loadGIImageData(const GIFrameHeader& image, GIFrame *background
         resultFrame = GIFrame();
         break;
     }
-    
+
     return resultFrame;
 }
 
@@ -525,13 +574,13 @@ GIFrame Rangers::loadFrameType2(const GIFrameHeader& image)
 
 
     if (image.layers[0].size)
-        DrawR5G6B5ToRGBA(rgba + (image.layers[0].startY * width + image.layers[0].startX)*4, width * 4, (unsigned char *)image.layers[0].data);
+        DrawR5G6B5ToRGBA(rgba + (image.layers[0].startY * width + image.layers[0].startX) * 4, width * 4, (unsigned char *)image.layers[0].data);
 
     if (image.layers[1].size)
-        DrawR5G6B5ToRGBA(rgba + (image.layers[1].startY * width + image.layers[1].startX)*4,  width * 4, (unsigned char *)image.layers[1].data);
+        DrawR5G6B5ToRGBA(rgba + (image.layers[1].startY * width + image.layers[1].startX) * 4,  width * 4, (unsigned char *)image.layers[1].data);
 
     if (image.layers[2].size)
-        DrawA6ToRGBA(rgba + (image.layers[2].startY * width + image.layers[2].startX)*4,  width * 4, (unsigned char *)image.layers[2].data);
+        DrawA6ToRGBA(rgba + (image.layers[2].startY * width + image.layers[2].startX) * 4,  width * 4, (unsigned char *)image.layers[2].data);
 
     result.data = rgba;
 
@@ -548,58 +597,58 @@ GIFrame Rangers::loadFrameType5(const GIFrameHeader& image, GIFrame *background)
 
     if (image.type != 5)
         return result;
-    
+
     int width;
     int height;
-    
+
     /*if(background)
     {
-	width = image.finishX > background->width ? width = image.finishX : background->width;
-	height = image.finishY > background->height ? image.finishY : background->height;
+    width = image.finishX > background->width ? width = image.finishX : background->width;
+    height = image.finishY > background->height ? image.finishY : background->height;
     }
     else*/
     {
         width = image.finishX;
-	height = image.finishY;
+        height = image.finishY;
     }
     result.width = width;
     result.height = height;
 
     unsigned char *rgba = new unsigned char[width * height * 4];
 
-    if(background)
-	memcpy(rgba, background->data, width * height * 4);
+    if (background)
+        memcpy(rgba, background->data, width * height * 4);
     else
-	memset(rgba, 0x0, width * height * 4);
-    
-    for(int i = 0; i < width * height; i++)
+        memset(rgba, 0x0, width * height * 4);
+
+    for (int i = 0; i < width * height; i++)
     {
-	unsigned char a = rgba[i * 4];
-	unsigned char b = rgba[i * 4 + 1];
-	unsigned char g = rgba[i * 4 + 2];
-	unsigned char r = rgba[i * 4 + 3];
-	
-	rgba[i * 4] = b;
-	rgba[i * 4 + 1] = g;
-	rgba[i * 4 + 2] = r;
-	rgba[i * 4 + 3] = a;
+        unsigned char a = rgba[i * 4];
+        unsigned char b = rgba[i * 4 + 1];
+        unsigned char g = rgba[i * 4 + 2];
+        unsigned char r = rgba[i * 4 + 3];
+
+        rgba[i * 4] = b;
+        rgba[i * 4 + 1] = g;
+        rgba[i * 4 + 2] = r;
+        rgba[i * 4 + 3] = a;
     }
-    
+
 
     if (image.layers[0].size)
-        DrawF5ToRGBA(rgba + (image.layers[0].startY * width + image.layers[0].startX)*4, width * 4, (unsigned char *)image.layers[0].data);
-    
-    for(int i = 0; i < width * height; i++)
+        DrawF5ToRGBA(rgba + (image.layers[0].startY * width + image.layers[0].startX) * 4, width * 4, (unsigned char *)image.layers[0].data);
+
+    for (int i = 0; i < width * height; i++)
     {
-	unsigned char b = rgba[i * 4];
-	unsigned char g = rgba[i * 4 + 1];
-	unsigned char r = rgba[i * 4 + 2];
-	unsigned char a = rgba[i * 4 + 3];
-	
-	rgba[i * 4] = a;
-	rgba[i * 4 + 1] = b;
-	rgba[i * 4 + 2] = g;
-	rgba[i * 4 + 3] = r;
+        unsigned char b = rgba[i * 4];
+        unsigned char g = rgba[i * 4 + 1];
+        unsigned char r = rgba[i * 4 + 2];
+        unsigned char a = rgba[i * 4 + 3];
+
+        rgba[i * 4] = a;
+        rgba[i * 4 + 1] = b;
+        rgba[i * 4 + 2] = g;
+        rgba[i * 4 + 3] = r;
     }
 
     result.data = rgba;
@@ -631,7 +680,7 @@ GIFrame Rangers::loadFrameType1(const GIFrameHeader& image)
     memset(rgba, 0, width * height * 4);
 
     if (image.layers[0].size)
-        DrawR5G6B5ToRGBA(rgba + (image.layers[0].startY * width + image.layers[0].startX)*4, width * 4, (unsigned char *)image.layers[0].data);
+        DrawR5G6B5ToRGBA(rgba + (image.layers[0].startY * width + image.layers[0].startX) * 4, width * 4, (unsigned char *)image.layers[0].data);
 
     result.data = rgba;
 
@@ -662,7 +711,7 @@ GIFrame Rangers::loadFrameType4(const GIFrameHeader& image)
     memset(rgba, 0, width * height * 4);
 
     if (image.layers[0].size)
-        FillARGBItoRGBA(rgba + (image.layers[0].startY * width + image.layers[0].startX)*4, (unsigned char *)image.layers[0].data, (unsigned char *)image.layers[1].data, width, height);
+        FillARGBItoRGBA(rgba + (image.layers[0].startY * width + image.layers[0].startX) * 4, (unsigned char *)image.layers[0].data, (unsigned char *)image.layers[1].data, width, height);
 
     result.data = rgba;
 
@@ -693,10 +742,10 @@ GIFrame Rangers::loadFrameType3(const GIFrameHeader& image)
     memset(rgba, 0, width * height * 4);
 
     if (image.layers[0].size)
-        DrawRGBIToRGBA(rgba + (image.layers[0].startY * width + image.layers[0].startX)*4, width * 4, (unsigned char *)image.layers[0].data);
+        DrawRGBIToRGBA(rgba + (image.layers[0].startY * width + image.layers[0].startX) * 4, width * 4, (unsigned char *)image.layers[0].data);
 
     if (image.layers[1].size)
-        DrawAIToRGBA(rgba + (image.layers[1].startY * width + image.layers[1].startX)*4, width * 4, (unsigned char *)image.layers[1].data);
+        DrawAIToRGBA(rgba + (image.layers[1].startY * width + image.layers[1].startX) * 4, width * 4, (unsigned char *)image.layers[1].data);
 
     result.data = rgba;
 
@@ -732,17 +781,16 @@ GIFrame Rangers::loadFrameType0(const GIFrameHeader& image)
 
         result.data = rgba;
     }
-    else
-        if ((image.rBitmask == 0xF800) && (image.gBitmask == 0x7E0) && (image.bBitmask == 0x1F))
-        {
-            unsigned char *rgba = new unsigned char[width * height * 4];
-            memset(rgba, 0, width * height * 4);
+    else if ((image.rBitmask == 0xF800) && (image.gBitmask == 0x7E0) && (image.bBitmask == 0x1F))
+    {
+        unsigned char *rgba = new unsigned char[width * height * 4];
+        memset(rgba, 0, width * height * 4);
 
-            if (image.layers[0].size)
-                FillR5G6B5ToRGBA(rgba, width, image.layers[0].startX, image.layers[0].startY, (image.layers[0].finishX - image.layers[0].startX), (image.layers[0].finishY - image.layers[0].startY), (unsigned char *)image.layers[0].data);
+        if (image.layers[0].size)
+            FillR5G6B5ToRGBA(rgba, width, image.layers[0].startX, image.layers[0].startY, (image.layers[0].finishX - image.layers[0].startX), (image.layers[0].finishY - image.layers[0].startY), (unsigned char *)image.layers[0].data);
 
-            result.data = rgba;
-        }
+        result.data = rgba;
+    }
 
     return result;
 }
@@ -770,7 +818,7 @@ GIFrame Rangers::loadGIFrame(const char *data, size_t &offset, GIFrame *backgrou
 
     if (finishY)
         image.finishY = finishY;
-    
+
     image.startX -= startX;
     image.startY -= startY;
     image.finishX -= startX;
@@ -827,7 +875,7 @@ GIFrame Rangers::loadGIFrame(std::istream& stream, size_t &offset, GIFrame *back
 
     if (finishY)
         image.finishY = finishY;
-    
+
     image.startX -= startX;
     image.startY -= startY;
     image.finishX -= startX;
@@ -842,7 +890,7 @@ GIFrame Rangers::loadGIFrame(std::istream& stream, size_t &offset, GIFrame *back
         stream.read((char*)image.layers[i].data, image.layers[i].size);
         delta += image.layers[i].size + 32;
 
-	image.layers[i].startX -= startX;
+        image.layers[i].startX -= startX;
         image.layers[i].startY -= startY;
         image.layers[i].finishX -= startX;
         image.layers[i].finishY -= startY;

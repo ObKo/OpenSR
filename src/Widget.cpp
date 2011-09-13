@@ -49,11 +49,11 @@ Widget::Widget(const Rangers::Widget& other): Object(other)
 
 void Widget::mouseMove(int x, int y)
 {
-	lock();
+    lock();
     /*for (std::list<Widget*>::const_reverse_iterator i = childWidgets.rbegin(); i != childWidgets.rend(); i++)
     {
         Rect bb = (*i)->getBoundingRect();
-	    Vector pos = (*i)->position();
+        Vector pos = (*i)->position();
         if ((bb.x1 + pos.x < x) && (bb.x2 + pos.x > x) && (bb.y1 + pos.y < y) && (bb.y2 + pos.y > y))
         {
             if ((*i) != currentChildWidget)
@@ -76,12 +76,12 @@ void Widget::mouseMove(int x, int y)
 
 void Widget::mouseEnter()
 {
-	leftMouseButtonPressed = false;
+    leftMouseButtonPressed = false;
 }
 
 void Widget::mouseLeave()
 {
-	leftMouseButtonPressed = false;
+    leftMouseButtonPressed = false;
 }
 
 void Widget::keyPressed(SDL_keysym key)
@@ -91,17 +91,17 @@ void Widget::keyPressed(SDL_keysym key)
 
 void Widget::mouseDown(uint8_t key, int x, int y)
 {
-	if(key == SDL_BUTTON_LEFT)
-		leftMouseButtonPressed = true;
+    if (key == SDL_BUTTON_LEFT)
+        leftMouseButtonPressed = true;
 }
 
 void Widget::mouseUp(uint8_t key, int x, int y)
 {
-	if(leftMouseButtonPressed && (key == SDL_BUTTON_LEFT))
-	{
-		leftMouseButtonPressed = false;
-		mouseClick(x, y);
-	}
+    if (leftMouseButtonPressed && (key == SDL_BUTTON_LEFT))
+    {
+        leftMouseButtonPressed = false;
+        mouseClick(x, y);
+    }
 }
 
 void Widget::mouseClick(int x, int y)
@@ -111,7 +111,7 @@ void Widget::mouseClick(int x, int y)
 
 void Widget::addWidget(Widget* w)
 {
-    if(w->parent() == this)
+    if (w->parent() == this)
         return;
     lock();
     addChild(w);
@@ -133,8 +133,8 @@ void Widget::removeWidget(Widget* w)
     lock();
     childWidgets.remove(w);
     removeChild(w);
-    if(currentChildWidget == w)
-	currentChildWidget = 0;
+    if (currentChildWidget == w)
+        currentChildWidget = 0;
     unlock();
 }
 
@@ -150,14 +150,14 @@ int Widget::width() const
 
 Widget& Widget::operator=(const Rangers::Widget& other)
 {
-    if(this == &other)
-	return *this;
-    
+    if (this == &other)
+        return *this;
+
     widgetWidth = other.widgetWidth;
     widgetHeight = other.widgetHeight;
     markToUpdate();
-    
-    ::Object::operator=(other);    
+
+    ::Object::operator=(other);
     return *this;
 }
 

@@ -29,12 +29,12 @@ using namespace Rangers;
 AnimatedSprite::AnimatedSprite(boost::shared_ptr<AnimatedTexture> texture,  Object *parent): Sprite(texture, parent)
 {
     t = 0;
-    animFrame= 0;
+    animFrame = 0;
     singleShot = false;
-    if(!texture)
+    if (!texture)
     {
         started = false;
-	frameTime = 0;
+        frameTime = 0;
     }
     else
     {
@@ -56,14 +56,14 @@ AnimatedSprite& AnimatedSprite::operator=(const Rangers::AnimatedSprite& other)
 {
     if (this == &other)
         return *this;
-    
+
     t = other.t;
     animFrame = other.animFrame;
     singleShot = other.singleShot;
     started = other.started;
     animFrame = other.animFrame;
     frameTime = other.frameTime;
-      
+
     ::Sprite::operator=(other);
     return *this;
 }
@@ -72,20 +72,20 @@ AnimatedSprite& AnimatedSprite::operator=(const Rangers::AnimatedSprite& other)
 
 void AnimatedSprite::processLogic(int dt)
 {
-    if(!spriteTexture)
+    if (!spriteTexture)
         return;
     AnimatedTexture *texture = static_cast<AnimatedTexture *>(spriteTexture.get());
 
-    if(started)
+    if (started)
     {
-	while (t > frameTime)
-	{
-	    if((texture->loadedFrames() == texture->count()) || (animFrame < texture->loadedFrames() - 1))
+        while (t > frameTime)
+        {
+            if ((texture->loadedFrames() == texture->count()) || (animFrame < texture->loadedFrames() - 1))
                 animFrame = (animFrame + 1) % texture->count();
-	    t -= frameTime;
-	}
+            t -= frameTime;
+        }
 
-	t += dt;
+        t += dt;
     }
 }
 
@@ -93,31 +93,31 @@ void AnimatedSprite::draw()
 {
     if (!spriteTexture)
         return;
-    
-    if(!prepareDraw())
+
+    if (!prepareDraw())
         return;
 
     GLuint texture = ((AnimatedTexture*)spriteTexture.get())->openGLTexture(animFrame);
-    
-    if(!texture)
+
+    if (!texture)
         return;
-    
+
     glBindTexture(GL_TEXTURE_2D, texture);
     if (textureScaling == TEXTURE_TILE_X)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     else
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 
     if (textureScaling == TEXTURE_TILE_Y)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     else
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-    
+
     if (textureScaling == TEXTURE_TILE)
     {
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    }   
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    }
 
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -126,7 +126,7 @@ void AnimatedSprite::draw()
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
 
     glVertexPointer(2, GL_FLOAT, sizeof(Vertex), 0);
-    glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), BUFFER_OFFSET(sizeof(float)*2));
+    glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), BUFFER_OFFSET(sizeof(float) * 2));
 
     glDrawArrays(GL_QUADS, 0, vertexCount);
 
@@ -153,7 +153,7 @@ void AnimatedSprite::setFrame(int f)
 
 void AnimatedSprite::setFPS(float f)
 {
-    if(f <= 0.0f)
+    if (f <= 0.0f)
         frameTime = INT_MAX;
     frameTime = 1000.0f / f;
 }

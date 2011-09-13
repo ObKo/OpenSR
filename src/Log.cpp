@@ -36,7 +36,7 @@ Log* Log::instance()
 {
     if (!logInstance)
         logInstance = new Log();
-    
+
     return logInstance;
 }
 
@@ -45,37 +45,37 @@ void Log::writeLogEntry(const LogEntry& s)
     bufferMutex.lock();
     logs.push_back(s);
     isNew = true;
-    
+
     wstring prefix;
-    
-    switch(s.level)
+
+    switch (s.level)
     {
     case LDEBUG:
-	prefix = L"[--] ";
-	break;
+        prefix = L"[--] ";
+        break;
     case LINFO:
-	prefix = L"[II] ";
-	break;
+        prefix = L"[II] ";
+        break;
     case LWARNING:
-	prefix = L"[WW] ";
-	break;
+        prefix = L"[WW] ";
+        break;
     case LERROR:
-	prefix = L"[EE] ";
-	break;
+        prefix = L"[EE] ";
+        break;
     }
-    
+
 #ifdef __unix__
-    switch(s.level)
+    switch (s.level)
     {
     case LINFO:
-	prefix = L"\e[0;32m" + prefix;
-	break;
+        prefix = L"\e[0;32m" + prefix;
+        break;
     case LWARNING:
-	prefix = L"\e[0;33m" + prefix;
-	break;
+        prefix = L"\e[0;33m" + prefix;
+        break;
     case LERROR:
-	prefix = L"\e[0;31m" + prefix;
-	break;
+        prefix = L"\e[0;31m" + prefix;
+        break;
     }
     cout << toLocal(prefix + s.text) << "\e[0m" << endl;
 #elif _WIN32
@@ -83,8 +83,8 @@ void Log::writeLogEntry(const LogEntry& s)
 #else
     cout << toLocal(prefix + s.text) << endl;
 #endif
-    
-    
+
+
     bufferMutex.unlock();
 }
 
@@ -152,7 +152,7 @@ Log::Logger::Logger(const Rangers::Log::Logger& other)
 
 Log::Logger::~Logger()
 {
-    if(loggerStream.use_count() == 1)
+    if (loggerStream.use_count() == 1)
         Log::instance()->writeLogEntry(LogEntry(m_logLevel, loggerStream->str(), time(0)));
 }
 

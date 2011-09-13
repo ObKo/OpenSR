@@ -72,15 +72,15 @@ Label::Label(const Rangers::Label& other): Sprite(other)
 
 Label& Label::operator=(const Rangers::Label& other)
 {
-    if(this == &other)
-	return *this;
-    
+    if (this == &other)
+        return *this;
+
     labelFont = other.labelFont;
     labelText = other.labelText;
     textWordWrap = other.textWordWrap;
     fixedSize = other.fixedSize;
-    
-    ::Sprite::operator=(other);    
+
+    ::Sprite::operator=(other);
     return *this;
 }
 
@@ -110,7 +110,7 @@ void Label::setText(const std::wstring& text)
 
 void Label::processMain()
 {
-    if(!labelFont)
+    if (!labelFont)
         return;
     lock();
 
@@ -124,7 +124,7 @@ void Label::processMain()
         spriteWidth = spriteTexture->width();
         spriteHeight = spriteTexture->height();
     }
-    
+
     unlock();
     ::Sprite::processMain();
 }

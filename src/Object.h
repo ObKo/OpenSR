@@ -56,7 +56,7 @@ public:
     Object* parent() const;
 
     void setLayer(int layer);
-    
+
     Object& operator=(const Object& other);
 
 private:

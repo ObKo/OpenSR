@@ -1,22 +1,22 @@
 SET(LIBRANGERS_SOURCES
-	GILoader.cpp
-	GAILoader.cpp
-	HAILoader.cpp
-	ZLib.cpp
-	PKG.cpp
-	RPKG.cpp
-	TextUtils.cpp
+    GILoader.cpp
+    GAILoader.cpp
+    HAILoader.cpp
+    ZLib.cpp
+    PKG.cpp
+    RPKG.cpp
+    TextUtils.cpp
 )
 
 SET(LIBRANGERS_HEADERS
-	libRanger.h
+    libRanger.h
 )
 
 FIND_PACKAGE(ZLIB REQUIRED)
 
 INCLUDE_DIRECTORIES(
-	${ZLIB_INCLUDE_DIRS}
-	${ICONV_INCLUDE_DIR}
+    ${ZLIB_INCLUDE_DIRS}
+    ${ICONV_INCLUDE_DIR}
 )
 
 ADD_LIBRARY(ranger ${LIBRANGERS_SOURCES} ${LIBRANGERS_HEADERS})

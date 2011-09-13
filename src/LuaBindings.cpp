@@ -26,7 +26,7 @@ AnimatedTexture* Rangers::getPointer(boost::shared_ptr<AnimatedTexture> sp)
 
 void Rangers::luaDebug(std::wstring s)
 {
-     Log::debug() << L"Lua: " << s;
+    Log::debug() << L"Lua: " << s;
 }
 
 void Rangers::freePointer(boost::shared_ptr<Font> *sp)

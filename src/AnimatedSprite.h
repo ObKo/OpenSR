@@ -34,20 +34,20 @@ public:
 
     void processLogic(int dt);
     void draw();
-    
+
     void setSingleShot(bool ss);
     void start();
     void stop();
     void reset();
-    
+
     bool isStarted() const;
     bool isSingleShot() const;
-    
+
     int currentFrame() const;
     float fps() const;
     void setFrame(int f);
     void setFPS(float f);
-    
+
     AnimatedSprite& operator=(const AnimatedSprite& other);
 
 private:

@@ -95,22 +95,22 @@ GAIAnimation Rangers::loadGAIAnimation(std::istream& stream, size_t &offset, GIF
             {
                 stream.seekg(giOffset, ios_base::beg);
                 header.frames[i] = loadGIFrame(stream, giOffset, background, header.finishX, header.finishY);
-	    }
-            if(background)
-		background = &(header.frames[i]);
+            }
+            if (background)
+                background = &(header.frames[i]);
         }
         else
         {
             GIFrame frame;
             frame.width = header.finishX;
             frame.height = header.finishY;
-            frame.data = new unsigned char[frame.width*frame.height*4];
-	    memset(frame.data, 0, frame.width*frame.height*4);
-	    if(background)
-		copyImageData(frame.data, frame.width, header.startX, header.startY, background->width, background->height, background->data);
-            
-	    header.frames[i] = frame;
-	    background = &(header.frames[i]);
+            frame.data = new unsigned char[frame.width * frame.height * 4];
+            memset(frame.data, 0, frame.width * frame.height * 4);
+            if (background)
+                copyImageData(frame.data, frame.width, header.startX, header.startY, background->width, background->height, background->data);
+
+            header.frames[i] = frame;
+            background = &(header.frames[i]);
         }
 
         delta += giSize + 2 * sizeof(uint32_t);
@@ -175,21 +175,21 @@ GAIAnimation Rangers::loadGAIAnimation(const char *data, GIFrame *background)
                 size_t offset = 0;
                 header.frames[i] = loadGIFrame(p, offset, background, header.startX, header.startY, header.finishX, header.finishY);
             }
-            if(background)
-		background = &(header.frames[i]);
+            if (background)
+                background = &(header.frames[i]);
         }
         else
         {
             GIFrame frame;
             frame.width = width;
             frame.height = height;
-            frame.data = new unsigned char[frame.width*frame.height*4];
-	    memset(frame.data, 0, frame.width*frame.height*4);
-	    if(background)
-		copyImageData(frame.data, frame.width, 0, 0, background->width, background->height, background->data);
-            
-	    header.frames[i] = frame;
-	    background = &(header.frames[i]);
+            frame.data = new unsigned char[frame.width * frame.height * 4];
+            memset(frame.data, 0, frame.width * frame.height * 4);
+            if (background)
+                copyImageData(frame.data, frame.width, 0, 0, background->width, background->height, background->data);
+
+            header.frames[i] = frame;
+            background = &(header.frames[i]);
         }
     }
 

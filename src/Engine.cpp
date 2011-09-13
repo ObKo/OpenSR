@@ -85,7 +85,7 @@ int Engine::fpsCounter()
     while (engineInstance->gameRunning)
     {
         SDL_Delay(1000);
-	char str[255];
+        char str[255];
         sprintf(str, "%d", engineInstance->frames);
         if (engineInstance->frames >= 60)
             engineInstance->fpsLabel.setColor(0, 1, 0);
@@ -142,7 +142,7 @@ void Engine::init(int w, int h, bool fullscreen)
 
     SDL_EnableKeyRepeat(660, 40);
     SDL_EnableUNICODE(1);
-    
+
     width = screen->w;
     height = screen->h;
 
@@ -164,31 +164,31 @@ void Engine::init(int w, int h, bool fullscreen)
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(0.0f, width, height, 0.0f, -1.0f, 1.0f);
-    
+
     std::ifstream startupScript("opensrrc");
-    if(startupScript.is_open())
+    if (startupScript.is_open())
     {
-	char str[255];
-	while(!startupScript.eof())
-	{
-	    startupScript.getline(str, 255);
-	    execCommand(fromUTF8(str));
-	}
-	startupScript.close();
+        char str[255];
+        while (!startupScript.eof())
+        {
+            startupScript.getline(str, 255);
+            execCommand(fromUTF8(str));
+        }
+        startupScript.close();
     }
 
     engineFont = ResourceManager::instance()->loadFont(L"DroidSans.ttf", 13);
     monospaceFont = ResourceManager::instance()->loadFont(L"DroidSansMono.ttf", 13);
 
     frames = 0;
-    
+
     mainNode.setPosition(0, 0);
 
     fpsLabel = Label("0", 0, monospaceFont, POSITION_X_LEFT, POSITION_Y_TOP);
     fpsLabel.setPosition(5, 5);
 
     consoleWidget = ConsoleWidget(width, 168);
-    
+
     LuaWidget *lw = new LuaWidget(L"data/test.lua");
     addWidget(lw);
 }
@@ -233,8 +233,8 @@ int Engine::run()
             (*i)->processMain();
         updateList.clear();
         updateMutex.unlock();
-	
-	ResourceManager::instance()->processMain();
+
+        ResourceManager::instance()->processMain();
 
         processEvents();
         paint();
@@ -276,7 +276,7 @@ int Engine::screenWidth() const
 
 GLint Engine::textureInternalFormat(TextureType t) const
 {
-    switch(t)
+    switch (t)
     {
     case TEXTURE_A8:
         return GL_COMPRESSED_ALPHA_ARB;
@@ -301,36 +301,36 @@ void Engine::focusWidget(Widget* w)
 
 std::wstring Engine::addObject(Object* object, const std::wstring& name)
 {
-    if(!object)
-	return wstring();
-    
+    if (!object)
+        return wstring();
+
     wstring objectName;
-    
-    if(name.empty())
-	objectName = L"object";
+
+    if (name.empty())
+        objectName = L"object";
     else
         objectName = name;
-    
-    if(!(object->parent()))
-	mainNode.addChild(object);
-    
+
+    if (!(object->parent()))
+        mainNode.addChild(object);
+
     std::map<std::wstring, Object*>::iterator it = objects.find(objectName);
-    if(it != objects.end())
+    if (it != objects.end())
     {
-	int i = 1;
-	wstring n;
-	while(it != objects.end())
-	{
-	    wostringstream s(objectName);
-	    s.seekp(0, ios_base::end);
-	    s << i;
-	    n = s.str();
-	    it = objects.find(n);
-	    i++;
-	}
-	Log::warning() << L"Object \"" << objectName << "\" exists. Renamed to \"" << n << "\""; 
-	objects[n] = object;
-	return n;
+        int i = 1;
+        wstring n;
+        while (it != objects.end())
+        {
+            wostringstream s(objectName);
+            s.seekp(0, ios_base::end);
+            s << i;
+            n = s.str();
+            it = objects.find(n);
+            i++;
+        }
+        Log::warning() << L"Object \"" << objectName << "\" exists. Renamed to \"" << n << "\"";
+        objects[n] = object;
+        return n;
     }
     objects[objectName] = object;
     return objectName;
@@ -338,31 +338,31 @@ std::wstring Engine::addObject(Object* object, const std::wstring& name)
 
 Object* Engine::getObject(const std::wstring& name)
 {
-    if(name.empty())
+    if (name.empty())
         return 0;
     std::map<std::wstring, Object*>::iterator it = objects.find(name);
-    if(it != objects.end())
+    if (it != objects.end())
         return (*it).second;
     else
     {
-        Log::warning() << L"No such object: " << name; 
+        Log::warning() << L"No such object: " << name;
         return 0;
     }
 }
 
 void Engine::removeObject(const std::wstring& name)
 {
-    if(name.empty())
+    if (name.empty())
         return;
-    
+
     std::map<std::wstring, Object*>::iterator it = objects.find(name);
-    if(it != objects.end())
+    if (it != objects.end())
     {
-        delete (*it).second;
+        delete(*it).second;
         objects.erase(it);
     }
     else
-        Log::warning() << L"No such object: " << name; 
+        Log::warning() << L"No such object: " << name;
 }
 
 void Engine::processEvents()
@@ -398,9 +398,9 @@ void Engine::processEvents()
             processMouseMove(event.motion);
             break;
         case SDL_MOUSEBUTTONDOWN:
-        	if (currentWidget)
-        		currentWidget->mouseDown(event.button.button, event.button.x, event.button.y);
-        	break;
+            if (currentWidget)
+                currentWidget->mouseDown(event.button.button, event.button.x, event.button.y);
+            break;
         case SDL_MOUSEBUTTONUP:
             if (currentWidget)
                 currentWidget->mouseUp(event.button.button, event.button.x, event.button.y);
@@ -437,8 +437,8 @@ void Engine::processMouseMove(SDL_MouseMotionEvent e)
 
 void Engine::execCommand(const std::wstring& what)
 {
-    if(what.empty())
-	return;
+    if (what.empty())
+        return;
     wistringstream args(what);
     wstring command;
     args >> command;
@@ -493,10 +493,10 @@ void Engine::execCommand(const std::wstring& what)
             {
                 Sprite *s = new Sprite(t, &mainNode, (TextureScaling)scaling);
                 mainNode.addChild(s);
-		wstring objName = addObject(s, fileName);
+                wstring objName = addObject(s, fileName);
                 s->setGeometry(w, h);
                 s->setPosition(x, y);
-		Log::info() << "Sprite \"" << objName << "\" loaded";
+                Log::info() << "Sprite \"" << objName << "\" loaded";
             }
         }
     }
@@ -521,13 +521,13 @@ void Engine::execCommand(const std::wstring& what)
             if (t)
             {
                 AnimatedSprite *s = new AnimatedSprite(t, &mainNode);
-		s->setFrame(currentFrame);
+                s->setFrame(currentFrame);
                 mainNode.addChild(s);
-		wstring objName = addObject(s, fileName);
+                wstring objName = addObject(s, fileName);
                 s->setGeometry(w, h);
                 s->setPosition(x, y);
                 s->setTextureScaling((TextureScaling)scaling);
-		Log::info() << "Animation \"" << objName << "\" loaded";
+                Log::info() << "Animation \"" << objName << "\" loaded";
             }
         }
     }
@@ -535,7 +535,7 @@ void Engine::execCommand(const std::wstring& what)
     {
         wstring name;
         args >> name;
-	removeObject(name);
+        removeObject(name);
     }
     else
         Log::error() << wstring(L"Unknown command: ") << command;

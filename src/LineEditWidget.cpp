@@ -23,9 +23,9 @@ using namespace Rangers;
 
 void LineEditWidget::draw()
 {
-    if(!prepareDraw())
+    if (!prepareDraw())
         return;
-    
+
     label.draw();
     glBindTexture(GL_TEXTURE_2D, 0);
     glColor3f(1, 1, 1);
@@ -49,7 +49,7 @@ void LineEditWidget::draw()
 }
 
 LineEditWidget::LineEditWidget(float w, float h, boost::shared_ptr< Font > font, Object* parent):
-        Widget(parent)
+    Widget(parent)
 {
     if (!font)
         font = Engine::instance()->defaultFont();
@@ -86,9 +86,9 @@ LineEditWidget::LineEditWidget(const Rangers::LineEditWidget& other): Widget(oth
 
 LineEditWidget& LineEditWidget::operator=(const Rangers::LineEditWidget& other)
 {
-    if(this == &other)
+    if (this == &other)
         return *this;
-    
+
     label = other.label;
     editText = other.editText;
     border = 0;
@@ -96,7 +96,7 @@ LineEditWidget& LineEditWidget::operator=(const Rangers::LineEditWidget& other)
     position = 0;
     cursorVisible = false;
     cursorTime = 0;
-    
+
     ::Widget::operator=(other);
     return *this;
 }

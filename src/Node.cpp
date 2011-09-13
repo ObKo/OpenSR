@@ -24,12 +24,12 @@ using namespace boost;
 
 void Node::draw()
 {
-    if(!prepareDraw())
+    if (!prepareDraw())
         return;
-    
+
     for (std::list<Object*>::const_iterator i = objectChilds.begin(); i != objectChilds.end(); i++)
         (*i)->draw();
-    
+
     endDraw();
 }
 

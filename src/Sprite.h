@@ -34,7 +34,7 @@ public:
     Sprite(Object *parent = 0);
     Sprite(boost::shared_ptr<Texture> texture, Object *parent = 0, TextureScaling  ts = TEXTURE_NORMAL, SpriteXPosition xpos = POSITION_X_LEFT, SpriteYPosition ypos = POSITION_Y_TOP);
     Sprite(const Sprite& other);
-    
+
     ~Sprite();
 
     void draw();
@@ -46,11 +46,11 @@ public:
     void setWidth(float width);
     void setHeight(float height);
     void setTextureScaling(TextureScaling  ts);
-    
+
     float width() const;
     float height() const;
     boost::shared_ptr<Texture> texture() const;
-    
+
     Sprite& operator=(const Sprite& other);
 
 protected:

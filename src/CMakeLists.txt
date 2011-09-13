@@ -1,95 +1,95 @@
 SET(SOURCES
-	Engine.cpp
-	Node.cpp
-	Object.cpp
-	Sprite.cpp
-	Types.cpp
-	main.cpp
-	Texture.cpp
-	Label.cpp
-	Font.cpp
-	AnimatedTexture.cpp
-	AnimatedSprite.cpp
-	Widget.cpp
-	Utils.cpp
-	ConsoleWidget.cpp
-	LineEditWidget.cpp
-	Log.cpp
-	ColorLabel.cpp
-	ResourceAdapter.cpp
-	RPKGAdapter.cpp
-	ResourceManager.cpp 
-	FSAdapter.cpp
-	LuaBindings.cpp
-	LuaWidget.cpp
+    Engine.cpp
+    Node.cpp
+    Object.cpp
+    Sprite.cpp
+    Types.cpp
+    main.cpp
+    Texture.cpp
+    Label.cpp
+    Font.cpp
+    AnimatedTexture.cpp
+    AnimatedSprite.cpp
+    Widget.cpp
+    Utils.cpp
+    ConsoleWidget.cpp
+    LineEditWidget.cpp
+    Log.cpp
+    ColorLabel.cpp
+    ResourceAdapter.cpp
+    RPKGAdapter.cpp
+    ResourceManager.cpp 
+    FSAdapter.cpp
+    LuaBindings.cpp
+    LuaWidget.cpp
 )
 
 SET(HEADERS 
-	Engine.h
-	Node.h
-	Object.h
-	Sprite.h
-	Types.h
-	Texture.h
-	Label.h
-	Font.h
-	AnimatedTexture.h
-	AnimatedSprite.h
-	Widget.h
-	Utils.h
-	ConsoleWidget.h
-	LineEditWidget.h
-	Log.h
-	ColorLabel.h
-	ResourceAdapter.h
-	RPKGAdapter.h
-	ResourceManager.h
-	FSAdapter.h
-	LuaBindings.h
-	LuaWidget.h
+    Engine.h
+    Node.h
+    Object.h
+    Sprite.h
+    Types.h
+    Texture.h
+    Label.h
+    Font.h
+    AnimatedTexture.h
+    AnimatedSprite.h
+    Widget.h
+    Utils.h
+    ConsoleWidget.h
+    LineEditWidget.h
+    Log.h
+    ColorLabel.h
+    ResourceAdapter.h
+    RPKGAdapter.h
+    ResourceManager.h
+    FSAdapter.h
+    LuaBindings.h
+    LuaWidget.h
 )
 
 SET(LUA_PACKAGES
-	lua/Engine.pkg
-	lua/libRanger.pkg
-	lua/Object.pkg
-	lua/Types.pkg
-	lua/ResourceManager.pkg
-	lua/Sprite.pkg
-	lua/AnimatedSprite.pkg
-	lua/LuaBindings.pkg
-	lua/Texture.pkg
-	lua/AnimatedTexture.pkg
-	lua/Widget.pkg
-	lua/LuaWidget.pkg
+    lua/Engine.pkg
+    lua/libRanger.pkg
+    lua/Object.pkg
+    lua/Types.pkg
+    lua/ResourceManager.pkg
+    lua/Sprite.pkg
+    lua/AnimatedSprite.pkg
+    lua/LuaBindings.pkg
+    lua/Texture.pkg
+    lua/AnimatedTexture.pkg
+    lua/Widget.pkg
+    lua/LuaWidget.pkg
 )
 
 INCLUDE_DIRECTORIES(
-	${SDL_INCLUDE_DIR}
-	${OPENGL_INCLUDE_DIR}
-	${Boost_INCLUDE_DIRS}
-	${FREETYPE_INCLUDE_DIRS}
-	${ICONV_INCLUDE_DIR}
-	${CMAKE_SOURCE_DIR}/libRanger
-	${Boost_INCLUDE_DIRS}
-	${TOLUAPP_INCLUDE_DIR}
-	${LUA_INCLUDE_DIR}
-	${CMAKE_CURRENT_SOURCE_DIR}
+    ${SDL_INCLUDE_DIR}
+    ${OPENGL_INCLUDE_DIR}
+    ${Boost_INCLUDE_DIRS}
+    ${FREETYPE_INCLUDE_DIRS}
+    ${ICONV_INCLUDE_DIR}
+    ${CMAKE_SOURCE_DIR}/libRanger
+    ${Boost_INCLUDE_DIRS}
+    ${TOLUAPP_INCLUDE_DIR}
+    ${LUA_INCLUDE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 IF(WIN32)
-	INCLUDE_DIRECTORIES(
-		${GLEW_INCLUDE_DIR}
-	)
+    INCLUDE_DIRECTORIES(
+        ${GLEW_INCLUDE_DIR}
+    )
 ENDIF(WIN32)
 
 FILE(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lua)
 FOREACH(PACKAGE ${LUA_PACKAGES})
-	SET(LUACPP ${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE}.cpp)
-	ADD_CUSTOM_COMMAND(OUTPUT ${LUACPP} 
-			   COMMAND tolua++ -o ${LUACPP} ${CMAKE_CURRENT_SOURCE_DIR}/${PACKAGE} DEPENDS ${PACKAGE}
-			   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/lua)
-	LIST(APPEND TOLUACPP_SOURCES ${LUACPP})	
+    SET(LUACPP ${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE}.cpp)
+    ADD_CUSTOM_COMMAND(OUTPUT ${LUACPP} 
+                       COMMAND tolua++ -o ${LUACPP} ${CMAKE_CURRENT_SOURCE_DIR}/${PACKAGE} DEPENDS ${PACKAGE}
+                       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/lua)
+    LIST(APPEND TOLUACPP_SOURCES ${LUACPP})	
 ENDFOREACH(PACKAGE)
 #ADD_CUSTOM_TARGET(lua_compile DEPENDS ${TOLUACPP_SOURCES})
 

@@ -60,9 +60,9 @@ ConsoleWidget::ConsoleWidget(Object* parent): Widget(parent)
 
 ConsoleWidget& ConsoleWidget::operator=(const Rangers::ConsoleWidget& other)
 {
-    if(this == &other)
+    if (this == &other)
         return *this;
-    
+
     lineEdit = other.lineEdit;
     logLabel = other.logLabel;
     border = 0;
@@ -72,8 +72,8 @@ ConsoleWidget& ConsoleWidget::operator=(const Rangers::ConsoleWidget& other)
     currentHistoryPosition = other.currentHistoryPosition;
     history = other.history;
     markToUpdate();
-    
-    ::Widget::operator=(other);    
+
+    ::Widget::operator=(other);
     return *this;
 }
 
@@ -81,9 +81,9 @@ ConsoleWidget& ConsoleWidget::operator=(const Rangers::ConsoleWidget& other)
 
 void ConsoleWidget::draw()
 {
-    if(!prepareDraw())
+    if (!prepareDraw())
         return;
-    
+
     lineEdit.draw();
     logLabel.draw();
 
@@ -118,44 +118,42 @@ void ConsoleWidget::keyPressed(SDL_keysym key)
             lineEdit.setText(L"");
         }
     }
-    else
-        if (key.sym == SDLK_UP)
+    else if (key.sym == SDLK_UP)
+    {
+        if (currentHistoryPosition == -1 && lineEdit.text() != L"")
         {
-            if (currentHistoryPosition == -1 && lineEdit.text() != L"")
-            {
-                history.push_back(lineEdit.text());
-                currentHistoryPosition = history.size() - 1;
-            }
+            history.push_back(lineEdit.text());
+            currentHistoryPosition = history.size() - 1;
+        }
 
-            if ((currentHistoryPosition == -1) && (history.size() > 0))
-                currentHistoryPosition = history.size();
+        if ((currentHistoryPosition == -1) && (history.size() > 0))
+            currentHistoryPosition = history.size();
 
-            if (currentHistoryPosition > 0)
-            {
-                currentHistoryPosition--;
-                lineEdit.setText(history[currentHistoryPosition]);
-            }
+        if (currentHistoryPosition > 0)
+        {
+            currentHistoryPosition--;
+            lineEdit.setText(history[currentHistoryPosition]);
+        }
 
-            //markToUpdate();
+        //markToUpdate();
+    }
+    else if (key.sym == SDLK_DOWN)
+    {
+        if (currentHistoryPosition < history.size() - 1)
+        {
+            currentHistoryPosition++;
+            lineEdit.setText(history[currentHistoryPosition]);
         }
         else
-            if (key.sym == SDLK_DOWN)
-            {
-                if (currentHistoryPosition < history.size() - 1)
-                {
-                    currentHistoryPosition++;
-                    lineEdit.setText(history[currentHistoryPosition]);
-                }
-                else
-                {
-                    currentHistoryPosition = -1;
-                    lineEdit.setText(L"");
-                }
+        {
+            currentHistoryPosition = -1;
+            lineEdit.setText(L"");
+        }
 
-                //markToUpdate();
-            }
-            else
-                lineEdit.keyPressed(key);
+        //markToUpdate();
+    }
+    else
+        lineEdit.keyPressed(key);
 }
 
 void ConsoleWidget::processLogic(int dt)

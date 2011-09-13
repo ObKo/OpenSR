@@ -39,7 +39,7 @@ public:
 
     std::wstring text() const;
     void setText(const std::wstring &s);
-    
+
     LineEditWidget& operator=(const LineEditWidget& other);
 
 private:
