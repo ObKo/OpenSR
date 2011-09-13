@@ -24,6 +24,8 @@
 using namespace Rangers;
 using namespace std;
 
+#define SDL_main main
+
 int main(int argc, char **argv)
 {
     Engine engine(argc, argv);

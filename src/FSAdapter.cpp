@@ -61,7 +61,7 @@ void FSAdapter::doScan(const wstring& path)
 
     if(fh == INVALID_HANDLE_VALUE)
     {
-	    logger() << LERROR << "Cannot open directory " << localPath << ": " << fromLocal(strerror(errno)) << LEND;
+	    Log::error() << "Cannot open directory " << localPath << ": " << fromLocal(strerror(errno));
 	    return;
     }
     do
