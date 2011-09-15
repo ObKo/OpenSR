@@ -19,8 +19,8 @@
 #include "Texture.h"
 #include "Engine.h"
 
-using namespace Rangers;
-
+namespace Rangers
+{
 unsigned int nextPowerOfTwo(unsigned int x)
 {
     x--;
@@ -35,41 +35,41 @@ unsigned int nextPowerOfTwo(unsigned int x)
 
 Texture::Texture()
 {
-    glGenTextures(1, &textureID);
-    realHeight = 0;
-    realHeight = 0;
+    glGenTextures(1, &m_openGLTexture);
+    m_height = 0;
+    m_height = 0;
 }
 
 Texture::Texture(int width, int height, TextureType type, unsigned char *rawData)
 {
-    glGenTextures(1, &textureID);
+    glGenTextures(1, &m_openGLTexture);
 
     setRawData(width, height, type, rawData);
 }
 
 Texture::~Texture()
 {
-    glDeleteTextures(1, &textureID);
+    glDeleteTextures(1, &m_openGLTexture);
 }
 
 int Texture::width() const
 {
-    return realWidth;
+    return m_width;
 }
 
 int Texture::height() const
 {
-    return realHeight;
+    return m_height;
 }
 
 GLuint Texture::openGLTexture()
 {
-    return textureID;
+    return m_openGLTexture;
 }
 
 void Texture::setRawData(int width, int height, TextureType type, unsigned char *rawData)
 {
-    glBindTexture(GL_TEXTURE_2D, textureID);
+    glBindTexture(GL_TEXTURE_2D, m_openGLTexture);
     GLint internalFormat = Engine::instance()->textureInternalFormat(type);
 
     switch (type)
@@ -85,6 +85,7 @@ void Texture::setRawData(int width, int height, TextureType type, unsigned char 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-    realWidth = width;
-    realHeight = height;
+    m_width = width;
+    m_height = height;
+}
 }

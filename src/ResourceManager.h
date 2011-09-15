@@ -58,14 +58,14 @@ private:
     class GAIWorker;
     void processGAIQueue();
     void cleanupUnused();
-    std::map<std::wstring, boost::shared_ptr<ResourceAdapter> > files;
-    std::list<boost::shared_ptr<ResourceAdapter> > adaptors;
+    std::map<std::wstring, boost::shared_ptr<ResourceAdapter> > m_files;
+    std::list<boost::shared_ptr<ResourceAdapter> > m_adapters;
 
-    std::map<std::wstring, boost::shared_ptr<Texture> > textures;
-    std::map<std::wstring, boost::shared_ptr<AnimatedTexture> > animations;
-    std::map<std::wstring, boost::shared_ptr<Font> > fonts;
-    std::map<boost::shared_ptr<AnimatedTexture>, GAIWorker *> onDemandGAIQueue;
+    std::map<std::wstring, boost::shared_ptr<Texture> > m_textures;
+    std::map<std::wstring, boost::shared_ptr<AnimatedTexture> > m_animations;
+    std::map<std::wstring, boost::shared_ptr<Font> > m_fonts;
+    std::map<boost::shared_ptr<AnimatedTexture>, GAIWorker *> m_gaiQueue;
 };
-};
+}
 
 #endif // RESOURCEMANAGER_H

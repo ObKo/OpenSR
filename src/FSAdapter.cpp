@@ -30,32 +30,32 @@
 #include "Log.h"
 #include <algorithm>
 
-
-using namespace Rangers;
 using namespace std;
 
+namespace Rangers
+{
 list< wstring > FSAdapter::getFiles() const
 {
-    return files;
+    return m_files;
 }
 
 void FSAdapter::load(const std::wstring& path)
 {
-    dirPath = path;
-    if (dirPath.at(path.length() - 1) != '/')
-        dirPath += '/';
+    m_dirPath = path;
+    if (m_dirPath.at(path.length() - 1) != '/')
+        m_dirPath += '/';
 #ifdef WIN32
-    doScan(L"");
+    scan(L"");
 #else
-    doScan("");
+    scan("");
 #endif
-    Log::info() << "Loaded " << files.size() << " files from directory " << path;
+    Log::info() << "Loaded " << m_files.size() << " files from directory " << path;
 }
 
 #ifdef WIN32
-void FSAdapter::doScan(const wstring& path)
+void FSAdapter::scan(const wstring& path)
 {
-    wstring localPath = dirPath + path;
+    wstring localPath = m_dirPath + path;
     WIN32_FIND_DATAW fd;
     HANDLE fh = FindFirstFileW((LPCWSTR)(localPath + L"*").c_str(), &fd);
 
@@ -71,20 +71,20 @@ void FSAdapter::doScan(const wstring& path)
             continue;
         }
         if (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
-            doScan(path + fd.cFileName + L'\\');
+            scan(path + fd.cFileName + L'\\');
         else
         {
             wstring fileName = path + fd.cFileName;
             std::replace(fileName.begin(), fileName.end(), L'\\', L'/');
-            files.push_back(fileName);
+            m_files.push_back(fileName);
         }
     }
     while (FindNextFileW(fh, &fd));
 }
 #else
-void FSAdapter::doScan(const string& path)
+void FSAdapter::scan(const string& path)
 {
-    string localPath = toLocal(dirPath) + path;
+    string localPath = toLocal(m_dirPath) + path;
     DIR* dir = opendir(localPath.c_str());
     if (!dir)
     {
@@ -106,10 +106,10 @@ void FSAdapter::doScan(const string& path)
             switch (entry.st_mode & S_IFMT)
             {
             case S_IFDIR:
-                doScan(path + current->d_name + '/');
+                scan(path + current->d_name + '/');
                 break;
             case S_IFREG:
-                files.push_back(fromLocal((path + current->d_name).c_str()));
+                m_files.push_back(fromLocal((path + current->d_name).c_str()));
                 break;
             default:
                 Log::debug() << fromLocal(fullPath.c_str()) << " unknown entry type";
@@ -126,7 +126,7 @@ void FSAdapter::doScan(const string& path)
 
 char* FSAdapter::loadData(const std::wstring& name, size_t& size)
 {
-    ifstream s(toLocal(dirPath + name).c_str(), ios::in | ios::binary);
+    ifstream s(toLocal(m_dirPath + name).c_str(), ios::in | ios::binary);
     if (!s.is_open())
     {
         Log::error() << "Cannot load file from FS: " << fromLocal(strerror(errno));
@@ -145,4 +145,5 @@ char* FSAdapter::loadData(const std::wstring& name, size_t& size)
 FSAdapter::~FSAdapter()
 {
 
+}
 }

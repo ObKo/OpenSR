@@ -8,10 +8,8 @@ namespace Rangers
 class AnimatedTexture: public Texture
 {
 public:
-    int seek() const;
-    int size() const;
-    int count() const;
+    int waitSeek() const;
+    int waitSize() const;
+    int frameCount() const;
 };
-};
-
-#endif
+}

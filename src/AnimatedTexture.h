@@ -39,10 +39,10 @@ public:
     //! Get OpenGL texture id
     GLuint openGLTexture(int i);
 
-    int seek() const;
-    int size() const;
+    int waitSeek() const;
+    int waitSize() const;
     //! Get frame count
-    int count() const;
+    int frameCount() const;
     //! Number of loaded frames (background loading)
     int loadedFrames() const;
     //! Animation need frames to loaded
@@ -54,13 +54,13 @@ public:
     void loadFrame(const char *data, int width, int height, TextureType type);
 
 private:
-    int waitSeek, waitSize;
-    int frameCount;
-    int loadedAnimationFrames;
+    int m_waitSeek, m_waitSize;
+    int m_frameCount;
+    int m_loadedFrames;
     bool m_needFrames;
 
-    GLuint *textureIDs;
+    GLuint *m_textures;
 };
-};
+}
 
 #endif

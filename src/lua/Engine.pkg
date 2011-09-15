@@ -17,7 +17,7 @@ public:
     void addWidget(Rangers::Widget *w);
     void focusWidget(Rangers::Widget *w);
 
-    boost::shared_ptr<Rangers::Font> defaultFont() const;
+    boost::shared_ptr<Rangers::Font> coreFont() const;
     boost::shared_ptr<Rangers::Font> serviceFont() const;
 
     static Engine *instance();
@@ -30,4 +30,4 @@ public:
     std::wstring addObject(Rangers::Object* object, const std::wstring& name);
     std::wstring addObject(Rangers::Object* object);
 };
-};
+}

@@ -39,9 +39,9 @@ public:
     void setRawData(int width, int height, TextureType type, unsigned char *rawData);
 
 protected:
-    int realWidth, realHeight;
-    GLuint textureID;
+    int m_width, m_height;
+    GLuint m_openGLTexture;
 };
-};
+}
 
 #endif

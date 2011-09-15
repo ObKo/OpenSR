@@ -30,6 +30,6 @@ public:
     virtual std::list<std::wstring> getFiles() const = 0;
     virtual char *loadData(const std::wstring& name, size_t& size) = 0;
 };
-};
+}
 
 #endif // RESOURCEADAPTER_H

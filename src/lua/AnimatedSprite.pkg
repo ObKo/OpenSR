@@ -7,25 +7,24 @@ namespace Rangers
 class AnimatedSprite: public Sprite
 {
 public:
-    AnimatedSprite(boost::shared_ptr<Rangers::AnimatedTexture> texture, Rangers::Object *parent = 0);
-    AnimatedSprite(const AnimatedSprite& other);
+    AnimatedSprite(boost::shared_ptr<Rangers::AnimatedTexture> texture,  Rangers::Object *parent);
+    AnimatedSprite(boost::shared_ptr<Rangers::AnimatedTexture> texture);
+    AnimatedSprite(const Rangers::AnimatedSprite& other);
 
     void processLogic(int dt);
     void draw();
-    
+
     void setSingleShot(bool ss);
     void start();
     void stop();
     void reset();
-    
+
     bool isStarted() const;
     bool isSingleShot() const;
-    
-    int currentFrame() const;
-    float fps() const;
-    void setFrame(int f);
-    void setFPS(float f);
-};
-};
 
-#endif
+    int currentFrame() const;
+    float frameRate() const;
+    void setFrame(int f);
+    void setFrameRate(float f);
+};
+}

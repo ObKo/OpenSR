@@ -23,34 +23,34 @@
 #include <map>
 #include <libRanger.h>
 
-using namespace Rangers;
-
 //TODO: Move this
 
+namespace Rangers
+{
 extern FT_Library trueTypeLibrary;
 
 Font::Font(const std::wstring& path, int size)
 {
-    FT_New_Face(trueTypeLibrary, toLocal(path).c_str(), 0, &fontFace);
-    FT_Set_Pixel_Sizes(fontFace, 0, size);
-    fontSize = size;
-    fontData = 0;
+    FT_New_Face(trueTypeLibrary, toLocal(path).c_str(), 0, &m_fontFace);
+    FT_Set_Pixel_Sizes(m_fontFace, 0, size);
+    m_fontSize = size;
+    m_fontData = 0;
 }
 
 Font::Font(const char* data, size_t dataSize, int size)
 {
-    fontData = new char[dataSize];
-    memcpy(fontData, data, dataSize);
-    int error = FT_New_Memory_Face(trueTypeLibrary, (FT_Byte *)fontData, dataSize, 0, &fontFace);
-    FT_Set_Pixel_Sizes(fontFace, 0, size);
-    fontSize = size;
+    m_fontData = new char[dataSize];
+    memcpy(m_fontData, data, dataSize);
+    int error = FT_New_Memory_Face(trueTypeLibrary, (FT_Byte *)m_fontData, dataSize, 0, &m_fontFace);
+    FT_Set_Pixel_Sizes(m_fontFace, 0, size);
+    m_fontSize = size;
 }
 
 Font::~Font()
 {
-    FT_Done_Face(fontFace);
-    if (fontData)
-        delete fontData;
+    FT_Done_Face(m_fontFace);
+    if (m_fontData)
+        delete m_fontData;
 }
 
 void Font::drawGlyph(unsigned char *dest, int destwidth, int destheight, int x, int y, int w, int h, unsigned char *data)
@@ -89,14 +89,14 @@ boost::shared_ptr<Texture> Font::renderText(const std::string& t, int width)
     return renderText(ws, width);
 }
 
-boost::shared_ptr<Texture> Font::renderColorText(const std::string& t, int defaultTextColor, int width)
+boost::shared_ptr<Texture> Font::renderColoredText(const std::string& t, int defaultTextColor, int width)
 {
     std::wstring ws(t.length(), L'\0');
     std::copy(t.begin(), t.end(), ws.begin());
-    return renderColorText(ws, defaultTextColor, width);
+    return renderColoredText(ws, defaultTextColor, width);
 }
 
-int Font::getWidth(const std::wstring::const_iterator& first, const std::wstring::const_iterator& last)
+int Font::calculateStringWidth(const std::wstring::const_iterator& first, const std::wstring::const_iterator& last)
 {
     int width = 0;
     int x = 0;
@@ -109,11 +109,11 @@ int Font::getWidth(const std::wstring::const_iterator& first, const std::wstring
             continue;
         }
         FT_UInt glyph_index;
-        glyph_index = FT_Get_Char_Index(fontFace, *i);
-        FT_Load_Glyph(fontFace, glyph_index, FT_LOAD_DEFAULT);
+        glyph_index = FT_Get_Char_Index(m_fontFace, *i);
+        FT_Load_Glyph(m_fontFace, glyph_index, FT_LOAD_DEFAULT);
         //bearingY = bearingY < fontFace->glyph->metrics.horiBearingY >> 6 ? fontFace->glyph->metrics.horiBearingY >> 6 : bearingY;
 
-        x += fontFace->glyph->advance.x >> 6;
+        x += m_fontFace->glyph->advance.x >> 6;
     }
     width = x > width ? x : width;
     return width;
@@ -130,7 +130,7 @@ boost::shared_ptr<Texture> Font::renderText(const std::wstring& t, int wrapWidth
 
     std::wstring text = t;
 
-    if ((wrapWidth) && (wrapWidth < (fontFace->max_advance_width >> 6)))
+    if ((wrapWidth) && (wrapWidth < (m_fontFace->max_advance_width >> 6)))
         return boost::shared_ptr<Texture>();
 
 
@@ -151,11 +151,11 @@ boost::shared_ptr<Texture> Font::renderText(const std::wstring& t, int wrapWidth
             continue;
         }
         FT_UInt glyph_index;
-        glyph_index = FT_Get_Char_Index(fontFace, text.at(i));
-        FT_Load_Glyph(fontFace, glyph_index, FT_LOAD_DEFAULT);
+        glyph_index = FT_Get_Char_Index(m_fontFace, text.at(i));
+        FT_Load_Glyph(m_fontFace, glyph_index, FT_LOAD_DEFAULT);
         //bearingY = bearingY < fontFace->glyph->metrics.horiBearingY >> 6 ? fontFace->glyph->metrics.horiBearingY >> 6 : bearingY;
 
-        x += fontFace->glyph->advance.x >> 6;
+        x += m_fontFace->glyph->advance.x >> 6;
 
         if ((wrapWidth) && (x > wrapWidth))
         {
@@ -198,23 +198,23 @@ boost::shared_ptr<Texture> Font::renderText(const std::wstring& t, int wrapWidth
 
     //FIXME: Baseline workaround.
     FT_UInt glyph_index;
-    glyph_index = FT_Get_Char_Index(fontFace, 'f');
-    FT_Load_Glyph(fontFace, glyph_index, FT_LOAD_DEFAULT);
-    bearingY = bearingY > fontFace->glyph->metrics.horiBearingY >> 6 ? bearingY : fontFace->glyph->metrics.horiBearingY >> 6;
+    glyph_index = FT_Get_Char_Index(m_fontFace, 'f');
+    FT_Load_Glyph(m_fontFace, glyph_index, FT_LOAD_DEFAULT);
+    bearingY = bearingY > m_fontFace->glyph->metrics.horiBearingY >> 6 ? bearingY : m_fontFace->glyph->metrics.horiBearingY >> 6;
 
-    glyph_index = FT_Get_Char_Index(fontFace, 'W');
-    FT_Load_Glyph(fontFace, glyph_index, FT_LOAD_DEFAULT);
-    bearingY = bearingY > fontFace->glyph->metrics.horiBearingY >> 6 ? bearingY : fontFace->glyph->metrics.horiBearingY >> 6;
+    glyph_index = FT_Get_Char_Index(m_fontFace, 'W');
+    FT_Load_Glyph(m_fontFace, glyph_index, FT_LOAD_DEFAULT);
+    bearingY = bearingY > m_fontFace->glyph->metrics.horiBearingY >> 6 ? bearingY : m_fontFace->glyph->metrics.horiBearingY >> 6;
 
-    glyph_index = FT_Get_Char_Index(fontFace, 'A');
-    FT_Load_Glyph(fontFace, glyph_index, FT_LOAD_DEFAULT);
-    bearingY = bearingY > fontFace->glyph->metrics.horiBearingY >> 6 ? bearingY : fontFace->glyph->metrics.horiBearingY >> 6;
+    glyph_index = FT_Get_Char_Index(m_fontFace, 'A');
+    FT_Load_Glyph(m_fontFace, glyph_index, FT_LOAD_DEFAULT);
+    bearingY = bearingY > m_fontFace->glyph->metrics.horiBearingY >> 6 ? bearingY : m_fontFace->glyph->metrics.horiBearingY >> 6;
 
     //bearingY = (fontFace->size->metrics.ascending >> 6) - fontSize/10 -1;
 
 
-    int fullHeight = lines * fontSize;
-    int lineHeight = fontSize;
+    int fullHeight = lines * m_fontSize;
+    int lineHeight = m_fontSize;
     int fullWidth;
 
     if (wrapWidth)
@@ -239,16 +239,16 @@ boost::shared_ptr<Texture> Font::renderText(const std::wstring& t, int wrapWidth
         else
         {
             FT_UInt glyph_index;
-            glyph_index = FT_Get_Char_Index(fontFace, text.at(i));
-            FT_Load_Glyph(fontFace, glyph_index, FT_LOAD_DEFAULT);
-            FT_Render_Glyph(fontFace->glyph, FT_RENDER_MODE_NORMAL);
+            glyph_index = FT_Get_Char_Index(m_fontFace, text.at(i));
+            FT_Load_Glyph(m_fontFace, glyph_index, FT_LOAD_DEFAULT);
+            FT_Render_Glyph(m_fontFace->glyph, FT_RENDER_MODE_NORMAL);
 
             drawGlyph(textureData, fullWidth, fullHeight,
-                      x + fontFace->glyph->bitmap_left, bearingY - fontFace->glyph->bitmap_top + line * fontSize,
-                      fontFace->glyph->bitmap.width, fontFace->glyph->bitmap.rows,
-                      fontFace->glyph->bitmap.buffer);
+                      x + m_fontFace->glyph->bitmap_left, bearingY - m_fontFace->glyph->bitmap_top + line * m_fontSize,
+                      m_fontFace->glyph->bitmap.width, m_fontFace->glyph->bitmap.rows,
+                      m_fontFace->glyph->bitmap.buffer);
 
-            x += fontFace->glyph->advance.x >> 6;
+            x += m_fontFace->glyph->advance.x >> 6;
         }
     }
     Texture *texture = new Texture(fullWidth, fullHeight, TEXTURE_A8, textureData);
@@ -256,7 +256,7 @@ boost::shared_ptr<Texture> Font::renderText(const std::wstring& t, int wrapWidth
     return boost::shared_ptr<Texture>(texture);
 }
 
-boost::shared_ptr<Texture> Font::renderColorText(const std::wstring& t, int defaultTextColor, int wrapWidth)
+boost::shared_ptr<Texture> Font::renderColoredText(const std::wstring& t, int defaultTextColor, int wrapWidth)
 {
     int x = 0;
     int y = 0;
@@ -270,7 +270,7 @@ boost::shared_ptr<Texture> Font::renderColorText(const std::wstring& t, int defa
 
     std::wstring text = t;
 
-    if ((wrapWidth) && (wrapWidth < (fontFace->max_advance_width >> 6)))
+    if ((wrapWidth) && (wrapWidth < (m_fontFace->max_advance_width >> 6)))
         return boost::shared_ptr<Texture>();
 
 
@@ -314,11 +314,11 @@ boost::shared_ptr<Texture> Font::renderColorText(const std::wstring& t, int defa
             continue;
         }
         FT_UInt glyph_index;
-        glyph_index = FT_Get_Char_Index(fontFace, text.at(i));
-        FT_Load_Glyph(fontFace, glyph_index, FT_LOAD_DEFAULT);
+        glyph_index = FT_Get_Char_Index(m_fontFace, text.at(i));
+        FT_Load_Glyph(m_fontFace, glyph_index, FT_LOAD_DEFAULT);
         //bearingY = bearingY < fontFace->glyph->metrics.horiBearingY >> 6 ? fontFace->glyph->metrics.horiBearingY >> 6 : bearingY;
 
-        x += fontFace->glyph->advance.x >> 6;
+        x += m_fontFace->glyph->advance.x >> 6;
 
         if ((wrapWidth) && (x > wrapWidth))
         {
@@ -361,23 +361,23 @@ boost::shared_ptr<Texture> Font::renderColorText(const std::wstring& t, int defa
 
     //FIXME: Baseline workaround.
     FT_UInt glyph_index;
-    glyph_index = FT_Get_Char_Index(fontFace, 'f');
-    FT_Load_Glyph(fontFace, glyph_index, FT_LOAD_DEFAULT);
-    bearingY = bearingY > fontFace->glyph->metrics.horiBearingY >> 6 ? bearingY : fontFace->glyph->metrics.horiBearingY >> 6;
+    glyph_index = FT_Get_Char_Index(m_fontFace, 'f');
+    FT_Load_Glyph(m_fontFace, glyph_index, FT_LOAD_DEFAULT);
+    bearingY = bearingY > m_fontFace->glyph->metrics.horiBearingY >> 6 ? bearingY : m_fontFace->glyph->metrics.horiBearingY >> 6;
 
-    glyph_index = FT_Get_Char_Index(fontFace, 'W');
-    FT_Load_Glyph(fontFace, glyph_index, FT_LOAD_DEFAULT);
-    bearingY = bearingY > fontFace->glyph->metrics.horiBearingY >> 6 ? bearingY : fontFace->glyph->metrics.horiBearingY >> 6;
+    glyph_index = FT_Get_Char_Index(m_fontFace, 'W');
+    FT_Load_Glyph(m_fontFace, glyph_index, FT_LOAD_DEFAULT);
+    bearingY = bearingY > m_fontFace->glyph->metrics.horiBearingY >> 6 ? bearingY : m_fontFace->glyph->metrics.horiBearingY >> 6;
 
-    glyph_index = FT_Get_Char_Index(fontFace, 'A');
-    FT_Load_Glyph(fontFace, glyph_index, FT_LOAD_DEFAULT);
-    bearingY = bearingY > fontFace->glyph->metrics.horiBearingY >> 6 ? bearingY : fontFace->glyph->metrics.horiBearingY >> 6;
+    glyph_index = FT_Get_Char_Index(m_fontFace, 'A');
+    FT_Load_Glyph(m_fontFace, glyph_index, FT_LOAD_DEFAULT);
+    bearingY = bearingY > m_fontFace->glyph->metrics.horiBearingY >> 6 ? bearingY : m_fontFace->glyph->metrics.horiBearingY >> 6;
 
     //bearingY = (fontFace->size->metrics.ascending >> 6) - fontSize/10 -1;
 
 
-    int fullHeight = lines * fontSize;
-    int lineHeight = fontSize;
+    int fullHeight = lines * m_fontSize;
+    int lineHeight = m_fontSize;
     int fullWidth;
 
     if (wrapWidth)
@@ -405,16 +405,16 @@ boost::shared_ptr<Texture> Font::renderColorText(const std::wstring& t, int defa
         else
         {
             FT_UInt glyph_index;
-            glyph_index = FT_Get_Char_Index(fontFace, text.at(i));
-            FT_Load_Glyph(fontFace, glyph_index, FT_LOAD_DEFAULT);
-            FT_Render_Glyph(fontFace->glyph, FT_RENDER_MODE_NORMAL);
+            glyph_index = FT_Get_Char_Index(m_fontFace, text.at(i));
+            FT_Load_Glyph(m_fontFace, glyph_index, FT_LOAD_DEFAULT);
+            FT_Render_Glyph(m_fontFace->glyph, FT_RENDER_MODE_NORMAL);
 
             drawGlyph(textureData, fullWidth, fullHeight,
-                      x + fontFace->glyph->bitmap_left, bearingY - fontFace->glyph->bitmap_top + line * fontSize,
-                      fontFace->glyph->bitmap.width, fontFace->glyph->bitmap.rows,
-                      fontFace->glyph->bitmap.buffer, currentColor);
+                      x + m_fontFace->glyph->bitmap_left, bearingY - m_fontFace->glyph->bitmap_top + line * m_fontSize,
+                      m_fontFace->glyph->bitmap.width, m_fontFace->glyph->bitmap.rows,
+                      m_fontFace->glyph->bitmap.buffer, currentColor);
 
-            x += fontFace->glyph->advance.x >> 6;
+            x += m_fontFace->glyph->advance.x >> 6;
         }
     }
     Texture *texture = new Texture(fullWidth, fullHeight, TEXTURE_R8G8B8A8, textureData);
@@ -424,6 +424,6 @@ boost::shared_ptr<Texture> Font::renderColorText(const std::wstring& t, int defa
 
 int Font::size() const
 {
-    return fontSize;
+    return m_fontSize;
 }
-
+}

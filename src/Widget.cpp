@@ -19,30 +19,30 @@
 #include "Widget.h"
 #include <iostream>
 
-using namespace Rangers;
-
+namespace Rangers
+{
 Rect Widget::getBoundingRect() const
 {
     Rect r;
-    r.x1 = objPosition.x;
-    r.y1 = objPosition.y;
-    r.x2 = objPosition.x + widgetWidth;
-    r.y2 = objPosition.y + widgetHeight;
+    r.x1 = m_position.x;
+    r.y1 = m_position.y;
+    r.x2 = m_position.x + m_width;
+    r.y2 = m_position.y + m_height;
     return r;
 }
 
-Widget::Widget(Object *parent): Object(parent), currentChildWidget(0)
+Widget::Widget(Object *parent): Object(parent), m_currentChild(0)
 {
 }
 
-Widget::Widget(float w, float h,  Object *parent): widgetWidth(w), widgetHeight(h), Object(parent), currentChildWidget(0)
+Widget::Widget(float w, float h,  Object *parent): m_width(w), m_height(h), Object(parent), m_currentChild(0)
 {
 }
 
 Widget::Widget(const Rangers::Widget& other): Object(other)
 {
-    widgetWidth = other.widgetWidth;
-    widgetHeight = other.widgetHeight;
+    m_width = other.m_width;
+    m_height = other.m_height;
     markToUpdate();
 }
 
@@ -68,20 +68,20 @@ void Widget::mouseMove(int x, int y)
             return;
         }
     }*/
-    if (currentChildWidget)
-        currentChildWidget->mouseLeave();
-    currentChildWidget = 0;
+    if (m_currentChild)
+        m_currentChild->mouseLeave();
+    m_currentChild = 0;
     unlock();
 }
 
 void Widget::mouseEnter()
 {
-    leftMouseButtonPressed = false;
+    m_leftMouseButtonPressed = false;
 }
 
 void Widget::mouseLeave()
 {
-    leftMouseButtonPressed = false;
+    m_leftMouseButtonPressed = false;
 }
 
 void Widget::keyPressed(SDL_keysym key)
@@ -92,14 +92,14 @@ void Widget::keyPressed(SDL_keysym key)
 void Widget::mouseDown(uint8_t key, int x, int y)
 {
     if (key == SDL_BUTTON_LEFT)
-        leftMouseButtonPressed = true;
+        m_leftMouseButtonPressed = true;
 }
 
 void Widget::mouseUp(uint8_t key, int x, int y)
 {
-    if (leftMouseButtonPressed && (key == SDL_BUTTON_LEFT))
+    if (m_leftMouseButtonPressed && (key == SDL_BUTTON_LEFT))
     {
-        leftMouseButtonPressed = false;
+        m_leftMouseButtonPressed = false;
         mouseClick(x, y);
     }
 }
@@ -115,37 +115,37 @@ void Widget::addWidget(Widget* w)
         return;
     lock();
     addChild(w);
-    for (std::list<Widget*>::iterator i = childWidgets.begin(); i != childWidgets.end(); i++)
+    for (std::list<Widget*>::iterator i = m_childWidgets.begin(); i != m_childWidgets.end(); i++)
     {
         if ((*i)->layer() > w->layer())
         {
-            childWidgets.insert(i, w);
+            m_childWidgets.insert(i, w);
             unlock();
             return;
         }
     }
-    objectChilds.push_back(w);
+    m_children.push_back(w);
     unlock();
 }
 
 void Widget::removeWidget(Widget* w)
 {
     lock();
-    childWidgets.remove(w);
+    m_childWidgets.remove(w);
     removeChild(w);
-    if (currentChildWidget == w)
-        currentChildWidget = 0;
+    if (m_currentChild == w)
+        m_currentChild = 0;
     unlock();
 }
 
 int Widget::height() const
 {
-    return widgetHeight;
+    return m_height;
 }
 
 int Widget::width() const
 {
-    return widgetWidth;
+    return m_width;
 }
 
 Widget& Widget::operator=(const Rangers::Widget& other)
@@ -153,13 +153,13 @@ Widget& Widget::operator=(const Rangers::Widget& other)
     if (this == &other)
         return *this;
 
-    widgetWidth = other.widgetWidth;
-    widgetHeight = other.widgetHeight;
+    m_width = other.m_width;
+    m_height = other.m_height;
     markToUpdate();
 
-    ::Object::operator=(other);
+    Object::operator=(other);
     return *this;
 }
-
+}
 
 

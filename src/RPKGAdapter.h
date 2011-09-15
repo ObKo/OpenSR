@@ -39,6 +39,6 @@ private:
     std::ifstream rpkgArchive;
     std::map<std::wstring, RPKGEntry> files;
 };
-};
+}
 
 #endif // RPKGADAPTER_H

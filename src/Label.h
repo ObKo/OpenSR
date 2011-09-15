@@ -29,8 +29,8 @@ class Label: public Sprite
 {
 public:
     Label(Object *parent = 0);
-    Label(const std::string& text, Object *parent = 0, boost::shared_ptr<Font> font = boost::shared_ptr<Font>(), SpriteXPosition xpos = POSITION_X_CENTER, SpriteYPosition ypos = POSITION_Y_CENTER);
-    Label(const std::wstring& text, Object *parent = 0, boost::shared_ptr<Font> font = boost::shared_ptr<Font>(), SpriteXPosition xpos = POSITION_X_CENTER, SpriteYPosition ypos = POSITION_Y_CENTER);
+    Label(const std::string& text, Object *parent = 0, boost::shared_ptr<Font> font = boost::shared_ptr<Font>(), SpriteXOrigin xpos = POSITION_X_CENTER, SpriteYOrigin ypos = POSITION_Y_CENTER);
+    Label(const std::wstring& text, Object *parent = 0, boost::shared_ptr<Font> font = boost::shared_ptr<Font>(), SpriteXOrigin xpos = POSITION_X_CENTER, SpriteYOrigin ypos = POSITION_Y_CENTER);
     Label(const Label& other);
 
     void setText(const std::string& text);
@@ -48,10 +48,11 @@ public:
     Label& operator=(const Label& other);
 
 protected:
-    boost::shared_ptr<Font> labelFont;
-    std::wstring labelText;
-    bool textWordWrap;
-    bool fixedSize;
+    boost::shared_ptr<Font> m_font;
+    std::wstring m_text;
+    bool m_wordWrap;
+    bool m_fixedSize;
 };
-};
+}
+
 #endif

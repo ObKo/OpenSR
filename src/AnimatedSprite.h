@@ -44,19 +44,19 @@ public:
     bool isSingleShot() const;
 
     int currentFrame() const;
-    float fps() const;
+    float frameRate() const;
     void setFrame(int f);
-    void setFPS(float f);
+    void setFrameRate(float f);
 
     AnimatedSprite& operator=(const AnimatedSprite& other);
 
 private:
-    int t;
-    int animFrame;
-    int frameTime;
-    bool singleShot;
-    bool started;
+    int m_animationTime;
+    int m_currentFrame;
+    int m_frameDuration;
+    bool m_singleShot;
+    bool m_animationStarted;
 };
-};
+}
 
 #endif

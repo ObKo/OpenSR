@@ -20,54 +20,54 @@
 #include <string>
 #include "Engine.h"
 
-using namespace Rangers;
-
+namespace Rangers
+{
 Label::Label(Object *parent): Sprite(parent)
 {
-    vertexCount = 0;
-    labelFont = boost::shared_ptr<Font>();
-    vertex = 0;
-    textWordWrap = false;
-    fixedSize = false;
-    textureScaling = TEXTURE_NO;
+    m_vertexCount = 0;
+    m_font = boost::shared_ptr<Font>();
+    m_vertices = 0;
+    m_wordWrap = false;
+    m_fixedSize = false;
+    m_scaling = TEXTURE_NO;
 }
 
-Label::Label(const std::string& text, Object *parent, boost::shared_ptr<Font> font, SpriteXPosition xpos, SpriteYPosition ypos): Sprite(parent)
+Label::Label(const std::string& text, Object *parent, boost::shared_ptr<Font> font, SpriteXOrigin xpos, SpriteYOrigin ypos): Sprite(parent)
 {
     if (!font)
-        labelFont = Engine::instance()->defaultFont();
+        m_font = Engine::instance()->coreFont();
     else
-        labelFont = font;
+        m_font = font;
 
-    xPos = xpos;
-    yPos = ypos;
+    m_xOrigin = xpos;
+    m_yOrigin = ypos;
     setText(text);
-    textWordWrap = false;
-    fixedSize = false;
-    textureScaling = TEXTURE_NO;
+    m_wordWrap = false;
+    m_fixedSize = false;
+    m_scaling = TEXTURE_NO;
 }
 
-Label::Label(const std::wstring& text, Object *parent, boost::shared_ptr<Font> font, SpriteXPosition xpos, SpriteYPosition ypos): Sprite(parent)
+Label::Label(const std::wstring& text, Object *parent, boost::shared_ptr<Font> font, SpriteXOrigin xpos, SpriteYOrigin ypos): Sprite(parent)
 {
     if (!font)
-        labelFont = Engine::instance()->defaultFont();
+        m_font = Engine::instance()->coreFont();
     else
-        labelFont = font;
+        m_font = font;
 
-    xPos = xpos;
-    yPos = ypos;
+    m_xOrigin = xpos;
+    m_yOrigin = ypos;
     setText(text);
-    textWordWrap = false;
-    fixedSize = false;
-    textureScaling = TEXTURE_NO;
+    m_wordWrap = false;
+    m_fixedSize = false;
+    m_scaling = TEXTURE_NO;
 }
 
 Label::Label(const Rangers::Label& other): Sprite(other)
 {
-    labelFont = other.labelFont;
-    labelText = other.labelText;
-    textWordWrap = other.textWordWrap;
-    fixedSize = other.fixedSize;
+    m_font = other.m_font;
+    m_text = other.m_text;
+    m_wordWrap = other.m_wordWrap;
+    m_fixedSize = other.m_fixedSize;
 }
 
 Label& Label::operator=(const Rangers::Label& other)
@@ -75,27 +75,27 @@ Label& Label::operator=(const Rangers::Label& other)
     if (this == &other)
         return *this;
 
-    labelFont = other.labelFont;
-    labelText = other.labelText;
-    textWordWrap = other.textWordWrap;
-    fixedSize = other.fixedSize;
+    m_font = other.m_font;
+    m_text = other.m_text;
+    m_wordWrap = other.m_wordWrap;
+    m_fixedSize = other.m_fixedSize;
 
-    ::Sprite::operator=(other);
+    Sprite::operator=(other);
     return *this;
 }
 
 
 boost::shared_ptr< Font > Label::font() const
 {
-    return labelFont;
+    return m_font;
 }
 
 
 void Label::setText(const std::string& text)
 {
     lock();
-    labelText.assign(text.length(), '\0');
-    std::copy(text.begin(), text.end(), labelText.begin());
+    m_text.assign(text.length(), '\0');
+    std::copy(text.begin(), text.end(), m_text.begin());
     markToUpdate();
     unlock();
 }
@@ -103,45 +103,45 @@ void Label::setText(const std::string& text)
 void Label::setText(const std::wstring& text)
 {
     lock();
-    labelText = text;
+    m_text = text;
     markToUpdate();
     unlock();
 }
 
 void Label::processMain()
 {
-    if (!labelFont)
+    if (!m_font)
         return;
     lock();
 
-    if (!textWordWrap)
-        spriteTexture = labelFont->renderText(labelText);
+    if (!m_wordWrap)
+        m_texture = m_font->renderText(m_text);
     else
-        spriteTexture = labelFont->renderText(labelText, spriteWidth);
+        m_texture = m_font->renderText(m_text, m_width);
 
-    if (!fixedSize)
+    if (!m_fixedSize)
     {
-        spriteWidth = spriteTexture->width();
-        spriteHeight = spriteTexture->height();
+        m_width = m_texture->width();
+        m_height = m_texture->height();
     }
 
     unlock();
-    ::Sprite::processMain();
+    Sprite::processMain();
 }
 
 float Label::height() const
 {
-    return spriteHeight;
+    return m_height;
 }
 
 float Label::width() const
 {
-    return spriteWidth;
+    return m_width;
 }
 
 void Label::setWordWrap(bool wordWrap)
 {
-    textWordWrap = wordWrap;
+    m_wordWrap = wordWrap;
     markToUpdate();
 }
 
@@ -149,11 +149,12 @@ void Label::setFixedSize(float width, float height)
 {
     if ((width > 0) && (height > 0))
     {
-        spriteWidth = width;
-        spriteHeight = height;
-        fixedSize = true;
+        m_width = width;
+        m_height = height;
+        m_fixedSize = true;
     }
     else
-        fixedSize = false;
+        m_fixedSize = false;
     markToUpdate();
+}
 }

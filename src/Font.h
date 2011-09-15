@@ -34,10 +34,10 @@ public:
 
     boost::shared_ptr<Texture> renderText(const std::string& text, int width = 0);
     boost::shared_ptr<Texture> renderText(const std::wstring& text, int width = 0);
-    boost::shared_ptr<Texture> renderColorText(const std::string& text, int defaultTextColor = 0xFFFFFF, int width = 0);
-    boost::shared_ptr<Texture> renderColorText(const std::wstring& text, int defaultTextColor = 0xFFFFFF, int width = 0);
+    boost::shared_ptr<Texture> renderColoredText(const std::string& text, int defaultTextColor = 0xFFFFFF, int width = 0);
+    boost::shared_ptr<Texture> renderColoredText(const std::wstring& text, int defaultTextColor = 0xFFFFFF, int width = 0);
 
-    int getWidth(const std::wstring::const_iterator& first, const std::wstring::const_iterator& last);
+    int calculateStringWidth(const std::wstring::const_iterator& first, const std::wstring::const_iterator& last);
 
     static void drawGlyph(unsigned char *dest, int destwidth, int destheight,
                           int x, int y, int w, int h, unsigned char *data);
@@ -47,10 +47,10 @@ public:
     int size() const;
 
 private:
-    FT_Face fontFace;
-    int fontSize;
-    char *fontData;
+    FT_Face m_fontFace;
+    int m_fontSize;
+    char *m_fontData;
 };
-};
+}
 
 #endif // FONT_H

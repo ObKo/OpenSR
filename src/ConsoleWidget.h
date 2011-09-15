@@ -42,14 +42,15 @@ public:
     ConsoleWidget& operator=(const ConsoleWidget& other);
 
 private:
-    LineEditWidget lineEdit;
-    ColorLabel logLabel;
-    Vertex *border;
-    GLuint borderBuffer;
-    int lines;
+    LineEditWidget m_lineEdit;
+    ColorLabel m_logLabel;
+    Vertex *m_borderVertices;
+    GLuint m_borderBuffer;
+    int m_consoleLines;
 
-    int currentHistoryPosition;
-    std::vector<std::wstring> history;
+    int m_historyPosition;
+    std::vector<std::wstring> m_commandHistory;
 };
-};
+}
+
 #endif // CONSOLEWIDGET_H

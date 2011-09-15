@@ -67,7 +67,7 @@ public:
     int screenWidth() const;
 
     //! Default engine font
-    boost::shared_ptr<Font> defaultFont() const;
+    boost::shared_ptr<Font> coreFont() const;
     //! Default engine service font (e.g. console font)
     boost::shared_ptr<Font> serviceFont() const;
 
@@ -93,37 +93,37 @@ public:
     GLint textureInternalFormat(TextureType t) const;
 
 private:
-    int argc;
-    char **argv;
-    int height;
-    int width;
+    int m_argc;
+    char **m_argv;
+    int m_height;
+    int m_width;
 
-    boost::recursive_mutex updateMutex;
-    boost::thread *fpsThread, *logicThread;
+    boost::recursive_mutex m_updateMutex;
+    boost::thread *m_fpsThread, *m_logicThread;
 
-    int exitCode;
-    bool gameRunning;
-    bool consoleOpenned;
-    bool showFPS;
-    long frames;
+    int m_exitCode;
+    bool m_gameRunning;
+    bool m_consoleOpenned;
+    bool m_showFPS;
+    long m_frames;
 
-    std::map<std::wstring, Object*> objects;
+    std::map<std::wstring, Object*> m_objects;
 
     void processEvents();
     void processMouseMove(SDL_MouseMotionEvent e);
 
-    std::list<Object *> updateList;
+    std::list<Object *> m_updateList;
 
-    std::list<Widget *> widgets;
-    Widget *currentWidget;
-    Widget *focusedWidget;
+    std::list<Widget *> m_widgets;
+    Widget *m_currentWidget;
+    Widget *m_focusedWidget;
 
-    Node mainNode;
-    Label fpsLabel;
-    ConsoleWidget consoleWidget;
-    boost::shared_ptr<Font> engineFont;
-    boost::shared_ptr<Font> monospaceFont;
+    Node m_mainNode;
+    Label m_fpsLabel;
+    ConsoleWidget m_consoleWidget;
+    boost::shared_ptr<Font> m_coreFont;
+    boost::shared_ptr<Font> m_monospaceFont;
 };
-};
+}
 
 #endif

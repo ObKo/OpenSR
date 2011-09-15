@@ -2,44 +2,55 @@
 #include "libRanger.h"
 #include "Log.h"
 
-using namespace Rangers;
-
+namespace Rangers
+{
 std::wstring fromLua(const char *s)
 {
     return Rangers::fromUTF8(s);
 }
 
-Font* Rangers::getPointer(boost::shared_ptr<Font> sp)
+Font* getPointer(boost::shared_ptr<Font> sp)
 {
     return sp.get();
 }
 
-Texture* Rangers::getPointer(boost::shared_ptr<Texture> sp)
+Texture* getPointer(boost::shared_ptr<Texture> sp)
 {
     return sp.get();
 }
 
-AnimatedTexture* Rangers::getPointer(boost::shared_ptr<AnimatedTexture> sp)
+AnimatedTexture* getPointer(boost::shared_ptr<AnimatedTexture> sp)
 {
     return sp.get();
 }
 
-void Rangers::luaDebug(std::wstring s)
+void luaDebug(std::wstring s)
 {
     Log::debug() << L"Lua: " << s;
 }
 
-void Rangers::freePointer(boost::shared_ptr<Font> *sp)
+void luaWarning(std::wstring s)
+{
+    Log::warning() << L"Lua: " << s;
+}
+
+void luaError(std::wstring s)
+{
+    Log::error() << L"Lua: " << s;
+}
+
+void freePointer(boost::shared_ptr<Font> *sp)
 {
     delete sp;
 }
 
-void Rangers::freePointer(boost::shared_ptr<Texture> *sp)
+void freePointer(boost::shared_ptr<Texture> *sp)
 {
     delete sp;
 }
 
-void Rangers::freePointer(boost::shared_ptr<AnimatedTexture> *sp)
+void freePointer(boost::shared_ptr<AnimatedTexture> *sp)
 {
     delete sp;
+}
 }

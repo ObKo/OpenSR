@@ -18,9 +18,9 @@
 
 #include "ColorLabel.h"
 
-using namespace Rangers;
 using namespace std;
-
+namespace Rangers
+{
 /*!
  * This class is used to draw text with different color
  * Color in text is defined as \\cXXXXXX - where XXXXXX - RGB color in hex format
@@ -42,7 +42,7 @@ ColorLabel::ColorLabel(Object* parent): Label(parent)
  * \param xpos sprite x origin
  * \param ypos sprite y origin
  */
-ColorLabel::ColorLabel(const std::string& text, Object* parent, boost::shared_ptr< Font > font, SpriteXPosition xpos, SpriteYPosition ypos): Label(text, parent, font, xpos, ypos)
+ColorLabel::ColorLabel(const std::string& text, Object* parent, boost::shared_ptr< Font > font, SpriteXOrigin xpos, SpriteYOrigin ypos): Label(text, parent, font, xpos, ypos)
 {
 
 }
@@ -54,7 +54,7 @@ ColorLabel::ColorLabel(const std::string& text, Object* parent, boost::shared_pt
  * \param xpos sprite x origin
  * \param ypos sprite y origin
  */
-ColorLabel::ColorLabel(const std::wstring& text, Object* parent, boost::shared_ptr< Font > font, SpriteXPosition xpos, SpriteYPosition ypos): Label(text, parent, font, xpos, ypos)
+ColorLabel::ColorLabel(const std::wstring& text, Object* parent, boost::shared_ptr< Font > font, SpriteXOrigin xpos, SpriteYOrigin ypos): Label(text, parent, font, xpos, ypos)
 {
 
 }
@@ -63,15 +63,15 @@ void ColorLabel::processMain()
 {
     lock();
 
-    if (!textWordWrap)
-        spriteTexture = labelFont->renderColorText(labelText, (char(red * 255) << 16) | (char(green * 255) << 8) | (char(blue * 255)));
+    if (!m_wordWrap)
+        m_texture = m_font->renderColoredText(m_text, (char(m_colorR * 255) << 16) | (char(m_colorG * 255) << 8) | (char(m_colorB * 255)));
     else
-        spriteTexture = labelFont->renderColorText(labelText, (char(red * 255) << 16) | (char(green * 255) << 8) | (char(blue * 255)), spriteWidth);
+        m_texture = m_font->renderColoredText(m_text, (char(m_colorR * 255) << 16) | (char(m_colorG * 255) << 8) | (char(m_colorB * 255)), m_width);
 
-    if (!fixedSize)
+    if (!m_fixedSize)
     {
-        spriteWidth = spriteTexture->width();
-        spriteHeight = spriteTexture->height();
+        m_width = m_texture->width();
+        m_height = m_texture->height();
     }
     unlock();
     Sprite::processMain();
@@ -81,5 +81,6 @@ void ColorLabel::setColor(float r, float g, float b, float a)
 {
     markToUpdate();
     Object::setColor(r, g, b, a);
+}
 }
 

@@ -26,6 +26,4 @@ public:
     void processMain();
     void processLogic(int dt);
 };
-};
-
-#endif // LUAWIDGET_H
+}

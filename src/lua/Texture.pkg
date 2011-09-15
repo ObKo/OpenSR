@@ -13,6 +13,4 @@ public:
 
     void setRawData(int width, int height, TextureType type, unsigned char *rawData);
 };
-};
-
-#endif
+}

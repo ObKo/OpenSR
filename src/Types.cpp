@@ -18,8 +18,8 @@
 
 #include "Types.h"
 
-using namespace Rangers;
-
+namespace Rangers
+{
 Vector::Vector()
 {
     x = 0;
@@ -38,4 +38,5 @@ Rect::Rect()
     y1 = 0;
     x2 = 0;
     y2 = 0;
+}
 }

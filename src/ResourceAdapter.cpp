@@ -18,5 +18,3 @@
 
 #include "ResourceAdapter.h"
 
-using namespace Rangers;
-

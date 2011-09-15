@@ -20,36 +20,36 @@
 #include "AnimatedSprite.h"
 #include "Engine.h"
 
-using namespace Rangers;
-
+namespace Rangers
+{
 /*!
  * \param texture texture
  * \param parent object parent
  */
 AnimatedSprite::AnimatedSprite(boost::shared_ptr<AnimatedTexture> texture,  Object *parent): Sprite(texture, parent)
 {
-    t = 0;
-    animFrame = 0;
-    singleShot = false;
+    m_animationTime = 0;
+    m_currentFrame = 0;
+    m_singleShot = false;
     if (!texture)
     {
-        started = false;
-        frameTime = 0;
+        m_animationStarted = false;
+        m_frameDuration = 0;
     }
     else
     {
-        started = true;
-        frameTime = texture->seek() > 1000 ? 50 : 100;
+        m_animationStarted = true;
+        m_frameDuration = texture->waitSeek() > 1000 ? 50 : 100;
     }
 }
 
 AnimatedSprite::AnimatedSprite(const Rangers::AnimatedSprite& other): Sprite(other)
 {
-    t = other.t;
-    animFrame = other.animFrame;
-    singleShot = other.singleShot;
-    started = other.started;
-    frameTime = other.frameTime;
+    m_animationTime = other.m_animationTime;
+    m_currentFrame = other.m_currentFrame;
+    m_singleShot = other.m_singleShot;
+    m_animationStarted = other.m_animationStarted;
+    m_frameDuration = other.m_frameDuration;
 }
 
 AnimatedSprite& AnimatedSprite::operator=(const Rangers::AnimatedSprite& other)
@@ -57,14 +57,14 @@ AnimatedSprite& AnimatedSprite::operator=(const Rangers::AnimatedSprite& other)
     if (this == &other)
         return *this;
 
-    t = other.t;
-    animFrame = other.animFrame;
-    singleShot = other.singleShot;
-    started = other.started;
-    animFrame = other.animFrame;
-    frameTime = other.frameTime;
+    m_animationTime = other.m_animationTime;
+    m_currentFrame = other.m_currentFrame;
+    m_singleShot = other.m_singleShot;
+    m_animationStarted = other.m_animationStarted;
+    m_currentFrame = other.m_currentFrame;
+    m_frameDuration = other.m_frameDuration;
 
-    ::Sprite::operator=(other);
+    Sprite::operator=(other);
     return *this;
 }
 
@@ -72,48 +72,48 @@ AnimatedSprite& AnimatedSprite::operator=(const Rangers::AnimatedSprite& other)
 
 void AnimatedSprite::processLogic(int dt)
 {
-    if (!spriteTexture)
+    if (!m_texture)
         return;
-    AnimatedTexture *texture = static_cast<AnimatedTexture *>(spriteTexture.get());
+    AnimatedTexture *texture = static_cast<AnimatedTexture *>(m_texture.get());
 
-    if (started)
+    if (m_animationStarted)
     {
-        while (t > frameTime)
+        while (m_animationTime > m_frameDuration)
         {
-            if ((texture->loadedFrames() == texture->count()) || (animFrame < texture->loadedFrames() - 1))
-                animFrame = (animFrame + 1) % texture->count();
-            t -= frameTime;
+            if ((texture->loadedFrames() == texture->frameCount()) || (m_currentFrame < texture->loadedFrames() - 1))
+                m_currentFrame = (m_currentFrame + 1) % texture->frameCount();
+            m_animationTime -= m_frameDuration;
         }
 
-        t += dt;
+        m_animationTime += dt;
     }
 }
 
 void AnimatedSprite::draw()
 {
-    if (!spriteTexture)
+    if (!m_texture)
         return;
 
     if (!prepareDraw())
         return;
 
-    GLuint texture = ((AnimatedTexture*)spriteTexture.get())->openGLTexture(animFrame);
+    GLuint texture = ((AnimatedTexture*)m_texture.get())->openGLTexture(m_currentFrame);
 
     if (!texture)
         return;
 
     glBindTexture(GL_TEXTURE_2D, texture);
-    if (textureScaling == TEXTURE_TILE_X)
+    if (m_scaling == TEXTURE_TILE_X)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     else
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 
-    if (textureScaling == TEXTURE_TILE_Y)
+    if (m_scaling == TEXTURE_TILE_Y)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     else
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 
-    if (textureScaling == TEXTURE_TILE)
+    if (m_scaling == TEXTURE_TILE)
     {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -123,12 +123,12 @@ void AnimatedSprite::draw()
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glEnableClientState(GL_ARRAY_BUFFER);
 
-    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, m_buffer);
 
     glVertexPointer(2, GL_FLOAT, sizeof(Vertex), 0);
     glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), BUFFER_OFFSET(sizeof(float) * 2));
 
-    glDrawArrays(GL_QUADS, 0, vertexCount);
+    glDrawArrays(GL_QUADS, 0, m_vertexCount);
 
     glDisableClientState(GL_ARRAY_BUFFER);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -138,57 +138,55 @@ void AnimatedSprite::draw()
 
 int AnimatedSprite::currentFrame() const
 {
-    return animFrame;
+    return m_currentFrame;
 }
 
-float AnimatedSprite::fps() const
+float AnimatedSprite::frameRate() const
 {
-    return 1000.0f / frameTime;
+    return 1000.0f / m_frameDuration;
 }
 
 void AnimatedSprite::setFrame(int f)
 {
-    animFrame = f;
+    m_currentFrame = f;
 }
 
-void AnimatedSprite::setFPS(float f)
+void AnimatedSprite::setFrameRate(float f)
 {
     if (f <= 0.0f)
-        frameTime = INT_MAX;
-    frameTime = 1000.0f / f;
+        m_frameDuration = INT_MAX;
+    m_frameDuration = 1000.0f / f;
 }
 
 void AnimatedSprite::setSingleShot(bool ss)
 {
-    singleShot = ss;
+    m_singleShot = ss;
 }
 
 bool AnimatedSprite::isSingleShot() const
 {
-    return singleShot;
+    return m_singleShot;
 }
 
 bool AnimatedSprite::isStarted() const
 {
-    return started;
+    return m_animationStarted;
 }
 
 void AnimatedSprite::start()
 {
-    started = true;
+    m_animationStarted = true;
 }
 
 void AnimatedSprite::stop()
 {
-    started = false;
+    m_animationStarted = false;
 }
 
 void AnimatedSprite::reset()
 {
-    started = false;
-    animFrame = 0;
-    t = 0;
+    m_animationStarted = false;
+    m_currentFrame = 0;
+    m_animationTime = 0;
 }
-
-
-
+}

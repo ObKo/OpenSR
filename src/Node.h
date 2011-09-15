@@ -32,5 +32,5 @@ public:
     void processLogic(int dt);
     void processMain();
 };
-};
+}
 #endif

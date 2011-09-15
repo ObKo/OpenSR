@@ -18,6 +18,7 @@
 
 #ifndef RANGERS_FSADAPTER_H
 #define RANGERS_FSADAPTER_H
+
 #include "ResourceAdapter.h"
 
 namespace Rangers
@@ -34,14 +35,14 @@ public:
 private:
 
 #ifdef WIN32
-    void doScan(const std::wstring& path);
+    void scan(const std::wstring& path);
 #else
-    void doScan(const std::string& path);
+    void scan(const std::string& path);
 #endif
 
-    std::wstring dirPath;
-    std::list<std::wstring> files;
+    std::wstring m_dirPath;
+    std::list<std::wstring> m_files;
 };
-};
+}
 
 #endif // FSADAPTER_H

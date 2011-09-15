@@ -47,8 +47,8 @@ public:
     void processLogic(int dt);
 
 private:
-    lua_State *luaState;
+    lua_State *m_luaState;
 };
-};
+}
 
 #endif // LUAWIDGET_H

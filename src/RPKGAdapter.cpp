@@ -22,9 +22,11 @@
 #include <sstream>
 #include <cerrno>
 
-using namespace Rangers;
+
 using namespace std;
 
+namespace Rangers
+{
 void RPKGAdapter::load(const wstring& fileName)
 {
     rpkgArchive.open(toLocal(fileName).c_str(), ios::binary | ios::in);
@@ -64,4 +66,5 @@ char* RPKGAdapter::loadData(const wstring& name, size_t& size)
         return 0;
     }
     return extractFile(files[name], rpkgArchive, size);
+}
 }

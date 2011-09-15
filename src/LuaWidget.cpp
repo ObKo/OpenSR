@@ -20,33 +20,33 @@
 #include "Log.h"
 #include "Types.h"
 
-using namespace Rangers;
-
+namespace Rangers
+{
 //TODO: Check stack size after pcall()
 
 LuaWidget::LuaWidget(std::wstring fileName, Rangers::Object* parent): Widget(parent)
 {
-    luaState = lua_open();
-    luaopen_base(luaState);
-    luaopen_table(luaState);
-    luaopen_math(luaState);
-    tolua_Engine_open(luaState);
-    tolua_libRanger_open(luaState);
-    tolua_Object_open(luaState);
-    tolua_Types_open(luaState);
-    tolua_ResourceManager_open(luaState);
-    tolua_Sprite_open(luaState);
-    tolua_AnimatedSprite_open(luaState);
-    tolua_LuaBindings_open(luaState);
-    tolua_AnimatedTexture_open(luaState);
-    tolua_LuaWidget_open(luaState);
-    tolua_pushusertype(luaState, this, "Rangers::LuaWidget");
-    lua_setglobal(luaState, "this");
-    if (luaL_dofile(luaState, toLocal(fileName).c_str()))
-        std::cerr << lua_tostring(luaState, -1) << std::endl;
+    m_luaState = lua_open();
+    luaopen_base(m_luaState);
+    luaopen_table(m_luaState);
+    luaopen_math(m_luaState);
+    tolua_Engine_open(m_luaState);
+    tolua_libRanger_open(m_luaState);
+    tolua_Object_open(m_luaState);
+    tolua_Types_open(m_luaState);
+    tolua_ResourceManager_open(m_luaState);
+    tolua_Sprite_open(m_luaState);
+    tolua_AnimatedSprite_open(m_luaState);
+    tolua_LuaBindings_open(m_luaState);
+    tolua_AnimatedTexture_open(m_luaState);
+    tolua_LuaWidget_open(m_luaState);
+    tolua_pushusertype(m_luaState, this, "Rangers::LuaWidget");
+    lua_setglobal(m_luaState, "this");
+    if (luaL_dofile(m_luaState, toLocal(fileName).c_str()))
+        std::cerr << lua_tostring(m_luaState, -1) << std::endl;
 }
 
-LuaWidget::LuaWidget(Rangers::Object* parent): Widget(parent), luaState()
+LuaWidget::LuaWidget(Rangers::Object* parent): Widget(parent), m_luaState()
 {
 
 }
@@ -55,26 +55,26 @@ void LuaWidget::draw()
 {
     if (!prepareDraw())
         return;
-    lua_getglobal(luaState, "draw");
-    if (!lua_isnil(luaState, -1))
-        lua_pcall(luaState, 0, 0, 0);
+    lua_getglobal(m_luaState, "draw");
+    if (!lua_isnil(m_luaState, -1))
+        lua_pcall(m_luaState, 0, 0, 0);
     endDraw();
 }
 
 Rect LuaWidget::getBoundingRect()
 {
     lock();
-    lua_getglobal(luaState, "getBoundingRect");
+    lua_getglobal(m_luaState, "getBoundingRect");
 
-    if (lua_isnil(luaState, -1))
+    if (lua_isnil(m_luaState, -1))
     {
         unlock();
         return Rect();
     }
 
-    lua_pcall(luaState, 0, 1, 0);
-    Rect bb = *((Rect*)(tolua_tousertype(luaState, -1, NULL)));
-    lua_pop(luaState, 1);
+    lua_pcall(m_luaState, 0, 1, 0);
+    Rect bb = *((Rect*)(tolua_tousertype(m_luaState, -1, NULL)));
+    lua_pop(m_luaState, 1);
     unlock();
     return bb;
 }
@@ -82,44 +82,44 @@ Rect LuaWidget::getBoundingRect()
 void LuaWidget::keyPressed(SDL_keysym key)
 {
     lock();
-    lua_getglobal(luaState, "keyPressed");
-    if (lua_isnil(luaState, -1))
+    lua_getglobal(m_luaState, "keyPressed");
+    if (lua_isnil(m_luaState, -1))
     {
         unlock();
         return;
     }
 
-    tolua_pushusertype(luaState, &key, "SDL_keysym");
-    if (lua_pcall(luaState, 1, 0, 0))
-        Log::warning() << "Lua: " << lua_tostring(luaState, -1);
+    tolua_pushusertype(m_luaState, &key, "SDL_keysym");
+    if (lua_pcall(m_luaState, 1, 0, 0))
+        Log::warning() << "Lua: " << lua_tostring(m_luaState, -1);
     unlock();
 }
 
 void LuaWidget::mouseEnter()
 {
     lock();
-    lua_getglobal(luaState, "mouseEnter");
-    if (lua_isnil(luaState, -1))
+    lua_getglobal(m_luaState, "mouseEnter");
+    if (lua_isnil(m_luaState, -1))
     {
         unlock();
         return;
     }
-    if (lua_pcall(luaState, 0, 0, 0))
-        Log::warning() << "Lua: " << lua_tostring(luaState, -1);
+    if (lua_pcall(m_luaState, 0, 0, 0))
+        Log::warning() << "Lua: " << lua_tostring(m_luaState, -1);
     unlock();
 }
 
 void LuaWidget::mouseLeave()
 {
     lock();
-    lua_getglobal(luaState, "mouseLeave");
-    if (lua_isnil(luaState, -1))
+    lua_getglobal(m_luaState, "mouseLeave");
+    if (lua_isnil(m_luaState, -1))
     {
         unlock();
         return;
     }
-    if (lua_pcall(luaState, 0, 0, 0))
-        Log::warning() << "Lua: " << lua_tostring(luaState, -1);
+    if (lua_pcall(m_luaState, 0, 0, 0))
+        Log::warning() << "Lua: " << lua_tostring(m_luaState, -1);
     unlock();
 }
 
@@ -127,32 +127,32 @@ void LuaWidget::mouseMove(int x, int y)
 {
     Widget::mouseMove(x, y);
     lock();
-    lua_getglobal(luaState, "mouseMove");
-    if (lua_isnil(luaState, -1))
+    lua_getglobal(m_luaState, "mouseMove");
+    if (lua_isnil(m_luaState, -1))
     {
         unlock();
         return;
     }
-    lua_pushinteger(luaState, x);
-    lua_pushinteger(luaState, y);
-    lua_pcall(luaState, 2, 0, 0);
+    lua_pushinteger(m_luaState, x);
+    lua_pushinteger(m_luaState, y);
+    lua_pcall(m_luaState, 2, 0, 0);
     unlock();
 }
 
 void LuaWidget::mouseDown(uint8_t key, int x, int y)
 {
     lock();
-    lua_getglobal(luaState, "mouseDown");
-    if (lua_isnil(luaState, -1))
+    lua_getglobal(m_luaState, "mouseDown");
+    if (lua_isnil(m_luaState, -1))
     {
         unlock();
         return;
     }
-    lua_pushinteger(luaState, key);
-    lua_pushinteger(luaState, x);
-    lua_pushinteger(luaState, y);
-    if (lua_pcall(luaState, 3, 0, 0))
-        Log::warning() << "Lua: " << lua_tostring(luaState, -1);
+    lua_pushinteger(m_luaState, key);
+    lua_pushinteger(m_luaState, x);
+    lua_pushinteger(m_luaState, y);
+    if (lua_pcall(m_luaState, 3, 0, 0))
+        Log::warning() << "Lua: " << lua_tostring(m_luaState, -1);
     unlock();
     Widget::mouseDown(key, x, y);
 }
@@ -160,17 +160,17 @@ void LuaWidget::mouseDown(uint8_t key, int x, int y)
 void LuaWidget::mouseUp(uint8_t key, int x, int y)
 {
     lock();
-    lua_getglobal(luaState, "mouseUp");
-    if (lua_isnil(luaState, -1))
+    lua_getglobal(m_luaState, "mouseUp");
+    if (lua_isnil(m_luaState, -1))
     {
         unlock();
         return;
     }
-    lua_pushinteger(luaState, key);
-    lua_pushinteger(luaState, x);
-    lua_pushinteger(luaState, y);
-    if (lua_pcall(luaState, 3, 0, 0))
-        Log::warning() << "Lua: " << lua_tostring(luaState, -1);
+    lua_pushinteger(m_luaState, key);
+    lua_pushinteger(m_luaState, x);
+    lua_pushinteger(m_luaState, y);
+    if (lua_pcall(m_luaState, 3, 0, 0))
+        Log::warning() << "Lua: " << lua_tostring(m_luaState, -1);
     unlock();
     Widget::mouseUp(key, x, y);
 }
@@ -178,16 +178,16 @@ void LuaWidget::mouseUp(uint8_t key, int x, int y)
 void LuaWidget::mouseClick(int x, int y)
 {
     lock();
-    lua_getglobal(luaState, "mouseClick");
-    if (lua_isnil(luaState, -1))
+    lua_getglobal(m_luaState, "mouseClick");
+    if (lua_isnil(m_luaState, -1))
     {
         unlock();
         return;
     }
-    lua_pushinteger(luaState, x);
-    lua_pushinteger(luaState, y);
-    if (lua_pcall(luaState, 2, 0, 0))
-        Log::warning() << "Lua: " << lua_tostring(luaState, -1);
+    lua_pushinteger(m_luaState, x);
+    lua_pushinteger(m_luaState, y);
+    if (lua_pcall(m_luaState, 2, 0, 0))
+        Log::warning() << "Lua: " << lua_tostring(m_luaState, -1);
     unlock();
     Widget::mouseClick(x, y);
 }
@@ -195,27 +195,27 @@ void LuaWidget::mouseClick(int x, int y)
 void LuaWidget::processLogic(int dt)
 {
     lock();
-    lua_getglobal(luaState, "processLogic");
-    if (lua_isnil(luaState, -1))
+    lua_getglobal(m_luaState, "processLogic");
+    if (lua_isnil(m_luaState, -1))
     {
         unlock();
         return;
     }
-    lua_pushinteger(luaState, dt);
-    lua_pcall(luaState, 1, 0, 0);
+    lua_pushinteger(m_luaState, dt);
+    lua_pcall(m_luaState, 1, 0, 0);
     unlock();
 }
 
 void LuaWidget::processMain()
 {
     lock();
-    lua_getglobal(luaState, "processMain");
-    if (lua_isnil(luaState, -1))
+    lua_getglobal(m_luaState, "processMain");
+    if (lua_isnil(m_luaState, -1))
     {
         unlock();
         return;
     }
-    lua_pcall(luaState, 0, 0, 0);
+    lua_pcall(m_luaState, 0, 0, 0);
     unlock();
 }
-
+}

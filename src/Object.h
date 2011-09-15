@@ -60,16 +60,16 @@ public:
     Object& operator=(const Object& other);
 
 private:
-    int objectLayer;
+    int m_layer;
 
 protected:
-    boost::recursive_mutex objectMutex;
-    float red, green, blue, alpha;
-    bool marked;
-    Object *objectParent;
-    std::list<Object*> objectChilds;
-    Vector objPosition;
-    float objRotation;
+    boost::recursive_mutex m_mutex;
+    float m_colorR, m_colorG, m_colorB, m_colorA;
+    bool m_needUpdate;
+    Object *m_parent;
+    std::list<Object*> m_children;
+    Vector m_position;
+    float m_rotation;
 
     bool prepareDraw();
     void endDraw();

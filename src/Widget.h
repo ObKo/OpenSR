@@ -51,10 +51,10 @@ public:
     void removeWidget(Widget *w);
 
 protected:
-    std::list<Widget *> childWidgets;
-    Widget *currentChildWidget;
-    int widgetWidth, widgetHeight;
-    bool leftMouseButtonPressed;
+    std::list<Widget *> m_childWidgets;
+    Widget *m_currentChild;
+    int m_width, m_height;
+    bool m_leftMouseButtonPressed;
 };
 }
 

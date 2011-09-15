@@ -95,7 +95,7 @@ std::wstring Rangers::fromCodec(const char *codec, const char *text, int length)
 
     //FIXME: Workaround about not working WCHAR_T on Windows XP
 #ifdef WIN32
-    char *data = convertText("UCS-2LE", codec, text, length, outl);
+    char *data = convertText("UCS-2LE", codec, m_text, length, outl);
 #else
     char *data = convertText("WCHAR_T", codec, text, length, outl);
 #endif
@@ -128,7 +128,7 @@ char* Rangers::toCodec(const char *codec, const std::wstring& text, int& resultL
 {
 //FIXME: Workaround about not working WCHAR_T on Windows XP
 #ifdef WIN32
-    return convertText(codec, "UCS-2LE", (char *)text.c_str(), (text.length() + 1) * sizeof(wchar_t), resultLength);
+    return convertText(codec, "UCS-2LE", (char *)m_text.c_str(), (m_text.length() + 1) * sizeof(wchar_t), resultLength);
 #else
     return convertText(codec, "WCHAR_T", (char *)text.c_str(), (text.length() + 1) * sizeof(wchar_t), resultLength);
 #endif

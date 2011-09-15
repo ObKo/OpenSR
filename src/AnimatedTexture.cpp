@@ -20,35 +20,33 @@
 #include "Engine.h"
 #include "Log.h"
 
-using namespace Rangers;
-
+namespace Rangers
+{
 /*!
  * \param a hai animation
  */
 AnimatedTexture::AnimatedTexture(const HAIAnimation& a)
 {
-    ::Texture();
+    m_waitSeek = 600;
+    m_waitSize = 600;
+    m_width = a.width;
+    m_height = a.height;
+    m_frameCount = a.frameCount;
 
-    waitSeek = 600;
-    waitSize = 600;
-    realWidth = a.width;
-    realHeight = a.height;
-    frameCount = a.frameCount;
+    m_textures = new GLuint[m_frameCount];
+    m_textures[0] = m_openGLTexture;
+    glGenTextures(m_frameCount - 1, m_textures + 1);
 
-    textureIDs = new GLuint[frameCount];
-    textureIDs[0] = textureID;
-    glGenTextures(frameCount - 1, textureIDs + 1);
-
-    for (int i = 0; i < frameCount; i++)
+    for (int i = 0; i < m_frameCount; i++)
     {
-        glBindTexture(GL_TEXTURE_2D, textureIDs[i]);
+        glBindTexture(GL_TEXTURE_2D, m_textures[i]);
 
         glTexImage2D(GL_TEXTURE_2D, 0, Engine::instance()->textureInternalFormat(TEXTURE_R8G8B8A8), a.width, a.height, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, a.frames + a.width * a.height * 4 * i);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     }
-    loadedAnimationFrames = frameCount;
+    m_loadedFrames = m_frameCount;
     m_needFrames = false;
 }
 
@@ -57,37 +55,35 @@ AnimatedTexture::AnimatedTexture(const HAIAnimation& a)
  */
 AnimatedTexture::AnimatedTexture(const GAIAnimation& a)
 {
-    ::Texture();
+    m_waitSeek = a.waitSeek;
+    m_waitSize = a.waitSize;
+    m_width = a.width;
+    m_height = a.height;
+    m_frameCount = a.frameCount;
 
-    waitSeek = a.waitSeek;
-    waitSize = a.waitSize;
-    realWidth = a.width;
-    realHeight = a.height;
-    frameCount = a.frameCount;
-
-    textureIDs = new GLuint[frameCount];
-    textureIDs[0] = textureID;
-    glGenTextures(frameCount - 1, textureIDs + 1);
+    m_textures = new GLuint[m_frameCount];
+    m_textures[0] = m_openGLTexture;
+    glGenTextures(m_frameCount - 1, m_textures + 1);
 
     size_t s = 0;
 
-    for (int i = 0; i < frameCount; i++)
+    for (int i = 0; i < m_frameCount; i++)
     {
-        glBindTexture(GL_TEXTURE_2D, textureIDs[i]);
+        glBindTexture(GL_TEXTURE_2D, m_textures[i]);
 
         glTexImage2D(GL_TEXTURE_2D, 0, Engine::instance()->textureInternalFormat(TEXTURE_R8G8B8A8), a.frames[i].width, a.frames[i].height, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, a.frames[i].data);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     }
-    loadedAnimationFrames = frameCount;
+    m_loadedFrames = m_frameCount;
     m_needFrames = false;
 }
 
 AnimatedTexture::~AnimatedTexture()
 {
-    textureID = textureIDs[0];
-    glDeleteTextures(frameCount - 1, &textureIDs[1]);
+    m_openGLTexture = m_textures[0];
+    glDeleteTextures(m_frameCount - 1, &m_textures[1]);
 }
 
 /*!
@@ -96,74 +92,72 @@ AnimatedTexture::~AnimatedTexture()
  */
 GLuint AnimatedTexture::openGLTexture(int i)
 {
-    if (!loadedAnimationFrames)
+    if (!m_loadedFrames)
     {
         m_needFrames = true;
         return 0;
     }
-    if (i >= loadedAnimationFrames - 2)
+    if (i >= m_loadedFrames - 2)
         m_needFrames = true;
     else
         m_needFrames = false;
 
-    if (i >= loadedAnimationFrames)
-        return textureIDs[loadedAnimationFrames - 1];
+    if (i >= m_loadedFrames)
+        return m_textures[m_loadedFrames - 1];
     else
-        return textureIDs[i];
+        return m_textures[i];
 }
 
 /*!
  * \return seek
  */
-int AnimatedTexture::seek() const
+int AnimatedTexture::waitSeek() const
 {
-    return waitSeek;
+    return m_waitSeek;
 }
 
 /*!
  * \return size
  */
-int AnimatedTexture::size() const
+int AnimatedTexture::waitSize() const
 {
-    return waitSize;
+    return m_waitSize;
 }
 
 /*!
  * \return frame count
  */
-int AnimatedTexture::count() const
+int AnimatedTexture::frameCount() const
 {
-    return frameCount;
+    return m_frameCount;
 }
 
 AnimatedTexture::AnimatedTexture(int width, int height, int seek, int size, int count)
 {
-    ::Texture();
+    m_waitSeek = seek;
+    m_waitSize = size;
+    m_width = width;
+    m_height = height;
+    m_frameCount = count;
 
-    waitSeek = seek;
-    waitSize = size;
-    realWidth = width;
-    realHeight = height;
-    frameCount = count;
-
-    textureIDs = new GLuint[frameCount];
-    textureIDs[0] = textureID;
-    glGenTextures(frameCount - 1, textureIDs + 1);
-    loadedAnimationFrames = 0;
+    m_textures = new GLuint[m_frameCount];
+    m_textures[0] = m_openGLTexture;
+    glGenTextures(m_frameCount - 1, m_textures + 1);
+    m_loadedFrames = 0;
     m_needFrames = true;
 }
 
 int AnimatedTexture::loadedFrames() const
 {
-    return loadedAnimationFrames;
+    return m_loadedFrames;
 }
 
 void AnimatedTexture::loadFrame(const char* data, int width, int height, TextureType type)
 {
-    if (loadedAnimationFrames == frameCount)
+    if (m_loadedFrames == m_frameCount)
         return;
 
-    glBindTexture(GL_TEXTURE_2D, textureIDs[loadedAnimationFrames]);
+    glBindTexture(GL_TEXTURE_2D, m_textures[m_loadedFrames]);
 
     switch (type)
     {
@@ -178,11 +172,12 @@ void AnimatedTexture::loadFrame(const char* data, int width, int height, Texture
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-    loadedAnimationFrames++;
+    m_loadedFrames++;
     m_needFrames = false;
 }
 
 bool AnimatedTexture::needFrames() const
 {
     return m_needFrames;
+}
 }

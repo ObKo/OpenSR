@@ -35,9 +35,10 @@
 #include "LuaBindings.h"
 #include "LuaWidget.h"
 
-using namespace Rangers;
 using namespace std;
 
+namespace Rangers
+{
 static Engine *engineInstance = 0;
 FT_Library trueTypeLibrary;
 
@@ -59,7 +60,7 @@ long long Engine::getTicks()
 }
 #endif
 
-Engine::Engine(int argc, char **argv): argc(argc), argv(argv)
+Engine::Engine(int argc, char **argv): m_argc(argc), m_argv(argv)
 {
     if (engineInstance)
     {
@@ -68,11 +69,11 @@ Engine::Engine(int argc, char **argv): argc(argc), argv(argv)
     }
 
     engineInstance = this;
-    currentWidget = 0;
-    focusedWidget = 0;
-    consoleOpenned = false;
-    showFPS = true;
-    frames = 0;
+    m_currentWidget = 0;
+    m_focusedWidget = 0;
+    m_consoleOpenned = false;
+    m_showFPS = true;
+    m_frames = 0;
 }
 
 Engine::~Engine()
@@ -82,40 +83,40 @@ Engine::~Engine()
 
 int Engine::fpsCounter()
 {
-    while (engineInstance->gameRunning)
+    while (engineInstance->m_gameRunning)
     {
         SDL_Delay(1000);
         char str[255];
-        sprintf(str, "%d", engineInstance->frames);
-        if (engineInstance->frames >= 60)
-            engineInstance->fpsLabel.setColor(0, 1, 0);
+        sprintf(str, "%d", engineInstance->m_frames);
+        if (engineInstance->m_frames >= 60)
+            engineInstance->m_fpsLabel.setColor(0, 1, 0);
         else
-            engineInstance->fpsLabel.setColor(1, 0, 0);
-        engineInstance->fpsLabel.setText(str);
-        engineInstance->frames = 0;
+            engineInstance->m_fpsLabel.setColor(1, 0, 0);
+        engineInstance->m_fpsLabel.setText(str);
+        engineInstance->m_frames = 0;
     }
     return 0;
 }
 
 void Engine::addWidget(Widget *w)
 {
-    mainNode.addChild(w);
+    m_mainNode.addChild(w);
 
-    for (std::list<Widget*>::iterator i = widgets.begin(); i != widgets.end(); i++)
+    for (std::list<Widget*>::iterator i = m_widgets.begin(); i != m_widgets.end(); i++)
     {
         if ((*i)->layer() < w->layer())
         {
-            widgets.insert(i, w);
+            m_widgets.insert(i, w);
             return;
         }
     }
-    widgets.push_back(w);
+    m_widgets.push_back(w);
 }
 
 int Engine::logic()
 {
     long t = getTicks();
-    while (engineInstance->gameRunning)
+    while (engineInstance->m_gameRunning)
     {
         int dt = getTicks() - t;
         while (!dt)
@@ -124,9 +125,9 @@ int Engine::logic()
             SDL_Delay(1);
             dt = getTicks() - t;
         }
-        engineInstance->mainNode.processLogic(dt);
-        if (engineInstance->consoleOpenned)
-            engineInstance->consoleWidget.processLogic(dt);
+        engineInstance->m_mainNode.processLogic(dt);
+        if (engineInstance->m_consoleOpenned)
+            engineInstance->m_consoleWidget.processLogic(dt);
         t = getTicks();
     }
     return 0;
@@ -143,8 +144,8 @@ void Engine::init(int w, int h, bool fullscreen)
     SDL_EnableKeyRepeat(660, 40);
     SDL_EnableUNICODE(1);
 
-    width = screen->w;
-    height = screen->h;
+    m_width = screen->w;
+    m_height = screen->h;
 
 #ifdef _WIN32
     glewInit();
@@ -160,10 +161,10 @@ void Engine::init(int w, int h, bool fullscreen)
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    glViewport(0, 0, width, height);
+    glViewport(0, 0, m_width, m_height);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(0.0f, width, height, 0.0f, -1.0f, 1.0f);
+    glOrtho(0.0f, m_width, m_height, 0.0f, -1.0f, 1.0f);
 
     std::ifstream startupScript("opensrrc");
     if (startupScript.is_open())
@@ -177,30 +178,30 @@ void Engine::init(int w, int h, bool fullscreen)
         startupScript.close();
     }
 
-    engineFont = ResourceManager::instance()->loadFont(L"DroidSans.ttf", 13);
-    monospaceFont = ResourceManager::instance()->loadFont(L"DroidSansMono.ttf", 13);
+    m_coreFont = ResourceManager::instance()->loadFont(L"DroidSans.ttf", 13);
+    m_monospaceFont = ResourceManager::instance()->loadFont(L"DroidSansMono.ttf", 13);
 
-    frames = 0;
+    m_frames = 0;
 
-    mainNode.setPosition(0, 0);
+    m_mainNode.setPosition(0, 0);
 
-    fpsLabel = Label("0", 0, monospaceFont, POSITION_X_LEFT, POSITION_Y_TOP);
-    fpsLabel.setPosition(5, 5);
+    m_fpsLabel = Label("0", 0, m_monospaceFont, POSITION_X_LEFT, POSITION_Y_TOP);
+    m_fpsLabel.setPosition(5, 5);
 
-    consoleWidget = ConsoleWidget(width, 168);
+    m_consoleWidget = ConsoleWidget(m_width, 168);
 
     LuaWidget *lw = new LuaWidget(L"data/test.lua");
     addWidget(lw);
 }
 
-boost::shared_ptr<Font> Engine::defaultFont() const
+boost::shared_ptr<Font> Engine::coreFont() const
 {
-    return engineFont;
+    return m_coreFont;
 }
 
 boost::shared_ptr<Font> Engine::serviceFont() const
 {
-    return monospaceFont;
+    return m_monospaceFont;
 }
 
 void Engine::paint()
@@ -211,67 +212,67 @@ void Engine::paint()
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    mainNode.draw();
-    if (consoleOpenned)
-        consoleWidget.draw();
-    if (showFPS)
-        fpsLabel.draw();
-    frames++;
+    m_mainNode.draw();
+    if (m_consoleOpenned)
+        m_consoleWidget.draw();
+    if (m_showFPS)
+        m_fpsLabel.draw();
+    m_frames++;
 
     SDL_GL_SwapBuffers();
 }
 
 int Engine::run()
 {
-    gameRunning = true;
-    fpsThread = new boost::thread(fpsCounter);
-    logicThread = new boost::thread(logic);
-    while (gameRunning)
+    m_gameRunning = true;
+    m_fpsThread = new boost::thread(fpsCounter);
+    m_logicThread = new boost::thread(logic);
+    while (m_gameRunning)
     {
-        updateMutex.lock();
-        for (std::list<Object *>::const_iterator i = updateList.begin(); i != updateList.end(); i++)
+        m_updateMutex.lock();
+        for (std::list<Object *>::const_iterator i = m_updateList.begin(); i != m_updateList.end(); i++)
             (*i)->processMain();
-        updateList.clear();
-        updateMutex.unlock();
+        m_updateList.clear();
+        m_updateMutex.unlock();
 
         ResourceManager::instance()->processMain();
 
         processEvents();
         paint();
     }
-    return exitCode;
+    return m_exitCode;
 }
 
 void Engine::markToUpdate(Object* object)
 {
-    updateMutex.lock();
-    updateList.push_back(object);
-    updateMutex.unlock();
+    m_updateMutex.lock();
+    m_updateList.push_back(object);
+    m_updateMutex.unlock();
 }
 
 void Engine::unmarkToUpdate(Object* object)
 {
-    updateMutex.lock();
-    updateList.remove(object);
-    updateMutex.unlock();
+    m_updateMutex.lock();
+    m_updateList.remove(object);
+    m_updateMutex.unlock();
 }
 
 void Engine::quit(int code)
 {
-    gameRunning = false;
-    exitCode = code;
-    logicThread->join();
-    fpsThread->interrupt();
+    m_gameRunning = false;
+    m_exitCode = code;
+    m_logicThread->join();
+    m_fpsThread->interrupt();
 }
 
 int Engine::screenHeight() const
 {
-    return height;
+    return m_height;
 }
 
 int Engine::screenWidth() const
 {
-    return width;
+    return m_width;
 }
 
 GLint Engine::textureInternalFormat(TextureType t) const
@@ -295,8 +296,8 @@ Engine *Engine::instance()
 
 void Engine::focusWidget(Widget* w)
 {
-    if (!consoleOpenned)
-        focusedWidget = w;
+    if (!m_consoleOpenned)
+        m_focusedWidget = w;
 }
 
 std::wstring Engine::addObject(Object* object, const std::wstring& name)
@@ -312,27 +313,27 @@ std::wstring Engine::addObject(Object* object, const std::wstring& name)
         objectName = name;
 
     if (!(object->parent()))
-        mainNode.addChild(object);
+        m_mainNode.addChild(object);
 
-    std::map<std::wstring, Object*>::iterator it = objects.find(objectName);
-    if (it != objects.end())
+    std::map<std::wstring, Object*>::iterator it = m_objects.find(objectName);
+    if (it != m_objects.end())
     {
         int i = 1;
         wstring n;
-        while (it != objects.end())
+        while (it != m_objects.end())
         {
             wostringstream s(objectName);
             s.seekp(0, ios_base::end);
             s << i;
             n = s.str();
-            it = objects.find(n);
+            it = m_objects.find(n);
             i++;
         }
         Log::warning() << L"Object \"" << objectName << "\" exists. Renamed to \"" << n << "\"";
-        objects[n] = object;
+        m_objects[n] = object;
         return n;
     }
-    objects[objectName] = object;
+    m_objects[objectName] = object;
     return objectName;
 }
 
@@ -340,8 +341,8 @@ Object* Engine::getObject(const std::wstring& name)
 {
     if (name.empty())
         return 0;
-    std::map<std::wstring, Object*>::iterator it = objects.find(name);
-    if (it != objects.end())
+    std::map<std::wstring, Object*>::iterator it = m_objects.find(name);
+    if (it != m_objects.end())
         return (*it).second;
     else
     {
@@ -355,11 +356,11 @@ void Engine::removeObject(const std::wstring& name)
     if (name.empty())
         return;
 
-    std::map<std::wstring, Object*>::iterator it = objects.find(name);
-    if (it != objects.end())
+    std::map<std::wstring, Object*>::iterator it = m_objects.find(name);
+    if (it != m_objects.end())
     {
         delete(*it).second;
-        objects.erase(it);
+        m_objects.erase(it);
     }
     else
         Log::warning() << L"No such object: " << name;
@@ -379,31 +380,31 @@ void Engine::processEvents()
         case SDL_KEYDOWN:
             if (event.key.keysym.sym == SDLK_BACKQUOTE)
             {
-                if (consoleOpenned)
+                if (m_consoleOpenned)
                 {
-                    consoleOpenned = false;
-                    focusedWidget = 0;
+                    m_consoleOpenned = false;
+                    m_focusedWidget = 0;
                 }
                 else
                 {
-                    consoleOpenned = true;
-                    focusedWidget = &consoleWidget;
+                    m_consoleOpenned = true;
+                    m_focusedWidget = &m_consoleWidget;
                 }
                 continue;
             }
-            if (focusedWidget)
-                focusedWidget->keyPressed(event.key.keysym);
+            if (m_focusedWidget)
+                m_focusedWidget->keyPressed(event.key.keysym);
             break;
         case SDL_MOUSEMOTION:
             processMouseMove(event.motion);
             break;
         case SDL_MOUSEBUTTONDOWN:
-            if (currentWidget)
-                currentWidget->mouseDown(event.button.button, event.button.x, event.button.y);
+            if (m_currentWidget)
+                m_currentWidget->mouseDown(event.button.button, event.button.x, event.button.y);
             break;
         case SDL_MOUSEBUTTONUP:
-            if (currentWidget)
-                currentWidget->mouseUp(event.button.button, event.button.x, event.button.y);
+            if (m_currentWidget)
+                m_currentWidget->mouseUp(event.button.button, event.button.x, event.button.y);
             break;
         case SDL_QUIT:
             quit();
@@ -414,25 +415,25 @@ void Engine::processEvents()
 
 void Engine::processMouseMove(SDL_MouseMotionEvent e)
 {
-    for (std::list<Widget*>::iterator i = widgets.begin(); i != widgets.end(); i++)
+    for (std::list<Widget*>::iterator i = m_widgets.begin(); i != m_widgets.end(); i++)
     {
         Rect bb = (*i)->getBoundingRect();
         if ((bb.x1 < e.x) && (bb.x2 > e.x) && (bb.y1 < e.y) && (bb.y2 > e.y))
         {
-            if ((*i) != currentWidget)
+            if ((*i) != m_currentWidget)
             {
-                if (currentWidget)
-                    currentWidget->mouseLeave();
-                currentWidget = *i;
-                currentWidget->mouseEnter();
+                if (m_currentWidget)
+                    m_currentWidget->mouseLeave();
+                m_currentWidget = *i;
+                m_currentWidget->mouseEnter();
             }
             (*i)->mouseMove(e.x - bb.x1, e.y - bb.y1);
             return;
         }
     }
-    if (currentWidget)
-        currentWidget->mouseLeave();
-    currentWidget = 0;
+    if (m_currentWidget)
+        m_currentWidget->mouseLeave();
+    m_currentWidget = 0;
 }
 
 void Engine::execCommand(const std::wstring& what)
@@ -452,8 +453,8 @@ void Engine::execCommand(const std::wstring& what)
 
         if (!args.fail())
         {
-            showFPS = enable;
-            Log::info() << L"FPS label " << (showFPS ? (L"enabled") : (L"disabled"));
+            m_showFPS = enable;
+            Log::info() << L"FPS label " << (m_showFPS ? (L"enabled") : (L"disabled"));
         }
     }
     else if (command == L"add_rpkg")
@@ -491,8 +492,8 @@ void Engine::execCommand(const std::wstring& what)
             boost::shared_ptr<Texture> t = ResourceManager::instance()->loadTexture(fileName);
             if (t)
             {
-                Sprite *s = new Sprite(t, &mainNode, (TextureScaling)scaling);
-                mainNode.addChild(s);
+                Sprite *s = new Sprite(t, &m_mainNode, (TextureScaling)scaling);
+                m_mainNode.addChild(s);
                 wstring objName = addObject(s, fileName);
                 s->setGeometry(w, h);
                 s->setPosition(x, y);
@@ -520,9 +521,9 @@ void Engine::execCommand(const std::wstring& what)
             boost::shared_ptr<AnimatedTexture> t = ResourceManager::instance()->loadAnimation(fileName);
             if (t)
             {
-                AnimatedSprite *s = new AnimatedSprite(t, &mainNode);
+                AnimatedSprite *s = new AnimatedSprite(t, &m_mainNode);
                 s->setFrame(currentFrame);
-                mainNode.addChild(s);
+                m_mainNode.addChild(s);
                 wstring objName = addObject(s, fileName);
                 s->setGeometry(w, h);
                 s->setPosition(x, y);
@@ -543,4 +544,4 @@ void Engine::execCommand(const std::wstring& what)
     if (args.fail())
         Log::error() << L"Invalid arguments";
 }
-
+}

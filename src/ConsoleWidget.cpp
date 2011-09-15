@@ -20,41 +20,41 @@
 #include "Engine.h"
 #include "Log.h"
 
-using namespace Rangers;
-
+namespace Rangers
+{
 ConsoleWidget::ConsoleWidget(float w, float h, Object* parent): Widget(w, h, parent)
 {
     int editSize = Engine::instance()->serviceFont()->size() + 4;
-    lineEdit = LineEditWidget(w, editSize, Engine::instance()->serviceFont(), this);
-    logLabel = ColorLabel("", this, Engine::instance()->serviceFont(), POSITION_X_LEFT, POSITION_Y_TOP);
-    logLabel.setPosition(4, 4);
-    logLabel.setFixedSize(w - 8, h - editSize - 8);
-    lineEdit.setPosition(0, h - editSize);
-    lines = (h - editSize - 8) / Engine::instance()->serviceFont()->size();
-    border = 0;
-    borderBuffer = 0;
+    m_lineEdit = LineEditWidget(w, editSize, Engine::instance()->serviceFont(), this);
+    m_logLabel = ColorLabel("", this, Engine::instance()->serviceFont(), POSITION_X_LEFT, POSITION_Y_TOP);
+    m_logLabel.setPosition(4, 4);
+    m_logLabel.setFixedSize(w - 8, h - editSize - 8);
+    m_lineEdit.setPosition(0, h - editSize);
+    m_consoleLines = (h - editSize - 8) / Engine::instance()->serviceFont()->size();
+    m_borderVertices = 0;
+    m_borderBuffer = 0;
     markToUpdate();
-    currentHistoryPosition = -1;
+    m_historyPosition = -1;
 }
 
 ConsoleWidget::ConsoleWidget(const Rangers::ConsoleWidget& other): Widget(other)
 {
-    lineEdit = other.lineEdit;
-    logLabel = other.logLabel;
-    border = 0;
-    borderBuffer = 0;
-    lines = other.lines;
+    m_lineEdit = other.m_lineEdit;
+    m_logLabel = other.m_logLabel;
+    m_borderVertices = 0;
+    m_borderBuffer = 0;
+    m_consoleLines = other.m_consoleLines;
 
-    currentHistoryPosition = other.currentHistoryPosition;
-    history = other.history;
+    m_historyPosition = other.m_historyPosition;
+    m_commandHistory = other.m_commandHistory;
     markToUpdate();
 }
 
 ConsoleWidget::ConsoleWidget(Object* parent): Widget(parent)
 {
-    border = 0;
-    borderBuffer = 0;
-    currentHistoryPosition = -1;
+    m_borderVertices = 0;
+    m_borderBuffer = 0;
+    m_historyPosition = -1;
 }
 
 
@@ -63,17 +63,17 @@ ConsoleWidget& ConsoleWidget::operator=(const Rangers::ConsoleWidget& other)
     if (this == &other)
         return *this;
 
-    lineEdit = other.lineEdit;
-    logLabel = other.logLabel;
-    border = 0;
-    borderBuffer = 0;
-    lines = other.lines;
+    m_lineEdit = other.m_lineEdit;
+    m_logLabel = other.m_logLabel;
+    m_borderVertices = 0;
+    m_borderBuffer = 0;
+    m_consoleLines = other.m_consoleLines;
 
-    currentHistoryPosition = other.currentHistoryPosition;
-    history = other.history;
+    m_historyPosition = other.m_historyPosition;
+    m_commandHistory = other.m_commandHistory;
     markToUpdate();
 
-    ::Widget::operator=(other);
+    Widget::operator=(other);
     return *this;
 }
 
@@ -84,8 +84,8 @@ void ConsoleWidget::draw()
     if (!prepareDraw())
         return;
 
-    lineEdit.draw();
-    logLabel.draw();
+    m_lineEdit.draw();
+    m_logLabel.draw();
 
     glBindTexture(GL_TEXTURE_2D, 0);
     glColor3f(1, 1, 1);
@@ -93,7 +93,7 @@ void ConsoleWidget::draw()
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_ARRAY_BUFFER);
 
-    glBindBuffer(GL_ARRAY_BUFFER, borderBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, m_borderBuffer);
 
     glVertexPointer(2, GL_FLOAT, sizeof(Vertex), 0);
     glLineWidth(1);
@@ -110,66 +110,66 @@ void ConsoleWidget::keyPressed(SDL_keysym key)
 {
     if (key.sym == SDLK_RETURN)
     {
-        if (lineEdit.text() != L"")
+        if (m_lineEdit.text() != L"")
         {
-            history.push_back(lineEdit.text());
-            currentHistoryPosition = -1;
-            Engine::instance()->execCommand(lineEdit.text());
-            lineEdit.setText(L"");
+            m_commandHistory.push_back(m_lineEdit.text());
+            m_historyPosition = -1;
+            Engine::instance()->execCommand(m_lineEdit.text());
+            m_lineEdit.setText(L"");
         }
     }
     else if (key.sym == SDLK_UP)
     {
-        if (currentHistoryPosition == -1 && lineEdit.text() != L"")
+        if (m_historyPosition == -1 && m_lineEdit.text() != L"")
         {
-            history.push_back(lineEdit.text());
-            currentHistoryPosition = history.size() - 1;
+            m_commandHistory.push_back(m_lineEdit.text());
+            m_historyPosition = m_commandHistory.size() - 1;
         }
 
-        if ((currentHistoryPosition == -1) && (history.size() > 0))
-            currentHistoryPosition = history.size();
+        if ((m_historyPosition == -1) && (m_commandHistory.size() > 0))
+            m_historyPosition = m_commandHistory.size();
 
-        if (currentHistoryPosition > 0)
+        if (m_historyPosition > 0)
         {
-            currentHistoryPosition--;
-            lineEdit.setText(history[currentHistoryPosition]);
+            m_historyPosition--;
+            m_lineEdit.setText(m_commandHistory[m_historyPosition]);
         }
 
         //markToUpdate();
     }
     else if (key.sym == SDLK_DOWN)
     {
-        if (currentHistoryPosition < history.size() - 1)
+        if (m_historyPosition < m_commandHistory.size() - 1)
         {
-            currentHistoryPosition++;
-            lineEdit.setText(history[currentHistoryPosition]);
+            m_historyPosition++;
+            m_lineEdit.setText(m_commandHistory[m_historyPosition]);
         }
         else
         {
-            currentHistoryPosition = -1;
-            lineEdit.setText(L"");
+            m_historyPosition = -1;
+            m_lineEdit.setText(L"");
         }
 
         //markToUpdate();
     }
     else
-        lineEdit.keyPressed(key);
+        m_lineEdit.keyPressed(key);
 }
 
 void ConsoleWidget::processLogic(int dt)
 {
-    lineEdit.processLogic(dt);
+    m_lineEdit.processLogic(dt);
 
-    if (Log::instance()->checkForUpdate())
+    if (Log::instance()->needUpdate())
     {
-        std::list<LogEntry> l = Log::instance()->lines(lines);
+        std::list<LogEntry> l = Log::instance()->getLastLines(m_consoleLines);
         std::wstring text;
 
         for (std::list<LogEntry>::const_iterator i = l.begin(); i != l.end(); i++)
         {
             const LogEntry& e = *i;
 
-            switch (e.level)
+            switch (e.m_level)
             {
 
             case LERROR:
@@ -189,10 +189,10 @@ void ConsoleWidget::processLogic(int dt)
                 break;
             }
 
-            text += e.text + L"\\cR\n";
+            text += e.m_text + L"\\cR\n";
         }
 
-        logLabel.setText(text);
+        m_logLabel.setText(text);
     }
 
     Widget::processLogic(dt);
@@ -202,36 +202,37 @@ void ConsoleWidget::processMain()
 {
     lock();
 
-    if (!borderBuffer)
+    if (!m_borderBuffer)
     {
-        border = new Vertex[6];
-        glGenBuffers(1, &borderBuffer);
-        glBindBuffer(GL_ARRAY_BUFFER, borderBuffer);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * 6, border, GL_DYNAMIC_DRAW);
-        delete border;
+        m_borderVertices = new Vertex[6];
+        glGenBuffers(1, &m_borderBuffer);
+        glBindBuffer(GL_ARRAY_BUFFER, m_borderBuffer);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * 6, m_borderVertices, GL_DYNAMIC_DRAW);
+        delete m_borderVertices;
     }
 
-    glBindBuffer(GL_ARRAY_BUFFER, borderBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, m_borderBuffer);
 
-    border = (Vertex *)glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
-    border[0].x = 1;
-    border[0].y = 1;
-    border[1].x = widgetWidth - 1;
-    border[1].y = 1;
-    border[2].x = widgetWidth - 1;
-    border[2].y = 1;
-    border[3].x = widgetWidth - 1;
-    border[3].y = widgetHeight - lineEdit.height();
-    border[4].x = 1;
-    border[4].y = 1;
-    border[5].x = 1;
-    border[5].y = widgetHeight - lineEdit.height();
+    m_borderVertices = (Vertex *)glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+    m_borderVertices[0].x = 1;
+    m_borderVertices[0].y = 1;
+    m_borderVertices[1].x = m_width - 1;
+    m_borderVertices[1].y = 1;
+    m_borderVertices[2].x = m_width - 1;
+    m_borderVertices[2].y = 1;
+    m_borderVertices[3].x = m_width - 1;
+    m_borderVertices[3].y = m_height - m_lineEdit.height();
+    m_borderVertices[4].x = 1;
+    m_borderVertices[4].y = 1;
+    m_borderVertices[5].x = 1;
+    m_borderVertices[5].y = m_height - m_lineEdit.height();
 
     glUnmapBuffer(GL_ARRAY_BUFFER);
 
-    lineEdit.processMain();
-    logLabel.processMain();
+    m_lineEdit.processMain();
+    m_logLabel.processMain();
     unlock();
     Widget::processMain();
+}
 }
 

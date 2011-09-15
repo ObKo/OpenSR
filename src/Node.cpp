@@ -19,15 +19,16 @@
 #include "Node.h"
 #include <stdexcept>
 
-using namespace Rangers;
 using namespace boost;
 
+namespace Rangers
+{
 void Node::draw()
 {
     if (!prepareDraw())
         return;
 
-    for (std::list<Object*>::const_iterator i = objectChilds.begin(); i != objectChilds.end(); i++)
+    for (std::list<Object*>::const_iterator i = m_children.begin(); i != m_children.end(); i++)
         (*i)->draw();
 
     endDraw();
@@ -36,12 +37,13 @@ void Node::draw()
 void Node::processLogic(int dt)
 {
     lock();
-    for (std::list<Object*>::const_iterator i = objectChilds.begin(); i != objectChilds.end(); i++)
+    for (std::list<Object*>::const_iterator i = m_children.begin(); i != m_children.end(); i++)
         (*i)->processLogic(dt);
     unlock();
 }
 
 void Node::processMain()
 {
-    ::Object::processMain();
+    Object::processMain();
+}
 }

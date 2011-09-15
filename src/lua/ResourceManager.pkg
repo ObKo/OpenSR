@@ -29,6 +29,4 @@ public:
     
     static ResourceManager *instance();
 };
-};
-
-#endif // RESOURCEMANAGER_H
+}

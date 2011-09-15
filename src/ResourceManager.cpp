@@ -27,8 +27,10 @@
 #include "AnimatedSprite.h"
 #include "Object.h"
 
-using namespace Rangers;
 using namespace std;
+
+namespace Rangers
+{
 ResourceManager *manager = 0;
 
 class ResourceManager::GAIWorker
@@ -63,27 +65,27 @@ void ResourceManager::addRPKG(const std::wstring& path)
 {
     boost::shared_ptr<RPKGAdapter> a = boost::shared_ptr<RPKGAdapter>(new RPKGAdapter());
     a->load(path);
-    adaptors.push_back(a);
+    m_adapters.push_back(a);
     list<wstring> adaptorFiles = a->getFiles();
     for (list<wstring>::const_iterator i = adaptorFiles.begin(); i != adaptorFiles.end(); ++i)
-        files[(*i)] = a;
+        m_files[(*i)] = a;
 }
 
 void ResourceManager::addDir(const std::wstring& path)
 {
     boost::shared_ptr<FSAdapter> a = boost::shared_ptr<FSAdapter>(new FSAdapter());
     a->load(path);
-    adaptors.push_back(a);
+    m_adapters.push_back(a);
     list<wstring> adaptorFiles = a->getFiles();
     for (list<wstring>::const_iterator i = adaptorFiles.begin(); i != adaptorFiles.end(); ++i)
-        files[(*i)] = a;
+        m_files[(*i)] = a;
 }
 
 
 boost::shared_ptr<Texture> ResourceManager::loadTexture(const std::wstring& name)
 {
-    map<wstring, boost::shared_ptr<Texture> >::const_iterator it = textures.find(name);
-    if (it != textures.end())
+    map<wstring, boost::shared_ptr<Texture> >::const_iterator it = m_textures.find(name);
+    if (it != m_textures.end())
         return it->second;
 
     wstring sfx = suffix(name);
@@ -98,8 +100,8 @@ boost::shared_ptr<Texture> ResourceManager::loadTexture(const std::wstring& name
         delete data;
         Texture *t = new Texture(frame.width, frame.height, Rangers::TEXTURE_R8G8B8A8, frame.data);
         delete frame.data;
-        textures[name] = boost::shared_ptr<Texture>(t);
-        return textures[name];
+        m_textures[name] = boost::shared_ptr<Texture>(t);
+        return m_textures[name];
     }
     else
         Log::error() << "Unknown texture format: " << sfx;
@@ -109,8 +111,8 @@ boost::shared_ptr<Texture> ResourceManager::loadTexture(const std::wstring& name
 
 boost::shared_ptr<AnimatedTexture> ResourceManager::loadAnimation(const std::wstring& name, bool backgroundLoading)
 {
-    map<wstring, boost::shared_ptr<AnimatedTexture> >::const_iterator it = animations.find(name);
-    if (it != animations.end())
+    map<wstring, boost::shared_ptr<AnimatedTexture> >::const_iterator it = m_animations.find(name);
+    if (it != m_animations.end())
         return it->second;
 
     wstring sfx = suffix(name);
@@ -140,18 +142,18 @@ boost::shared_ptr<AnimatedTexture> ResourceManager::loadAnimation(const std::wst
                     header.waitSeek, header.waitSize,
                     header.frameCount);
 
-            animations[name] = boost::shared_ptr<AnimatedTexture>(t);
+            m_animations[name] = boost::shared_ptr<AnimatedTexture>(t);
             GAIWorker *worker = new GAIWorker(data, bgFrameData);
-            onDemandGAIQueue[animations[name]] = worker;
+            m_gaiQueue[m_animations[name]] = worker;
             worker->run();
         }
         else
         {
             GAIWorker worker(data, bgFrameData);
             worker.loadAnimation(&worker);
-            animations[name] = boost::shared_ptr<AnimatedTexture>(new AnimatedTexture(worker.animation()));
+            m_animations[name] = boost::shared_ptr<AnimatedTexture>(new AnimatedTexture(worker.animation()));
         }
-        return animations[name];
+        return m_animations[name];
     }
     else
         Log::error() << "Unknown animation format: " << sfx;
@@ -166,8 +168,8 @@ boost::shared_ptr< Font > ResourceManager::loadFont(const std::wstring& name, in
     s << size;
     wstring mapName = s.str();
 
-    map<wstring, boost::shared_ptr<Font> >::const_iterator it = fonts.find(mapName);
-    if (it != fonts.end())
+    map<wstring, boost::shared_ptr<Font> >::const_iterator it = m_fonts.find(mapName);
+    if (it != m_fonts.end())
         return it->second;
 
     wstring sfx = suffix(name);
@@ -182,8 +184,8 @@ boost::shared_ptr< Font > ResourceManager::loadFont(const std::wstring& name, in
 
         Font *f = new Font(data, dataSize, size);
         delete data;
-        fonts[mapName] = boost::shared_ptr<Font>(f);
-        return fonts[mapName];
+        m_fonts[mapName] = boost::shared_ptr<Font>(f);
+        return m_fonts[mapName];
     }
     else
         Log::error() << "Unknown font format: " << sfx;
@@ -200,19 +202,19 @@ void ResourceManager::processMain()
 
 char* ResourceManager::loadData(const std::wstring& name, size_t &size)
 {
-    if (files.find(name) == files.end())
+    if (m_files.find(name) == m_files.end())
     {
         Log::error() << "No such file: " << name;
         return 0;
     }
-    return files[name]->loadData(name, size);
+    return m_files[name]->loadData(name, size);
 }
 
 void ResourceManager::processGAIQueue()
 {
     std::list<boost::shared_ptr<AnimatedTexture> > animationsToRemove;
 
-    for (std::map<boost::shared_ptr<AnimatedTexture>, GAIWorker*>::iterator i = onDemandGAIQueue.begin(); i != onDemandGAIQueue.end(); i++)
+    for (std::map<boost::shared_ptr<AnimatedTexture>, GAIWorker*>::iterator i = m_gaiQueue.begin(); i != m_gaiQueue.end(); i++)
     {
         boost::shared_ptr<AnimatedTexture> t = (*i).first;
         GAIWorker *w = (*i).second;
@@ -226,7 +228,7 @@ void ResourceManager::processGAIQueue()
                          w->animation().frames[f].width,
                          w->animation().frames[f].height, TEXTURE_R8G8B8A8);
             w->cleanFrame(f);
-            if (t->loadedFrames() >= t->count())
+            if (t->loadedFrames() >= t->frameCount())
             {
                 delete w;
                 animationsToRemove.push_back(i->first);
@@ -234,7 +236,7 @@ void ResourceManager::processGAIQueue()
         }
     }
     for (std::list<boost::shared_ptr<AnimatedTexture> >::const_iterator i = animationsToRemove.begin(); i != animationsToRemove.end(); i++)
-        onDemandGAIQueue.erase(*i);
+        m_gaiQueue.erase(*i);
     animationsToRemove.clear();
 }
 
@@ -243,19 +245,19 @@ void ResourceManager::cleanupUnused()
     std::list<std::wstring> animationsToRemove;
     std::list<std::wstring> texturesToRemove;
 
-    for (map<std::wstring, boost::shared_ptr<Texture> >::iterator i = textures.begin(); i != textures.end(); i++)
+    for (map<std::wstring, boost::shared_ptr<Texture> >::iterator i = m_textures.begin(); i != m_textures.end(); i++)
         if ((*i).second.use_count() < 2)
             texturesToRemove.push_back(i->first);
 
-    for (map<std::wstring, boost::shared_ptr<AnimatedTexture> >::iterator i = animations.begin(); i != animations.end(); i++)
+    for (map<std::wstring, boost::shared_ptr<AnimatedTexture> >::iterator i = m_animations.begin(); i != m_animations.end(); i++)
         if ((*i).second.use_count() < 2)
             animationsToRemove.push_back(i->first);
 
 
     for (std::list<std::wstring>::const_iterator i = animationsToRemove.begin(); i != animationsToRemove.end(); i++)
-        animations.erase(*i);
+        m_animations.erase(*i);
     for (std::list<std::wstring>::const_iterator i = texturesToRemove.begin(); i != texturesToRemove.end(); i++)
-        textures.erase(*i);
+        m_textures.erase(*i);
 }
 
 AnimatedSprite ResourceManager::getAnimatedSprite(const std::wstring& name, bool backgroundLoading, Object *parent)
@@ -324,7 +326,6 @@ void ResourceManager::GAIWorker::cleanFrame(int i)
     delete[] m_animation.frames[i % m_animation.frameCount].data;
     m_animation.frames[i % m_animation.frameCount].data = 0;
 }
-
-
+}
 
 

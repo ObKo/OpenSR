@@ -28,5 +28,3 @@ public:
     void setLayer(int layer);
 };
 }
-
-#endif

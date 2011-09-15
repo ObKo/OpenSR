@@ -26,13 +26,13 @@
 namespace Rangers
 {
 enum TextureScaling {TEXTURE_NO, TEXTURE_NORMAL, TEXTURE_KEEPASPECT, TEXTURE_TILE_X, TEXTURE_TILE_Y, TEXTURE_TILE};
-enum SpriteXPosition {POSITION_X_LEFT, POSITION_X_RIGHT, POSITION_X_CENTER};
-enum SpriteYPosition {POSITION_Y_TOP, POSITION_Y_BOTTOM, POSITION_Y_CENTER};
+enum SpriteXOrigin {POSITION_X_LEFT, POSITION_X_RIGHT, POSITION_X_CENTER};
+enum SpriteYOrigin {POSITION_Y_TOP, POSITION_Y_BOTTOM, POSITION_Y_CENTER};
 class Sprite: public Object
 {
 public:
     Sprite(Object *parent = 0);
-    Sprite(boost::shared_ptr<Texture> texture, Object *parent = 0, TextureScaling  ts = TEXTURE_NORMAL, SpriteXPosition xpos = POSITION_X_LEFT, SpriteYPosition ypos = POSITION_Y_TOP);
+    Sprite(boost::shared_ptr<Texture> texture, Object *parent = 0, TextureScaling  ts = TEXTURE_NORMAL, SpriteXOrigin xpos = POSITION_X_LEFT, SpriteYOrigin ypos = POSITION_Y_TOP);
     Sprite(const Sprite& other);
 
     ~Sprite();
@@ -41,7 +41,7 @@ public:
 
     void processMain();
 
-    void setSpriteOrigin(SpriteXPosition xpos, SpriteYPosition ypos);
+    void setOrigin(SpriteXOrigin xpos, SpriteYOrigin ypos);
     void setGeometry(float width, float height);
     void setWidth(float width);
     void setHeight(float height);
@@ -54,17 +54,17 @@ public:
     Sprite& operator=(const Sprite& other);
 
 protected:
-    Vertex *vertex;
-    int vertexCount;
+    Vertex *m_vertices;
+    int m_vertexCount;
 
-    float spriteWidth, spriteHeight;
-    SpriteXPosition xPos;
-    SpriteYPosition yPos;
-    TextureScaling textureScaling;
+    float m_width, m_height;
+    SpriteXOrigin m_xOrigin;
+    SpriteYOrigin m_yOrigin;
+    TextureScaling m_scaling;
 
-    GLuint vertexBuffer;
-    boost::shared_ptr<Texture> spriteTexture;
+    GLuint m_buffer;
+    boost::shared_ptr<Texture> m_texture;
 };
-};
+}
 
 #endif

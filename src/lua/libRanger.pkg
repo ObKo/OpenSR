@@ -13,6 +13,4 @@ std::string toLocal(const std::wstring& text);
 
 std::vector<std::wstring> split(const std::wstring& s, wchar_t c);
 std::wstring suffix(const std::wstring& s);
-};
-
-#endif
+}

@@ -44,10 +44,9 @@ int tolua_Texture_open(lua_State* tolua_S);
 int tolua_AnimatedTexture_open(lua_State* tolua_S);
 int tolua_LuaWidget_open(lua_State* tolua_S);
 
-std::wstring fromLua(const char *s);
-
 namespace Rangers
 {
+std::wstring fromLua(const char *s);
 Font *getPointer(boost::shared_ptr<Font> sp);
 Texture *getPointer(boost::shared_ptr<Texture> sp);
 AnimatedTexture *getPointer(boost::shared_ptr<AnimatedTexture> sp);
@@ -57,6 +56,8 @@ void freePointer(boost::shared_ptr<Texture> *sp);
 void freePointer(boost::shared_ptr<AnimatedTexture> *sp);
 
 void luaDebug(std::wstring s);
+void luaWarning(std::wstring s);
+void luaError(std::wstring s);
 }
 
 #endif

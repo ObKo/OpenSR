@@ -31,9 +31,9 @@ struct LogEntry
 {
     LogEntry(LogLevel l, std::wstring t, unsigned int ts);
     LogEntry();
-    LogLevel level;
-    std::wstring text;
-    unsigned int timestap;
+    LogLevel m_level;
+    std::wstring m_text;
+    unsigned int m_timestamp;
 };
 
 class Log
@@ -49,17 +49,15 @@ public:
     static Logger warning();
     static Logger error();
 
-    bool checkForUpdate();
-    std::list<LogEntry> lines(int n = -1) const;
+    bool needUpdate();
+    std::list<LogEntry> getLastLines(int n = -1) const;
     void writeLogEntry(const LogEntry& s);
 
 private:
-    bool isNew;
-    bool colorOutput;
-    std::list<LogEntry> logs;
-    boost::recursive_mutex bufferMutex;
-
-    LogEntry currentEntry;
+    bool m_needUpdate;
+    bool m_colorOutput;
+    std::list<LogEntry> m_logEntries;
+    boost::recursive_mutex m_bufferMutex;
 };
 
 class Log::Logger
@@ -82,9 +80,8 @@ public:
 
 private:
     LogLevel m_logLevel;
-    boost::shared_ptr<std::wostringstream> loggerStream;
+    boost::shared_ptr<std::wostringstream> m_stream;
 };
-
-};
+}
 
 #endif // LOG_H

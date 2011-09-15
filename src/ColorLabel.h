@@ -30,14 +30,14 @@ public:
     //! Default constructor
     ColorLabel(Object *parent = 0);
     //! Construct from std::string
-    ColorLabel(const std::string& text, Object *parent = 0, boost::shared_ptr<Font> font = boost::shared_ptr<Font>(), SpriteXPosition xpos = POSITION_X_CENTER, SpriteYPosition ypos = POSITION_Y_CENTER);
+    ColorLabel(const std::string& text, Object *parent = 0, boost::shared_ptr<Font> font = boost::shared_ptr<Font>(), SpriteXOrigin xpos = POSITION_X_CENTER, SpriteYOrigin ypos = POSITION_Y_CENTER);
     //! Construct from std::wstring
-    ColorLabel(const std::wstring& text, Object *parent = 0, boost::shared_ptr<Font> font = boost::shared_ptr<Font>(), SpriteXPosition xpos = POSITION_X_CENTER, SpriteYPosition ypos = POSITION_Y_CENTER);
+    ColorLabel(const std::wstring& text, Object *parent = 0, boost::shared_ptr<Font> font = boost::shared_ptr<Font>(), SpriteXOrigin xpos = POSITION_X_CENTER, SpriteYOrigin ypos = POSITION_Y_CENTER);
 
     void processMain();
     //! Set default text color
     void setColor(float r, float g, float b, float a = 1.0f);
 };
-};
+}
 
 #endif // COLORLABEL_H

@@ -19,26 +19,26 @@
 #include "LineEditWidget.h"
 #include "Engine.h"
 
-using namespace Rangers;
-
+namespace Rangers
+{
 void LineEditWidget::draw()
 {
     if (!prepareDraw())
         return;
 
-    label.draw();
+    m_label.draw();
     glBindTexture(GL_TEXTURE_2D, 0);
     glColor3f(1, 1, 1);
 
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_ARRAY_BUFFER);
 
-    glBindBuffer(GL_ARRAY_BUFFER, borderBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, m_borderBuffer);
 
     glVertexPointer(2, GL_FLOAT, sizeof(Vertex), 0);
     glLineWidth(1);
 
-    if (cursorVisible)
+    if (m_cursorVisible)
         glDrawArrays(GL_LINES, 0, 10);
     else
         glDrawArrays(GL_LINES, 0, 8);
@@ -52,36 +52,36 @@ LineEditWidget::LineEditWidget(float w, float h, boost::shared_ptr< Font > font,
     Widget(parent)
 {
     if (!font)
-        font = Engine::instance()->defaultFont();
-    label = Label(L"", this, font, POSITION_X_LEFT, POSITION_Y_TOP);
-    widgetHeight = h > font->size() + 4 ? h : font->size() + 4;
-    widgetWidth = w;
-    borderBuffer = 0;
-    label.setPosition(5, 2);
-    position = 0;
-    cursorTime = 0;
-    cursorVisible = true;
+        font = Engine::instance()->coreFont();
+    m_label = Label(L"", this, font, POSITION_X_LEFT, POSITION_Y_TOP);
+    m_height = h > font->size() + 4 ? h : font->size() + 4;
+    m_width = w;
+    m_borderBuffer = 0;
+    m_label.setPosition(5, 2);
+    m_position = 0;
+    m_cursorTime = 0;
+    m_cursorVisible = true;
     markToUpdate();
 }
 
 LineEditWidget::LineEditWidget(Object* parent): Widget(parent)
 {
-    border = 0;
-    borderBuffer = 0;
-    position = 0;
-    cursorVisible = false;
-    cursorTime = 0;
+    m_borderVertices = 0;
+    m_borderBuffer = 0;
+    m_position = 0;
+    m_cursorVisible = false;
+    m_cursorTime = 0;
 }
 
 LineEditWidget::LineEditWidget(const Rangers::LineEditWidget& other): Widget(other)
 {
-    label = other.label;
-    editText = other.editText;
-    border = 0;
-    borderBuffer = 0;
-    position = 0;
-    cursorVisible = false;
-    cursorTime = 0;
+    m_label = other.m_label;
+    m_text = other.m_text;
+    m_borderVertices = 0;
+    m_borderBuffer = 0;
+    m_position = 0;
+    m_cursorVisible = false;
+    m_cursorTime = 0;
 }
 
 LineEditWidget& LineEditWidget::operator=(const Rangers::LineEditWidget& other)
@@ -89,15 +89,15 @@ LineEditWidget& LineEditWidget::operator=(const Rangers::LineEditWidget& other)
     if (this == &other)
         return *this;
 
-    label = other.label;
-    editText = other.editText;
-    border = 0;
-    borderBuffer = 0;
-    position = 0;
-    cursorVisible = false;
-    cursorTime = 0;
+    m_label = other.m_label;
+    m_text = other.m_text;
+    m_borderVertices = 0;
+    m_borderBuffer = 0;
+    m_position = 0;
+    m_cursorVisible = false;
+    m_cursorTime = 0;
 
-    ::Widget::operator=(other);
+    Widget::operator=(other);
     return *this;
 }
 
@@ -106,37 +106,37 @@ LineEditWidget& LineEditWidget::operator=(const Rangers::LineEditWidget& other)
 void LineEditWidget::processMain()
 {
     lock();
-    int cursorPosition = label.font()->getWidth(editText.begin(), editText.begin() + position) + 6;
-    if (!borderBuffer)
+    int cursorPosition = m_label.font()->calculateStringWidth(m_text.begin(), m_text.begin() + m_position) + 6;
+    if (!m_borderBuffer)
     {
-        border = new Vertex[10];
-        glGenBuffers(1, &borderBuffer);
-        glBindBuffer(GL_ARRAY_BUFFER, borderBuffer);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * 10, border, GL_DYNAMIC_DRAW);
-        delete border;
+        m_borderVertices = new Vertex[10];
+        glGenBuffers(1, &m_borderBuffer);
+        glBindBuffer(GL_ARRAY_BUFFER, m_borderBuffer);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * 10, m_borderVertices, GL_DYNAMIC_DRAW);
+        delete m_borderVertices;
     }
-    glBindBuffer(GL_ARRAY_BUFFER, borderBuffer);
-    border = (Vertex *)glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
-    border[0].x = 1;
-    border[0].y = 1;
-    border[1].x = widgetWidth - 1;
-    border[1].y = 1;
-    border[2].x = widgetWidth - 1;
-    border[2].y = 1;
-    border[3].x = widgetWidth - 1;
-    border[3].y = widgetHeight - 1;
-    border[4].x = widgetWidth - 1;
-    border[4].y = widgetHeight - 1;
-    border[5].x = 1;
-    border[5].y = widgetHeight - 1;
-    border[6].x = 1;
-    border[6].y = widgetHeight - 1;
-    border[7].x = 1;
-    border[7].y = 1;
-    border[8].x = cursorPosition;
-    border[8].y = widgetHeight - 2;
-    border[9].x = cursorPosition;
-    border[9].y = 2;
+    glBindBuffer(GL_ARRAY_BUFFER, m_borderBuffer);
+    m_borderVertices = (Vertex *)glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+    m_borderVertices[0].x = 1;
+    m_borderVertices[0].y = 1;
+    m_borderVertices[1].x = m_width - 1;
+    m_borderVertices[1].y = 1;
+    m_borderVertices[2].x = m_width - 1;
+    m_borderVertices[2].y = 1;
+    m_borderVertices[3].x = m_width - 1;
+    m_borderVertices[3].y = m_height - 1;
+    m_borderVertices[4].x = m_width - 1;
+    m_borderVertices[4].y = m_height - 1;
+    m_borderVertices[5].x = 1;
+    m_borderVertices[5].y = m_height - 1;
+    m_borderVertices[6].x = 1;
+    m_borderVertices[6].y = m_height - 1;
+    m_borderVertices[7].x = 1;
+    m_borderVertices[7].y = 1;
+    m_borderVertices[8].x = cursorPosition;
+    m_borderVertices[8].y = m_height - 2;
+    m_borderVertices[9].x = cursorPosition;
+    m_borderVertices[9].y = 2;
 
     glUnmapBuffer(GL_ARRAY_BUFFER);
 
@@ -146,11 +146,11 @@ void LineEditWidget::processMain()
 
 void LineEditWidget::processLogic(int dt)
 {
-    cursorTime += dt;
-    if (cursorTime > 500)
+    m_cursorTime += dt;
+    if (m_cursorTime > 500)
     {
-        cursorVisible = !cursorVisible;
-        cursorTime = 0;
+        m_cursorVisible = !m_cursorVisible;
+        m_cursorTime = 0;
     }
 }
 
@@ -161,35 +161,35 @@ void LineEditWidget::keyPressed(SDL_keysym key)
 
     if (key.sym == SDLK_RETURN);
     else if (key.sym == SDLK_LEFT)
-        position--;
+        m_position--;
     else if (key.sym == SDLK_RIGHT)
-        position++;
+        m_position++;
     else if (key.sym == SDLK_ESCAPE)
-        editText.clear();
+        m_text.clear();
     else if (key.sym == SDLK_BACKSPACE)
     {
-        if (editText.size())
-            if (position > 0)
-                editText.erase(position - 1, 1);
-        position--;
+        if (m_text.size())
+            if (m_position > 0)
+                m_text.erase(m_position - 1, 1);
+        m_position--;
     }
     else if (key.sym == SDLK_DELETE)
     {
-        if (editText.size())
-            if (position < editText.length())
-                editText.erase(position, 1);
+        if (m_text.size())
+            if (m_position < m_text.length())
+                m_text.erase(m_position, 1);
     }
     else if (key.unicode && !(key.mod & (KMOD_ALT | KMOD_META | KMOD_CTRL)))
     {
         if (key.unicode == '\t')
-            editText.insert(position, 1, ' ');
+            m_text.insert(m_position, 1, ' ');
         else
-            editText.insert(position, 1, key.unicode);
-        position++;
+            m_text.insert(m_position, 1, key.unicode);
+        m_position++;
     }
-    if (position < 0) position = 0;
-    if (position > editText.length()) position = editText.length();
-    label.setText(editText);
+    if (m_position < 0) m_position = 0;
+    if (m_position > m_text.length()) m_position = m_text.length();
+    m_label.setText(m_text);
     markToUpdate();
 
     unlock();
@@ -197,13 +197,14 @@ void LineEditWidget::keyPressed(SDL_keysym key)
 
 void LineEditWidget::setText(const std::wstring& s)
 {
-    editText = s;
-    position = s.length();
-    label.setText(s);
+    m_text = s;
+    m_position = s.length();
+    m_label.setText(s);
     markToUpdate();
 }
 
 std::wstring LineEditWidget::text() const
 {
-    return editText;
+    return m_text;
+}
 }

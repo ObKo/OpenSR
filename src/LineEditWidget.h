@@ -43,14 +43,14 @@ public:
     LineEditWidget& operator=(const LineEditWidget& other);
 
 private:
-    Label label;
-    std::wstring editText;
-    Vertex *border;
-    GLuint borderBuffer;
-    int position;
-    bool cursorVisible;
-    int cursorTime;
+    Label m_label;
+    std::wstring m_text;
+    Vertex *m_borderVertices;
+    GLuint m_borderBuffer;
+    int m_position;
+    bool m_cursorVisible;
+    int m_cursorTime;
 };
-};
+}
 
 #endif

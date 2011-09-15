@@ -19,63 +19,63 @@
 #include "Sprite.h"
 #include "Engine.h"
 
-using namespace Rangers;
-
+namespace Rangers
+{
 Sprite::Sprite(Object *parent): Object(parent)
 {
-    vertexBuffer = 0;
-    vertex = 0;
-    vertexCount = 0;
-    spriteWidth = 0;
-    spriteHeight = 0;
-    xPos = POSITION_X_CENTER;
-    yPos = POSITION_Y_CENTER;
-    textureScaling = TEXTURE_NORMAL;
+    m_buffer = 0;
+    m_vertices = 0;
+    m_vertexCount = 0;
+    m_width = 0;
+    m_height = 0;
+    m_xOrigin = POSITION_X_CENTER;
+    m_yOrigin = POSITION_Y_CENTER;
+    m_scaling = TEXTURE_NORMAL;
 }
 
 Sprite::Sprite(const Rangers::Sprite& other): Object(other)
 {
-    vertexBuffer = 0;
-    vertex = 0;
-    vertexCount = 0;
+    m_buffer = 0;
+    m_vertices = 0;
+    m_vertexCount = 0;
 
-    spriteWidth = other.spriteWidth;
-    spriteHeight = other.spriteHeight;
-    xPos = other.xPos;
-    yPos = other.yPos;
-    textureScaling = other.textureScaling;
-    spriteTexture = other.spriteTexture;
+    m_width = other.m_width;
+    m_height = other.m_height;
+    m_xOrigin = other.m_xOrigin;
+    m_yOrigin = other.m_yOrigin;
+    m_scaling = other.m_scaling;
+    m_texture = other.m_texture;
 
     markToUpdate();
 }
 
 
-Sprite::Sprite(boost::shared_ptr<Texture> texture,  Object *parent, TextureScaling  ts, SpriteXPosition xpos, SpriteYPosition ypos): Object(parent)
+Sprite::Sprite(boost::shared_ptr<Texture> texture,  Object *parent, TextureScaling  ts, SpriteXOrigin xpos, SpriteYOrigin ypos): Object(parent)
 {
-    vertexBuffer = 0;
-    vertex = 0;
-    vertexCount = 0;
-    spriteTexture = texture;
-    textureScaling = ts;
+    m_buffer = 0;
+    m_vertices = 0;
+    m_vertexCount = 0;
+    m_texture = texture;
+    m_scaling = ts;
     if (!texture)
     {
-        spriteWidth = 0;
-        spriteHeight = 0;
+        m_width = 0;
+        m_height = 0;
     }
     else
     {
-        spriteWidth = texture->width();
-        spriteHeight = texture->height();
+        m_width = texture->width();
+        m_height = texture->height();
     }
-    xPos = xpos;
-    yPos = ypos;
+    m_xOrigin = xpos;
+    m_yOrigin = ypos;
     markToUpdate();
 }
 
 Sprite::~Sprite()
 {
-    if (vertexBuffer)
-        glDeleteBuffers(1, &vertexBuffer);
+    if (m_buffer)
+        glDeleteBuffers(1, &m_buffer);
 }
 
 Sprite& Sprite::operator=(const Rangers::Sprite& other)
@@ -83,44 +83,44 @@ Sprite& Sprite::operator=(const Rangers::Sprite& other)
     if (this == &other)
         return *this;
 
-    vertexBuffer = 0;
-    vertex = 0;
-    vertexCount = 0;
+    m_buffer = 0;
+    m_vertices = 0;
+    m_vertexCount = 0;
 
-    spriteWidth = other.spriteWidth;
-    spriteHeight = other.spriteHeight;
-    xPos = other.xPos;
-    yPos = other.yPos;
-    textureScaling = other.textureScaling;
-    spriteTexture = other.spriteTexture;
+    m_width = other.m_width;
+    m_height = other.m_height;
+    m_xOrigin = other.m_xOrigin;
+    m_yOrigin = other.m_yOrigin;
+    m_scaling = other.m_scaling;
+    m_texture = other.m_texture;
 
     markToUpdate();
-    ::Object::operator=(other);
+    Object::operator=(other);
     return *this;
 }
 
 
 void Sprite::draw()
 {
-    if (!spriteTexture)
+    if (!m_texture)
         return;
 
     if (!prepareDraw())
         return;
 
-    glBindTexture(GL_TEXTURE_2D, spriteTexture->openGLTexture());
+    glBindTexture(GL_TEXTURE_2D, m_texture->openGLTexture());
 
-    if (textureScaling == TEXTURE_TILE_X)
+    if (m_scaling == TEXTURE_TILE_X)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     else
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 
-    if (textureScaling == TEXTURE_TILE_Y)
+    if (m_scaling == TEXTURE_TILE_Y)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     else
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 
-    if (textureScaling == TEXTURE_TILE)
+    if (m_scaling == TEXTURE_TILE)
     {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -130,12 +130,12 @@ void Sprite::draw()
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glEnableClientState(GL_ARRAY_BUFFER);
 
-    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, m_buffer);
 
     glVertexPointer(2, GL_FLOAT, sizeof(Vertex), 0);
     glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), BUFFER_OFFSET(sizeof(float) * 2));
 
-    glDrawArrays(GL_QUADS, 0, vertexCount);
+    glDrawArrays(GL_QUADS, 0, m_vertexCount);
 
     glDisableClientState(GL_ARRAY_BUFFER);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -143,121 +143,121 @@ void Sprite::draw()
     endDraw();
 }
 
-void Sprite::setSpriteOrigin(SpriteXPosition xpos, SpriteYPosition ypos)
+void Sprite::setOrigin(SpriteXOrigin xpos, SpriteYOrigin ypos)
 {
-    xPos = xpos;
-    yPos = ypos;
+    m_xOrigin = xpos;
+    m_yOrigin = ypos;
     markToUpdate();
 }
 
 void Sprite::setGeometry(float width, float height)
 {
-    if (spriteTexture)
+    if (m_texture)
     {
         if (width <= 0)
-            width = spriteTexture->width();
+            width = m_texture->width();
         if (height <= 0)
-            height = spriteTexture->height();
+            height = m_texture->height();
     }
 
-    spriteWidth = width;
-    spriteHeight = height;
+    m_width = width;
+    m_height = height;
     markToUpdate();
 }
 
 void Sprite::setHeight(float height)
 {
-    if (spriteTexture)
+    if (m_texture)
         if (height <= 0)
-            height = spriteTexture->height();
+            height = m_texture->height();
 
-    spriteHeight = height;
+    m_height = height;
     markToUpdate();
 }
 
 void Sprite::setWidth(float width)
 {
-    if (spriteTexture)
+    if (m_texture)
         if (width <= 0)
-            width = spriteTexture->width();
+            width = m_texture->width();
 
-    spriteWidth = width;
+    m_width = width;
     markToUpdate();
 }
 
 
 void Sprite::setTextureScaling(TextureScaling ts)
 {
-    textureScaling = ts;
+    m_scaling = ts;
     markToUpdate();
 }
 
 
 void Sprite::processMain()
 {
-    ::Object::processMain();
+    Object::processMain();
 
-    if (!spriteTexture)
+    if (!m_texture)
         return;
 
     lock();
-    if (!vertexBuffer)
+    if (!m_buffer)
     {
-        vertex = new Vertex[4];
-        vertexCount = 4;
-        memset(vertex, 0, vertexCount * sizeof(Vertex));
+        m_vertices = new Vertex[4];
+        m_vertexCount = 4;
+        memset(m_vertices, 0, m_vertexCount * sizeof(Vertex));
 
-        glGenBuffers(1, &vertexBuffer);
-        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * vertexCount, vertex, GL_DYNAMIC_DRAW);
-        delete vertex;
+        glGenBuffers(1, &m_buffer);
+        glBindBuffer(GL_ARRAY_BUFFER, m_buffer);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * m_vertexCount, m_vertices, GL_DYNAMIC_DRAW);
+        delete m_vertices;
     }
 
-    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-    vertex = (Vertex *)glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+    glBindBuffer(GL_ARRAY_BUFFER, m_buffer);
+    m_vertices = (Vertex *)glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
 
     float x1 = 0, x2 = 0, y1 = 0, y2 = 0;
     float u1 = 0, u2 = 0, w1 = 0, w2 = 0;
 
-    switch (xPos)
+    switch (m_xOrigin)
     {
     case POSITION_X_CENTER:
-        x1 = -spriteWidth / 2.0f;
-        x2 = spriteWidth / 2.0f;
+        x1 = -m_width / 2.0f;
+        x2 = m_width / 2.0f;
         break;
     case POSITION_X_LEFT:
         x1 = 0;
-        x2 = spriteWidth;
+        x2 = m_width;
         break;
     case POSITION_X_RIGHT:
-        x1 = -spriteWidth;
+        x1 = -m_width;
         x2 = 0;
         break;
     }
 
-    switch (yPos)
+    switch (m_yOrigin)
     {
     case POSITION_Y_CENTER:
-        y1 = -spriteHeight / 2.0f;
-        y2 = spriteHeight / 2.0f;
+        y1 = -m_height / 2.0f;
+        y2 = m_height / 2.0f;
         break;
     case POSITION_Y_TOP:
         y1 = 0;
-        y2 = spriteHeight;
+        y2 = m_height;
         break;
     case POSITION_Y_BOTTOM:
-        y1 = -spriteHeight;
+        y1 = -m_height;
         y2 = 0;
         break;
     }
 
-    switch (textureScaling)
+    switch (m_scaling)
     {
     case TEXTURE_NO:
         u1 = 0;
         w1 = 0;
-        u2 = spriteWidth / spriteTexture->width();
-        w2 = spriteHeight / spriteTexture->height();
+        u2 = m_width / m_texture->width();
+        w2 = m_height / m_texture->height();
         break;
     case TEXTURE_NORMAL:
         u1 = 0;
@@ -271,42 +271,42 @@ void Sprite::processMain()
     case TEXTURE_TILE_X:
         u1 = 0;
         w1 = 0;
-        u2 = spriteWidth / spriteTexture->width();
+        u2 = m_width / m_texture->width();
         w2 = 1;
         break;
     case TEXTURE_TILE_Y:
         u1 = 0;
         w1 = 0;
         u2 = 1;
-        w2 = spriteHeight / spriteTexture->height();
+        w2 = m_height / m_texture->height();
         break;
     case TEXTURE_TILE:
         u1 = 0;
         w1 = 0;
-        u2 = spriteWidth / spriteTexture->width();
-        w2 = spriteHeight / spriteTexture->height();
+        u2 = m_width / m_texture->width();
+        w2 = m_height / m_texture->height();
         break;
     }
 
-    vertex[0].x = x1;
-    vertex[0].y = y1;
-    vertex[0].u = u1;
-    vertex[0].w = w1;
+    m_vertices[0].x = x1;
+    m_vertices[0].y = y1;
+    m_vertices[0].u = u1;
+    m_vertices[0].w = w1;
 
-    vertex[1].x = x2;
-    vertex[1].y = y1;
-    vertex[1].u = u2;
-    vertex[1].w = w1;
+    m_vertices[1].x = x2;
+    m_vertices[1].y = y1;
+    m_vertices[1].u = u2;
+    m_vertices[1].w = w1;
 
-    vertex[2].x = x2;
-    vertex[2].y = y2;
-    vertex[2].u = u2;
-    vertex[2].w = w2;
+    m_vertices[2].x = x2;
+    m_vertices[2].y = y2;
+    m_vertices[2].u = u2;
+    m_vertices[2].w = w2;
 
-    vertex[3].x = x1;
-    vertex[3].y = y2;
-    vertex[3].u = u1;
-    vertex[3].w = w2;
+    m_vertices[3].x = x1;
+    m_vertices[3].y = y2;
+    m_vertices[3].u = u1;
+    m_vertices[3].w = w2;
 
     glUnmapBuffer(GL_ARRAY_BUFFER);
     unlock();
@@ -314,15 +314,16 @@ void Sprite::processMain()
 
 float Sprite::height() const
 {
-    return spriteHeight;
+    return m_height;
 }
 
 float Sprite::width() const
 {
-    return spriteWidth;
+    return m_width;
 }
 
 boost::shared_ptr< Texture > Sprite::texture() const
 {
-    return spriteTexture;
+    return m_texture;
+}
 }

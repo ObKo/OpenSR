@@ -4,16 +4,6 @@ $#include <Texture.h>
 $#include <AnimatedTexture.h>
 $#include <LuaBindings.h>
 
-/*int tolua_libRanger_open(lua_State* tolua_S);
-int tolua_Engine_open(lua_State* tolua_S);
-int tolua_Object_open(lua_State* tolua_S);
-int tolua_Types_open(lua_State* tolua_S);
-int tolua_ResourceManager_open(lua_State* tolua_S);
-int tolua_Sprite_open(lua_State* tolua_S);
-int tolua_AnimatedSprite_open(lua_State* tolua_S);*/
-
-std::wstring fromLua @ L(const char *s);
-
 struct SDL_keysym
 {
     Uint8 scancode;
@@ -21,6 +11,8 @@ struct SDL_keysym
     SDLMod mod;
     short unicode;
 }
+
+std::wstring Rangers::fromLua @ L(const char *s);
 
 namespace Rangers
 {
@@ -33,6 +25,6 @@ void freePointer(boost::shared_ptr<Rangers::Texture> *sp);
 void freePointer(boost::shared_ptr<Rangers::AnimatedTexture> *sp);
 
 void luaDebug(std::wstring s);
+void luaWarning(std::wstring s);
+void luaError(std::wstring s);
 }
-
-#endif

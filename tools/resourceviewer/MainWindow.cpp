@@ -17,7 +17,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionOpen, SIGNAL(triggered()), this, SLOT(openFile()));
     connect(&animationTimer, SIGNAL(timeout()), this, SLOT(nextFrame()));
 
-    if(qApp->arguments().count() > 1)
+    if(qApp->arguments().frameCount() > 1)
         loadFile(qApp->arguments().at(1));
 }
 

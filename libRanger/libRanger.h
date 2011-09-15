@@ -301,6 +301,6 @@ LIBRANGER_DIRECTIVE std::wstring suffix(const std::wstring& s);
 LIBRANGER_DIRECTIVE std::wstring basename(const std::wstring& s);
 //! Get file dir
 LIBRANGER_DIRECTIVE std::wstring directory(const std::wstring& s);
-};
+}
 
 #endif

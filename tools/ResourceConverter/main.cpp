@@ -5,7 +5,7 @@ void showHelp()
 {
     std::cout << "Usage: rangersresconv command [arguments]" << std::endl;
     std::cout << "Commands: " << std::endl;
-    std::cout << "\tpkg2rpkg pkg_file rpkg_file" << std::endl;
+    std::cout << "\tpkg2rpkg pkg_file rpkg_file - convert pkg files from original game to rpkg format." << std::endl;
 }
 
 int main(int argc, char **argv)
