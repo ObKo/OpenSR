@@ -16,14 +16,14 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef PKG2RPKG_H
-#define PKG2RPKG_H
+#ifndef GAI_H
+#define GAI_H
 
-#include <string>
+#include <libRanger.h>
 
 namespace Rangers
 {
-int pkg2rpkg(const std::string& inputFile, const std::string& outputFile);
+int extractGAI2PNG(const std::string& gaiFile, const std::string& outName);
 }
 
-#endif
+#endif /* GAI_H */

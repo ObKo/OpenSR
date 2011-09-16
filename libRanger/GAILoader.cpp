@@ -46,6 +46,7 @@ GAIAnimation Rangers::loadGAIAnimation(std::istream& stream, size_t &offset, GIF
 {
     GAIHeader header;
 
+    stream.seekg(offset, ios_base::beg);
     stream.read((char *)&header, 48);
     /*cout << "signature: " << header.signature << endl;
     cout << "version: " << header.version << endl;
@@ -86,10 +87,10 @@ GAIAnimation Rangers::loadGAIAnimation(std::istream& stream, size_t &offset, GIF
                 char *buffer = new char[giSize];
                 stream.read((char *)buffer, giSize);
                 unsigned char *gi = unpackZL01((unsigned char *)buffer, giSize, outsize);
-                delete buffer;
-                size_t offset = 0;
-                header.frames[i] = loadGIFrame((char *)gi, offset, background, header.finishX, header.finishY);
-                delete gi;
+                delete[] buffer;
+                size_t giFrameOffset = 0;
+                header.frames[i] = loadGIFrame((char *)gi, giFrameOffset, background, header.startX, header.startY, header.finishX, header.finishY);
+                delete[] gi;
             }
             else
             {

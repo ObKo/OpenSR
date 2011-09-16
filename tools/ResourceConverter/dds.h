@@ -16,14 +16,15 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef PKG2RPKG_H
-#define PKG2RPKG_H
+#ifndef DDS_H
+#define DDS_H
 
 #include <string>
 
 namespace Rangers
 {
-int pkg2rpkg(const std::string& inputFile, const std::string& outputFile);
+enum DDSCompression {DDS_DXT1, DDS_DXT3, DDS_DXT5};
+int convertImageToDDS(const std::string& inFile, const std::string& outFile, DDSCompression compression);
 }
 
 #endif

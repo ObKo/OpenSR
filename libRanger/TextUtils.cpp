@@ -269,3 +269,75 @@ std::wstring Rangers::directory(const std::wstring& s)
     else
         return s.substr(0, pos);
 }
+
+/*!
+ * \param s string
+ * \param c separator
+ * \return array of strings
+ */
+std::vector<std::string> Rangers::split(const std::string& s, char c)
+{
+    std::vector<std::string> array;
+    for (std::string::const_iterator it = s.begin(); it != s.end();)
+    {
+        while (((*it) == c) && (it != s.end()))
+            it++;
+        std::string::const_iterator begin = it;
+        while (((*it) != c) && (it != s.end()))
+            it++;
+        if (it != begin)
+            array.push_back(s.substr(begin - s.begin(), it - begin));
+    }
+    return array;
+}
+
+/*!
+ * \param s file path
+ * \return file extension
+ */
+std::string Rangers::suffix(const std::string& s)
+{
+    int pos;
+    if ((pos = s.rfind(L'.')) == std::string::npos)
+        return std::string();
+    else
+        return s.substr(pos + 1);
+}
+
+/*!
+ * \param s file path
+ * \return file basename
+ */
+std::string Rangers::basename(const std::string& s)
+{
+    int endpos = s.rfind(L'.');
+    int startpos = s.rfind(L'/');
+
+    if (endpos == std::string::npos)
+    {
+        if (startpos == std::string::npos)
+            return s;
+        else
+            return s.substr(startpos + 1);
+    }
+    else
+    {
+        if (startpos == std::string::npos)
+            return s.substr(0, endpos);
+        else
+            return s.substr(startpos + 1, endpos - startpos - 1);
+    }
+}
+
+/*!
+ * \param s file path
+ * \return file directory
+ */
+std::string Rangers::directory(const std::string& s)
+{
+    int pos;
+    if ((pos = s.rfind(L'/')) == std::string::npos)
+        return s;
+    else
+        return s.substr(0, pos);
+}
