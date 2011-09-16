@@ -25,15 +25,15 @@ using namespace Rangers;
 using namespace std;
 
 #define B_565(word) ((word & 0x1f) * 8)
-#define G_565(word) ((word>>3) & 0xfc)
-#define R_565(word) ((word>>8) & 0xf8)
+#define G_565(word) (((word>>5) & 0x3f) * 4)
+#define R_565(word) (((word>>11) & 0x1f) * 8)
 
-uint32_t R5G6B5ToR8G8B8(uint16_t color)
+uint32_t R5G6B5ToB8G8R8(uint16_t color)
 {
     uint32_t result = 0;
-    result |= (color & 0x1F) << 11;
-    result |= ((color >> 5) & 0x3F) << 18;
-    result |= ((color >> 11) & 0x1F) << 27;
+    result |= B_565(color) << 0;
+    result |= G_565(color) << 8;
+    result |= R_565(color) << 16;
     return result;
 }
 
@@ -46,7 +46,7 @@ uint16_t R5G6B5(char b, char g, char r)
     return result;
 }
 
-void DrawA6ToRGBA(unsigned char * bufdes, int bufdesll, unsigned char * graphbuf)
+void drawA6ToBGRA(unsigned char * bufdes, int bufdesll, unsigned char * graphbuf)
 {
     int size, cnt;
     unsigned char byte;
@@ -65,7 +65,7 @@ void DrawA6ToRGBA(unsigned char * bufdes, int bufdesll, unsigned char * graphbuf
         {
             //goto new scanline
             bufdes += bufdesll;
-            bufdesrow = bufdes;
+            bufdesrow = bufdes + 3;
         }
         else if (byte > 0x80)
         {
@@ -92,7 +92,7 @@ void DrawA6ToRGBA(unsigned char * bufdes, int bufdesll, unsigned char * graphbuf
     }
 }
 
-void DrawR5G6B5ToRGBA(unsigned char * bufdes, int bufdesll, unsigned char * graphbuf)
+void drawR5G6B5ToBGRA(unsigned char * bufdes, int bufdesll, unsigned char * graphbuf)
 {
     int size, cnt;
     uint16_t j;
@@ -123,10 +123,10 @@ void DrawR5G6B5ToRGBA(unsigned char * bufdes, int bufdesll, unsigned char * grap
             do
             {
                 j = *(uint16_t *)graphbuf;
-                *(bufdesrow + 0) = 0xff;
-                *(bufdesrow + 1) = B_565(j);
-                *(bufdesrow + 2) = G_565(j);
-                *(bufdesrow + 3) = R_565(j);
+                *(bufdesrow + 0) = B_565(j);
+                *(bufdesrow + 1) = G_565(j);
+                *(bufdesrow + 2) = R_565(j);
+                *(bufdesrow + 3) = 0xff;
                 bufdesrow += 4;
                 graphbuf += 2;
                 cnt--;
@@ -143,7 +143,7 @@ void DrawR5G6B5ToRGBA(unsigned char * bufdes, int bufdesll, unsigned char * grap
     }
 }
 
-void DrawAIToRGBA(unsigned char * bufdes, int bufdesll, unsigned char * graphbuf)
+void drawAIToBGRA(unsigned char * bufdes, int bufdesll, unsigned char * graphbuf)
 {
     int size, cnt, palsize, i;
     uint8_t byte, r, g, b, alpha;
@@ -168,7 +168,7 @@ void DrawAIToRGBA(unsigned char * bufdes, int bufdesll, unsigned char * graphbuf
             b = B_565(j) * 0xff / alpha;
             g = G_565(j) * 0xff / alpha;
             r = R_565(j) * 0xff / alpha;
-            Pal[i] = b << 8 | g << 16 | r << 24 | alpha;
+            Pal[i] = r << 8 | g << 16 | b << 24 | alpha;
         }
         else
         {
@@ -217,7 +217,7 @@ void DrawAIToRGBA(unsigned char * bufdes, int bufdesll, unsigned char * graphbuf
     }
 }
 
-void DrawRGBIToRGBA(unsigned char * bufdes, int bufdesll, unsigned char * graphbuf)
+void drawRGBIToBGRA(unsigned char * bufdes, int bufdesll, unsigned char * graphbuf)
 {
     int size, cnt, palsize, i;
     uint32_t Pal[256];
@@ -235,7 +235,7 @@ void DrawRGBIToRGBA(unsigned char * bufdes, int bufdesll, unsigned char * graphb
     for (i = 0; i < palsize; i++)
     {
         j = *(uint16_t *)graphbuf;
-        Pal[i] = R5G6B5ToR8G8B8(j) | 0xff;
+        Pal[i] = R5G6B5ToB8G8R8(j) | 0xff000000;
         graphbuf += 2;
     }
 
@@ -278,7 +278,7 @@ void DrawRGBIToRGBA(unsigned char * bufdes, int bufdesll, unsigned char * graphb
     }
 }
 
-void DrawF5ToRGBA(unsigned char * bufdes, int bufdesll, unsigned char * graphbuf)
+void drawF5ToBGRA(unsigned char * bufdes, int bufdesll, unsigned char * graphbuf)
 {
     int i, cnt, cnt2, shlc;
     int shlca[4];
@@ -459,21 +459,21 @@ void DrawF5ToRGBA(unsigned char * bufdes, int bufdesll, unsigned char * graphbuf
     }
 }
 
-void FillARGBToRGBA(unsigned char *bufdes, int destwidth, int x, int y, int w, int h, unsigned char *graphbuf)
+void blitBGRAToBGRA(unsigned char *bufdes, int destwidth, int x, int y, int w, int h, unsigned char *graphbuf)
 {
     uint32_t j;
     unsigned char *row = bufdes + (destwidth * y + x) * 4;
 
     for (int i = 0; i < w * h; i++)
     {
-        *(bufdes + (destwidth * (i / w + y) + x + i % w) * 4) = *((graphbuf) + i * 4 + 3);
-        *(bufdes + (destwidth * (i / w + y) + x + i % w) * 4 + 1) = *((graphbuf) + i * 4);
-        *(bufdes + (destwidth * (i / w + y) + x + i % w) * 4 + 2) = *((graphbuf) + i * 4 + 1);
-        *(bufdes + (destwidth * (i / w + y) + x + i % w) * 4 + 3) = *((graphbuf) + i * 4 + 2);
+        *(bufdes + (destwidth * (i / w + y) + x + i % w) * 4) = *((graphbuf) + i * 4);
+        *(bufdes + (destwidth * (i / w + y) + x + i % w) * 4 + 1) = *((graphbuf) + i * 4 + 1);
+        *(bufdes + (destwidth * (i / w + y) + x + i % w) * 4 + 2) = *((graphbuf) + i * 4 + 2);
+        *(bufdes + (destwidth * (i / w + y) + x + i % w) * 4 + 3) = *((graphbuf) + i * 4 + 3);
     }
 }
 
-void FillR5G6B5ToRGBA(unsigned char *bufdes, int destwidth, int x, int y, int w, int h, unsigned char *graphbuf)
+void blitR5G6B5ToBGRA(unsigned char *bufdes, int destwidth, int x, int y, int w, int h, unsigned char *graphbuf)
 {
     uint32_t j;
     uint32_t *dest = (uint32_t *)bufdes;
@@ -482,12 +482,12 @@ void FillR5G6B5ToRGBA(unsigned char *bufdes, int destwidth, int x, int y, int w,
 
     for (int i = 0; i < w * h; i++)
     {
-        dest[destwidth * (i / w + y) + x + i % w] = R5G6B5ToR8G8B8(src[i]);
-        dest[destwidth * (i / w + y) + x + i % w] |= 0xff;
+        dest[destwidth * (i / w + y) + x + i % w] = R5G6B5ToB8G8R8(src[i]);
+        dest[destwidth * (i / w + y) + x + i % w] |= 0xff000000;
     }
 }
 
-void FillARGBItoRGBA(unsigned char *bufdes, unsigned char *bufsrc, unsigned char *pal, int width, int height)
+void blitBGRAItoBGRA(unsigned char *bufdes, unsigned char *bufsrc, unsigned char *pal, int width, int height)
 {
     for (int y = 0; y < height; y++)
     {
@@ -496,10 +496,10 @@ void FillARGBItoRGBA(unsigned char *bufdes, unsigned char *bufsrc, unsigned char
 
         for (int x = 0; x < width; x++)
         {
-            bufdes[0] = pal[bits[0] * 4 + 3];
-            bufdes[1] = pal[bits[0] * 4 + 2];
-            bufdes[2] = pal[bits[0] * 4 + 1];
-            bufdes[3] = pal[bits[0] * 4 + 0];
+            bufdes[0] = pal[bits[0] * 4 + 0];
+            bufdes[1] = pal[bits[0] * 4 + 1];
+            bufdes[2] = pal[bits[0] * 4 + 2];
+            bufdes[3] = pal[bits[0] * 4 + 3];
             bufdes += 4;
             bits += 1;
         }
@@ -516,7 +516,6 @@ GIFrame Rangers::loadGIImageData(const GIFrameHeader& image, GIFrame *background
 
     switch (image.type)
     {
-
     case 0:
         resultFrame = loadFrameType0(image);
         break;
@@ -574,13 +573,13 @@ GIFrame Rangers::loadFrameType2(const GIFrameHeader& image)
 
 
     if (image.layers[0].size)
-        DrawR5G6B5ToRGBA(rgba + (image.layers[0].startY * width + image.layers[0].startX) * 4, width * 4, (unsigned char *)image.layers[0].data);
+        drawR5G6B5ToBGRA(rgba + (image.layers[0].startY * width + image.layers[0].startX) * 4, width * 4, (unsigned char *)image.layers[0].data);
 
     if (image.layers[1].size)
-        DrawR5G6B5ToRGBA(rgba + (image.layers[1].startY * width + image.layers[1].startX) * 4,  width * 4, (unsigned char *)image.layers[1].data);
+        drawR5G6B5ToBGRA(rgba + (image.layers[1].startY * width + image.layers[1].startX) * 4,  width * 4, (unsigned char *)image.layers[1].data);
 
     if (image.layers[2].size)
-        DrawA6ToRGBA(rgba + (image.layers[2].startY * width + image.layers[2].startX) * 4,  width * 4, (unsigned char *)image.layers[2].data);
+        drawA6ToBGRA(rgba + (image.layers[2].startY * width + image.layers[2].startX) * 4,  width * 4, (unsigned char *)image.layers[2].data);
 
     result.data = rgba;
 
@@ -621,35 +620,35 @@ GIFrame Rangers::loadFrameType5(const GIFrameHeader& image, GIFrame *background)
     else
         memset(rgba, 0x0, width * height * 4);
 
-    for (int i = 0; i < width * height; i++)
+    /*for (int i = 0; i < width * height; i++)
     {
-        unsigned char a = rgba[i * 4];
-        unsigned char b = rgba[i * 4 + 1];
-        unsigned char g = rgba[i * 4 + 2];
-        unsigned char r = rgba[i * 4 + 3];
+        unsigned char r = rgba[i * 4];
+        unsigned char g = rgba[i * 4 + 1];
+        unsigned char b = rgba[i * 4 + 2];
+        unsigned char a = rgba[i * 4 + 3];
 
         rgba[i * 4] = b;
         rgba[i * 4 + 1] = g;
         rgba[i * 4 + 2] = r;
         rgba[i * 4 + 3] = a;
-    }
+    }*/
 
 
     if (image.layers[0].size)
-        DrawF5ToRGBA(rgba + (image.layers[0].startY * width + image.layers[0].startX) * 4, width * 4, (unsigned char *)image.layers[0].data);
+        drawF5ToBGRA(rgba + (image.layers[0].startY * width + image.layers[0].startX) * 4, width * 4, (unsigned char *)image.layers[0].data);
 
-    for (int i = 0; i < width * height; i++)
+    /*for (int i = 0; i < width * height; i++)
     {
-        unsigned char b = rgba[i * 4];
+    	unsigned char r = rgba[i * 4 + 2];
         unsigned char g = rgba[i * 4 + 1];
-        unsigned char r = rgba[i * 4 + 2];
+        unsigned char b = rgba[i * 4];
         unsigned char a = rgba[i * 4 + 3];
 
-        rgba[i * 4] = a;
-        rgba[i * 4 + 1] = b;
-        rgba[i * 4 + 2] = g;
-        rgba[i * 4 + 3] = r;
-    }
+        rgba[i * 4] = r;
+        rgba[i * 4 + 1] = g;
+        rgba[i * 4 + 2] = b;
+        rgba[i * 4 + 3] = a;
+    }*/
 
     result.data = rgba;
 
@@ -680,7 +679,7 @@ GIFrame Rangers::loadFrameType1(const GIFrameHeader& image)
     memset(rgba, 0, width * height * 4);
 
     if (image.layers[0].size)
-        DrawR5G6B5ToRGBA(rgba + (image.layers[0].startY * width + image.layers[0].startX) * 4, width * 4, (unsigned char *)image.layers[0].data);
+        drawR5G6B5ToBGRA(rgba + (image.layers[0].startY * width + image.layers[0].startX) * 4, width * 4, (unsigned char *)image.layers[0].data);
 
     result.data = rgba;
 
@@ -711,7 +710,7 @@ GIFrame Rangers::loadFrameType4(const GIFrameHeader& image)
     memset(rgba, 0, width * height * 4);
 
     if (image.layers[0].size)
-        FillARGBItoRGBA(rgba + (image.layers[0].startY * width + image.layers[0].startX) * 4, (unsigned char *)image.layers[0].data, (unsigned char *)image.layers[1].data, width, height);
+        blitBGRAItoBGRA(rgba + (image.layers[0].startY * width + image.layers[0].startX) * 4, (unsigned char *)image.layers[0].data, (unsigned char *)image.layers[1].data, width, height);
 
     result.data = rgba;
 
@@ -742,10 +741,10 @@ GIFrame Rangers::loadFrameType3(const GIFrameHeader& image)
     memset(rgba, 0, width * height * 4);
 
     if (image.layers[0].size)
-        DrawRGBIToRGBA(rgba + (image.layers[0].startY * width + image.layers[0].startX) * 4, width * 4, (unsigned char *)image.layers[0].data);
+        drawRGBIToBGRA(rgba + (image.layers[0].startY * width + image.layers[0].startX) * 4, width * 4, (unsigned char *)image.layers[0].data);
 
     if (image.layers[1].size)
-        DrawAIToRGBA(rgba + (image.layers[1].startY * width + image.layers[1].startX) * 4, width * 4, (unsigned char *)image.layers[1].data);
+        drawAIToBGRA(rgba + (image.layers[1].startY * width + image.layers[1].startX) * 4, width * 4, (unsigned char *)image.layers[1].data);
 
     result.data = rgba;
 
@@ -777,7 +776,7 @@ GIFrame Rangers::loadFrameType0(const GIFrameHeader& image)
         memset(rgba, 0, width * height * 4);
 
         if (image.layers[0].size)
-            FillARGBToRGBA(rgba, width, image.layers[0].startX, image.layers[0].startY, (image.layers[0].finishX - image.layers[0].startX), (image.layers[0].finishY - image.layers[0].startY), (unsigned char *)image.layers[0].data);
+            blitBGRAToBGRA(rgba, width, image.layers[0].startX, image.layers[0].startY, (image.layers[0].finishX - image.layers[0].startX), (image.layers[0].finishY - image.layers[0].startY), (unsigned char *)image.layers[0].data);
 
         result.data = rgba;
     }
@@ -787,7 +786,7 @@ GIFrame Rangers::loadFrameType0(const GIFrameHeader& image)
         memset(rgba, 0, width * height * 4);
 
         if (image.layers[0].size)
-            FillR5G6B5ToRGBA(rgba, width, image.layers[0].startX, image.layers[0].startY, (image.layers[0].finishX - image.layers[0].startX), (image.layers[0].finishY - image.layers[0].startY), (unsigned char *)image.layers[0].data);
+            blitR5G6B5ToBGRA(rgba, width, image.layers[0].startX, image.layers[0].startY, (image.layers[0].finishX - image.layers[0].startX), (image.layers[0].finishY - image.layers[0].startY), (unsigned char *)image.layers[0].data);
 
         result.data = rgba;
     }

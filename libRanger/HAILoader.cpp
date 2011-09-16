@@ -20,7 +20,7 @@
 
 using namespace Rangers;
 
-extern void FillARGBItoRGBA(unsigned char *bufdes, unsigned char *bufsrc, unsigned char *pal, int width, int height);
+extern void blitBGRAItoBGRA(unsigned char *bufdes, unsigned char *bufsrc, unsigned char *pal, int width, int height);
 
 /*!
  * \param stream input file
@@ -41,7 +41,7 @@ HAIAnimation Rangers::loadHAI(std::istream& stream)
     for (int i = 0; i < header.count; i++)
     {
         stream.read((char *)buffer, header.width * header.height + header.palSize);
-        FillARGBItoRGBA(outbuf, buffer, buffer + size, header.width, header.height);
+        blitBGRAItoBGRA(outbuf, buffer, buffer + size, header.width, header.height);
         outbuf += size * 4;
     }
 

@@ -75,10 +75,10 @@ void Font::drawGlyph(unsigned char *dest, int destwidth, int destheight, int x, 
         if (((y + i / w) >= destheight) || ((y + i / w) < 0) || (x + i % w < 0) || (x + i % w >= destwidth))
             continue;
 
-        dest[((y + i / w) * destwidth + x + i % w) * 4 + 0] = data[i] & 0xff;
-        dest[((y + i / w) * destwidth + x + i % w) * 4 + 1] = color & 0xff;
-        dest[((y + i / w) * destwidth + x + i % w) * 4 + 2] = (color & 0xff00) >> 8;
-        dest[((y + i / w) * destwidth + x + i % w) * 4 + 3] = (color & 0xff0000) >> 16;
+        dest[((y + i / w) * destwidth + x + i % w) * 4 + 0] = (color & 0xff0000) >> 16;
+        dest[((y + i / w) * destwidth + x + i % w) * 4 + 1] = (color & 0xff00) >> 8;
+        dest[((y + i / w) * destwidth + x + i % w) * 4 + 2] = color & 0xff;
+        dest[((y + i / w) * destwidth + x + i % w) * 4 + 3] = data[i] & 0xff;
     }
 }
 

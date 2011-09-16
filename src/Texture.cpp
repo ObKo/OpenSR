@@ -75,7 +75,10 @@ void Texture::setRawData(int width, int height, TextureType type, unsigned char 
     switch (type)
     {
     case TEXTURE_R8G8B8A8:
-        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, rawData);
+        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, rawData);
+        break;
+    case TEXTURE_B8G8R8A8:
+        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, GL_BGRA, GL_UNSIGNED_BYTE, rawData);
         break;
     case TEXTURE_A8:
         glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, GL_ALPHA, GL_UNSIGNED_BYTE, rawData);

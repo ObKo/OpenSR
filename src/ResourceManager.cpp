@@ -98,7 +98,7 @@ boost::shared_ptr<Texture> ResourceManager::loadTexture(const std::wstring& name
             return boost::shared_ptr<Texture>();
         GIFrame frame = loadGIFile(data);
         delete data;
-        Texture *t = new Texture(frame.width, frame.height, Rangers::TEXTURE_R8G8B8A8, frame.data);
+        Texture *t = new Texture(frame.width, frame.height, Rangers::TEXTURE_B8G8R8A8, frame.data);
         delete frame.data;
         m_textures[name] = boost::shared_ptr<Texture>(t);
         return m_textures[name];
@@ -226,7 +226,7 @@ void ResourceManager::processGAIQueue()
             int f = t->loadedFrames();
             t->loadFrame((char *)w->animation().frames[f].data,
                          w->animation().frames[f].width,
-                         w->animation().frames[f].height, TEXTURE_R8G8B8A8);
+                         w->animation().frames[f].height, TEXTURE_B8G8R8A8);
             w->cleanFrame(f);
             if (t->loadedFrames() >= t->frameCount())
             {

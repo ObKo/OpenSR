@@ -283,6 +283,7 @@ GLint Engine::textureInternalFormat(TextureType t) const
         return GL_COMPRESSED_ALPHA_ARB;
         break;
     case TEXTURE_R8G8B8A8:
+    case TEXTURE_B8G8R8A8:
         return GL_COMPRESSED_RGBA_ARB;
         break;
     }

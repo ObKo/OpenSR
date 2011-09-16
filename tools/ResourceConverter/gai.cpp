@@ -50,7 +50,7 @@ int extractGAI2PNG(const std::string& gaiFile, const std::string& outName)
 		snprintf(counts, 5, "%04d", i);
         GIFrame g = gai.frames[i];
         ilBindImage(frames[i]);
-        ilTexImage(g.width, g.height, 1, 4, IL_RGBA, IL_UNSIGNED_BYTE, g.data);
+        ilTexImage(g.width, g.height, 1, 4, IL_BGRA, IL_UNSIGNED_BYTE, g.data);
         ilSaveImage((directory(outName) + "/" + basename(outName) + counts + ".png").c_str());
         ilDeleteImage(frames[i]);
         delete g.data;

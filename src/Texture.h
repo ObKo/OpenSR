@@ -23,7 +23,7 @@
 
 namespace Rangers
 {
-enum TextureType {TEXTURE_A8, TEXTURE_R8G8B8A8};
+enum TextureType {TEXTURE_A8, TEXTURE_R8G8B8A8, TEXTURE_B8G8R8A8};
 
 class Texture
 {
