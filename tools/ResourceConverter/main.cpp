@@ -19,6 +19,7 @@
 #include "pkg2rpkg.h"
 #include "dds.h"
 #include "gai.h"
+#include "gi.h"
 #include <iostream>
 #include <algorithm>
 
@@ -26,11 +27,13 @@ void showHelp()
 {
     std::cout << "Usage: rangersresconv command [arguments]" << std::endl;
     std::cout << "Commands: " << std::endl;
-    std::cout << "\tpkg2rpkg pkg_file rpkg_file - convert pkg files from original game to rpkg format." << std::endl;
+    std::cout << "\tpkg2rpkg pkg_file rpkg_file - convert pkg file from original game to rpkg format." << std::endl;
     std::cout << "\tany2dds compression image_file dds_file - create compressed dds texture from image." << std::endl;
     std::cout << "\t\tSupported compressions: DXT1, DXT3, DXT5" << std::endl;
     std::cout << "\tgai2png gai_file png_file_name - extract gai animation frames to png files." << std::endl;
     std::cout << "\t\tWill produce files named png_file_name$frame_number$.png" << std::endl;
+    std::cout << "\tgi2png gi_file png_file - convert GI image file from original game to png." << std::endl;
+    std::cout << "\tgi2dds compression gi_file dds_file - convert GI image file from original game to dds format." << std::endl;
 }
 
 int main(int argc, char **argv)
@@ -81,6 +84,39 @@ int main(int argc, char **argv)
             return 0;
         }
         Rangers::extractGAI2PNG(argv[2], argv[3]);
+    }
+    else if(std::string(argv[1]) == "gi2png")
+    {
+        if(argc < 4)
+        {
+            showHelp();
+            return 0;
+        }
+        Rangers::gi2png(argv[2], argv[3]);
+    }
+    else if(std::string(argv[1]) == "gi2dds")
+    {
+        if(argc < 5)
+        {
+            showHelp();
+            return 0;
+        }
+        std::string argv2 = std::string(argv[2]);
+        std::transform(argv2.begin(), argv2.end(), argv2.begin(), ::toupper);
+        Rangers::DDSCompression compression;
+        if(argv2 == "DXT1")
+            compression = Rangers::DDS_DXT1;
+        else if(argv2 == "DXT3")
+          	compression = Rangers::DDS_DXT3;
+        else if(argv2 == "DXT5")
+            compression = Rangers::DDS_DXT5;
+        else
+        {
+          	std::cout << "Unsupported compression." << std::endl;
+           	showHelp();
+           	return 0;
+        }
+        Rangers::gi2dds(argv[3], argv[4], compression);
     }
     else
     {

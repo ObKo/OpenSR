@@ -40,11 +40,11 @@ Texture::Texture()
     m_height = 0;
 }
 
-Texture::Texture(int width, int height, TextureType type, unsigned char *rawData)
+Texture::Texture(int width, int height, TextureType type, unsigned char *rawData, int dataSize)
 {
     glGenTextures(1, &m_openGLTexture);
 
-    setRawData(width, height, type, rawData);
+    setRawData(width, height, type, rawData, dataSize);
 }
 
 Texture::~Texture()
@@ -67,7 +67,7 @@ GLuint Texture::openGLTexture()
     return m_openGLTexture;
 }
 
-void Texture::setRawData(int width, int height, TextureType type, unsigned char *rawData)
+void Texture::setRawData(int width, int height, TextureType type, unsigned char *rawData, int dataSize)
 {
     glBindTexture(GL_TEXTURE_2D, m_openGLTexture);
     GLint internalFormat = Engine::instance()->textureInternalFormat(type);
@@ -82,6 +82,15 @@ void Texture::setRawData(int width, int height, TextureType type, unsigned char 
         break;
     case TEXTURE_A8:
         glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, GL_ALPHA, GL_UNSIGNED_BYTE, rawData);
+        break;
+    case TEXTURE_DXT1:
+    	glCompressedTexImage2D(GL_TEXTURE_2D, 0, GL_COMPRESSED_RGB_S3TC_DXT1_EXT, width, height, 0, dataSize, rawData);
+        break;
+    case TEXTURE_DXT3:
+        glCompressedTexImage2D(GL_TEXTURE_2D, 0, GL_COMPRESSED_RGBA_S3TC_DXT3_EXT, width, height, 0, dataSize, rawData);
+        break;
+    case TEXTURE_DXT5:
+        glCompressedTexImage2D(GL_TEXTURE_2D, 0, GL_COMPRESSED_RGBA_S3TC_DXT5_EXT, width, height, 0, dataSize, rawData);
         break;
     }
 

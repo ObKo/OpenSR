@@ -23,20 +23,20 @@
 
 namespace Rangers
 {
-enum TextureType {TEXTURE_A8, TEXTURE_R8G8B8A8, TEXTURE_B8G8R8A8};
+enum TextureType {TEXTURE_A8, TEXTURE_R8G8B8A8, TEXTURE_B8G8R8A8, TEXTURE_DXT1, TEXTURE_DXT3, TEXTURE_DXT5};
 
 class Texture
 {
 public:
     Texture();
-    Texture(int width, int height, TextureType type, unsigned char *rawData);
+    Texture(int width, int height, TextureType type, unsigned char *rawData, int dataSize = 0);
     ~Texture();
 
     int width() const;
     int height() const;
     GLuint openGLTexture();
 
-    void setRawData(int width, int height, TextureType type, unsigned char *rawData);
+    void setRawData(int width, int height, TextureType type, unsigned char *rawData, int dataSize = 0);
 
 protected:
     int m_width, m_height;

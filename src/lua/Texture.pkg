@@ -3,7 +3,7 @@ $#include <Texture.h>
 
 namespace Rangers
 {
-enum TextureType {TEXTURE_A8, TEXTURE_B8G8R8A8, TEXTURE_R8G8B8A8};
+enum TextureType {TEXTURE_A8, TEXTURE_B8G8R8A8, TEXTURE_R8G8B8A8, TEXTURE_DXT1, TEXTURE_DXT3, TEXTURE_DXT5};
 
 class Texture
 {
@@ -11,6 +11,7 @@ public:
     int width() const;
     int height() const;
 
+    void setRawData(int width, int height, TextureType type, unsigned char *rawData, int dataSize);
     void setRawData(int width, int height, TextureType type, unsigned char *rawData);
 };
 }

@@ -12,6 +12,7 @@ SET(RESOURCE_CONVERTER_SRCS
     pkg2rpkg.cpp
     dds.cpp
     gai.cpp
+    gi.cpp
 )
 
 ADD_EXECUTABLE(rangersresconv ${RESOURCE_CONVERTER_SRCS})

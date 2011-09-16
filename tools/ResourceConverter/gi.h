@@ -16,16 +16,16 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DDS_H
-#define DDS_H
+#ifndef GI_H
+#define GI_H
 
 #include <string>
+#include "dds.h"
 
 namespace Rangers
 {
-enum DDSCompression {DDS_DXT1, DDS_DXT3, DDS_DXT5};
-int convertImageToDDS(const std::string& inFile, const std::string& outFile, DDSCompression compression);
-int saveDataToDDS(int width, int height, unsigned char *bgraData, const std::string& outFile, DDSCompression compression);
+int gi2png(const std::string &inFile, const std::string &outFile);
+int gi2dds(const std::string &inFile, const std::string &outFile, DDSCompression compression);
 }
 
-#endif
+#endif /* GI_H */

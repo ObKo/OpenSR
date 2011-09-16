@@ -38,6 +38,17 @@ int convertImageToDDS(const std::string& inFile, const std::string& outFile, DDS
 	unsigned int dxtDataSize;
 	char* data = (char*)ilCompressDXT(ilGetData(), width, height, 1, IL_DXT5, &dxtDataSize);*/
 
+	unsigned char *bgraData = new unsigned char[width * height * 4];
+	ilCopyPixels(0, 0, 0, width, height, 1, IL_RGBA, IL_UNSIGNED_BYTE, bgraData);
+    ilDeleteImages(1, &image);
+
+	int ret = saveDataToDDS(width, height, bgraData, outFile, compression);
+	delete bgraData;
+	return ret;
+}
+
+int saveDataToDDS(int width, int height, unsigned char *bgraData, const std::string& outFile, DDSCompression compression)
+{
 	int squishFlags;
 	uint32_t fourCC;
 	int blockSize;
@@ -46,7 +57,7 @@ int convertImageToDDS(const std::string& inFile, const std::string& outFile, DDS
 	{
 	case DDS_DXT1:
 		squishFlags = squish::kDxt1;
-		fourCC =  *((uint32_t *)"DXT1");
+	    fourCC =  *((uint32_t *)"DXT1");
 		blockSize = 8;
 		break;
 	case DDS_DXT3:
@@ -61,13 +72,9 @@ int convertImageToDDS(const std::string& inFile, const std::string& outFile, DDS
 		break;
 	}
 
-	unsigned char *bgraData = new unsigned char[width * height * 4];
-	ilCopyPixels(0, 0, 0, width, height, 1, IL_RGBA, IL_UNSIGNED_BYTE, bgraData);
-    int dxtDataSize = squish::GetStorageRequirements(width, height, squishFlags);
+	int dxtDataSize = squish::GetStorageRequirements(width, height, squishFlags);
     unsigned char *data = new unsigned char[dxtDataSize];
-    squish::CompressImage(bgraData, width, height, data, squishFlags);
-
-    ilDeleteImages(1, &image);
+	squish::CompressImage(bgraData, width, height, data, squishFlags);
 
 	std::cout << "Image: " << width << "x" << height << " (" << width * height * 4 / 1024 << " KiB) DXT size: "
 			  << dxtDataSize / 1024 << " KiB" << std::endl;
@@ -84,7 +91,7 @@ int convertImageToDDS(const std::string& inFile, const std::string& outFile, DDS
     pixelFormat.rgbBitCount = 32;
     pixelFormat.size = 32;
 
-	header.caps = 0x1000;
+    header.caps = 0x1000;
 	header.caps2 = 0;
 	header.ddspf = pixelFormat;
 	header.depth = 1;
@@ -101,5 +108,9 @@ int convertImageToDDS(const std::string& inFile, const std::string& outFile, DDS
     out.write((const char *)&header, 124);
     out.write((const char *)data, dxtDataSize);
     out.close();
+
+    delete data;
+
+    return 0;
 }
 }
