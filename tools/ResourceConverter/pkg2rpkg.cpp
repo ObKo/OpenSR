@@ -37,7 +37,7 @@ void countFiles(std::wstring dir, PKGItem *base, std::map<RPKGEntry *, PKGItem*>
             countFiles(dir + fromASCII(base->name) + L"/", &base->childs[i], itemMap);
         else
         {
-            RPKGEntry *e= new RPKGEntry;
+            RPKGEntry *e = new RPKGEntry;
             e->name = dir + fromASCII(base->childs[i].name);
             itemMap[e] = &base->childs[i];
         }

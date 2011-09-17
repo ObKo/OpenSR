@@ -105,46 +105,46 @@ boost::shared_ptr<Texture> ResourceManager::loadTexture(const std::wstring& name
     }
     else if (sfx == L"dds")
     {
-    	size_t size;
-    	char *data = loadData(name, size);
-    	if (!data)
-    	    return boost::shared_ptr<Texture>();
-    	if(*(uint32_t*)(data) != 0x20534444)
-    	{
-    		Log::error() << "Invalid dds file.";
-    		return boost::shared_ptr<Texture>();
-    	}
-    	DDSHeader header = *((DDSHeader*)(data + 4));
-    	int dxtSize = size - sizeof(DDSHeader) - 4;
-    	char *dxt = data + sizeof(DDSHeader) + 4;
+        size_t size;
+        char *data = loadData(name, size);
+        if (!data)
+            return boost::shared_ptr<Texture>();
+        if (*(uint32_t*)(data) != 0x20534444)
+        {
+            Log::error() << "Invalid dds file.";
+            return boost::shared_ptr<Texture>();
+        }
+        DDSHeader header = *((DDSHeader*)(data + 4));
+        int dxtSize = size - sizeof(DDSHeader) - 4;
+        char *dxt = data + sizeof(DDSHeader) + 4;
 
-    	if(!(header.ddspf.flags & DDPF_FOURCC))
-    	{
-    		Log::warning() << "Unsupported DDS file";
-    		delete data;
-    		return boost::shared_ptr<Texture>();
-    	}
+        if (!(header.ddspf.flags & DDPF_FOURCC))
+        {
+            Log::warning() << "Unsupported DDS file";
+            delete data;
+            return boost::shared_ptr<Texture>();
+        }
 
-    	Texture *t = 0;
-        switch(header.ddspf.fourCC)
+        Texture *t = 0;
+        switch (header.ddspf.fourCC)
         {
         case 0x31545844:
-        	t = new Texture(header.width, header.height, Rangers::TEXTURE_DXT1, (unsigned char *)dxt, dxtSize);
-        	delete data;
+            t = new Texture(header.width, header.height, Rangers::TEXTURE_DXT1, (unsigned char *)dxt, dxtSize);
+            delete data;
             break;
         case 0x33545844:
-        	t = new Texture(header.width, header.height, Rangers::TEXTURE_DXT3, (unsigned char *)dxt, dxtSize);
-        	delete data;
+            t = new Texture(header.width, header.height, Rangers::TEXTURE_DXT3, (unsigned char *)dxt, dxtSize);
+            delete data;
             break;
         case 0x35545844:
-        	t = new Texture(header.width, header.height, Rangers::TEXTURE_DXT5, (unsigned char *)dxt, dxtSize);
-        	delete data;
-        	break;
+            t = new Texture(header.width, header.height, Rangers::TEXTURE_DXT5, (unsigned char *)dxt, dxtSize);
+            delete data;
+            break;
         default:
-        	Log::warning() << "Unsupported DDS file";
-        	delete data;
-        	return boost::shared_ptr<Texture>();
-        	break;
+            Log::warning() << "Unsupported DDS file";
+            delete data;
+            return boost::shared_ptr<Texture>();
+            break;
         }
         return boost::shared_ptr<Texture>(t);
     }
@@ -200,67 +200,67 @@ boost::shared_ptr<AnimatedTexture> ResourceManager::loadAnimation(const std::wst
         }
         return m_animations[name];
     }
-    else if(sfx == L"dds")
+    else if (sfx == L"dds")
     {
-    	size_t s;
-    	char *data = loadData(name, s);
-    	if (!data)
-    	    return boost::shared_ptr<AnimatedTexture>();
+        size_t s;
+        char *data = loadData(name, s);
+        if (!data)
+            return boost::shared_ptr<AnimatedTexture>();
 
-        if(*(uint32_t*)(data) != 0x20534444)
-    	{
-    	    Log::error() << "Invalid dds file.";
-    	    return boost::shared_ptr<AnimatedTexture>();
-    	}
-    	DDSHeader header = *((DDSHeader*)(data + 4));
+        if (*(uint32_t*)(data) != 0x20534444)
+        {
+            Log::error() << "Invalid dds file.";
+            return boost::shared_ptr<AnimatedTexture>();
+        }
+        DDSHeader header = *((DDSHeader*)(data + 4));
 
-    	if(!(header.ddspf.flags & DDPF_FOURCC))
-    	{
-    	    Log::warning() << "Unsupported DDS file";
-    	    delete data;
-    	    return boost::shared_ptr<AnimatedTexture>();
-    	}
+        if (!(header.ddspf.flags & DDPF_FOURCC))
+        {
+            Log::warning() << "Unsupported DDS file";
+            delete data;
+            return boost::shared_ptr<AnimatedTexture>();
+        }
 
-    	if(!((header.caps & DDSCAPS_COMPLEX) && (header.caps2 & DDSCAPS2_VOLUME)
-    	   && (header.flags & DDSD_LINEARSIZE) && (header.flags & DDSD_LINEARSIZE)))
-    	{
-    		 Log::warning() << "Unsupported DDS file";
-    		 delete data;
-    		 return boost::shared_ptr<AnimatedTexture>();
-    	}
+        if (!((header.caps & DDSCAPS_COMPLEX) && (header.caps2 & DDSCAPS2_VOLUME)
+                && (header.flags & DDSD_LINEARSIZE) && (header.flags & DDSD_LINEARSIZE)))
+        {
+            Log::warning() << "Unsupported DDS file";
+            delete data;
+            return boost::shared_ptr<AnimatedTexture>();
+        }
 
-    	switch(header.ddspf.fourCC)
-    	{
-    	case 0x31545844:
-    	case 0x33545844:
-    	case 0x35545844:
-    		break;
-    	default:
-    		Log::warning() << "Unsupported DDS file";
-    		delete data;
-    		return boost::shared_ptr<AnimatedTexture>();
-    		break;
-    	}
+        switch (header.ddspf.fourCC)
+        {
+        case 0x31545844:
+        case 0x33545844:
+        case 0x35545844:
+            break;
+        default:
+            Log::warning() << "Unsupported DDS file";
+            delete data;
+            return boost::shared_ptr<AnimatedTexture>();
+            break;
+        }
 
-    	AnimatedTexture *t = new AnimatedTexture(header.width, header.height, header.reserved1[0], header.reserved1[1], header.depth);
-    	for(int i = 0; i < header.depth; i++)
-    	{
-    		char *dxt = data + sizeof(DDSHeader) + 4 + (header.pitchOrLinearSize * header.height) * i;
-			switch(header.ddspf.fourCC)
-			{
-			case 0x31545844:
-				t->loadFrame(dxt, header.width, header.height, Rangers::TEXTURE_DXT1, header.pitchOrLinearSize * header.height);
-				break;
-			case 0x33545844:
-				t->loadFrame(dxt, header.width, header.height, Rangers::TEXTURE_DXT3, header.pitchOrLinearSize * header.height);
-				break;
-			case 0x35545844:
-				t->loadFrame(dxt, header.width, header.height, Rangers::TEXTURE_DXT5, header.pitchOrLinearSize * header.height);
-				break;
-			}
-    	}
-    	return boost::shared_ptr<AnimatedTexture>(t);
-    	delete data;
+        AnimatedTexture *t = new AnimatedTexture(header.width, header.height, header.reserved1[0], header.reserved1[1], header.depth);
+        for (int i = 0; i < header.depth; i++)
+        {
+            char *dxt = data + sizeof(DDSHeader) + 4 + (header.pitchOrLinearSize * header.height) * i;
+            switch (header.ddspf.fourCC)
+            {
+            case 0x31545844:
+                t->loadFrame(dxt, header.width, header.height, Rangers::TEXTURE_DXT1, header.pitchOrLinearSize * header.height);
+                break;
+            case 0x33545844:
+                t->loadFrame(dxt, header.width, header.height, Rangers::TEXTURE_DXT3, header.pitchOrLinearSize * header.height);
+                break;
+            case 0x35545844:
+                t->loadFrame(dxt, header.width, header.height, Rangers::TEXTURE_DXT5, header.pitchOrLinearSize * header.height);
+                break;
+            }
+        }
+        return boost::shared_ptr<AnimatedTexture>(t);
+        delete data;
     }
     else
         Log::error() << "Unknown animation format: " << sfx;

@@ -28,78 +28,78 @@ namespace Rangers
 {
 int extractGAI2PNG(const std::string& gaiFile, const std::string& outName)
 {
-	std::ifstream gaiStream(gaiFile.c_str(), std::ios_base::in | std::ios_base::binary);
+    std::ifstream gaiStream(gaiFile.c_str(), std::ios_base::in | std::ios_base::binary);
     size_t offset = 0;
-	GAIHeader header = loadGAIHeader(gaiStream, offset);
-	offset = 0;
-	GIFrame *bg = 0;
-	if(header.haveBackground)
-	{
-		std::ifstream bgStream((directory(gaiFile) + "/" + basename(gaiFile) + ".gi").c_str(), std::ios_base::in | std::ios_base::binary);
-		bg = new GIFrame();
+    GAIHeader header = loadGAIHeader(gaiStream, offset);
+    offset = 0;
+    GIFrame *bg = 0;
+    if (header.haveBackground)
+    {
+        std::ifstream bgStream((directory(gaiFile) + "/" + basename(gaiFile) + ".gi").c_str(), std::ios_base::in | std::ios_base::binary);
+        bg = new GIFrame();
         *bg = loadGIFile(bgStream);
         bgStream.close();
-	}
-	GAIAnimation gai = loadGAIAnimation(gaiStream, offset, bg);
-	gaiStream.close();
+    }
+    GAIAnimation gai = loadGAIAnimation(gaiStream, offset, bg);
+    gaiStream.close();
 
-	ILuint frames[gai.frameCount];
-	char counts[5];
-	ilInit();
-	ilGenImages(gai.frameCount, frames);
-	for(int i = 0; i < gai.frameCount; i++)
-	{
-		snprintf(counts, 5, "%04d", i);
+    ILuint frames[gai.frameCount];
+    char counts[5];
+    ilInit();
+    ilGenImages(gai.frameCount, frames);
+    for (int i = 0; i < gai.frameCount; i++)
+    {
+        snprintf(counts, 5, "%04d", i);
         GIFrame g = gai.frames[i];
         ilBindImage(frames[i]);
         ilTexImage(g.width, g.height, 1, 4, IL_BGRA, IL_UNSIGNED_BYTE, g.data);
         ilSaveImage((directory(outName) + "/" + basename(outName) + counts + ".png").c_str());
         ilDeleteImage(frames[i]);
         delete g.data;
-	}
-	delete gai.frames;
-	return 0;
+    }
+    delete gai.frames;
+    return 0;
 }
 
 int gai2dds(const std::string& gaiFile, const std::string& ddsFile, DDSCompression compression)
 {
-	std::ifstream gaiStream(gaiFile.c_str(), std::ios_base::in | std::ios_base::binary);
+    std::ifstream gaiStream(gaiFile.c_str(), std::ios_base::in | std::ios_base::binary);
     size_t offset = 0;
-	GAIHeader header = loadGAIHeader(gaiStream, offset);
-	offset = 0;
-	GIFrame *bg = 0;
-	if(header.haveBackground)
-	{
-		std::ifstream bgStream((directory(gaiFile) + "/" + basename(gaiFile) + ".gi").c_str(), std::ios_base::in | std::ios_base::binary);
-		bg = new GIFrame();
+    GAIHeader header = loadGAIHeader(gaiStream, offset);
+    offset = 0;
+    GIFrame *bg = 0;
+    if (header.haveBackground)
+    {
+        std::ifstream bgStream((directory(gaiFile) + "/" + basename(gaiFile) + ".gi").c_str(), std::ios_base::in | std::ios_base::binary);
+        bg = new GIFrame();
         *bg = loadGIFile(bgStream);
         bgStream.close();
-	}
-	GAIAnimation gai = loadGAIAnimation(gaiStream, offset, bg);
-	gaiStream.close();
+    }
+    GAIAnimation gai = loadGAIAnimation(gaiStream, offset, bg);
+    gaiStream.close();
 
-	DDSHeader ddsHeader;
-	DDSPixelFormat pixelFormat;
+    DDSHeader ddsHeader;
+    DDSPixelFormat pixelFormat;
 
-	uint32_t fourCC;
+    uint32_t fourCC;
 
-	switch(compression)
-	{
-	case DDS_DXT1:
-	    fourCC =  *((uint32_t *)"DXT1");
-		break;
-	case DDS_DXT3:
-		fourCC =  *((uint32_t *)"DXT3");
-		break;
-	case DDS_DXT5:
-		fourCC =  *((uint32_t *)"DXT5");
-		break;
-	}
+    switch (compression)
+    {
+    case DDS_DXT1:
+        fourCC =  *((uint32_t *)"DXT1");
+        break;
+    case DDS_DXT3:
+        fourCC =  *((uint32_t *)"DXT3");
+        break;
+    case DDS_DXT5:
+        fourCC =  *((uint32_t *)"DXT5");
+        break;
+    }
 
-	pixelFormat.aBitMask = 0xff000000;
-	pixelFormat.rBitMask = 0xff0000;
-	pixelFormat.gBitMask = 0xff00;
-	pixelFormat.bBitMask = 0xff;
+    pixelFormat.aBitMask = 0xff000000;
+    pixelFormat.rBitMask = 0xff0000;
+    pixelFormat.gBitMask = 0xff00;
+    pixelFormat.bBitMask = 0xff;
     pixelFormat.flags = DDPF_ALPHAPIXELS | DDPF_FOURCC;
     pixelFormat.fourCC = fourCC;
     pixelFormat.rgbBitCount = 32;
@@ -123,17 +123,17 @@ int gai2dds(const std::string& gaiFile, const std::string& ddsFile, DDSCompressi
     out.write((const char *)&magic, 4);
     out.write((const char *)&ddsHeader, 124);
 
-	for(int i = 0; i < gai.frameCount; i++)
-	{
+    for (int i = 0; i < gai.frameCount; i++)
+    {
         GIFrame g = gai.frames[i];
         BGRAToRGBA((char*)g.data, g.width, g.height);
         unsigned char *dxtData = compressDXTData(gai.width, gai.height, g.data, compression);
         out.write((const char *)dxtData, ddsHeader.pitchOrLinearSize * gai.height);
         delete dxtData;
         delete g.data;
-	}
-	delete gai.frames;
-	out.close();
-	return 0;
+    }
+    delete gai.frames;
+    out.close();
+    return 0;
 }
 }

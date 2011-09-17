@@ -84,7 +84,7 @@ void Texture::setRawData(int width, int height, TextureType type, unsigned char 
         glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, GL_ALPHA, GL_UNSIGNED_BYTE, rawData);
         break;
     case TEXTURE_DXT1:
-    	glCompressedTexImage2D(GL_TEXTURE_2D, 0, GL_COMPRESSED_RGB_S3TC_DXT1_EXT, width, height, 0, dataSize, rawData);
+        glCompressedTexImage2D(GL_TEXTURE_2D, 0, GL_COMPRESSED_RGB_S3TC_DXT1_EXT, width, height, 0, dataSize, rawData);
         break;
     case TEXTURE_DXT3:
         glCompressedTexImage2D(GL_TEXTURE_2D, 0, GL_COMPRESSED_RGBA_S3TC_DXT3_EXT, width, height, 0, dataSize, rawData);

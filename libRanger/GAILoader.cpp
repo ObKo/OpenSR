@@ -95,7 +95,7 @@ GAIAnimation Rangers::loadGAIAnimation(std::istream& stream, size_t &offset, GIF
             else
             {
                 stream.seekg(giOffset, ios_base::beg);
-                header.frames[i] = loadGIFrame(stream, giOffset, background, header.finishX, header.finishY);
+                header.frames[i] = loadGIFrame(stream, giOffset, background, header.startX, header.startY, header.finishX, header.finishY);
             }
             if (background)
                 background = &(header.frames[i]);

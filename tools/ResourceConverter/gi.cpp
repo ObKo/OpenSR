@@ -25,24 +25,24 @@ namespace Rangers
 {
 int gi2png(const std::string &inFile, const std::string &outFile)
 {
-	std::ifstream giStream(inFile.c_str(), std::ios_base::in | std::ios_base::binary);
+    std::ifstream giStream(inFile.c_str(), std::ios_base::in | std::ios_base::binary);
 
-	GIFrame g = loadGIFile(giStream);
+    GIFrame g = loadGIFile(giStream);
 
-	ilInit();
-	ILuint image;
-	ilGenImages(1, &image);
-	ilBindImage(image);
-	ilTexImage(g.width, g.height, 1, 4, IL_BGRA, IL_UNSIGNED_BYTE, g.data);
-	ilSaveImage(outFile.c_str());
-	ilDeleteImage(image);
-	delete g.data;
-	return 0;
+    ilInit();
+    ILuint image;
+    ilGenImages(1, &image);
+    ilBindImage(image);
+    ilTexImage(g.width, g.height, 1, 4, IL_BGRA, IL_UNSIGNED_BYTE, g.data);
+    ilSaveImage(outFile.c_str());
+    ilDeleteImage(image);
+    delete g.data;
+    return 0;
 }
 
 int gi2dds(const std::string &inFile, const std::string &outFile, DDSCompression compression)
 {
-	std::ifstream giStream(inFile.c_str(), std::ios_base::in | std::ios_base::binary);
+    std::ifstream giStream(inFile.c_str(), std::ios_base::in | std::ios_base::binary);
 
     GIFrame g = loadGIFile(giStream);
     BGRAToRGBA((char*)g.data, g.width, g.height);

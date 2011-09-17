@@ -39,23 +39,23 @@ void showHelp()
 
 int main(int argc, char **argv)
 {
-    if(argc < 2)
+    if (argc < 2)
     {
         showHelp();
         return 0;
     }
-    if(std::string(argv[1]) == "pkg2rpkg")
+    if (std::string(argv[1]) == "pkg2rpkg")
     {
-        if(argc < 4)
+        if (argc < 4)
         {
             showHelp();
             return 0;
         }
         Rangers::pkg2rpkg(argv[2], argv[3]);
     }
-    else if(std::string(argv[1]) == "any2dds")
+    else if (std::string(argv[1]) == "any2dds")
     {
-        if(argc < 5)
+        if (argc < 5)
         {
             showHelp();
             return 0;
@@ -63,41 +63,41 @@ int main(int argc, char **argv)
         std::string argv2 = std::string(argv[2]);
         std::transform(argv2.begin(), argv2.end(), argv2.begin(), ::toupper);
         Rangers::DDSCompression compression;
-        if(argv2 == "DXT1")
+        if (argv2 == "DXT1")
             compression = Rangers::DDS_DXT1;
-        else if(argv2 == "DXT3")
-        	compression = Rangers::DDS_DXT3;
-        else if(argv2 == "DXT5")
+        else if (argv2 == "DXT3")
+            compression = Rangers::DDS_DXT3;
+        else if (argv2 == "DXT5")
             compression = Rangers::DDS_DXT5;
         else
         {
-        	std::cout << "Unsupported compression." << std::endl;
-        	showHelp();
-        	return 0;
+            std::cout << "Unsupported compression." << std::endl;
+            showHelp();
+            return 0;
         }
         Rangers::convertImageToDDS(argv[3], argv[4], compression);
     }
-    else if(std::string(argv[1]) == "gai2png")
+    else if (std::string(argv[1]) == "gai2png")
     {
-        if(argc < 4)
+        if (argc < 4)
         {
             showHelp();
             return 0;
         }
         Rangers::extractGAI2PNG(argv[2], argv[3]);
     }
-    else if(std::string(argv[1]) == "gi2png")
+    else if (std::string(argv[1]) == "gi2png")
     {
-        if(argc < 4)
+        if (argc < 4)
         {
             showHelp();
             return 0;
         }
         Rangers::gi2png(argv[2], argv[3]);
     }
-    else if(std::string(argv[1]) == "gi2dds")
+    else if (std::string(argv[1]) == "gi2dds")
     {
-        if(argc < 5)
+        if (argc < 5)
         {
             showHelp();
             return 0;
@@ -105,23 +105,23 @@ int main(int argc, char **argv)
         std::string argv2 = std::string(argv[2]);
         std::transform(argv2.begin(), argv2.end(), argv2.begin(), ::toupper);
         Rangers::DDSCompression compression;
-        if(argv2 == "DXT1")
+        if (argv2 == "DXT1")
             compression = Rangers::DDS_DXT1;
-        else if(argv2 == "DXT3")
-          	compression = Rangers::DDS_DXT3;
-        else if(argv2 == "DXT5")
+        else if (argv2 == "DXT3")
+            compression = Rangers::DDS_DXT3;
+        else if (argv2 == "DXT5")
             compression = Rangers::DDS_DXT5;
         else
         {
-          	std::cout << "Unsupported compression." << std::endl;
-           	showHelp();
-           	return 0;
+            std::cout << "Unsupported compression." << std::endl;
+            showHelp();
+            return 0;
         }
         Rangers::gi2dds(argv[3], argv[4], compression);
     }
-    else if(std::string(argv[1]) == "gai2dds")
+    else if (std::string(argv[1]) == "gai2dds")
     {
-        if(argc < 5)
+        if (argc < 5)
         {
             showHelp();
             return 0;
@@ -129,24 +129,24 @@ int main(int argc, char **argv)
         std::string argv2 = std::string(argv[2]);
         std::transform(argv2.begin(), argv2.end(), argv2.begin(), ::toupper);
         Rangers::DDSCompression compression;
-        if(argv2 == "DXT1")
+        if (argv2 == "DXT1")
             compression = Rangers::DDS_DXT1;
-        else if(argv2 == "DXT3")
-          	compression = Rangers::DDS_DXT3;
-        else if(argv2 == "DXT5")
+        else if (argv2 == "DXT3")
+            compression = Rangers::DDS_DXT3;
+        else if (argv2 == "DXT5")
             compression = Rangers::DDS_DXT5;
         else
         {
-          	std::cout << "Unsupported compression." << std::endl;
-           	showHelp();
-           	return 0;
+            std::cout << "Unsupported compression." << std::endl;
+            showHelp();
+            return 0;
         }
         Rangers::gai2dds(argv[3], argv[4], compression);
-        }
+    }
     else
     {
-    	std::cout << "Invalid command" << std::endl;
-    	showHelp();
+        std::cout << "Invalid command" << std::endl;
+        showHelp();
 
     }
 }

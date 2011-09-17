@@ -168,7 +168,7 @@ void drawAIToBGRA(unsigned char * bufdes, int bufdesll, unsigned char * graphbuf
             b = B_565(j) * 0xff / alpha;
             g = G_565(j) * 0xff / alpha;
             r = R_565(j) * 0xff / alpha;
-            Pal[i] = r << 8 | g << 16 | b << 24 | alpha;
+            Pal[i] = b | g << 8 | r << 16 | alpha << 24;
         }
         else
         {

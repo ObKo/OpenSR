@@ -22,9 +22,9 @@ namespace Rangers
 {
 void BGRAToRGBA(char *data, int width, int height)
 {
-    for(int i = 0; i < width * height; i++)
+    for (int i = 0; i < width * height; i++)
     {
-    	char buf =  data[i * 4];
+        char buf =  data[i * 4];
         data[i * 4] =  data[i * 4 + 2];
         data[i * 4 + 2] = buf;
     }
