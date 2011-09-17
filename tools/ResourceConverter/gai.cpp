@@ -21,6 +21,8 @@
 #include <IL/il.h>
 #include <cstring>
 #include <cstdlib>
+#include <libRanger.h>
+#include "utils.h"
 
 namespace Rangers
 {
@@ -56,6 +58,82 @@ int extractGAI2PNG(const std::string& gaiFile, const std::string& outName)
         delete g.data;
 	}
 	delete gai.frames;
+	return 0;
+}
+
+int gai2dds(const std::string& gaiFile, const std::string& ddsFile, DDSCompression compression)
+{
+	std::ifstream gaiStream(gaiFile.c_str(), std::ios_base::in | std::ios_base::binary);
+    size_t offset = 0;
+	GAIHeader header = loadGAIHeader(gaiStream, offset);
+	offset = 0;
+	GIFrame *bg = 0;
+	if(header.haveBackground)
+	{
+		std::ifstream bgStream((directory(gaiFile) + "/" + basename(gaiFile) + ".gi").c_str(), std::ios_base::in | std::ios_base::binary);
+		bg = new GIFrame();
+        *bg = loadGIFile(bgStream);
+        bgStream.close();
+	}
+	GAIAnimation gai = loadGAIAnimation(gaiStream, offset, bg);
+	gaiStream.close();
+
+	DDSHeader ddsHeader;
+	DDSPixelFormat pixelFormat;
+
+	uint32_t fourCC;
+
+	switch(compression)
+	{
+	case DDS_DXT1:
+	    fourCC =  *((uint32_t *)"DXT1");
+		break;
+	case DDS_DXT3:
+		fourCC =  *((uint32_t *)"DXT3");
+		break;
+	case DDS_DXT5:
+		fourCC =  *((uint32_t *)"DXT5");
+		break;
+	}
+
+	pixelFormat.aBitMask = 0xff000000;
+	pixelFormat.rBitMask = 0xff0000;
+	pixelFormat.gBitMask = 0xff00;
+	pixelFormat.bBitMask = 0xff;
+    pixelFormat.flags = DDPF_ALPHAPIXELS | DDPF_FOURCC;
+    pixelFormat.fourCC = fourCC;
+    pixelFormat.rgbBitCount = 32;
+    pixelFormat.size = 32;
+
+    ddsHeader.caps = DDSCAPS_TEXTURE | DDSCAPS_COMPLEX;
+    ddsHeader.caps2 = DDSCAPS2_VOLUME;
+    ddsHeader.ddspf = pixelFormat;
+    ddsHeader.depth = gai.frameCount;
+    ddsHeader.flags = DDSD_CAPS | DDSD_HEIGHT | DDSD_WIDTH | DDSD_DEPTH | DDSD_PIXELFORMAT | DDSD_LINEARSIZE;
+    ddsHeader.height = gai.height;
+    ddsHeader.mipMapCount = 0;
+    ddsHeader.pitchOrLinearSize = getLineSize(gai.width, gai.height, compression);
+    ddsHeader.size = 124;
+    ddsHeader.width = gai.width;
+    ddsHeader.reserved1[0] = gai.waitSeek;
+    ddsHeader.reserved1[1] = gai.waitSize;
+
+    std::ofstream out(ddsFile.c_str(), std::ios_base::out | std::ios_base::binary);
+    uint32_t magic = 0x20534444;
+    out.write((const char *)&magic, 4);
+    out.write((const char *)&ddsHeader, 124);
+
+	for(int i = 0; i < gai.frameCount; i++)
+	{
+        GIFrame g = gai.frames[i];
+        BGRAToRGBA((char*)g.data, g.width, g.height);
+        unsigned char *dxtData = compressDXTData(gai.width, gai.height, g.data, compression);
+        out.write((const char *)dxtData, ddsHeader.pitchOrLinearSize * gai.height);
+        delete dxtData;
+        delete g.data;
+	}
+	delete gai.frames;
+	out.close();
 	return 0;
 }
 }

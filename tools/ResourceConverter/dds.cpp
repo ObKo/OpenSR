@@ -49,35 +49,22 @@ int convertImageToDDS(const std::string& inFile, const std::string& outFile, DDS
 
 int saveDataToDDS(int width, int height, unsigned char *bgraData, const std::string& outFile, DDSCompression compression)
 {
-	int squishFlags;
 	uint32_t fourCC;
-	int blockSize;
 
 	switch(compression)
 	{
 	case DDS_DXT1:
-		squishFlags = squish::kDxt1;
 	    fourCC =  *((uint32_t *)"DXT1");
-		blockSize = 8;
 		break;
 	case DDS_DXT3:
-	    squishFlags = squish::kDxt3;
 		fourCC =  *((uint32_t *)"DXT3");
-		blockSize = 16;
 		break;
 	case DDS_DXT5:
-		squishFlags = squish::kDxt5;
 		fourCC =  *((uint32_t *)"DXT5");
-		blockSize = 16;
 		break;
 	}
 
-	int dxtDataSize = squish::GetStorageRequirements(width, height, squishFlags);
-    unsigned char *data = new unsigned char[dxtDataSize];
-	squish::CompressImage(bgraData, width, height, data, squishFlags);
-
-	std::cout << "Image: " << width << "x" << height << " (" << width * height * 4 / 1024 << " KiB) DXT size: "
-			  << dxtDataSize / 1024 << " KiB" << std::endl;
+	unsigned char *dxtData = compressDXTData(width, height, bgraData, compression);
 
 	DDSHeader header;
 	DDSPixelFormat pixelFormat;
@@ -91,14 +78,14 @@ int saveDataToDDS(int width, int height, unsigned char *bgraData, const std::str
     pixelFormat.rgbBitCount = 32;
     pixelFormat.size = 32;
 
-    header.caps = 0x1000;
+    header.caps = DDSCAPS_TEXTURE;
 	header.caps2 = 0;
 	header.ddspf = pixelFormat;
 	header.depth = 1;
-	header.flags = DDSD_CAPS | DDSD_HEIGHT | DDSD_WIDTH | DDSD_PIXELFORMAT;
+	header.flags = DDSD_CAPS | DDSD_HEIGHT | DDSD_WIDTH | DDSD_PIXELFORMAT | DDSD_LINEARSIZE;
 	header.height = height;
 	header.mipMapCount = 0;
-	header.pitchOrLinearSize = ((width + 3) / 4) * blockSize;
+	header.pitchOrLinearSize = getLineSize(width, height, compression);
     header.size = 124;
     header.width = width;
 
@@ -106,11 +93,56 @@ int saveDataToDDS(int width, int height, unsigned char *bgraData, const std::str
     uint32_t magic = 0x20534444;
     out.write((const char *)&magic, 4);
     out.write((const char *)&header, 124);
-    out.write((const char *)data, dxtDataSize);
+    out.write((const char *)dxtData, header.pitchOrLinearSize * height);
     out.close();
 
-    delete data;
+    delete dxtData;
 
     return 0;
 }
+
+unsigned char *compressDXTData(int width, int height, unsigned char *bgraData, DDSCompression compression)
+{
+	int squishFlags;
+	switch(compression)
+	{
+	case DDS_DXT1:
+		squishFlags = squish::kDxt1;
+		break;
+	case DDS_DXT3:
+	    squishFlags = squish::kDxt3;
+		break;
+	case DDS_DXT5:
+		squishFlags = squish::kDxt5;
+		break;
+	}
+
+	int dxtDataSize = squish::GetStorageRequirements(width, height, squishFlags);
+    unsigned char *data = new unsigned char[dxtDataSize];
+	squish::CompressImage(bgraData, width, height, data, squishFlags);
+
+	std::cout << "Image: " << width << "x" << height << " (" << width * height * 4 / 1024 << " KiB) DXT size: "
+			  << dxtDataSize / 1024 << " KiB" << std::endl;
+	return data;
+}
+
+int getLineSize(int width, int height, DDSCompression compression)
+{
+	int squishFlags;
+	switch(compression)
+	{
+	case DDS_DXT1:
+		squishFlags = squish::kDxt1;
+		break;
+	case DDS_DXT3:
+	    squishFlags = squish::kDxt3;
+		break;
+	case DDS_DXT5:
+		squishFlags = squish::kDxt5;
+		break;
+	}
+	int dxtDataSize = squish::GetStorageRequirements(width, height, squishFlags);
+	return dxtDataSize / height;
+}
+
 }

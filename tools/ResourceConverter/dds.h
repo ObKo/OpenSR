@@ -26,6 +26,8 @@ namespace Rangers
 enum DDSCompression {DDS_DXT1, DDS_DXT3, DDS_DXT5};
 int convertImageToDDS(const std::string& inFile, const std::string& outFile, DDSCompression compression);
 int saveDataToDDS(int width, int height, unsigned char *bgraData, const std::string& outFile, DDSCompression compression);
+unsigned char *compressDXTData(int width, int height, unsigned char *bgraData, DDSCompression compression);
+int getLineSize(int width, int height, DDSCompression compression);
 }
 
 #endif

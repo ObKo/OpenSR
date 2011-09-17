@@ -51,7 +51,7 @@ public:
     //! Set texture tiling
     void setTiling(bool tx, bool ty);
     //! Append frame (on-demand loading)
-    void loadFrame(const char *data, int width, int height, TextureType type);
+    void loadFrame(const char *data, int width, int height, TextureType type, int dataSize = 0);
 
 private:
     int m_waitSeek, m_waitSize;

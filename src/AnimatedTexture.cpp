@@ -152,7 +152,7 @@ int AnimatedTexture::loadedFrames() const
     return m_loadedFrames;
 }
 
-void AnimatedTexture::loadFrame(const char* data, int width, int height, TextureType type)
+void AnimatedTexture::loadFrame(const char* data, int width, int height, TextureType type, int dataSize)
 {
     if (m_loadedFrames == m_frameCount)
         return;
@@ -170,6 +170,15 @@ void AnimatedTexture::loadFrame(const char* data, int width, int height, Texture
         break;
     case TEXTURE_R8G8B8A8:
         glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+        break;
+    case TEXTURE_DXT1:
+      	glCompressedTexImage2D(GL_TEXTURE_2D, 0, GL_COMPRESSED_RGB_S3TC_DXT1_EXT, width, height, 0, dataSize, data);
+        break;
+    case TEXTURE_DXT3:
+        glCompressedTexImage2D(GL_TEXTURE_2D, 0, GL_COMPRESSED_RGBA_S3TC_DXT3_EXT, width, height, 0, dataSize, data);
+        break;
+    case TEXTURE_DXT5:
+        glCompressedTexImage2D(GL_TEXTURE_2D, 0, GL_COMPRESSED_RGBA_S3TC_DXT5_EXT, width, height, 0, dataSize, data);
         break;
     }
 

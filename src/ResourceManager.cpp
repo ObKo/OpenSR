@@ -200,6 +200,68 @@ boost::shared_ptr<AnimatedTexture> ResourceManager::loadAnimation(const std::wst
         }
         return m_animations[name];
     }
+    else if(sfx == L"dds")
+    {
+    	size_t s;
+    	char *data = loadData(name, s);
+    	if (!data)
+    	    return boost::shared_ptr<AnimatedTexture>();
+
+        if(*(uint32_t*)(data) != 0x20534444)
+    	{
+    	    Log::error() << "Invalid dds file.";
+    	    return boost::shared_ptr<AnimatedTexture>();
+    	}
+    	DDSHeader header = *((DDSHeader*)(data + 4));
+
+    	if(!(header.ddspf.flags & DDPF_FOURCC))
+    	{
+    	    Log::warning() << "Unsupported DDS file";
+    	    delete data;
+    	    return boost::shared_ptr<AnimatedTexture>();
+    	}
+
+    	if(!((header.caps & DDSCAPS_COMPLEX) && (header.caps2 & DDSCAPS2_VOLUME)
+    	   && (header.flags & DDSD_LINEARSIZE) && (header.flags & DDSD_LINEARSIZE)))
+    	{
+    		 Log::warning() << "Unsupported DDS file";
+    		 delete data;
+    		 return boost::shared_ptr<AnimatedTexture>();
+    	}
+
+    	switch(header.ddspf.fourCC)
+    	{
+    	case 0x31545844:
+    	case 0x33545844:
+    	case 0x35545844:
+    		break;
+    	default:
+    		Log::warning() << "Unsupported DDS file";
+    		delete data;
+    		return boost::shared_ptr<AnimatedTexture>();
+    		break;
+    	}
+
+    	AnimatedTexture *t = new AnimatedTexture(header.width, header.height, header.reserved1[0], header.reserved1[1], header.depth);
+    	for(int i = 0; i < header.depth; i++)
+    	{
+    		char *dxt = data + sizeof(DDSHeader) + 4 + (header.pitchOrLinearSize * header.height) * i;
+			switch(header.ddspf.fourCC)
+			{
+			case 0x31545844:
+				t->loadFrame(dxt, header.width, header.height, Rangers::TEXTURE_DXT1, header.pitchOrLinearSize * header.height);
+				break;
+			case 0x33545844:
+				t->loadFrame(dxt, header.width, header.height, Rangers::TEXTURE_DXT3, header.pitchOrLinearSize * header.height);
+				break;
+			case 0x35545844:
+				t->loadFrame(dxt, header.width, header.height, Rangers::TEXTURE_DXT5, header.pitchOrLinearSize * header.height);
+				break;
+			}
+    	}
+    	return boost::shared_ptr<AnimatedTexture>(t);
+    	delete data;
+    }
     else
         Log::error() << "Unknown animation format: " << sfx;
 

@@ -13,6 +13,7 @@ SET(RESOURCE_CONVERTER_SRCS
     dds.cpp
     gai.cpp
     gi.cpp
+    utils.cpp
 )
 
 ADD_EXECUTABLE(rangersresconv ${RESOURCE_CONVERTER_SRCS})

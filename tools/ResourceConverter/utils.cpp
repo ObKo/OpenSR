@@ -16,16 +16,17 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef GAI_H
-#define GAI_H
-
-#include <libRanger.h>
-#include "dds.h"
+#include "utils.h"
 
 namespace Rangers
 {
-int extractGAI2PNG(const std::string& gaiFile, const std::string& outName);
-int gai2dds(const std::string& gaiFile, const std::string& ddsFile, DDSCompression compression);
+void BGRAToRGBA(char *data, int width, int height)
+{
+    for(int i = 0; i < width * height; i++)
+    {
+    	char buf =  data[i * 4];
+        data[i * 4] =  data[i * 4 + 2];
+        data[i * 4 + 2] = buf;
+    }
 }
-
-#endif /* GAI_H */
+}

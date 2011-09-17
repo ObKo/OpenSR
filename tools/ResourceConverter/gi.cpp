@@ -19,19 +19,10 @@
 #include "gi.h"
 #include <libRanger.h>
 #include <IL/il.h>
+#include "utils.h"
 
 namespace Rangers
 {
-void BGRAToRGBA(char *data, int width, int height)
-{
-    for(int i = 0; i < width * height; i++)
-    {
-    	char buf =  data[i * 4];
-        data[i * 4] =  data[i * 4 + 2];
-        data[i * 4 + 2] = buf;
-    }
-}
-
 int gi2png(const std::string &inFile, const std::string &outFile)
 {
 	std::ifstream giStream(inFile.c_str(), std::ios_base::in | std::ios_base::binary);
