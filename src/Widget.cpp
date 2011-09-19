@@ -124,7 +124,7 @@ void Widget::addWidget(Widget* w)
             return;
         }
     }
-    m_children.push_back(w);
+    m_childWidgets.push_back(w);
     unlock();
 }
 

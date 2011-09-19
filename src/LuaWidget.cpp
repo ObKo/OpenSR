@@ -19,6 +19,7 @@
 #include "LuaWidget.h"
 #include "Log.h"
 #include "Types.h"
+#include "Object.h"
 
 namespace Rangers
 {
@@ -55,9 +56,10 @@ void LuaWidget::draw()
 {
     if (!prepareDraw())
         return;
-    lua_getglobal(m_luaState, "draw");
-    if (!lua_isnil(m_luaState, -1))
-        lua_pcall(m_luaState, 0, 0, 0);
+
+    for (std::list<Object*>::const_iterator i = m_children.begin(); i != m_children.end(); i++)
+        (*i)->draw();
+
     endDraw();
 }
 
@@ -195,6 +197,8 @@ void LuaWidget::mouseClick(int x, int y)
 void LuaWidget::processLogic(int dt)
 {
     lock();
+    for (std::list<Object*>::const_iterator i = m_children.begin(); i != m_children.end(); i++)
+        (*i)->processLogic(dt);
     lua_getglobal(m_luaState, "processLogic");
     if (lua_isnil(m_luaState, -1))
     {
@@ -209,13 +213,8 @@ void LuaWidget::processLogic(int dt)
 void LuaWidget::processMain()
 {
     lock();
-    lua_getglobal(m_luaState, "processMain");
-    if (lua_isnil(m_luaState, -1))
-    {
-        unlock();
-        return;
-    }
-    lua_pcall(m_luaState, 0, 0, 0);
+    for (std::list<Object*>::const_iterator i = m_children.begin(); i != m_children.end(); i++)
+        (*i)->processMain();
     unlock();
 }
 }

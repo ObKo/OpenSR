@@ -214,7 +214,9 @@ void Object::addChild(Object* object)
 
 void Object::setParent(Object *parent)
 {
+    lock();
     m_parent = parent;
+    unlock();
 }
 
 void Object::removeChild(Object* object)
@@ -229,10 +231,10 @@ void Object::setLayer(int layer)
 {
     lock();
     m_layer = layer;
-    if (m_parent)
+    if (Object *parent = m_parent)
     {
-        m_parent->removeChild(this);
-        m_parent->addChild(this);
+        parent->removeChild(this);
+        parent->addChild(this);
     }
     unlock();
 }

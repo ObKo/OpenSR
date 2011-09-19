@@ -1,36 +1,28 @@
 engine = Rangers.Engine:instance()
 resources = Rangers.ResourceManager:instance()
 
-backgroundTexture = resources:loadTexture(L"DATA/FormMain3/2bg.gi")
-background = Rangers.Sprite:new(backgroundTexture, this)
+background = resources:getSprite(L"2bg.dds", this)
 background:setWidth(background:width()/(engine:screenHeight()/background:height()))
 background:setHeight(engine:screenHeight())
+background:setLayer(-1)
 
-bgPlanetTexture = resources:loadTexture(L"DATA/FormMain3/2Planet.gi")
-bgPlanet = Rangers.Sprite:new(bgPlanetTexture, this, Rangers.TEXTURE_NORMAL,
-    Rangers.POSITION_X_LEFT, Rangers.POSITION_Y_BOTTOM)
+bgPlanet = resources:getSprite(L"DATA/FormMain3/2Planet.gi", this)
+bgPlanet:setOrigin(Rangers.POSITION_X_LEFT, Rangers.POSITION_Y_BOTTOM)
 bgPlanet:setPosition(0, engine:screenHeight())
+bgPlanet:setLayer(0)
 
 bgAnimLine = resources:getAnimatedSprite(L"DATA/FormMain2/2AnimLine.gai", true, this)
+bgAnimLine:setLayer(0)
 
-shipAnimation = resources:loadAnimation(L"DATA/FormMain3/2Ship1.gai", true)
--- shipAnimation = resources:loadTexture(L"DATA/FormMain3/2Ship1.gi")
-ship = Rangers.AnimatedSprite:new(shipAnimation, this)
--- ship = Rangers.Sprite:new(shipAnimation, this)
+ship = resources:getAnimatedSprite(L"2ship.dds", true, this)
 ship:setPosition(0, engine:screenHeight() - ship:height())
+ship:setLayer(1)
 
 t = 0
 bgspeed = 5/1000
 bgforward = true
 
 engine:focusWidget(this)
-
-function draw()
-  background:draw()
-  bgPlanet:draw()
-   bgAnimLine:draw()
-  ship:draw()
-end
 
 function keyPressed(k)
 --   bgAnimLine:delete()
@@ -65,13 +57,6 @@ function mouseClick(x, y)
 
 end
 
-function processMain()
-  ship:processMain()
-  bgPlanet:processMain()
-  background:processMain()
-  bgAnimLine:processMain()
-end
-
 function processLogic(dt)
   if math.abs(t * bgspeed) >= background:width() - engine:screenWidth() then
     t = 0
@@ -82,7 +67,5 @@ function processLogic(dt)
   else 
     background:setPosition(-background:width() + engine:screenWidth() + t * bgspeed, 0)
   end
-  ship:processLogic(dt)
-  bgAnimLine:processLogic(dt)
   t = t + dt
 end
