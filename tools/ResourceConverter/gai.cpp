@@ -43,13 +43,13 @@ int extractGAI2PNG(const std::string& gaiFile, const std::string& outName)
     GAIAnimation gai = loadGAIAnimation(gaiStream, offset, bg);
     gaiStream.close();
 
-    ILuint frames[gai.frameCount];
+    ILuint *frames = new ILuint[gai.frameCount];
     char counts[5];
     ilInit();
     ilGenImages(gai.frameCount, frames);
     for (int i = 0; i < gai.frameCount; i++)
     {
-        snprintf(counts, 5, "%04d", i);
+        sprintf(counts, "%04d", i);
         GIFrame g = gai.frames[i];
         ilBindImage(frames[i]);
         ilTexImage(g.width, g.height, 1, 4, IL_BGRA, IL_UNSIGNED_BYTE, g.data);

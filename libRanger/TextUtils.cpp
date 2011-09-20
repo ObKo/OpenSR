@@ -24,7 +24,7 @@
 #include <cstring>
 #include <sstream>
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <windows.h>
 #else
 #include <locale.h>
@@ -61,7 +61,7 @@ char *Rangers::convertText(const char *to, const char *from, const char *what, i
     size_t outbuflength = 4 * (srcLength + 1);
     char *pointer = result;
     char **inp = (char **)&what;
-#ifdef WIN32
+#ifdef _WIN32
     iconv(codec, (const char **)inp, &inbuflength, &pointer, &outbuflength);
 #else
     iconv(codec, inp, &inbuflength, &pointer, &outbuflength);
@@ -94,8 +94,8 @@ std::wstring Rangers::fromCodec(const char *codec, const char *text, int length)
     int outl;
 
     //FIXME: Workaround about not working WCHAR_T on Windows XP
-#ifdef WIN32
-    char *data = convertText("UCS-2LE", codec, m_text, length, outl);
+#ifdef _WIN32
+    char *data = convertText("UCS-2LE", codec, text, length, outl);
 #else
     char *data = convertText("WCHAR_T", codec, text, length, outl);
 #endif
@@ -127,8 +127,8 @@ std::wstring Rangers::fromASCII(const char *text, int length)
 char* Rangers::toCodec(const char *codec, const std::wstring& text, int& resultLength)
 {
 //FIXME: Workaround about not working WCHAR_T on Windows XP
-#ifdef WIN32
-    return convertText(codec, "UCS-2LE", (char *)m_text.c_str(), (m_text.length() + 1) * sizeof(wchar_t), resultLength);
+#ifdef _WIN32
+    return convertText(codec, "UCS-2LE", (char *)text.c_str(), (text.length() + 1) * sizeof(wchar_t), resultLength);
 #else
     return convertText(codec, "WCHAR_T", (char *)text.c_str(), (text.length() + 1) * sizeof(wchar_t), resultLength);
 #endif
@@ -167,7 +167,7 @@ std::string Rangers::toUTF8(const std::wstring& text)
 std::string Rangers::toLocal(const std::wstring& text)
 {
     std::string codec;
-#ifdef WIN32
+#ifdef _WIN32
     int cp = GetACP();
     std::ostringstream ss;
     ss << "CP" << cp;
@@ -186,7 +186,7 @@ std::string Rangers::toLocal(const std::wstring& text)
 std::wstring Rangers::fromLocal(const char *text, int length)
 {
     const char *codec;
-#ifdef WIN32
+#ifdef _WIN32
     int cp = GetACP();
     std::ostringstream ss;
     ss << "CP" << cp;
