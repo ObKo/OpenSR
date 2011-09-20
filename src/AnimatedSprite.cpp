@@ -39,6 +39,7 @@ AnimatedSprite::AnimatedSprite(boost::shared_ptr<AnimatedTexture> texture,  Obje
     else
     {
         m_animationStarted = true;
+//TODO: Find relations between seek/size and FPS.
         m_frameDuration = texture->waitSeek() > 1000 ? 50 : 100;
     }
 }

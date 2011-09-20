@@ -48,16 +48,6 @@ GAIAnimation Rangers::loadGAIAnimation(std::istream& stream, size_t &offset, GIF
 
     stream.seekg(offset, ios_base::beg);
     stream.read((char *)&header, 48);
-    /*cout << "signature: " << header.signature << endl;
-    cout << "version: " << header.version << endl;
-    cout << "startX: " << header.startX << endl;
-    cout << "startY: " << header.startY << endl;
-    cout << "finishX: " << header.finishX << endl;
-    cout << "finishY: " << header.finishY << endl;
-    cout << "frames: " << header.frameCount << endl;
-    cout << "haveBackground: " << header.haveBackground << endl;
-    cout << "waitSeek: " << header.waitSeek << endl;
-    cout << "waitSize: " << header.waitSize << endl;*/
 
     int width = header.finishX - header.startX;
     int height = header.finishY - header.startY;
@@ -103,12 +93,12 @@ GAIAnimation Rangers::loadGAIAnimation(std::istream& stream, size_t &offset, GIF
         else
         {
             GIFrame frame;
-            frame.width = header.finishX;
-            frame.height = header.finishY;
+            frame.width = width;
+            frame.height = height;
             frame.data = new unsigned char[frame.width * frame.height * 4];
             memset(frame.data, 0, frame.width * frame.height * 4);
             if (background)
-                copyImageData(frame.data, frame.width, header.startX, header.startY, background->width, background->height, background->data);
+                copyImageData(frame.data, frame.width, 0, 0, background->width, background->height, background->data);
 
             header.frames[i] = frame;
             background = &(header.frames[i]);

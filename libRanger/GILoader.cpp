@@ -496,9 +496,9 @@ void blitBGRAItoBGRA(unsigned char *bufdes, unsigned char *bufsrc, unsigned char
 
         for (int x = 0; x < width; x++)
         {
-            bufdes[0] = pal[bits[0] * 4 + 0];
+            bufdes[0] = pal[bits[0] * 4 + 2];
             bufdes[1] = pal[bits[0] * 4 + 1];
-            bufdes[2] = pal[bits[0] * 4 + 2];
+            bufdes[2] = pal[bits[0] * 4 + 0];
             bufdes[3] = pal[bits[0] * 4 + 3];
             bufdes += 4;
             bits += 1;

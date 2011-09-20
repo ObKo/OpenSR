@@ -7,8 +7,9 @@
 #include <QTimer>
 #include "PKGModel.h"
 
-namespace Ui {
-    class MainWindow;
+namespace Ui
+{
+class MainWindow;
 }
 
 namespace Rangers
@@ -20,6 +21,7 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+    void closeEvent(QCloseEvent *event);
 
 private:
     Ui::MainWindow *ui;
@@ -36,6 +38,8 @@ private:
 private Q_SLOTS:
     void openFile();
     void nextFrame();
+    void framerateChanged(double value);
+    void durationChanged(double value);
 };
-};
+}
 #endif // MAINWINDOW_H

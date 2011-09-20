@@ -4,7 +4,7 @@
 using namespace Rangers;
 
 PKGModel::PKGModel(PKGItem *root, QObject *parent)
-        : QAbstractItemModel(parent)
+    : QAbstractItemModel(parent)
 {
     rootItem = root;
 }
@@ -37,7 +37,8 @@ Qt::ItemFlags PKGModel::flags(const QModelIndex &index) const
 
 PKGItem *PKGModel::getItem(const QModelIndex &index) const
 {
-    if (index.isValid()) {
+    if (index.isValid())
+    {
         PKGItem *item = static_cast<PKGItem*>(index.internalPointer());
         if (item) return item;
     }
@@ -45,7 +46,7 @@ PKGItem *PKGModel::getItem(const QModelIndex &index) const
 }
 
 QVariant PKGModel::headerData(int section, Qt::Orientation orientation,
-                               int role) const
+                              int role) const
 {
     //if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
     //    return rootItem->data(section);
