@@ -5,14 +5,30 @@
 #include <QModelIndex>
 #include <QVariant>
 #include <libRanger.h>
+#include <QList>
+#include <QFileInfo>
+#include <QMap>
 
 namespace Rangers
 {
-class PKGModel : public QAbstractItemModel
+enum NodeType {NODE_FILE, NODE_PKG, NODE_RPKG};
+struct FileNode
+{
+    QString name;
+    QString fullName;
+    FileNode *parent;
+    QList<FileNode*> childs;
+    NodeType type;
+    void *userData;
+};
+class FileModel : public QAbstractItemModel
 {
     Q_OBJECT
 public:
-    PKGModel(PKGItem *root, QObject *parent = 0);
+    FileModel(QObject *parent = 0);
+
+    FileNode* addPKG(const QFileInfo& file);
+    FileNode* addFile(const QFileInfo& file);
 
     QVariant data(const QModelIndex &index, int role) const;
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
@@ -25,9 +41,14 @@ public:
 
     Qt::ItemFlags flags(const QModelIndex &index) const;
 
+    QByteArray getData(const QModelIndex &index);
+    QByteArray getData(FileNode *node);
+    FileNode* getSiblingNode(FileNode* node, const QString& name);
+
 private:
-    PKGItem *rootItem;
-    PKGItem *getItem(const QModelIndex &index) const;
+    FileNode *rootItem;
+    FileNode *getItem(const QModelIndex &index) const;
+    QMap<FileNode*, QFileInfo> archives;
 };
 };
 

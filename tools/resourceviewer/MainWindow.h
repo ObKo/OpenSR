@@ -5,7 +5,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsPixmapItem>
 #include <QTimer>
-#include "PKGModel.h"
+#include "FileModel.h"
 
 namespace Ui
 {
@@ -33,13 +33,20 @@ private:
     int currentFrame;
 
     void loadFile(const QString& fileName);
-    PKGModel *model;
+    FileModel model;
+
+    void loadGAI(GAIAnimation animation);
+    void loadGI(GIFrame frame);
+    void loadHAI(HAIAnimation animation);
+
+    void loadResource(FileNode *node);
 
 private Q_SLOTS:
     void openFile();
     void nextFrame();
     void framerateChanged(double value);
     void durationChanged(double value);
+    void treeDoubleClicked(const QModelIndex& index);
 };
 }
 #endif // MAINWINDOW_H

@@ -274,6 +274,8 @@ LIBRANGER_DIRECTIVE GIFrame loadGIFrame(const char *buffer, size_t &offset, GIFr
 
 //! Load HAI animation from file
 LIBRANGER_DIRECTIVE HAIAnimation loadHAI(std::istream& stream);
+//! Load HAI animation from memory
+LIBRANGER_DIRECTIVE HAIAnimation loadHAI(const char *data);
 
 //! Load GI file
 LIBRANGER_DIRECTIVE GIFrame loadGIFile(std::istream& stream);

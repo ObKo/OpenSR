@@ -20,10 +20,13 @@ MainWindow::MainWindow(QWidget *parent) :
     scene.setBackgroundBrush(QBrush(Qt::black));
     scene.addItem(&item);
 
+    ui->fileTreeView->setModel(&model);
+
     connect(ui->actionOpen, SIGNAL(triggered()), this, SLOT(openFile()));
     connect(&animationTimer, SIGNAL(timeout()), this, SLOT(nextFrame()));
     connect(ui->framerateSpinBox, SIGNAL(valueChanged(double)), this, SLOT(framerateChanged(double)));
     connect(ui->durationSpinBox, SIGNAL(valueChanged(double)), this, SLOT(durationChanged(double)));
+    connect(ui->fileTreeView, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(treeDoubleClicked(const QModelIndex&)));
 
     QSettings settings("OpenSR", "ResourceViewer");
     restoreGeometry(settings.value("mainWindow/geometry").toByteArray());
@@ -79,105 +82,72 @@ void MainWindow::nextFrame()
 
 void MainWindow::loadFile(const QString& fileName)
 {
-    ui->paramGroupBox->setEnabled(false);
     QFileInfo fileInfo(fileName);
     if (!fileInfo.exists())
         return;
 
-    std::ifstream f(fileName.toLocal8Bit().data(), std::ios::binary);
-
-    if (!frames.isEmpty())
+    if (fileInfo.suffix().toLower() == "pkg")
     {
-        frames.clear();
-        animationTimer.stop();
+        model.addPKG(fileInfo);
     }
-
-
-    if (fileInfo.suffix().toLower() == "gi")
+    else
     {
-        Rangers::GIFrame frame = Rangers::loadGIFile(f);
-        item.setPixmap(QPixmap::fromImage(QImage(frame.data, frame.width, frame.height, QImage::Format_ARGB32)));
-        delete frame.data;
-        scene.setSceneRect(0, 0, frame.width, frame.height);
-        scene.invalidate();
+        loadResource(model.addFile(fileInfo));
     }
-    else if (fileInfo.suffix().toLower() == "gai")
+}
+
+void MainWindow::loadHAI(HAIAnimation anim)
+{
+    for (int i = 0; i < anim.frameCount; i++)
     {
-        size_t offset = 0;
-        Rangers::GAIHeader h = Rangers::loadGAIHeader(f, offset);
-        Rangers::GIFrame *bg = 0;
-        if (h.haveBackground)
-        {
-            QFileInfo bgFileInfo((fileInfo.absoluteDir().canonicalPath() + "/" + fileInfo.completeBaseName() + ".gi"));
-            if (!bgFileInfo.exists())
-                bgFileInfo = QFileInfo((fileInfo.absoluteDir().canonicalPath() + "/" + fileInfo.completeBaseName() + ".GI"));
-
-            if (!bgFileInfo.exists())
-                qCritical() << "Could not found background frame!";
-            else
-            {
-                std::ifstream bgFile(bgFileInfo.absoluteFilePath().toLocal8Bit().data(), std::ios::in | std::ios::binary);
-                bg = new Rangers::GIFrame();
-                *bg = loadGIFile(bgFile);
-                bgFile.close();
-            }
-        }
-        offset = 0;
-        Rangers::GAIAnimation anim = Rangers::loadGAIAnimation(f, offset, bg);
-        for (int i = 0; i < anim.frameCount; i++)
-        {
-            frames.append(QPixmap::fromImage(QImage(anim.frames[i].data, anim.frames[i].width, anim.frames[i].height, QImage::Format_ARGB32)));
-            delete[] anim.frames[i].data;
-        }
-        delete[] anim.frames;
-        if (bg)
-            delete bg->data;
-        delete bg;
-        currentFrame = 0;
-        item.setPixmap(frames.at(currentFrame));
-        animationTimer.setInterval(1000 / 15);
-        animationTimer.setSingleShot(false);
-        animationTimer.start();
-        scene.setSceneRect(0, 0, anim.width, anim.height);
-        scene.invalidate();
-
-        ui->seekLabel->setText(QString::number(anim.waitSeek));
-        ui->waitLabel->setText(QString::number(anim.waitSize));
-        ui->framerateSpinBox->setValue(15);
-        ui->durationSpinBox->setValue(1000.0 / 15);
-        ui->paramGroupBox->setEnabled(true);
+        frames.append(QPixmap::fromImage(QImage(anim.frames + i * anim.width * anim.height * 4, anim.width, anim.height, QImage::Format_ARGB32)));
     }
-    else if (fileInfo.suffix().toLower() == "hai")
+    delete anim.frames;
+    currentFrame = 0;
+    item.setPixmap(frames.at(currentFrame));
+    animationTimer.setInterval(1000 / 15);
+    animationTimer.setSingleShot(false);
+    animationTimer.start();
+
+    ui->seekLabel->setText("");
+    ui->waitLabel->setText("");
+    ui->framerateSpinBox->setValue(15);
+    ui->durationSpinBox->setValue(1000.0 / 15);
+    ui->paramGroupBox->setEnabled(true);
+
+    scene.setSceneRect(0, 0, anim.width, anim.height);
+    scene.invalidate();
+}
+
+void MainWindow::loadGI(GIFrame frame)
+{
+    item.setPixmap(QPixmap::fromImage(QImage(frame.data, frame.width, frame.height, QImage::Format_ARGB32)));
+    delete frame.data;
+    scene.setSceneRect(0, 0, frame.width, frame.height);
+    scene.invalidate();
+}
+
+void MainWindow::loadGAI(GAIAnimation anim)
+{
+    for (int i = 0; i < anim.frameCount; i++)
     {
-        Rangers::HAIAnimation anim = Rangers::loadHAI(f);
-        for (int i = 0; i < anim.frameCount; i++)
-        {
-            frames.append(QPixmap::fromImage(QImage(anim.frames + i * anim.width * anim.height * 4, anim.width, anim.height, QImage::Format_ARGB32)));
-        }
-        delete anim.frames;
-        currentFrame = 0;
-        item.setPixmap(frames.at(currentFrame));
-        animationTimer.setInterval(1000 / 15);
-        animationTimer.setSingleShot(false);
-        animationTimer.start();
-
-        ui->seekLabel->setText("");
-        ui->waitLabel->setText("");
-        ui->framerateSpinBox->setValue(15);
-        ui->durationSpinBox->setValue(1000.0 / 15);
-        ui->paramGroupBox->setEnabled(true);
-
-        scene.setSceneRect(0, 0, anim.width, anim.height);
-        scene.invalidate();
+        frames.append(QPixmap::fromImage(QImage(anim.frames[i].data, anim.frames[i].width, anim.frames[i].height, QImage::Format_ARGB32)));
+        delete[] anim.frames[i].data;
     }
-    else if (fileInfo.suffix().toLower() == "pkg")
-    {
-        PKGItem *root = Rangers::loadPKG(f);
-        model = new PKGModel(root, this);
-        ui->fileTreeView->setModel(model);
-        //QString outDir = QFileDialog::getExistingDirectory(this, tr("Select output folder"));
-        //extractPKG(0, outDir, f);
-    }
+    delete[] anim.frames;
+    currentFrame = 0;
+    item.setPixmap(frames.at(currentFrame));
+    animationTimer.setInterval(1000 / 15);
+    animationTimer.setSingleShot(false);
+    animationTimer.start();
+    scene.setSceneRect(0, 0, anim.width, anim.height);
+    scene.invalidate();
+
+    ui->seekLabel->setText(QString::number(anim.waitSeek));
+    ui->waitLabel->setText(QString::number(anim.waitSize));
+    ui->framerateSpinBox->setValue(15);
+    ui->durationSpinBox->setValue(1000.0 / 15);
+    ui->paramGroupBox->setEnabled(true);
 }
 
 void MainWindow::openFile()
@@ -211,4 +181,57 @@ void MainWindow::durationChanged(double value)
 {
     animationTimer.setInterval(int(value));
     ui->framerateSpinBox->setValue(1000.0 / value);
+}
+
+void MainWindow::loadResource(FileNode *node)
+{
+    ui->paramGroupBox->setEnabled(false);
+    if (!frames.isEmpty())
+    {
+        frames.clear();
+        animationTimer.stop();
+    }
+
+    QString fileName = node->name;
+    QFileInfo fileInfo(fileName);
+    if (fileInfo.suffix() == "gi")
+    {
+        Rangers::GIFrame frame = Rangers::loadGIFile(model.getData(node).data());
+        loadGI(frame);
+    }
+    else if (fileInfo.suffix().toLower() == "gai")
+    {
+        Rangers::GAIHeader h = Rangers::loadGAIHeader(model.getData(node).data());
+        Rangers::GIFrame *bg = 0;
+        if (h.haveBackground)
+        {
+            FileNode *bgNode = model.getSiblingNode(node, fileInfo.completeBaseName() + ".gi");
+            if (!bgNode)
+                bgNode = model.getSiblingNode(node, fileInfo.completeBaseName() + ".GI");
+
+            if (!bgNode)
+                qCritical() << "Could not found background frame!";
+            else
+            {
+                bg = new Rangers::GIFrame;
+                *bg = Rangers::loadGIFile(model.getData(bgNode).data());
+            }
+        }
+        Rangers::GAIAnimation anim = Rangers::loadGAIAnimation(model.getData(node).data(), bg);
+        loadGAI(anim);
+        /*if (bg)
+            delete bg->data;
+        delete bg;*/
+    }
+    else if (fileInfo.suffix().toLower() == "hai")
+    {
+        Rangers::HAIAnimation anim = Rangers::loadHAI(model.getData(node).data());
+        loadHAI(anim);
+    }
+}
+
+void MainWindow::treeDoubleClicked(const QModelIndex& index)
+{
+    FileNode *node = static_cast<FileNode *>(index.internalPointer());
+    loadResource(node);
 }

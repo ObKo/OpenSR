@@ -1,16 +1,16 @@
-FIND_PACKAGE(Qt4 REQUIRED) 
+FIND_PACKAGE(Qt4 REQUIRED)
 
 INCLUDE(${QT_USE_FILE})
 
 SET(RW_HEADERS
     MainWindow.h
-    PKGModel.h
+    FileModel.h
 )
 
 SET(RW_SOURCES
     main.cpp
     MainWindow.cpp
-    PKGModel.cpp
+    FileModel.cpp
 )
 
 SET(RW_UI

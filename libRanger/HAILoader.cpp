@@ -17,6 +17,7 @@
 */
 
 #include "libRanger.h"
+#include <cstring>
 
 using namespace Rangers;
 
@@ -41,6 +42,39 @@ HAIAnimation Rangers::loadHAI(std::istream& stream)
     for (int i = 0; i < header.count; i++)
     {
         stream.read((char *)buffer, header.width * header.height + header.palSize);
+        blitBGRAItoBGRA(outbuf, buffer, buffer + size, header.width, header.height);
+        outbuf += size * 4;
+    }
+
+    delete buffer;
+
+    HAIAnimation result;
+    result.frameCount = header.count;
+    result.frames = rgba;
+    result.width = header.width;
+    result.height = header.height;
+
+    return result;
+}
+
+HAIAnimation Rangers::loadHAI(const char *data)
+{
+    const char *p = data;
+    HAIHeader header;
+    header = *((HAIHeader*)p);
+    p += sizeof(HAIHeader);
+
+    int size = header.width * header.height;
+
+    unsigned char *buffer = new unsigned char[header.width * header.height + header.palSize];
+    unsigned char *rgba = new unsigned char[size * 4 * header.count];
+
+    unsigned char *outbuf = rgba;
+
+    for (int i = 0; i < header.count; i++)
+    {
+        memcpy(buffer, p, header.width * header.height + header.palSize);
+        p += header.width * header.height + header.palSize;
         blitBGRAItoBGRA(outbuf, buffer, buffer + size, header.width, header.height);
         outbuf += size * 4;
     }
