@@ -42,12 +42,19 @@ private:
 
     void loadResource(FileNode *node);
 
+    void animationLoaded(int framerate, int waitSeek, int waitSize);
+    void imageLoaded();
+
 private Q_SLOTS:
     void openFile();
     void nextFrame();
     void framerateChanged(double value);
     void durationChanged(double value);
     void treeDoubleClicked(const QModelIndex& index);
+    void stopAnimation();
+    void startAnimation();
+    void resetAnimation();
+    void setFrame(int frame);
 };
 }
 #endif // MAINWINDOW_H

@@ -29,6 +29,11 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->framerateSpinBox, SIGNAL(valueChanged(double)), this, SLOT(framerateChanged(double)));
     connect(ui->durationSpinBox, SIGNAL(valueChanged(double)), this, SLOT(durationChanged(double)));
     connect(ui->fileTreeView, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(treeDoubleClicked(const QModelIndex&)));
+    connect(ui->startButton, SIGNAL(clicked()), this, SLOT(startAnimation()));
+    connect(ui->stopButton, SIGNAL(clicked()), this, SLOT(stopAnimation()));
+    connect(ui->resetButton, SIGNAL(clicked()), this, SLOT(resetAnimation()));
+    connect(ui->frameSlider, SIGNAL(sliderPressed()), this, SLOT(stopAnimation()));
+    connect(ui->frameSlider, SIGNAL(valueChanged(int)), this, SLOT(setFrame(int)));
 
     QSettings settings("OpenSR", "ResourceViewer");
     restoreGeometry(settings.value("mainWindow/geometry").toByteArray());
@@ -77,9 +82,18 @@ void extractPKG(Rangers::PKGItem *root, QString path, std::ifstream& f)
 
 void MainWindow::nextFrame()
 {
-    currentFrame = (currentFrame + 1) % frames.count();
+    setFrame((currentFrame + 1) % frames.count());
+}
+
+void MainWindow::setFrame(int frame)
+{
+    if ((frame >= frames.count()) || (frame < 0))
+        return;
+
+    currentFrame = frame;
     item.setPixmap(frames.at(currentFrame));
-    ui->frameLabel->setText(QString::number(currentFrame) + "/" + QString::number(frames.count()));
+    ui->frameLabel->setText(QString::number(currentFrame + 1) + "/" + QString::number(frames.count()));
+    ui->frameSlider->setValue(currentFrame);
 }
 
 void MainWindow::loadFile(const QString& fileName)
@@ -105,28 +119,14 @@ void MainWindow::loadHAI(HAIAnimation anim)
         frames.append(QPixmap::fromImage(QImage(anim.frames + i * anim.width * anim.height * 4, anim.width, anim.height, QImage::Format_ARGB32)));
     }
     delete anim.frames;
-    currentFrame = 0;
-    item.setPixmap(frames.at(currentFrame));
-    animationTimer.setInterval(1000 / 15);
-    animationTimer.setSingleShot(false);
-    animationTimer.start();
-
-    ui->seekLabel->setText("");
-    ui->waitLabel->setText("");
-    ui->framerateSpinBox->setValue(15);
-    ui->durationSpinBox->setValue(1000.0 / 15);
-    ui->paramGroupBox->setEnabled(true);
-
-    scene.setSceneRect(0, 0, anim.width, anim.height);
-    scene.invalidate();
+    animationLoaded(15, 0, 0);
 }
 
 void MainWindow::loadGI(GIFrame frame)
 {
     item.setPixmap(QPixmap::fromImage(QImage(frame.data, frame.width, frame.height, QImage::Format_ARGB32)));
     delete frame.data;
-    scene.setSceneRect(0, 0, frame.width, frame.height);
-    scene.invalidate();
+    imageLoaded();
 }
 
 void MainWindow::loadGAI(GAIAnimation anim)
@@ -137,19 +137,7 @@ void MainWindow::loadGAI(GAIAnimation anim)
         delete[] anim.frames[i].data;
     }
     delete[] anim.frames;
-    currentFrame = 0;
-    item.setPixmap(frames.at(currentFrame));
-    animationTimer.setInterval(1000 / 15);
-    animationTimer.setSingleShot(false);
-    animationTimer.start();
-    scene.setSceneRect(0, 0, anim.width, anim.height);
-    scene.invalidate();
-
-    ui->seekLabel->setText(QString::number(anim.waitSeek));
-    ui->waitLabel->setText(QString::number(anim.waitSize));
-    ui->framerateSpinBox->setValue(15);
-    ui->durationSpinBox->setValue(1000.0 / 15);
-    ui->paramGroupBox->setEnabled(true);
+    animationLoaded(15, anim.waitSeek, anim.waitSize);
 }
 
 void MainWindow::openFile()
@@ -188,7 +176,6 @@ void MainWindow::durationChanged(double value)
 
 void MainWindow::loadResource(FileNode *node)
 {
-    ui->paramGroupBox->setEnabled(false);
     if (!frames.isEmpty())
     {
         frames.clear();
@@ -295,19 +282,8 @@ void MainWindow::loadDDS(const char *data)
             frames.append(QPixmap::fromImage(QImage(rgbaData, header.width, header.height, QImage::Format_ARGB32)));
         }
         delete rgbaData;
-        currentFrame = 0;
-        item.setPixmap(frames.at(currentFrame));
-        animationTimer.setInterval(1000 / 15);
-        animationTimer.setSingleShot(false);
-        animationTimer.start();
-        scene.setSceneRect(0, 0, header.width, header.height);
-        scene.invalidate();
+        animationLoaded(15, header.reserved1[0], header.reserved1[1]);
 
-        ui->seekLabel->setText(QString::number(header.reserved1[0]));
-        ui->waitLabel->setText(QString::number(header.reserved1[1]));
-        ui->framerateSpinBox->setValue(15);
-        ui->durationSpinBox->setValue(1000.0 / 15);
-        ui->paramGroupBox->setEnabled(true);
     }
     else if (header.ddspf.flags & DDPF_FOURCC)
     {
@@ -331,8 +307,7 @@ void MainWindow::loadDDS(const char *data)
         convertRGBAToBGRA(rgbaData, header.width, header.height);
         item.setPixmap(QPixmap::fromImage(QImage(rgbaData, header.width, header.height, QImage::Format_ARGB32)));
         delete rgbaData;
-        scene.setSceneRect(0, 0, header.width, header.height);
-        scene.invalidate();
+        imageLoaded();
     }
     else
     {
@@ -341,8 +316,93 @@ void MainWindow::loadDDS(const char *data)
     }
 }
 
+
+void MainWindow::animationLoaded(int framerate, int waitSeek, int waitSize)
+{
+    if (!frames.count())
+        return;
+
+    item.setPixmap(frames.at(0));
+    animationTimer.setInterval(1000 / framerate);
+    scene.setSceneRect(0, 0, item.pixmap().width(), item.pixmap().height());
+    scene.invalidate();
+
+    ui->seekLabel->setText(QString::number(waitSeek));
+    ui->waitLabel->setText(QString::number(waitSize));
+    ui->framerateSpinBox->setValue(framerate);
+    ui->durationSpinBox->setValue(1000 / framerate);
+    ui->frameSlider->setMaximum(frames.count() - 1);
+    ui->frameSlider->setMinimum(0);
+    ui->frameSlider->setSingleStep(1);
+
+    ui->paramGroupBox->setEnabled(true);
+    ui->frameSlider->setEnabled(true);
+
+    resetAnimation();
+    startAnimation();
+}
+
+void MainWindow::imageLoaded()
+{
+    animationTimer.stop();
+    scene.setSceneRect(0, 0, item.pixmap().width(), item.pixmap().height());
+    scene.invalidate();
+
+    ui->seekLabel->setText("");
+    ui->waitLabel->setText("");
+    ui->framerateSpinBox->setValue(15.0);
+    ui->durationSpinBox->setValue(1000.0 / 15.0);
+
+    ui->paramGroupBox->setEnabled(false);
+    ui->stopButton->setEnabled(false);
+    ui->startButton->setEnabled(false);
+    ui->resetButton->setEnabled(false);
+    ui->frameSlider->setEnabled(false);
+    ui->frameSlider->setValue(0);
+    ui->frameSlider->setMaximum(0);
+    ui->frameSlider->setMinimum(0);
+}
+
+
 void MainWindow::treeDoubleClicked(const QModelIndex& index)
 {
     FileNode *node = static_cast<FileNode *>(index.internalPointer());
     loadResource(node);
+}
+
+void MainWindow::startAnimation()
+{
+    if (animationTimer.isActive())
+        return;
+    if (!frames.count())
+        return;
+
+    ui->startButton->setEnabled(false);
+    ui->stopButton->setEnabled(true);
+    ui->resetButton->setEnabled(true);
+    animationTimer.setSingleShot(false);
+    animationTimer.start();
+}
+
+void MainWindow::stopAnimation()
+{
+    if (!animationTimer.isActive())
+        return;
+
+    ui->startButton->setEnabled(true);
+    ui->stopButton->setEnabled(false);
+    ui->resetButton->setEnabled(true);
+    animationTimer.stop();
+}
+
+void MainWindow::resetAnimation()
+{
+    if (!frames.count())
+        return;
+
+    stopAnimation();
+    setFrame(0);
+    ui->startButton->setEnabled(true);
+    ui->stopButton->setEnabled(false);
+    ui->resetButton->setEnabled(true);
 }
