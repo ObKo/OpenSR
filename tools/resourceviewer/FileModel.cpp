@@ -65,6 +65,9 @@ QModelIndex FileModel::index(int row, int column, const QModelIndex &parent) con
 
     FileNode *parentItem = getItem(parent);
 
+    if (row >= parentItem->childs.count())
+        return QModelIndex();
+
     FileNode *childItem = parentItem->childs.at(row);
     if (childItem)
         return createIndex(row, column, childItem);

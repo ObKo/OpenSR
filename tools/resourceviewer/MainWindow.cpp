@@ -4,8 +4,10 @@
 #include <QFileInfo>
 #include <QSettings>
 #include <QDebug>
+#include <QMessageBox>
 #include <fstream>
 #include <libRanger.h>
+#include <squish.h>
 
 using namespace Rangers;
 
@@ -152,7 +154,8 @@ void MainWindow::loadGAI(GAIAnimation anim)
 
 void MainWindow::openFile()
 {
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Open image file"), QString(), tr("All suported files (*.gai *.hai *.gi *.pkg)"));
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open image file"), QString(),
+                       tr("All suported files (*.gai *.hai *.gi *.pkg *.dds)"));
     if (fileName.isNull())
         return;
 
@@ -227,6 +230,114 @@ void MainWindow::loadResource(FileNode *node)
     {
         Rangers::HAIAnimation anim = Rangers::loadHAI(model.getData(node).data());
         loadHAI(anim);
+    }
+    else if (fileInfo.suffix().toLower() == "dds")
+    {
+        loadDDS(model.getData(node).data());
+    }
+}
+
+void convertRGBAToBGRA(unsigned char *rgba, int width, int height)
+{
+    for (int i = 0; i < width * height; i++)
+    {
+        unsigned char tmp = rgba[i * 4];
+        rgba[i * 4] = rgba[i * 4 + 2];
+        rgba[i * 4 + 2] = tmp;
+    }
+}
+
+void MainWindow::loadDDS(const char *data)
+{
+    if (*(uint32_t*)(data) != 0x20534444)
+    {
+        QMessageBox::warning(this, tr("Unsupported file"), tr("Not a DDS file."));
+        return;
+    }
+
+    DDSHeader header = *((DDSHeader*)(data + 4));
+
+    switch (header.ddspf.fourCC)
+    {
+    case 0x31545844:
+    case 0x33545844:
+    case 0x35545844:
+        break;
+    default:
+        QMessageBox::warning(this, tr("Unsupported file"), tr("Unsupported DDS compression."));
+        return;
+
+    }
+
+    if ((header.caps & DDSCAPS_COMPLEX) && (header.caps2 & DDSCAPS2_VOLUME)
+            && (header.flags & DDSD_LINEARSIZE) && (header.flags & DDSD_LINEARSIZE) && (header.ddspf.flags & DDPF_FOURCC))
+    {
+        unsigned char *rgbaData = new unsigned char[header.height * header.width * 4];
+        for (int i = 0; i < header.depth; i++)
+        {
+            unsigned char *dxt = ((unsigned char *)data) + 4 + sizeof(DDSHeader) + header.pitchOrLinearSize * header.height * i;
+            int squishFlags;
+
+            switch (header.ddspf.fourCC)
+            {
+            case 0x31545844:
+                squishFlags = squish::kDxt1;
+                break;
+            case 0x33545844:
+                squishFlags = squish::kDxt3;
+                break;
+            case 0x35545844:
+                squishFlags = squish::kDxt5;
+                break;
+            }
+            squish::DecompressImage(rgbaData, header.width, header.height, dxt, squishFlags);
+            convertRGBAToBGRA(rgbaData, header.width, header.height);
+            frames.append(QPixmap::fromImage(QImage(rgbaData, header.width, header.height, QImage::Format_ARGB32)));
+        }
+        delete rgbaData;
+        currentFrame = 0;
+        item.setPixmap(frames.at(currentFrame));
+        animationTimer.setInterval(1000 / 15);
+        animationTimer.setSingleShot(false);
+        animationTimer.start();
+        scene.setSceneRect(0, 0, header.width, header.height);
+        scene.invalidate();
+
+        ui->seekLabel->setText(QString::number(header.reserved1[0]));
+        ui->waitLabel->setText(QString::number(header.reserved1[1]));
+        ui->framerateSpinBox->setValue(15);
+        ui->durationSpinBox->setValue(1000.0 / 15);
+        ui->paramGroupBox->setEnabled(true);
+    }
+    else if (header.ddspf.flags & DDPF_FOURCC)
+    {
+        unsigned char *rgbaData = new unsigned char[header.height * header.width * 4];
+        unsigned char *dxt = ((unsigned char *)data) + 4 + sizeof(DDSHeader);
+        int squishFlags;
+
+        switch (header.ddspf.fourCC)
+        {
+        case 0x31545844:
+            squishFlags = squish::kDxt1;
+            break;
+        case 0x33545844:
+            squishFlags = squish::kDxt3;
+            break;
+        case 0x35545844:
+            squishFlags = squish::kDxt5;
+            break;
+        }
+        squish::DecompressImage(rgbaData, header.width, header.height, dxt, squishFlags);
+        convertRGBAToBGRA(rgbaData, header.width, header.height);
+        item.setPixmap(QPixmap::fromImage(QImage(rgbaData, header.width, header.height, QImage::Format_ARGB32)));
+        delete rgbaData;
+        scene.setSceneRect(0, 0, header.width, header.height);
+        scene.invalidate();
+    }
+    else
+    {
+        QMessageBox::warning(this, tr("Unsupported file"), tr("Unsupported DDS format."));
+        return;
     }
 }
 

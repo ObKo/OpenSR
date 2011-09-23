@@ -38,6 +38,7 @@ private:
     void loadGAI(GAIAnimation animation);
     void loadGI(GIFrame frame);
     void loadHAI(HAIAnimation animation);
+    void loadDDS(const char *data);
 
     void loadResource(FileNode *node);
 
