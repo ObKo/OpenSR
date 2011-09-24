@@ -28,8 +28,8 @@ Sprite::Sprite(Object *parent): Object(parent)
     m_vertexCount = 0;
     m_width = 0;
     m_height = 0;
-    m_xOrigin = POSITION_X_CENTER;
-    m_yOrigin = POSITION_Y_CENTER;
+    m_xOrigin = POSITION_X_LEFT;
+    m_yOrigin = POSITION_Y_TOP;
     m_scaling = TEXTURE_NORMAL;
 }
 

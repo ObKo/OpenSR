@@ -23,6 +23,7 @@
 #include <Font.h>
 #include <Texture.h>
 #include <AnimatedTexture.h>
+#include "GAISprite.h"
 #include <tolua++.h>
 
 extern "C"
@@ -43,6 +44,7 @@ int tolua_LuaBindings_open(lua_State* tolua_S);
 int tolua_Texture_open(lua_State* tolua_S);
 int tolua_AnimatedTexture_open(lua_State* tolua_S);
 int tolua_LuaWidget_open(lua_State* tolua_S);
+int tolua_GAISprite_open(lua_State* tolua_S);
 
 namespace Rangers
 {
@@ -50,6 +52,7 @@ std::wstring fromLua(const char *s);
 Font *getPointer(boost::shared_ptr<Font> sp);
 Texture *getPointer(boost::shared_ptr<Texture> sp);
 AnimatedTexture *getPointer(boost::shared_ptr<AnimatedTexture> sp);
+GAISprite *getPointer(boost::shared_ptr<GAISprite> sp);
 
 void freePointer(boost::shared_ptr<Font> *sp);
 void freePointer(boost::shared_ptr<Texture> *sp);

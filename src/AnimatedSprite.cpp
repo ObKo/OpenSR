@@ -26,6 +26,16 @@ namespace Rangers
  * \param texture texture
  * \param parent object parent
  */
+AnimatedSprite::AnimatedSprite(Object *parent): Sprite(parent)
+{
+    m_animationTime = 0;
+    m_currentFrame = 0;
+    m_singleShot = false;
+    m_animationStarted = false;
+    m_frameDuration = 0;
+    m_texture = boost::shared_ptr<AnimatedTexture>();
+}
+
 AnimatedSprite::AnimatedSprite(boost::shared_ptr<AnimatedTexture> texture,  Object *parent): Sprite(texture, parent)
 {
     m_animationTime = 0;

@@ -1,0 +1,12 @@
+$#include <GAISprite.h>
+$pfile "AnimatedSprite.pkg"
+
+namespace Rangers
+{
+class GAISprite: public AnimatedSprite
+{
+public:
+    void setFrame(int f);
+    void reset();
+};
+}

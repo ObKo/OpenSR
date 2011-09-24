@@ -28,6 +28,7 @@ namespace Rangers
 class AnimatedSprite: public Sprite
 {
 public:
+    AnimatedSprite(Object *parent = 0);
     //! Create sprite from animated texture
     AnimatedSprite(boost::shared_ptr<AnimatedTexture> texture,  Object *parent = 0);
     AnimatedSprite(const AnimatedSprite& other);
@@ -50,7 +51,7 @@ public:
 
     AnimatedSprite& operator=(const AnimatedSprite& other);
 
-private:
+protected:
     int m_animationTime;
     int m_currentFrame;
     int m_frameDuration;

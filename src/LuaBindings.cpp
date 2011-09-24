@@ -24,6 +24,11 @@ AnimatedTexture* getPointer(boost::shared_ptr<AnimatedTexture> sp)
     return sp.get();
 }
 
+GAISprite *getPointer(boost::shared_ptr<GAISprite> sp)
+{
+    return sp.get();
+}
+
 void luaDebug(std::wstring s)
 {
     Log::debug() << L"Lua: " << s;

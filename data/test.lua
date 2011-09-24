@@ -11,12 +11,14 @@ bgPlanet:setOrigin(Rangers.POSITION_X_LEFT, Rangers.POSITION_Y_BOTTOM)
 bgPlanet:setPosition(0, engine:screenHeight())
 bgPlanet:setLayer(0)
 
-bgAnimLine = resources:getAnimatedSprite(L"DATA/FormMain2/2AnimLine.gai", true, this)
-bgAnimLine:setLayer(0)
+bgAnimLine = resources:loadDeltaGAIAnimation(L"DATA/FormMain2/2AnimLine.gai")
+Rangers.getPointer(bgAnimLine):setParent(this)
+Rangers.getPointer(bgAnimLine):setLayer(0)
 
-ship = resources:getAnimatedSprite(L"2ship.dds", true, this)
-ship:setPosition(0, engine:screenHeight() - ship:height())
-ship:setLayer(1)
+ship = resources:loadDeltaGAIAnimation(L"DATA/FormMain3/2Ship1.gai")
+Rangers.getPointer(ship):setParent(this)
+Rangers.getPointer(ship):setPosition(0, engine:screenHeight() - Rangers.getPointer(ship):height())
+Rangers.getPointer(ship):setLayer(1)
 
 t = 0
 bgspeed = 5/1000
@@ -32,9 +34,9 @@ end
 function getBoundingRect()
   r = Rangers.Rect:new()
   r.x1 = 0.0
-  r.x2 = ship:width()
+  r.x2 = Rangers.getPointer(ship):width()
   r.y1 = 0.0
-  r.y2 = ship:height()
+  r.y2 = Rangers.getPointer(ship):height()
   return r
 end
 

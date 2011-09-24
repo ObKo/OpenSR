@@ -20,6 +20,7 @@ public:
     boost::shared_ptr<Rangers::AnimatedTexture> loadAnimation(const std::wstring& name, bool onDemand);
     boost::shared_ptr<Rangers::AnimatedTexture> loadAnimation(const std::wstring& name);
     boost::shared_ptr<Rangers::Font> loadFont(const std::wstring& name, int size);
+    boost::shared_ptr<Rangers::GAISprite> loadDeltaGAIAnimation(const std::wstring& name);
 
     Rangers::Sprite getSprite(const std::wstring& name);
     Rangers::Sprite getSprite(const std::wstring& name, Rangers::Object *parent = 0);

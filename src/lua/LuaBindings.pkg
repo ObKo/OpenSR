@@ -19,6 +19,7 @@ namespace Rangers
 Rangers::Font *getPointer(boost::shared_ptr<Rangers::Font> sp);
 Rangers::Texture *getPointer(boost::shared_ptr<Rangers::Texture> sp);
 Rangers::AnimatedTexture *getPointer(boost::shared_ptr<Rangers::AnimatedTexture> sp);
+Rangers::GAISprite *getPointer(boost::shared_ptr<Rangers::GAISprite> sp);
 
 void freePointer(boost::shared_ptr<Rangers::Font> *sp);
 void freePointer(boost::shared_ptr<Rangers::Texture> *sp);

@@ -26,6 +26,7 @@
 #include <algorithm>
 #include "AnimatedSprite.h"
 #include "Object.h"
+#include "GAISprite.h"
 
 using namespace std;
 
@@ -152,6 +153,47 @@ boost::shared_ptr<Texture> ResourceManager::loadTexture(const std::wstring& name
         Log::error() << "Unknown texture format: " << sfx;
 
     return boost::shared_ptr<Texture>();
+}
+
+boost::shared_ptr<GAISprite> ResourceManager::loadDeltaGAIAnimation(const std::wstring& name)
+{
+    map<wstring, boost::shared_ptr<GAISprite> >::const_iterator it = m_gaiAnimations.find(name);
+    if (it != m_gaiAnimations.end())
+        return it->second;
+
+    wstring sfx = suffix(name);
+    transform(sfx.begin(), sfx.end(), sfx.begin(), towlower);
+    if (sfx == L"gai")
+    {
+        size_t s;
+        char *data = loadData(name, s);
+        if (!data)
+            return boost::shared_ptr<GAISprite>();
+
+        char *bgFrameData = 0;
+        GAIHeader header = loadGAIHeader(data);
+
+        if (!header.haveBackground)
+        {
+            Log::error() << "Unsupported gai format";
+            return boost::shared_ptr<GAISprite>();
+        }
+
+        size_t size;
+        bgFrameData = loadData(directory(name) + L"/" + basename(name) + L".gi", size);
+        if (!bgFrameData)
+            return boost::shared_ptr<GAISprite>();
+
+        GIFrame bgFrame = loadGIFile(bgFrameData);
+        delete bgFrameData;
+        GAISprite *bgSprite = new GAISprite(data, s, bgFrame, 0);
+        m_gaiAnimations[name] = boost::shared_ptr<GAISprite>(bgSprite);
+        return m_gaiAnimations[name];
+    }
+    else
+        Log::error() << "Unknown animation format: " << sfx;
+
+    return boost::shared_ptr<GAISprite>();
 }
 
 boost::shared_ptr<AnimatedTexture> ResourceManager::loadAnimation(const std::wstring& name, bool backgroundLoading)

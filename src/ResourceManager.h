@@ -34,6 +34,7 @@ class Sprite;
 class AnimatedSprite;
 class Object;
 struct GAIAnimation;
+class GAISprite;
 
 class ResourceManager
 {
@@ -44,6 +45,7 @@ public:
     char* loadData(const std::wstring& name, size_t &size);
     boost::shared_ptr<Texture> loadTexture(const std::wstring& name);
     boost::shared_ptr<AnimatedTexture> loadAnimation(const std::wstring& name, bool backgroundLoading = false);
+    boost::shared_ptr<GAISprite> loadDeltaGAIAnimation(const std::wstring& name);
     boost::shared_ptr<Font> loadFont(const std::wstring& name, int size);
 
     Sprite getSprite(const std::wstring& name, Object *parent = 0);
@@ -64,6 +66,7 @@ private:
     std::map<std::wstring, boost::shared_ptr<Texture> > m_textures;
     std::map<std::wstring, boost::shared_ptr<AnimatedTexture> > m_animations;
     std::map<std::wstring, boost::shared_ptr<Font> > m_fonts;
+    std::map<std::wstring, boost::shared_ptr<GAISprite> > m_gaiAnimations;
     std::map<boost::shared_ptr<AnimatedTexture>, GAIWorker *> m_gaiQueue;
 };
 }

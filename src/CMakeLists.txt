@@ -22,6 +22,7 @@ SET(SOURCES
     FSAdapter.cpp
     LuaBindings.cpp
     LuaWidget.cpp
+    GAISprite.cpp
 )
 
 SET(HEADERS 
@@ -47,6 +48,7 @@ SET(HEADERS
     FSAdapter.h
     LuaBindings.h
     LuaWidget.h
+    GAISprite.h
 )
 
 SET(LUA_PACKAGES
@@ -62,6 +64,7 @@ SET(LUA_PACKAGES
     lua/AnimatedTexture.pkg
     lua/Widget.pkg
     lua/LuaWidget.pkg
+    lua/GAISprite.pkg
 )
 
 INCLUDE_DIRECTORIES(

@@ -41,6 +41,7 @@ LuaWidget::LuaWidget(std::wstring fileName, Rangers::Object* parent): Widget(par
     tolua_LuaBindings_open(m_luaState);
     tolua_AnimatedTexture_open(m_luaState);
     tolua_LuaWidget_open(m_luaState);
+    tolua_GAISprite_open(m_luaState);
     tolua_pushusertype(m_luaState, this, "Rangers::LuaWidget");
     lua_setglobal(m_luaState, "this");
     if (luaL_dofile(m_luaState, toLocal(fileName).c_str()))
