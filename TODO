@@ -3,37 +3,51 @@ Done:
   - Resource manager
     - RPKG format archive loading
     - FS Directory loading
-  - HAI animation loader
+  - Animation:
+    - GAI animation from original game
+    - DDS compressed animation - using volume dds texture
+    - HAI animation (ships)
+  - Texture:
+    - GI images from original game
+    - DDS compressed textures
   - Engine console
   - Font loading
   - Unicode support
   - Startup scripts
+  - Engine logger
+  - Resource converter:
+    - pkg archive to rpkg archive
+    - png, bmp, jpeg, etc. to compressed dds
+    - gai animation extracting
+    - gi image to png
+    - gi image to compressed dds
+    - gai animation to volume dds
+  - Resource viewer:
+    - Loading data from PKG archive
+    - Loading data from files
+    - DDS and volume DDS support
+    - GAI and HAI animation support
+    - GI images support. 
+  - Mac OS X support (gcc, x86_64 tested)
+  - Windows support (msvc, x86 and x86_64 tested)
+  - Linux support (gcc, x86 and x86_64 tested)
 
 Partially done:
-  - Engine logger - need timestap writing, color console output on linux, log file output - WIP
   - Resource manager 
     - Cache
-  - PKG to RPKG converter - some PKG files aren't loading.
-  - GI texture loading - One of frametypes aren't loading.
-  - GAI animation loader - Need support for GAI with external background image (Government and pilot animations)
-  - Resource viewer - now supports only GAI, HAI, and GI files from FS - WIP
+  - GAI animation loader - need support for GAI with delta frames
  
 Not done:
-  - Configuration file - WIP
+  - Configuration files - WIP
   - Lua scripting - WIP
     - Lua widgets
     - Lua game scripting
   - Resource manager
     - 7z archive loading
-  - MacOS X support - WIP
-  - Original quest loading
+  - Original quest loading - seems not possible
   - l10n using gettext
-  - Original script loading
-  - Some texture formats support
-    - PNG
-  - Animation formats support
-    - APNG
+  - Original script loading - seems not possible
   - Sound
   - Main Game
   - Quest Game
-  - Black Hole Game 
+  - Black Hole Game
