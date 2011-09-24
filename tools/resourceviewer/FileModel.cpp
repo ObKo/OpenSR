@@ -117,7 +117,11 @@ void convertNode(PKGItem *node, FileNode *fileNode, FileNode *parent, QString fu
 
 FileNode* FileModel::addPKG(const QFileInfo& file)
 {
-    std::ifstream f(file.filePath().toLocal8Bit().data(), std::ios::binary);
+#ifdef Q_OS_WIN32
+    std::ifstream f((wchar_t *)file.filePath().utf16(), std::ios::binary);
+#else
+    std::ifstream f(QFile::encodeName(file.filePath()).data(), std::ios::binary);
+#endif
     PKGItem *root = Rangers::loadPKG(f);
     f.close();
 
@@ -196,7 +200,11 @@ QByteArray FileModel::getData(FileNode *node)
         while (static_cast<PKGItem*>(root->userData)->parent)
             root = root->parent;
 
-        std::ifstream f(archives[root].filePath().toLocal8Bit().data(), std::ios::binary);
+#ifdef Q_OS_WIN32
+        std::ifstream f((wchar_t *)archives[root].filePath().utf16(), std::ios::binary);
+#else
+        std::ifstream f(QFile::encodeName(archives[root].filePath()).data(), std::ios::binary);
+#endif
         unsigned char *data = extractFile(*pkg, f);
         result = QByteArray((const char*)data, pkg->size);
         delete data;
