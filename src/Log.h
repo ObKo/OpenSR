@@ -71,6 +71,8 @@ public:
 
     Logger& operator <<(const std::wstring& v);
     Logger& operator <<(int v);
+    Logger& operator <<(long v);
+    Logger& operator <<(long long v);
     Logger& operator <<(float v);
     Logger& operator <<(size_t v);
     Logger& operator <<(bool v);

@@ -168,6 +168,18 @@ Log::Logger& Log::Logger::operator<<(int v)
     return *this;
 }
 
+Log::Logger& Log::Logger::operator<<(long v)
+{
+    *m_stream << v;
+    return *this;
+}
+
+Log::Logger& Log::Logger::operator<<(long long v)
+{
+    *m_stream << v;
+    return *this;
+}
+
 Log::Logger& Log::Logger::operator<<(float v)
 {
     *m_stream << v;
