@@ -63,19 +63,16 @@ GAISprite::GAISprite(const char *data, int size, GIFrame baseFrame, Object *pare
                 uint32_t signature;
                 p = data + giSeek;
                 signature = *((uint32_t *)p);
-                p += sizeof(uint32_t);
 
                 if (signature == 0x31304c5a)
                 {
-                    p = data + giSeek;
                     size_t outsize;
                     m_gaiFrames[i] = (char*)unpackZL01((const unsigned char*)p, giSize, outsize);
                 }
                 else
                 {
-                    p = data + giSeek;
                     m_gaiFrames[i] = new char[giSize];
-                    memcpy(m_gaiFrames, p, giSize);
+                    memcpy(m_gaiFrames[i], p, giSize);
                 }
             }
         }
@@ -176,7 +173,6 @@ void GAISprite::processMain()
         glBindBuffer(GL_PIXEL_UNPACK_BUFFER, m_textureBuffer);
         if (m_currentFrame == 0)
         {
-            //m_texture->setRawData(m_baseFrame.width, m_baseFrame.height, TEXTURE_B8G8R8A8, m_baseFrame.data, 4 * m_baseFrame.width * m_baseFrame.height);
             unsigned char* data = (unsigned char*)glMapBuffer(GL_PIXEL_UNPACK_BUFFER, GL_READ_WRITE);
             memset(data, 0, m_width * m_height * 4);
             copyImageData(data, m_width, 0, 0, m_baseFrame.width, m_baseFrame.height, m_baseFrame.data);
