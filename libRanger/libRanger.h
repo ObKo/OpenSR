@@ -292,11 +292,11 @@ LIBRANGER_DIRECTIVE GAIHeader loadGAIHeader(std::istream& stream, size_t &offset
 LIBRANGER_DIRECTIVE GAIHeader loadGAIHeader(const char *data);
 
 //! Unpack ZL01 - compressed file
-LIBRANGER_DIRECTIVE unsigned char *unpackZL01(unsigned char * src, size_t srclen, size_t& destlen);
+LIBRANGER_DIRECTIVE unsigned char *unpackZL01(const unsigned char * src, size_t srclen, size_t& destlen);
 //! Unpack ZL02 - compressed file
-LIBRANGER_DIRECTIVE unsigned char *unpackZL02(unsigned char * src, size_t srclen, size_t& destlen);
+LIBRANGER_DIRECTIVE unsigned char *unpackZL02(const unsigned char * src, size_t srclen, size_t& destlen);
 //! Unpack ZL02 - compressed file
-LIBRANGER_DIRECTIVE void unpackZL02(unsigned char * dst, unsigned char * src, size_t srclen, size_t& destlen);
+LIBRANGER_DIRECTIVE void unpackZL02(unsigned char * dst, const unsigned char * src, size_t srclen, size_t& destlen);
 
 //! Load file descriptions from PKG archive
 LIBRANGER_DIRECTIVE PKGItem *loadPKG(std::istream& stream);

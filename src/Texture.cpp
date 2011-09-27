@@ -40,6 +40,13 @@ Texture::Texture()
     m_height = 0;
 }
 
+Texture::Texture(int width, int height)
+{
+    glGenTextures(1, &m_openGLTexture);
+    m_height = width;
+    m_height = height;
+}
+
 Texture::Texture(int width, int height, TextureType type, unsigned char *rawData, int dataSize)
 {
     glGenTextures(1, &m_openGLTexture);

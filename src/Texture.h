@@ -29,6 +29,7 @@ class Texture
 {
 public:
     Texture();
+    Texture(int width, int height);
     Texture(int width, int height, TextureType type, unsigned char *rawData, int dataSize = 0);
     ~Texture();
 

@@ -39,12 +39,13 @@ public:
 private:
     void drawFrame(int i);
     void loadGIFrame5(const char *data, unsigned char *background, int startX, int startY, int finishX, int finishY);
-    char *m_gaiData;
+    char **m_gaiFrames;
     int m_dataSize;
     bool m_needNextFrame;
     GAIHeader m_gaiHeader;
     GIFrame m_baseFrame;
-    unsigned char *m_currentData;
+    //unsigned char *m_currentData;
+    GLuint m_textureBuffer;
 };
 
 }

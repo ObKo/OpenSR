@@ -29,7 +29,6 @@ namespace Rangers
 
 GAISprite::GAISprite(const char *data, int size, GIFrame baseFrame, Object *parent): AnimatedSprite(parent)
 {
-    m_gaiData = new char[size];
     m_dataSize = size;
     m_gaiHeader = loadGAIHeader(data);
     m_animationTime = 0;
@@ -37,27 +36,60 @@ GAISprite::GAISprite(const char *data, int size, GIFrame baseFrame, Object *pare
     m_singleShot = false;
     m_baseFrame = baseFrame;
     m_needNextFrame = true;
+    m_textureBuffer = 0;
 
     if (!m_gaiHeader.haveBackground)
-        m_gaiData = 0;
+        m_gaiFrames = 0;
     else
     {
-        memcpy(m_gaiData, data, size);
+        m_gaiFrames = new char*[m_gaiHeader.frameCount];
         m_width = m_gaiHeader.finishX - m_gaiHeader.startX;
         m_height = m_gaiHeader.finishY - m_gaiHeader.startY;
         int width = m_gaiHeader.finishX - m_gaiHeader.startX;
         int height = m_gaiHeader.finishY - m_gaiHeader.startY;
-        m_currentData = new unsigned char[width * height * 4];
+        //m_currentData = new unsigned char[width * height * 4];
+
+        for (int i = 0; i < m_gaiHeader.frameCount; i++)
+        {
+            uint32_t giSeek , giSize;
+            const char *p = data + sizeof(GAIHeader) - sizeof(GIFrame *) + i * 2 * sizeof(uint32_t);
+            giSeek = *((uint32_t *)p);
+            p += sizeof(uint32_t);
+            giSize = *((uint32_t *)p);
+            p += sizeof(uint32_t);
+
+            if (giSeek && giSize)
+            {
+                uint32_t signature;
+                p = data + giSeek;
+                signature = *((uint32_t *)p);
+                p += sizeof(uint32_t);
+
+                if (signature == 0x31304c5a)
+                {
+                    p = data + giSeek;
+                    size_t outsize;
+                    m_gaiFrames[i] = (char*)unpackZL01((const unsigned char*)p, giSize, outsize);
+                }
+                else
+                {
+                    p = data + giSeek;
+                    m_gaiFrames[i] = new char[giSize];
+                    memcpy(m_gaiFrames, p, giSize);
+                }
+            }
+        }
+
         m_animationStarted = true;
     }
     setFrameRate(15);
-    m_texture = boost::shared_ptr<Texture>(new Texture(m_width, m_height, TEXTURE_B8G8R8A8, baseFrame.data));
+    m_texture = boost::shared_ptr<Texture>(new Texture(m_width, m_height));
     markToUpdate();
 }
 
 GAISprite::~GAISprite()
 {
-    delete m_gaiData;
+    delete[] m_gaiFrames;
 }
 
 void GAISprite::processLogic(int dt)
@@ -78,7 +110,7 @@ void GAISprite::processLogic(int dt)
 
 void GAISprite::draw()
 {
-    if (!m_gaiData)
+    if (!m_gaiFrames)
         return;
 
     if (!prepareDraw())
@@ -126,20 +158,39 @@ void GAISprite::processMain()
 {
     Sprite::processMain();
     lock();
+
+    if (!m_gaiFrames)
+        return;
+
+    if (!m_textureBuffer)
+    {
+        glGenBuffers(1, &m_textureBuffer);
+        glBindBuffer(GL_PIXEL_UNPACK_BUFFER, m_textureBuffer);
+        glBufferData(GL_PIXEL_UNPACK_BUFFER, m_width * m_height * 4, 0, GL_STREAM_DRAW);
+        glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+    }
+
     if (m_needNextFrame)
     {
         glBindTexture(GL_TEXTURE_2D, m_texture->openGLTexture());
+        glBindBuffer(GL_PIXEL_UNPACK_BUFFER, m_textureBuffer);
         if (m_currentFrame == 0)
         {
-            m_texture->setRawData(m_baseFrame.width, m_baseFrame.height, TEXTURE_B8G8R8A8, m_baseFrame.data, 4 * m_baseFrame.width * m_baseFrame.height);
-            memset(m_currentData, 0, m_width * m_height * 4);
-            copyImageData(m_currentData, m_width, 0, 0, m_baseFrame.width, m_baseFrame.height, m_baseFrame.data);
+            //m_texture->setRawData(m_baseFrame.width, m_baseFrame.height, TEXTURE_B8G8R8A8, m_baseFrame.data, 4 * m_baseFrame.width * m_baseFrame.height);
+            unsigned char* data = (unsigned char*)glMapBuffer(GL_PIXEL_UNPACK_BUFFER, GL_READ_WRITE);
+            memset(data, 0, m_width * m_height * 4);
+            copyImageData(data, m_width, 0, 0, m_baseFrame.width, m_baseFrame.height, m_baseFrame.data);
+            glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER);
+            //FIXME: null as pointer to rgba looks ugly
+            m_texture->setRawData(m_baseFrame.width, m_baseFrame.height, TEXTURE_B8G8R8A8, 0, 4 * m_baseFrame.width * m_baseFrame.height);
+
         }
         else
         {
             drawFrame(m_currentFrame);
-            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_width, m_height, GL_BGRA, GL_UNSIGNED_BYTE, m_currentData);
+            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_width, m_height, GL_BGRA, GL_UNSIGNED_BYTE, 0);
         }
+        glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
         m_needNextFrame = false;
     }
     unlock();
@@ -200,40 +251,9 @@ void GAISprite::loadGIFrame5(const char *data, unsigned char *background, int st
 
 void GAISprite::drawFrame(int i)
 {
-    uint32_t giSeek , giSize;
-    char *p = m_gaiData + sizeof(GAIHeader) - sizeof(GIFrame *) + i * 2 * sizeof(uint32_t);
-    giSeek = *((uint32_t *)p);
-    p += sizeof(uint32_t);
-    giSize = *((uint32_t *)p);
-    p += sizeof(uint32_t);
-
-    if (giSeek && giSize)
-    {
-        size_t giOffset = giSeek;
-        uint32_t signature;
-        p = m_gaiData + giOffset;
-        signature = *((uint32_t *)p);
-        p += sizeof(uint32_t);
-
-        if (signature == 0x31304c5a)
-        {
-            p = m_gaiData + giOffset;
-            size_t outsize;
-            unsigned char *buffer = new unsigned char[giSize];
-            memcpy(buffer, p, giSize);
-            unsigned char *gi = unpackZL01(buffer, giSize, outsize);
-            delete[] buffer;
-            size_t offset = 0;
-            loadGIFrame5((char *)gi, m_currentData, m_gaiHeader.startX,  m_gaiHeader.startY,  m_gaiHeader.finishX,  m_gaiHeader.finishY);
-            delete[] gi;
-        }
-        else
-        {
-            p = m_gaiData + giOffset;
-            size_t offset = 0;
-            loadGIFrame5(p, m_currentData,  m_gaiHeader.startX,  m_gaiHeader.startY,  m_gaiHeader.finishX,  m_gaiHeader.finishY);
-        }
-    }
+    unsigned char* data = (unsigned char*)glMapBuffer(GL_PIXEL_UNPACK_BUFFER, GL_READ_WRITE);
+    loadGIFrame5((char *)m_gaiFrames[i], data, m_gaiHeader.startX,  m_gaiHeader.startY,  m_gaiHeader.finishX,  m_gaiHeader.finishY);
+    glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER);
 }
 
 void GAISprite::setFrame(int f)
@@ -243,7 +263,7 @@ void GAISprite::setFrame(int f)
 
 void GAISprite::reset()
 {
-    if (!m_gaiData)
+    if (!m_gaiFrames)
         return;
     m_animationStarted = false;
     m_currentFrame = 0;

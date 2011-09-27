@@ -30,7 +30,7 @@ using namespace Rangers;
  * \param destlen output data size
  * \return unpacked data
  */
-unsigned char *Rangers::unpackZL01(unsigned char * src, size_t srclen, size_t& destlen)
+unsigned char *Rangers::unpackZL01(const unsigned char * src, size_t srclen, size_t& destlen)
 {
     uint32_t sig = ((uint32_t *)src)[0];
 
@@ -42,7 +42,7 @@ unsigned char *Rangers::unpackZL01(unsigned char * src, size_t srclen, size_t& d
 
     uLongf outsize = ((uint32_t *)src)[1];
 
-    unsigned char *inbuffer = src + 8;
+    const unsigned char *inbuffer = src + 8;
     unsigned char *outbuffer = new unsigned char[outsize];
 
     if (uncompress(outbuffer, &outsize, inbuffer, srclen - 8))
@@ -63,7 +63,7 @@ unsigned char *Rangers::unpackZL01(unsigned char * src, size_t srclen, size_t& d
  * \param srclen input data size
  * \param destlen output data size
  */
-void Rangers::unpackZL02(unsigned char * dst, unsigned char * src, size_t srclen, size_t& destlen)
+void Rangers::unpackZL02(unsigned char * dst, const unsigned char * src, size_t srclen, size_t& destlen)
 {
     uint32_t sig = ((uint32_t *)src)[0];
 
@@ -75,7 +75,7 @@ void Rangers::unpackZL02(unsigned char * dst, unsigned char * src, size_t srclen
 
     uLongf outsize = destlen;
 
-    unsigned char *inbuffer = src + 8;
+    const unsigned char *inbuffer = src + 8;
     unsigned char *outbuffer = dst;
 
     if (uncompress(outbuffer, &outsize, inbuffer, srclen - 8))
@@ -90,7 +90,7 @@ void Rangers::unpackZL02(unsigned char * dst, unsigned char * src, size_t srclen
  * \param destlen output data size
  * \return unpacked data
  */
-unsigned char *Rangers::unpackZL02(unsigned char * src, size_t srclen, size_t& destlen)
+unsigned char *Rangers::unpackZL02(const unsigned char * src, size_t srclen, size_t& destlen)
 {
     uint32_t sig = ((uint32_t *)src)[0];
 
@@ -102,7 +102,7 @@ unsigned char *Rangers::unpackZL02(unsigned char * src, size_t srclen, size_t& d
 
     uLongf outsize = destlen;
 
-    unsigned char *inbuffer = src + 8;
+    const unsigned char *inbuffer = src + 8;
     unsigned char *outbuffer = new unsigned char[outsize];
 
     if (uncompress(outbuffer, &outsize, inbuffer, srclen - 8))
