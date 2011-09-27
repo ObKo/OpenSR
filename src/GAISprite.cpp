@@ -220,10 +220,10 @@ void GAISprite::loadGIFrame5(const char *data, unsigned char *background, int st
     for (int i = 0; i < image.layerCount; i++)
     {
         buffer = data + 64 + i * 32;
-        memcpy((char*)&image.layers[i], buffer, 32);
-        image.layers[i].data = new unsigned char[image.layers[i].size];
+        image.layers[i] = *((GILayerHeader*)buffer);
         buffer = data + image.layers[i].seek;
-        memcpy((char*)image.layers[i].data, buffer, image.layers[i].size);
+        //FIXME: const unsigned char* -> unsigned char*
+        image.layers[i].data = (unsigned char*)buffer;
 
         image.layers[i].startX -= startX;
         image.layers[i].startY -= startY;
@@ -241,12 +241,7 @@ void GAISprite::loadGIFrame5(const char *data, unsigned char *background, int st
     if (image.layers[0].size)
         drawF5ToBGRA(background + (image.layers[0].startY * width + image.layers[0].startX) * 4, width * 4, (unsigned char *)image.layers[0].data);
 
-    for (int i = 0; i < image.layerCount; i++)
-    {
-        delete[] image.layers[i].data;
-    }
-
-    delete[] image.layers;
+    delete image.layers;
 }
 
 void GAISprite::drawFrame(int i)

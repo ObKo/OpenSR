@@ -11,9 +11,9 @@ bgPlanet:setOrigin(Rangers.POSITION_X_LEFT, Rangers.POSITION_Y_BOTTOM)
 bgPlanet:setPosition(0, engine:screenHeight())
 bgPlanet:setLayer(0)
 
-bgAnimLine = resources:loadDeltaGAIAnimation(L"DATA/FormMain2/2AnimLine.gai")
-Rangers.getPointer(bgAnimLine):setParent(this)
-Rangers.getPointer(bgAnimLine):setLayer(0)
+--bgAnimLine = resources:loadDeltaGAIAnimation(L"DATA/FormMain2/2AnimLine.gai")
+--Rangers.getPointer(bgAnimLine):setParent(this)
+--Rangers.getPointer(bgAnimLine):setLayer(0)
 
 ship = resources:loadDeltaGAIAnimation(L"DATA/FormMain3/2Ship1.gai")
 Rangers.getPointer(ship):setParent(this)
