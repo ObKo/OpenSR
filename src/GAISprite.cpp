@@ -21,7 +21,7 @@
 #include "Texture.h"
 #include <cstdlib>
 
-extern void drawF5ToBGRA(unsigned char * bufdes, int bufdesll, unsigned char * graphbuf);
+extern void drawF5ToBGRA(unsigned char * bufdes, int bufdesll, const unsigned char * graphbuf);
 extern void copyImageData(unsigned char *bufdes, int destwidth, int x, int y, int w, int h, unsigned char *graphbuf);
 
 namespace Rangers
@@ -239,14 +239,14 @@ void GAISprite::loadGIFrame5(const char *data, unsigned char *background, int st
     height = image.finishY;
 
     if (image.layers[0].size)
-        drawF5ToBGRA(background + (image.layers[0].startY * width + image.layers[0].startX) * 4, width * 4, (unsigned char *)image.layers[0].data);
+        drawF5ToBGRA(background + (image.layers[0].startY * width + image.layers[0].startX) * 4, width * 4, (const unsigned char *)image.layers[0].data);
 
     delete image.layers;
 }
 
 void GAISprite::drawFrame(int i)
 {
-    unsigned char* data = (unsigned char*)glMapBuffer(GL_PIXEL_UNPACK_BUFFER, GL_READ_WRITE);
+    unsigned char* data = (unsigned char*)glMapBuffer(GL_PIXEL_UNPACK_BUFFER, GL_WRITE_ONLY);
     loadGIFrame5((char *)m_gaiFrames[i], data, m_gaiHeader.startX,  m_gaiHeader.startY,  m_gaiHeader.finishX,  m_gaiHeader.finishY);
     glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER);
 }
