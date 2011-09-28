@@ -155,12 +155,8 @@ boost::shared_ptr<Texture> ResourceManager::loadTexture(const std::wstring& name
     return boost::shared_ptr<Texture>();
 }
 
-boost::shared_ptr<GAISprite> ResourceManager::loadDeltaGAIAnimation(const std::wstring& name)
+GAISprite *ResourceManager::loadDeltaAnimation(const std::wstring& name, Object *parent)
 {
-    map<wstring, boost::shared_ptr<GAISprite> >::const_iterator it = m_gaiAnimations.find(name);
-    if (it != m_gaiAnimations.end())
-        return it->second;
-
     wstring sfx = suffix(name);
     transform(sfx.begin(), sfx.end(), sfx.begin(), towlower);
     if (sfx == L"gai")
@@ -168,7 +164,7 @@ boost::shared_ptr<GAISprite> ResourceManager::loadDeltaGAIAnimation(const std::w
         size_t s;
         char *data = loadData(name, s);
         if (!data)
-            return boost::shared_ptr<GAISprite>();
+            return 0;
 
         char *bgFrameData = 0;
         GAIHeader header = loadGAIHeader(data);
@@ -176,24 +172,23 @@ boost::shared_ptr<GAISprite> ResourceManager::loadDeltaGAIAnimation(const std::w
         if (!header.haveBackground)
         {
             Log::error() << "Unsupported gai format";
-            return boost::shared_ptr<GAISprite>();
+            return 0;
         }
 
         size_t size;
         bgFrameData = loadData(directory(name) + L"/" + basename(name) + L".gi", size);
         if (!bgFrameData)
-            return boost::shared_ptr<GAISprite>();
+            return 0;
 
         GIFrame bgFrame = loadGIFile(bgFrameData);
         delete bgFrameData;
-        GAISprite *bgSprite = new GAISprite(data, s, bgFrame, 0);
-        m_gaiAnimations[name] = boost::shared_ptr<GAISprite>(bgSprite);
-        return m_gaiAnimations[name];
+        GAISprite *bgSprite = new GAISprite(data, s, bgFrame, parent);
+        return bgSprite;
     }
     else
         Log::error() << "Unknown animation format: " << sfx;
 
-    return boost::shared_ptr<GAISprite>();
+    return 0;
 }
 
 boost::shared_ptr<AnimatedTexture> ResourceManager::loadAnimation(const std::wstring& name, bool backgroundLoading)
