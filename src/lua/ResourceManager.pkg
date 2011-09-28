@@ -22,8 +22,8 @@ public:
     boost::shared_ptr<Rangers::AnimatedTexture> loadAnimation(const std::wstring& name);
     boost::shared_ptr<Rangers::Font> loadFont(const std::wstring& name, int size);
     
-    Rangers::GAISprite *loadDeltaAnimation(const std::wstring& name);
-    Rangers::GAISprite *loadDeltaAnimation(const std::wstring& name, Rangers::Object *parent);
+    Rangers::GAISprite loadDeltaAnimation(const std::wstring& name);
+    Rangers::GAISprite loadDeltaAnimation(const std::wstring& name, Rangers::Object *parent);
     Rangers::Sprite getSprite(const std::wstring& name);
     Rangers::Sprite getSprite(const std::wstring& name, Rangers::Object *parent);
     Rangers::AnimatedSprite getAnimatedSprite(const std::wstring& name);

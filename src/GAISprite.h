@@ -20,6 +20,8 @@
 #define RANGERS_GAISPRITE_H
 
 #include "AnimatedSprite.h"
+#include <vector>
+#include <boost/shared_array.hpp>
 
 namespace Rangers
 {
@@ -27,7 +29,9 @@ namespace Rangers
 class GAISprite: public AnimatedSprite
 {
 public:
+    GAISprite(Object *parent = 0);
     GAISprite(const char *data, int size, GIFrame baseFrame, Object *parent = 0);
+    GAISprite(GAISprite &other);
     ~GAISprite();
 
     void draw();
@@ -36,15 +40,15 @@ public:
     void processMain();
     void reset();
 
+    GAISprite& operator=(const GAISprite& other);
+
 private:
     void drawFrame(int i);
     void loadGIFrame5(const char *data, unsigned char *background, int startX, int startY, int finishX, int finishY);
-    char **m_gaiFrames;
-    int m_dataSize;
+    std::vector< boost::shared_array<char> > m_gaiFrames;
     bool m_needNextFrame;
     GAIHeader m_gaiHeader;
     GIFrame m_baseFrame;
-    //unsigned char *m_currentData;
     GLuint m_textureBuffer;
 };
 

@@ -155,7 +155,7 @@ boost::shared_ptr<Texture> ResourceManager::loadTexture(const std::wstring& name
     return boost::shared_ptr<Texture>();
 }
 
-GAISprite *ResourceManager::loadDeltaAnimation(const std::wstring& name, Object *parent)
+GAISprite ResourceManager::loadDeltaAnimation(const std::wstring& name, Object *parent)
 {
     wstring sfx = suffix(name);
     transform(sfx.begin(), sfx.end(), sfx.begin(), towlower);
@@ -164,7 +164,7 @@ GAISprite *ResourceManager::loadDeltaAnimation(const std::wstring& name, Object 
         size_t s;
         char *data = loadData(name, s);
         if (!data)
-            return 0;
+            return GAISprite(parent);
 
         char *bgFrameData = 0;
         GAIHeader header = loadGAIHeader(data);
@@ -172,18 +172,17 @@ GAISprite *ResourceManager::loadDeltaAnimation(const std::wstring& name, Object 
         if (!header.haveBackground)
         {
             Log::error() << "Unsupported gai format";
-            return 0;
+            return GAISprite(parent);
         }
 
         size_t size;
         bgFrameData = loadData(directory(name) + L"/" + basename(name) + L".gi", size);
         if (!bgFrameData)
-            return 0;
+            return GAISprite(parent);
 
         GIFrame bgFrame = loadGIFile(bgFrameData);
         delete bgFrameData;
-        GAISprite *bgSprite = new GAISprite(data, s, bgFrame, parent);
-        return bgSprite;
+        return GAISprite(data, s, bgFrame, parent);
     }
     else
         Log::error() << "Unknown animation format: " << sfx;
