@@ -46,9 +46,15 @@ GAISprite::GAISprite(const char *data, int size, GIFrame baseFrame, Object *pare
     m_animationTime = 0;
     m_currentFrame = 0;
     m_singleShot = false;
-    m_baseFrame = baseFrame;
     m_needNextFrame = true;
     m_textureBuffer = 0;
+
+    unsigned char *baseFrameData = new unsigned char[baseFrame.width * baseFrame.height * 4];
+    memcpy(baseFrameData, baseFrame.data, baseFrame.width * baseFrame.height * 4);
+    m_baseFrame = boost::shared_array<unsigned char>(baseFrameData);
+
+    m_baseFrameWidth = baseFrame.width;
+    m_baseFrameHeight = baseFrame.height;
 
     if (m_gaiHeader.haveBackground)
     {
@@ -96,17 +102,15 @@ GAISprite::GAISprite(const char *data, int size, GIFrame baseFrame, Object *pare
     markToUpdate();
 }
 
-GAISprite::GAISprite(GAISprite &other): AnimatedSprite(other)
+GAISprite::GAISprite(const GAISprite &other): AnimatedSprite(other)
 {
     m_gaiFrames.assign(other.m_gaiFrames.begin(), other.m_gaiFrames.end());
     m_needNextFrame = true;
     m_gaiHeader = other.m_gaiHeader;
 
-    //TODO: Move all data to boost::shared_ptr!
     m_baseFrame = other.m_baseFrame;
-    unsigned char *data = new unsigned char[m_baseFrame.width * m_baseFrame.height * 4];
-    memcpy(data, other.m_baseFrame.data, m_baseFrame.width * m_baseFrame.height * 4);
-    m_baseFrame.data = data;
+    m_baseFrameWidth = other.m_baseFrameWidth;
+    m_baseFrameHeight = other.m_baseFrameHeight;
 
     m_textureBuffer = 0;
     m_texture = boost::shared_ptr<Texture>(new Texture(m_width, m_height));
@@ -119,7 +123,6 @@ GAISprite::~GAISprite()
 {
     if (m_textureBuffer)
         glDeleteBuffers(1, &m_textureBuffer);
-    delete[] m_baseFrame.data;
 }
 
 GAISprite& GAISprite::operator=(const GAISprite& other)
@@ -136,11 +139,9 @@ GAISprite& GAISprite::operator=(const GAISprite& other)
     m_needNextFrame = true;
     m_gaiHeader = other.m_gaiHeader;
 
-    //TODO: Move all data to boost::shared_ptr!
     m_baseFrame = other.m_baseFrame;
-    unsigned char *data = new unsigned char[m_baseFrame.width * m_baseFrame.height * 4];
-    memcpy(data, other.m_baseFrame.data, m_baseFrame.width * m_baseFrame.height * 4);
-    m_baseFrame.data = data;
+    m_baseFrameWidth = other.m_baseFrameWidth;
+    m_baseFrameHeight = other.m_baseFrameHeight;
 
     m_textureBuffer = 0;
     m_texture = boost::shared_ptr<Texture>(new Texture(m_width, m_height));
@@ -238,10 +239,10 @@ void GAISprite::processMain()
         {
             unsigned char* data = (unsigned char*)glMapBuffer(GL_PIXEL_UNPACK_BUFFER, GL_READ_WRITE);
             memset(data, 0, m_width * m_height * 4);
-            copyImageData(data, m_width, 0, 0, m_baseFrame.width, m_baseFrame.height, m_baseFrame.data);
+            copyImageData(data, m_width, 0, 0, m_baseFrameWidth, m_baseFrameHeight, m_baseFrame.get());
             glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER);
             //FIXME: null as pointer to rgba looks ugly
-            m_texture->setRawData(m_baseFrame.width, m_baseFrame.height, TEXTURE_B8G8R8A8, 0, 4 * m_baseFrame.width * m_baseFrame.height);
+            m_texture->setRawData(m_baseFrameWidth, m_baseFrameHeight, TEXTURE_B8G8R8A8, 0, 4 * m_baseFrameWidth * m_baseFrameHeight);
         }
         else
         {

@@ -31,7 +31,7 @@ class GAISprite: public AnimatedSprite
 public:
     GAISprite(Object *parent = 0);
     GAISprite(const char *data, int size, GIFrame baseFrame, Object *parent = 0);
-    GAISprite(GAISprite &other);
+    GAISprite(const GAISprite &other);
     ~GAISprite();
 
     void draw();
@@ -48,8 +48,11 @@ private:
     std::vector< boost::shared_array<char> > m_gaiFrames;
     bool m_needNextFrame;
     GAIHeader m_gaiHeader;
-    GIFrame m_baseFrame;
     GLuint m_textureBuffer;
+
+    int m_baseFrameWidth;
+    int m_baseFrameHeight;
+    boost::shared_array<unsigned char> m_baseFrame;
 };
 
 }
