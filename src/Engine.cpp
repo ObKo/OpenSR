@@ -23,6 +23,7 @@
 #include <SDL_mouse.h>
 #include <fstream>
 #include <boost/shared_ptr.hpp>
+#include <boost/property_tree/ini_parser.hpp>
 #include <ft2build.h>
 #include <stdio.h>
 #include FT_FREETYPE_H
@@ -68,6 +69,32 @@ Engine::Engine(int argc, char **argv): m_argc(argc), m_argv(argv)
         engineInstance = 0;
     }
 
+    std::ifstream configFile;
+
+#ifdef WIN32
+    m_configPath = fromLocal((directory(std::string(argv[0])) + "/OpenSR.ini").c_str());
+    configFile.open(m_configPath, ios_base::in);
+#else
+    char *path;
+    if((path = getenv("XDG_CONFIG_HOME")) == NULL)
+    {
+        if((path = getenv("HOME")) == NULL)
+        {
+            m_configPath = fromLocal((directory(std::string(argv[0])) + "/OpenSR.conf").c_str());
+        }
+        else
+        {
+            m_configPath = fromLocal((std::string(path) + "/.OpenSR/OpenSR.conf").c_str());
+        }
+    }
+    else
+        m_configPath = fromLocal((std::string(path) + "/OpenSR/OpenSR.conf").c_str());
+    configFile.open(toLocal(m_configPath).c_str(), ios_base::in);
+#endif
+
+    if(configFile.is_open())
+        boost::property_tree::read_ini(configFile, m_properties);
+
     engineInstance = this;
     m_currentWidget = 0;
     m_focusedWidget = 0;
@@ -79,6 +106,15 @@ Engine::Engine(int argc, char **argv): m_argc(argc), m_argv(argv)
 Engine::~Engine()
 {
     engineInstance = 0;
+    //TODO: Check directory existing.
+    std::ofstream configFile;
+#ifdef WIN32
+    configFile.open(m_configPath, ios_base::out);
+#else
+    configFile.open(toLocal(m_configPath).c_str(), ios_base::out);
+#endif
+    if(configFile.is_open())
+        boost::property_tree::write_ini(configFile, m_properties);
 }
 
 int Engine::fpsCounter()
@@ -137,6 +173,10 @@ void Engine::init(int w, int h, bool fullscreen)
 {
     if (SDL_Init(SDL_INIT_VIDEO) != 0)
         throw std::runtime_error("Unable to init SDL");
+
+    w = m_properties.get<int>("graphics.width", w);
+    h = m_properties.get<int>("graphics.height", h);
+    fullscreen = m_properties.get<bool>("graphics.fullscreen", fullscreen);
 
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_Surface* screen = SDL_SetVideoMode(w, h, 32, SDL_OPENGL | (fullscreen ? SDL_FULLSCREEN : 0));
@@ -240,6 +280,7 @@ int Engine::run()
         processEvents();
         paint();
     }
+    SDL_Quit();// SDL_INIT_VIDEO)
     return m_exitCode;
 }
 
@@ -262,7 +303,7 @@ void Engine::quit(int code)
     m_gameRunning = false;
     m_exitCode = code;
     m_logicThread->join();
-    m_fpsThread->interrupt();
+    m_fpsThread->join();
 }
 
 int Engine::screenHeight() const

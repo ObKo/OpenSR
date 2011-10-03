@@ -30,6 +30,7 @@
 #include <map>
 #include <boost/thread.hpp>
 #include <boost/thread/recursive_mutex.hpp>
+#include <boost/property_tree/ptree.hpp>
 
 namespace Rangers
 {
@@ -100,6 +101,9 @@ private:
 
     boost::recursive_mutex m_updateMutex;
     boost::thread *m_fpsThread, *m_logicThread;
+
+    boost::property_tree::ptree m_properties;
+    std::wstring m_configPath;
 
     int m_exitCode;
     bool m_gameRunning;
