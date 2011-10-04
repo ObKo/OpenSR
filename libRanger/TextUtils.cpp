@@ -265,9 +265,11 @@ std::wstring Rangers::directory(const std::wstring& s)
 {
     int pos;
     if ((pos = s.rfind(L'/')) == std::wstring::npos)
-        return s;
-    else
-        return s.substr(0, pos);
+#ifdef WIN32
+        if ((pos = s.rfind(L'\\')) == std::wstring::npos)
+#endif
+            return s;
+    return s.substr(0, pos + 1);
 }
 
 /*!
@@ -280,10 +282,10 @@ std::vector<std::string> Rangers::split(const std::string& s, char c)
     std::vector<std::string> array;
     for (std::string::const_iterator it = s.begin(); it != s.end();)
     {
-        while (((*it) == c) && (it != s.end()))
+        while ((it != s.end()) && ((*it) == c))
             it++;
         std::string::const_iterator begin = it;
-        while (((*it) != c) && (it != s.end()))
+        while ((it != s.end()) && ((*it) != c))
             it++;
         if (it != begin)
             array.push_back(s.substr(begin - s.begin(), it - begin));
@@ -312,6 +314,10 @@ std::string Rangers::basename(const std::string& s)
 {
     int endpos = s.rfind(L'.');
     int startpos = s.rfind(L'/');
+#ifdef WIN32
+    if (startpos == std::wstring::npos)
+        startpos = s.rfind(L'\\');
+#endif
 
     if (endpos == std::string::npos)
     {
@@ -337,7 +343,9 @@ std::string Rangers::directory(const std::string& s)
 {
     int pos;
     if ((pos = s.rfind(L'/')) == std::string::npos)
-        return s;
-    else
-        return s.substr(0, pos);
+#ifdef WIN32
+        if ((pos = s.rfind(L'\\')) == std::string::npos)
+#endif
+            return s;
+    return s.substr(0, pos);
 }

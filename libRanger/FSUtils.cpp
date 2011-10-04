@@ -19,7 +19,7 @@
 #include "libRanger.h"
 
 #ifdef WIN32
-#include <windows.h>
+#include <Shlobj.h>
 #else
 #include <sys/stat.h>
 int createDir(const std::string &path, mode_t mode)
@@ -45,7 +45,8 @@ bool createDirPath(const std::wstring& path)
 {
 #ifdef WIN32
     //FIXME: Will work only on WinXP SP2 or newer.
-    if(SHCreateDirectoryEx(NULL, path, NULL) != ERROR_SUCCESS)
+    int result = SHCreateDirectoryExW(NULL, directory(path).c_str(), NULL);
+    if((result != ERROR_SUCCESS) && (result != ERROR_FILE_EXISTS) && (result != ERROR_ALREADY_EXISTS))
         return false;
 #else
     int startPos = 0;

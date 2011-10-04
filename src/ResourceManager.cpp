@@ -176,7 +176,7 @@ GAISprite ResourceManager::loadDeltaAnimation(const std::wstring& name, Object *
         }
 
         size_t size;
-        bgFrameData = loadData(directory(name) + L"/" + basename(name) + L".gi", size);
+        bgFrameData = loadData(directory(name) + basename(name) + L".gi", size);
         if (!bgFrameData)
             return GAISprite(parent);
 
@@ -211,7 +211,7 @@ boost::shared_ptr<AnimatedTexture> ResourceManager::loadAnimation(const std::wst
         if (header.haveBackground)
         {
             size_t size;
-            bgFrameData = loadData(directory(name) + L"/" + basename(name) + L".gi", size);
+            bgFrameData = loadData(directory(name) + basename(name) + L".gi", size);
             if (!bgFrameData)
                 return boost::shared_ptr<AnimatedTexture>();
         }

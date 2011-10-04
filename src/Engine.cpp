@@ -72,7 +72,7 @@ Engine::Engine(int argc, char **argv): m_argc(argc), m_argv(argv)
     std::ifstream configFile;
 
 #ifdef WIN32
-    m_configPath = fromLocal((directory(std::string(argv[0])) + "/OpenSR.ini").c_str());
+    m_configPath = fromLocal((directory(std::string(argv[0])) + "\\OpenSR.ini").c_str());
     configFile.open(m_configPath, ios_base::in);
 #else
     char *path;
@@ -94,6 +94,8 @@ Engine::Engine(int argc, char **argv): m_argc(argc), m_argv(argv)
 
     if(configFile.is_open())
         boost::property_tree::read_ini(configFile, m_properties);
+
+    configFile.close();
 
     engineInstance = this;
     m_currentWidget = 0;
@@ -117,6 +119,7 @@ Engine::~Engine()
 #endif
     if(configFile.is_open())
         boost::property_tree::write_ini(configFile, m_properties);
+    configFile.close();
 }
 
 int Engine::fpsCounter()
@@ -220,8 +223,17 @@ void Engine::init(int w, int h, bool fullscreen)
         startupScript.close();
     }
 
-    m_coreFont = ResourceManager::instance()->loadFont(L"DroidSans.ttf", 13);
-    m_monospaceFont = ResourceManager::instance()->loadFont(L"DroidSansMono.ttf", 13);
+    std::vector<std::string> coreFontStrings = split(m_properties.get<std::string>("graphics.corefont", "DroidSans.ttf:13"), ':');
+    int coreFontSize = 13;
+    if(coreFontStrings.size() > 1)
+        coreFontSize = atoi(coreFontStrings.at(1).c_str());
+    m_coreFont = ResourceManager::instance()->loadFont(fromUTF8(coreFontStrings.at(0).c_str()), coreFontSize);
+    
+    std::vector<std::string> monoFontStrings = split(m_properties.get<std::string>("graphics.monofont", "DroidSansMono.ttf:13"), ':');
+    int monoFontSize = 13;
+    if(monoFontStrings.size() > 1)
+        monoFontSize = atoi(monoFontStrings.at(1).c_str());
+    m_monospaceFont = ResourceManager::instance()->loadFont(fromUTF8(monoFontStrings.at(0).c_str()), monoFontSize);
 
     m_frames = 0;
 
