@@ -21,7 +21,7 @@
 #include "Log.h"
 #include <sstream>
 #include <cerrno>
-
+#include <cstring>
 
 using namespace std;
 

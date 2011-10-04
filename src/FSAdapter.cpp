@@ -25,10 +25,11 @@
 #include <dirent.h>
 #include <sys/stat.h>
 #endif
-#include <errno.h>
+#include <cerrno>
 #include <libRanger.h>
 #include "Log.h"
 #include <algorithm>
+#include <cstring>
 
 using namespace std;
 
