@@ -106,7 +106,9 @@ Engine::Engine(int argc, char **argv): m_argc(argc), m_argv(argv)
 Engine::~Engine()
 {
     engineInstance = 0;
-    //TODO: Check directory existing.
+    if(!createDirPath(m_configPath))
+        Log::error() << "Cannot create dir for config: " << m_configPath;
+
     std::ofstream configFile;
 #ifdef WIN32
     configFile.open(m_configPath, ios_base::out);

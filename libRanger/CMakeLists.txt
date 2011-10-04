@@ -6,6 +6,7 @@ SET(LIBRANGERS_SOURCES
     PKG.cpp
     RPKG.cpp
     TextUtils.cpp
+    FSUtils.cpp
 )
 
 SET(LIBRANGERS_HEADERS

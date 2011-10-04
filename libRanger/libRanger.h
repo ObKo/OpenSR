@@ -359,6 +359,9 @@ LIBRANGER_DIRECTIVE std::string suffix(const std::string& s);
 LIBRANGER_DIRECTIVE std::string basename(const std::string& s);
 //! Get file dir
 LIBRANGER_DIRECTIVE std::string directory(const std::string& s);
+
+//! Create directory path
+LIBRANGER_DIRECTIVE bool createDirPath(const std::wstring& path);
 }
 
 #endif
