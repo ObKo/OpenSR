@@ -104,6 +104,7 @@ private:
 
     boost::property_tree::ptree m_properties;
     std::wstring m_configPath;
+    std::wstring m_mainDataDir;
 
     int m_exitCode;
     bool m_gameRunning;

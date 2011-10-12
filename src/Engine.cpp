@@ -24,6 +24,7 @@
 #include <fstream>
 #include <boost/shared_ptr.hpp>
 #include <boost/property_tree/ini_parser.hpp>
+#include <boost/property_tree/ptree.hpp>
 #include <ft2build.h>
 #include <stdio.h>
 #include FT_FREETYPE_H
@@ -76,9 +77,9 @@ Engine::Engine(int argc, char **argv): m_argc(argc), m_argv(argv)
     configFile.open(m_configPath, ios_base::in);
 #else
     char *path;
-    if((path = getenv("XDG_CONFIG_HOME")) == NULL)
+    if ((path = getenv("XDG_CONFIG_HOME")) == NULL)
     {
-        if((path = getenv("HOME")) == NULL)
+        if ((path = getenv("HOME")) == NULL)
         {
             m_configPath = fromLocal((directory(std::string(argv[0])) + "/OpenSR.conf").c_str());
         }
@@ -92,7 +93,7 @@ Engine::Engine(int argc, char **argv): m_argc(argc), m_argv(argv)
     configFile.open(toLocal(m_configPath).c_str(), ios_base::in);
 #endif
 
-    if(configFile.is_open())
+    if (configFile.is_open())
         boost::property_tree::read_ini(configFile, m_properties);
 
     configFile.close();
@@ -108,7 +109,7 @@ Engine::Engine(int argc, char **argv): m_argc(argc), m_argv(argv)
 Engine::~Engine()
 {
     engineInstance = 0;
-    if(!createDirPath(m_configPath))
+    if (!createDirPath(m_configPath))
         Log::error() << "Cannot create dir for config: " << m_configPath;
 
     std::ofstream configFile;
@@ -117,7 +118,7 @@ Engine::~Engine()
 #else
     configFile.open(toLocal(m_configPath).c_str(), ios_base::out);
 #endif
-    if(configFile.is_open())
+    if (configFile.is_open())
         boost::property_tree::write_ini(configFile, m_properties);
     configFile.close();
 }
@@ -179,6 +180,48 @@ void Engine::init(int w, int h, bool fullscreen)
     if (SDL_Init(SDL_INIT_VIDEO) != 0)
         throw std::runtime_error("Unable to init SDL");
 
+    m_mainDataDir = fromLocal(m_properties.get<std::string>("data.mainDataDir", "").c_str());
+    if (m_mainDataDir != L"")
+    {
+        if (!createDirPath(m_mainDataDir) && !checkDirWritable(m_mainDataDir))
+        {
+            Log::error() << "Cannot create data dir or dir not writable: " << m_mainDataDir;
+            m_mainDataDir = L"";
+        }
+    }
+    Log::info() << m_mainDataDir;
+#ifdef WIN32
+    m_mainDataDir = fromLocal((directory(std::string(m_argv[0]))).c_str());
+#else
+    if (m_mainDataDir == L"")
+    {
+        char *path;
+        if ((path = getenv("XDG_DATA_HOME")) == NULL)
+        {
+            if ((path = getenv("HOME")) != NULL)
+            {
+                m_mainDataDir = fromLocal((std::string(path) + "/.OpenSR/").c_str());
+                if (!createDirPath(m_mainDataDir) && !checkDirWritable(m_mainDataDir))
+                {
+                    Log::error() << "Cannot create data dir or dir not writable: " << m_mainDataDir;
+                    m_mainDataDir = L"";
+                }
+            }
+        }
+        else
+        {
+            m_mainDataDir = fromLocal((std::string(path) + "/OpenSR/").c_str());
+            if (!createDirPath(m_mainDataDir) && !checkDirWritable(m_mainDataDir))
+            {
+                Log::error() << "Cannot create data dir or dir not writable: " << m_mainDataDir;
+                m_mainDataDir = L"";
+            }
+        }
+    }
+#endif
+    if (m_mainDataDir == L"")
+        throw std::runtime_error("No writable data dir available.");
+
     w = m_properties.get<int>("graphics.width", w);
     h = m_properties.get<int>("graphics.height", h);
     fullscreen = m_properties.get<bool>("graphics.fullscreen", fullscreen);
@@ -225,13 +268,13 @@ void Engine::init(int w, int h, bool fullscreen)
 
     std::vector<std::string> coreFontStrings = split(m_properties.get<std::string>("graphics.corefont", "DroidSans.ttf:13"), ':');
     int coreFontSize = 13;
-    if(coreFontStrings.size() > 1)
+    if (coreFontStrings.size() > 1)
         coreFontSize = atoi(coreFontStrings.at(1).c_str());
     m_coreFont = ResourceManager::instance()->loadFont(fromUTF8(coreFontStrings.at(0).c_str()), coreFontSize);
-    
+
     std::vector<std::string> monoFontStrings = split(m_properties.get<std::string>("graphics.monofont", "DroidSansMono.ttf:13"), ':');
     int monoFontSize = 13;
-    if(monoFontStrings.size() > 1)
+    if (monoFontStrings.size() > 1)
         monoFontSize = atoi(monoFontStrings.at(1).c_str());
     m_monospaceFont = ResourceManager::instance()->loadFont(fromUTF8(monoFontStrings.at(0).c_str()), monoFontSize);
 

@@ -17,6 +17,8 @@
 */
 
 #include "libRanger.h"
+#include <cstdio>
+#include <cerrno>
 
 #ifdef WIN32
 #include <Shlobj.h>
@@ -46,18 +48,38 @@ bool createDirPath(const std::wstring& path)
 #ifdef WIN32
     //FIXME: Will work only on WinXP SP2 or newer.
     int result = SHCreateDirectoryExW(NULL, directory(path).c_str(), NULL);
-    if((result != ERROR_SUCCESS) && (result != ERROR_FILE_EXISTS) && (result != ERROR_ALREADY_EXISTS))
+    if ((result != ERROR_SUCCESS) && (result != ERROR_FILE_EXISTS) && (result != ERROR_ALREADY_EXISTS))
         return false;
 #else
     int startPos = 0;
     int endPos = 0;
-    while((endPos = path.find(L'/', startPos)) != std::wstring::npos)
+    while ((endPos = path.find(L'/', startPos)) != std::wstring::npos)
     {
-        if(createDir(toLocal(path.substr(0, endPos + 1)).c_str(), 0666))
+        if (createDir(toLocal(path.substr(0, endPos + 1)).c_str(), 0777))
             return false;
         startPos = endPos + 1;
     }
 #endif
     return true;
 }
+
+bool checkDirWritable(const std::wstring& path)
+{
+//FIXME: more correct file name.
+#ifdef WIN32
+    FILE *fp = _wfopen((path + L"\\98hj8u.tmp").c_str(), "w");
+#else
+    FILE *fp = fopen((toLocal(path) + "/98hj8u.tmp").c_str(), "w");
+#endif
+    if (fp == NULL)
+        return false;
+    fclose(fp);
+#ifdef WIN32
+    _wremove((path + L"\\98hj8u.tmp").c_str());
+#else
+    remove((toLocal(path) + "/98hj8u.tmp").c_str());
+#endif
+    return true;
+}
+
 }

@@ -362,6 +362,8 @@ LIBRANGER_DIRECTIVE std::string directory(const std::string& s);
 
 //! Create directory path
 LIBRANGER_DIRECTIVE bool createDirPath(const std::wstring& path);
+//! Check directory writable
+LIBRANGER_DIRECTIVE bool checkDirWritable(const std::wstring& path);
 }
 
 #endif
