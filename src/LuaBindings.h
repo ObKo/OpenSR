@@ -48,6 +48,8 @@ int tolua_GAISprite_open(lua_State* tolua_S);
 
 namespace Rangers
 {
+int execScript(const std::wstring& fileName);
+int execScript(const char *data, size_t size, const std::string& name);
 std::wstring fromLua(const char *s);
 Font *getPointer(boost::shared_ptr<Font> sp);
 Texture *getPointer(boost::shared_ptr<Texture> sp);

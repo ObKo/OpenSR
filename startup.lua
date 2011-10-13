@@ -1,0 +1,1 @@
+Rangers.ResourceManager:instance():addDir(L"data/")

@@ -25,7 +25,7 @@ namespace Rangers
 {
 //TODO: Check stack size after pcall()
 
-LuaWidget::LuaWidget(std::wstring fileName, Rangers::Object* parent): Widget(parent)
+LuaWidget::LuaWidget(const std::wstring& fileName, Rangers::Object* parent): Widget(parent)
 {
     m_luaState = lua_open();
     luaopen_base(m_luaState);
@@ -45,7 +45,30 @@ LuaWidget::LuaWidget(std::wstring fileName, Rangers::Object* parent): Widget(par
     tolua_pushusertype(m_luaState, this, "Rangers::LuaWidget");
     lua_setglobal(m_luaState, "this");
     if (luaL_dofile(m_luaState, toLocal(fileName).c_str()))
-        std::cerr << lua_tostring(m_luaState, -1) << std::endl;
+        Log::error() << "Cannot load lua script: " << lua_tostring(m_luaState, -1);
+}
+
+LuaWidget::LuaWidget(const char *data, size_t size, const std::string& name, Object *parent): Widget(parent)
+{
+    m_luaState = lua_open();
+    luaopen_base(m_luaState);
+    luaopen_table(m_luaState);
+    luaopen_math(m_luaState);
+    tolua_Engine_open(m_luaState);
+    tolua_libRanger_open(m_luaState);
+    tolua_Object_open(m_luaState);
+    tolua_Types_open(m_luaState);
+    tolua_ResourceManager_open(m_luaState);
+    tolua_Sprite_open(m_luaState);
+    tolua_AnimatedSprite_open(m_luaState);
+    tolua_LuaBindings_open(m_luaState);
+    tolua_AnimatedTexture_open(m_luaState);
+    tolua_LuaWidget_open(m_luaState);
+    tolua_GAISprite_open(m_luaState);
+    tolua_pushusertype(m_luaState, this, "Rangers::LuaWidget");
+    lua_setglobal(m_luaState, "this");
+    if (luaL_loadbuffer(m_luaState, data, size, name.c_str()) || lua_pcall(m_luaState, 0, LUA_MULTRET, 0))
+        Log::error() << "Cannot load lua script: " << lua_tostring(m_luaState, -1);
 }
 
 LuaWidget::LuaWidget(Rangers::Object* parent): Widget(parent), m_luaState()

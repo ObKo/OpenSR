@@ -28,7 +28,8 @@ class LuaWidget: public Widget
 {
 public:
     //TODO: Remove this
-    LuaWidget(std::wstring fileName, Object *parent = 0);
+    LuaWidget(const std::wstring& fileName, Object *parent = 0);
+    LuaWidget(const char *data, size_t size, const std::string& name, Object *parent = 0);
     LuaWidget(Object *parent = 0);
 
     void draw();

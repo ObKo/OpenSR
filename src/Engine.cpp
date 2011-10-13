@@ -195,9 +195,11 @@ void Engine::init(int w, int h, bool fullscreen)
 #else
     if (m_mainDataDir == L"")
     {
+#ifdef __linux
         char *path;
         if ((path = getenv("XDG_DATA_HOME")) == NULL)
         {
+#endif
             if ((path = getenv("HOME")) != NULL)
             {
                 m_mainDataDir = fromLocal((std::string(path) + "/.OpenSR/").c_str());
@@ -207,6 +209,7 @@ void Engine::init(int w, int h, bool fullscreen)
                     m_mainDataDir = L"";
                 }
             }
+#ifdef __linux
         }
         else
         {
@@ -217,10 +220,28 @@ void Engine::init(int w, int h, bool fullscreen)
                 m_mainDataDir = L"";
             }
         }
+#endif
     }
 #endif
     if (m_mainDataDir == L"")
         throw std::runtime_error("No writable data dir available.");
+
+    Log::debug() << "Using data dir: " << m_mainDataDir;
+    ResourceManager::instance()->addDir(m_mainDataDir);
+#ifdef __linux
+    char *pathes;
+    if ((pathes = getenv("XDG_DATA_DIRS")) != NULL)
+    {
+        std::vector<std::wstring> list = split(fromLocal(pathes), L':');
+        for (std::vector<std::wstring>::const_iterator i = list.begin(); i != list.end(); i++)
+            ResourceManager::instance()->addDir((*i) + L"OpenSR/");
+    }
+    else
+    {
+        //FIXME: use install prefix.
+        ResourceManager::instance()->addDir(L"/usr/share/OpenSR/");
+    }
+#endif
 
     w = m_properties.get<int>("graphics.width", w);
     h = m_properties.get<int>("graphics.height", h);
@@ -254,29 +275,26 @@ void Engine::init(int w, int h, bool fullscreen)
     glLoadIdentity();
     glOrtho(0.0f, m_width, m_height, 0.0f, -1.0f, 1.0f);
 
-    std::ifstream startupScript("opensrrc");
-    if (startupScript.is_open())
+    std::wstring startupScript = fromLocal(m_properties.get<std::string>("engine.startupScript", "startup.lua").c_str());
+    size_t luaSize = 0;
+    char *luaData = ResourceManager::instance()->loadData(startupScript, luaSize);
+    if (luaData)
     {
-        char str[255];
-        while (!startupScript.eof())
-        {
-            startupScript.getline(str, 255);
-            execCommand(fromUTF8(str));
-        }
-        startupScript.close();
+        execScript(luaData, luaSize, toLocal(startupScript));
+        delete[] luaData;
     }
 
     std::vector<std::string> coreFontStrings = split(m_properties.get<std::string>("graphics.corefont", "DroidSans.ttf:13"), ':');
     int coreFontSize = 13;
     if (coreFontStrings.size() > 1)
         coreFontSize = atoi(coreFontStrings.at(1).c_str());
-    m_coreFont = ResourceManager::instance()->loadFont(fromUTF8(coreFontStrings.at(0).c_str()), coreFontSize);
+    m_coreFont = ResourceManager::instance()->loadFont(fromLocal(coreFontStrings.at(0).c_str()), coreFontSize);
 
     std::vector<std::string> monoFontStrings = split(m_properties.get<std::string>("graphics.monofont", "DroidSansMono.ttf:13"), ':');
     int monoFontSize = 13;
     if (monoFontStrings.size() > 1)
         monoFontSize = atoi(monoFontStrings.at(1).c_str());
-    m_monospaceFont = ResourceManager::instance()->loadFont(fromUTF8(monoFontStrings.at(0).c_str()), monoFontSize);
+    m_monospaceFont = ResourceManager::instance()->loadFont(fromLocal(monoFontStrings.at(0).c_str()), monoFontSize);
 
     m_frames = 0;
 

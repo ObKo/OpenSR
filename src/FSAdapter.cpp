@@ -50,7 +50,8 @@ void FSAdapter::load(const std::wstring& path)
 #else
     scan("");
 #endif
-    Log::info() << "Loaded " << m_files.size() << " files from directory " << path;
+    if (m_files.size())
+        Log::info() << "Loaded " << m_files.size() << " files from directory " << path;
 }
 
 #ifdef WIN32
