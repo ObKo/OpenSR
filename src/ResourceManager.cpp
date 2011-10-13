@@ -27,6 +27,7 @@
 #include "AnimatedSprite.h"
 #include "Object.h"
 #include "GAISprite.h"
+#include "LuaWidget.h"
 
 using namespace std;
 
@@ -336,6 +337,18 @@ boost::shared_ptr< Font > ResourceManager::loadFont(const std::wstring& name, in
     return boost::shared_ptr<Font>();
 }
 
+LuaWidget *ResourceManager::loadLuaWidget(const std::wstring& name, Object *parent)
+{
+    size_t luaSize = 0;
+    char *luaData = loadData(name, luaSize);
+    LuaWidget *widget = 0;
+    if (luaData)
+    {
+        widget = new LuaWidget(luaData, luaSize, toLocal(name), parent);
+        delete[] luaData;
+    }
+    return widget;
+}
 
 void ResourceManager::processMain()
 {

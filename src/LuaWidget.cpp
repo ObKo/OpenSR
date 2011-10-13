@@ -71,7 +71,7 @@ LuaWidget::LuaWidget(const char *data, size_t size, const std::string& name, Obj
         Log::error() << "Cannot load lua script: " << lua_tostring(m_luaState, -1);
 }
 
-LuaWidget::LuaWidget(Rangers::Object* parent): Widget(parent), m_luaState()
+LuaWidget::LuaWidget(Rangers::Object* parent): Widget(parent), m_luaState(0)
 {
 
 }

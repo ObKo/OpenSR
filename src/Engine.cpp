@@ -142,6 +142,9 @@ int Engine::fpsCounter()
 
 void Engine::addWidget(Widget *w)
 {
+    if(!w)
+        return;
+    
     m_mainNode.addChild(w);
 
     for (std::list<Widget*>::iterator i = m_widgets.begin(); i != m_widgets.end(); i++)
@@ -304,9 +307,6 @@ void Engine::init(int w, int h, bool fullscreen)
     m_fpsLabel.setPosition(5, 5);
 
     m_consoleWidget = ConsoleWidget(m_width, 168);
-
-    LuaWidget *lw = new LuaWidget(L"data/test.lua");
-    addWidget(lw);
 }
 
 boost::shared_ptr<Font> Engine::coreFont() const

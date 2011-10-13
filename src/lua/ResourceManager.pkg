@@ -7,6 +7,7 @@ $#include <AnimatedSprite.h>
 $#include <Sprite.h>
 $#include <Object.h>
 $#include <GAISprite.h>
+$#include <LuaWidget.h>
 
 namespace Rangers
 {
@@ -28,7 +29,10 @@ public:
     Rangers::Sprite getSprite(const std::wstring& name, Rangers::Object *parent);
     Rangers::AnimatedSprite getAnimatedSprite(const std::wstring& name);
     Rangers::AnimatedSprite getAnimatedSprite(const std::wstring& name, bool backgroundLoading = false);
-    Rangers::AnimatedSprite getAnimatedSprite(const std::wstring& name, bool backgroundLoading = false, Rangers::Object *parent = 0);
+    Rangers::AnimatedSprite getAnimatedSprite(const std::wstring& name, bool backgroundLoading = false, Rangers::Object *parent);
+
+    Rangers::LuaWidget *loadLuaWidget(const std::wstring& name);
+    Rangers::LuaWidget *loadLuaWidget(const std::wstring& name, Rangers::Object *parent);
     
     static ResourceManager *instance();
 };

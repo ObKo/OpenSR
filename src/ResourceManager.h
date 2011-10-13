@@ -35,6 +35,7 @@ class AnimatedSprite;
 class Object;
 struct GAIAnimation;
 class GAISprite;
+class LuaWidget;
 
 class ResourceManager
 {
@@ -50,6 +51,8 @@ public:
     Sprite getSprite(const std::wstring& name, Object *parent = 0);
     AnimatedSprite getAnimatedSprite(const std::wstring& name, bool backgroundLoading = false, Object *parent = 0);
     GAISprite loadDeltaAnimation(const std::wstring& name, Object *parent = 0);
+    
+    LuaWidget *loadLuaWidget(const std::wstring& name, Object *parent = 0);
 
     static ResourceManager *instance();
 
