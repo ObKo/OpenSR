@@ -155,6 +155,7 @@ GAISprite& GAISprite::operator=(const GAISprite& other)
 
 void GAISprite::processLogic(int dt)
 {
+    lock();
     if (m_animationStarted && m_frameDuration)
     {
         if ((m_animationTime > m_frameDuration) && (!m_needNextFrame))
@@ -167,6 +168,7 @@ void GAISprite::processLogic(int dt)
 
         m_animationTime += dt;
     }
+    unlock();
 }
 
 void GAISprite::draw()

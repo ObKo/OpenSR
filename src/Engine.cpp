@@ -142,9 +142,9 @@ int Engine::fpsCounter()
 
 void Engine::addWidget(Widget *w)
 {
-    if(!w)
+    if (!w)
         return;
-    
+
     m_mainNode.addChild(w);
 
     for (std::list<Widget*>::iterator i = m_widgets.begin(); i != m_widgets.end(); i++)

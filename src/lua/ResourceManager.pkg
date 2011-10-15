@@ -31,8 +31,8 @@ public:
     Rangers::AnimatedSprite getAnimatedSprite(const std::wstring& name, bool backgroundLoading = false);
     Rangers::AnimatedSprite getAnimatedSprite(const std::wstring& name, bool backgroundLoading = false, Rangers::Object *parent);
 
-    Rangers::LuaWidget *loadLuaWidget(const std::wstring& name);
-    Rangers::LuaWidget *loadLuaWidget(const std::wstring& name, Rangers::Object *parent);
+    Rangers::LuaWidget loadLuaWidget(const std::wstring& name);
+    Rangers::LuaWidget loadLuaWidget(const std::wstring& name, Rangers::Object *parent);
     
     static ResourceManager *instance();
 };

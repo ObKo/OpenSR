@@ -31,6 +31,7 @@ public:
     LuaWidget(const std::wstring& fileName, Object *parent = 0);
     LuaWidget(const char *data, size_t size, const std::string& name, Object *parent = 0);
     LuaWidget(Object *parent = 0);
+    LuaWidget(const LuaWidget& other);
 
     void draw();
 
@@ -47,8 +48,10 @@ public:
     void processMain();
     void processLogic(int dt);
 
+    LuaWidget& operator=(const LuaWidget& other);
+
 private:
-    lua_State *m_luaState;
+    boost::shared_ptr<lua_State> m_luaState;
 };
 }
 

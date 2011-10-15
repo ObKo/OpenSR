@@ -41,6 +41,9 @@ Widget::Widget(float w, float h,  Object *parent): m_width(w), m_height(h), Obje
 
 Widget::Widget(const Rangers::Widget& other): Object(other)
 {
+    m_childWidgets = other.m_childWidgets;
+    m_currentChild = other.m_currentChild;
+    m_leftMouseButtonPressed = other.m_leftMouseButtonPressed;
     m_width = other.m_width;
     m_height = other.m_height;
     markToUpdate();
@@ -152,6 +155,14 @@ Widget& Widget::operator=(const Rangers::Widget& other)
 {
     if (this == &other)
         return *this;
+
+    Object::operator=(other);
+    //(std::list<Widget*>::iterator i = m_childWidgets.begin(); i != m_childWidgets.end(); i++)
+    //    i->set
+
+    m_childWidgets = other.m_childWidgets;
+    m_currentChild = other.m_currentChild;
+    m_leftMouseButtonPressed = other.m_leftMouseButtonPressed;
 
     m_width = other.m_width;
     m_height = other.m_height;

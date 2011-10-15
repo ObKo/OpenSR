@@ -53,6 +53,14 @@ Object::Object(const Vector& pos, float rot, int layer, Object *parent): m_layer
 
 Object::Object(const Rangers::Object& other)
 {
+    for (std::list<Object*>::iterator i = m_children.begin(); i != m_children.end(); i++)
+        if ((*i)->parent == this)
+            (*i)->setParent(0);
+
+    m_children = other.m_children;
+    for (std::list<Object*>::iterator i = m_children.begin(); i != m_children.end(); i++)
+        (*i)->setParent(this);
+
     m_colorR = other.m_colorR;
     m_colorG = other.m_colorG;
     m_colorB = other.m_colorB;
@@ -69,6 +77,7 @@ Object::Object(const Rangers::Object& other)
 
     m_position = other.m_position;
     m_rotation = other.m_rotation;
+    markToUpdate();
 }
 
 
@@ -76,7 +85,8 @@ Object::~Object()
 {
     lock();
     for (std::list<Object*>::iterator i = m_children.begin(); i != m_children.end(); i++)
-        (*i)->setParent(0);
+        if ((*i)->parent() == this)
+            (*i)->setParent(0);
 
     if (m_parent)
         m_parent->removeChild(this);
@@ -92,23 +102,28 @@ Object& Object::operator=(const Rangers::Object& other)
     if (this == &other)
         return *this;
 
-    //objectMutex = SDL_CreateMutex();
+    for (std::list<Object*>::iterator i = m_children.begin(); i != m_children.end(); i++)
+        if ((*i)->parent == this)
+            (*i)->setParent(0);
+
+    m_children = other.m_children;
+    for (std::list<Object*>::iterator i = m_children.begin(); i != m_children.end(); i++)
+        (*i)->setParent(this);
+
     m_colorR = other.m_colorR;
     m_colorG = other.m_colorG;
     m_colorB = other.m_colorB;
     m_colorA = other.m_colorA;
     m_needUpdate = false;
 
-    m_parent = other.parent();
+    m_parent = other.m_parent;
 
     if (m_parent)
         m_parent->addChild(this);
 
-    //for(std::list<Object*>::const_iterator it = other.objectChilds.begin(); it < other.objectChilds.end(); it++)
-    //	objectChilds.push_back(new Object(*(*it)));
-
     m_position = other.m_position;
     m_rotation = other.m_rotation;
+    markToUpdate();
     return *this;
 }
 
