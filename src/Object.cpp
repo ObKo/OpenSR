@@ -54,7 +54,7 @@ Object::Object(const Vector& pos, float rot, int layer, Object *parent): m_layer
 Object::Object(const Rangers::Object& other)
 {
     for (std::list<Object*>::iterator i = m_children.begin(); i != m_children.end(); i++)
-        if ((*i)->parent == this)
+        if ((*i)->parent() == this)
             (*i)->setParent(0);
 
     m_children = other.m_children;
@@ -103,7 +103,7 @@ Object& Object::operator=(const Rangers::Object& other)
         return *this;
 
     for (std::list<Object*>::iterator i = m_children.begin(); i != m_children.end(); i++)
-        if ((*i)->parent == this)
+        if ((*i)->parent() == this)
             (*i)->setParent(0);
 
     m_children = other.m_children;

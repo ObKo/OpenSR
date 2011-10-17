@@ -27,8 +27,8 @@ namespace Rangers
 class LineEditWidget: public Widget
 {
 public:
-    LineEditWidget(float w, float h = 0, boost::shared_ptr<Font> font = boost::shared_ptr<Font>(), Object* parent = 0);
-    LineEditWidget(Object* parent = 0);
+    LineEditWidget(float w, float h = 0, boost::shared_ptr<Font> font = boost::shared_ptr<Font>(), Widget* parent = 0);
+    LineEditWidget(Widget* parent = 0);
     LineEditWidget(const LineEditWidget& other);
 
     void draw();

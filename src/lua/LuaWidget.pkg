@@ -9,7 +9,7 @@ class LuaWidget: public Widget
 {
 public:
     //TODO: Remove this
-    LuaWidget(std::wstring fileName, Object *parent = 0);
+    LuaWidget(std::wstring fileName, Widget *parent = 0);
 
     void draw();
 

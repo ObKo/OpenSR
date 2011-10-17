@@ -45,6 +45,7 @@ int tolua_Texture_open(lua_State* tolua_S);
 int tolua_AnimatedTexture_open(lua_State* tolua_S);
 int tolua_LuaWidget_open(lua_State* tolua_S);
 int tolua_GAISprite_open(lua_State* tolua_S);
+int tolua_Button_open(lua_State* tolua_S);
 
 namespace Rangers
 {

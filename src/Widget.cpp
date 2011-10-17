@@ -18,25 +18,34 @@
 
 #include "Widget.h"
 #include <iostream>
+#include "Log.h"
 
 namespace Rangers
 {
-Rect Widget::getBoundingRect() const
+Rect Widget::getBoundingRect()
 {
     Rect r;
-    r.x1 = m_position.x;
-    r.y1 = m_position.y;
-    r.x2 = m_position.x + m_width;
-    r.y2 = m_position.y + m_height;
+    r.x1 = 0;
+    r.y1 = 0;
+    r.x2 = m_width;
+    r.y2 = m_height;
+    for (std::list<Widget*>::const_reverse_iterator i = m_childWidgets.rbegin(); i != m_childWidgets.rend(); i++)
+    {
+        r += (*i)->getBoundingRect();
+    }
     return r;
 }
 
-Widget::Widget(Object *parent): Object(parent), m_currentChild(0)
+Widget::Widget(Widget *parent): Object(parent), m_currentChild(0), m_width(0), m_height(0), m_leftMouseButtonPressed(false)
 {
+    if (parent)
+        parent->addWidget(this);
 }
 
-Widget::Widget(float w, float h,  Object *parent): m_width(w), m_height(h), Object(parent), m_currentChild(0)
+Widget::Widget(float w, float h, Widget *parent): m_width(w), m_height(h), Object(parent), m_currentChild(0), m_leftMouseButtonPressed(false)
 {
+    if (parent)
+        parent->addWidget(this);
 }
 
 Widget::Widget(const Rangers::Widget& other): Object(other)
@@ -53,24 +62,26 @@ Widget::Widget(const Rangers::Widget& other): Object(other)
 void Widget::mouseMove(int x, int y)
 {
     lock();
-    /*for (std::list<Widget*>::const_reverse_iterator i = childWidgets.rbegin(); i != childWidgets.rend(); i++)
+    for (std::list<Widget*>::const_reverse_iterator i = m_childWidgets.rbegin(); i != m_childWidgets.rend(); i++)
     {
         Rect bb = (*i)->getBoundingRect();
         Vector pos = (*i)->position();
         if ((bb.x1 + pos.x < x) && (bb.x2 + pos.x > x) && (bb.y1 + pos.y < y) && (bb.y2 + pos.y > y))
         {
-            if ((*i) != currentChildWidget)
+            if ((*i) != m_currentChild)
             {
-                if (currentChildWidget)
-                    currentChildWidget->mouseLeave();
-                currentChildWidget = *i;
-                currentChildWidget->mouseEnter();
+                if (m_currentChild)
+                {
+                    m_currentChild->mouseLeave();
+                }
+                m_currentChild = *i;
+                m_currentChild->mouseEnter();
             }
             (*i)->mouseMove(x - bb.x1 - pos.x, y - bb.y1 - pos.y);
             unlock();
             return;
         }
-    }*/
+    }
     if (m_currentChild)
         m_currentChild->mouseLeave();
     m_currentChild = 0;
@@ -84,6 +95,9 @@ void Widget::mouseEnter()
 
 void Widget::mouseLeave()
 {
+    if (m_currentChild)
+        m_currentChild->mouseLeave();
+    m_currentChild = 0;
     m_leftMouseButtonPressed = false;
 }
 
@@ -96,10 +110,22 @@ void Widget::mouseDown(uint8_t key, int x, int y)
 {
     if (key == SDL_BUTTON_LEFT)
         m_leftMouseButtonPressed = true;
+    if (m_currentChild)
+    {
+        Rect b = m_currentChild->getBoundingRect();
+        Vector pos = m_currentChild->position();
+        m_currentChild->mouseDown(key, x - b.x1 - pos.x, y - b.y1 - pos.y);
+    }
 }
 
 void Widget::mouseUp(uint8_t key, int x, int y)
 {
+    if (m_currentChild)
+    {
+        Rect b = m_currentChild->getBoundingRect();
+        Vector pos = m_currentChild->position();
+        m_currentChild->mouseUp(key, x - b.x1 - pos.x, y - b.y1 - pos.y);
+    }
     if (m_leftMouseButtonPressed && (key == SDL_BUTTON_LEFT))
     {
         m_leftMouseButtonPressed = false;
@@ -109,15 +135,13 @@ void Widget::mouseUp(uint8_t key, int x, int y)
 
 void Widget::mouseClick(int x, int y)
 {
-
 }
 
 void Widget::addWidget(Widget* w)
 {
-    if (w->parent() == this)
-        return;
     lock();
-    addChild(w);
+    if (w->parent() != this)
+        addChild(w);
     for (std::list<Widget*>::iterator i = m_childWidgets.begin(); i != m_childWidgets.end(); i++)
     {
         if ((*i)->layer() > w->layer())
@@ -170,6 +194,16 @@ Widget& Widget::operator=(const Rangers::Widget& other)
 
     Object::operator=(other);
     return *this;
+}
+
+void Widget::addCallback(Callback* callback)
+{
+    m_callbacks.push_back(callback);
+}
+
+void Widget::removeCallback(Callback* callback)
+{
+    m_callbacks.remove(callback);
 }
 }
 

@@ -150,6 +150,11 @@ void Sprite::setOrigin(SpriteXOrigin xpos, SpriteYOrigin ypos)
     markToUpdate();
 }
 
+void Sprite::setTexture(boost::shared_ptr<Texture> texture)
+{
+    m_texture = texture;
+}
+
 void Sprite::setGeometry(float width, float height)
 {
     if (m_texture)

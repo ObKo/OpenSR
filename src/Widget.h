@@ -23,16 +23,17 @@
 
 namespace Rangers
 {
+class Callback;
 class Widget: public Object
 {
 public:
-    Widget(Object *parent = 0);
-    Widget(float w, float h, Object *parent = 0);
+    Widget(Widget *parent = 0);
+    Widget(float w, float h, Widget *parent = 0);
     Widget(const Widget& other);
 
     virtual void draw() = 0;
 
-    virtual Rect getBoundingRect() const;
+    virtual Rect getBoundingRect();
     virtual void mouseMove(int x, int y);
     virtual void mouseEnter();
     virtual void mouseLeave();
@@ -50,8 +51,12 @@ public:
     void addWidget(Widget *w);
     void removeWidget(Widget *w);
 
+    void addCallback(Callback* callback);
+    void removeCallback(Callback* callback);
+
 protected:
     std::list<Widget *> m_childWidgets;
+    std::list<Callback*> m_callbacks;
     Widget *m_currentChild;
     int m_width, m_height;
     bool m_leftMouseButtonPressed;

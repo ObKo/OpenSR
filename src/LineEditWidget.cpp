@@ -48,7 +48,7 @@ void LineEditWidget::draw()
     endDraw();
 }
 
-LineEditWidget::LineEditWidget(float w, float h, boost::shared_ptr< Font > font, Object* parent):
+LineEditWidget::LineEditWidget(float w, float h, boost::shared_ptr< Font > font, Widget* parent):
     Widget(parent)
 {
     if (!font)
@@ -64,7 +64,7 @@ LineEditWidget::LineEditWidget(float w, float h, boost::shared_ptr< Font > font,
     markToUpdate();
 }
 
-LineEditWidget::LineEditWidget(Object* parent): Widget(parent)
+LineEditWidget::LineEditWidget(Widget* parent): Widget(parent)
 {
     m_borderVertices = 0;
     m_borderBuffer = 0;

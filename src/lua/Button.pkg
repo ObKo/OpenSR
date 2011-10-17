@@ -1,0 +1,14 @@
+$#include <Button.h>
+
+$pfile "Widget.pkg"
+
+namespace Rangers
+{
+class Button: public Widget
+{
+public:
+    Button(boost::shared_ptr<Rangers::Texture> texture, Rangers::Widget *parent = 0);
+    Button(boost::shared_ptr<Rangers::Texture> texture, boost::shared_ptr<Rangers::Texture> hoverTexture, Rangers::Widget *parent = 0);
+    Button(boost::shared_ptr<Rangers::Texture> texture, boost::shared_ptr<Rangers::Texture> hoverTexture, boost::shared_ptr<Rangers::Texture> pressTexture, Widget *parent = 0);
+};
+}

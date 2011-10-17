@@ -22,7 +22,7 @@
 
 namespace Rangers
 {
-ConsoleWidget::ConsoleWidget(float w, float h, Object* parent): Widget(w, h, parent)
+ConsoleWidget::ConsoleWidget(float w, float h, Widget* parent): Widget(w, h, parent)
 {
     int editSize = Engine::instance()->serviceFont()->size() + 4;
     m_lineEdit = LineEditWidget(w, editSize, Engine::instance()->serviceFont(), this);
@@ -50,7 +50,7 @@ ConsoleWidget::ConsoleWidget(const Rangers::ConsoleWidget& other): Widget(other)
     markToUpdate();
 }
 
-ConsoleWidget::ConsoleWidget(Object* parent): Widget(parent)
+ConsoleWidget::ConsoleWidget(Widget* parent): Widget(parent)
 {
     m_borderVertices = 0;
     m_borderBuffer = 0;

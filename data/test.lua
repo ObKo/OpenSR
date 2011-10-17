@@ -1,7 +1,7 @@
 engine = Rangers.Engine:instance()
 resources = Rangers.ResourceManager:instance()
 
-background = resources:getSprite(L"2bg.dds", this)
+background = resources:getSprite(L"DATA/FormMain3/2bg.gi", this)
 background:setWidth(background:width()/(engine:screenHeight()/background:height()))
 background:setHeight(engine:screenHeight())
 background:setLayer(-1)
@@ -14,9 +14,17 @@ bgPlanet:setLayer(0)
 bgAnimLine = resources:loadDeltaAnimation(L"DATA/FormMain2/2AnimLine.gai", this)
 bgAnimLine:setLayer(0)
 
+caption = resources:getSprite(L"DATA/FormMain2/2AnimCaption.gi", this)
+caption:setOrigin(Rangers.POSITION_X_RIGHT, Rangers.POSITION_Y_TOP)
+caption:setPosition(engine:screenWidth(), 0)
+caption:setLayer(1)
+
 ship = resources:loadDeltaAnimation(L"DATA/FormMain3/2Ship1.gai", this)
 ship:setPosition(0, engine:screenHeight() - ship:height())
 ship:setLayer(1)
+
+button = Rangers.Button:new(resources:loadTexture(L"DATA/FormMain2/2ButExitN.gi"), resources:loadTexture(L"DATA/FormMain2/2ButExitA.gi"), resources:loadTexture(L"DATA/FormMain2/2ButExitD.gi"), this);
+button:setPosition(100, 100)
 
 t = 0
 bgspeed = 5/1000
@@ -32,29 +40,10 @@ end
 function getBoundingRect()
   r = Rangers.Rect:new()
   r.x1 = 0.0
-  r.x2 = Rangers.getPointer(ship):width()
+  r.x2 = ship:width()
   r.y1 = 0.0
-  r.y2 = Rangers.getPointer(ship):height()
+  r.y2 = ship:height()
   return r
-end
-
-function mouseEnter()
-end
-
-function mouseLeave()
-end
-
-function mouseMove(x, y)
-end
-
-function mouseUp(key, x, y)
-end
-
-function mouseDown(key, x, y)
-end
-
-function mouseClick(x, y)
-
 end
 
 function processLogic(dt)

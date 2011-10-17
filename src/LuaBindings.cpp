@@ -48,6 +48,7 @@ int execScript(const char *data, size_t size, const std::string& name)
     tolua_AnimatedTexture_open(luaState);
     tolua_LuaWidget_open(luaState);
     tolua_GAISprite_open(luaState);
+    tolua_Button_open(luaState);
     int state;
     if (state = (luaL_loadbuffer(luaState, data, size, name.c_str()) || lua_pcall(luaState, 0, LUA_MULTRET, 0)))
         Log::error() << "Cannot exec lua script: " << lua_tostring(luaState, -1);

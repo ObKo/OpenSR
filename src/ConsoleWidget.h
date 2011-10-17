@@ -29,9 +29,9 @@ namespace Rangers
 class ConsoleWidget: public Widget
 {
 public:
-    ConsoleWidget(float w, float h, Object* parent = 0);
+    ConsoleWidget(float w, float h, Widget* parent = 0);
     ConsoleWidget(const ConsoleWidget& other);
-    ConsoleWidget(Object *parent = 0);
+    ConsoleWidget(Widget *parent = 0);
 
     void draw();
     void processMain();

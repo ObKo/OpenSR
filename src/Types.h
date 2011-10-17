@@ -60,7 +60,10 @@ struct Rect
     Rect();
     float x1, y1;
     float x2, y2;
+    Rect& operator+=(const Rect& other);
 };
+
+Rect operator+(const Rect& r1, const Rect& r2);
 }
 
 #endif

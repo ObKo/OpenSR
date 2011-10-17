@@ -16,43 +16,39 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef LUAWIDGET_H
-#define LUAWIDGET_H
+#ifndef RANGERS_BUTTON_H
+#define RANGERS_BUTTON_H
 
 #include "Widget.h"
-#include "LuaBindings.h"
+#include "Texture.h"
+#include "Sprite.h"
+#include <boost/shared_ptr.hpp>
 
 namespace Rangers
 {
-class LuaWidget: public Widget
+class Button: public Widget
 {
 public:
-    //TODO: Remove this
-    LuaWidget(const std::wstring& fileName, Widget *parent = 0);
-    LuaWidget(const char *data, size_t size, const std::string& name, Widget *parent = 0);
-    LuaWidget(Widget *parent = 0);
-    LuaWidget(const LuaWidget& other);
+    Button(boost::shared_ptr<Texture> texture, Widget *parent = 0);
+    Button(boost::shared_ptr<Texture> texture, boost::shared_ptr<Texture> hoverTexture, Widget *parent = 0);
+    Button(boost::shared_ptr<Texture> texture, boost::shared_ptr<Texture> hoverTexture, boost::shared_ptr<Texture> pressTexture, Widget *parent = 0);
 
     void draw();
+    void processMain();
 
-    virtual Rect getBoundingRect();
-    void mouseMove(int x, int y);
     void mouseEnter();
     void mouseLeave();
-    void keyPressed(SDL_keysym key);
 
     void mouseDown(uint8_t key, int x, int y);
     void mouseUp(uint8_t key, int x, int y);
     void mouseClick(int x, int y);
 
-    void processMain();
-    void processLogic(int dt);
-
-    LuaWidget& operator=(const LuaWidget& other);
-
 private:
-    boost::shared_ptr<lua_State> m_luaState;
+    boost::shared_ptr<Texture> m_mainTexture;
+    boost::shared_ptr<Texture> m_hoverTexture;
+    boost::shared_ptr<Texture> m_pressedTexture;
+    Sprite m_sprite;
 };
 }
 
-#endif // LUAWIDGET_H
+#endif // BUTTON_H

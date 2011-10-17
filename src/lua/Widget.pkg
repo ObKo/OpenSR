@@ -10,7 +10,7 @@ class Widget: public Object
 public:
     void draw();
 
-    Rangers::Rect getBoundingRect() const;
+    Rangers::Rect getBoundingRect();
     void mouseMove(int x, int y);
     void mouseEnter();
     void mouseLeave();

@@ -20,6 +20,7 @@
 #include <ctime>
 #include <iostream>
 #include <libRanger.h>
+#include <Types.h>
 
 using namespace std;
 
@@ -220,6 +221,12 @@ Log::Logger& Log::Logger::operator<<(const wchar_t *v)
 Log::Logger& Log::Logger::operator<<(size_t v)
 {
     *m_stream << v;
+    return *this;
+}
+
+Log::Logger& Log::Logger::operator<<(const Rect& r)
+{
+    *m_stream << "[" << r.x1 << ", " << r.y1 << ", " << r.x2 << ", " << r.y2 << "]";
     return *this;
 }
 }

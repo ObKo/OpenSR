@@ -46,6 +46,7 @@ public:
     void setWidth(float width);
     void setHeight(float height);
     void setTextureScaling(TextureScaling  ts);
+    void setTexture(boost::shared_ptr<Texture> texture);
 
     float width() const;
     float height() const;

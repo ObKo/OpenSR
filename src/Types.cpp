@@ -39,4 +39,24 @@ Rect::Rect()
     x2 = 0;
     y2 = 0;
 }
+
+Rect& Rect::operator+=(const Rect& other)
+{
+    if (other.x2 > x2)
+        x2 = other.x2;
+    if (other.y2 > y2)
+        y2 = other.y2;
+    if (other.x1 < x1)
+        x1 = other.x1;
+    if (other.y1 < y1)
+        y1 = other.y1;
+    return *this;
+}
+
+Rect operator+(const Rect& r1, const Rect& r2)
+{
+    Rect result(r1);
+    result += r2;
+    return result;
+}
 }

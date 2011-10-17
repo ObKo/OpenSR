@@ -25,6 +25,8 @@
 
 namespace Rangers
 {
+struct Rect;
+
 enum LogLevel {LDEBUG, LINFO, LWARNING, LERROR};
 
 struct LogEntry
@@ -79,6 +81,7 @@ public:
     Logger& operator <<(const std::string& v);
     Logger& operator <<(const char *v);
     Logger& operator <<(const wchar_t *v);
+    Logger& operator <<(const Rect& r);
 
 private:
     LogLevel m_logLevel;

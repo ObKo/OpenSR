@@ -337,7 +337,7 @@ boost::shared_ptr< Font > ResourceManager::loadFont(const std::wstring& name, in
     return boost::shared_ptr<Font>();
 }
 
-LuaWidget ResourceManager::loadLuaWidget(const std::wstring& name, Object *parent)
+LuaWidget ResourceManager::loadLuaWidget(const std::wstring& name, Widget *parent)
 {
     size_t luaSize = 0;
     char *luaData = loadData(name, luaSize);

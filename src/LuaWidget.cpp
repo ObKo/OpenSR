@@ -37,7 +37,7 @@ public:
     }
 };
 
-LuaWidget::LuaWidget(const std::wstring& fileName, Rangers::Object* parent): Widget(parent)
+LuaWidget::LuaWidget(const std::wstring& fileName, Rangers::Widget* parent): Widget(parent)
 {
     m_luaState = boost::shared_ptr<lua_State>(lua_open(), LuaDeleter());
     luaopen_base(m_luaState.get());
@@ -54,13 +54,14 @@ LuaWidget::LuaWidget(const std::wstring& fileName, Rangers::Object* parent): Wid
     tolua_AnimatedTexture_open(m_luaState.get());
     tolua_LuaWidget_open(m_luaState.get());
     tolua_GAISprite_open(m_luaState.get());
+    tolua_Button_open(m_luaState.get());
     tolua_pushusertype(m_luaState.get(), this, "Rangers::LuaWidget");
     lua_setglobal(m_luaState.get(), "this");
     if (luaL_dofile(m_luaState.get(), toLocal(fileName).c_str()))
         Log::error() << "Cannot load lua script: " << lua_tostring(m_luaState.get(), -1);
 }
 
-LuaWidget::LuaWidget(const char *data, size_t size, const std::string& name, Object *parent): Widget(parent)
+LuaWidget::LuaWidget(const char *data, size_t size, const std::string& name, Widget *parent): Widget(parent)
 {
     m_luaState = boost::shared_ptr<lua_State>(lua_open(), LuaDeleter());
     luaopen_base(m_luaState.get());
@@ -77,15 +78,15 @@ LuaWidget::LuaWidget(const char *data, size_t size, const std::string& name, Obj
     tolua_AnimatedTexture_open(m_luaState.get());
     tolua_LuaWidget_open(m_luaState.get());
     tolua_GAISprite_open(m_luaState.get());
+    tolua_Button_open(m_luaState.get());
     tolua_pushusertype(m_luaState.get(), this, "Rangers::LuaWidget");
     lua_setglobal(m_luaState.get(), "this");
     if (luaL_loadbuffer(m_luaState.get(), data, size, name.c_str()) || lua_pcall(m_luaState.get(), 0, LUA_MULTRET, 0))
         Log::error() << "Cannot load lua script: " << lua_tostring(m_luaState.get(), -1);
 }
 
-LuaWidget::LuaWidget(Rangers::Object* parent): Widget(parent), m_luaState(boost::shared_ptr<lua_State>((lua_State*)0, LuaDeleter()))
+LuaWidget::LuaWidget(Rangers::Widget* parent): Widget(parent), m_luaState(boost::shared_ptr<lua_State>((lua_State*)0, LuaDeleter()))
 {
-
 }
 
 LuaWidget::LuaWidget(const LuaWidget& other): Widget(other)
@@ -120,14 +121,16 @@ Rect LuaWidget::getBoundingRect()
     if (lua_isnil(m_luaState.get(), -1))
     {
         unlock();
-        return Rect();
+        return Widget::getBoundingRect();
     }
 
+    Rect bb;
     lua_pcall(m_luaState.get(), 0, 1, 0);
-    Rect bb = *((Rect*)(tolua_tousertype(m_luaState.get(), -1, NULL)));
+    if (Rect *bp = ((Rect*)(tolua_tousertype(m_luaState.get(), -1, 0))))
+        bb = *bp;
     lua_pop(m_luaState.get(), 1);
     unlock();
-    return bb;
+    return bb + Widget::getBoundingRect();
 }
 
 void LuaWidget::keyPressed(SDL_keysym key)
@@ -158,6 +161,7 @@ void LuaWidget::mouseEnter()
     if (lua_pcall(m_luaState.get(), 0, 0, 0))
         Log::warning() << "Lua: " << lua_tostring(m_luaState.get(), -1);
     unlock();
+    Widget::mouseEnter();
 }
 
 void LuaWidget::mouseLeave()
@@ -172,6 +176,7 @@ void LuaWidget::mouseLeave()
     if (lua_pcall(m_luaState.get(), 0, 0, 0))
         Log::warning() << "Lua: " << lua_tostring(m_luaState.get(), -1);
     unlock();
+    Widget::mouseLeave();
 }
 
 void LuaWidget::mouseMove(int x, int y)
@@ -188,6 +193,7 @@ void LuaWidget::mouseMove(int x, int y)
     lua_pushinteger(m_luaState.get(), y);
     lua_pcall(m_luaState.get(), 2, 0, 0);
     unlock();
+    Widget::mouseMove(x, y);
 }
 
 void LuaWidget::mouseDown(uint8_t key, int x, int y)

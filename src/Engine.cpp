@@ -535,7 +535,8 @@ void Engine::processMouseMove(SDL_MouseMotionEvent e)
     for (std::list<Widget*>::iterator i = m_widgets.begin(); i != m_widgets.end(); i++)
     {
         Rect bb = (*i)->getBoundingRect();
-        if ((bb.x1 < e.x) && (bb.x2 > e.x) && (bb.y1 < e.y) && (bb.y2 > e.y))
+        Vector pos = (*i)->position();
+        if ((bb.x1 + pos.x < e.x) && (bb.x2 + pos.x > e.x) && (bb.y1 + pos.y < e.y) && (bb.y2 + pos.y > e.y))
         {
             if ((*i) != m_currentWidget)
             {
@@ -544,7 +545,7 @@ void Engine::processMouseMove(SDL_MouseMotionEvent e)
                 m_currentWidget = *i;
                 m_currentWidget->mouseEnter();
             }
-            (*i)->mouseMove(e.x - bb.x1, e.y - bb.y1);
+            (*i)->mouseMove(e.x - bb.x1 - pos.x, e.y - bb.y1 - pos.y);
             return;
         }
     }
