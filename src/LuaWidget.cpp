@@ -39,14 +39,41 @@ public:
     }
 };
 
+LuaWidget::LuaActionListener::LuaActionListener(LuaWidget *widget): m_widget(widget)
+{
+
+}
+
 void LuaWidget::LuaActionListener::actionPerformed(const Action &action)
 {
-    Log::debug() << "Lua action: " << action.type() << " from " << (int)action.source();
+    m_widget->lock();
+    lua_getglobal(m_widget->m_luaState.get(), "actionPerformed");
+    if (lua_isnil(m_widget->m_luaState.get(), -1))
+    {
+        m_widget->unlock();
+        return;
+    }
+    //FIXME: const * -> *
+    tolua_pushusertype(m_widget->m_luaState.get(), (void *)&action, "Rangers::Action");
+    if (lua_pcall(m_widget->m_luaState.get(), 1, 0, 0))
+        Log::warning() << "Lua: " << lua_tostring(m_widget->m_luaState.get(), -1);
+
+    m_widget->unlock();
+}
+
+LuaWidget* LuaWidget::LuaActionListener::associatedWidget()
+{
+    return m_widget;
+}
+
+void LuaWidget::LuaActionListener::setAssociatedWidget(LuaWidget *widget)
+{
+    m_widget = widget;
 }
 
 LuaWidget::LuaWidget(const std::wstring& fileName, Rangers::Widget* parent): Widget(parent)
 {
-    m_actionListener = new LuaActionListener();
+    m_actionListener = new LuaActionListener(this);
     m_luaState = boost::shared_ptr<lua_State>(lua_open(), LuaDeleter());
     luaopen_base(m_luaState.get());
     luaopen_table(m_luaState.get());
@@ -73,7 +100,7 @@ LuaWidget::LuaWidget(const std::wstring& fileName, Rangers::Widget* parent): Wid
 
 LuaWidget::LuaWidget(const char *data, size_t size, const std::string& name, Widget *parent): Widget(parent)
 {
-    m_actionListener = new LuaActionListener();
+    m_actionListener = new LuaActionListener(this);
     m_luaState = boost::shared_ptr<lua_State>(lua_open(), LuaDeleter());
     luaopen_base(m_luaState.get());
     luaopen_table(m_luaState.get());
@@ -100,17 +127,34 @@ LuaWidget::LuaWidget(const char *data, size_t size, const std::string& name, Wid
 
 LuaWidget::LuaWidget(Rangers::Widget* parent): Widget(parent), m_luaState(boost::shared_ptr<lua_State>((lua_State*)0, LuaDeleter()))
 {
+    m_actionListener = new LuaActionListener(this);
 }
 
 LuaWidget::LuaWidget(const LuaWidget& other): Widget(other)
 {
     m_luaState = other.m_luaState;
+    m_actionListener = other.m_actionListener;
+    if(m_luaState)
+    {
+        tolua_pushusertype(m_luaState.get(), this, "Rangers::LuaWidget");
+        lua_setglobal(m_luaState.get(), "this");
+    }
+    //FIXME: Do something with action listener and LUA.
+    m_actionListener->setAssociatedWidget(this);
 }
 
 LuaWidget& LuaWidget::operator=(const LuaWidget& other)
 {
     Widget::operator=(other);
     m_luaState = other.m_luaState;
+    m_actionListener = other.m_actionListener;
+    if(m_luaState)
+    {
+        tolua_pushusertype(m_luaState.get(), this, "Rangers::LuaWidget");
+        lua_setglobal(m_luaState.get(), "this");
+    }
+    //FIXME: Do something with action listener and LUA.
+    m_actionListener->setAssociatedWidget(this);
 
     return *this;
 }

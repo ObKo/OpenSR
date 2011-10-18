@@ -111,6 +111,7 @@ void Widget::keyPressed(SDL_keysym key)
 
 void Widget::mouseDown(uint8_t key, int x, int y)
 {
+    lock();
     if (key == SDL_BUTTON_LEFT)
         m_leftMouseButtonPressed = true;
     if (m_currentChild)
@@ -119,10 +120,12 @@ void Widget::mouseDown(uint8_t key, int x, int y)
         Vector pos = m_currentChild->position();
         m_currentChild->mouseDown(key, x - b.x1 - pos.x, y - b.y1 - pos.y);
     }
+    unlock();
 }
 
 void Widget::mouseUp(uint8_t key, int x, int y)
 {
+    lock();
     if (m_currentChild)
     {
         Rect b = m_currentChild->getBoundingRect();
@@ -134,6 +137,7 @@ void Widget::mouseUp(uint8_t key, int x, int y)
         m_leftMouseButtonPressed = false;
         mouseClick(x, y);
     }
+    unlock();
 }
 
 void Widget::mouseClick(int x, int y)
@@ -212,9 +216,11 @@ void Widget::removeListener(ActionListener* listener)
 
 void Widget::action(const Action& action)
 {
+    lock();
     if (!m_listeners.size())
         return;
     for (std::list<ActionListener*>::iterator i = m_listeners.begin(); i != m_listeners.end(); i++)
         (*i)->actionPerformed(action);
+    unlock();
 }
 }

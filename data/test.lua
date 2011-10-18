@@ -23,9 +23,9 @@ ship = resources:loadDeltaAnimation(L"DATA/FormMain3/2Ship1.gai", this)
 ship:setPosition(0, engine:screenHeight() - ship:height())
 ship:setLayer(1)
 
-button = Rangers.Button:new(resources:loadTexture(L"DATA/FormMain2/2ButExitN.gi"), resources:loadTexture(L"DATA/FormMain2/2ButExitA.gi"), resources:loadTexture(L"DATA/FormMain2/2ButExitD.gi"), this);
-button:setPosition(100, 100)
-button:addListener(actionListener)
+exitButton = Rangers.Button:new(resources:loadTexture(L"DATA/FormMain2/2ButExitN.gi"), resources:loadTexture(L"DATA/FormMain2/2ButExitA.gi"), resources:loadTexture(L"DATA/FormMain2/2ButExitD.gi"), this);
+exitButton:setPosition(100, 100)
+exitButton:addListener(actionListener)
 
 t = 0
 bgspeed = 5/1000
@@ -45,6 +45,12 @@ function getBoundingRect()
   r.y1 = 0.0
   r.y2 = ship:height()
   return r
+end
+
+function actionPerformed(action)
+    if action:source() == exitButton then
+        engine:quit(0)
+    end
 end
 
 function processLogic(dt)

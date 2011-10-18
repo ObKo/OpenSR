@@ -79,18 +79,22 @@ void Button::mouseLeave()
 }
 void Button::mouseDown(uint8_t key, int x, int y)
 {
+    lock();
     if (m_pressedTexture)
         m_sprite.setTexture(m_pressedTexture);
     Widget::mouseDown(key, x, y);
+    unlock();
 }
 
 void Button::mouseUp(uint8_t key, int x, int y)
 {
+    lock();
     if (m_hoverTexture)
         m_sprite.setTexture(m_hoverTexture);
     else if (m_mainTexture)
         m_sprite.setTexture(m_mainTexture);
     Widget::mouseUp(key, x, y);
+    unlock();
 }
 
 void Button::mouseClick(int x, int y)

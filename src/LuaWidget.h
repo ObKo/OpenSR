@@ -31,7 +31,14 @@ public:
     class LuaActionListener: public ActionListener
     {
     public:
+        LuaActionListener(LuaWidget *widget);
         void actionPerformed(const Action &action);
+
+        LuaWidget* associatedWidget();
+        void setAssociatedWidget(LuaWidget *widget);
+
+    private:
+        LuaWidget *m_widget;
     };
 
     //TODO: Remove this

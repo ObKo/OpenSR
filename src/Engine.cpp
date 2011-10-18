@@ -367,7 +367,9 @@ int Engine::run()
         processEvents();
         paint();
     }
-    SDL_Quit();// SDL_INIT_VIDEO)
+    m_fpsThread->join();
+    m_logicThread->join();
+    SDL_Quit();
     return m_exitCode;
 }
 
@@ -389,8 +391,6 @@ void Engine::quit(int code)
 {
     m_gameRunning = false;
     m_exitCode = code;
-    m_logicThread->join();
-    m_fpsThread->join();
 }
 
 int Engine::screenHeight() const
