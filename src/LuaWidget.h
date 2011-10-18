@@ -59,7 +59,7 @@ public:
 
 private:
     boost::shared_ptr<lua_State> m_luaState;
-    LuaActionListener m_actionListener;
+    LuaActionListener *m_actionListener;
 };
 }
 

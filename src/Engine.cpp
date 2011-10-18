@@ -62,7 +62,7 @@ long long Engine::getTicks()
 }
 #endif
 
-Engine::Engine(int argc, char **argv): m_argc(argc), m_argv(argv)
+Engine::Engine(int argc, char **argv): m_argc(argc), m_argv(argv), m_focusedWidget(0)
 {
     if (engineInstance)
     {

@@ -57,6 +57,7 @@ Widget::Widget(const Rangers::Widget& other): Object(other)
     m_leftMouseButtonPressed = other.m_leftMouseButtonPressed;
     m_width = other.m_width;
     m_height = other.m_height;
+    m_listeners = other.m_listeners;
     markToUpdate();
 }
 
@@ -192,6 +193,7 @@ Widget& Widget::operator=(const Rangers::Widget& other)
 
     m_width = other.m_width;
     m_height = other.m_height;
+    m_listeners = other.m_listeners;
     markToUpdate();
 
     Object::operator=(other);
@@ -210,7 +212,9 @@ void Widget::removeListener(ActionListener* listener)
 
 void Widget::action(const Action& action)
 {
-    for(std::list<ActionListener*>::iterator i = m_listeners.begin(); i != m_listeners.end(); i++)
+    if (!m_listeners.size())
+        return;
+    for (std::list<ActionListener*>::iterator i = m_listeners.begin(); i != m_listeners.end(); i++)
         (*i)->actionPerformed(action);
 }
 }

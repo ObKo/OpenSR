@@ -95,7 +95,7 @@ void Button::mouseUp(uint8_t key, int x, int y)
 
 void Button::mouseClick(int x, int y)
 {
-    action(Action(this, Action::BUTTON_CLICKED, Action::Argument()));
+    action(Action(this, Action::BUTTON_CLICKED, Action::Argument(L"0")));
 }
 }
 

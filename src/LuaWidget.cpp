@@ -46,6 +46,7 @@ void LuaWidget::LuaActionListener::actionPerformed(const Action &action)
 
 LuaWidget::LuaWidget(const std::wstring& fileName, Rangers::Widget* parent): Widget(parent)
 {
+    m_actionListener = new LuaActionListener();
     m_luaState = boost::shared_ptr<lua_State>(lua_open(), LuaDeleter());
     luaopen_base(m_luaState.get());
     luaopen_table(m_luaState.get());
@@ -64,7 +65,7 @@ LuaWidget::LuaWidget(const std::wstring& fileName, Rangers::Widget* parent): Wid
     tolua_Button_open(m_luaState.get());
     tolua_pushusertype(m_luaState.get(), this, "Rangers::LuaWidget");
     lua_setglobal(m_luaState.get(), "this");
-    tolua_pushusertype(m_luaState.get(), &m_actionListener, "Rangers::LuaWidget::LuaActionListener");
+    tolua_pushusertype(m_luaState.get(), m_actionListener, "Rangers::LuaWidget::LuaActionListener");
     lua_setglobal(m_luaState.get(), "actionListener");
     if (luaL_dofile(m_luaState.get(), toLocal(fileName).c_str()))
         Log::error() << "Cannot load lua script: " << lua_tostring(m_luaState.get(), -1);
@@ -72,6 +73,7 @@ LuaWidget::LuaWidget(const std::wstring& fileName, Rangers::Widget* parent): Wid
 
 LuaWidget::LuaWidget(const char *data, size_t size, const std::string& name, Widget *parent): Widget(parent)
 {
+    m_actionListener = new LuaActionListener();
     m_luaState = boost::shared_ptr<lua_State>(lua_open(), LuaDeleter());
     luaopen_base(m_luaState.get());
     luaopen_table(m_luaState.get());
@@ -90,7 +92,7 @@ LuaWidget::LuaWidget(const char *data, size_t size, const std::string& name, Wid
     tolua_Button_open(m_luaState.get());
     tolua_pushusertype(m_luaState.get(), this, "Rangers::LuaWidget");
     lua_setglobal(m_luaState.get(), "this");
-    tolua_pushusertype(m_luaState.get(), &m_actionListener, "Rangers::LuaWidget::LuaActionListener");
+    tolua_pushusertype(m_luaState.get(), m_actionListener, "Rangers::LuaWidget::LuaActionListener");
     lua_setglobal(m_luaState.get(), "actionListener");
     if (luaL_loadbuffer(m_luaState.get(), data, size, name.c_str()) || lua_pcall(m_luaState.get(), 0, LUA_MULTRET, 0))
         Log::error() << "Cannot load lua script: " << lua_tostring(m_luaState.get(), -1);
