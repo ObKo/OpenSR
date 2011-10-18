@@ -1,0 +1,13 @@
+$#include "Action.h"
+$#include "ActionListener.h"
+
+$pfile "Action.pkg"
+
+namespace Rangers
+{
+class ActionListener
+{
+public:
+    virtual void actionPerformed(const Rangers::Action &action) = 0;
+};
+}

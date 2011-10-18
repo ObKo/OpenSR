@@ -19,6 +19,7 @@
 #include "Button.h"
 #include "Sprite.h"
 #include "Log.h"
+#include "Action.h"
 
 namespace Rangers
 {
@@ -94,6 +95,7 @@ void Button::mouseUp(uint8_t key, int x, int y)
 
 void Button::mouseClick(int x, int y)
 {
+    action(Action(this, Action::BUTTON_CLICKED, Action::Argument()));
 }
 }
 

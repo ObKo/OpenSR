@@ -1,6 +1,7 @@
 $#include <Widget.h> 
 $#include <Types.h>
 $#include <SDL.h>
+$#include <ActionListener.h>
 $pfile "Object.pkg"
 
 namespace Rangers
@@ -25,5 +26,8 @@ public:
     
     void addWidget(Rangers::Widget *w);
     void removeWidget(Rangers::Widget *w);
+
+    void addListener(Rangers::ActionListener* listener);
+    void removeListener(Rangers::ActionListener* listener);
 };
 }

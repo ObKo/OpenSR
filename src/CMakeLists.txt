@@ -24,6 +24,7 @@ SET(SOURCES
     LuaWidget.cpp
     GAISprite.cpp
     Button.cpp
+	Action.cpp
 )
 
 SET(HEADERS 
@@ -51,6 +52,8 @@ SET(HEADERS
     LuaWidget.h
     GAISprite.h
     Button.h
+	Action.h
+	ActionListener.h
 )
 
 SET(LUA_PACKAGES
@@ -68,6 +71,8 @@ SET(LUA_PACKAGES
     lua/LuaWidget.pkg
     lua/GAISprite.pkg
     lua/Button.pkg
+	lua/Action.pkg
+	lua/ActionListener.pkg
 )
 
 INCLUDE_DIRECTORIES(

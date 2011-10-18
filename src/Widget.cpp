@@ -19,6 +19,8 @@
 #include "Widget.h"
 #include <iostream>
 #include "Log.h"
+#include "Action.h"
+#include "ActionListener.h"
 
 namespace Rangers
 {
@@ -196,15 +198,19 @@ Widget& Widget::operator=(const Rangers::Widget& other)
     return *this;
 }
 
-void Widget::addCallback(Callback* callback)
+void Widget::addListener(ActionListener* listener)
 {
-    m_callbacks.push_back(callback);
+    m_listeners.push_back(listener);
 }
 
-void Widget::removeCallback(Callback* callback)
+void Widget::removeListener(ActionListener* listener)
 {
-    m_callbacks.remove(callback);
-}
+    m_listeners.remove(listener);
 }
 
-
+void Widget::action(const Action& action)
+{
+    for(std::list<ActionListener*>::iterator i = m_listeners.begin(); i != m_listeners.end(); i++)
+        (*i)->actionPerformed(action);
+}
+}

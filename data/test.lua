@@ -25,6 +25,7 @@ ship:setLayer(1)
 
 button = Rangers.Button:new(resources:loadTexture(L"DATA/FormMain2/2ButExitN.gi"), resources:loadTexture(L"DATA/FormMain2/2ButExitA.gi"), resources:loadTexture(L"DATA/FormMain2/2ButExitD.gi"), this);
 button:setPosition(100, 100)
+button:addListener(actionListener)
 
 t = 0
 bgspeed = 5/1000

@@ -23,7 +23,8 @@
 
 namespace Rangers
 {
-class Callback;
+class ActionListener;
+class Action;
 class Widget: public Object
 {
 public:
@@ -51,15 +52,17 @@ public:
     void addWidget(Widget *w);
     void removeWidget(Widget *w);
 
-    void addCallback(Callback* callback);
-    void removeCallback(Callback* callback);
+    void addListener(ActionListener* listener);
+    void removeListener(ActionListener* listener);
 
 protected:
     std::list<Widget *> m_childWidgets;
-    std::list<Callback*> m_callbacks;
+    std::list<ActionListener*> m_listeners;
     Widget *m_currentChild;
     int m_width, m_height;
     bool m_leftMouseButtonPressed;
+
+    void action(const Action& action);
 };
 }
 

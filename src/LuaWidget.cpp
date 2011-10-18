@@ -20,6 +20,8 @@
 #include "Log.h"
 #include "Types.h"
 #include "Object.h"
+#include "ActionListener.h"
+#include "Action.h"
 
 namespace Rangers
 {
@@ -36,6 +38,11 @@ public:
         }
     }
 };
+
+void LuaWidget::LuaActionListener::actionPerformed(const Action &action)
+{
+    Log::debug() << "Lua action: " << action.type() << " from " << (int)action.source();
+}
 
 LuaWidget::LuaWidget(const std::wstring& fileName, Rangers::Widget* parent): Widget(parent)
 {
@@ -57,6 +64,8 @@ LuaWidget::LuaWidget(const std::wstring& fileName, Rangers::Widget* parent): Wid
     tolua_Button_open(m_luaState.get());
     tolua_pushusertype(m_luaState.get(), this, "Rangers::LuaWidget");
     lua_setglobal(m_luaState.get(), "this");
+    tolua_pushusertype(m_luaState.get(), &m_actionListener, "Rangers::LuaWidget::LuaActionListener");
+    lua_setglobal(m_luaState.get(), "actionListener");
     if (luaL_dofile(m_luaState.get(), toLocal(fileName).c_str()))
         Log::error() << "Cannot load lua script: " << lua_tostring(m_luaState.get(), -1);
 }
@@ -81,6 +90,8 @@ LuaWidget::LuaWidget(const char *data, size_t size, const std::string& name, Wid
     tolua_Button_open(m_luaState.get());
     tolua_pushusertype(m_luaState.get(), this, "Rangers::LuaWidget");
     lua_setglobal(m_luaState.get(), "this");
+    tolua_pushusertype(m_luaState.get(), &m_actionListener, "Rangers::LuaWidget::LuaActionListener");
+    lua_setglobal(m_luaState.get(), "actionListener");
     if (luaL_loadbuffer(m_luaState.get(), data, size, name.c_str()) || lua_pcall(m_luaState.get(), 0, LUA_MULTRET, 0))
         Log::error() << "Cannot load lua script: " << lua_tostring(m_luaState.get(), -1);
 }

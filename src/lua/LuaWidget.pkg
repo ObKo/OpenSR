@@ -1,7 +1,10 @@
 $#include <LuaWidget.h>
 $#include <Types.h>
+$#include <ActionListener.h>
+$#include <Action.h>
 
 $pfile "Widget.pkg"
+$pfile "ActionListener.pkg"
 
 namespace Rangers
 {
@@ -25,5 +28,11 @@ public:
     
     void processMain();
     void processLogic(int dt);
+
+    class LuaActionListener: public ActionListener
+    {
+    public:
+        void actionPerformed(const Rangers::Action &action);
+    };
 };
 }

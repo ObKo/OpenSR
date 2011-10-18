@@ -1,0 +1,20 @@
+$#include <boost/variant.hpp>
+$#include "Action.h"
+
+$pfile "Types.pkg"
+
+namespace Rangers
+{
+class Action
+{
+public:
+    enum Type {BUTTON_CLICKED};
+    typedef boost::variant<std::wstring, Rect> Argument;
+
+    Action(Rangers::Widget *source, Type type, const Argument& argument);
+
+    Rangers::Widget* source() const;
+    Type type() const;
+    Argument argument() const;
+};
+}

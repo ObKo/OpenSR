@@ -21,12 +21,19 @@
 
 #include "Widget.h"
 #include "LuaBindings.h"
+#include "ActionListener.h"
 
 namespace Rangers
 {
 class LuaWidget: public Widget
 {
 public:
+    class LuaActionListener: public ActionListener
+    {
+    public:
+        void actionPerformed(const Action &action);
+    };
+
     //TODO: Remove this
     LuaWidget(const std::wstring& fileName, Widget *parent = 0);
     LuaWidget(const char *data, size_t size, const std::string& name, Widget *parent = 0);
@@ -52,6 +59,7 @@ public:
 
 private:
     boost::shared_ptr<lua_State> m_luaState;
+    LuaActionListener m_actionListener;
 };
 }
 
