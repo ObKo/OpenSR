@@ -94,7 +94,16 @@ Engine::Engine(int argc, char **argv): m_argc(argc), m_argv(argv)
 #endif
 
     if (configFile.is_open())
-        boost::property_tree::read_ini(configFile, m_properties);
+    {
+        try
+        {
+            boost::property_tree::read_ini(configFile, m_properties);
+        }
+        catch (boost::property_tree::ini_parser_error &error)
+        {
+            Log::error() << "Error parsing ini file " << m_configPath << ":" << error.line() << ": " << error.message();
+        }
+    }
 
     configFile.close();
 
@@ -194,7 +203,10 @@ void Engine::init(int w, int h, bool fullscreen)
     }
     Log::info() << m_mainDataDir;
 #ifdef WIN32
-    m_mainDataDir = fromLocal((directory(std::string(m_argv[0]))).c_str());
+    if (m_mainDataDir == L"")
+    {
+        m_mainDataDir = fromLocal((directory(std::string(m_argv[0]))).c_str());
+    }
 #else
     if (m_mainDataDir == L"")
     {

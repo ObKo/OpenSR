@@ -67,7 +67,7 @@ bool checkDirWritable(const std::wstring& path)
 {
 //FIXME: more correct file name.
 #ifdef WIN32
-    FILE *fp = _wfopen((path + L"\\98hj8u.tmp").c_str(), "w");
+    FILE *fp = _wfopen((path + L"\\98hj8u.tmp").c_str(), L"w");
 #else
     FILE *fp = fopen((toLocal(path) + "/98hj8u.tmp").c_str(), "w");
 #endif

@@ -203,6 +203,7 @@ void LuaWidget::mouseDown(uint8_t key, int x, int y)
     if (lua_isnil(m_luaState.get(), -1))
     {
         unlock();
+        Widget::mouseDown(key, x, y);
         return;
     }
     lua_pushinteger(m_luaState.get(), key);
@@ -221,6 +222,7 @@ void LuaWidget::mouseUp(uint8_t key, int x, int y)
     if (lua_isnil(m_luaState.get(), -1))
     {
         unlock();
+        Widget::mouseUp(key, x, y);
         return;
     }
     lua_pushinteger(m_luaState.get(), key);

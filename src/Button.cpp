@@ -94,7 +94,6 @@ void Button::mouseUp(uint8_t key, int x, int y)
 
 void Button::mouseClick(int x, int y)
 {
-    Log::debug() << "Button clicked";
 }
 }
 

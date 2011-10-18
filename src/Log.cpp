@@ -218,7 +218,19 @@ Log::Logger& Log::Logger::operator<<(const wchar_t *v)
     return *this;
 }
 
-Log::Logger& Log::Logger::operator<<(size_t v)
+Log::Logger& Log::Logger::operator <<(unsigned int v)
+{
+    *m_stream << v;
+    return *this;
+}
+
+Log::Logger& Log::Logger::operator <<(unsigned long v)
+{
+    *m_stream << v;
+    return *this;
+}
+
+Log::Logger& Log::Logger::operator <<(unsigned long long v)
 {
     *m_stream << v;
     return *this;

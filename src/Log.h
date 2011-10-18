@@ -75,8 +75,10 @@ public:
     Logger& operator <<(int v);
     Logger& operator <<(long v);
     Logger& operator <<(long long v);
+    Logger& operator <<(unsigned int v);
+    Logger& operator <<(unsigned long v);
+    Logger& operator <<(unsigned long long v);
     Logger& operator <<(float v);
-    Logger& operator <<(size_t v);
     Logger& operator <<(bool v);
     Logger& operator <<(const std::string& v);
     Logger& operator <<(const char *v);
