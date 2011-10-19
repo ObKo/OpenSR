@@ -30,7 +30,6 @@ class Node: public Object
 public:
     void draw();
     void processLogic(int dt);
-    void processMain();
 };
 }
 #endif

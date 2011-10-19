@@ -20,6 +20,7 @@
 #include "Log.h"
 #include "Texture.h"
 #include <cstdlib>
+#include "ResourceManager.h"
 
 extern void drawF5ToBGRA(unsigned char * bufdes, int bufdesll, const unsigned char * graphbuf);
 extern void copyImageData(unsigned char *bufdes, int destwidth, int x, int y, int w, int h, unsigned char *graphbuf);
@@ -42,67 +43,66 @@ GAISprite::GAISprite(Object *parent): AnimatedSprite(parent)
 
 GAISprite::GAISprite(const char *data, int size, GIFrame baseFrame, Object *parent): AnimatedSprite(parent)
 {
-    m_gaiHeader = loadGAIHeader(data);
     m_animationTime = 0;
     m_currentFrame = 0;
     m_singleShot = false;
     m_needNextFrame = true;
     m_textureBuffer = 0;
 
-    unsigned char *baseFrameData = new unsigned char[baseFrame.width * baseFrame.height * 4];
-    memcpy(baseFrameData, baseFrame.data, baseFrame.width * baseFrame.height * 4);
-    m_baseFrame = boost::shared_array<unsigned char>(baseFrameData);
-
-    m_baseFrameWidth = baseFrame.width;
-    m_baseFrameHeight = baseFrame.height;
-
-    if (m_gaiHeader.haveBackground)
-    {
-        m_width = m_gaiHeader.finishX - m_gaiHeader.startX;
-        m_height = m_gaiHeader.finishY - m_gaiHeader.startY;
-        int width = m_gaiHeader.finishX - m_gaiHeader.startX;
-        int height = m_gaiHeader.finishY - m_gaiHeader.startY;
-
-        //Background as frame #0
-        m_gaiFrames.push_back(boost::shared_array<char>(0));
-
-        for (int i = 0; i < m_gaiHeader.frameCount; i++)
-        {
-            uint32_t giSeek , giSize;
-            const char *p = data + sizeof(GAIHeader) - sizeof(GIFrame *) + i * 2 * sizeof(uint32_t);
-            giSeek = *((uint32_t *)p);
-            p += sizeof(uint32_t);
-            giSize = *((uint32_t *)p);
-            p += sizeof(uint32_t);
-
-            if (giSeek && giSize)
-            {
-                uint32_t signature;
-                p = data + giSeek;
-                signature = *((uint32_t *)p);
-
-                if (signature == 0x31304c5a)
-                {
-                    size_t outsize;
-                    m_gaiFrames.push_back(boost::shared_array<char>((char*)unpackZL01((const unsigned char*)p, giSize, outsize)));
-                }
-                else
-                {
-                    char *data = new char[giSize];
-                    memcpy(data, p, giSize);
-                    m_gaiFrames.push_back(boost::shared_array<char>(data));
-                }
-            }
-        }
-
-        m_animationStarted = true;
-    }
-    setFrameRate(15);
-    m_texture = boost::shared_ptr<Texture>(new Texture(m_width, m_height));
+    loadGAI(data, size, baseFrame);
     markToUpdate();
 }
 
-GAISprite::GAISprite(const GAISprite &other): AnimatedSprite(other)
+GAISprite::GAISprite(const std::wstring& name, Object *parent): AnimatedSprite(parent)
+{
+    m_animationTime = 0;
+    m_currentFrame = 0;
+    m_singleShot = false;
+    m_needNextFrame = true;
+    m_textureBuffer = 0;
+    m_textureBuffer = 0;
+    m_width = 0;
+    m_height = 0;
+    m_animationStarted = false;
+    m_texture = boost::shared_ptr<Texture>((Texture*)0);
+
+    std::wstring sfx = suffix(name);
+    std::transform(sfx.begin(), sfx.end(), sfx.begin(), std::towlower);
+    if (sfx == L"gai")
+    {
+        size_t s;
+        char *data = ResourceManager::instance()->loadData(name, s);
+        char *bgFrameData = 0;
+
+        if (data)
+        {
+            GAIHeader header = loadGAIHeader(data);
+
+            if (!header.haveBackground)
+            {
+                Log::error() << "Unsupported gai format";
+            }
+            else
+            {
+                size_t size;
+                bgFrameData = ResourceManager::instance()->loadData(directory(name) + basename(name) + L".gi", size);
+                if (bgFrameData)
+                {
+                    GIFrame bgFrame = loadGIFile(bgFrameData);
+                    delete[] bgFrameData;
+                    loadGAI(data, s, bgFrame);
+                }
+            }
+            delete[] data;
+        }
+    }
+    else
+        Log::error() << "Unknown animation format: " << sfx;
+
+    markToUpdate();
+}
+
+GAISprite::GAISprite(const GAISprite & other): AnimatedSprite(other)
 {
     m_gaiFrames.assign(other.m_gaiFrames.begin(), other.m_gaiFrames.end());
     m_needNextFrame = true;
@@ -125,7 +125,7 @@ GAISprite::~GAISprite()
         glDeleteBuffers(1, &m_textureBuffer);
 }
 
-GAISprite& GAISprite::operator=(const GAISprite& other)
+GAISprite& GAISprite::operator=(const GAISprite & other)
 {
     if (this == &other)
         return *this;
@@ -155,6 +155,9 @@ GAISprite& GAISprite::operator=(const GAISprite& other)
 
 void GAISprite::processLogic(int dt)
 {
+    if (!m_gaiFrames.size())
+        return;
+
     lock();
     if (m_animationStarted && m_frameDuration)
     {
@@ -173,57 +176,19 @@ void GAISprite::processLogic(int dt)
 
 void GAISprite::draw()
 {
-    if (!m_gaiFrames.size())
-        return;
-
-    if (!prepareDraw())
-        return;
-
-    if (!m_texture)
-        return;
-
-    glBindTexture(GL_TEXTURE_2D, m_texture->openGLTexture());
-
-    if (m_scaling == TEXTURE_TILE_X)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    else
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-
-    if (m_scaling == TEXTURE_TILE_Y)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    else
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-
-    if (m_scaling == TEXTURE_TILE)
-    {
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    }
-
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-    glEnableClientState(GL_ARRAY_BUFFER);
-
-    glBindBuffer(GL_ARRAY_BUFFER, m_buffer);
-
-    glVertexPointer(2, GL_FLOAT, sizeof(Vertex), 0);
-    glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), BUFFER_OFFSET(sizeof(float) * 2));
-
-    glDrawArrays(GL_QUADS, 0, m_vertexCount);
-
-    glDisableClientState(GL_ARRAY_BUFFER);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    glDisableClientState(GL_VERTEX_ARRAY);
-    endDraw();
+    Sprite::draw();
 }
 
 void GAISprite::processMain()
 {
-    Sprite::processMain();
+    AnimatedSprite::processMain();
     lock();
 
     if (!m_gaiFrames.size())
+    {
+        unlock();
         return;
+    }
 
     if (!m_textureBuffer)
     {
@@ -257,7 +222,7 @@ void GAISprite::processMain()
     unlock();
 }
 
-void GAISprite::loadGIFrame5(const char *data, unsigned char *background, int startX, int startY, int finishX, int finishY)
+void GAISprite::loadGIFrame5(const char * data, unsigned char * background, int startX, int startY, int finishX, int finishY)
 {
     const char *buffer = data;
     GIFrameHeader image = *((GIFrameHeader*)data);
@@ -315,6 +280,62 @@ void GAISprite::drawFrame(int i)
 void GAISprite::setFrame(int f)
 {
     Log::warning() << "Cannot set frame on GAISprite";
+}
+
+void GAISprite::loadGAI(const char * data, int size, GIFrame baseFrame)
+{
+    m_gaiHeader = loadGAIHeader(data);
+
+    unsigned char *baseFrameData = new unsigned char[baseFrame.width * baseFrame.height * 4];
+    memcpy(baseFrameData, baseFrame.data, baseFrame.width * baseFrame.height * 4);
+    m_baseFrame = boost::shared_array<unsigned char>(baseFrameData);
+
+    m_baseFrameWidth = baseFrame.width;
+    m_baseFrameHeight = baseFrame.height;
+
+    if (m_gaiHeader.haveBackground)
+    {
+        m_width = m_gaiHeader.finishX - m_gaiHeader.startX;
+        m_height = m_gaiHeader.finishY - m_gaiHeader.startY;
+        int width = m_gaiHeader.finishX - m_gaiHeader.startX;
+        int height = m_gaiHeader.finishY - m_gaiHeader.startY;
+
+        //Background as frame #0
+        m_gaiFrames.push_back(boost::shared_array<char>(0));
+
+        for (int i = 0; i < m_gaiHeader.frameCount; i++)
+        {
+            uint32_t giSeek , giSize;
+            const char *p = data + sizeof(GAIHeader) - sizeof(GIFrame *) + i * 2 * sizeof(uint32_t);
+            giSeek = *((uint32_t *)p);
+            p += sizeof(uint32_t);
+            giSize = *((uint32_t *)p);
+            p += sizeof(uint32_t);
+
+            if (giSeek && giSize)
+            {
+                uint32_t signature;
+                p = data + giSeek;
+                signature = *((uint32_t *)p);
+
+                if (signature == 0x31304c5a)
+                {
+                    size_t outsize;
+                    m_gaiFrames.push_back(boost::shared_array<char>((char*)unpackZL01((const unsigned char*)p, giSize, outsize)));
+                }
+                else
+                {
+                    char *data = new char[giSize];
+                    memcpy(data, p, giSize);
+                    m_gaiFrames.push_back(boost::shared_array<char>(data));
+                }
+            }
+        }
+
+        m_animationStarted = true;
+    }
+    setFrameRate(15);
+    m_texture = boost::shared_ptr<Texture>(new Texture(m_width, m_height));
 }
 
 void GAISprite::reset()

@@ -110,6 +110,8 @@ void AnimatedSprite::processLogic(int dt)
 {
     if (!m_texture)
         return;
+
+    lock();
     AnimatedTexture *texture = static_cast<AnimatedTexture *>(m_texture.get());
 
     if (m_animationStarted)
@@ -123,6 +125,7 @@ void AnimatedSprite::processLogic(int dt)
 
         m_animationTime += dt;
     }
+    unlock();
 }
 
 void AnimatedSprite::draw()
@@ -130,12 +133,11 @@ void AnimatedSprite::draw()
     if (!m_texture)
         return;
 
-    if (!prepareDraw())
+    GLuint texture = ((AnimatedTexture*)m_texture.get())->openGLTexture(m_currentFrame);
+    if (!texture)
         return;
 
-    GLuint texture = ((AnimatedTexture*)m_texture.get())->openGLTexture(m_currentFrame);
-
-    if (!texture)
+    if (!prepareDraw())
         return;
 
     glBindTexture(GL_TEXTURE_2D, texture);
@@ -184,19 +186,25 @@ float AnimatedSprite::frameRate() const
 
 void AnimatedSprite::setFrame(int f)
 {
+    lock();
     m_currentFrame = f;
+    unlock();
 }
 
 void AnimatedSprite::setFrameRate(float f)
 {
+    lock();
     if (f <= 0.0f)
         m_frameDuration = INT_MAX;
     m_frameDuration = 1000.0f / f;
+    unlock();
 }
 
 void AnimatedSprite::setSingleShot(bool ss)
 {
+    lock();
     m_singleShot = ss;
+    unlock();
 }
 
 bool AnimatedSprite::isSingleShot() const
@@ -211,18 +219,24 @@ bool AnimatedSprite::isStarted() const
 
 void AnimatedSprite::start()
 {
+    lock();
     m_animationStarted = true;
+    unlock();
 }
 
 void AnimatedSprite::stop()
 {
+    lock();
     m_animationStarted = false;
+    unlock();
 }
 
 void AnimatedSprite::reset()
 {
+    lock();
     m_animationStarted = false;
     m_currentFrame = 0;
     m_animationTime = 0;
+    unlock();
 }
 }

@@ -156,41 +156,6 @@ boost::shared_ptr<Texture> ResourceManager::loadTexture(const std::wstring& name
     return boost::shared_ptr<Texture>();
 }
 
-GAISprite ResourceManager::loadDeltaAnimation(const std::wstring& name, Object *parent)
-{
-    wstring sfx = suffix(name);
-    transform(sfx.begin(), sfx.end(), sfx.begin(), towlower);
-    if (sfx == L"gai")
-    {
-        size_t s;
-        char *data = loadData(name, s);
-        if (!data)
-            return GAISprite(parent);
-
-        char *bgFrameData = 0;
-        GAIHeader header = loadGAIHeader(data);
-
-        if (!header.haveBackground)
-        {
-            Log::error() << "Unsupported gai format";
-            return GAISprite(parent);
-        }
-
-        size_t size;
-        bgFrameData = loadData(directory(name) + basename(name) + L".gi", size);
-        if (!bgFrameData)
-            return GAISprite(parent);
-
-        GIFrame bgFrame = loadGIFile(bgFrameData);
-        delete bgFrameData;
-        return GAISprite(data, s, bgFrame, parent);
-    }
-    else
-        Log::error() << "Unknown animation format: " << sfx;
-
-    return 0;
-}
-
 boost::shared_ptr<AnimatedTexture> ResourceManager::loadAnimation(const std::wstring& name, bool backgroundLoading)
 {
     map<wstring, boost::shared_ptr<AnimatedTexture> >::const_iterator it = m_animations.find(name);
@@ -335,19 +300,6 @@ boost::shared_ptr< Font > ResourceManager::loadFont(const std::wstring& name, in
         Log::error() << "Unknown font format: " << sfx;
 
     return boost::shared_ptr<Font>();
-}
-
-LuaWidget ResourceManager::loadLuaWidget(const std::wstring& name, Widget *parent)
-{
-    size_t luaSize = 0;
-    char *luaData = loadData(name, luaSize);
-    LuaWidget widget;
-    if (luaData)
-    {
-        widget = LuaWidget(luaData, luaSize, toLocal(name), parent);
-        delete[] luaData;
-    }
-    return widget;
 }
 
 void ResourceManager::processMain()

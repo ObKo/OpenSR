@@ -168,18 +168,23 @@ void Sprite::draw()
 
 void Sprite::setOrigin(SpriteXOrigin xpos, SpriteYOrigin ypos)
 {
+    lock();
     m_xOrigin = xpos;
     m_yOrigin = ypos;
     markToUpdate();
+    unlock();
 }
 
 void Sprite::setTexture(boost::shared_ptr<Texture> texture)
 {
+    lock();
     m_texture = texture;
+    unlock();
 }
 
 void Sprite::setGeometry(float width, float height)
 {
+    lock();
     if (m_texture)
     {
         if (width <= 0)
@@ -191,33 +196,40 @@ void Sprite::setGeometry(float width, float height)
     m_width = width;
     m_height = height;
     markToUpdate();
+    unlock();
 }
 
 void Sprite::setHeight(float height)
 {
+    lock();
     if (m_texture)
         if (height <= 0)
             height = m_texture->height();
 
     m_height = height;
     markToUpdate();
+    unlock();
 }
 
 void Sprite::setWidth(float width)
 {
+    lock();
     if (m_texture)
         if (width <= 0)
             width = m_texture->width();
 
     m_width = width;
     markToUpdate();
+    unlock();
 }
 
 
 void Sprite::setTextureScaling(TextureScaling ts)
 {
+    lock();
     m_scaling = ts;
     markToUpdate();
+    unlock();
 }
 
 

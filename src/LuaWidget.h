@@ -41,9 +41,8 @@ public:
         LuaWidget *m_widget;
     };
 
-    //TODO: Remove this
-    LuaWidget(const std::wstring& fileName, Widget *parent = 0);
     LuaWidget(const char *data, size_t size, const std::string& name, Widget *parent = 0);
+    LuaWidget(const std::wstring& name, Widget *parent = 0);
     LuaWidget(Widget *parent = 0);
     LuaWidget(const LuaWidget& other);
 
@@ -65,6 +64,8 @@ public:
     LuaWidget& operator=(const LuaWidget& other);
 
 private:
+    void initLuaState();
+
     boost::shared_ptr<lua_State> m_luaState;
     LuaActionListener *m_actionListener;
 };

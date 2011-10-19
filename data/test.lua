@@ -11,7 +11,9 @@ bgPlanet:setOrigin(Rangers.POSITION_X_LEFT, Rangers.POSITION_Y_BOTTOM)
 bgPlanet:setPosition(0, engine:screenHeight())
 bgPlanet:setLayer(0)
 
-bgAnimLine = resources:loadDeltaAnimation(L"DATA/FormMain2/2AnimLine.gai", this)
+bgAnimLine = Rangers.GAISprite:new(L"DATA/FormMain2/2AnimLine.gai", this)
+bgAnimLine:setOrigin(Rangers.POSITION_X_RIGHT, Rangers.POSITION_Y_TOP)
+bgAnimLine:setPosition(engine:screenWidth(), 0)
 bgAnimLine:setLayer(0)
 
 caption = Rangers.Sprite:new(L"DATA/FormMain2/2AnimCaption.gi", this)
@@ -19,7 +21,7 @@ caption:setOrigin(Rangers.POSITION_X_RIGHT, Rangers.POSITION_Y_TOP)
 caption:setPosition(engine:screenWidth(), 0)
 caption:setLayer(1)
 
-ship = resources:loadDeltaAnimation(L"DATA/FormMain3/2Ship1.gai", this)
+ship = Rangers.GAISprite:new(L"DATA/FormMain3/2Ship1.gai", this)
 ship:setPosition(0, engine:screenHeight() - ship:height())
 ship:setLayer(1)
 

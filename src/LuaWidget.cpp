@@ -22,11 +22,10 @@
 #include "Object.h"
 #include "ActionListener.h"
 #include "Action.h"
+#include "ResourceManager.h"
 
 namespace Rangers
 {
-//TODO: Check stack size after pcall()
-
 class LuaDeleter
 {
 public:
@@ -71,58 +70,24 @@ void LuaWidget::LuaActionListener::setAssociatedWidget(LuaWidget *widget)
     m_widget = widget;
 }
 
-LuaWidget::LuaWidget(const std::wstring& fileName, Rangers::Widget* parent): Widget(parent)
+LuaWidget::LuaWidget(const char *data, size_t size, const std::string& name, Widget *parent): Widget(parent)
 {
-    m_actionListener = new LuaActionListener(this);
-    m_luaState = boost::shared_ptr<lua_State>(lua_open(), LuaDeleter());
-    luaopen_base(m_luaState.get());
-    luaopen_table(m_luaState.get());
-    luaopen_math(m_luaState.get());
-    tolua_Engine_open(m_luaState.get());
-    tolua_libRanger_open(m_luaState.get());
-    tolua_Object_open(m_luaState.get());
-    tolua_Types_open(m_luaState.get());
-    tolua_ResourceManager_open(m_luaState.get());
-    tolua_Sprite_open(m_luaState.get());
-    tolua_AnimatedSprite_open(m_luaState.get());
-    tolua_LuaBindings_open(m_luaState.get());
-    tolua_AnimatedTexture_open(m_luaState.get());
-    tolua_LuaWidget_open(m_luaState.get());
-    tolua_GAISprite_open(m_luaState.get());
-    tolua_Button_open(m_luaState.get());
-    tolua_pushusertype(m_luaState.get(), this, "Rangers::LuaWidget");
-    lua_setglobal(m_luaState.get(), "this");
-    tolua_pushusertype(m_luaState.get(), m_actionListener, "Rangers::LuaWidget::LuaActionListener");
-    lua_setglobal(m_luaState.get(), "actionListener");
-    if (luaL_dofile(m_luaState.get(), toLocal(fileName).c_str()))
+    initLuaState();
+    if (luaL_loadbuffer(m_luaState.get(), data, size, name.c_str()) || lua_pcall(m_luaState.get(), 0, LUA_MULTRET, 0))
         Log::error() << "Cannot load lua script: " << lua_tostring(m_luaState.get(), -1);
 }
 
-LuaWidget::LuaWidget(const char *data, size_t size, const std::string& name, Widget *parent): Widget(parent)
+LuaWidget::LuaWidget(const std::wstring& name, Widget *parent)
 {
-    m_actionListener = new LuaActionListener(this);
-    m_luaState = boost::shared_ptr<lua_State>(lua_open(), LuaDeleter());
-    luaopen_base(m_luaState.get());
-    luaopen_table(m_luaState.get());
-    luaopen_math(m_luaState.get());
-    tolua_Engine_open(m_luaState.get());
-    tolua_libRanger_open(m_luaState.get());
-    tolua_Object_open(m_luaState.get());
-    tolua_Types_open(m_luaState.get());
-    tolua_ResourceManager_open(m_luaState.get());
-    tolua_Sprite_open(m_luaState.get());
-    tolua_AnimatedSprite_open(m_luaState.get());
-    tolua_LuaBindings_open(m_luaState.get());
-    tolua_AnimatedTexture_open(m_luaState.get());
-    tolua_LuaWidget_open(m_luaState.get());
-    tolua_GAISprite_open(m_luaState.get());
-    tolua_Button_open(m_luaState.get());
-    tolua_pushusertype(m_luaState.get(), this, "Rangers::LuaWidget");
-    lua_setglobal(m_luaState.get(), "this");
-    tolua_pushusertype(m_luaState.get(), m_actionListener, "Rangers::LuaWidget::LuaActionListener");
-    lua_setglobal(m_luaState.get(), "actionListener");
-    if (luaL_loadbuffer(m_luaState.get(), data, size, name.c_str()) || lua_pcall(m_luaState.get(), 0, LUA_MULTRET, 0))
-        Log::error() << "Cannot load lua script: " << lua_tostring(m_luaState.get(), -1);
+    initLuaState();
+    size_t size;
+    char *luaData = ResourceManager::instance()->loadData(name, size);
+    if (luaData)
+    {
+        if (luaL_loadbuffer(m_luaState.get(), luaData, size, toLocal(name.c_str()).c_str()) || lua_pcall(m_luaState.get(), 0, LUA_MULTRET, 0))
+            Log::error() << "Cannot load lua script: " << lua_tostring(m_luaState.get(), -1);
+        delete[] luaData;
+    }
 }
 
 LuaWidget::LuaWidget(Rangers::Widget* parent): Widget(parent), m_luaState(boost::shared_ptr<lua_State>((lua_State*)0, LuaDeleter()))
@@ -134,7 +99,7 @@ LuaWidget::LuaWidget(const LuaWidget& other): Widget(other)
 {
     m_luaState = other.m_luaState;
     m_actionListener = other.m_actionListener;
-    if(m_luaState)
+    if (m_luaState)
     {
         tolua_pushusertype(m_luaState.get(), this, "Rangers::LuaWidget");
         lua_setglobal(m_luaState.get(), "this");
@@ -148,7 +113,7 @@ LuaWidget& LuaWidget::operator=(const LuaWidget& other)
     Widget::operator=(other);
     m_luaState = other.m_luaState;
     m_actionListener = other.m_actionListener;
-    if(m_luaState)
+    if (m_luaState)
     {
         tolua_pushusertype(m_luaState.get(), this, "Rangers::LuaWidget");
         lua_setglobal(m_luaState.get(), "this");
@@ -330,5 +295,30 @@ void LuaWidget::processMain()
     for (std::list<Object*>::const_iterator i = m_children.begin(); i != m_children.end(); i++)
         (*i)->processMain();
     unlock();
+}
+
+void LuaWidget::initLuaState()
+{
+    m_actionListener = new LuaActionListener(this);
+    m_luaState = boost::shared_ptr<lua_State>(lua_open(), LuaDeleter());
+    luaopen_base(m_luaState.get());
+    luaopen_table(m_luaState.get());
+    luaopen_math(m_luaState.get());
+    tolua_Engine_open(m_luaState.get());
+    tolua_libRanger_open(m_luaState.get());
+    tolua_Object_open(m_luaState.get());
+    tolua_Types_open(m_luaState.get());
+    tolua_ResourceManager_open(m_luaState.get());
+    tolua_Sprite_open(m_luaState.get());
+    tolua_AnimatedSprite_open(m_luaState.get());
+    tolua_LuaBindings_open(m_luaState.get());
+    tolua_AnimatedTexture_open(m_luaState.get());
+    tolua_LuaWidget_open(m_luaState.get());
+    tolua_GAISprite_open(m_luaState.get());
+    tolua_Button_open(m_luaState.get());
+    tolua_pushusertype(m_luaState.get(), this, "Rangers::LuaWidget");
+    lua_setglobal(m_luaState.get(), "this");
+    tolua_pushusertype(m_luaState.get(), m_actionListener, "Rangers::LuaWidget::LuaActionListener");
+    lua_setglobal(m_luaState.get(), "actionListener");
 }
 }

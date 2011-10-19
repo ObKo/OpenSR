@@ -11,8 +11,8 @@ namespace Rangers
 class LuaWidget: public Widget
 {
 public:
-    //TODO: Remove this
-    LuaWidget(std::wstring fileName, Widget *parent = 0);
+    LuaWidget(const std::wstring& name, Widget *parent);
+    LuaWidget(const std::wstring& name);
 
     void draw();
 

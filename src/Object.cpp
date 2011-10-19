@@ -140,7 +140,9 @@ bool Object::prepareDraw()
 
 void Object::processMain()
 {
+    lock();
     m_needUpdate = false;
+    unlock();
 }
 
 void Object::processLogic(int dt)

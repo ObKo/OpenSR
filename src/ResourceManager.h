@@ -49,10 +49,6 @@ public:
     boost::shared_ptr<AnimatedTexture> loadAnimation(const std::wstring& name, bool backgroundLoading = false);
     boost::shared_ptr<Font> loadFont(const std::wstring& name, int size);
 
-    GAISprite loadDeltaAnimation(const std::wstring& name, Object *parent = 0);
-
-    LuaWidget loadLuaWidget(const std::wstring& name, Widget *parent = 0);
-
     static ResourceManager *instance();
 
     void processMain();
