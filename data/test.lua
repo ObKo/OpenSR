@@ -1,12 +1,12 @@
 engine = Rangers.Engine:instance()
 resources = Rangers.ResourceManager:instance()
 
-background = resources:getSprite(L"DATA/FormMain3/2bg.gi", this)
+background = Rangers.Sprite:new(L"DATA/FormMain3/2bg.gi", this)
 background:setWidth(background:width()/(engine:screenHeight()/background:height()))
 background:setHeight(engine:screenHeight())
 background:setLayer(-1)
 
-bgPlanet = resources:getSprite(L"DATA/FormMain3/2Planet.gi", this)
+bgPlanet = Rangers.Sprite:new(L"DATA/FormMain3/2Planet.gi", this)
 bgPlanet:setOrigin(Rangers.POSITION_X_LEFT, Rangers.POSITION_Y_BOTTOM)
 bgPlanet:setPosition(0, engine:screenHeight())
 bgPlanet:setLayer(0)
@@ -14,7 +14,7 @@ bgPlanet:setLayer(0)
 bgAnimLine = resources:loadDeltaAnimation(L"DATA/FormMain2/2AnimLine.gai", this)
 bgAnimLine:setLayer(0)
 
-caption = resources:getSprite(L"DATA/FormMain2/2AnimCaption.gi", this)
+caption = Rangers.Sprite:new(L"DATA/FormMain2/2AnimCaption.gi", this)
 caption:setOrigin(Rangers.POSITION_X_RIGHT, Rangers.POSITION_Y_TOP)
 caption:setPosition(engine:screenWidth(), 0)
 caption:setLayer(1)
@@ -23,7 +23,7 @@ ship = resources:loadDeltaAnimation(L"DATA/FormMain3/2Ship1.gai", this)
 ship:setPosition(0, engine:screenHeight() - ship:height())
 ship:setLayer(1)
 
-exitButton = Rangers.Button:new(resources:loadTexture(L"DATA/FormMain2/2ButExitN.gi"), resources:loadTexture(L"DATA/FormMain2/2ButExitA.gi"), resources:loadTexture(L"DATA/FormMain2/2ButExitD.gi"), this);
+exitButton = Rangers.Button:new(L"DATA/FormMain2/2ButExitN.gi", L"DATA/FormMain2/2ButExitA.gi", L"DATA/FormMain2/2ButExitD.gi", this);
 exitButton:setPosition(100, 100)
 exitButton:addListener(actionListener)
 

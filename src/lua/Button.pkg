@@ -10,5 +10,9 @@ public:
     Button(boost::shared_ptr<Rangers::Texture> texture, Rangers::Widget *parent = 0);
     Button(boost::shared_ptr<Rangers::Texture> texture, boost::shared_ptr<Rangers::Texture> hoverTexture, Rangers::Widget *parent = 0);
     Button(boost::shared_ptr<Rangers::Texture> texture, boost::shared_ptr<Rangers::Texture> hoverTexture, boost::shared_ptr<Rangers::Texture> pressTexture, Widget *parent = 0);
+	
+	Button(const std::wstring& texture, Rangers::Widget *parent = 0);
+    Button(const std::wstring& texture, const std::wstring& hoverTexture, Rangers::Widget *parent = 0);
+    Button(const std::wstring& texture, const std::wstring& hoverTexture, const std::wstring& pressTexture, Rangers::Widget *parent = 0);
 };
 }

@@ -31,6 +31,7 @@ public:
     AnimatedSprite(Object *parent = 0);
     //! Create sprite from animated texture
     AnimatedSprite(boost::shared_ptr<AnimatedTexture> texture,  Object *parent = 0);
+    AnimatedSprite(const std::wstring& animation,  Object *parent = 0);
     AnimatedSprite(const AnimatedSprite& other);
 
     void processLogic(int dt);

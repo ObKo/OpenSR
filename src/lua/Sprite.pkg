@@ -17,6 +17,12 @@ public:
     Sprite(boost::shared_ptr<Rangers::Texture> texture, Rangers::Object *parent, TextureScaling ts);
     Sprite(boost::shared_ptr<Rangers::Texture> texture, Rangers::Object *parent);
     Sprite(boost::shared_ptr<Rangers::Texture> texture);
+
+	Sprite(const std::wstring& texture, Rangers::Object *parent, TextureScaling ts, SpriteXOrigin xpos, SpriteYOrigin ypos);
+    Sprite(const std::wstring& texture, Rangers::Object *parent, TextureScaling ts);
+    Sprite(const std::wstring& texture, Rangers::Object *parent);
+    Sprite(const std::wstring& texture);
+
     Sprite(Rangers::Object *parent);
     Sprite(const Rangers::Sprite& other);
     

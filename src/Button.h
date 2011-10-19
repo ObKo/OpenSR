@@ -33,6 +33,10 @@ public:
     Button(boost::shared_ptr<Texture> texture, boost::shared_ptr<Texture> hoverTexture, Widget *parent = 0);
     Button(boost::shared_ptr<Texture> texture, boost::shared_ptr<Texture> hoverTexture, boost::shared_ptr<Texture> pressTexture, Widget *parent = 0);
 
+    Button(const std::wstring& texture, Widget *parent = 0);
+    Button(const std::wstring& texture, const std::wstring& hoverTexture, Widget *parent = 0);
+    Button(const std::wstring& texture, const std::wstring& hoverTexture, const std::wstring& pressTexture, Widget *parent = 0);
+
     void draw();
     void processMain();
 

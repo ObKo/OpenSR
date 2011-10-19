@@ -25,11 +25,6 @@ public:
     
     Rangers::GAISprite loadDeltaAnimation(const std::wstring& name);
     Rangers::GAISprite loadDeltaAnimation(const std::wstring& name, Rangers::Object *parent);
-    Rangers::Sprite getSprite(const std::wstring& name);
-    Rangers::Sprite getSprite(const std::wstring& name, Rangers::Object *parent);
-    Rangers::AnimatedSprite getAnimatedSprite(const std::wstring& name);
-    Rangers::AnimatedSprite getAnimatedSprite(const std::wstring& name, bool backgroundLoading = false);
-    Rangers::AnimatedSprite getAnimatedSprite(const std::wstring& name, bool backgroundLoading = false, Rangers::Object *parent);
 
     Rangers::LuaWidget loadLuaWidget(const std::wstring& name);
     Rangers::LuaWidget loadLuaWidget(const std::wstring& name, Rangers::Widget *parent);

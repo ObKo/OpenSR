@@ -9,6 +9,8 @@ class AnimatedSprite: public Sprite
 public:
     AnimatedSprite(boost::shared_ptr<Rangers::AnimatedTexture> texture,  Rangers::Object *parent);
     AnimatedSprite(boost::shared_ptr<Rangers::AnimatedTexture> texture);
+	AnimatedSprite(const std::wstring& animation,  Rangers::Object *parent);
+	AnimatedSprite(const std::wstring& animation);
     AnimatedSprite(const Rangers::AnimatedSprite& other);
 
     void processLogic(int dt);

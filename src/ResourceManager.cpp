@@ -416,16 +416,6 @@ void ResourceManager::cleanupUnused()
         m_textures.erase(*i);
 }
 
-AnimatedSprite ResourceManager::getAnimatedSprite(const std::wstring& name, bool backgroundLoading, Object *parent)
-{
-    return AnimatedSprite(loadAnimation(name, backgroundLoading), parent);
-}
-
-Sprite ResourceManager::getSprite(const std::wstring& name, Object *parent)
-{
-    return Sprite(loadTexture(name), parent);
-}
-
 ResourceManager::GAIWorker::GAIWorker(char* gaiData, char* bgData)
 {
     m_bgFrameData = bgData;

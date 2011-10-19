@@ -18,7 +18,9 @@
 
 
 #include "AnimatedSprite.h"
+#include <string>
 #include "Engine.h"
+#include "ResourceManager.h"
 
 namespace Rangers
 {
@@ -52,6 +54,29 @@ AnimatedSprite::AnimatedSprite(boost::shared_ptr<AnimatedTexture> texture,  Obje
 //TODO: Find relations between seek/size and FPS.
         m_frameDuration = texture->waitSeek() > 1000 ? 50 : 100;
     }
+}
+
+AnimatedSprite::AnimatedSprite(const std::wstring& animation,  Object *parent): Sprite(parent)
+{
+    m_animationTime = 0;
+    m_currentFrame = 0;
+    m_singleShot = false;
+    boost::shared_ptr<AnimatedTexture> animTexture = ResourceManager::instance()->loadAnimation(animation);
+    if (!animTexture)
+    {
+        m_animationStarted = false;
+        m_frameDuration = 0;
+    }
+    else
+    {
+        m_texture = animTexture;
+        m_animationStarted = true;
+//TODO: Find relations between seek/size and FPS.
+        m_frameDuration = animTexture->waitSeek() > 1000 ? 50 : 100;
+        m_width = animTexture->width();
+        m_height = animTexture->height();
+    }
+    markToUpdate();
 }
 
 AnimatedSprite::AnimatedSprite(const Rangers::AnimatedSprite& other): Sprite(other)

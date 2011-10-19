@@ -20,6 +20,7 @@
 #include "Sprite.h"
 #include "Log.h"
 #include "Action.h"
+#include "ResourceManager.h"
 
 namespace Rangers
 {
@@ -45,6 +46,33 @@ Button::Button(boost::shared_ptr<Texture> texture, boost::shared_ptr<Texture> ho
     m_mainTexture = texture;
     m_hoverTexture = hoverTexture;
     m_pressedTexture = pressTexture;
+    m_sprite = Sprite(m_mainTexture, this);
+    m_width = m_sprite.width();
+    m_height = m_sprite.height();
+}
+
+Button::Button(const std::wstring& texture, Widget *parent): Widget(parent)
+{
+    m_mainTexture = ResourceManager::instance()->loadTexture(texture);
+    m_sprite = Sprite(m_mainTexture, this);
+    m_width = m_sprite.width();
+    m_height = m_sprite.height();
+}
+
+Button::Button(const std::wstring& texture, const std::wstring& hoverTexture, Widget *parent): Widget(parent)
+{
+    m_mainTexture = ResourceManager::instance()->loadTexture(texture);
+    m_hoverTexture = ResourceManager::instance()->loadTexture(hoverTexture);
+    m_sprite = Sprite(m_mainTexture, this);
+    m_width = m_sprite.width();
+    m_height = m_sprite.height();
+}
+
+Button::Button(const std::wstring& texture, const std::wstring& hoverTexture, const std::wstring& pressTexture, Widget *parent): Widget(parent)
+{
+    m_mainTexture = ResourceManager::instance()->loadTexture(texture);
+    m_hoverTexture = ResourceManager::instance()->loadTexture(hoverTexture);
+    m_pressedTexture = ResourceManager::instance()->loadTexture(pressTexture);
     m_sprite = Sprite(m_mainTexture, this);
     m_width = m_sprite.width();
     m_height = m_sprite.height();

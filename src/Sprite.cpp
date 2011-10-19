@@ -18,6 +18,7 @@
 
 #include "Sprite.h"
 #include "Engine.h"
+#include "ResourceManager.h"
 
 namespace Rangers
 {
@@ -66,6 +67,28 @@ Sprite::Sprite(boost::shared_ptr<Texture> texture,  Object *parent, TextureScali
     {
         m_width = texture->width();
         m_height = texture->height();
+    }
+    m_xOrigin = xpos;
+    m_yOrigin = ypos;
+    markToUpdate();
+}
+
+Sprite::Sprite(const std::wstring& texture,  Object *parent, TextureScaling  ts, SpriteXOrigin xpos, SpriteYOrigin ypos): Object(parent)
+{
+    m_buffer = 0;
+    m_vertices = 0;
+    m_vertexCount = 0;
+    m_scaling = ts;
+    m_texture = ResourceManager::instance()->loadTexture(texture);
+    if (!m_texture)
+    {
+        m_width = 0;
+        m_height = 0;
+    }
+    else
+    {
+        m_width = m_texture->width();
+        m_height = m_texture->height();
     }
     m_xOrigin = xpos;
     m_yOrigin = ypos;
