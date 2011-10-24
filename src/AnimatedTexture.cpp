@@ -17,6 +17,7 @@
 */
 
 #include "AnimatedTexture.h"
+#include <libRanger.h>
 #include "Engine.h"
 #include "Log.h"
 

@@ -22,6 +22,7 @@
 #include <sstream>
 #include <map>
 #include <libRanger.h>
+#include "Texture.h"
 
 //TODO: Move this
 

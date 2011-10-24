@@ -20,8 +20,12 @@
 #define LUAWIDGET_H
 
 #include "Widget.h"
-#include "LuaBindings.h"
 #include "ActionListener.h"
+
+extern "C"
+{
+#include <lua.h>
+}
 
 namespace Rangers
 {

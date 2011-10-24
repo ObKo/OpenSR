@@ -18,6 +18,7 @@
 
 #include "LineEditWidget.h"
 #include "Engine.h"
+#include "Font.h"
 
 namespace Rangers
 {

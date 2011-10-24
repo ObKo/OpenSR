@@ -19,6 +19,7 @@
 #include "ConsoleWidget.h"
 #include "Engine.h"
 #include "Log.h"
+#include "Font.h"
 
 namespace Rangers
 {

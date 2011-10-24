@@ -19,11 +19,9 @@
 #ifndef RANGERS_RESOURCEMANAGER_H
 #define RANGERS_RESOURCEMANAGER_H
 #include "ResourceAdapter.h"
-#include <libRanger.h>
 #include <map>
 #include <list>
 #include <boost/shared_ptr.hpp>
-#include <boost/thread.hpp>
 
 namespace Rangers
 {
@@ -52,7 +50,6 @@ public:
     static ResourceManager *instance();
 
     void processMain();
-
 
 private:
     class GAIWorker;

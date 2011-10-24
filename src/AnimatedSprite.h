@@ -20,10 +20,10 @@
 #define RANGERS_ANIMATEDSPRITE_H
 
 #include "Sprite.h"
-#include "AnimatedTexture.h"
 
 namespace Rangers
 {
+class AnimatedTexture;
 //! Animated sprite using animated texture
 class AnimatedSprite: public Sprite
 {

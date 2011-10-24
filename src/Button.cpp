@@ -21,6 +21,7 @@
 #include "Log.h"
 #include "Action.h"
 #include "ResourceManager.h"
+#include "Texture.h"
 
 namespace Rangers
 {

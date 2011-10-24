@@ -21,6 +21,7 @@
 
 namespace Rangers
 {
+class Action;
 class ActionListener
 {
 public:

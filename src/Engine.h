@@ -19,14 +19,11 @@
 #ifndef RANGERS_ENGINE_H
 #define RANGERS_ENGINE_H
 
-#include "Object.h"
 #include "Node.h"
-#include "Sprite.h"
-#include "AnimatedSprite.h"
 #include "Label.h"
-#include "Widget.h"
 #include <list>
 #include "ConsoleWidget.h"
+#include "Texture.h"
 #include <map>
 #include <boost/thread.hpp>
 #include <boost/thread/recursive_mutex.hpp>
@@ -34,6 +31,8 @@
 
 namespace Rangers
 {
+class Widget;
+class Object;
 //! Main engine class
 class Engine
 {

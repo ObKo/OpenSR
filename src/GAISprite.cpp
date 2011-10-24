@@ -41,7 +41,7 @@ GAISprite::GAISprite(Object *parent): AnimatedSprite(parent)
     m_texture = boost::shared_ptr<Texture>((Texture*)0);
 }
 
-GAISprite::GAISprite(const char *data, int size, GIFrame baseFrame, Object *parent): AnimatedSprite(parent)
+GAISprite::GAISprite(const char *data, int size, const GIFrame& baseFrame, Object *parent): AnimatedSprite(parent)
 {
     m_animationTime = 0;
     m_currentFrame = 0;
@@ -282,7 +282,7 @@ void GAISprite::setFrame(int f)
     Log::warning() << "Cannot set frame on GAISprite";
 }
 
-void GAISprite::loadGAI(const char * data, int size, GIFrame baseFrame)
+void GAISprite::loadGAI(const char * data, int size, const GIFrame& baseFrame)
 {
     m_gaiHeader = loadGAIHeader(data);
 

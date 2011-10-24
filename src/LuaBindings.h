@@ -20,11 +20,6 @@
 #define RANGERS_LUABINDINGS_H
 
 #include <boost/shared_ptr.hpp>
-#include <Font.h>
-#include <Texture.h>
-#include <AnimatedTexture.h>
-#include "GAISprite.h"
-#include <tolua++.h>
 
 extern "C"
 {
@@ -49,6 +44,10 @@ int tolua_Button_open(lua_State* tolua_S);
 
 namespace Rangers
 {
+class AnimatedTexture;
+class GAISprite;
+class Texture;
+class Font;
 int execScript(const std::wstring& fileName);
 int execScript(const char *data, size_t size, const std::string& name);
 std::wstring fromLua(const char *s);

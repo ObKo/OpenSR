@@ -17,6 +17,8 @@
 */
 
 #include "ColorLabel.h"
+#include "Font.h"
+#include "Texture.h"
 
 using namespace std;
 namespace Rangers

@@ -33,9 +33,6 @@
 #include <GL/glext.h>
 #endif
 
-#include <boost/shared_ptr.hpp>
-#include <boost/shared_array.hpp>
-
 #define BUFFER_OFFSET(i) ((char*)0 + (i))
 
 namespace Rangers

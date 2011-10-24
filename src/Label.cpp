@@ -19,6 +19,8 @@
 #include "Label.h"
 #include <string>
 #include "Engine.h"
+#include "Object.h"
+#include "Font.h"
 
 namespace Rangers
 {

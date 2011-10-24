@@ -18,8 +18,6 @@
 
 #ifndef RANGERS_UTILS_H
 #define RANGERS_UTILS_H
-#include <string>
-#include <vector>
 
 namespace Rangers
 {

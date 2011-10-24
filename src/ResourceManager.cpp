@@ -28,6 +28,7 @@
 #include "Object.h"
 #include "GAISprite.h"
 #include "LuaWidget.h"
+#include <boost/thread.hpp>
 
 using namespace std;
 

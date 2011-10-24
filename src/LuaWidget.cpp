@@ -23,6 +23,9 @@
 #include "ActionListener.h"
 #include "Action.h"
 #include "ResourceManager.h"
+#include "LuaBindings.h"
+#include <tolua++.h>
+#include <libRanger.h>
 
 namespace Rangers
 {

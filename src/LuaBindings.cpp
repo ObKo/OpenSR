@@ -1,6 +1,11 @@
 #include "LuaBindings.h"
 #include "libRanger.h"
 #include "Log.h"
+#include <Font.h>
+#include <Texture.h>
+#include <AnimatedTexture.h>
+#include "GAISprite.h"
+#include <tolua++.h>
 #include <fstream>
 #include <string>
 #include <cstring>

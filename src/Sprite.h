@@ -20,14 +20,14 @@
 #define RANGERS_SPRITE_H
 
 #include "Object.h"
-#include "Types.h"
-#include "Texture.h"
 
 namespace Rangers
 {
 enum TextureScaling {TEXTURE_NO, TEXTURE_NORMAL, TEXTURE_KEEPASPECT, TEXTURE_TILE_X, TEXTURE_TILE_Y, TEXTURE_TILE};
 enum SpriteXOrigin {POSITION_X_LEFT, POSITION_X_RIGHT, POSITION_X_CENTER};
 enum SpriteYOrigin {POSITION_Y_TOP, POSITION_Y_BOTTOM, POSITION_Y_CENTER};
+struct Vertex;
+class Texture;
 class Sprite: public Object
 {
 public:

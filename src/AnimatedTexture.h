@@ -19,12 +19,12 @@
 #ifndef RANGERS_ANIMATEDTEXTURE_H
 #define RANGERS_ANIMATEDTEXTURE_H
 
-#include "Types.h"
 #include "Texture.h"
-#include <libRanger.h>
 
 namespace Rangers
 {
+struct HAIAnimation;
+struct GAIAnimation;
 class AnimatedTexture: public Texture
 {
 public:

@@ -19,12 +19,12 @@
 #ifndef RANGERS_LABEL_H
 #define RANGERS_LABEL_H
 
-#include "Object.h"
-#include "Font.h"
 #include "Sprite.h"
 
 namespace Rangers
 {
+class Font;
+class Object;
 class Label: public Sprite
 {
 public:

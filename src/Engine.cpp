@@ -36,6 +36,7 @@
 #include <sstream>
 #include "LuaBindings.h"
 #include "LuaWidget.h"
+#include "AnimatedSprite.h"
 
 using namespace std;
 

@@ -21,6 +21,7 @@
 #include <string>
 #include "Engine.h"
 #include "ResourceManager.h"
+#include "AnimatedTexture.h"
 
 namespace Rangers
 {

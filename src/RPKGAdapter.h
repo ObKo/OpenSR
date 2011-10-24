@@ -19,7 +19,7 @@
 #ifndef RANGERS_RPKGADAPTER_H
 #define RANGERS_RPKGADAPTER_H
 #include "ResourceAdapter.h"
-#include "libRanger.h"
+#include <libRanger.h>
 #include <string>
 #include <fstream>
 #include <map>

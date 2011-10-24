@@ -20,7 +20,6 @@
 #define RANGERS_BUTTON_H
 
 #include "Widget.h"
-#include "Texture.h"
 #include "Sprite.h"
 #include <boost/shared_ptr.hpp>
 

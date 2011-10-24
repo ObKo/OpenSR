@@ -20,8 +20,6 @@
 #define RANGERS_NODE_H
 
 #include "Object.h"
-#include <list>
-#include <boost/shared_ptr.hpp>
 
 namespace Rangers
 {

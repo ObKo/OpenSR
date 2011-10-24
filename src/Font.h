@@ -20,11 +20,12 @@
 #define RANGERS_FONT_H
 #include <string>
 #include <ft2build.h>
+#include <boost/shared_ptr.hpp>
 #include FT_FREETYPE_H
-#include "Texture.h"
 
 namespace Rangers
 {
+class Texture;
 class Font
 {
 public:
