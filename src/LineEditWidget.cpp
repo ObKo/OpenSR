@@ -21,7 +21,7 @@
 
 namespace Rangers
 {
-void LineEditWidget::draw()
+void LineEditWidget::draw() const
 {
     if (!prepareDraw())
         return;

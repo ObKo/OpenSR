@@ -37,7 +37,7 @@ public:
     ~AnimatedTexture();
 
     //! Get OpenGL texture id
-    GLuint openGLTexture(int i);
+    GLuint openGLTexture(int i) const;
 
     int waitSeek() const;
     int waitSize() const;
@@ -57,7 +57,7 @@ private:
     int m_waitSeek, m_waitSize;
     int m_frameCount;
     int m_loadedFrames;
-    bool m_needFrames;
+    mutable bool m_needFrames;
 
     GLuint *m_textures;
 };

@@ -174,7 +174,7 @@ void GAISprite::processLogic(int dt)
     unlock();
 }
 
-void GAISprite::draw()
+void GAISprite::draw() const
 {
     Sprite::draw();
 }

@@ -69,7 +69,7 @@ int Texture::height() const
     return m_height;
 }
 
-GLuint Texture::openGLTexture()
+GLuint Texture::openGLTexture() const
 {
     return m_openGLTexture;
 }

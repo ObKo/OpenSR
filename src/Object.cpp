@@ -128,7 +128,7 @@ Object& Object::operator=(const Rangers::Object& other)
 }
 
 
-bool Object::prepareDraw()
+bool Object::prepareDraw() const
 {
     lock();
     glPushMatrix();
@@ -149,15 +149,10 @@ void Object::processLogic(int dt)
 {
 }
 
-void Object::endDraw()
+void Object::endDraw() const
 {
     glPopMatrix();
     unlock();
-}
-
-void Object::draw()
-{
-
 }
 
 void Object::setColor(float r, float g, float b, float a)
@@ -266,12 +261,12 @@ void Object::markToUpdate()
     }
 }
 
-void Object::lock()
+void Object::lock() const
 {
     m_mutex.lock();
 }
 
-void Object::unlock()
+void Object::unlock() const
 {
     m_mutex.unlock();
 }

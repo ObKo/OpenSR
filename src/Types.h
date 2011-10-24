@@ -40,9 +40,8 @@
 
 namespace Rangers
 {
-class Vector
+struct Vector
 {
-public:
     Vector();
     Vector(float x, float y);
 

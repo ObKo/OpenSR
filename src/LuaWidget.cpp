@@ -60,7 +60,7 @@ void LuaWidget::LuaActionListener::actionPerformed(const Action &action)
     m_widget->unlock();
 }
 
-LuaWidget* LuaWidget::LuaActionListener::associatedWidget()
+LuaWidget* LuaWidget::LuaActionListener::associatedWidget() const
 {
     return m_widget;
 }
@@ -124,7 +124,7 @@ LuaWidget& LuaWidget::operator=(const LuaWidget& other)
     return *this;
 }
 
-void LuaWidget::draw()
+void LuaWidget::draw() const
 {
     if (!prepareDraw())
         return;
@@ -135,7 +135,7 @@ void LuaWidget::draw()
     endDraw();
 }
 
-Rect LuaWidget::getBoundingRect()
+Rect LuaWidget::getBoundingRect() const
 {
     lock();
     lua_getglobal(m_luaState.get(), "getBoundingRect");

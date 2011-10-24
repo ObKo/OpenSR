@@ -43,7 +43,7 @@ public:
     void setWordWrap(bool wordWrap);
     void setFixedSize(float w, float h);
 
-    void processMain();
+    virtual void processMain();
 
     Label& operator=(const Label& other);
 

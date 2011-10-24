@@ -34,7 +34,7 @@ public:
     //! Construct from std::wstring
     ColorLabel(const std::wstring& text, Object *parent = 0, boost::shared_ptr<Font> font = boost::shared_ptr<Font>(), SpriteXOrigin xpos = POSITION_X_CENTER, SpriteYOrigin ypos = POSITION_Y_CENTER);
 
-    void processMain();
+    virtual void processMain();
     //! Set default text color
     void setColor(float r, float g, float b, float a = 1.0f);
 };

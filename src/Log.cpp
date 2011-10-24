@@ -89,7 +89,7 @@ void Log::writeLogEntry(const LogEntry& s)
     m_bufferMutex.unlock();
 }
 
-bool Log::needUpdate()
+bool Log::needUpdate() const
 {
     bool r = m_needUpdate;
     m_needUpdate = false;

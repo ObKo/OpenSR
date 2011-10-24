@@ -90,7 +90,7 @@ AnimatedTexture::~AnimatedTexture()
  * \param i frame index
  * \return OpenGL texture id
  */
-GLuint AnimatedTexture::openGLTexture(int i)
+GLuint AnimatedTexture::openGLTexture(int i) const
 {
     if (!m_loadedFrames)
     {

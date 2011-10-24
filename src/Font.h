@@ -32,12 +32,12 @@ public:
     Font(const char *data, size_t dataSize, int size);
     ~Font();
 
-    boost::shared_ptr<Texture> renderText(const std::string& text, int width = 0);
-    boost::shared_ptr<Texture> renderText(const std::wstring& text, int width = 0);
-    boost::shared_ptr<Texture> renderColoredText(const std::string& text, int defaultTextColor = 0xFFFFFF, int width = 0);
-    boost::shared_ptr<Texture> renderColoredText(const std::wstring& text, int defaultTextColor = 0xFFFFFF, int width = 0);
+    boost::shared_ptr<Texture> renderText(const std::string& text, int width = 0) const;
+    boost::shared_ptr<Texture> renderText(const std::wstring& text, int width = 0) const;
+    boost::shared_ptr<Texture> renderColoredText(const std::string& text, int defaultTextColor = 0xFFFFFF, int width = 0) const;
+    boost::shared_ptr<Texture> renderColoredText(const std::wstring& text, int defaultTextColor = 0xFFFFFF, int width = 0) const;
 
-    int calculateStringWidth(const std::wstring::const_iterator& first, const std::wstring::const_iterator& last);
+    int calculateStringWidth(const std::wstring::const_iterator& first, const std::wstring::const_iterator& last) const;
 
     static void drawGlyph(unsigned char *dest, int destwidth, int destheight,
                           int x, int y, int w, int h, unsigned char *data);

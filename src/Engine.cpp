@@ -466,11 +466,11 @@ std::wstring Engine::addObject(Object* object, const std::wstring& name)
     return objectName;
 }
 
-Object* Engine::getObject(const std::wstring& name)
+Object* Engine::getObject(const std::wstring& name) const
 {
     if (name.empty())
         return 0;
-    std::map<std::wstring, Object*>::iterator it = m_objects.find(name);
+    std::map<std::wstring, Object*>::const_iterator it = m_objects.find(name);
     if (it != m_objects.end())
         return (*it).second;
     else

@@ -34,7 +34,7 @@ public:
         LuaActionListener(LuaWidget *widget);
         void actionPerformed(const Action &action);
 
-        LuaWidget* associatedWidget();
+        LuaWidget* associatedWidget() const;
         void setAssociatedWidget(LuaWidget *widget);
 
     private:
@@ -46,20 +46,20 @@ public:
     LuaWidget(Widget *parent = 0);
     LuaWidget(const LuaWidget& other);
 
-    void draw();
+    virtual void draw() const;
 
-    virtual Rect getBoundingRect();
-    void mouseMove(int x, int y);
-    void mouseEnter();
-    void mouseLeave();
-    void keyPressed(SDL_keysym key);
+    virtual Rect getBoundingRect() const;
+    virtual void mouseMove(int x, int y);
+    virtual void mouseEnter();
+    virtual void mouseLeave();
+    virtual void keyPressed(SDL_keysym key);
 
-    void mouseDown(uint8_t key, int x, int y);
-    void mouseUp(uint8_t key, int x, int y);
-    void mouseClick(int x, int y);
+    virtual void mouseDown(uint8_t key, int x, int y);
+    virtual void mouseUp(uint8_t key, int x, int y);
+    virtual void mouseClick(int x, int y);
 
-    void processMain();
-    void processLogic(int dt);
+    virtual void processMain();
+    virtual void processLogic(int dt);
 
     LuaWidget& operator=(const LuaWidget& other);
 

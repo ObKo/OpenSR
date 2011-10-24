@@ -24,7 +24,7 @@
 
 namespace Rangers
 {
-Rect Widget::getBoundingRect()
+Rect Widget::getBoundingRect() const
 {
     Rect r;
     r.x1 = 0;

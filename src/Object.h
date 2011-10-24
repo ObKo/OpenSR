@@ -34,7 +34,7 @@ public:
 
     ~Object();
 
-    virtual void draw();
+    virtual void draw() const = 0;
 
     //Function to process all needed OpenGL functions
     virtual void processMain();
@@ -63,7 +63,7 @@ private:
     int m_layer;
 
 protected:
-    boost::recursive_mutex m_mutex;
+    mutable boost::recursive_mutex m_mutex;
     float m_colorR, m_colorG, m_colorB, m_colorA;
     bool m_needUpdate;
     Object *m_parent;
@@ -71,10 +71,10 @@ protected:
     Vector m_position;
     float m_rotation;
 
-    bool prepareDraw();
-    void endDraw();
-    void lock();
-    void unlock();
+    bool prepareDraw() const;
+    void endDraw() const;
+    void lock() const;
+    void unlock() const;
     void markToUpdate();
 };
 }

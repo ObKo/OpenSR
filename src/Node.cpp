@@ -23,7 +23,7 @@ using namespace boost;
 
 namespace Rangers
 {
-void Node::draw()
+void Node::draw() const
 {
     if (!prepareDraw())
         return;

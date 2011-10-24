@@ -32,9 +32,9 @@ public:
     Widget(float w, float h, Widget *parent = 0);
     Widget(const Widget& other);
 
-    virtual void draw() = 0;
+    virtual void draw() const = 0;
 
-    virtual Rect getBoundingRect();
+    virtual Rect getBoundingRect() const;
     virtual void mouseMove(int x, int y);
     virtual void mouseEnter();
     virtual void mouseLeave();

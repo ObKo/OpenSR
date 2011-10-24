@@ -123,7 +123,7 @@ Sprite& Sprite::operator=(const Rangers::Sprite& other)
 }
 
 
-void Sprite::draw()
+void Sprite::draw() const
 {
     if (!m_texture)
         return;

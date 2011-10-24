@@ -79,7 +79,7 @@ ConsoleWidget& ConsoleWidget::operator=(const Rangers::ConsoleWidget& other)
 
 
 
-void ConsoleWidget::draw()
+void ConsoleWidget::draw() const
 {
     if (!prepareDraw())
         return;

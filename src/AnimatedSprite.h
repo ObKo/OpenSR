@@ -34,8 +34,8 @@ public:
     AnimatedSprite(const std::wstring& animation,  Object *parent = 0);
     AnimatedSprite(const AnimatedSprite& other);
 
-    void processLogic(int dt);
-    void draw();
+    virtual void processLogic(int dt);
+    virtual void draw() const;
 
     void setSingleShot(bool ss);
     void start();

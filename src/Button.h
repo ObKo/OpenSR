@@ -37,15 +37,15 @@ public:
     Button(const std::wstring& texture, const std::wstring& hoverTexture, Widget *parent = 0);
     Button(const std::wstring& texture, const std::wstring& hoverTexture, const std::wstring& pressTexture, Widget *parent = 0);
 
-    void draw();
-    void processMain();
+    virtual void draw() const;
+    virtual void processMain();
 
-    void mouseEnter();
-    void mouseLeave();
+    virtual void mouseEnter();
+    virtual void mouseLeave();
 
-    void mouseDown(uint8_t key, int x, int y);
-    void mouseUp(uint8_t key, int x, int y);
-    void mouseClick(int x, int y);
+    virtual void mouseDown(uint8_t key, int x, int y);
+    virtual void mouseUp(uint8_t key, int x, int y);
+    virtual void mouseClick(int x, int y);
 
 private:
     boost::shared_ptr<Texture> m_mainTexture;

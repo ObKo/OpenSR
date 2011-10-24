@@ -78,7 +78,7 @@ Button::Button(const std::wstring& texture, const std::wstring& hoverTexture, co
     m_height = m_sprite.height();
 }
 
-void Button::draw()
+void Button::draw() const
 {
     if (!prepareDraw())
         return;

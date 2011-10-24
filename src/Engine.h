@@ -84,7 +84,7 @@ public:
     static int logic();
 
     //! Get object by name
-    Object* getObject(const std::wstring& name);
+    Object* getObject(const std::wstring& name) const;
     //! Remove object.
     void removeObject(const std::wstring& name);
     //! Add object. Engine becomes owner of object.

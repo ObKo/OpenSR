@@ -128,7 +128,7 @@ void AnimatedSprite::processLogic(int dt)
     unlock();
 }
 
-void AnimatedSprite::draw()
+void AnimatedSprite::draw() const
 {
     if (!m_texture)
         return;

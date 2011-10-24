@@ -31,11 +31,11 @@ public:
     LineEditWidget(Widget* parent = 0);
     LineEditWidget(const LineEditWidget& other);
 
-    void draw();
-    void processMain();
-    void processLogic(int dt);
+    virtual void draw() const;
+    virtual void processMain();
+    virtual void processLogic(int dt);
 
-    void keyPressed(SDL_keysym key);
+    virtual void keyPressed(SDL_keysym key);
 
     std::wstring text() const;
     void setText(const std::wstring &s);

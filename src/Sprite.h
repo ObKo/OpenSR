@@ -38,9 +38,8 @@ public:
 
     ~Sprite();
 
-    void draw();
-
-    void processMain();
+    virtual void draw() const;
+    virtual void processMain();
 
     void setOrigin(SpriteXOrigin xpos, SpriteYOrigin ypos);
     void setGeometry(float width, float height);

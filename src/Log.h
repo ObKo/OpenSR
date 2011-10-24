@@ -51,12 +51,12 @@ public:
     static Logger warning();
     static Logger error();
 
-    bool needUpdate();
+    bool needUpdate() const;
     std::list<LogEntry> getLastLines(int n = -1) const;
     void writeLogEntry(const LogEntry& s);
 
 private:
-    bool m_needUpdate;
+    mutable bool m_needUpdate;
     bool m_colorOutput;
     std::list<LogEntry> m_logEntries;
     boost::recursive_mutex m_bufferMutex;

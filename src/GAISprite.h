@@ -35,10 +35,11 @@ public:
     GAISprite(const GAISprite &other);
     ~GAISprite();
 
-    void draw();
-    void processLogic(int dt);
+    virtual void draw() const;
+    virtual void processLogic(int dt);
+    virtual void processMain();
     void setFrame(int f);
-    void processMain();
+
     void reset();
 
     GAISprite& operator=(const GAISprite& other);

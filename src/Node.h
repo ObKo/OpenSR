@@ -28,8 +28,8 @@ namespace Rangers
 class Node: public Object
 {
 public:
-    void draw();
-    void processLogic(int dt);
+    virtual void draw() const;
+    virtual void processLogic(int dt);
 };
 }
 #endif

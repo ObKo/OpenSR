@@ -33,11 +33,11 @@ public:
     ConsoleWidget(const ConsoleWidget& other);
     ConsoleWidget(Widget *parent = 0);
 
-    void draw();
-    void processMain();
-    void processLogic(int dt);
+    virtual void draw() const;
+    virtual void processMain();
+    virtual void processLogic(int dt);
 
-    void keyPressed(SDL_keysym key);
+    virtual void keyPressed(SDL_keysym key);
 
     ConsoleWidget& operator=(const ConsoleWidget& other);
 
