@@ -37,6 +37,7 @@
 #include "LuaBindings.h"
 #include "LuaWidget.h"
 #include "AnimatedSprite.h"
+#include "Action.h"
 
 using namespace std;
 
@@ -545,7 +546,7 @@ void Engine::processEvents()
                 continue;
             }
             if (m_focusedWidget)
-                m_focusedWidget->keyPressed(event.key.keysym);
+                m_focusedWidget->action(Action(m_focusedWidget, Rangers::Action::KEY_PRESSED, event.key.keysym));
             break;
         case SDL_MOUSEMOTION:
             processMouseMove(event.motion);

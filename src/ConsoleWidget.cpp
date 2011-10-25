@@ -20,9 +20,75 @@
 #include "Engine.h"
 #include "Log.h"
 #include "Font.h"
+#include "Action.h"
+#include "ActionListener.h"
+#include <boost/variant/get.hpp>
 
 namespace Rangers
 {
+class ConsoleWidget::ConsoleWidgetListener: public ActionListener
+{
+public:
+    void actionPerformed(const Action &action)
+    {
+        if (ConsoleWidget *w = dynamic_cast<ConsoleWidget*>(action.source()))
+        {
+            if (action.type() == Action::KEY_PRESSED)
+            {
+                SDL_keysym key = boost::get<SDL_keysym>(action.argument());
+                if (key.sym == SDLK_RETURN)
+                {
+                    if (w->m_lineEdit.text() != L"")
+                    {
+                        w->m_commandHistory.push_back(w->m_lineEdit.text());
+                        w->m_historyPosition = -1;
+                        Engine::instance()->execCommand(w->m_lineEdit.text());
+                        w->m_lineEdit.setText(L"");
+                    }
+                }
+                else if (key.sym == SDLK_UP)
+                {
+                    if (w->m_historyPosition == -1 && w->m_lineEdit.text() != L"")
+                    {
+                        w->m_commandHistory.push_back(w->m_lineEdit.text());
+                        w->m_historyPosition = w->m_commandHistory.size() - 1;
+                    }
+
+                    if ((w->m_historyPosition == -1) && (w->m_commandHistory.size() > 0))
+                        w->m_historyPosition = w->m_commandHistory.size();
+
+                    if (w->m_historyPosition > 0)
+                    {
+                        w->m_historyPosition--;
+                        w->m_lineEdit.setText(w->m_commandHistory[w->m_historyPosition]);
+                    }
+
+                    //markToUpdate();
+                }
+                else if (key.sym == SDLK_DOWN)
+                {
+                    if (w->m_historyPosition < w->m_commandHistory.size() - 1)
+                    {
+                        w->m_historyPosition++;
+                        w->m_lineEdit.setText(w->m_commandHistory[w->m_historyPosition]);
+                    }
+                    else
+                    {
+                        w->m_historyPosition = -1;
+                        w->m_lineEdit.setText(L"");
+                    }
+
+                    //markToUpdate();
+                }
+                else
+                {
+                    w->m_lineEdit.action(Action(&w->m_lineEdit, action.type(), action.argument()));
+                }
+            }
+        }
+    }
+};
+
 ConsoleWidget::ConsoleWidget(float w, float h, Widget* parent): Widget(w, h, parent)
 {
     int editSize = Engine::instance()->serviceFont()->size() + 4;
@@ -36,6 +102,7 @@ ConsoleWidget::ConsoleWidget(float w, float h, Widget* parent): Widget(w, h, par
     m_borderBuffer = 0;
     markToUpdate();
     m_historyPosition = -1;
+    addListener(new ConsoleWidgetListener());
 }
 
 ConsoleWidget::ConsoleWidget(const Rangers::ConsoleWidget& other): Widget(other)
@@ -48,6 +115,7 @@ ConsoleWidget::ConsoleWidget(const Rangers::ConsoleWidget& other): Widget(other)
 
     m_historyPosition = other.m_historyPosition;
     m_commandHistory = other.m_commandHistory;
+    addListener(new ConsoleWidgetListener());
     markToUpdate();
 }
 
@@ -56,6 +124,7 @@ ConsoleWidget::ConsoleWidget(Widget* parent): Widget(parent)
     m_borderVertices = 0;
     m_borderBuffer = 0;
     m_historyPosition = -1;
+    addListener(new ConsoleWidgetListener());
 }
 
 
@@ -105,56 +174,6 @@ void ConsoleWidget::draw() const
     glDisableClientState(GL_VERTEX_ARRAY);
 
     endDraw();
-}
-
-void ConsoleWidget::keyPressed(SDL_keysym key)
-{
-    if (key.sym == SDLK_RETURN)
-    {
-        if (m_lineEdit.text() != L"")
-        {
-            m_commandHistory.push_back(m_lineEdit.text());
-            m_historyPosition = -1;
-            Engine::instance()->execCommand(m_lineEdit.text());
-            m_lineEdit.setText(L"");
-        }
-    }
-    else if (key.sym == SDLK_UP)
-    {
-        if (m_historyPosition == -1 && m_lineEdit.text() != L"")
-        {
-            m_commandHistory.push_back(m_lineEdit.text());
-            m_historyPosition = m_commandHistory.size() - 1;
-        }
-
-        if ((m_historyPosition == -1) && (m_commandHistory.size() > 0))
-            m_historyPosition = m_commandHistory.size();
-
-        if (m_historyPosition > 0)
-        {
-            m_historyPosition--;
-            m_lineEdit.setText(m_commandHistory[m_historyPosition]);
-        }
-
-        //markToUpdate();
-    }
-    else if (key.sym == SDLK_DOWN)
-    {
-        if (m_historyPosition < m_commandHistory.size() - 1)
-        {
-            m_historyPosition++;
-            m_lineEdit.setText(m_commandHistory[m_historyPosition]);
-        }
-        else
-        {
-            m_historyPosition = -1;
-            m_lineEdit.setText(L"");
-        }
-
-        //markToUpdate();
-    }
-    else
-        m_lineEdit.keyPressed(key);
 }
 
 void ConsoleWidget::processLogic(int dt)

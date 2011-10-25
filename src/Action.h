@@ -21,6 +21,7 @@
 
 #include <boost/variant.hpp>
 #include "Types.h"
+#include "SDL_keysym.h"
 
 namespace Rangers
 {
@@ -30,8 +31,8 @@ class Action;
 class Action
 {
 public:
-    enum Type {BUTTON_CLICKED};
-    typedef boost::variant<std::wstring, Rect> Argument;
+    enum Type {BUTTON_CLICKED, KEY_PRESSED};
+    typedef boost::variant<std::wstring, Rect, SDL_keysym> Argument;
 
     Action(Widget *source, Type type, const Argument& argument);
 

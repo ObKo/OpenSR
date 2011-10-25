@@ -1,7 +1,6 @@
 $#include <LuaWidget.h>
 $#include <Types.h>
 $#include <ActionListener.h>
-$#include <Action.h>
 
 $pfile "Widget.pkg"
 $pfile "ActionListener.pkg"
@@ -20,7 +19,6 @@ public:
     void mouseMove(int x, int y);
     void mouseEnter();
     void mouseLeave();
-    void keyPressed(SDL_keysym key);
     
     void mouseDown(uint8_t key, int x, int y);
     void mouseUp(uint8_t key, int x, int y);
@@ -28,11 +26,12 @@ public:
     
     void processMain();
     void processLogic(int dt);
-
+    
     class LuaActionListener: public ActionListener
     {
     public:
-        void actionPerformed(const Rangers::Action &action);
+        LuaWidget* associatedWidget() const;
+        void setAssociatedWidget(LuaWidget *widget);
     };
 };
 }

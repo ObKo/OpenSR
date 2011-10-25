@@ -19,9 +19,25 @@
 #include "LineEditWidget.h"
 #include "Engine.h"
 #include "Font.h"
+#include "ActionListener.h"
+#include "Action.h"
+#include <boost/variant/get.hpp>
 
 namespace Rangers
 {
+class LineEditWidget::LineEditWidgetListener: public ActionListener
+{
+public:
+    void actionPerformed(const Action &action)
+    {
+        if (LineEditWidget *w = dynamic_cast<LineEditWidget *>(action.source()))
+        {
+            if (action.type() == Action::KEY_PRESSED)
+                w->keyPressed(boost::get<SDL_keysym>(action.argument()));
+        }
+    }
+};
+
 void LineEditWidget::draw() const
 {
     if (!prepareDraw())
@@ -62,6 +78,7 @@ LineEditWidget::LineEditWidget(float w, float h, boost::shared_ptr< Font > font,
     m_position = 0;
     m_cursorTime = 0;
     m_cursorVisible = true;
+    addListener(new LineEditWidgetListener());
     markToUpdate();
 }
 
@@ -72,6 +89,7 @@ LineEditWidget::LineEditWidget(Widget* parent): Widget(parent)
     m_position = 0;
     m_cursorVisible = false;
     m_cursorTime = 0;
+    addListener(new LineEditWidgetListener());
 }
 
 LineEditWidget::LineEditWidget(const Rangers::LineEditWidget& other): Widget(other)
@@ -83,6 +101,7 @@ LineEditWidget::LineEditWidget(const Rangers::LineEditWidget& other): Widget(oth
     m_position = 0;
     m_cursorVisible = false;
     m_cursorTime = 0;
+    addListener(new LineEditWidgetListener());
 }
 
 LineEditWidget& LineEditWidget::operator=(const Rangers::LineEditWidget& other)
@@ -156,7 +175,7 @@ void LineEditWidget::processLogic(int dt)
 }
 
 
-void LineEditWidget::keyPressed(SDL_keysym key)
+void LineEditWidget::keyPressed(const SDL_keysym& key)
 {
     lock();
 

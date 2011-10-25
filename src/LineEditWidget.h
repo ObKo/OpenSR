@@ -35,14 +35,16 @@ public:
     virtual void processMain();
     virtual void processLogic(int dt);
 
-    virtual void keyPressed(SDL_keysym key);
-
     std::wstring text() const;
     void setText(const std::wstring &s);
 
     LineEditWidget& operator=(const LineEditWidget& other);
 
 private:
+    class LineEditWidgetListener;
+
+    void keyPressed(const SDL_keysym& key);
+
     Label m_label;
     std::wstring m_text;
     Vertex *m_borderVertices;

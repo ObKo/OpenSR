@@ -104,11 +104,6 @@ void Widget::mouseLeave()
     m_leftMouseButtonPressed = false;
 }
 
-void Widget::keyPressed(SDL_keysym key)
-{
-
-}
-
 void Widget::mouseDown(uint8_t key, int x, int y)
 {
     lock();

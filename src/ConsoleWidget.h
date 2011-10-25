@@ -37,11 +37,10 @@ public:
     virtual void processMain();
     virtual void processLogic(int dt);
 
-    virtual void keyPressed(SDL_keysym key);
-
     ConsoleWidget& operator=(const ConsoleWidget& other);
 
 private:
+    class ConsoleWidgetListener;
     LineEditWidget m_lineEdit;
     ColorLabel m_logLabel;
     Vertex *m_borderVertices;

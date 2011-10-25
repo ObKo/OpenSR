@@ -158,22 +158,6 @@ Rect LuaWidget::getBoundingRect() const
     return bb + Widget::getBoundingRect();
 }
 
-void LuaWidget::keyPressed(SDL_keysym key)
-{
-    lock();
-    lua_getglobal(m_luaState.get(), "keyPressed");
-    if (lua_isnil(m_luaState.get(), -1))
-    {
-        unlock();
-        return;
-    }
-
-    tolua_pushusertype(m_luaState.get(), &key, "SDL_keysym");
-    if (lua_pcall(m_luaState.get(), 1, 0, 0))
-        Log::warning() << "Lua: " << lua_tostring(m_luaState.get(), -1);
-    unlock();
-}
-
 void LuaWidget::mouseEnter()
 {
     lock();

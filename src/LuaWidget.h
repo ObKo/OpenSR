@@ -56,7 +56,6 @@ public:
     virtual void mouseMove(int x, int y);
     virtual void mouseEnter();
     virtual void mouseLeave();
-    virtual void keyPressed(SDL_keysym key);
 
     virtual void mouseDown(uint8_t key, int x, int y);
     virtual void mouseUp(uint8_t key, int x, int y);
