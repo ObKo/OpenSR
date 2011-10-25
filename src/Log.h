@@ -55,6 +55,9 @@ public:
     std::list<LogEntry> getLastLines(int n = -1) const;
     void writeLogEntry(const LogEntry& s);
 
+    bool colorOutput() const;
+    void setColorOutput(bool colorOutput);
+
 private:
     mutable bool m_needUpdate;
     bool m_colorOutput;

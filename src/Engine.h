@@ -82,6 +82,9 @@ public:
     //! Logic loop
     static int logic();
 
+    //! Global program options
+    boost::shared_ptr<boost::property_tree::ptree> properties() const;
+
     //! Get object by name
     Object* getObject(const std::wstring& name) const;
     //! Remove object.
@@ -101,7 +104,7 @@ private:
     boost::recursive_mutex m_updateMutex;
     boost::thread *m_fpsThread, *m_logicThread;
 
-    boost::property_tree::ptree m_properties;
+    boost::shared_ptr<boost::property_tree::ptree> m_properties;
     std::wstring m_configPath;
     std::wstring m_mainDataDir;
 

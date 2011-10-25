@@ -33,6 +33,16 @@ Log::Log()
     m_needUpdate = false;
 }
 
+bool Log::colorOutput() const
+{
+    return m_colorOutput;
+}
+
+void Log::setColorOutput(bool colorOutput)
+{
+    m_colorOutput = colorOutput;
+}
+
 Log* Log::instance()
 {
     if (!logInstance)
@@ -66,25 +76,29 @@ void Log::writeLogEntry(const LogEntry& s)
     }
 
 #ifdef __unix__
-    switch (s.m_level)
+    if (m_colorOutput)
     {
-    case LINFO:
-        prefix = L"\e[0;32m" + prefix;
-        break;
-    case LWARNING:
-        prefix = L"\e[0;33m" + prefix;
-        break;
-    case LERROR:
-        prefix = L"\e[0;31m" + prefix;
-        break;
+        switch (s.m_level)
+        {
+        case LINFO:
+            prefix = L"\e[0;32m" + prefix;
+            break;
+        case LWARNING:
+            prefix = L"\e[0;33m" + prefix;
+            break;
+        case LERROR:
+            prefix = L"\e[0;31m" + prefix;
+            break;
+        }
+        cout << toLocal(prefix + s.m_text) << "\e[0m" << endl;
     }
-    cout << toLocal(prefix + s.m_text) << "\e[0m" << endl;
+    else
+        cout << toLocal(prefix + s.m_text) << endl;
 #elif _WIN32
     cout << toLocal(prefix + s.m_text) << endl;
 #else
     cout << toLocal(prefix + s.m_text) << endl;
 #endif
-
 
     m_bufferMutex.unlock();
 }

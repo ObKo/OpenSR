@@ -72,6 +72,7 @@ Engine::Engine(int argc, char **argv): m_argc(argc), m_argv(argv), m_focusedWidg
     }
 
     std::ifstream configFile;
+    m_properties = boost::shared_ptr<boost::property_tree::ptree>(new boost::property_tree::ptree());
 
 #ifdef WIN32
     m_configPath = fromLocal((directory(std::string(argv[0])) + "\\OpenSR.ini").c_str());
@@ -98,7 +99,7 @@ Engine::Engine(int argc, char **argv): m_argc(argc), m_argv(argv), m_focusedWidg
     {
         try
         {
-            boost::property_tree::read_ini(configFile, m_properties);
+            boost::property_tree::read_ini(configFile, *m_properties);
         }
         catch (boost::property_tree::ini_parser_error &error)
         {
@@ -107,6 +108,22 @@ Engine::Engine(int argc, char **argv): m_argc(argc), m_argv(argv), m_focusedWidg
     }
 
     configFile.close();
+
+#ifdef WIN32
+    Log::instance()->setColorOutput(m_properties->get<bool>("log.color", false));
+#else
+    bool colorTerminal = false;
+    const char *term = getenv("TERM");
+    if (term)
+    {
+        std::string terminal(term);
+        //FIXME: looks quite ugly
+        if ((terminal.find("xterm") != string::npos)
+                || (terminal.find("color") != string::npos))
+            colorTerminal = true;
+    }
+    Log::instance()->setColorOutput(m_properties->get<bool>("log.color", colorTerminal));
+#endif
 
     engineInstance = this;
     m_currentWidget = 0;
@@ -129,7 +146,7 @@ Engine::~Engine()
     configFile.open(toLocal(m_configPath).c_str(), ios_base::out);
 #endif
     if (configFile.is_open())
-        boost::property_tree::write_ini(configFile, m_properties);
+        boost::property_tree::write_ini(configFile, *m_properties);
     configFile.close();
 }
 
@@ -193,7 +210,7 @@ void Engine::init(int w, int h, bool fullscreen)
     if (SDL_Init(SDL_INIT_VIDEO) != 0)
         throw std::runtime_error("Unable to init SDL");
 
-    m_mainDataDir = fromLocal(m_properties.get<std::string>("data.mainDataDir", "").c_str());
+    m_mainDataDir = fromLocal(m_properties->get<std::string>("data.mainDataDir", "").c_str());
     if (m_mainDataDir != L"")
     {
         if (!createDirPath(m_mainDataDir) && !checkDirWritable(m_mainDataDir))
@@ -259,9 +276,9 @@ void Engine::init(int w, int h, bool fullscreen)
     }
 #endif
 
-    w = m_properties.get<int>("graphics.width", w);
-    h = m_properties.get<int>("graphics.height", h);
-    fullscreen = m_properties.get<bool>("graphics.fullscreen", fullscreen);
+    w = m_properties->get<int>("graphics.width", w);
+    h = m_properties->get<int>("graphics.height", h);
+    fullscreen = m_properties->get<bool>("graphics.fullscreen", fullscreen);
 
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_Surface* screen = SDL_SetVideoMode(w, h, 32, SDL_OPENGL | (fullscreen ? SDL_FULLSCREEN : 0));
@@ -291,7 +308,7 @@ void Engine::init(int w, int h, bool fullscreen)
     glLoadIdentity();
     glOrtho(0.0f, m_width, m_height, 0.0f, -1.0f, 1.0f);
 
-    std::wstring startupScript = fromLocal(m_properties.get<std::string>("engine.startupScript", "startup.lua").c_str());
+    std::wstring startupScript = fromLocal(m_properties->get<std::string>("engine.startupScript", "startup.lua").c_str());
     size_t luaSize = 0;
     char *luaData = ResourceManager::instance()->loadData(startupScript, luaSize);
     if (luaData)
@@ -300,13 +317,13 @@ void Engine::init(int w, int h, bool fullscreen)
         delete[] luaData;
     }
 
-    std::vector<std::string> coreFontStrings = split(m_properties.get<std::string>("graphics.corefont", "DroidSans.ttf:13"), ':');
+    std::vector<std::string> coreFontStrings = split(m_properties->get<std::string>("graphics.corefont", "DroidSans.ttf:13"), ':');
     int coreFontSize = 13;
     if (coreFontStrings.size() > 1)
         coreFontSize = atoi(coreFontStrings.at(1).c_str());
     m_coreFont = ResourceManager::instance()->loadFont(fromLocal(coreFontStrings.at(0).c_str()), coreFontSize);
 
-    std::vector<std::string> monoFontStrings = split(m_properties.get<std::string>("graphics.monofont", "DroidSansMono.ttf:13"), ':');
+    std::vector<std::string> monoFontStrings = split(m_properties->get<std::string>("graphics.monofont", "DroidSansMono.ttf:13"), ':');
     int monoFontSize = 13;
     if (monoFontStrings.size() > 1)
         monoFontSize = atoi(monoFontStrings.at(1).c_str());
@@ -402,6 +419,11 @@ int Engine::screenHeight() const
 int Engine::screenWidth() const
 {
     return m_width;
+}
+
+boost::shared_ptr<boost::property_tree::ptree> Engine::properties() const
+{
+    return m_properties;
 }
 
 GLint Engine::textureInternalFormat(TextureType t) const
