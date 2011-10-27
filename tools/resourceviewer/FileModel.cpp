@@ -23,12 +23,21 @@ QVariant FileModel::data(const QModelIndex &index, int role) const
     if (!index.isValid())
         return QVariant();
 
-    if (role != Qt::DisplayRole && role != Qt::EditRole)
+    if (role != Qt::DisplayRole && role != Qt::DecorationRole)
         return QVariant();
 
     FileNode *item = getItem(index);
 
-    return item->name;
+    switch (role)
+    {
+    case Qt::DisplayRole:
+        return item->name;
+    case Qt::DecorationRole:
+        if (item->childs.count())
+            return iconProvider.icon(QFileIconProvider::Folder);
+        else
+            return iconProvider.icon(QFileInfo(item->name));
+    }
 }
 
 Qt::ItemFlags FileModel::flags(const QModelIndex &index) const

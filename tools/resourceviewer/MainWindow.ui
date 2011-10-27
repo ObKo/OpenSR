@@ -24,7 +24,11 @@
        <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
-       <widget class="QTreeView" name="fileTreeView"/>
+       <widget class="QTreeView" name="fileTreeView">
+        <property name="contextMenuPolicy">
+         <enum>Qt::CustomContextMenu</enum>
+        </property>
+       </widget>
        <widget class="QGroupBox" name="paramGroupBox">
         <property name="enabled">
          <bool>false</bool>

@@ -51,6 +51,7 @@ private Q_SLOTS:
     void framerateChanged(double value);
     void durationChanged(double value);
     void treeDoubleClicked(const QModelIndex& index);
+    void openContextMenu(const QPoint & pos);
     void stopAnimation();
     void startAnimation();
     void resetAnimation();

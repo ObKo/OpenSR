@@ -8,6 +8,7 @@
 #include <fstream>
 #include <libRanger.h>
 #include <squish.h>
+#include <QProgressDialog>
 
 using namespace Rangers;
 
@@ -28,6 +29,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&animationTimer, SIGNAL(timeout()), this, SLOT(nextFrame()));
     connect(ui->framerateSpinBox, SIGNAL(valueChanged(double)), this, SLOT(framerateChanged(double)));
     connect(ui->durationSpinBox, SIGNAL(valueChanged(double)), this, SLOT(durationChanged(double)));
+    connect(ui->fileTreeView, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(openContextMenu(const QPoint&)));
     connect(ui->fileTreeView, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(treeDoubleClicked(const QModelIndex&)));
     connect(ui->startButton, SIGNAL(clicked()), this, SLOT(startAnimation()));
     connect(ui->stopButton, SIGNAL(clicked()), this, SLOT(stopAnimation()));
@@ -50,34 +52,6 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
-}
-
-void extractPKG(Rangers::PKGItem *root, QString path, std::ifstream& f)
-{
-    if (!root)
-        root = Rangers::loadPKG(f);
-
-    if (root->dataType == 3)
-    {
-        if (qstrlen(root->name) > 0)
-        {
-            path += QString("/") + QString::fromAscii(root->name);
-            QDir().mkpath(path);
-        }
-
-        for (int i = 0; i < root->childCount; i++)
-            extractPKG(&root->childs[i], path, f);
-    }
-    else
-    {
-        QFile out(path + "/" + QString::fromAscii(root->name));
-        qDebug("Extracting file %s ...", (path + "/" + QString::fromAscii(root->name)).toLocal8Bit().data());
-        out.open(QIODevice::WriteOnly);
-        char *data = (char*)Rangers::extractFile(*root, f);
-        out.write(data, root->size);
-        out.close();
-        delete data;
-    }
 }
 
 void MainWindow::nextFrame()
@@ -368,6 +342,84 @@ void MainWindow::treeDoubleClicked(const QModelIndex& index)
 {
     FileNode *node = static_cast<FileNode *>(index.internalPointer());
     loadResource(node);
+}
+
+namespace
+{
+void addFileToList(QList<FileNode*>& files, FileNode* node)
+{
+    //FIXME: Possible errors
+    if ((node->parent) && (node->parent->parent))
+        files.append(node);
+    foreach(FileNode * child, node->childs)
+    {
+        addFileToList(files, child);
+    }
+}
+}
+
+void MainWindow::openContextMenu(const QPoint & pos)
+{
+    FileNode *node = static_cast<FileNode *>(ui->fileTreeView->indexAt(pos).internalPointer());
+    if (!node)
+        return;
+    if (node->type == NODE_RPKG || node->type == NODE_PKG)
+    {
+        QMenu menu(ui->fileTreeView);
+        menu.addAction(tr("Extract..."));
+        QAction *selectedAction = menu.exec(ui->fileTreeView->mapToGlobal(pos));
+        if (!selectedAction)
+            return;
+        QList<FileNode*> files;
+        addFileToList(files, node);
+        QString baseDir = QFileInfo(node->fullName).dir().path();
+        qDebug() << "Base dir: " << baseDir;
+        QString outDirectory = QFileDialog::getExistingDirectory(this, tr("Select folder to extract"));
+        if (outDirectory.isNull())
+            return;
+        qDebug() << "Output dir: " << outDirectory;
+        QDir outDir(outDirectory);
+        QProgressDialog progress(tr("Extracting files..."), tr("Cancel"), 0, files.count(), this);
+        progress.setWindowModality(Qt::WindowModal);
+        int value = 0;
+        foreach(FileNode * child, files)
+        {
+            if (progress.wasCanceled())
+                break;
+            QString fullName = child->fullName;
+            QString fullNameWithoutBase = fullName;
+            if ((!baseDir.isNull()) && (baseDir != ".") && (fullName.startsWith(baseDir)))
+                fullNameWithoutBase = fullName.right(fullName.length() - baseDir.length() - 1);
+            qDebug() << "Name:" << fullName << "name w/o base: " << fullNameWithoutBase;
+            progress.setValue(value);
+            progress.setLabelText(fullNameWithoutBase);
+            if (child->childs.count())
+            {
+                if (!outDir.mkpath(fullNameWithoutBase))
+                {
+                    qCritical() << "Cannot create out dir:" << outDir.canonicalPath() + "/" + fullNameWithoutBase;
+                    QMessageBox::critical(this, tr("Error extracting files"), tr("Cannot create out dir: %1").arg(outDir.canonicalPath() + "/" + fullNameWithoutBase));
+                    return;
+                }
+            }
+            else
+            {
+                qDebug() << "Saving to " << outDir.canonicalPath() + "/" + fullNameWithoutBase;
+                QFile out(outDir.canonicalPath() + "/" + fullNameWithoutBase);
+                if (!out.open(QIODevice::WriteOnly))
+                {
+                    qCritical() << "Cannot open file " << outDir.canonicalPath() + "/" + fullNameWithoutBase << ":" << out.errorString();
+                    QMessageBox::critical(this, tr("Error extracting files"),
+                                          tr("Cannot open file %1: %2").arg(outDir.canonicalPath() + "/" + fullNameWithoutBase, out.errorString()));
+                    return;
+                }
+                out.write(model.getData(child));
+                out.close();
+            }
+            value++;
+        }
+        progress.setValue(files.count());
+    }
 }
 
 void MainWindow::startAnimation()

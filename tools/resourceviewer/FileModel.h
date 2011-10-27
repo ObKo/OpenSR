@@ -8,6 +8,7 @@
 #include <QList>
 #include <QFileInfo>
 #include <QMap>
+#include <QFileIconProvider>
 
 namespace Rangers
 {
@@ -49,6 +50,7 @@ private:
     FileNode *rootItem;
     FileNode *getItem(const QModelIndex &index) const;
     QMap<FileNode*, QFileInfo> archives;
+    QFileIconProvider iconProvider;
 };
 };
 
