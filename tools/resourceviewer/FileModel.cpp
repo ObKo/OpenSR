@@ -105,7 +105,7 @@ int FileModel::rowCount(const QModelIndex &parent) const
     return parentItem->childs.count();
 }
 
-void convertNode(PKGItem *node, FileNode *fileNode, FileNode *parent, QString fullName)
+void convertPKGNode(PKGItem *node, FileNode *fileNode, FileNode *parent, QString fullName)
 {
     fileNode->name = node->name;
     fileNode->fullName = fullName + fileNode->name;
@@ -120,8 +120,53 @@ void convertNode(PKGItem *node, FileNode *fileNode, FileNode *parent, QString fu
     {
         FileNode *newNode = new FileNode;
         fileNode->childs.append(newNode);
-        convertNode(&node->childs[i], newNode, fileNode, fullName);
+        convertPKGNode(&node->childs[i], newNode, fileNode, fullName);
     }
+}
+
+void convertRPKGEntry(const RPKGEntry *entry, FileNode *root, FileNode *fileNode)
+{
+    QString name = QString::fromStdWString(entry->name);
+    QFileInfo fileInfo(name);
+    fileNode->name = fileInfo.fileName();
+    fileNode->fullName = name;
+
+    QString dir = fileInfo.dir().path();
+    QStringList dirs = dir.split("/");
+
+    FileNode *currentNode = root;
+    QString fullDirName;
+    foreach(QString dir, dirs)
+    {
+        fullDirName += dir + "/";
+        bool hasChild = false;
+        foreach(FileNode * child, currentNode->childs)
+        {
+            if (child->name == dir)
+            {
+                hasChild = true;
+                currentNode = child;
+                break;
+            }
+        }
+        if (!hasChild)
+        {
+            FileNode *newNode = new FileNode();
+            currentNode->childs.append(newNode);
+            newNode->parent = currentNode;
+            newNode->fullName = fullDirName;
+            newNode->fullName.chop(1);
+            newNode->name = dir;
+            newNode->type = NODE_RPKG;
+            newNode->userData = 0;
+            currentNode = newNode;
+        }
+    }
+
+    fileNode->parent = currentNode;
+    currentNode->childs.append(fileNode);
+    fileNode->userData = new RPKGEntry(*entry);
+    fileNode->type = NODE_RPKG;
 }
 
 FileNode* FileModel::addPKG(const QFileInfo& file)
@@ -134,11 +179,36 @@ FileNode* FileModel::addPKG(const QFileInfo& file)
     PKGItem *root = Rangers::loadPKG(f);
     f.close();
 
-    this->
+    beginResetModel();
+    FileNode *node = new FileNode;
+    convertPKGNode(root, node, rootItem, "");
+    node->name = file.fileName();
+    node->fullName = file.filePath();
+    rootItem->childs.append(node);
+    archives[node] = file;
+    endResetModel();
+    return node;
+}
+
+FileNode* FileModel::addRPKG(const QFileInfo& file)
+{
+#ifdef Q_OS_WIN32
+    std::ifstream f((wchar_t *)file.filePath().utf16(), std::ios::binary);
+#else
+    std::ifstream f(QFile::encodeName(file.filePath()).data(), std::ios::binary);
+#endif
+    std::list<RPKGEntry> entries = Rangers::loadRPKG(f);
+    f.close();
 
     beginResetModel();
     FileNode *node = new FileNode;
-    convertNode(root, node, rootItem, "");
+    std::list<RPKGEntry>::const_iterator end = entries.end();
+    for (std::list<RPKGEntry>::const_iterator i = entries.begin(); i != end; ++i)
+    {
+        FileNode *n = new FileNode();
+        convertRPKGEntry(&(*i), node, n);
+    }
+    node->parent = rootItem;
     node->name = file.fileName();
     node->fullName = file.filePath();
     rootItem->childs.append(node);
@@ -166,6 +236,7 @@ FileNode* FileModel::getSiblingNode(FileNode* node, const QString& name)
     switch (node->type)
     {
     case NODE_PKG:
+    case NODE_RPKG:
     {
         FileNode *parent = node->parent;
         if (!parent)
@@ -216,6 +287,26 @@ QByteArray FileModel::getData(FileNode *node)
 #endif
         unsigned char *data = extractFile(*pkg, f);
         result = QByteArray((const char*)data, pkg->size);
+        delete data;
+        f.close();
+        break;
+    }
+    case NODE_RPKG:
+    {
+        RPKGEntry *pkg = static_cast<RPKGEntry*>(node->userData);
+        FileNode *root = node;
+        //FIXME: Possible errors
+        while (root && root->parent && root->parent->parent)
+            root = root->parent;
+
+#ifdef Q_OS_WIN32
+        std::ifstream f((wchar_t *)archives[root].filePath().utf16(), std::ios::binary);
+#else
+        std::ifstream f(QFile::encodeName(archives[root].filePath()).data(), std::ios::binary);
+#endif
+        size_t size = 0;
+        char *data = extractFile(*pkg, f, size);
+        result = QByteArray(data, size);
         delete data;
         f.close();
         break;

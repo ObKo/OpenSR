@@ -29,6 +29,7 @@ public:
     FileModel(QObject *parent = 0);
 
     FileNode* addPKG(const QFileInfo& file);
+    FileNode* addRPKG(const QFileInfo& file);
     FileNode* addFile(const QFileInfo& file);
 
     QVariant data(const QModelIndex &index, int role) const;

@@ -34,7 +34,7 @@ void countFiles(std::wstring dir, PKGItem *base, std::map<RPKGEntry *, PKGItem*>
     for (int i = 0; i < base->childCount; i++)
     {
         if (base->childs[i].dataType == 3)
-            countFiles(dir + fromASCII(base->name) + L"/", &base->childs[i], itemMap);
+            countFiles(dir + fromASCII(base->childs[i].name) + L"/", &base->childs[i], itemMap);
         else
         {
             RPKGEntry *e = new RPKGEntry;
@@ -64,7 +64,7 @@ int pkg2rpkg(const std::string& inputFile, const std::string& outputFile)
         std::cout << "Incorrect input file" << endl;
         return -1;
     }
-    countFiles(L"", &root->childs[0], itemMap);
+    countFiles(L"", root, itemMap);
 
     //FIXME: OH SHI~
     std::vector<RPKGEntry> files;

@@ -80,6 +80,10 @@ void MainWindow::loadFile(const QString& fileName)
     {
         model.addPKG(fileInfo);
     }
+    else if (fileInfo.suffix().toLower() == "rpkg")
+    {
+        model.addRPKG(fileInfo);
+    }
     else
     {
         loadResource(model.addFile(fileInfo));
@@ -117,7 +121,7 @@ void MainWindow::loadGAI(GAIAnimation anim)
 void MainWindow::openFile()
 {
     QString fileName = QFileDialog::getOpenFileName(this, tr("Open image file"), QString(),
-                       tr("All suported files (*.gai *.hai *.gi *.pkg *.dds)"));
+                       tr("All suported files (*.gai *.hai *.gi *.pkg *.dds *.rpkg)"));
     if (fileName.isNull())
         return;
 
@@ -158,7 +162,7 @@ void MainWindow::loadResource(FileNode *node)
 
     QString fileName = node->name;
     QFileInfo fileInfo(fileName);
-    if (fileInfo.suffix() == "gi")
+    if (fileInfo.suffix().toLower() == "gi")
     {
         Rangers::GIFrame frame = Rangers::loadGIFile(model.getData(node).data());
         loadGI(frame);
