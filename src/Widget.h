@@ -31,6 +31,7 @@ public:
     Widget(Widget *parent = 0);
     Widget(float w, float h, Widget *parent = 0);
     Widget(const Widget& other);
+    virtual ~Widget();
 
     virtual void draw() const = 0;
 

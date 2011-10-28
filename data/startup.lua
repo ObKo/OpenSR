@@ -1,2 +1,3 @@
 widget = Rangers.LuaWidget:new(L"test.lua")
-Rangers.Engine:instance():addWidget(widget)
+engine:addWidget(widget)
+engine:focusWidget(widget)

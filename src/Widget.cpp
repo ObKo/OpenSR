@@ -61,6 +61,9 @@ Widget::Widget(const Rangers::Widget& other): Object(other)
     markToUpdate();
 }
 
+Widget::~Widget()
+{
+}
 
 void Widget::mouseMove(int x, int y)
 {

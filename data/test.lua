@@ -1,44 +1,40 @@
-engine = Rangers.Engine:instance()
-resources = Rangers.ResourceManager:instance()
-
 background = Rangers.Sprite:new(L"DATA/FormMain3/2bg.gi", this)
 background:setWidth(background:width()/(engine:screenHeight()/background:height()))
 background:setHeight(engine:screenHeight())
 background:setLayer(-1)
+tolua.takeownership(background)
 
 bgPlanet = Rangers.Sprite:new(L"DATA/FormMain3/2Planet.gi", this)
 bgPlanet:setOrigin(Rangers.POSITION_X_LEFT, Rangers.POSITION_Y_BOTTOM)
 bgPlanet:setPosition(0, engine:screenHeight())
 bgPlanet:setLayer(0)
+tolua.takeownership(bgPlanet)
 
 bgAnimLine = Rangers.GAISprite:new(L"DATA/FormMain2/2AnimLine.gai", this)
 bgAnimLine:setOrigin(Rangers.POSITION_X_RIGHT, Rangers.POSITION_Y_TOP)
 bgAnimLine:setPosition(engine:screenWidth(), 0)
 bgAnimLine:setLayer(0)
+tolua.takeownership(bgAnimLine)
 
 caption = Rangers.Sprite:new(L"DATA/FormMain2/2AnimCaption.gi", this)
 caption:setOrigin(Rangers.POSITION_X_RIGHT, Rangers.POSITION_Y_TOP)
 caption:setPosition(engine:screenWidth(), 0)
 caption:setLayer(1)
+tolua.takeownership(caption)
 
 ship = Rangers.GAISprite:new(L"DATA/FormMain3/2Ship1.gai", this)
 ship:setPosition(0, engine:screenHeight() - ship:height())
 ship:setLayer(1)
+tolua.takeownership(ship)
 
 exitButton = Rangers.Button:new(L"DATA/FormMain2/2ButExitN.gi", L"DATA/FormMain2/2ButExitA.gi", L"DATA/FormMain2/2ButExitD.gi", this);
 exitButton:setPosition(100, 100)
 exitButton:addListener(actionListener)
+tolua.takeownership(exitButton)
 
 t = 0
 bgspeed = 5/1000
 bgforward = true
-
-engine:focusWidget(this)
-
-function keyPressed(k)
---   bgAnimLine:delete()
---   bgAnimLine = nil
-end
 
 function getBoundingRect()
   r = Rangers.Rect:new()

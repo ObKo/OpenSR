@@ -149,6 +149,12 @@ Engine::~Engine()
     if (configFile.is_open())
         boost::property_tree::write_ini(configFile, *m_properties);
     configFile.close();
+
+    std::list<Widget *>::iterator end = m_widgets.end();
+    for (std::list<Widget *>::iterator it = m_widgets.begin(); it != end; ++it)
+    {
+        delete *it;
+    }
 }
 
 int Engine::fpsCounter()
@@ -175,7 +181,8 @@ void Engine::addWidget(Widget *w)
 
     m_mainNode.addChild(w);
 
-    for (std::list<Widget*>::iterator i = m_widgets.begin(); i != m_widgets.end(); i++)
+    std::list<Widget*>::iterator end = m_widgets.end();
+    for (std::list<Widget*>::iterator i = m_widgets.begin(); i != end; ++i)
     {
         if ((*i)->layer() < w->layer())
         {
@@ -184,6 +191,15 @@ void Engine::addWidget(Widget *w)
         }
     }
     m_widgets.push_back(w);
+}
+
+void Engine::removeWidget(Widget *w)
+{
+    if (w == m_currentWidget)
+        m_currentWidget = 0;
+    if (w == m_focusedWidget)
+        m_focusedWidget = 0;
+    m_widgets.remove(w);
 }
 
 int Engine::logic()
@@ -310,13 +326,7 @@ void Engine::init(int w, int h, bool fullscreen)
     glOrtho(0.0f, m_width, m_height, 0.0f, -1.0f, 1.0f);
 
     std::wstring startupScript = fromLocal(m_properties->get<std::string>("engine.startupScript", "startup.lua").c_str());
-    size_t luaSize = 0;
-    char *luaData = ResourceManager::instance()->loadData(startupScript, luaSize);
-    if (luaData)
-    {
-        execScript(luaData, luaSize, toLocal(startupScript));
-        delete[] luaData;
-    }
+    execLuaScript(startupScript);
 
     std::vector<std::string> coreFontStrings = split(m_properties->get<std::string>("graphics.corefont", "DroidSans.ttf:13"), ':');
     int coreFontSize = 13;
@@ -376,9 +386,16 @@ int Engine::run()
     while (m_gameRunning)
     {
         m_updateMutex.lock();
-        for (std::list<Object *>::const_iterator i = m_updateList.begin(); i != m_updateList.end(); i++)
+        std::list<Object *>::const_iterator end = m_updateList.end();
+        for (std::list<Object *>::const_iterator i = m_updateList.begin(); i != end; ++i)
             (*i)->processMain();
         m_updateList.clear();
+
+        std::list<Widget*>::const_iterator widgetEnd = m_widgetsToDelete.end();
+        for (std::list<Widget*>::const_iterator i = m_widgetsToDelete.begin(); i != widgetEnd; ++i)
+            delete(*i);
+        m_widgetsToDelete.clear();
+
         m_updateMutex.unlock();
 
         ResourceManager::instance()->processMain();
@@ -451,6 +468,14 @@ void Engine::focusWidget(Widget* w)
 {
     if (!m_consoleOpenned)
         m_focusedWidget = w;
+}
+
+void Engine::markWidgetDeleting(Widget *w)
+{
+    m_updateMutex.lock();
+    removeWidget(w);
+    m_widgetsToDelete.push_back(w);
+    m_updateMutex.unlock();
 }
 
 std::wstring Engine::addObject(Object* object, const std::wstring& name)

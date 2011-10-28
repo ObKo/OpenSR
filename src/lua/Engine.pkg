@@ -16,6 +16,8 @@ public:
     void unmarkToUpdate(Rangers::Object* object);
     void addWidget(Rangers::Widget *w);
     void focusWidget(Rangers::Widget *w);
+    void removeWidget(Rangers::Widget *w);
+    void markWidgetDeleting(Rangers::Widget *w);
 
     boost::shared_ptr<Rangers::Font> coreFont() const;
     boost::shared_ptr<Rangers::Font> serviceFont() const;

@@ -24,6 +24,7 @@
 #include "Action.h"
 #include "ResourceManager.h"
 #include "LuaBindings.h"
+#include "Engine.h"
 #include <tolua++.h>
 #include <libRanger.h>
 
@@ -307,5 +308,9 @@ void LuaWidget::initLuaState()
     lua_setglobal(m_luaState.get(), "this");
     tolua_pushusertype(m_luaState.get(), m_actionListener, "Rangers::LuaWidget::LuaActionListener");
     lua_setglobal(m_luaState.get(), "actionListener");
+    tolua_pushusertype(m_luaState.get(), Engine::instance(), "Rangers::Engine");
+    lua_setglobal(m_luaState.get(), "engine");
+    tolua_pushusertype(m_luaState.get(), ResourceManager::instance(), "Rangers::ResourceManager");
+    lua_setglobal(m_luaState.get(), "resources");
 }
 }

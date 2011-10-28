@@ -1,5 +1,7 @@
 #include "LuaBindings.h"
 #include "libRanger.h"
+#include "ResourceManager.h"
+#include "Engine.h"
 #include "Log.h"
 #include <Font.h>
 #include <Texture.h>
@@ -13,30 +15,18 @@
 
 namespace Rangers
 {
-int execScript(const std::wstring& fileName)
+int execLuaScript(const std::wstring& name)
 {
-#ifdef WIN32
-    std::ifstream stream(fileName.c_str(), std::ifstream::in | std::ifstream::binary);
-#else
-    std::ifstream stream(toLocal(fileName).c_str(), std::ifstream::in | std::ifstream::binary);
-#endif
-    if (!stream.is_open())
-    {
-        Log::error() << "Cannot open lua script file: " << strerror(errno);
+    size_t size;
+    char *luaData = ResourceManager::instance()->loadData(name, size);
+    if (!luaData)
         return -1;
-    }
-    stream.seekg(0, std::ios_base::end);
-    size_t size = stream.tellg();
-    stream.seekg(0, std::ios_base::beg);
-    char *data = new char[size];
-    stream.read(data, size);
-    stream.close();
-    int state = execScript(data, size, toLocal(basename(fileName) + L"." + suffix(fileName)));
-    delete[] data;
+    int state = execLuaScript(luaData, size, toLocal(name));
+    delete[] luaData;
     return state;
 }
 
-int execScript(const char *data, size_t size, const std::string& name)
+int execLuaScript(const char *data, size_t size, const std::string& name)
 {
     lua_State *luaState = lua_open();
     luaopen_base(luaState);
@@ -54,9 +44,14 @@ int execScript(const char *data, size_t size, const std::string& name)
     tolua_LuaWidget_open(luaState);
     tolua_GAISprite_open(luaState);
     tolua_Button_open(luaState);
+    tolua_pushusertype(luaState, Engine::instance(), "Rangers::Engine");
+    lua_setglobal(luaState, "engine");
+    tolua_pushusertype(luaState, ResourceManager::instance(), "Rangers::ResourceManager");
+    lua_setglobal(luaState, "resources");
     int state;
     if (state = (luaL_loadbuffer(luaState, data, size, name.c_str()) || lua_pcall(luaState, 0, LUA_MULTRET, 0)))
         Log::error() << "Cannot exec lua script: " << lua_tostring(luaState, -1);
+    lua_close(luaState);
     return state;
 }
 

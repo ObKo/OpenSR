@@ -58,8 +58,12 @@ public:
     void unmarkToUpdate(Object* object);
     //! Add widget for mouse input handling
     void addWidget(Widget *w);
+    //! Remove widget from mouse input handling
+    void removeWidget(Widget *w);
     //! Focus widget for key input handling
     void focusWidget(Widget *w);
+    //! Mark widget to be deleted in main loop.
+    void markWidgetDeleting(Widget *w);
 
     //! Current screen height
     int screenHeight() const;
@@ -122,6 +126,7 @@ private:
     std::list<Object *> m_updateList;
 
     std::list<Widget *> m_widgets;
+    std::list<Widget *> m_widgetsToDelete;
     Widget *m_currentWidget;
     Widget *m_focusedWidget;
 
