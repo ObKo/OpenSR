@@ -1,0 +1,15 @@
+$#include <Object.h>
+$#include <Node.h>
+$pfile "Object.pkg"
+
+namespace Rangers
+{
+class Node: public Object
+{
+public:
+    Node();
+    Node(Rangers::Object *parent);
+    virtual void draw() const;
+    virtual void processLogic(int dt);
+};
+}

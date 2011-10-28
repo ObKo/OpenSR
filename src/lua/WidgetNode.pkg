@@ -1,0 +1,13 @@
+$#include <Widget.h>
+$#include <WidgetNode.h>
+$pfile "Widget.pkg"
+
+namespace Rangers
+{
+class WidgetNode: public Widget
+{
+public:
+    WidgetNode(Rangers::Widget *parent);
+    WidgetNode();
+};
+}
