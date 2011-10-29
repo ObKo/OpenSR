@@ -26,6 +26,7 @@ namespace Rangers
 class Node: public Object
 {
 public:
+    Node(Rangers::Object *parent = 0);
     virtual void draw() const;
     virtual void processLogic(int dt);
 };

@@ -33,7 +33,13 @@ Rect Widget::getBoundingRect() const
     r.y2 = m_height;
     for (std::list<Widget*>::const_reverse_iterator i = m_childWidgets.rbegin(); i != m_childWidgets.rend(); i++)
     {
-        r += (*i)->getBoundingRect();
+        Rect childRect = (*i)->getBoundingRect();
+        Vector position = (*i)->position();
+        childRect.x1 += position.x;
+        childRect.x2 += position.x;
+        childRect.y1 += position.y;
+        childRect.y2 += position.y;
+        r += childRect;
     }
     return r;
 }

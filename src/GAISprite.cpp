@@ -181,6 +181,7 @@ void GAISprite::draw() const
 
 void GAISprite::processMain()
 {
+    //FIXME: m_baseFrameWidth
     AnimatedSprite::processMain();
     lock();
 
@@ -205,8 +206,8 @@ void GAISprite::processMain()
         if (m_currentFrame == 0)
         {
             unsigned char* data = (unsigned char*)glMapBuffer(GL_PIXEL_UNPACK_BUFFER, GL_READ_WRITE);
-            memset(data, 0, m_width * m_height * 4);
-            copyImageData(data, m_width, 0, 0, m_baseFrameWidth, m_baseFrameHeight, m_baseFrame.get());
+            memset(data, 0, m_baseFrameWidth * m_baseFrameHeight * 4);
+            copyImageData(data, m_baseFrameWidth, 0, 0, m_baseFrameWidth, m_baseFrameHeight, m_baseFrame.get());
             glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER);
             //FIXME: null as pointer to rgba looks ugly
             m_texture->setRawData(m_baseFrameWidth, m_baseFrameHeight, TEXTURE_B8G8R8A8, 0, 4 * m_baseFrameWidth * m_baseFrameHeight);
@@ -214,7 +215,7 @@ void GAISprite::processMain()
         else
         {
             drawFrame(m_currentFrame);
-            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_width, m_height, GL_BGRA, GL_UNSIGNED_BYTE, 0);
+            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_baseFrameWidth, m_baseFrameHeight, GL_BGRA, GL_UNSIGNED_BYTE, 0);
         }
         glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
         m_needNextFrame = false;

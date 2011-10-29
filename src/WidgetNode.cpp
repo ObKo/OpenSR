@@ -28,17 +28,17 @@ WidgetNode::WidgetNode(Widget *parent): Widget(parent)
 void WidgetNode::draw() const
 {
     if (!prepareDraw())
-            return;
+        return;
 
-        for (std::list<Object*>::const_iterator i = m_children.begin(); i != m_children.end(); i++)
-            (*i)->draw();
+    for (std::list<Object*>::const_iterator i = m_children.begin(); i != m_children.end(); i++)
+        (*i)->draw();
 
-        endDraw();
+    endDraw();
 }
 
 void WidgetNode::processLogic(int dt)
 {
     for (std::list<Object*>::const_iterator i = m_children.begin(); i != m_children.end(); i++)
-            (*i)->processLogic(dt);
+        (*i)->processLogic(dt);
 }
 }

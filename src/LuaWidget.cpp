@@ -304,6 +304,8 @@ void LuaWidget::initLuaState()
     tolua_LuaWidget_open(m_luaState.get());
     tolua_GAISprite_open(m_luaState.get());
     tolua_Button_open(m_luaState.get());
+    tolua_Node_open(m_luaState.get());
+    tolua_WidgetNode_open(m_luaState.get());
     tolua_pushusertype(m_luaState.get(), this, "Rangers::LuaWidget");
     lua_setglobal(m_luaState.get(), "this");
     tolua_pushusertype(m_luaState.get(), m_actionListener, "Rangers::LuaWidget::LuaActionListener");

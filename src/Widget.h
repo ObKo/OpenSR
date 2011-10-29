@@ -33,8 +33,6 @@ public:
     Widget(const Widget& other);
     virtual ~Widget();
 
-    virtual void draw() const = 0;
-
     virtual Rect getBoundingRect() const;
     virtual void mouseMove(int x, int y);
     virtual void mouseEnter();

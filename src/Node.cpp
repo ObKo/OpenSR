@@ -23,6 +23,11 @@ using namespace boost;
 
 namespace Rangers
 {
+Node::Node(Rangers::Object *parent): Object(parent)
+{
+
+}
+
 void Node::draw() const
 {
     if (!prepareDraw())
