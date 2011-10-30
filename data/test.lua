@@ -64,15 +64,6 @@ t = 0
 bgspeed = 5/1000
 bgforward = true
 
-function getBoundingRect()
-  r = Rangers.Rect:new()
-  r.x1 = 0.0
-  r.x2 = ship:width()
-  r.y1 = 0.0
-  r.y2 = ship:height()
-  return r
-end
-
 function actionPerformed(action)
     if action:source() == buttons["exit"] then
         engine:quit(0)

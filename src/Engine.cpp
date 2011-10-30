@@ -284,7 +284,7 @@ void Engine::init(int w, int h, bool fullscreen)
     {
         std::vector<std::wstring> list = split(fromLocal(pathes), L':');
         for (std::vector<std::wstring>::const_iterator i = list.begin(); i != list.end(); i++)
-            ResourceManager::instance()->addDir((*i) + L"OpenSR/");
+            ResourceManager::instance()->addDir((*i) + L"/OpenSR/");
     }
     else
     {

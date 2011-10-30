@@ -120,12 +120,15 @@ void MainWindow::loadGAI(GAIAnimation anim)
 
 void MainWindow::openFile()
 {
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Open image file"), QString(),
+    QStringList fileNames = QFileDialog::getOpenFileNames(this, tr("Open file"), QString(),
                        tr("All suported files (*.gai *.hai *.gi *.pkg *.dds *.rpkg)"));
-    if (fileName.isNull())
+    if (fileNames.isEmpty())
         return;
 
-    loadFile(fileName);
+    foreach(QString fileName, fileNames)
+    {
+        loadFile(fileName);
+    }
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
