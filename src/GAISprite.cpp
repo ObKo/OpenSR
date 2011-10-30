@@ -67,7 +67,7 @@ GAISprite::GAISprite(const std::wstring& name, Object *parent): AnimatedSprite(p
     m_texture = boost::shared_ptr<Texture>((Texture*)0);
 
     std::wstring sfx = suffix(name);
-    std::transform(sfx.begin(), sfx.end(), sfx.begin(), std::towlower);
+    std::transform(sfx.begin(), sfx.end(), sfx.begin(), towlower);
     if (sfx == L"gai")
     {
         size_t s;
