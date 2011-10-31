@@ -41,6 +41,7 @@ class ResourceManager
 public:
     void addRPKG(const std::wstring& path);
     void addDir(const std::wstring& path);
+    void addMapping(const std::wstring& fileName);
 
     char* loadData(const std::wstring& name, size_t &size);
     boost::shared_ptr<Texture> loadTexture(const std::wstring& name);
@@ -55,6 +56,7 @@ private:
     class GAIWorker;
     void processGAIQueue();
     void cleanupUnused();
+    std::map<std::wstring, std::wstring> m_fileMapping;
     std::map<std::wstring, boost::shared_ptr<ResourceAdapter> > m_files;
     std::list<boost::shared_ptr<ResourceAdapter> > m_adapters;
 

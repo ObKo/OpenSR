@@ -1,0 +1,3 @@
+exitButtonNormal.gi = DATA/FormMain2/2ButExitN.gi		
+exitButtonHovered.gi = DATA/FormMain2/2ButExitA.gi
+exitButtonPressed.gi = DATA/FormMain2/2ButExitD.gi

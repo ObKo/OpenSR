@@ -1,13 +1,13 @@
 background = Rangers.Sprite:new(L"DATA/FormMain3/2bg.gi", this)
 background:setWidth(background:width()/(engine:screenHeight()/background:height()))
 background:setHeight(engine:screenHeight())
-background:setLayer(-2)
+background:setLayer(-3)
 tolua.takeownership(background)
 
 bgPlanet = Rangers.Sprite:new(L"DATA/FormMain3/2Planet.gi", this)
 bgPlanet:setOrigin(Rangers.POSITION_X_LEFT, Rangers.POSITION_Y_BOTTOM)
 bgPlanet:setPosition(0, engine:screenHeight())
-bgPlanet:setLayer(0)
+bgPlanet:setLayer(-2)
 tolua.takeownership(bgPlanet)
 
 bgAnimLine = Rangers.GAISprite:new(L"DATA/FormMain2/2AnimLine.gai", this)
@@ -52,7 +52,7 @@ buttons["records"] = Rangers.Button:new(L"DATA/FormMain2/2ButRecordsN.gi", L"DAT
 buttons["records"]:setPosition(0, 3 * (h + 15))
 buttons["about"] = Rangers.Button:new(L"DATA/FormMain2/2ButAboutN.gi", L"DATA/FormMain2/2ButAboutA.gi", L"DATA/FormMain2/2ButAboutD.gi", menuNode);
 buttons["about"]:setPosition(0, 4 * (h + 15))
-buttons["exit"] = Rangers.Button:new(L"DATA/FormMain2/2ButExitN.gi", L"DATA/FormMain2/2ButExitA.gi", L"DATA/FormMain2/2ButExitD.gi", menuNode);
+buttons["exit"] = Rangers.Button:new(L"exitButtonNormal.gi", L"exitButtonHovered.gi", L"exitButtonPressed.gi", menuNode);
 buttons["exit"]:setPosition(0, 5 * (h + 15))
 
 for k,v in pairs(buttons) do
@@ -61,7 +61,7 @@ for k,v in pairs(buttons) do
 end
 
 t = 0
-bgspeed = 5/1000
+bgspeed = 20/1000
 bgforward = true
 
 function actionPerformed(action)

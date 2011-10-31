@@ -13,4 +13,13 @@ std::string toLocal(const std::wstring& text);
 
 std::vector<std::wstring> split(const std::wstring& s, wchar_t c);
 std::wstring suffix(const std::wstring& s);
+std::wstring trim(const std::wstring& s);
+std::wstring basename(const std::wstring& s);
+std::wstring directory(const std::wstring& s);
+
+std::vector<std::string> split(const std::string& s, char c);
+std::string suffix(const std::string& s);
+std::string trim(const std::string& s);
+std::string basename(const std::string& s);
+std::string directory(const std::string& s);
 }

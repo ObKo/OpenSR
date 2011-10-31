@@ -29,6 +29,9 @@
 #include "GAISprite.h"
 #include "LuaWidget.h"
 #include <boost/thread.hpp>
+#include <string>
+#include <iostream>
+#include <sstream>
 
 using namespace std;
 
@@ -72,6 +75,44 @@ void ResourceManager::addRPKG(const std::wstring& path)
     list<wstring> adaptorFiles = a->getFiles();
     for (list<wstring>::const_iterator i = adaptorFiles.begin(); i != adaptorFiles.end(); ++i)
         m_files[(*i)] = a;
+}
+
+void ResourceManager::addMapping(const std::wstring& fileName)
+{
+    size_t fileSize;
+    char *data = loadData(fileName, fileSize);
+    if (!fileSize || !data)
+        return;
+    string stringData = string(data);
+    stringData += "\r\n";
+    istringstream iss(stringData, istringstream::in);
+    delete[] data;
+    char lineBuffer[1024];
+    int i = 1;
+    while (!iss.fail() && !iss.bad() && !iss.eof())
+    {
+        memset(lineBuffer, 0, 1024);
+        iss.getline(lineBuffer, 1024);
+        wstring line = fromUTF8(lineBuffer);
+        if (trim(line) == L"")
+            continue;
+        vector<wstring> strs = split(line, '=');
+        if (strs.size() != 2)
+        {
+            Log::warning() << "Invalid mapping on " << fileName << ":" << i;
+            return;
+        }
+        wstring key = trim(strs[0]);
+        wstring value = trim(strs[1]);
+        if ((key == L"") || (value == L""))
+        {
+            Log::warning() << "Invalid mapping on " << fileName << ":" << i;
+            return;
+        }
+        Log::debug() << "\"" << key << "\" = \"" << value << "\"";
+        m_fileMapping[key] = value;
+        i++;
+    }
 }
 
 void ResourceManager::addDir(const std::wstring& path)
@@ -311,12 +352,18 @@ void ResourceManager::processMain()
 
 char* ResourceManager::loadData(const std::wstring& name, size_t &size)
 {
-    if (m_files.find(name) == m_files.end())
+    wstring realName = name;
+    map<wstring, wstring>::iterator mapIt = m_fileMapping.find(name);
+    if (mapIt != m_fileMapping.end())
+        realName = mapIt->second;
+
+    std::map<std::wstring, boost::shared_ptr<ResourceAdapter> >::iterator fileIt = m_files.find(realName);
+    if (fileIt == m_files.end())
     {
-        Log::error() << "No such file: " << name;
+        Log::error() << "No such file: " << realName;
         return 0;
     }
-    return m_files[name]->loadData(name, size);
+    return fileIt->second->loadData(realName, size);
 }
 
 void ResourceManager::processGAIQueue()

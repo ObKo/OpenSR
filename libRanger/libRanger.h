@@ -344,6 +344,8 @@ LIBRANGER_DIRECTIVE std::string toLocal(const std::wstring& text);
 
 //! Split string
 LIBRANGER_DIRECTIVE std::vector<std::wstring> split(const std::wstring& s, wchar_t c);
+//! Remove leading and trailing whitespace/tabs/newlines from a string
+LIBRANGER_DIRECTIVE std::wstring trim(const std::wstring& s);
 //! Get file extension
 LIBRANGER_DIRECTIVE std::wstring suffix(const std::wstring& s);
 //! Get file basename
@@ -353,6 +355,8 @@ LIBRANGER_DIRECTIVE std::wstring directory(const std::wstring& s);
 
 //! Split string
 LIBRANGER_DIRECTIVE std::vector<std::string> split(const std::string& s, char c);
+//! Remove leading and trailing whitespace/tabs/newlines from a string
+LIBRANGER_DIRECTIVE std::string trim(const std::string& s);
 //! Get file extension
 LIBRANGER_DIRECTIVE std::string suffix(const std::string& s);
 //! Get file basename

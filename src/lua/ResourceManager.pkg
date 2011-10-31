@@ -16,6 +16,7 @@ class ResourceManager
 public:
     void addRPKG(const std::wstring& path);
     void addDir(const std::wstring& path);
+    void addMapping(const std::wstring& fileName);
 
     char* loadData(const std::wstring& name, size_t &size);
     boost::shared_ptr<Rangers::Texture> loadTexture(const std::wstring& name);

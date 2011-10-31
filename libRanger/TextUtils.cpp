@@ -349,3 +349,41 @@ std::string Rangers::directory(const std::string& s)
             return s;
     return s.substr(0, pos);
 }
+
+/*!
+ * \param s input string
+ * \return trimmed string
+ */
+std::wstring Rangers::trim(const std::wstring& s)
+{
+    std::wstring result = s;
+    std::wstring::iterator end = result.end();
+    std::wstring::iterator spaceEnd;
+    for (spaceEnd = result.begin(); (spaceEnd != end) && ((*spaceEnd == L' ') || (*spaceEnd == L'\t') || (*spaceEnd == L'\n') || (*spaceEnd == L'\r')); ++spaceEnd);
+    if (spaceEnd != result.begin())
+        result.erase(result.begin(), spaceEnd);
+    end = result.begin();
+    for (spaceEnd = result.end(); (spaceEnd != end) && ((*(spaceEnd - 1) == L' ') || (*(spaceEnd - 1) == L'\t') || (*(spaceEnd - 1) == L'\n') || (*(spaceEnd - 1) == L'\r')); --spaceEnd);
+    if (spaceEnd != result.end())
+        result.erase(spaceEnd, result.end());
+    return result;
+}
+
+/*!
+ * \param s input string
+ * \return trimmed string
+ */
+std::string Rangers::trim(const std::string& s)
+{
+    std::string result = s;
+    std::string::iterator end = result.end();
+    std::string::iterator spaceEnd;
+    for (spaceEnd = result.begin(); (spaceEnd != end) && ((*spaceEnd == ' ') || (*spaceEnd == '\t') || (*spaceEnd == '\n') || (*spaceEnd == '\r')); ++spaceEnd);
+    if (spaceEnd != result.begin())
+        result.erase(result.begin(), spaceEnd);
+    end = result.begin();
+    for (spaceEnd = result.end(); (spaceEnd != end) && ((*(spaceEnd - 1) == ' ') || (*(spaceEnd - 1) == '\t') || (*(spaceEnd - 1) == '\n') || (*(spaceEnd - 1) == '\r')); --spaceEnd);
+    if (spaceEnd != result.end())
+        result.erase(spaceEnd, result.end());
+    return result;
+}
