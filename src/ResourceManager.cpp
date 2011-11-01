@@ -399,25 +399,41 @@ void ResourceManager::cleanupUnused()
 {
     std::list<std::wstring> animationsToRemove;
     std::list<std::wstring> texturesToRemove;
+    std::list<std::wstring> fontsToRemove;
 
-    for (map<std::wstring, boost::shared_ptr<Texture> >::iterator i = m_textures.begin(); i != m_textures.end(); i++)
+    map<std::wstring, boost::shared_ptr<Texture> >::iterator texturesEnd = m_textures.end();
+    for (map<std::wstring, boost::shared_ptr<Texture> >::iterator i = m_textures.begin(); i != texturesEnd; ++i)
         if ((*i).second.use_count() < 2)
             texturesToRemove.push_back(i->first);
 
-    for (map<std::wstring, boost::shared_ptr<AnimatedTexture> >::iterator i = m_animations.begin(); i != m_animations.end(); i++)
+    map<std::wstring, boost::shared_ptr<AnimatedTexture> >::iterator animEnd = m_animations.end();
+    for (map<std::wstring, boost::shared_ptr<AnimatedTexture> >::iterator i = m_animations.begin(); i != animEnd; ++i)
         if ((*i).second.use_count() < 2)
             animationsToRemove.push_back(i->first);
 
+    std::map<std::wstring, boost::shared_ptr<Font> >::iterator fontEnd = m_fonts.end();
+    for (map<std::wstring, boost::shared_ptr<Font> >::iterator i = m_fonts.begin(); i != fontEnd; ++i)
+        if ((*i).second.use_count() < 2)
+            fontsToRemove.push_back(i->first);
 
-    for (std::list<std::wstring>::const_iterator i = animationsToRemove.begin(); i != animationsToRemove.end(); i++)
+
+    std::list<std::wstring>::const_iterator end = animationsToRemove.end();
+    for (std::list<std::wstring>::const_iterator i = animationsToRemove.begin(); i != end; ++i)
     {
         Log::debug() << "Cleanup " << *i;
         m_animations.erase(*i);
     }
-    for (std::list<std::wstring>::const_iterator i = texturesToRemove.begin(); i != texturesToRemove.end(); i++)
+    end = texturesToRemove.end();
+    for (std::list<std::wstring>::const_iterator i = texturesToRemove.begin(); i != end; ++i)
     {
         Log::debug() << "Cleanup " << *i;
         m_textures.erase(*i);
+    }
+    end = fontsToRemove.end();
+    for (std::list<std::wstring>::const_iterator i = fontsToRemove.begin(); i != end; ++i)
+    {
+        Log::debug() << "Cleanup " << *i;
+        m_fonts.erase(*i);
     }
 }
 

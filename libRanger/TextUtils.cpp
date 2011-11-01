@@ -99,7 +99,7 @@ std::wstring Rangers::fromCodec(const char *codec, const char *text, int length)
         return std::wstring();
 
     std::wstring result = std::wstring((wchar_t *)data);
-    delete data;
+    delete[] data;
     return result;
 }
 
@@ -116,17 +116,36 @@ std::wstring Rangers::fromASCII(const char *text, int length)
 /*!
  * \param codec output encoding
  * \param text input string
- * \param resultLength output string size
+ * \return converted string
+ */
+std::string Rangers::toCodec(const char *codec, const std::wstring& text)
+{
+    int resultLength;
+//FIXME: Workaround about not working WCHAR_T on Windows XP
+#ifdef _WIN32
+    char *data = convertText(codec, "UCS-2LE", (char *)text.c_str(), (text.length() + 1) * sizeof(wchar_t), resultLength);
+#else
+    char *data = convertText(codec, "WCHAR_T", (char *)text.c_str(), (text.length() + 1) * sizeof(wchar_t), resultLength);
+#endif
+    std::string str(data);
+    delete[] data;
+    return str;
+}
+
+/*!
+ * \param codec output encoding
+ * \param text input string
  * \return converted string
  */
 char* Rangers::toCodec(const char *codec, const std::wstring& text, int& resultLength)
 {
 //FIXME: Workaround about not working WCHAR_T on Windows XP
 #ifdef _WIN32
-    return convertText(codec, "UCS-2LE", (char *)text.c_str(), (text.length() + 1) * sizeof(wchar_t), resultLength);
+    char *data = convertText(codec, "UCS-2LE", (char *)text.c_str(), (text.length() + 1) * sizeof(wchar_t), resultLength);
 #else
-    return convertText(codec, "WCHAR_T", (char *)text.c_str(), (text.length() + 1) * sizeof(wchar_t), resultLength);
+    char *data = convertText(codec, "WCHAR_T", (char *)text.c_str(), (text.length() + 1) * sizeof(wchar_t), resultLength);
 #endif
+    return data;
 }
 
 /*!
@@ -135,11 +154,7 @@ char* Rangers::toCodec(const char *codec, const std::wstring& text, int& resultL
  */
 std::string Rangers::toASCII(const std::wstring& text)
 {
-    int resultLength;
-    char *s = toCodec("ASCII", text, resultLength);
-    std::string r(s, resultLength - 1);
-    delete s;
-    return r;
+    return toCodec("ASCII", text);
 }
 
 /*!
@@ -148,11 +163,7 @@ std::string Rangers::toASCII(const std::wstring& text)
  */
 std::string Rangers::toUTF8(const std::wstring& text)
 {
-    int resultLength;
-    char *s = toCodec("UTF-8", text, resultLength);
-    std::string r(s, resultLength - 1);
-    delete s;
-    return r;
+    return toCodec("UTF-8", text);
 }
 
 /*!
@@ -171,11 +182,7 @@ std::string Rangers::toLocal(const std::wstring& text)
     setlocale(LC_ALL, "");
     codec = nl_langinfo(CODESET);
 #endif
-    int resultLength;
-    char *s = toCodec(codec.c_str(), text, resultLength);
-    std::string r(s, resultLength - 1);
-    delete s;
-    return r;
+    return toCodec(codec.c_str(), text);
 }
 
 std::wstring Rangers::fromLocal(const char *text, int length)

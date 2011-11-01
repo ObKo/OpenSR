@@ -6,7 +6,7 @@ std::wstring fromUTF8(const char *text, int length = -1);
 std::wstring fromASCII(const char *text, int length = -1);
 std::wstring fromLocal(const char *text, int length = -1);
 
-char* toCodec(const char *codec, const std::wstring& text, int& resultLength);
+std::string toCodec(const char *codec, const std::wstring& text);
 std::string toUTF8(const std::wstring& text);
 std::string toASCII(const std::wstring& text);
 std::string toLocal(const std::wstring& text);

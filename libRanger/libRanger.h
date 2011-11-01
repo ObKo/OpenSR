@@ -333,7 +333,9 @@ LIBRANGER_DIRECTIVE std::wstring fromASCII(const char *text, int length = -1);
 LIBRANGER_DIRECTIVE std::wstring fromLocal(const char *text, int length = -1);
 
 //! Convert wstring to charset
-LIBRANGER_DIRECTIVE char* toCodec(const char *codec, const std::wstring& text, int& resultLength);
+LIBRANGER_DIRECTIVE std::string toCodec(const char *codec, const std::wstring& text);
+//! Convert wstring to charset
+LIBRANGER_DIRECTIVE char* toCodec(const char *codec, const std::wstring& text, int& destLength);
 
 //! Convert wstring to UTF-8
 LIBRANGER_DIRECTIVE std::string toUTF8(const std::wstring& text);

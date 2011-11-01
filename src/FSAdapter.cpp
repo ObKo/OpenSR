@@ -100,7 +100,7 @@ void FSAdapter::scan(const string& path)
         {
             continue;
         }
-        string fullPath = localPath + current->d_name;
+        string fullPath = localPath + string(current->d_name);
         struct stat entry;
         if (!lstat(fullPath.c_str(), &entry))
         {
