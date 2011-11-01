@@ -40,19 +40,19 @@ menuNode:setLayer(2)
 tolua.takeownership(menuNode)
 
 buttons = {}
-buttons["newGame"] = Rangers.Button:new(L"DATA/FormMain2/2ButNewN.gi", L"DATA/FormMain2/2ButNewA.gi", L"DATA/FormMain2/2ButNewD.gi", menuNode);
+buttons["newGame"] = Rangers.Button:new(L"NewGameButtonNormal.gi", L"NewGameButtonHovered.gi", L"NewGameButtonPressed.gi", menuNode);
 buttons["newGame"]:setPosition(0, 0)
 h = buttons["newGame"]:height()
 
-buttons["load"] = Rangers.Button:new(L"DATA/FormMain2/2ButLoadN.gi", L"DATA/FormMain2/2ButLoadA.gi", L"DATA/FormMain2/2ButLoadD.gi", menuNode);
+buttons["load"] = Rangers.Button:new(L"LoadButtonNormal.gi", L"LoadButtonHovered.gi", L"LoadButtonPressed.gi", menuNode);
 buttons["load"]:setPosition(0, h + 15)
-buttons["settings"] = Rangers.Button:new(L"DATA/FormMain2/2ButSettingsN.gi", L"DATA/FormMain2/2ButSettingsA.gi", L"DATA/FormMain2/2ButSettingsD.gi", menuNode);
+buttons["settings"] = Rangers.Button:new(L"SettingsButtonNormal.gi", L"SettingsButtonHovered.gi", L"SettingsButtonPressed.gi", menuNode);
 buttons["settings"]:setPosition(0, 2 * (h + 15))
-buttons["records"] = Rangers.Button:new(L"DATA/FormMain2/2ButRecordsN.gi", L"DATA/FormMain2/2ButRecordsA.gi", L"DATA/FormMain2/2ButRecordsD.gi", menuNode);
+buttons["records"] = Rangers.Button:new(L"RecordsButtonNormal.gi", L"RecordsButtonHovered.gi", L"RecordsButtonPressed.gi", menuNode);
 buttons["records"]:setPosition(0, 3 * (h + 15))
-buttons["about"] = Rangers.Button:new(L"DATA/FormMain2/2ButAboutN.gi", L"DATA/FormMain2/2ButAboutA.gi", L"DATA/FormMain2/2ButAboutD.gi", menuNode);
+buttons["about"] = Rangers.Button:new(L"AboutButtonNormal.gi", L"AboutButtonHovered.gi", L"AboutButtonPressed.gi", menuNode);
 buttons["about"]:setPosition(0, 4 * (h + 15))
-buttons["exit"] = Rangers.Button:new(L"exitButtonNormal.gi", L"exitButtonHovered.gi", L"exitButtonPressed.gi", menuNode);
+buttons["exit"] = Rangers.Button:new(L"ExitButtonNormal.gi", L"ExitButtonHovered.gi", L"ExitButtonPressed.gi", menuNode);
 buttons["exit"]:setPosition(0, 5 * (h + 15))
 
 for k,v in pairs(buttons) do
@@ -67,6 +67,9 @@ bgforward = true
 function actionPerformed(action)
     if action:source() == buttons["exit"] then
         engine:quit(0)
+    end
+    if action:source() == buttons["settings"] then
+        engine:markWidgetDeleting(this);
     end
 end
 

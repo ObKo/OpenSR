@@ -1,3 +1,23 @@
-exitButtonNormal.gi = DATA/FormMain2/2ButExitN.gi		
-exitButtonHovered.gi = DATA/FormMain2/2ButExitA.gi
-exitButtonPressed.gi = DATA/FormMain2/2ButExitD.gi
+NewGameButtonNormal.gi = DATA/FormMain2/2ButNewN.gi		
+NewGameButtonHovered.gi = DATA/FormMain2/2ButNewA.gi
+NewGameButtonPressed.gi = DATA/FormMain2/2ButNewD.gi
+
+LoadButtonNormal.gi = DATA/FormMain2/2ButLoadN.gi		
+LoadButtonHovered.gi = DATA/FormMain2/2ButLoadA.gi
+LoadButtonPressed.gi = DATA/FormMain2/2ButLoadD.gi
+
+SettingsButtonNormal.gi = DATA/FormMain2/2ButSettingsN.gi		
+SettingsButtonHovered.gi = DATA/FormMain2/2ButSettingsA.gi
+SettingsButtonPressed.gi = DATA/FormMain2/2ButSettingsD.gi
+
+RecordsButtonNormal.gi = DATA/FormMain2/2ButRecordsN.gi		
+RecordsButtonHovered.gi = DATA/FormMain2/2ButRecordsA.gi
+RecordsButtonPressed.gi = DATA/FormMain2/2ButRecordsD.gi
+
+AboutButtonNormal.gi = DATA/FormMain2/2ButAboutN.gi		
+AboutButtonHovered.gi = DATA/FormMain2/2ButAboutA.gi
+AboutButtonPressed.gi = DATA/FormMain2/2ButAboutD.gi
+
+ExitButtonNormal.gi = DATA/FormMain2/2ButExitN.gi		
+ExitButtonHovered.gi = DATA/FormMain2/2ButExitA.gi
+ExitButtonPressed.gi = DATA/FormMain2/2ButExitD.gi

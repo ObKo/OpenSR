@@ -63,7 +63,6 @@ private:
     std::map<std::wstring, boost::shared_ptr<Texture> > m_textures;
     std::map<std::wstring, boost::shared_ptr<AnimatedTexture> > m_animations;
     std::map<std::wstring, boost::shared_ptr<Font> > m_fonts;
-    std::map<std::wstring, boost::shared_ptr<GAISprite> > m_gaiAnimations;
     std::map<boost::shared_ptr<AnimatedTexture>, GAIWorker *> m_gaiQueue;
 };
 }

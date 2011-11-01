@@ -410,9 +410,15 @@ void ResourceManager::cleanupUnused()
 
 
     for (std::list<std::wstring>::const_iterator i = animationsToRemove.begin(); i != animationsToRemove.end(); i++)
+    {
+        Log::debug() << "Cleanup " << *i;
         m_animations.erase(*i);
+    }
     for (std::list<std::wstring>::const_iterator i = texturesToRemove.begin(); i != texturesToRemove.end(); i++)
+    {
+        Log::debug() << "Cleanup " << *i;
         m_textures.erase(*i);
+    }
 }
 
 ResourceManager::GAIWorker::GAIWorker(char* gaiData, char* bgData)
