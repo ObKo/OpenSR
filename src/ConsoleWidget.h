@@ -45,6 +45,7 @@ private:
     ColorLabel m_logLabel;
     Vertex *m_borderVertices;
     GLuint m_borderBuffer;
+    GLuint m_texture;
     int m_consoleLines;
 
     int m_historyPosition;

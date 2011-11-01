@@ -56,6 +56,7 @@ char *Rangers::convertText(const char *to, const char *from, const char *what, i
     if (srcLength < 0)
         srcLength = strlen(what);
     char *result = new char[4 * (srcLength + 1)];
+    memset(result, 0, 4 * (srcLength + 1));
 
     size_t inbuflength = srcLength + 1;
     size_t outbuflength = 4 * (srcLength + 1);
@@ -68,15 +69,9 @@ char *Rangers::convertText(const char *to, const char *from, const char *what, i
 #endif
     size_t l = 4 * (srcLength + 1) - outbuflength;
 
-    //if(result[l])
-    //{
-    //  result[l] = '\0';
-    //  outbuflength--;
-    //}
-
     result = (char *)realloc(result, l);
     iconv_close(codec);
-    destLength = 4 * (srcLength + 1) - outbuflength;
+    destLength = l;
     return result;
 }
 

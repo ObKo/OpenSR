@@ -100,6 +100,7 @@ ConsoleWidget::ConsoleWidget(float w, float h, Widget* parent): Widget(w, h, par
     m_consoleLines = (h - editSize - 8) / Engine::instance()->serviceFont()->size();
     m_borderVertices = 0;
     m_borderBuffer = 0;
+    m_texture = 0;
     markToUpdate();
     m_historyPosition = -1;
     addListener(new ConsoleWidgetListener());
@@ -111,6 +112,7 @@ ConsoleWidget::ConsoleWidget(const Rangers::ConsoleWidget& other): Widget(other)
     m_logLabel = other.m_logLabel;
     m_borderVertices = 0;
     m_borderBuffer = 0;
+    m_texture = 0;
     m_consoleLines = other.m_consoleLines;
 
     m_historyPosition = other.m_historyPosition;
@@ -123,6 +125,7 @@ ConsoleWidget::ConsoleWidget(Widget* parent): Widget(parent)
 {
     m_borderVertices = 0;
     m_borderBuffer = 0;
+    m_texture = 0;
     m_historyPosition = -1;
     addListener(new ConsoleWidgetListener());
 }
@@ -154,25 +157,32 @@ void ConsoleWidget::draw() const
     if (!prepareDraw())
         return;
 
-    m_lineEdit.draw();
-    m_logLabel.draw();
-
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glColor3f(1, 1, 1);
+    glBindTexture(GL_TEXTURE_2D, m_texture);
 
     glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glEnableClientState(GL_ARRAY_BUFFER);
 
     glBindBuffer(GL_ARRAY_BUFFER, m_borderBuffer);
 
     glVertexPointer(2, GL_FLOAT, sizeof(Vertex), 0);
-    glLineWidth(1);
+    glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), BUFFER_OFFSET(sizeof(float) * 2));
 
-    glDrawArrays(GL_LINES, 0, 6);
+    glColor3f(0, 0, 0);
+    glDrawArrays(GL_QUADS, 0, 4);
+
+    glColor3f(1, 1, 1);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glLineWidth(1);
+    glDrawArrays(GL_LINE_STRIP, 0, 4);
 
     glDisableClientState(GL_ARRAY_BUFFER);
     glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
+
+    m_lineEdit.draw();
+    m_logLabel.draw();
     endDraw();
 }
 
@@ -231,21 +241,40 @@ void ConsoleWidget::processMain()
         delete m_borderVertices;
     }
 
+    if(!m_texture)
+    {
+        glGenTextures(1, &m_texture);
+        unsigned char pattern[16] = {0x80, 0xC0, 0xC0, 0x80,
+                                     0xC0, 0x80, 0x80, 0xC0,
+                                     0xC0, 0x80, 0x80, 0xC0,
+                                     0x80, 0xC0, 0xC0, 0x80};
+        glBindTexture(GL_TEXTURE_2D, m_texture);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, 4, 4, 0, GL_ALPHA, GL_UNSIGNED_BYTE, pattern);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    }
+
     glBindBuffer(GL_ARRAY_BUFFER, m_borderBuffer);
 
     m_borderVertices = (Vertex *)glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
     m_borderVertices[0].x = 1;
-    m_borderVertices[0].y = 1;
-    m_borderVertices[1].x = m_width - 1;
+    m_borderVertices[0].y = m_height;
+    m_borderVertices[0].u = 0;
+    m_borderVertices[0].w = m_height / 4.0f;
+    m_borderVertices[1].x = 1;
     m_borderVertices[1].y = 1;
+    m_borderVertices[1].u = 0;
+    m_borderVertices[1].w = 0;
     m_borderVertices[2].x = m_width - 1;
     m_borderVertices[2].y = 1;
+    m_borderVertices[2].u = m_width / 4.0f;
+    m_borderVertices[2].w = 0;
     m_borderVertices[3].x = m_width - 1;
-    m_borderVertices[3].y = m_height - m_lineEdit.height();
-    m_borderVertices[4].x = 1;
-    m_borderVertices[4].y = 1;
-    m_borderVertices[5].x = 1;
-    m_borderVertices[5].y = m_height - m_lineEdit.height();
+    m_borderVertices[3].y = m_height;
+    m_borderVertices[3].u = m_width / 4.0f;
+    m_borderVertices[3].w = m_height / 4.0f;
 
     glUnmapBuffer(GL_ARRAY_BUFFER);
 

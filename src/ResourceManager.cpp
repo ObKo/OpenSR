@@ -83,8 +83,7 @@ void ResourceManager::addMapping(const std::wstring& fileName)
     char *data = loadData(fileName, fileSize);
     if (!fileSize || !data)
         return;
-    string stringData = string(data);
-    stringData += "\r\n";
+    string stringData = string(data, fileSize);
     istringstream iss(stringData, istringstream::in);
     delete[] data;
     char lineBuffer[1024];
