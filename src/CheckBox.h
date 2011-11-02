@@ -16,25 +16,30 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef RANGERS_BUTTON_H
-#define RANGERS_BUTTON_H
+#ifndef RANGERS_CHECKBOX_H
+#define RANGERS_CHECKBOX_H
 
 #include "Widget.h"
-#include "Sprite.h"
+#include "Label.h"
 #include <boost/shared_ptr.hpp>
 
 namespace Rangers
 {
-class Button: public Widget
+class CheckBox: public Widget
 {
 public:
-    Button(boost::shared_ptr<Texture> texture, Widget *parent = 0);
-    Button(boost::shared_ptr<Texture> texture, boost::shared_ptr<Texture> hoverTexture, Widget *parent = 0);
-    Button(boost::shared_ptr<Texture> texture, boost::shared_ptr<Texture> hoverTexture, boost::shared_ptr<Texture> pressTexture, Widget *parent = 0);
+    CheckBox(boost::shared_ptr<Texture> texture, boost::shared_ptr<Texture> checkTexture, const std::wstring &text, Widget *parent = 0);
+    CheckBox(boost::shared_ptr<Texture> texture, boost::shared_ptr<Texture> checkTexture, boost::shared_ptr<Texture> hoverTexture, boost::shared_ptr<Texture> checkHoverTexture, const std::wstring &text, Widget *parent = 0);
 
-    Button(const std::wstring& texture, Widget *parent = 0);
-    Button(const std::wstring& texture, const std::wstring& hoverTexture, Widget *parent = 0);
-    Button(const std::wstring& texture, const std::wstring& hoverTexture, const std::wstring& pressTexture, Widget *parent = 0);
+    CheckBox(const std::wstring& texture, const std::wstring& checkTexture, const std::wstring &text, Widget *parent = 0);
+    CheckBox(const std::wstring& texture, const std::wstring& checkTexture, const std::wstring& hoverTexture, const std::wstring& checkHoverTexture, const std::wstring &text, Widget *parent = 0);
+
+    void setChecked(bool checked);
+    void setText(const std::wstring& text);
+    void setColor(float r, float g, float b, float a = 1.0f);
+
+    bool checked() const;
+    std::wstring text() const;
 
     virtual void draw() const;
     virtual void processMain();
@@ -42,15 +47,16 @@ public:
     virtual void mouseEnter();
     virtual void mouseLeave();
 
-    virtual void mouseDown(uint8_t key, int x, int y);
-    virtual void mouseUp(uint8_t key, int x, int y);
     virtual void mouseClick(int x, int y);
 
 private:
     boost::shared_ptr<Texture> m_mainTexture;
     boost::shared_ptr<Texture> m_hoverTexture;
-    boost::shared_ptr<Texture> m_pressedTexture;
+    boost::shared_ptr<Texture> m_checkTexture;
+    boost::shared_ptr<Texture> m_hoverCheckTexture;
+    bool m_checked;
     Sprite m_sprite;
+    Label m_label;
 };
 }
 

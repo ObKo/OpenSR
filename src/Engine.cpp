@@ -325,10 +325,7 @@ void Engine::init(int w, int h, bool fullscreen)
     glLoadIdentity();
     glOrtho(0.0f, m_width, m_height, 0.0f, -1.0f, 1.0f);
 
-    std::wstring startupScript = fromLocal(m_properties->get<std::string>("engine.startupScript", "startup.lua").c_str());
-    execLuaScript(startupScript);
-
-    std::vector<std::string> coreFontStrings = split(m_properties->get<std::string>("graphics.corefont", "DroidSans.ttf:13"), ':');
+    std::vector<std::string> coreFontStrings = split(m_properties->get<std::string>("graphics.corefont", "DroidSans.ttf:14"), ':');
     int coreFontSize = 13;
     if (coreFontStrings.size() > 1)
         coreFontSize = atoi(coreFontStrings.at(1).c_str());
@@ -339,6 +336,9 @@ void Engine::init(int w, int h, bool fullscreen)
     if (monoFontStrings.size() > 1)
         monoFontSize = atoi(monoFontStrings.at(1).c_str());
     m_monospaceFont = ResourceManager::instance()->loadFont(fromLocal(monoFontStrings.at(0).c_str()), monoFontSize);
+
+    std::wstring startupScript = fromLocal(m_properties->get<std::string>("engine.startupScript", "startup.lua").c_str());
+    execLuaScript(startupScript);
 
     m_frames = 0;
 

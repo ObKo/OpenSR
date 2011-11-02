@@ -31,14 +31,19 @@ class Action;
 class Action
 {
 public:
-    enum Type {BUTTON_CLICKED, KEY_PRESSED};
-    typedef boost::variant<std::wstring, Rect, SDL_keysym> Argument;
+    enum Type {BUTTON_CLICKED, KEY_PRESSED, CHECKBOX_TOGGLED};
+    typedef boost::variant<std::wstring, Rect, SDL_keysym, bool> Argument;
 
     Action(Widget *source, Type type, const Argument& argument);
 
     Widget* source() const;
     Type type() const;
     Argument argument() const;
+
+    static std::wstring getStringArgument(const Action &a);
+    static Rect getRectArgument(const Action &a);
+    static SDL_keysym getKeyArgument(const Action &a);
+    static bool getBoolArgument(const Action &a);
 
 private:
     Widget *m_source;

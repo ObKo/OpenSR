@@ -1,63 +1,55 @@
-background = Rangers.Sprite:new(L"DATA/FormMain3/2bg.gi", this)
+background = Rangers.Sprite:new_local(L"DATA/FormMain3/2bg.gi", this)
 background:setWidth(background:width()/(engine:screenHeight()/background:height()))
 background:setHeight(engine:screenHeight())
 background:setLayer(-3)
-tolua.takeownership(background)
 
-bgPlanet = Rangers.Sprite:new(L"DATA/FormMain3/2Planet.gi", this)
+bgPlanet = Rangers.Sprite:new_local(L"DATA/FormMain3/2Planet.gi", this)
 bgPlanet:setOrigin(Rangers.POSITION_X_LEFT, Rangers.POSITION_Y_BOTTOM)
 bgPlanet:setPosition(0, engine:screenHeight())
 bgPlanet:setLayer(-2)
-tolua.takeownership(bgPlanet)
 
-bgAnimLine = Rangers.GAISprite:new(L"DATA/FormMain2/2AnimLine.gai", this)
+bgAnimLine = Rangers.GAISprite:new_local(L"DATA/FormMain2/2AnimLine.gai", this)
 bgAnimLine:setOrigin(Rangers.POSITION_X_RIGHT, Rangers.POSITION_Y_TOP)
 bgAnimLine:setPosition(engine:screenWidth(), 0)
 bgAnimLine:setLayer(0)
-tolua.takeownership(bgAnimLine)
 
-bgAnim = Rangers.GAISprite:new(L"DATA/FormMain2/2AnimMain.gai", this)
+bgAnim = Rangers.GAISprite:new_local(L"DATA/FormMain2/2AnimMain.gai", this)
 bgAnim:setPosition(0, 0)
 bgAnim:setLayer(-1)
 bgAnim:setWidth(engine:screenWidth())
 bgAnim:setHeight(engine:screenHeight())
-tolua.takeownership(bgAnim)
 
-caption = Rangers.Sprite:new(L"DATA/FormMain3/2caption.gi", this)
+caption = Rangers.Sprite:new_local(L"DATA/FormMain3/2caption.gi", this)
 caption:setOrigin(Rangers.POSITION_X_RIGHT, Rangers.POSITION_Y_CENTER)
 caption:setPosition(engine:screenWidth(), 110)
 caption:setLayer(1)
-tolua.takeownership(caption)
 
-ship = Rangers.GAISprite:new(L"DATA/FormMain3/2Ship1.gai", this)
+ship = Rangers.GAISprite:new_local(L"DATA/FormMain3/2Ship1.gai", this)
 ship:setPosition(0, engine:screenHeight() - ship:height())
 ship:setLayer(1)
-tolua.takeownership(ship)
 
-menuNode = Rangers.WidgetNode:new(this)
+menuNode = Rangers.WidgetNode:new_local(this)
 menuNode:setPosition(engine:screenWidth() - 400, 300);
 menuNode:setLayer(2)
-tolua.takeownership(menuNode)
 
 buttons = {}
-buttons["newGame"] = Rangers.Button:new(L"NewGameButtonNormal.gi", L"NewGameButtonHovered.gi", L"NewGameButtonPressed.gi", menuNode);
+buttons["newGame"] = Rangers.Button:new_local(L"NewGameButtonNormal.gi", L"NewGameButtonHovered.gi", L"NewGameButtonPressed.gi", menuNode);
 buttons["newGame"]:setPosition(0, 0)
 h = buttons["newGame"]:height()
 
-buttons["load"] = Rangers.Button:new(L"LoadButtonNormal.gi", L"LoadButtonHovered.gi", L"LoadButtonPressed.gi", menuNode);
+buttons["load"] = Rangers.Button:new_local(L"LoadButtonNormal.gi", L"LoadButtonHovered.gi", L"LoadButtonPressed.gi", menuNode);
 buttons["load"]:setPosition(0, h + 15)
-buttons["settings"] = Rangers.Button:new(L"SettingsButtonNormal.gi", L"SettingsButtonHovered.gi", L"SettingsButtonPressed.gi", menuNode);
+buttons["settings"] = Rangers.Button:new_local(L"SettingsButtonNormal.gi", L"SettingsButtonHovered.gi", L"SettingsButtonPressed.gi", menuNode);
 buttons["settings"]:setPosition(0, 2 * (h + 15))
-buttons["records"] = Rangers.Button:new(L"RecordsButtonNormal.gi", L"RecordsButtonHovered.gi", L"RecordsButtonPressed.gi", menuNode);
+buttons["records"] = Rangers.Button:new_local(L"RecordsButtonNormal.gi", L"RecordsButtonHovered.gi", L"RecordsButtonPressed.gi", menuNode);
 buttons["records"]:setPosition(0, 3 * (h + 15))
-buttons["about"] = Rangers.Button:new(L"AboutButtonNormal.gi", L"AboutButtonHovered.gi", L"AboutButtonPressed.gi", menuNode);
+buttons["about"] = Rangers.Button:new_local(L"AboutButtonNormal.gi", L"AboutButtonHovered.gi", L"AboutButtonPressed.gi", menuNode);
 buttons["about"]:setPosition(0, 4 * (h + 15))
-buttons["exit"] = Rangers.Button:new(L"ExitButtonNormal.gi", L"ExitButtonHovered.gi", L"ExitButtonPressed.gi", menuNode);
+buttons["exit"] = Rangers.Button:new_local(L"ExitButtonNormal.gi", L"ExitButtonHovered.gi", L"ExitButtonPressed.gi", menuNode);
 buttons["exit"]:setPosition(0, 5 * (h + 15))
 
 for k,v in pairs(buttons) do
   v:addListener(actionListener)
-  tolua.takeownership(v)
 end
 
 t = 0

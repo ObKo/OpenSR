@@ -131,6 +131,11 @@ void Label::processMain()
     Sprite::processMain();
 }
 
+std::wstring Label::text() const
+{
+    return m_text;
+}
+
 float Label::height() const
 {
     return m_height;

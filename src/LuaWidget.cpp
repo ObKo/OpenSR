@@ -166,6 +166,7 @@ void LuaWidget::mouseEnter()
     if (lua_isnil(m_luaState.get(), -1))
     {
         unlock();
+        Widget::mouseEnter();
         return;
     }
     if (lua_pcall(m_luaState.get(), 0, 0, 0))
@@ -181,6 +182,7 @@ void LuaWidget::mouseLeave()
     if (lua_isnil(m_luaState.get(), -1))
     {
         unlock();
+        Widget::mouseLeave();
         return;
     }
     if (lua_pcall(m_luaState.get(), 0, 0, 0))
@@ -197,6 +199,7 @@ void LuaWidget::mouseMove(int x, int y)
     if (lua_isnil(m_luaState.get(), -1))
     {
         unlock();
+        Widget::mouseMove(x, y);
         return;
     }
     lua_pushinteger(m_luaState.get(), x);
@@ -251,6 +254,7 @@ void LuaWidget::mouseClick(int x, int y)
     if (lua_isnil(m_luaState.get(), -1))
     {
         unlock();
+        Widget::mouseClick(x, y);
         return;
     }
     lua_pushinteger(m_luaState.get(), x);
@@ -306,6 +310,7 @@ void LuaWidget::initLuaState()
     tolua_Button_open(m_luaState.get());
     tolua_Node_open(m_luaState.get());
     tolua_WidgetNode_open(m_luaState.get());
+    tolua_CheckBox_open(m_luaState.get());
     tolua_pushusertype(m_luaState.get(), this, "Rangers::LuaWidget");
     lua_setglobal(m_luaState.get(), "this");
     tolua_pushusertype(m_luaState.get(), m_actionListener, "Rangers::LuaWidget::LuaActionListener");

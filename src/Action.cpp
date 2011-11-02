@@ -18,6 +18,7 @@
 
 #include "Action.h"
 #include "Widget.h"
+#include <boost/variant.hpp>
 
 namespace Rangers
 {
@@ -38,5 +39,26 @@ Action::Type Action::type() const
 Action::Argument Action::argument() const
 {
     return m_argument;
+}
+
+std::wstring Action::getStringArgument(const Action &a)
+{
+    return boost::get<std::wstring>(a.argument());
+}
+
+Rect Action::getRectArgument(const Action &a)
+{
+
+    return boost::get<Rect>(a.argument());
+}
+
+SDL_keysym Action::getKeyArgument(const Action &a)
+{
+    return boost::get<SDL_keysym>(a.argument());
+}
+
+bool Action::getBoolArgument(const Action &a)
+{
+    return boost::get<bool>(a.argument());
 }
 }

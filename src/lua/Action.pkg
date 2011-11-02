@@ -8,13 +8,18 @@ namespace Rangers
 class Action
 {
 public:
-    enum Type {BUTTON_CLICKED, KEY_PRESSED};
-    typedef boost::variant<std::wstring, Rect, SDL_keysym> Argument;
+    enum Type {BUTTON_CLICKED, KEY_PRESSED, CHECKBOX_TOGGLED};
+    typedef boost::variant<std::wstring, Rect, SDL_keysym, bool> Argument;
 
     Action(Rangers::Widget *source, Type type, const Argument& argument);
 
     Rangers::Widget* source() const;
     Type type() const;
     Argument argument() const;
+    
+    static std::wstring getStringArgument(const Rangers::Action &a);
+    static Rangers::Rect getRectArgument(const Rangers::Action &a);
+    static SDL_keysym getKeyArgument(const Rangers::Action &a);
+    static bool getBoolArgument(const Rangers::Action &a);
 };
 }
