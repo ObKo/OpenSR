@@ -42,7 +42,7 @@ AnimatedTexture::AnimatedTexture(const HAIAnimation& a)
     {
         glBindTexture(GL_TEXTURE_2D, m_textures[i]);
 
-        glTexImage2D(GL_TEXTURE_2D, 0, Engine::instance()->textureInternalFormat(TEXTURE_B8G8R8A8), a.width, a.height, 0, GL_BGRA, GL_UNSIGNED_BYTE, a.frames + a.width * a.height * 4 * i);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_BGRA, a.width, a.height, 0, GL_BGRA, GL_UNSIGNED_BYTE, a.frames + a.width * a.height * 4 * i);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -72,7 +72,7 @@ AnimatedTexture::AnimatedTexture(const GAIAnimation& a)
     {
         glBindTexture(GL_TEXTURE_2D, m_textures[i]);
 
-        glTexImage2D(GL_TEXTURE_2D, 0, Engine::instance()->textureInternalFormat(TEXTURE_B8G8R8A8), a.frames[i].width, a.frames[i].height, 0, GL_BGRA, GL_UNSIGNED_BYTE, a.frames[i].data);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_BGRA, a.frames[i].width, a.frames[i].height, 0, GL_BGRA, GL_UNSIGNED_BYTE, a.frames[i].data);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -159,18 +159,20 @@ void AnimatedTexture::loadFrame(const char* data, int width, int height, Texture
         return;
 
     glBindTexture(GL_TEXTURE_2D, m_textures[m_loadedFrames]);
-    GLint internalFormat = Engine::instance()->textureInternalFormat(type);
 
     switch (type)
     {
-    case TEXTURE_A8:
-        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, GL_ALPHA, GL_UNSIGNED_BYTE, data);
+    case TEXTURE_R8G8B8A8:
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
         break;
     case TEXTURE_B8G8R8A8:
-        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, GL_BGRA, GL_UNSIGNED_BYTE, data);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_BGRA, width, height, 0, GL_BGRA, GL_UNSIGNED_BYTE, data);
         break;
-    case TEXTURE_R8G8B8A8:
-        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+    case TEXTURE_A8:
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA8, width, height, 0, GL_ALPHA, GL_UNSIGNED_BYTE, data);
+        break;
+    case TEXTURE_R5G6B5:
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16, width, height, 0, GL_BGRA, GL_UNSIGNED_BYTE, data);
         break;
     case TEXTURE_DXT1:
         glCompressedTexImage2D(GL_TEXTURE_2D, 0, GL_COMPRESSED_RGB_S3TC_DXT1_EXT, width, height, 0, dataSize, data);

@@ -24,9 +24,9 @@ SET(SOURCES
     LuaWidget.cpp
     GAISprite.cpp
     Button.cpp
-	Action.cpp
-	WidgetNode.cpp
-	CheckBox.cpp
+    Action.cpp
+    WidgetNode.cpp
+    CheckBox.cpp
 )
 
 SET(HEADERS 
@@ -54,10 +54,10 @@ SET(HEADERS
     LuaWidget.h
     GAISprite.h
     Button.h
-	Action.h
-	ActionListener.h
-	WidgetNode.h
-	CheckBox.h
+    Action.h
+    ActionListener.h
+    WidgetNode.h
+    CheckBox.h
 )
 
 SET(LUA_PACKAGES
@@ -75,11 +75,11 @@ SET(LUA_PACKAGES
     lua/LuaWidget.pkg
     lua/GAISprite.pkg
     lua/Button.pkg
-	lua/Action.pkg
-	lua/ActionListener.pkg
-	lua/Node.pkg
-	lua/WidgetNode.pkg
-	lua/CheckBox.pkg
+    lua/Action.pkg
+    lua/ActionListener.pkg
+    lua/Node.pkg
+    lua/WidgetNode.pkg
+    lua/CheckBox.pkg
 )
 
 INCLUDE_DIRECTORIES(

@@ -444,21 +444,6 @@ boost::shared_ptr<boost::property_tree::ptree> Engine::properties() const
     return m_properties;
 }
 
-GLint Engine::textureInternalFormat(TextureType t) const
-{
-    switch (t)
-    {
-    case TEXTURE_A8:
-        return GL_COMPRESSED_ALPHA_ARB;
-        break;
-    case TEXTURE_R8G8B8A8:
-    case TEXTURE_B8G8R8A8:
-        return GL_RGBA;
-        break;
-    }
-    //GL_COMPRESSED_RGBA_S3TC_DXT5_EXT
-}
-
 Engine *Engine::instance()
 {
     return engineInstance;

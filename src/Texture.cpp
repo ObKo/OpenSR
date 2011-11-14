@@ -77,18 +77,20 @@ GLuint Texture::openGLTexture() const
 void Texture::setRawData(int width, int height, TextureType type, unsigned char *rawData, int dataSize)
 {
     glBindTexture(GL_TEXTURE_2D, m_openGLTexture);
-    GLint internalFormat = Engine::instance()->textureInternalFormat(type);
 
     switch (type)
     {
     case TEXTURE_R8G8B8A8:
-        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, rawData);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, rawData);
         break;
     case TEXTURE_B8G8R8A8:
-        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, GL_BGRA, GL_UNSIGNED_BYTE, rawData);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_BGRA, GL_UNSIGNED_BYTE, rawData);
         break;
     case TEXTURE_A8:
-        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, GL_ALPHA, GL_UNSIGNED_BYTE, rawData);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA8, width, height, 0, GL_ALPHA, GL_UNSIGNED_BYTE, rawData);
+        break;
+    case TEXTURE_R5G6B5:
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16, width, height, 0, GL_BGRA, GL_UNSIGNED_BYTE, rawData);
         break;
     case TEXTURE_DXT1:
         glCompressedTexImage2D(GL_TEXTURE_2D, 0, GL_COMPRESSED_RGB_S3TC_DXT1_EXT, width, height, 0, dataSize, rawData);
