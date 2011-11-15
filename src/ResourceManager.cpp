@@ -226,7 +226,10 @@ boost::shared_ptr<Texture> ResourceManager::loadTexture(const std::wstring& name
         if (!t)
             return boost::shared_ptr<Texture>();
         else
-            return boost::shared_ptr<Texture>(t);
+        {
+            m_textures[name] = boost::shared_ptr<Texture>(t);;
+            return m_textures[name];
+        }
     }
     else
         Log::error() << "Unknown texture format: " << sfx;

@@ -136,12 +136,12 @@ void Sprite::draw() const
     if (m_scaling == TEXTURE_TILE_X)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     else
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
 
     if (m_scaling == TEXTURE_TILE_Y)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     else
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 
     if (m_scaling == TEXTURE_TILE)
     {
@@ -306,7 +306,32 @@ void Sprite::processMain()
         w2 = 1;
         break;
     case TEXTURE_KEEPASPECT:
-        //TODO: keep aspect
+        u1 = 0;
+        w1 = 0;
+        if (m_width / m_texture->width() * m_texture->height() > m_height)
+        {
+            u2 = m_texture->height() / m_texture->width();
+            w2 = 1;
+        }
+        else
+        {
+            u2 = 1;
+            w2 = m_texture->width() / m_texture->height();
+        }
+        break;
+    case TEXTURE_KEEPASPECT_EXPANDING:
+        u1 = 0;
+        w1 = 0;
+        if (m_width / m_texture->width() * m_texture->height() > m_height)
+        {
+            u2 = 1;
+            w2 = m_height / m_texture->height();
+        }
+        else
+        {
+            u2 = m_width / m_texture->width();
+            w2 = 1;
+        }
         break;
     case TEXTURE_TILE_X:
         u1 = 0;
