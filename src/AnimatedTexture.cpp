@@ -174,6 +174,9 @@ void AnimatedTexture::loadFrame(const char* data, int width, int height, Texture
     case TEXTURE_R5G6B5:
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16, width, height, 0, GL_BGRA, GL_UNSIGNED_BYTE, data);
         break;
+    case TEXTURE_R8G8B8:
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+        break;
     case TEXTURE_DXT1:
         glCompressedTexImage2D(GL_TEXTURE_2D, 0, GL_COMPRESSED_RGB_S3TC_DXT1_EXT, width, height, 0, dataSize, data);
         break;

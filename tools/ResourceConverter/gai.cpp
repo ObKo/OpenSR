@@ -61,7 +61,7 @@ int extractGAI2PNG(const std::string& gaiFile, const std::string& outName)
     return 0;
 }
 
-int gai2dds(const std::string& gaiFile, const std::string& ddsFile, DDSCompression compression)
+int gai2dds(const std::string& gaiFile, const std::string& ddsFile, DDSType compression)
 {
     std::ifstream gaiStream(gaiFile.c_str(), std::ios_base::in | std::ios_base::binary);
     size_t offset = 0;
@@ -127,9 +127,10 @@ int gai2dds(const std::string& gaiFile, const std::string& ddsFile, DDSCompressi
     {
         GIFrame g = gai.frames[i];
         BGRAToRGBA((char*)g.data, g.width, g.height);
-        unsigned char *dxtData = compressDXTData(gai.width, gai.height, g.data, compression);
-        out.write((const char *)dxtData, ddsHeader.pitchOrLinearSize * gai.height);
-        delete dxtData;
+        size_t dataSize = 0;
+        unsigned char *data = compressData(gai.width, gai.height, g.data, dataSize, compression);
+        out.write((const char *)data, dataSize);
+        delete data;
         delete g.data;
     }
     delete gai.frames;

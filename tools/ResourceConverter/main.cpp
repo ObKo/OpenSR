@@ -28,8 +28,8 @@ void showHelp()
     std::cout << "Usage: rangersresconv command [arguments]" << std::endl;
     std::cout << "Commands: " << std::endl;
     std::cout << "\tpkg2rpkg pkg_file rpkg_file - convert pkg file from original game to rpkg format." << std::endl;
-    std::cout << "\tany2dds compression image_file dds_file - create compressed dds texture from image." << std::endl;
-    std::cout << "\t\tSupported compressions: DXT1, DXT3, DXT5" << std::endl;
+    std::cout << "\tany2dds type image_file dds_file - create dds texture from image." << std::endl;
+    std::cout << "\t\tSupported types: RGB16, RGB24, RGBA, DXT1, DXT3, DXT5" << std::endl;
     std::cout << "\tgai2png gai_file png_file_name - extract gai animation frames to png files." << std::endl;
     std::cout << "\t\tWill produce files named png_file_name$frame_number$.png" << std::endl;
     std::cout << "\tgi2png gi_file png_file - convert GI image file from original game to png." << std::endl;
@@ -62,20 +62,26 @@ int main(int argc, char **argv)
         }
         std::string argv2 = std::string(argv[2]);
         std::transform(argv2.begin(), argv2.end(), argv2.begin(), ::toupper);
-        Rangers::DDSCompression compression;
+        Rangers::DDSType type;
         if (argv2 == "DXT1")
-            compression = Rangers::DDS_DXT1;
+            type = Rangers::DDS_DXT1;
         else if (argv2 == "DXT3")
-            compression = Rangers::DDS_DXT3;
+            type = Rangers::DDS_DXT3;
         else if (argv2 == "DXT5")
-            compression = Rangers::DDS_DXT5;
+            type = Rangers::DDS_DXT5;
+        else if (argv2 == "RGB16")
+            type = Rangers::DDS_RGB16;
+        else if (argv2 == "RGB24")
+            type = Rangers::DDS_RGB24;
+        else if (argv2 == "RGBA")
+            type = Rangers::DDS_RGBA;
         else
         {
-            std::cout << "Unsupported compression." << std::endl;
+            std::cout << "Unsupported type." << std::endl;
             showHelp();
             return 0;
         }
-        Rangers::convertImageToDDS(argv[3], argv[4], compression);
+        Rangers::convertImageToDDS(argv[3], argv[4], type);
     }
     else if (std::string(argv[1]) == "gai2png")
     {
@@ -104,20 +110,26 @@ int main(int argc, char **argv)
         }
         std::string argv2 = std::string(argv[2]);
         std::transform(argv2.begin(), argv2.end(), argv2.begin(), ::toupper);
-        Rangers::DDSCompression compression;
+        Rangers::DDSType type;
         if (argv2 == "DXT1")
-            compression = Rangers::DDS_DXT1;
+            type = Rangers::DDS_DXT1;
         else if (argv2 == "DXT3")
-            compression = Rangers::DDS_DXT3;
+            type = Rangers::DDS_DXT3;
         else if (argv2 == "DXT5")
-            compression = Rangers::DDS_DXT5;
+            type = Rangers::DDS_DXT5;
+        else if (argv2 == "RGB16")
+            type = Rangers::DDS_RGB16;
+        else if (argv2 == "RGB24")
+            type = Rangers::DDS_RGB24;
+        else if (argv2 == "RGBA")
+            type = Rangers::DDS_RGBA;
         else
         {
             std::cout << "Unsupported compression." << std::endl;
             showHelp();
             return 0;
         }
-        Rangers::gi2dds(argv[3], argv[4], compression);
+        Rangers::gi2dds(argv[3], argv[4], type);
     }
     else if (std::string(argv[1]) == "gai2dds")
     {
@@ -128,7 +140,7 @@ int main(int argc, char **argv)
         }
         std::string argv2 = std::string(argv[2]);
         std::transform(argv2.begin(), argv2.end(), argv2.begin(), ::toupper);
-        Rangers::DDSCompression compression;
+        Rangers::DDSType compression;
         if (argv2 == "DXT1")
             compression = Rangers::DDS_DXT1;
         else if (argv2 == "DXT3")

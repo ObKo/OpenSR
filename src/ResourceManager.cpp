@@ -155,41 +155,78 @@ boost::shared_ptr<Texture> ResourceManager::loadTexture(const std::wstring& name
         if (*(uint32_t*)(data) != 0x20534444)
         {
             Log::error() << "Invalid dds file.";
+            delete[] data;
             return boost::shared_ptr<Texture>();
         }
         DDSHeader header = *((DDSHeader*)(data + 4));
-        int dxtSize = size - sizeof(DDSHeader) - 4;
-        char *dxt = data + sizeof(DDSHeader) + 4;
+        int imageSize = size - sizeof(DDSHeader) - 4;
+        char *image = data + sizeof(DDSHeader) + 4;
 
-        if (!(header.ddspf.flags & DDPF_FOURCC))
+        if (!((header.flags & DDSD_CAPS) && (header.caps & DDSCAPS_TEXTURE)))
         {
             Log::warning() << "Unsupported DDS file";
-            delete data;
+            delete[] data;
             return boost::shared_ptr<Texture>();
         }
 
         Texture *t = 0;
-        switch (header.ddspf.fourCC)
+        if (header.ddspf.flags & DDPF_FOURCC)
         {
-        case 0x31545844:
-            t = new Texture(header.width, header.height, Rangers::TEXTURE_DXT1, (unsigned char *)dxt, dxtSize);
-            delete data;
-            break;
-        case 0x33545844:
-            t = new Texture(header.width, header.height, Rangers::TEXTURE_DXT3, (unsigned char *)dxt, dxtSize);
-            delete data;
-            break;
-        case 0x35545844:
-            t = new Texture(header.width, header.height, Rangers::TEXTURE_DXT5, (unsigned char *)dxt, dxtSize);
-            delete data;
-            break;
-        default:
-            Log::warning() << "Unsupported DDS file";
-            delete data;
-            return boost::shared_ptr<Texture>();
-            break;
+            switch (header.ddspf.fourCC)
+            {
+            case 0x31545844:
+                t = new Texture(header.width, header.height, Rangers::TEXTURE_DXT1, (unsigned char *)image, imageSize);
+                break;
+            case 0x33545844:
+                t = new Texture(header.width, header.height, Rangers::TEXTURE_DXT3, (unsigned char *)image, imageSize);
+                break;
+            case 0x35545844:
+                t = new Texture(header.width, header.height, Rangers::TEXTURE_DXT5, (unsigned char *)image, imageSize);
+                break;
+            default:
+                Log::warning() << "Unsupported DDS file";
+                delete data;
+                break;
+            }
         }
-        return boost::shared_ptr<Texture>(t);
+        else
+        {
+            switch (header.ddspf.rgbBitCount)
+            {
+            case 16:
+                if ((header.ddspf.rBitMask != 0xf800) || (header.ddspf.gBitMask != 0x7e) || (header.ddspf.bBitMask != 0x1f))
+                {
+                    Log::warning() << "Unsupported DDS file";
+                    break;
+                }
+                t = new Texture(header.width, header.height, Rangers::TEXTURE_R5G6B5, (unsigned char *)image, imageSize);
+                break;
+            case 24:
+                if ((header.ddspf.rBitMask != 0xff0000) || (header.ddspf.gBitMask != 0xff00) || (header.ddspf.bBitMask != 0xff))
+                {
+                    Log::warning() << "Unsupported DDS file";
+                    break;
+                }
+                t = new Texture(header.width, header.height, Rangers::TEXTURE_R8G8B8, (unsigned char *)image, imageSize);
+                break;
+            case 32:
+                if ((header.ddspf.rBitMask != 0xff000000) || (header.ddspf.gBitMask != 0xff0000) || (header.ddspf.bBitMask != 0xff00) || (header.ddspf.aBitMask != 0xff))
+                {
+                    Log::warning() << "Unsupported DDS file";
+                    break;
+                }
+                t = new Texture(header.width, header.height, Rangers::TEXTURE_R8G8B8A8, (unsigned char *)image, imageSize);
+                break;
+            default:
+                Log::warning() << "Unsupported DDS file";
+                break;
+            }
+        }
+        delete[] data;
+        if (!t)
+            return boost::shared_ptr<Texture>();
+        else
+            return boost::shared_ptr<Texture>(t);
     }
     else
         Log::error() << "Unknown texture format: " << sfx;

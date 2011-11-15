@@ -25,7 +25,7 @@
 namespace Rangers
 {
 int gi2png(const std::string &inFile, const std::string &outFile);
-int gi2dds(const std::string &inFile, const std::string &outFile, DDSCompression compression);
+int gi2dds(const std::string &inFile, const std::string &outFile, DDSType type);
 }
 
 #endif /* GI_H */

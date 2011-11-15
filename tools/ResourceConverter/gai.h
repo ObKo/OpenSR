@@ -25,7 +25,7 @@
 namespace Rangers
 {
 int extractGAI2PNG(const std::string& gaiFile, const std::string& outName);
-int gai2dds(const std::string& gaiFile, const std::string& ddsFile, DDSCompression compression);
+int gai2dds(const std::string& gaiFile, const std::string& ddsFile, DDSType compression);
 }
 
 #endif /* GAI_H */
