@@ -210,10 +210,10 @@ std::vector<std::wstring> Rangers::split(const std::wstring& s, wchar_t c)
     std::vector<std::wstring> array;
     for (std::wstring::const_iterator it = s.begin(); it != s.end();)
     {
-        while (((*it) == c) && (it != s.end()))
+        while ((it != s.end()) && ((*it) == c))
             it++;
         std::wstring::const_iterator begin = it;
-        while (((*it) != c) && (it != s.end()))
+        while ((it != s.end()) && ((*it) != c))
             it++;
         if (it != begin)
             array.push_back(s.substr(begin - s.begin(), it - begin));
