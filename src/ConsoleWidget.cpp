@@ -262,19 +262,19 @@ void ConsoleWidget::processMain()
     m_borderVertices[0].x = 1;
     m_borderVertices[0].y = m_height;
     m_borderVertices[0].u = 0;
-    m_borderVertices[0].w = m_height / 4.0f;
+    m_borderVertices[0].v = m_height / 4.0f;
     m_borderVertices[1].x = 1;
     m_borderVertices[1].y = 1;
     m_borderVertices[1].u = 0;
-    m_borderVertices[1].w = 0;
+    m_borderVertices[1].v = 0;
     m_borderVertices[2].x = m_width - 1;
     m_borderVertices[2].y = 1;
     m_borderVertices[2].u = m_width / 4.0f;
-    m_borderVertices[2].w = 0;
+    m_borderVertices[2].v = 0;
     m_borderVertices[3].x = m_width - 1;
     m_borderVertices[3].y = m_height;
     m_borderVertices[3].u = m_width / 4.0f;
-    m_borderVertices[3].w = m_height / 4.0f;
+    m_borderVertices[3].v = m_height / 4.0f;
 
     glUnmapBuffer(GL_ARRAY_BUFFER);
 

@@ -14,10 +14,11 @@ bgAnimLine:setPosition(engine:screenWidth(), 0)
 bgAnimLine:setLayer(0)
 
 bgAnim = Rangers.GAISprite:new_local(L"DATA/FormMain2/2AnimMain.gai", this)
-bgAnim:setPosition(0, 0)
 bgAnim:setLayer(-1)
+bgAnim:setHeight(bgAnim:height() * engine:screenWidth() / bgAnim:width())
 bgAnim:setWidth(engine:screenWidth())
-bgAnim:setHeight(engine:screenHeight())
+bgAnim:setOrigin(Rangers.POSITION_X_LEFT, Rangers.POSITION_Y_BOTTOM)
+bgAnim:setPosition(0, engine:screenHeight())
 
 caption = Rangers.Sprite:new_local(L"DATA/FormMain3/2caption.gi", this)
 caption:setOrigin(Rangers.POSITION_X_RIGHT, Rangers.POSITION_Y_CENTER)

@@ -257,7 +257,7 @@ void Sprite::processMain()
     m_vertices = (Vertex *)glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
 
     float x1 = 0, x2 = 0, y1 = 0, y2 = 0;
-    float u1 = 0, u2 = 0, w1 = 0, w2 = 0;
+    float u1 = 0, u2 = 0, v1 = 0, v2 = 0;
 
     switch (m_xOrigin)
     {
@@ -295,83 +295,83 @@ void Sprite::processMain()
     {
     case TEXTURE_NO:
         u1 = 0;
-        w1 = 0;
+        v1 = 0;
         u2 = m_width / m_texture->width();
-        w2 = m_height / m_texture->height();
+        v2 = m_height / m_texture->height();
         break;
     case TEXTURE_NORMAL:
         u1 = 0;
-        w1 = 0;
+        v1 = 0;
         u2 = 1;
-        w2 = 1;
+        v2 = 1;
         break;
     case TEXTURE_KEEPASPECT:
         u1 = 0;
-        w1 = 0;
+        v1 = 0;
         if (m_width / m_texture->width() * m_texture->height() > m_height)
         {
             u2 = m_texture->height() / m_texture->width();
-            w2 = 1;
+            v2 = 1;
         }
         else
         {
             u2 = 1;
-            w2 = m_texture->width() / m_texture->height();
+            v2 = m_texture->width() / m_texture->height();
         }
         break;
     case TEXTURE_KEEPASPECT_EXPANDING:
         u1 = 0;
-        w1 = 0;
+        v1 = 0;
         if (m_width / m_texture->width() * m_texture->height() > m_height)
         {
             u2 = 1;
-            w2 = m_height / m_texture->height();
+            v2 = m_height / m_texture->height();
         }
         else
         {
             u2 = m_width / m_texture->width();
-            w2 = 1;
+            v2 = 1;
         }
         break;
     case TEXTURE_TILE_X:
         u1 = 0;
-        w1 = 0;
+        v1 = 0;
         u2 = m_width / m_texture->width();
-        w2 = 1;
+        v2 = 1;
         break;
     case TEXTURE_TILE_Y:
         u1 = 0;
-        w1 = 0;
+        v1 = 0;
         u2 = 1;
-        w2 = m_height / m_texture->height();
+        v2 = m_height / m_texture->height();
         break;
     case TEXTURE_TILE:
         u1 = 0;
-        w1 = 0;
+        v1 = 0;
         u2 = m_width / m_texture->width();
-        w2 = m_height / m_texture->height();
+        v2 = m_height / m_texture->height();
         break;
     }
 
     m_vertices[0].x = x1;
     m_vertices[0].y = y1;
     m_vertices[0].u = u1;
-    m_vertices[0].w = w1;
+    m_vertices[0].v = v1;
 
     m_vertices[1].x = x2;
     m_vertices[1].y = y1;
     m_vertices[1].u = u2;
-    m_vertices[1].w = w1;
+    m_vertices[1].v = v1;
 
     m_vertices[2].x = x2;
     m_vertices[2].y = y2;
     m_vertices[2].u = u2;
-    m_vertices[2].w = w2;
+    m_vertices[2].v = v2;
 
     m_vertices[3].x = x1;
     m_vertices[3].y = y2;
     m_vertices[3].u = u1;
-    m_vertices[3].w = w2;
+    m_vertices[3].v = v2;
 
     glUnmapBuffer(GL_ARRAY_BUFFER);
     unlock();

@@ -23,7 +23,6 @@
 #include "ResourceManager.h"
 
 extern void drawF5ToBGRA(unsigned char * bufdes, int bufdesll, const unsigned char * graphbuf);
-extern void copyImageData(unsigned char *bufdes, int destwidth, int x, int y, int w, int h, unsigned char *graphbuf);
 
 namespace Rangers
 {
@@ -184,7 +183,6 @@ void GAISprite::processMain()
     //FIXME: m_baseFrameWidth
     AnimatedSprite::processMain();
     lock();
-
     if (!m_gaiFrames.size())
     {
         unlock();
@@ -207,7 +205,8 @@ void GAISprite::processMain()
         {
             unsigned char* data = (unsigned char*)glMapBuffer(GL_PIXEL_UNPACK_BUFFER, GL_READ_WRITE);
             memset(data, 0, m_baseFrameWidth * m_baseFrameHeight * 4);
-            copyImageData(data, m_baseFrameWidth, 0, 0, m_baseFrameWidth, m_baseFrameHeight, m_baseFrame.get());
+            memcpy(data, m_baseFrame.get(), m_baseFrameWidth * m_baseFrameHeight * 4);
+            //copyImageData(data, m_baseFrameWidth, 0, 0, m_baseFrameWidth, m_baseFrameHeight, m_baseFrame.get());
             glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER);
             //FIXME: null as pointer to rgba looks ugly
             m_texture->setRawData(m_baseFrameWidth, m_baseFrameHeight, TEXTURE_B8G8R8A8, 0, 4 * m_baseFrameWidth * m_baseFrameHeight);

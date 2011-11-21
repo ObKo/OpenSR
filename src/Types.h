@@ -48,7 +48,7 @@ struct Vector
 struct Vertex
 {
     float x, y;
-    float u, w;
+    float u, v;
 };
 
 struct Rect

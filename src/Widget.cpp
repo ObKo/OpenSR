@@ -222,7 +222,10 @@ void Widget::action(const Action& action)
 {
     lock();
     if (!m_listeners.size())
+    {
+        unlock();
         return;
+    }
     for (std::list<ActionListener*>::iterator i = m_listeners.begin(); i != m_listeners.end(); i++)
         (*i)->actionPerformed(action);
     unlock();
