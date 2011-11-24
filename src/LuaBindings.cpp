@@ -47,6 +47,7 @@ int execLuaScript(const char *data, size_t size, const std::string& name)
     tolua_Node_open(luaState);
     tolua_WidgetNode_open(luaState);
     tolua_CheckBox_open(luaState);
+    tolua_NinePatch_open(luaState);
     tolua_pushusertype(luaState, Engine::instance(), "Rangers::Engine");
     lua_setglobal(luaState, "engine");
     tolua_pushusertype(luaState, ResourceManager::instance(), "Rangers::ResourceManager");

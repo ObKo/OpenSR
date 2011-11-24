@@ -27,6 +27,7 @@ SET(SOURCES
     Action.cpp
     WidgetNode.cpp
     CheckBox.cpp
+    NinePatch.cpp
 )
 
 SET(HEADERS 
@@ -58,6 +59,7 @@ SET(HEADERS
     ActionListener.h
     WidgetNode.h
     CheckBox.h
+    NinePatch.h
 )
 
 SET(LUA_PACKAGES
@@ -80,6 +82,7 @@ SET(LUA_PACKAGES
     lua/Node.pkg
     lua/WidgetNode.pkg
     lua/CheckBox.pkg
+    lua/NinePatch.pkg
 )
 
 INCLUDE_DIRECTORIES(

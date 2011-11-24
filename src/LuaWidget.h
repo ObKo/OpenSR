@@ -16,8 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef LUAWIDGET_H
-#define LUAWIDGET_H
+#ifndef RANGERS_LUAWIDGET_H
+#define RANGERS_LUAWIDGET_H
 
 #include "Widget.h"
 #include "ActionListener.h"
