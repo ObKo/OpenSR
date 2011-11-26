@@ -18,33 +18,51 @@
 
 #include "NinePatch.h"
 #include "Texture.h"
+#include <vector>
+#include <cfloat>
+#include "Log.h"
+
+namespace
+{
+struct Delta
+{
+    Delta()
+    {
+        t1 = 0.0f;
+        t2 = 0.0f;
+        size = 0.0f;
+    }
+    Delta(float t1_, float t2_, float size_)
+    {
+        t1 = t1_;
+        t2 = t2_;
+        size = size_;
+    }
+    float t1, t2;
+    float size;
+};
+}
 
 namespace Rangers
 {
 NinePatch::NinePatch(Object *parent): Sprite(parent), m_embedded(false)
 {
-    m_centralPatch.u1 = 0;
-    m_centralPatch.v1 = 0;
-    m_centralPatch.u2 = 0;
-    m_centralPatch.v2 = 0;
+
 }
 
 NinePatch::NinePatch(const std::wstring& resourceName, Object *parent): Sprite(resourceName, parent), m_embedded(true)
 {
-    m_centralPatch.u1 = -1.0f;
-    m_centralPatch.v1 = -1.0f;
-    m_centralPatch.u2 = -1.0f;
-    m_centralPatch.v2 = -1.0f;
 }
 
-NinePatch::NinePatch(const std::wstring& resourceName, const TextureRegion& centralRegion, Object *parent):
-    Sprite(resourceName, parent), m_embedded(false), m_centralPatch(centralRegion)
+NinePatch::NinePatch(const std::wstring& resourceName, const std::vector<float> &rows, const std::vector<float> &columns, Object *parent):
+    Sprite(resourceName, parent), m_embedded(false), m_rows(rows), m_columns(columns)
 {
 
 }
 
 void NinePatch::processMain()
 {
+    //TODO: Move some stuff to initialization only.
     Object::processMain();
 
     if (!m_texture)
@@ -52,74 +70,52 @@ void NinePatch::processMain()
 
     lock();
 
-    if (m_embedded && ((m_centralPatch.u1 < 0) || (m_centralPatch.u2 < 0) || (m_centralPatch.v1 < 0) || (m_centralPatch.v2 < 0)))
+    if (m_embedded && (!m_columns.size() || !m_rows.size()))
     {
         int width = m_texture->width();
         int height = m_texture->height();
-        int u1 = 0, v1 = 0, u2 = 0, v2 = 0;
-        bool black = false;
         glBindTexture(GL_TEXTURE_2D, m_texture->openGLTexture());
         int realWidth = (width % 4) != 0 ? width + 4 - (width % 4) : width;
         uint8_t *grayData = new uint8_t[realWidth * height];
         glGetTexImage(GL_TEXTURE_2D, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, grayData);
-        for (int i = 0; i < realWidth; i++)
+
+        bool black = false;
+
+        for (int i = 1; i < width - 1; i++)
         {
-            if ((grayData[i] > 127) && !black)
+            if ((grayData[i] > 127) && black)
             {
-                u1 = i;
+                m_columns.push_back(float(i) / width);
+                black = false;
             }
-            else
+            else if ((grayData[i] < 128) && !black)
             {
-                if (grayData[i] > 127)
-                {
-                    u2 = i;
-                    break;
-                }
-                if (!black)
-                    black = true;
+                m_columns.push_back(float(i) / width);
+                black = true;
             }
 
         }
         black = false;
-        for (int i = 0; i < height; i++)
+        for (int i = 1; i < height - 1; i++)
         {
-            if ((grayData[i * realWidth] > 127) && !black)
+            if ((grayData[i * realWidth] > 127) && black)
             {
-                v1 = i;
+                m_rows.push_back(float(i) / height);
+                black = false;
             }
-            else
+            else if ((grayData[i * realWidth] < 128) && !black)
             {
-                if (grayData[i * realWidth] > 127)
-                {
-                    v2 = i;
-                    break;
-                }
-                if (!black)
-                    black = true;
+                m_rows.push_back(float(i) / height);
+                black = true;
             }
-
         }
-        m_centralPatch.u1 = float(u1) / width;
-        m_centralPatch.u2 = float(u2) / width;
-        m_centralPatch.v1 = float(v1) / height;
-        m_centralPatch.v2 = float(v2) / height;
         delete[] grayData;
     }
 
     if (!m_buffer)
     {
-        m_vertices = new Vertex[4 * 9];
-        m_vertexCount = 4 * 9;
-        memset(m_vertices, 0, m_vertexCount * sizeof(Vertex));
-
         glGenBuffers(1, &m_buffer);
-        glBindBuffer(GL_ARRAY_BUFFER, m_buffer);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * m_vertexCount, m_vertices, GL_DYNAMIC_DRAW);
-        delete m_vertices;
     }
-
-    glBindBuffer(GL_ARRAY_BUFFER, m_buffer);
-    m_vertices = (Vertex *)glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
 
     float x1 = 0, x2 = 0, y1 = 0, y2 = 0;
     float u1 = 0, u2 = 0, v1 = 0, v2 = 0;
@@ -151,8 +147,6 @@ void NinePatch::processMain()
         break;
     }
 
-    float width0, width1, width2;
-    float height0, height1, height2;
     float uStart = 0, uEnd = 0, vStart = 0, vEnd = 0;
 
     if (m_embedded)
@@ -163,167 +157,140 @@ void NinePatch::processMain()
         vEnd = 1.0f - 1.0f / m_texture->height();
     }
 
-    width0 = m_texture->width() * m_centralPatch.u1;
-    width2 = m_texture->width() * (1.0f - m_centralPatch.u2);
-    width1 = m_width - width0 - width2;
-    height0 = m_texture->height() * m_centralPatch.v1;
-    height2 = m_texture->height() * (1.0f - m_centralPatch.v2);
-    height1 = m_height - height0 - height2;
+    std::vector<Delta> widths;
+    std::vector<Delta> heights;
+    std::vector<int> sizeable;
 
-    m_vertices[0].x = xOffset;
-    m_vertices[0].y = yOffset;
-    m_vertices[0].u = uStart;
-    m_vertices[0].v = vStart;
-    m_vertices[1].x = xOffset + width0;
-    m_vertices[1].y = yOffset;
-    m_vertices[1].u = m_centralPatch.u1;
-    m_vertices[1].v = vStart;
-    m_vertices[2].x = xOffset + width0;
-    m_vertices[2].y = yOffset + height0;
-    m_vertices[2].u = m_centralPatch.u1;
-    m_vertices[2].v = m_centralPatch.v1;
-    m_vertices[3].x = xOffset;
-    m_vertices[3].y = yOffset + height0;
-    m_vertices[3].u = uStart;
-    m_vertices[3].v = m_centralPatch.v1;
+    bool currentSizeable = false;
+    float residue = m_width;
+    int size = m_columns.size();
 
-    m_vertices[4].x = xOffset + width0;
-    m_vertices[4].y = yOffset;
-    m_vertices[4].u = m_centralPatch.u1;
-    m_vertices[4].v = vStart;
-    m_vertices[5].x = xOffset + width0 + width1;
-    m_vertices[5].y = yOffset;
-    m_vertices[5].u = m_centralPatch.u2;
-    m_vertices[5].v = vStart;
-    m_vertices[6].x = xOffset + width0 + width1;
-    m_vertices[6].y = yOffset + height0;
-    m_vertices[6].u = m_centralPatch.u2;
-    m_vertices[6].v = m_centralPatch.v1;
-    m_vertices[7].x = xOffset + width0;
-    m_vertices[7].y = yOffset + height0;
-    m_vertices[7].u = m_centralPatch.u1;
-    m_vertices[7].v = m_centralPatch.v1;
+    for (int i = 0; i != size; i++)
+    {
+        if (i != 0)
+        {
+            if (currentSizeable)
+                sizeable.push_back(i);
+            else
+                residue -= (m_columns[i] - m_columns[i - 1]) * m_texture->width();
+            widths.push_back(Delta(m_columns[i - 1], m_columns[i], (m_columns[i] - m_columns[i - 1]) * m_texture->width()));
+        }
+        else
+        {
+            if (m_columns[0] != 0.0f)
+            {
+                residue -= (m_columns[0] - uStart) * m_texture->width();
+                widths.push_back(Delta(uStart, m_columns[0], (m_columns[0] - uStart) * m_texture->width()));
+            }
+        }
+        currentSizeable = !currentSizeable;
+    }
+    if (size)
+    {
+        if (currentSizeable)
+            sizeable.push_back(size);
+        else
+            residue -= (uEnd - m_columns[size - 1]) * m_texture->width();
+        widths.push_back(Delta(m_columns[size - 1], uEnd, (uEnd - m_columns[size - 1]) * m_texture->width()));
+    }
+    else
+    {
+        widths.push_back(Delta(uStart, uEnd, m_texture->width()));
+        residue = 0.0f;
+    }
 
-    m_vertices[8].x = xOffset + width0 + width1;
-    m_vertices[8].y = yOffset;
-    m_vertices[8].u = m_centralPatch.u2;
-    m_vertices[8].v = vStart;
-    m_vertices[9].x = xOffset + m_width;
-    m_vertices[9].y = yOffset;
-    m_vertices[9].u = uEnd;
-    m_vertices[9].v = vStart;
-    m_vertices[10].x = xOffset + m_width;
-    m_vertices[10].y = yOffset + height0;
-    m_vertices[10].u = uEnd;
-    m_vertices[10].v = m_centralPatch.v1;
-    m_vertices[11].x = xOffset + width0 + width1;
-    m_vertices[11].y = yOffset + height0;
-    m_vertices[11].u = m_centralPatch.u2;
-    m_vertices[11].v = m_centralPatch.v1;
+    size = sizeable.size();
+    for (int i = 0; i < size; i++)
+    {
+        widths[sizeable[i]].size = residue / size;
+    }
 
-    m_vertices[12].x = xOffset;
-    m_vertices[12].y = yOffset + height0;
-    m_vertices[12].u = uStart;
-    m_vertices[12].v = m_centralPatch.v1;
-    m_vertices[13].x = xOffset + width0;
-    m_vertices[13].y = yOffset + height0;
-    m_vertices[13].u = m_centralPatch.u1;
-    m_vertices[13].v = m_centralPatch.v1;
-    m_vertices[14].x = xOffset + width0;
-    m_vertices[14].y = yOffset + height0 + height1;
-    m_vertices[14].u = m_centralPatch.u1;
-    m_vertices[14].v = m_centralPatch.v2;
-    m_vertices[15].x = xOffset;
-    m_vertices[15].y = yOffset + height0 + height1;
-    m_vertices[15].u = uStart;
-    m_vertices[15].v = m_centralPatch.v2;
+    sizeable.clear();
+    currentSizeable = false;
+    residue = m_height;
+    size = m_rows.size();
 
-    m_vertices[16].x = xOffset + width0;
-    m_vertices[16].y = yOffset + height0;
-    m_vertices[16].u = m_centralPatch.u1;
-    m_vertices[16].v = m_centralPatch.v1;
-    m_vertices[17].x = xOffset + width0 + width1;
-    m_vertices[17].y = yOffset + height0;
-    m_vertices[17].u = m_centralPatch.u2;
-    m_vertices[17].v = m_centralPatch.v1;
-    m_vertices[18].x = xOffset + width0 + width1;
-    m_vertices[18].y = yOffset + height0 + height1;
-    m_vertices[18].u = m_centralPatch.u2;
-    m_vertices[18].v = m_centralPatch.v2;
-    m_vertices[19].x = xOffset + width0;
-    m_vertices[19].y = yOffset + height0 + height1;
-    m_vertices[19].u = m_centralPatch.u1;
-    m_vertices[19].v = m_centralPatch.v2;
+    for (int i = 0; i != size; i++)
+    {
+        if (i != 0)
+        {
 
-    m_vertices[20].x = xOffset + width0 + width1;
-    m_vertices[20].y = yOffset + height0;
-    m_vertices[20].u = m_centralPatch.u2;
-    m_vertices[20].v = m_centralPatch.v1;
-    m_vertices[21].x = xOffset + m_width;
-    m_vertices[21].y = yOffset + height0;
-    m_vertices[21].u = uEnd;
-    m_vertices[21].v = m_centralPatch.v1;
-    m_vertices[22].x = xOffset + m_width;
-    m_vertices[22].y = yOffset + height0 + height1;
-    m_vertices[22].u = uEnd;
-    m_vertices[22].v = m_centralPatch.v2;
-    m_vertices[23].x = xOffset + width0 + width1;
-    m_vertices[23].y = yOffset + height0 + height1;
-    m_vertices[23].u = m_centralPatch.u2;
-    m_vertices[23].v = m_centralPatch.v2;
+            if (currentSizeable)
+                sizeable.push_back(i);
+            else
+                residue -= (m_rows[i] - m_rows[i - 1]) * m_texture->height();
+            heights.push_back(Delta(m_rows[i - 1], m_rows[i], (m_rows[i] - m_rows[i - 1]) * m_texture->height()));
+        }
+        else
+        {
+            if (m_rows[0] != 0.0f)
+            {
+                residue -= (m_rows[0] - vStart)  * m_texture->height();
+                heights.push_back(Delta(vStart, m_rows[0], (m_rows[0] - vStart) * m_texture->height()));
+            }
+        }
+        currentSizeable = !currentSizeable;
+    }
+    if (size)
+    {
+        if (currentSizeable)
+            sizeable.push_back(size);
+        else
+            residue -= (vEnd - m_rows[size - 1]) * m_texture->height();
+        heights.push_back(Delta(m_rows[size - 1], vEnd, (vEnd - m_rows[size - 1]) * m_texture->height()));
+    }
+    else
+    {
+        heights.push_back(Delta(vStart, vEnd, m_texture->height()));
+        residue = 0.0f;
+    }
 
-    m_vertices[24].x = xOffset;
-    m_vertices[24].y = yOffset + height0 + height1;
-    m_vertices[24].u = uStart;
-    m_vertices[24].v = m_centralPatch.v2;
-    m_vertices[25].x = xOffset + width0;
-    m_vertices[25].y = yOffset + height0 + height1;
-    m_vertices[25].u = m_centralPatch.u1;
-    m_vertices[25].v = m_centralPatch.v2;
-    m_vertices[26].x = xOffset + width0;
-    m_vertices[26].y = yOffset + m_height;
-    m_vertices[26].u = m_centralPatch.u1;
-    m_vertices[26].v = vEnd;
-    m_vertices[27].x = xOffset;
-    m_vertices[27].y = yOffset + m_height;
-    m_vertices[27].u = uStart;
-    m_vertices[27].v = vEnd;
+    size = sizeable.size();
+    for (int i = 0; i < size; i++)
+    {
+        heights[sizeable[i]].size = residue / size;
+    }
 
-    m_vertices[28].x = xOffset + width0;
-    m_vertices[28].y = yOffset + height0 + height1;
-    m_vertices[28].u = m_centralPatch.u1;
-    m_vertices[28].v = m_centralPatch.v2;
-    m_vertices[29].x = xOffset + width0 + width1;
-    m_vertices[29].y = yOffset + height0 + height1;
-    m_vertices[29].u = m_centralPatch.u2;
-    m_vertices[29].v = m_centralPatch.v2;
-    m_vertices[30].x = xOffset + width0 + width1;
-    m_vertices[30].y = yOffset + m_height;
-    m_vertices[30].u = m_centralPatch.u2;
-    m_vertices[30].v = vEnd;
-    m_vertices[31].x = xOffset + width0;
-    m_vertices[31].y = yOffset + m_height;
-    m_vertices[31].u = m_centralPatch.u1;
-    m_vertices[31].v = vEnd;
+    m_vertexCount = heights.size() * widths.size() * 4;
 
-    m_vertices[32].x = xOffset + width0 + width1;
-    m_vertices[32].y = yOffset + height0 + height1;
-    m_vertices[32].u = m_centralPatch.u2;
-    m_vertices[32].v = m_centralPatch.v2;
-    m_vertices[33].x = xOffset + m_width;
-    m_vertices[33].y = yOffset + height0 + height1;
-    m_vertices[33].u = uEnd;
-    m_vertices[33].v = m_centralPatch.v2;
-    m_vertices[34].x = xOffset + m_width;
-    m_vertices[34].y = yOffset + m_height;
-    m_vertices[34].u = uEnd;
-    m_vertices[34].v = vEnd;
-    m_vertices[35].x = xOffset + width0 + width1;
-    m_vertices[35].y = yOffset + m_height;
-    m_vertices[35].u = m_centralPatch.u2;
-    m_vertices[35].v = vEnd;
+    if (m_vertices)
+        delete[] m_vertices;
+    m_vertices = new Vertex[m_vertexCount];
 
-    glUnmapBuffer(GL_ARRAY_BUFFER);
+    float x = 0.0f, y = 0.0f;
+    for (int i = 0; i < heights.size(); i++)
+    {
+        x = 0.0f;
+        for (int j = 0; j < widths.size(); j++)
+        {
+            m_vertices[(i * widths.size() + j) * 4].x = xOffset + x;
+            m_vertices[(i * widths.size() + j) * 4].u = widths[j].t1;
+            m_vertices[(i * widths.size() + j) * 4].y = yOffset + y;
+            m_vertices[(i * widths.size() + j) * 4].v = heights[i].t1;
+
+            m_vertices[(i * widths.size() + j) * 4 + 1].x = xOffset + x + widths[j].size;
+            m_vertices[(i * widths.size() + j) * 4 + 1].u = widths[j].t2;
+            m_vertices[(i * widths.size() + j) * 4 + 1].y = yOffset + y;
+            m_vertices[(i * widths.size() + j) * 4 + 1].v = heights[i].t1;
+
+            m_vertices[(i * widths.size() + j) * 4 + 2].x = xOffset + x + widths[j].size;
+            m_vertices[(i * widths.size() + j) * 4 + 2].u = widths[j].t2;
+            m_vertices[(i * widths.size() + j) * 4 + 2].y = yOffset + y + heights[i].size;
+            m_vertices[(i * widths.size() + j) * 4 + 2].v = heights[i].t2;
+
+            m_vertices[(i * widths.size() + j) * 4 + 3].x = xOffset + x;
+            m_vertices[(i * widths.size() + j) * 4 + 3].u = widths[j].t1;
+            m_vertices[(i * widths.size() + j) * 4 + 3].y = yOffset + y + heights[i].size;
+            m_vertices[(i * widths.size() + j) * 4 + 3].v = heights[i].t2;
+
+            x += widths[j].size;
+        }
+        y += heights[i].size;
+    }
+
+    glBindBuffer(GL_ARRAY_BUFFER, m_buffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * m_vertexCount, m_vertices, GL_DYNAMIC_DRAW);
+
     unlock();
 }
 

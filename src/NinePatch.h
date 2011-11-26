@@ -20,6 +20,7 @@
 #define RANGERS_NINEPATCH_H
 
 #include "Sprite.h"
+#include <vector>
 
 namespace Rangers
 {
@@ -35,13 +36,14 @@ public:
 
     NinePatch(Object *parent = 0);
     NinePatch(const std::wstring& resourceName, Object *parent = 0);
-    NinePatch(const std::wstring& resourceName, const TextureRegion& centralRegion, Object *parent = 0);
+    NinePatch(const std::wstring& resourceName, const std::vector<float> &rows, const std::vector<float> &columns, Object *parent = 0);
 
     virtual void processMain();
     virtual void draw() const;
 
 private:
-    TextureRegion m_centralPatch;
+    std::vector<float> m_rows;
+    std::vector<float> m_columns;
     bool m_embedded;
 };
 }
