@@ -49,6 +49,8 @@ public:
     LuaWidget(const std::wstring& name, Widget *parent = 0);
     LuaWidget(Widget *parent = 0);
 
+	virtual ~LuaWidget();
+
     virtual void draw() const;
 
     virtual Rect getBoundingRect() const;

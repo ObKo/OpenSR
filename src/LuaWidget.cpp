@@ -99,6 +99,10 @@ LuaWidget::LuaWidget(Rangers::Widget* parent): Widget(parent), m_luaState(boost:
     m_actionListener = new LuaActionListener(this);
 }
 
+LuaWidget::~LuaWidget()
+{
+}
+
 LuaWidget::LuaWidget(const LuaWidget& other): Widget(other)
 {
     m_luaState = other.m_luaState;

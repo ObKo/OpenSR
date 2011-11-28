@@ -31,7 +31,6 @@ public:
     Widget(Widget *parent = 0);
     Widget(float w, float h, Widget *parent = 0);
     Widget(const Widget& other);
-    virtual ~Widget();
 
     virtual Rect getBoundingRect() const;
     virtual void mouseMove(int x, int y);

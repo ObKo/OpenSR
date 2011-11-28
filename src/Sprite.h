@@ -38,7 +38,7 @@ public:
     Sprite(const std::wstring& texture, Object *parent = 0, TextureScaling  ts = TEXTURE_NORMAL, SpriteXOrigin xpos = POSITION_X_LEFT, SpriteYOrigin ypos = POSITION_Y_TOP);
     Sprite(const Sprite& other);
 
-    ~Sprite();
+    virtual ~Sprite();
 
     virtual void draw() const;
     virtual void processMain();

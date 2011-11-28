@@ -32,7 +32,7 @@ public:
     Object(const Vector& pos, float rot, int layer = 0, Object *parent = 0);
     Object(const Object& other);
 
-    ~Object();
+    virtual ~Object();
 
     virtual void draw() const = 0;
 

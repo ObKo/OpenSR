@@ -33,7 +33,7 @@ public:
     GAISprite(const char *data, int size, const GIFrame& baseFrame, Object *parent = 0);
     GAISprite(const std::wstring& name, Object *parent = 0);
     GAISprite(const GAISprite &other);
-    ~GAISprite();
+    virtual ~GAISprite();
 
     virtual void draw() const;
     virtual void processLogic(int dt);
