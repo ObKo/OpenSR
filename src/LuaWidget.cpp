@@ -37,7 +37,7 @@ public:
     {
         if (ptr)
         {
-            lua_close(ptr);
+//            lua_close(ptr);
         }
     }
 };
@@ -282,14 +282,6 @@ void LuaWidget::processLogic(int dt)
     }
     lua_pushinteger(m_luaState.get(), dt);
     lua_pcall(m_luaState.get(), 1, 0, 0);
-    unlock();
-}
-
-void LuaWidget::processMain()
-{
-    lock();
-    for (std::list<Object*>::const_iterator i = m_children.begin(); i != m_children.end(); i++)
-        (*i)->processMain();
     unlock();
 }
 

@@ -63,6 +63,8 @@ function actionPerformed(action)
     end
     if action:source() == buttons["settings"] then
         engine:markWidgetDeleting(this);
+        widget = Rangers.LuaWidget:new(L"ORC/settings.lua")
+        engine:addWidget(widget)
     end
 end
 

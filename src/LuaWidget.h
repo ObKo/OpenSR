@@ -62,7 +62,6 @@ public:
     virtual void mouseUp(uint8_t key, int x, int y);
     virtual void mouseClick(int x, int y);
 
-    virtual void processMain();
     virtual void processLogic(int dt);
 
 private:

@@ -90,6 +90,7 @@ CheckBox::CheckBox(const std::wstring& texture, const std::wstring& checkTexture
 
 void CheckBox::setChecked(bool checked)
 {
+    lock();
     m_checked = checked;
     if (m_hoverTexture)
     {
@@ -105,19 +106,24 @@ void CheckBox::setChecked(bool checked)
         else
             m_sprite.setTexture(m_mainTexture);
     }
+    unlock();
     markToUpdate();
 }
 
 void CheckBox::setColor(float r, float g, float b, float a)
 {
+    lock();
     m_label.setColor(r, g, b, a);
+    unlock();
     Object::setColor(r, g, b, a);
 }
 
 void CheckBox::setText(const std::wstring& text)
 {
+    lock();
     m_label.setText(text);
     markToUpdate();
+    unlock();
 }
 
 bool CheckBox::checked() const
@@ -141,16 +147,19 @@ void CheckBox::draw() const
 
 void CheckBox::processMain()
 {
+    lock();
     m_sprite.processMain();
     m_label.processMain();
     m_width = m_sprite.width() + m_label.width() + 5;
     m_height = m_sprite.height();
     m_label.setPosition(m_sprite.width() + 5, int(m_sprite.height() - m_label.height()) / 2);
+    unlock();
     Widget::processMain();
 }
 
 void CheckBox::mouseEnter()
 {
+    lock();
     if (m_hoverTexture)
     {
         if (m_checked)
@@ -158,11 +167,13 @@ void CheckBox::mouseEnter()
         else
             m_sprite.setTexture(m_hoverTexture);
     }
+    unlock();
     Widget::mouseEnter();
 }
 
 void CheckBox::mouseLeave()
 {
+    lock();
     if (m_mainTexture)
     {
         if (m_checked)
@@ -170,13 +181,16 @@ void CheckBox::mouseLeave()
         else
             m_sprite.setTexture(m_mainTexture);
     }
+    unlock();
     Widget::mouseLeave();
 }
 
 void CheckBox::mouseClick(int x, int y)
 {
+    lock();
     setChecked(!m_checked);
     action(Action(this, Action::CHECKBOX_TOGGLED, Action::Argument(m_checked)));
+    unlock();
 }
 }
 

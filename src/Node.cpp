@@ -41,7 +41,9 @@ void Node::draw() const
 
 void Node::processLogic(int dt)
 {
+    lock();
     for (std::list<Object*>::const_iterator i = m_children.begin(); i != m_children.end(); i++)
         (*i)->processLogic(dt);
+    unlock();
 }
 }

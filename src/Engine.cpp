@@ -200,6 +200,11 @@ void Engine::removeWidget(Widget *w)
     if (w == m_focusedWidget)
         m_focusedWidget = 0;
     m_widgets.remove(w);
+    m_mainNode.removeChild(w);
+
+    m_updateMutex.lock();
+    m_updateList.remove(w);
+    m_updateMutex.unlock();
 }
 
 int Engine::logic()
@@ -337,9 +342,6 @@ void Engine::init(int w, int h, bool fullscreen)
         monoFontSize = atoi(monoFontStrings.at(1).c_str());
     m_monospaceFont = ResourceManager::instance()->loadFont(fromLocal(monoFontStrings.at(0).c_str()), monoFontSize);
 
-    std::wstring startupScript = fromLocal(m_properties->get<std::string>("engine.startupScript", "startup.lua").c_str());
-    execLuaScript(startupScript);
-
     m_frames = 0;
 
     m_mainNode.setPosition(0, 0);
@@ -383,6 +385,8 @@ int Engine::run()
     m_gameRunning = true;
     m_fpsThread = new boost::thread(fpsCounter);
     m_logicThread = new boost::thread(logic);
+    std::wstring startupScript = fromLocal(m_properties->get<std::string>("engine.startupScript", "startup.lua").c_str());
+    execLuaScript(startupScript);
     while (m_gameRunning)
     {
         m_updateMutex.lock();

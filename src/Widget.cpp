@@ -26,6 +26,7 @@ namespace Rangers
 {
 Rect Widget::getBoundingRect() const
 {
+    lock();
     Rect r;
     r.x1 = 0;
     r.y1 = 0;
@@ -41,6 +42,7 @@ Rect Widget::getBoundingRect() const
         childRect.y2 += position.y;
         r += childRect;
     }
+    unlock();
     return r;
 }
 
@@ -98,15 +100,19 @@ void Widget::mouseMove(int x, int y)
 
 void Widget::mouseEnter()
 {
+    lock();
     m_leftMouseButtonPressed = false;
+    unlock();
 }
 
 void Widget::mouseLeave()
 {
+    lock();
     if (m_currentChild)
         m_currentChild->mouseLeave();
     m_currentChild = 0;
     m_leftMouseButtonPressed = false;
+    unlock();
 }
 
 void Widget::mouseDown(uint8_t key, int x, int y)
@@ -206,12 +212,16 @@ Widget& Widget::operator=(const Rangers::Widget& other)
 
 void Widget::addListener(ActionListener* listener)
 {
+    lock();
     m_listeners.push_back(listener);
+    unlock();
 }
 
 void Widget::removeListener(ActionListener* listener)
 {
+    lock();
     m_listeners.remove(listener);
+    unlock();
 }
 
 void Widget::action(const Action& action)

@@ -188,6 +188,7 @@ void ConsoleWidget::draw() const
 
 void ConsoleWidget::processLogic(int dt)
 {
+    lock();
     m_lineEdit.processLogic(dt);
 
     if (Log::instance()->needUpdate())
@@ -224,6 +225,7 @@ void ConsoleWidget::processLogic(int dt)
 
         m_logLabel.setText(text);
     }
+    unlock();
 
     Widget::processLogic(dt);
 }

@@ -342,10 +342,12 @@ void GAISprite::reset()
 {
     if (!m_gaiFrames.size())
         return;
+    lock();
     m_animationStarted = false;
     m_currentFrame = 0;
     m_animationTime = 0;
     markToUpdate();
+    unlock();
 }
 
 }

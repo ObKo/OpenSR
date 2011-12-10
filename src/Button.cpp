@@ -89,21 +89,27 @@ void Button::draw() const
 
 void Button::processMain()
 {
+    lock();
     m_sprite.processMain();
+    unlock();
     Widget::processMain();
 }
 
 void Button::mouseEnter()
 {
+    lock();
     if (m_hoverTexture)
         m_sprite.setTexture(m_hoverTexture);
+    unlock();
     Widget::mouseEnter();
 }
 
 void Button::mouseLeave()
 {
+    lock();
     if (m_mainTexture)
         m_sprite.setTexture(m_mainTexture);
+    unlock();
     Widget::mouseLeave();
 }
 void Button::mouseDown(uint8_t key, int x, int y)

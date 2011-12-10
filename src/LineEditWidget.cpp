@@ -166,12 +166,14 @@ void LineEditWidget::processMain()
 
 void LineEditWidget::processLogic(int dt)
 {
+    lock();
     m_cursorTime += dt;
     if (m_cursorTime > 500)
     {
         m_cursorVisible = !m_cursorVisible;
         m_cursorTime = 0;
     }
+    unlock();
 }
 
 
@@ -217,10 +219,12 @@ void LineEditWidget::keyPressed(const SDL_keysym& key)
 
 void LineEditWidget::setText(const std::wstring& s)
 {
+    lock();
     m_text = s;
     m_position = s.length();
     m_label.setText(s);
     markToUpdate();
+    unlock();
 }
 
 std::wstring LineEditWidget::text() const

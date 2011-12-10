@@ -154,6 +154,7 @@ void Label::setWordWrap(bool wordWrap)
 
 void Label::setFixedSize(float width, float height)
 {
+    lock();
     if ((width > 0) && (height > 0))
     {
         m_width = width;
@@ -163,5 +164,6 @@ void Label::setFixedSize(float width, float height)
     else
         m_fixedSize = false;
     markToUpdate();
+    unlock();
 }
 }
