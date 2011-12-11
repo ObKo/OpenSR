@@ -162,7 +162,7 @@ int Engine::fpsCounter()
     while (engineInstance->m_gameRunning)
     {
         SDL_Delay(1000);
-		ostringstream fps(ostringstream::out);
+        ostringstream fps(ostringstream::out);
         fps << engineInstance->m_frames;
         if (engineInstance->m_frames >= 60)
             engineInstance->m_fpsLabel.setColor(0, 1, 0);
@@ -390,9 +390,12 @@ int Engine::run()
     while (m_gameRunning)
     {
         m_updateMutex.lock();
-		std::list<Widget*>::const_iterator widgetEnd = m_widgetsToDelete.end();
+        std::list<Widget*>::const_iterator widgetEnd = m_widgetsToDelete.end();
         for (std::list<Widget*>::const_iterator i = m_widgetsToDelete.begin(); i != widgetEnd; ++i)
-            delete (*i);
+        {
+            removeWidget(*i);
+            delete(*i);
+        }
         m_widgetsToDelete.clear();
 
         std::list<Object *>::const_iterator end = m_updateList.end();

@@ -49,7 +49,7 @@ public:
     LuaWidget(const std::wstring& name, Widget *parent = 0);
     LuaWidget(Widget *parent = 0);
 
-	virtual ~LuaWidget();
+    virtual ~LuaWidget();
 
     virtual void draw() const;
 
@@ -72,6 +72,8 @@ private:
 
     boost::shared_ptr<lua_State> m_luaState;
     LuaActionListener *m_actionListener;
+
+    static int luaErrorHandler(lua_State* state);
 };
 }
 

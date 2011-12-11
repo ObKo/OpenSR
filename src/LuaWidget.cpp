@@ -38,7 +38,7 @@ public:
         if (ptr)
         {
             lua_close(ptr);
-			ptr = 0;
+            ptr = 0;
         }
     }
 };
@@ -61,7 +61,7 @@ void LuaWidget::LuaActionListener::actionPerformed(const Action &action)
     //FIXME: const * -> *
     tolua_pushusertype(m_widget->m_luaState.get(), (void *)&action, "Rangers::Action");
     if (lua_pcall(m_widget->m_luaState.get(), 1, 0, 0))
-        Log::warning() << "Lua: " << lua_tostring(m_widget->m_luaState.get(), -1);
+        Log::warning() << "[LuaWidget] " << lua_tostring(m_widget->m_luaState.get(), -1);
 
     m_widget->unlock();
 }
@@ -80,7 +80,10 @@ LuaWidget::LuaWidget(const char *data, size_t size, const std::string& name, Wid
 {
     initLuaState();
     if (luaL_loadbuffer(m_luaState.get(), data, size, name.c_str()) || lua_pcall(m_luaState.get(), 0, LUA_MULTRET, 0))
-        Log::error() << "Cannot load lua script: " << lua_tostring(m_luaState.get(), -1);
+    {
+        Log::error() << "[LuaWidget] " << lua_tostring(m_luaState.get(), -1);
+        Engine::instance()->markWidgetDeleting(this);
+    }
 }
 
 LuaWidget::LuaWidget(const std::wstring& name, Widget *parent)
@@ -91,7 +94,10 @@ LuaWidget::LuaWidget(const std::wstring& name, Widget *parent)
     if (luaData)
     {
         if (luaL_loadbuffer(m_luaState.get(), luaData, size, toLocal(name.c_str()).c_str()) || lua_pcall(m_luaState.get(), 0, LUA_MULTRET, 0))
-            Log::error() << "Cannot load lua script: " << lua_tostring(m_luaState.get(), -1);
+        {
+            Log::error() << "[LuaWidget] " << lua_tostring(m_luaState.get(), -1);
+            Engine::instance()->markWidgetDeleting(this);
+        }
         delete[] luaData;
     }
 }
@@ -103,7 +109,7 @@ LuaWidget::LuaWidget(Rangers::Widget* parent): Widget(parent), m_luaState(boost:
 
 LuaWidget::~LuaWidget()
 {
-	delete m_actionListener;
+    delete m_actionListener;
 }
 
 LuaWidget::LuaWidget(const LuaWidget& other): Widget(other)
@@ -156,11 +162,11 @@ Rect LuaWidget::getBoundingRect() const
     Rect *bp = ((Rect*)(tolua_tousertype(m_luaState.get(), -1, 0)));
     lua_pop(m_luaState.get(), 1);
 
-	if(!bp)
-	{
-		unlock();
-		return Widget::getBoundingRect();
-	}
+    if (!bp)
+    {
+        unlock();
+        return Widget::getBoundingRect();
+    }
 
     unlock();
     return *bp + Widget::getBoundingRect();
@@ -273,5 +279,17 @@ void LuaWidget::initLuaState()
     lua_setglobal(m_luaState.get(), "engine");
     tolua_pushusertype(m_luaState.get(), ResourceManager::instance(), "Rangers::ResourceManager");
     lua_setglobal(m_luaState.get(), "resources");
+    lua_atpanic(m_luaState.get(), LuaWidget::luaErrorHandler);
+}
+
+int LuaWidget::luaErrorHandler(lua_State* state)
+{
+    std::wstring error = fromUTF8(lua_tostring(state, 1));
+    lua_getglobal(state, "this");
+    LuaWidget *widget = static_cast<LuaWidget*>(tolua_tousertype(state, -1, 0));
+    assert(widget != 0);
+    Log::error() << "[LuaWidget] " << error;
+    Engine::instance()->markWidgetDeleting(widget);
+    return 0;
 }
 }
