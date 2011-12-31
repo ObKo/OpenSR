@@ -18,6 +18,7 @@
 
 #include "Object.h"
 #include "Engine.h"
+#include <GL/glu.h>
 
 namespace Rangers
 {
@@ -143,6 +144,102 @@ void Object::processMain()
     lock();
     m_needUpdate = false;
     unlock();
+}
+
+//FIXME: Adding locks causing deadlocks.
+Vector Object::mapToParent(const Vector& v) const
+{
+    float c = cos(m_rotation);
+    float s = sin(m_rotation);
+    Vector result;
+    result.x = c * v.x - s * v.y + m_position.x;
+    result.y = s * v.x + c * v.y + m_position.y;
+    return result;
+}
+
+Rect Object::mapToParent(const Rect& r) const
+{
+    Vector a(r.x1, r.y1), b(r.x2, r.y1), c(r.x2, r.y2), d(r.x1, r.y2);
+    a = mapToParent(a);
+    b = mapToParent(b);
+    c = mapToParent(c);
+    d = mapToParent(d);
+    Rect result;
+    result.x1 = std::min(std::min(a.x, b.x), std::min(c.x, d.x));
+    result.y1 = std::min(std::min(a.y, b.y), std::min(c.y, d.y));
+    result.x2 = std::max(std::max(a.x, b.x), std::max(c.x, d.x));
+    result.y2 = std::max(std::max(a.y, b.y), std::max(c.y, d.y));
+    return result;
+}
+
+//FIXME: Locking parent obvious causing deadlock (logic thread and nodes).
+Vector Object::mapToGlobal(const Vector& v) const
+{
+    Vector result = mapToParent(v);
+    Object *currentParent = m_parent;
+    while (currentParent != 0)
+    {
+        result = currentParent->mapToParent(result);
+        Object *p = currentParent;
+        currentParent = currentParent->m_parent;
+    }
+    return result;
+}
+
+Rect Object::mapToGlobal(const Rect& r) const
+{
+    Vector a(r.x1, r.y1), b(r.x2, r.y1), c(r.x2, r.y2), d(r.x1, r.y2);
+    a = mapToGlobal(a);
+    b = mapToGlobal(b);
+    c = mapToGlobal(c);
+    d = mapToGlobal(d);
+    Rect result;
+    result.x1 = std::min(std::min(a.x, b.x), std::min(c.x, d.x));
+    result.y1 = std::min(std::min(a.y, b.y), std::min(c.y, d.y));
+    result.x2 = std::max(std::max(a.x, b.x), std::max(c.x, d.x));
+    result.y2 = std::max(std::max(a.y, b.y), std::max(c.y, d.y));
+    return result;
+    return result;
+}
+
+Vector Object::mapToScreen(const Vector& v) const
+{
+    Vector global = mapToGlobal(v);
+    GLdouble x = global.x, y = global.y;
+    GLdouble wx, wy, wz;
+    int viewport[4];
+    GLdouble p[16];
+    GLdouble w[16] = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
+    glGetDoublev(GL_PROJECTION_MATRIX, p);
+    glGetIntegerv(GL_VIEWPORT, viewport);
+    gluProject(x, y, 0, w, p, viewport, &wx, &wy, &wz);
+    Vector result(wx, wy);
+
+    return result;
+}
+
+Rect Object::mapToScreen(const Rect& r) const
+{
+    Rect global = mapToGlobal(r);
+    GLdouble wx1, wy1, wx2, wy2, wx3, wy3, wx4, wy4, wz;
+    int viewport[4];
+    GLdouble p[16];
+    GLdouble w[16] = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
+    glGetDoublev(GL_PROJECTION_MATRIX, p);
+    glGetIntegerv(GL_VIEWPORT, viewport);
+
+    gluProject(global.x1, global.y1, 0, w, p, viewport, &wx1, &wy1, &wz);
+    gluProject(global.x2, global.y1, 0, w, p, viewport, &wx2, &wy2, &wz);
+    gluProject(global.x2, global.y2, 0, w, p, viewport, &wx3, &wy3, &wz);
+    gluProject(global.x1, global.y2, 0, w, p, viewport, &wx4, &wy4, &wz);
+
+    Rect result;
+    result.x1 = std::min(std::min(wx1, wx2), std::min(wx3, wx4));
+    result.y1 = std::min(std::min(wy1, wy2), std::min(wy3, wy4));
+    result.x2 = std::max(std::max(wx1, wx2), std::max(wx3, wx4));
+    result.y2 = std::max(std::max(wy1, wy2), std::max(wy3, wy4));
+
+    return result;
 }
 
 void Object::processLogic(int dt)

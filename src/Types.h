@@ -54,6 +54,7 @@ struct Vertex
 struct Rect
 {
     Rect();
+    Rect(float x1, float y1, float x2, float y2);
     float x1, y1;
     float x2, y2;
     Rect& operator+=(const Rect& other);

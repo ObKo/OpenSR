@@ -57,6 +57,14 @@ public:
 
     void setLayer(int layer);
 
+    Vector mapToParent(const Vector& v) const;
+    Vector mapToGlobal(const Vector& v) const;
+    Vector mapToScreen(const Vector& v) const;
+
+    Rect mapToParent(const Rect& r) const;
+    Rect mapToGlobal(const Rect& r) const;
+    Rect mapToScreen(const Rect& r) const;
+
     Object& operator=(const Object& other);
 
 private:

@@ -255,4 +255,10 @@ Log::Logger& Log::Logger::operator<<(const Rect& r)
     *m_stream << "[" << r.x1 << ", " << r.y1 << ", " << r.x2 << ", " << r.y2 << "]";
     return *this;
 }
+
+Log::Logger& Log::Logger::operator<<(const Vector& v)
+{
+    *m_stream << "[" << v.x << ", " << v.y << "]";
+    return *this;
+}
 }
