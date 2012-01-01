@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2012 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 #include "Object.h"
 #include "Engine.h"
 #include <GL/glu.h>
+#include <stack>
 
 namespace Rangers
 {
@@ -133,8 +134,8 @@ bool Object::prepareDraw() const
 {
     lock();
     glPushMatrix();
-    glTranslatef(m_position.x, m_position.y, 0);
     glRotatef(m_rotation, 0, 0, -1);
+    glTranslatef(m_position.x, m_position.y, 0);
     glColor4f(m_colorR, m_colorG, m_colorB, m_colorA);
     return true;
 }
@@ -146,14 +147,43 @@ void Object::processMain()
     unlock();
 }
 
+Vector Object::mapFromParent(const Vector& v) const
+{
+    float c = cos(m_rotation * M_PI / 180.0);
+    float s = -sin(m_rotation * M_PI / 180.0);
+    Vector result;
+    result.x = c * (v.x - m_position.x) + s * (v.y - m_position.y);
+    result.y = -s * (v.x - m_position.x) + c * (v.y - m_position.y);
+    return result;
+}
+
 //FIXME: Adding locks causing deadlocks.
 Vector Object::mapToParent(const Vector& v) const
 {
-    float c = cos(m_rotation);
-    float s = sin(m_rotation);
+    float c = cos(m_rotation * M_PI / 180.0);
+    float s = -sin(m_rotation * M_PI / 180.0);
     Vector result;
     result.x = c * v.x - s * v.y + m_position.x;
     result.y = s * v.x + c * v.y + m_position.y;
+    return result;
+}
+
+Vector Object::mapFromGlobal(const Vector& v) const
+{
+    std::stack<const Object*> objects;
+    objects.push(this);
+    Object *currentParent = m_parent;
+    while (currentParent != 0)
+    {
+        objects.push(currentParent);
+        currentParent = currentParent->m_parent;
+    }
+    int size = objects.size();
+    Vector result = v;
+    for (; !objects.empty(); objects.pop())
+    {
+        result = objects.top()->mapFromParent(result);
+    }
     return result;
 }
 
@@ -180,7 +210,6 @@ Vector Object::mapToGlobal(const Vector& v) const
     while (currentParent != 0)
     {
         result = currentParent->mapToParent(result);
-        Object *p = currentParent;
         currentParent = currentParent->m_parent;
     }
     return result;
@@ -202,6 +231,21 @@ Rect Object::mapToGlobal(const Rect& r) const
     return result;
 }
 
+Vector Object::mapFromScreen(const Vector& v) const
+{
+    GLdouble wx, wy, wz;
+    int viewport[4];
+    GLdouble p[16];
+    GLdouble w[16] = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
+    glGetDoublev(GL_PROJECTION_MATRIX, p);
+    glGetIntegerv(GL_VIEWPORT, viewport);
+    gluUnProject(v.x, v.y, 0, w, p, viewport, &wx, &wy, &wz);
+
+    Vector result = mapFromGlobal(Vector(wx, viewport[3] - wy));
+
+    return result;
+}
+
 Vector Object::mapToScreen(const Vector& v) const
 {
     Vector global = mapToGlobal(v);
@@ -213,7 +257,7 @@ Vector Object::mapToScreen(const Vector& v) const
     glGetDoublev(GL_PROJECTION_MATRIX, p);
     glGetIntegerv(GL_VIEWPORT, viewport);
     gluProject(x, y, 0, w, p, viewport, &wx, &wy, &wz);
-    Vector result(wx, wy);
+    Vector result(wx, viewport[3] - wy);
 
     return result;
 }

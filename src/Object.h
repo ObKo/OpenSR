@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2012 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -56,6 +56,10 @@ public:
     Object* parent() const;
 
     void setLayer(int layer);
+
+    Vector mapFromParent(const Vector& v) const;
+    Vector mapFromGlobal(const Vector& v) const;
+    Vector mapFromScreen(const Vector& v) const;
 
     Vector mapToParent(const Vector& v) const;
     Vector mapToGlobal(const Vector& v) const;

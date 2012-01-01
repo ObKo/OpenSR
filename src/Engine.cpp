@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2012 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -587,9 +587,9 @@ void Engine::processMouseMove(SDL_MouseMotionEvent e)
 {
     for (std::list<Widget*>::iterator i = m_widgets.begin(); i != m_widgets.end(); i++)
     {
-        Rect bb = (*i)->getBoundingRect();
-        Vector pos = (*i)->position();
-        if ((bb.x1 + pos.x < e.x) && (bb.x2 + pos.x > e.x) && (bb.y1 + pos.y < e.y) && (bb.y2 + pos.y > e.y))
+        Rect bb = (*i)->mapToGlobal((*i)->getBoundingRect());
+        Vector globalMouse = m_mainNode.mapFromScreen(Vector(e.x, e.y));
+        if (bb.contains(globalMouse))
         {
             if ((*i) != m_currentWidget)
             {
@@ -598,7 +598,8 @@ void Engine::processMouseMove(SDL_MouseMotionEvent e)
                 m_currentWidget = *i;
                 m_currentWidget->mouseEnter();
             }
-            (*i)->mouseMove(e.x - bb.x1 - pos.x, e.y - bb.y1 - pos.y);
+            Vector mouse = (*i)->mapFromParent(globalMouse);
+            (*i)->mouseMove(mouse.x, mouse.y);
             return;
         }
     }

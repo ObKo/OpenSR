@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2012 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -72,22 +72,21 @@ Widget::Widget(const Rangers::Widget& other): Object(other)
 void Widget::mouseMove(int x, int y)
 {
     lock();
-    for (std::list<Widget*>::const_reverse_iterator i = m_childWidgets.rbegin(); i != m_childWidgets.rend(); i++)
+    for (std::list<Widget*>::const_reverse_iterator i = m_childWidgets.rbegin(); i != m_childWidgets.rend(); ++i)
     {
-        Rect bb = (*i)->getBoundingRect();
-        Vector pos = (*i)->position();
-        if ((bb.x1 + pos.x < x) && (bb.x2 + pos.x > x) && (bb.y1 + pos.y < y) && (bb.y2 + pos.y > y))
+        Rect bb = (*i)->mapToParent((*i)->getBoundingRect());
+        Vector mouse = Vector(x, y);
+        if (bb.contains(mouse))
         {
             if ((*i) != m_currentChild)
             {
                 if (m_currentChild)
-                {
                     m_currentChild->mouseLeave();
-                }
                 m_currentChild = *i;
                 m_currentChild->mouseEnter();
             }
-            (*i)->mouseMove(x - bb.x1 - pos.x, y - bb.y1 - pos.y);
+            Vector m = (*i)->mapFromParent(mouse);
+            (*i)->mouseMove(m.x, m.y);
             unlock();
             return;
         }

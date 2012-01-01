@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2012 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -62,5 +62,10 @@ Rect operator+(const Rect& r1, const Rect& r2)
     Rect result(r1);
     result += r2;
     return result;
+}
+
+bool Rect::contains(const Vector& v)
+{
+    return (v.x > x1) && (v.x < x2) && (v.y > y1) && (v.y < y2);
 }
 }
