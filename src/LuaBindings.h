@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2012 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -46,6 +46,7 @@ int tolua_WidgetNode_open(lua_State* tolua_S);
 int tolua_Node_open(lua_State* tolua_S);
 int tolua_CheckBox_open(lua_State* tolua_S);
 int tolua_NinePatch_open(lua_State* tolua_S);
+int tolua_ScrollArea_open(lua_State* tolua_S);
 
 namespace Rangers
 {

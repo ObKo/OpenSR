@@ -66,13 +66,25 @@ Widget::Widget(const Rangers::Widget& other): Object(other)
     m_width = other.m_width;
     m_height = other.m_height;
     m_listeners = other.m_listeners;
+    //FIXME: Ugly downcasting
+    Widget* wparent;
+    if ((wparent = dynamic_cast<Widget*>(other.m_parent)) != 0)
+        wparent->addWidget(this);
     markToUpdate();
+}
+
+Widget::~Widget()
+{
+    //FIXME: Ugly downcasting
+    Widget* wparent;
+    if ((wparent = dynamic_cast<Widget*>(m_parent)) != 0)
+        wparent->removeWidget(this);
 }
 
 void Widget::mouseMove(int x, int y)
 {
     lock();
-    for (std::list<Widget*>::const_reverse_iterator i = m_childWidgets.rbegin(); i != m_childWidgets.rend(); ++i)
+    for (std::list<Widget*>::reverse_iterator i = m_childWidgets.rbegin(); i != m_childWidgets.rend(); ++i)
     {
         Rect bb = (*i)->mapToParent((*i)->getBoundingRect());
         Vector mouse = Vector(x, y);
@@ -121,9 +133,8 @@ void Widget::mouseDown(uint8_t key, int x, int y)
         m_leftMouseButtonPressed = true;
     if (m_currentChild)
     {
-        Rect b = m_currentChild->getBoundingRect();
-        Vector pos = m_currentChild->position();
-        m_currentChild->mouseDown(key, x - b.x1 - pos.x, y - b.y1 - pos.y);
+        Vector pos = m_currentChild->mapFromParent(Vector(x, y));
+        m_currentChild->mouseDown(key, pos.x, pos.y);
     }
     unlock();
 }
@@ -133,9 +144,8 @@ void Widget::mouseUp(uint8_t key, int x, int y)
     lock();
     if (m_currentChild)
     {
-        Rect b = m_currentChild->getBoundingRect();
-        Vector pos = m_currentChild->position();
-        m_currentChild->mouseUp(key, x - b.x1 - pos.x, y - b.y1 - pos.y);
+        Vector pos = m_currentChild->mapFromParent(Vector(x, y));
+        m_currentChild->mouseUp(key, pos.x, pos.y);
     }
     if (m_leftMouseButtonPressed && (key == SDL_BUTTON_LEFT))
     {
@@ -203,9 +213,11 @@ Widget& Widget::operator=(const Rangers::Widget& other)
     m_width = other.m_width;
     m_height = other.m_height;
     m_listeners = other.m_listeners;
+    //FIXME: Ugly downcasting
+    Widget* wparent;
+    if ((wparent = dynamic_cast<Widget*>(other.m_parent)) != 0)
+        wparent->addWidget(this);
     markToUpdate();
-
-    Object::operator=(other);
     return *this;
 }
 

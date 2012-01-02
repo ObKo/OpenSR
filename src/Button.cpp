@@ -25,6 +25,11 @@
 
 namespace Rangers
 {
+
+Button::Button(Widget *parent): Widget(parent)
+{
+}
+
 Button::Button(boost::shared_ptr<Texture> texture, Widget *parent): Widget(parent)
 {
     m_mainTexture = texture;
@@ -136,5 +141,26 @@ void Button::mouseClick(int x, int y)
 {
     action(Action(this, Action::BUTTON_CLICKED, Action::Argument()));
 }
+
+Button::Button(const Button& other): Widget(other)
+{
+    m_mainTexture = other.m_mainTexture;
+    m_hoverTexture = other.m_hoverTexture;
+    m_pressedTexture = other.m_pressedTexture;
+    m_sprite = other.m_sprite;
+}
+
+Button& Button::operator=(const Button& other)
+{
+    if (this == &other)
+        return *this;
+    Widget::operator=(other);
+    m_mainTexture = other.m_mainTexture;
+    m_hoverTexture = other.m_hoverTexture;
+    m_pressedTexture = other.m_pressedTexture;
+    m_sprite = other.m_sprite;
+    return *this;
+}
+
 }
 

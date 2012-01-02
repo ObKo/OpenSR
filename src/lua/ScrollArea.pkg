@@ -1,0 +1,18 @@
+$#include "ScrollArea.h"
+$#include "WidgetNode.h"
+$pfile "Widget.pkg"
+
+namespace Rangers
+{
+class ScrollArea: public Rangers::Widget
+{
+public:
+    ScrollArea(const std::wstring& topButtonTexture, const std::wstring& bottomButtonTexture, 
+               const std::wstring& scrollTopTexture, const std::wstring& scrollBottomTexture,
+               const std::wstring& scrollCenterTexture, Rangers::WidgetNode *node, Widget* parent = 0);
+    
+    void setWidth(float width);
+    void setHeight(float height);
+    void setNode(Rangers::WidgetNode *node);
+};
+}

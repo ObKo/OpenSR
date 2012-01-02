@@ -134,8 +134,8 @@ bool Object::prepareDraw() const
 {
     lock();
     glPushMatrix();
-    glRotatef(m_rotation, 0, 0, -1);
     glTranslatef(m_position.x, m_position.y, 0);
+    glRotatef(m_rotation, 0, 0, -1);
     glColor4f(m_colorR, m_colorG, m_colorB, m_colorA);
     return true;
 }

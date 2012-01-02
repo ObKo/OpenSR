@@ -271,6 +271,7 @@ void LuaWidget::initLuaState()
     tolua_WidgetNode_open(m_luaState.get());
     tolua_CheckBox_open(m_luaState.get());
     tolua_NinePatch_open(m_luaState.get());
+    tolua_ScrollArea_open(m_luaState.get());
     tolua_pushusertype(m_luaState.get(), this, "Rangers::LuaWidget");
     lua_setglobal(m_luaState.get(), "this");
     tolua_pushusertype(m_luaState.get(), m_actionListener, "Rangers::LuaWidget::LuaActionListener");
