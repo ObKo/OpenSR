@@ -20,6 +20,9 @@
 #include "Engine.h"
 #include <GL/glu.h>
 #include <stack>
+#include <algorithm>
+#include <boost/math/constants/constants.hpp>
+#define DEG2RAD(x) (x * boost::math::constants::pi<double>() / 180.0)
 
 namespace Rangers
 {
@@ -149,8 +152,8 @@ void Object::processMain()
 
 Vector Object::mapFromParent(const Vector& v) const
 {
-    float c = cos(m_rotation * M_PI / 180.0);
-    float s = -sin(m_rotation * M_PI / 180.0);
+    float c = cos(DEG2RAD(m_rotation));
+    float s = -sin(DEG2RAD(m_rotation));
     Vector result;
     result.x = c * (v.x - m_position.x) + s * (v.y - m_position.y);
     result.y = -s * (v.x - m_position.x) + c * (v.y - m_position.y);
@@ -160,8 +163,8 @@ Vector Object::mapFromParent(const Vector& v) const
 //FIXME: Adding locks causing deadlocks.
 Vector Object::mapToParent(const Vector& v) const
 {
-    float c = cos(m_rotation * M_PI / 180.0);
-    float s = -sin(m_rotation * M_PI / 180.0);
+    float c = cos(DEG2RAD(m_rotation));
+    float s = -sin(DEG2RAD(m_rotation));
     Vector result;
     result.x = c * v.x - s * v.y + m_position.x;
     result.y = s * v.x + c * v.y + m_position.y;
@@ -195,7 +198,9 @@ Rect Object::mapToParent(const Rect& r) const
     c = mapToParent(c);
     d = mapToParent(d);
     Rect result;
-    result.x1 = std::min(std::min(a.x, b.x), std::min(c.x, d.x));
+    result.x1 = std::min(
+    		std::min(a.x, b.x),
+    		std::min(c.x, d.x));
     result.y1 = std::min(std::min(a.y, b.y), std::min(c.y, d.y));
     result.x2 = std::max(std::max(a.x, b.x), std::max(c.x, d.x));
     result.y2 = std::max(std::max(a.y, b.y), std::max(c.y, d.y));
