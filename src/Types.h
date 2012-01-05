@@ -67,8 +67,9 @@ struct Rect
 //! Struct that handles region of texture.
 struct TextureRegion
 {
-    //! Constructs texture region.s
+    //! Constructs texture region.
     TextureRegion(boost::shared_ptr<Texture> texture, float x, float y, float width, float height);
+    TextureRegion();
     boost::shared_ptr<Texture> texture;
     float u1, v1, u2, v2;
 };

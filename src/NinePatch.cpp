@@ -39,6 +39,7 @@ NinePatch::NinePatch(const std::vector<TextureRegion>& regions, int rows, int co
     Sprite(parent), m_regions(regions), m_rows(rows), m_columns(columns), m_sizeableRows(sizeableRows),
     m_sizeableColumns(sizeableColumns)
 {
+    markToUpdate();
 }
 
 NinePatch::NinePatch(const std::wstring& name, Object *parent): Sprite(parent), m_rows(0), m_columns(0)
@@ -58,6 +59,133 @@ NinePatch::NinePatch(const std::wstring& name, Object *parent): Sprite(parent), 
             m_regions = other.m_regions;
         }
     }
+    else
+    {
+        m_texture = ResourceManager::instance()->loadTexture(name);
+        if (m_texture)
+        {
+            int width = m_texture->width();
+            int height = m_texture->height();
+            m_width = width - 2;
+            m_height = height - 2;
+            glBindTexture(GL_TEXTURE_2D, m_texture->openGLTexture());
+            int realWidth = (width % 4) != 0 ? width + 4 - (width % 4) : width;
+            uint8_t *grayData = new uint8_t[realWidth * height];
+            glGetTexImage(GL_TEXTURE_2D, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, grayData);
+
+            bool black = false;
+
+            std::vector<float> columns;
+            std::vector<float> rows;
+
+            for (int i = 1; i < width - 1; i++)
+            {
+                if ((grayData[i] > 127) && black)
+                {
+                    columns.push_back(float(i) / width);
+                    black = false;
+                }
+                else if ((grayData[i] < 128) && !black)
+                {
+                    columns.push_back(float(i) / width);
+                    black = true;
+                }
+
+            }
+            black = false;
+            for (int i = 1; i < height - 1; i++)
+            {
+                if ((grayData[i * realWidth] > 127) && black)
+                {
+                    rows.push_back(float(i) / height);
+                    black = false;
+                }
+                else if ((grayData[i * realWidth] < 128) && !black)
+                {
+                    rows.push_back(float(i) / height);
+                    black = true;
+                }
+            }
+            delete[] grayData;
+
+            bool firstRowSizeable = false, firstColumnSizeable = false;
+
+            if (!rows.size())
+            {
+                m_rows = 1;
+            }
+            else
+            {
+                if (rows[0] == 0.0f)
+                {
+                    firstRowSizeable = true;
+                    rows.erase(rows.begin());
+                }
+                m_rows = rows.size() + 1;
+            }
+
+            if (!columns.size())
+            {
+                m_columns = 1;
+            }
+            else
+            {
+                if (columns[0] == 0.0f)
+                {
+                    firstColumnSizeable = true;
+                    columns.erase(columns.begin());
+                }
+                m_columns = columns.size() + 1;
+            }
+            for (int i = 0; i < m_rows; i++)
+            {
+                if (((firstRowSizeable) && !(i & 0x1)) || ((!firstRowSizeable) && (i & 0x1)))
+                {
+                    m_sizeableRows.push_back(i);
+                }
+            }
+            for (int i = 0; i < m_columns; i++)
+            {
+                if (((firstColumnSizeable) && !(i & 0x1)) || ((!firstColumnSizeable) && (i & 0x1)))
+                {
+                    m_sizeableColumns.push_back(i);
+                }
+            }
+            for (int i = 0; i < m_rows; i++)
+            {
+                float vStart, vEnd;
+                if (i == 0)
+                    vStart = 1.0f / m_texture->height();
+                else
+                    vStart = rows[i - 1];
+                if (i == (m_rows - 1))
+                    vEnd = 1.0f - 1.0f / m_texture->height();
+                else
+                    vEnd = rows[i];
+
+                for (int j = 0; j < m_columns; j++)
+                {
+                    float uStart, uEnd;
+                    if (j == 0)
+                        uStart = 1.0f / m_texture->width();
+                    else
+                        uStart = columns[j - 1];
+                    if (j == (m_columns - 1))
+                        uEnd = 1.0f - 1.0f / m_texture->width();
+                    else
+                        uEnd = columns[j];
+                    TextureRegion r;
+                    r.texture = m_texture;
+                    r.u1 = uStart;
+                    r.u2 = uEnd;
+                    r.v1 = vStart;
+                    r.v2 = vEnd;
+                    m_regions.push_back(r);
+                }
+            }
+        }
+    }
+    markToUpdate();
 }
 
 void NinePatch::processMain()
@@ -241,6 +369,8 @@ void NinePatch::draw() const
     //if (!m_texture)
     //    return;
 
+    if (!m_buffer)
+        return;
     if (!prepareDraw())
         return;
 
