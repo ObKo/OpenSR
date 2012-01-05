@@ -29,6 +29,7 @@ SET(SOURCES
     CheckBox.cpp
     NinePatch.cpp
     ScrollArea.cpp
+    JSONHelper.cpp
 )
 
 SET(HEADERS 
@@ -62,6 +63,7 @@ SET(HEADERS
     CheckBox.h
     NinePatch.h
     ScrollArea.h
+    JSONHelper.h
 )
 
 SET(LUA_PACKAGES
@@ -98,6 +100,7 @@ INCLUDE_DIRECTORIES(
     ${Boost_INCLUDE_DIRS}
     ${TOLUAPP_INCLUDE_DIR}
     ${LUA_INCLUDE_DIR}
+    ${JSONCPP_INCLUDE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
@@ -130,6 +133,7 @@ TARGET_LINK_LIBRARIES(opensr
     ${TOLUAPP_LIBRARIES} 
     ${Boost_LIBRARIES} 
     ${GLEW_LIBRARIES}
+    ${JSONCPP_LIBRARIES}
 )
 ELSE(WIN32)
 TARGET_LINK_LIBRARIES(opensr 
@@ -139,6 +143,7 @@ TARGET_LINK_LIBRARIES(opensr
     ${LUA_LIBRARIES} 
     ${TOLUAPP_LIBRARIES} 
     ${Boost_LIBRARIES}
+    ${JSONCPP_LIBRARIES}
 )
 ENDIF(WIN32)
 TARGET_LINK_LIBRARIES(opensr ranger)

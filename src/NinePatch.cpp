@@ -21,43 +21,43 @@
 #include <vector>
 #include <cfloat>
 #include "Log.h"
+#include <algorithm>
+#include <libRanger.h>
+#include "JSONHelper.h"
+#include "ResourceManager.h"
 
-namespace
-{
-struct Delta
-{
-    Delta()
-    {
-        t1 = 0.0f;
-        t2 = 0.0f;
-        size = 0.0f;
-    }
-    Delta(float t1_, float t2_, float size_)
-    {
-        t1 = t1_;
-        t2 = t2_;
-        size = size_;
-    }
-    float t1, t2;
-    float size;
-};
-}
 
 namespace Rangers
 {
-NinePatch::NinePatch(Object *parent): Sprite(parent), m_embedded(false)
+NinePatch::NinePatch(Object *parent): Sprite(parent), m_rows(0), m_columns(0)
 {
 
 }
 
-NinePatch::NinePatch(const std::wstring& resourceName, Object *parent): Sprite(resourceName, parent), m_embedded(true)
+NinePatch::NinePatch(const std::vector<TextureRegion>& regions, int rows, int columns,
+                     const std::vector<int>& sizeableRows, const std::vector<int>& sizeableColumns, Object *parent):
+    Sprite(parent), m_regions(regions), m_rows(rows), m_columns(columns), m_sizeableRows(sizeableRows),
+    m_sizeableColumns(sizeableColumns)
 {
 }
 
-NinePatch::NinePatch(const std::wstring& resourceName, const std::vector<float> &rows, const std::vector<float> &columns, Object *parent):
-    Sprite(resourceName, parent), m_embedded(false), m_rows(rows), m_columns(columns)
+NinePatch::NinePatch(const std::wstring& name, Object *parent): Sprite(parent), m_rows(0), m_columns(0)
 {
-
+    std::wstring s = suffix(name);
+    if (s == L"9.json")
+    {
+        size_t dataSize;
+        char *jsonData = ResourceManager::instance()->loadData(name, dataSize);
+        if (jsonData)
+        {
+            NinePatch other = JSONHelper::parseNinePatch(std::string(jsonData, dataSize));
+            m_rows = other.m_rows;
+            m_columns = other.m_columns;
+            m_sizeableColumns = other.m_sizeableColumns;
+            m_sizeableRows = other.m_sizeableRows;
+            m_regions = other.m_regions;
+        }
+    }
 }
 
 void NinePatch::processMain()
@@ -65,12 +65,12 @@ void NinePatch::processMain()
     //TODO: Move some stuff to initialization only.
     Object::processMain();
 
-    if (!m_texture)
-        return;
+    //if (!m_texture)
+    //    return;
 
     lock();
 
-    if (m_embedded && (!m_columns.size() || !m_rows.size()))
+    /*if (m_embedded && (!m_columns.size() || !m_rows.size()))
     {
         int width = m_texture->width();
         int height = m_texture->height();
@@ -110,7 +110,7 @@ void NinePatch::processMain()
             }
         }
         delete[] grayData;
-    }
+    }*/
 
     if (!m_buffer)
     {
@@ -149,143 +149,85 @@ void NinePatch::processMain()
 
     float uStart = 0, uEnd = 0, vStart = 0, vEnd = 0;
 
-    if (m_embedded)
+    /*if (m_embedded)
     {
         uStart = 1.0f / m_texture->width();
         uEnd = 1.0f - 1.0f / m_texture->width();
         vStart = 1.0f / m_texture->height();
         vEnd = 1.0f - 1.0f / m_texture->height();
-    }
+    }*/
 
-    std::vector<Delta> widths;
-    std::vector<Delta> heights;
-    std::vector<int> sizeable;
+    std::vector<int> widths;
+    std::vector<int> heights;
 
-    bool currentSizeable = false;
     float residue = m_width;
-    int size = m_columns.size();
 
-    for (int i = 0; i != size; i++)
+    for (int i = 0; i != m_columns; i++)
     {
-        if (i != 0)
-        {
-            if (currentSizeable)
-                sizeable.push_back(i);
-            else
-                residue -= (m_columns[i] - m_columns[i - 1]) * m_texture->width();
-            widths.push_back(Delta(m_columns[i - 1], m_columns[i], (m_columns[i] - m_columns[i - 1]) * m_texture->width()));
-        }
-        else
-        {
-            if (m_columns[0] != 0.0f)
-            {
-                residue -= (m_columns[0] - uStart) * m_texture->width();
-                widths.push_back(Delta(uStart, m_columns[0], (m_columns[0] - uStart) * m_texture->width()));
-            }
-        }
-        currentSizeable = !currentSizeable;
-    }
-    if (size)
-    {
-        if (currentSizeable)
-            sizeable.push_back(size);
-        else
-            residue -= (uEnd - m_columns[size - 1]) * m_texture->width();
-        widths.push_back(Delta(m_columns[size - 1], uEnd, (uEnd - m_columns[size - 1]) * m_texture->width()));
-    }
-    else
-    {
-        widths.push_back(Delta(uStart, uEnd, m_texture->width()));
-        residue = 0.0f;
+        int width = (m_regions[i].u2 - m_regions[i].u1) * m_regions[i].texture->width();
+        if (std::find(m_sizeableColumns.begin(), m_sizeableColumns.end(), i) == m_sizeableColumns.end())
+            residue -= width;
+        widths.push_back(width);
+
     }
 
-    size = sizeable.size();
+    int size = m_sizeableColumns.size();
     for (int i = 0; i < size; i++)
     {
-        widths[sizeable[i]].size = residue / size;
+        widths[m_sizeableColumns[i]] = residue / size;
     }
 
-    sizeable.clear();
-    currentSizeable = false;
     residue = m_height;
-    size = m_rows.size();
 
-    for (int i = 0; i != size; i++)
+    for (int i = 0; i != m_rows; i++)
     {
-        if (i != 0)
-        {
-
-            if (currentSizeable)
-                sizeable.push_back(i);
-            else
-                residue -= (m_rows[i] - m_rows[i - 1]) * m_texture->height();
-            heights.push_back(Delta(m_rows[i - 1], m_rows[i], (m_rows[i] - m_rows[i - 1]) * m_texture->height()));
-        }
-        else
-        {
-            if (m_rows[0] != 0.0f)
-            {
-                residue -= (m_rows[0] - vStart)  * m_texture->height();
-                heights.push_back(Delta(vStart, m_rows[0], (m_rows[0] - vStart) * m_texture->height()));
-            }
-        }
-        currentSizeable = !currentSizeable;
-    }
-    if (size)
-    {
-        if (currentSizeable)
-            sizeable.push_back(size);
-        else
-            residue -= (vEnd - m_rows[size - 1]) * m_texture->height();
-        heights.push_back(Delta(m_rows[size - 1], vEnd, (vEnd - m_rows[size - 1]) * m_texture->height()));
-    }
-    else
-    {
-        heights.push_back(Delta(vStart, vEnd, m_texture->height()));
-        residue = 0.0f;
+        int height = (m_regions[i * m_columns].v2 - m_regions[i * m_columns].v1) * m_regions[i * m_columns].texture->height();
+        if (std::find(m_sizeableRows.begin(), m_sizeableRows.end(), i) == m_sizeableRows.end())
+            residue -= height;
+        heights.push_back(height);
     }
 
-    size = sizeable.size();
+    size = m_sizeableRows.size();
     for (int i = 0; i < size; i++)
     {
-        heights[sizeable[i]].size = residue / size;
+        heights[m_sizeableRows[i]] = residue / size;
     }
 
-    m_vertexCount = heights.size() * widths.size() * 4;
+    m_vertexCount = m_rows * m_columns * 4;
 
     if (m_vertices)
         delete[] m_vertices;
     m_vertices = new Vertex[m_vertexCount];
 
     float x = 0.0f, y = 0.0f;
-    for (int i = 0; i < heights.size(); i++)
+    for (int i = 0; i < m_rows; i++)
     {
         x = 0.0f;
-        for (int j = 0; j < widths.size(); j++)
+        for (int j = 0; j < m_columns; j++)
         {
-            m_vertices[(i * widths.size() + j) * 4].x = xOffset + x;
-            m_vertices[(i * widths.size() + j) * 4].u = widths[j].t1;
-            m_vertices[(i * widths.size() + j) * 4].y = yOffset + y;
-            m_vertices[(i * widths.size() + j) * 4].v = heights[i].t1;
+            m_vertices[(i * m_columns + j) * 4].x = xOffset + x;
+            m_vertices[(i * m_columns + j) * 4].u = m_regions[i * m_columns + j].u1;
+            m_vertices[(i * m_columns + j) * 4].y = yOffset + y;
+            m_vertices[(i * m_columns + j) * 4].v = m_regions[i * m_columns + j].v1;
 
-            m_vertices[(i * widths.size() + j) * 4 + 1].x = xOffset + x + widths[j].size;
-            m_vertices[(i * widths.size() + j) * 4 + 1].u = widths[j].t2;
-            m_vertices[(i * widths.size() + j) * 4 + 1].y = yOffset + y;
-            m_vertices[(i * widths.size() + j) * 4 + 1].v = heights[i].t1;
+            m_vertices[(i * m_columns + j) * 4 + 1].x = xOffset + x + widths[j];
+            m_vertices[(i * m_columns + j) * 4 + 1].u = m_regions[i * m_columns + j].u2;
+            m_vertices[(i * m_columns + j) * 4 + 1].y = yOffset + y;
+            m_vertices[(i * m_columns + j) * 4 + 1].v = m_regions[i * m_columns + j].v1;
 
-            m_vertices[(i * widths.size() + j) * 4 + 2].x = xOffset + x + widths[j].size;
-            m_vertices[(i * widths.size() + j) * 4 + 2].u = widths[j].t2;
-            m_vertices[(i * widths.size() + j) * 4 + 2].y = yOffset + y + heights[i].size;
-            m_vertices[(i * widths.size() + j) * 4 + 2].v = heights[i].t2;
+            m_vertices[(i * m_columns + j) * 4 + 2].x = xOffset + x + widths[j];
+            m_vertices[(i * m_columns + j) * 4 + 2].u = m_regions[i * m_columns + j].u2;
+            m_vertices[(i * m_columns + j) * 4 + 2].y = yOffset + y + heights[i];
+            m_vertices[(i * m_columns + j) * 4 + 2].v = m_regions[i * m_columns + j].v2;
 
-            m_vertices[(i * widths.size() + j) * 4 + 3].x = xOffset + x;
-            m_vertices[(i * widths.size() + j) * 4 + 3].u = widths[j].t1;
-            m_vertices[(i * widths.size() + j) * 4 + 3].y = yOffset + y + heights[i].size;
-            m_vertices[(i * widths.size() + j) * 4 + 3].v = heights[i].t2;
+            m_vertices[(i * m_columns + j) * 4 + 3].x = xOffset + x;
+            m_vertices[(i * m_columns + j) * 4 + 3].u = m_regions[i * m_columns + j].u1;
+            m_vertices[(i * m_columns + j) * 4 + 3].y = yOffset + y + heights[i];
+            m_vertices[(i * m_columns + j) * 4 + 3].v = m_regions[i * m_columns + j].v2;
 
-            x += widths[j].size;
+            x += widths[j];
         }
-        y += heights[i].size;
+        y += heights[i];
     }
 
     glBindBuffer(GL_ARRAY_BUFFER, m_buffer);
@@ -296,14 +238,11 @@ void NinePatch::processMain()
 
 void NinePatch::draw() const
 {
-    if (!m_texture)
-        return;
+    //if (!m_texture)
+    //    return;
 
     if (!prepareDraw())
         return;
-
-    glBindTexture(GL_TEXTURE_2D, m_texture->openGLTexture());
-
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
@@ -317,7 +256,17 @@ void NinePatch::draw() const
     glVertexPointer(2, GL_FLOAT, sizeof(Vertex), 0);
     glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), BUFFER_OFFSET(sizeof(float) * 2));
 
-    glDrawArrays(GL_QUADS, 0, m_vertexCount);
+    int vertexIndex = 0;
+    std::vector<TextureRegion>::const_iterator end = m_regions.end();
+    for (std::vector<TextureRegion>::const_iterator i = m_regions.begin(); i != end; ++i)
+    {
+        if (!(*i).texture)
+            continue;
+
+        glBindTexture(GL_TEXTURE_2D, (*i).texture->openGLTexture());
+        glDrawArrays(GL_QUADS, vertexIndex, 4);
+        vertexIndex += 4;
+    }
 
     glDisableClientState(GL_ARRAY_BUFFER);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);

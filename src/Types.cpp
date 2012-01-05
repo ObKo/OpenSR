@@ -17,6 +17,7 @@
 */
 
 #include "Types.h"
+#include "Texture.h"
 
 namespace Rangers
 {
@@ -67,5 +68,24 @@ Rect operator+(const Rect& r1, const Rect& r2)
 bool Rect::contains(const Vector& v)
 {
     return (v.x > x1) && (v.x < x2) && (v.y > y1) && (v.y < y2);
+}
+
+TextureRegion::TextureRegion(boost::shared_ptr<Texture> texture, float x, float y, float width, float height)
+{
+    this->texture = texture;
+    if (texture)
+    {
+        this->u1 = float(x) / texture->width();
+        this->u2 = float(x + width) / texture->width();
+        this->v1 = float(y) / texture->height();
+        this->v2 = float(y + height) / texture->height();
+    }
+    else
+    {
+        this->u1 = 0;
+        this->u2 = 0;
+        this->v1 = 0;
+        this->v2 = 0;
+    }
 }
 }

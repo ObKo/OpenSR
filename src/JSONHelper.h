@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2012 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,33 +16,22 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef RANGERS_NINEPATCH_H
-#define RANGERS_NINEPATCH_H
+#ifndef RANGERS_JSONHELPER_H
+#define RANGERS_JSONHELPER_H
 
-#include "Sprite.h"
-#include <vector>
+#include <jsoncpp/json.h>
 #include "Types.h"
+#include "NinePatch.h"
 
 namespace Rangers
 {
-class NinePatch: public Sprite
+class JSONHelper
 {
 public:
-    NinePatch(Object *parent = 0);
-    NinePatch(const std::vector<TextureRegion>& regions, int rows, int columns,
-              const std::vector<int>& sizeableRows, const std::vector<int>& sizeableColumns, Object *parent = 0);
-    NinePatch(const std::wstring& name, Object *parent = 0);
-
-    virtual void processMain();
-    virtual void draw() const;
-
-private:
-    std::vector<TextureRegion> m_regions;
-    int m_rows;
-    int m_columns;
-    std::vector<int> m_sizeableRows;
-    std::vector<int> m_sizeableColumns;
+    static TextureRegion parseTextureRegion(const Json::Value& object);
+    static NinePatch parseNinePatch(const Json::Value& object);
+    static NinePatch parseNinePatch(const std::string& json);
 };
 }
 
-#endif /* RANGER_NINEPATCH_H */
+#endif // RANGERS_JSONHELPER_H

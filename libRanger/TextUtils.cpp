@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2012 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -228,10 +228,21 @@ std::vector<std::wstring> Rangers::split(const std::wstring& s, wchar_t c)
 std::wstring Rangers::suffix(const std::wstring& s)
 {
     int pos;
+    int lastPos, dotPos;
+
     if ((pos = s.rfind(L'.')) == std::wstring::npos)
         return std::wstring();
-    else
-        return s.substr(pos + 1);
+
+    if ((lastPos = s.rfind(L'/')) == std::wstring::npos)
+        if ((lastPos = s.rfind(L'\\')) == std::wstring::npos)
+            lastPos = -1;
+
+    while ((pos != std::wstring::npos) && (pos > lastPos))
+    {
+        dotPos = pos;
+        pos = s.rfind(L'.', pos - 1);
+    }
+    return s.substr(dotPos + 1);
 }
 
 /*!

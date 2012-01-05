@@ -33,10 +33,13 @@
 #include <GL/glext.h>
 #endif
 
+#include <boost/shared_ptr.hpp>
+
 #define BUFFER_OFFSET(i) ((char*)0 + (i))
 
 namespace Rangers
 {
+class Texture;
 struct Vector
 {
     Vector();
@@ -59,6 +62,15 @@ struct Rect
     float x2, y2;
     Rect& operator+=(const Rect& other);
     bool contains(const Vector& v);
+};
+
+//! Struct that handles region of texture.
+struct TextureRegion
+{
+    //! Constructs texture region.s
+    TextureRegion(boost::shared_ptr<Texture> texture, float x, float y, float width, float height);
+    boost::shared_ptr<Texture> texture;
+    float u1, v1, u2, v2;
 };
 
 Rect operator+(const Rect& r1, const Rect& r2);

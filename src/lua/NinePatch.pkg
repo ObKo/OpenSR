@@ -6,13 +6,7 @@ namespace Rangers
 class NinePatch: public Rangers::Sprite
 {
 public:
-    struct TextureRegion
-    {
-        float u1, v1;
-        float u2, v2;
-    };
     NinePatch(Rangers::Object *parent = 0);
-    NinePatch(const std::wstring& resourceName, Rangers::Object *parent = 0);
-    NinePatch(const std::wstring& resourceName, const std::vector<float> &rows, const std::vector<float> &columns, Object *parent = 0);
+    NinePatch(const std::wstring& name, Rangers::Object *parent = 0);
 };
 }
