@@ -24,7 +24,8 @@ namespace Rangers
 {
 ScrollArea::ScrollArea(const std::wstring& topButtonTexture, const std::wstring& bottomButtonTexture,
                        const std::wstring& scrollTopTexture, const std::wstring& scrollBottomTexture,
-                       const std::wstring& scrollCenterTexture, WidgetNode *node, Widget* parent): Widget(parent)
+                       const std::wstring& scrollCenterTexture, WidgetNode *node, Widget* parent): 
+                       Widget(parent), m_node(0)
 {
     m_topButton = Button(topButtonTexture, this);
     m_topButton.addListener(this);
@@ -45,16 +46,11 @@ ScrollArea::ScrollArea(const std::wstring& topButtonTexture, const std::wstring&
     m_scrollHCenter = m_scrollVCenter;
     m_scrollHCenter.setRotation(90);
     m_scrollVCenter.setTextureScaling(TEXTURE_TILE_Y);
-    m_node = node;
-    if (m_node)
-    {
-        m_node->setParent(this);
-        addWidget(m_node);
-    }
     vPosition = 0.0f;
     hPosition = 0.0f;
     hSize = 0.0f;
     vSize = 0.0f;
+	setNode(node);
 }
 
 void ScrollArea::draw() const
@@ -87,7 +83,13 @@ void ScrollArea::draw() const
 
 void ScrollArea::setNode(WidgetNode* node)
 {
+	if(m_node)
+        removeWidget(m_node);
     m_node = node;
+    if (m_node)
+    {
+        addWidget(m_node);
+    }
     markToUpdate();
 }
 
