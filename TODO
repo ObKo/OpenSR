@@ -31,14 +31,13 @@ Done:
   - Mac OS X support (gcc, x86_64 tested)
   - Windows support (msvc, x86 and x86_64 tested)
   - Linux support (gcc, x86 and x86_64 tested)
-
+  - Configuration files
+  
 Partially done:
   - Resource manager 
     - Cache
-  - GAI animation loader - need support for GAI with delta frames
  
 Not done:
-  - Configuration files - WIP
   - Lua scripting - WIP
     - Lua widgets
     - Lua game scripting
@@ -51,3 +50,6 @@ Not done:
   - Main Game
   - Quest Game
   - Black Hole Game
+  
+Global FIXME:
+  - Fix object hierachy (child adding/removing, parent set, etc.)
