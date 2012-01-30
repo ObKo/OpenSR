@@ -22,80 +22,216 @@
 #include "Action.h"
 #include "ResourceManager.h"
 #include "Texture.h"
+#include "NinePatch.h"
 
 namespace Rangers
 {
 
-Button::Button(Widget *parent): Widget(parent)
+Button::Button(Widget *parent):
+    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0)
 {
 }
 
-Button::Button(boost::shared_ptr<Texture> texture, Widget *parent): Widget(parent)
+Button::Button(boost::shared_ptr<Texture> texture, Widget *parent):
+    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0)
 {
-    m_mainTexture = texture;
-    m_sprite = Sprite(m_mainTexture, this);
-    m_width = m_sprite.width();
-    m_height = m_sprite.height();
+    if (texture)
+    {
+        m_style.normal.region = TextureRegion(texture, 0, 0, texture->width(), texture->height());
+        m_style.normal.type = ResourceDescriptor::SPRITE;
+    }
+    init();
+    if (texture)
+    {
+        m_width = texture->width();
+        m_height = texture->height();
+    }
 }
 
-Button::Button(boost::shared_ptr<Texture> texture, boost::shared_ptr<Texture> hoverTexture, Widget *parent): Widget(parent)
+Button::Button(boost::shared_ptr<Texture> texture, boost::shared_ptr<Texture> hoverTexture, Widget *parent):
+    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0)
 {
-    m_mainTexture = texture;
-    m_hoverTexture = hoverTexture;
-    m_sprite = Sprite(m_mainTexture, this);
-    m_width = m_sprite.width();
-    m_height = m_sprite.height();
+    if (texture)
+    {
+        m_style.normal.region = TextureRegion(texture, 0, 0, texture->width(), texture->height());
+        m_style.normal.type = ResourceDescriptor::SPRITE;
+    }
+    if (hoverTexture)
+    {
+        m_style.hovered.region = TextureRegion(hoverTexture, 0, 0, hoverTexture->width(), hoverTexture->height());
+        m_style.hovered.type = ResourceDescriptor::SPRITE;
+    }
+    init();
+    if (texture)
+    {
+        m_width = texture->width();
+        m_height = texture->height();
+    }
 }
 
-Button::Button(boost::shared_ptr<Texture> texture, boost::shared_ptr<Texture> hoverTexture, boost::shared_ptr<Texture> pressTexture, Widget *parent): Widget(parent)
+Button::Button(boost::shared_ptr<Texture> texture, boost::shared_ptr<Texture> hoverTexture, boost::shared_ptr<Texture> pressTexture, Widget *parent):
+    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0)
 {
-    m_mainTexture = texture;
-    m_hoverTexture = hoverTexture;
-    m_pressedTexture = pressTexture;
-    m_sprite = Sprite(m_mainTexture, this);
-    m_width = m_sprite.width();
-    m_height = m_sprite.height();
+    if (texture)
+    {
+        m_style.normal.region = TextureRegion(texture, 0, 0, texture->width(), texture->height());
+        m_style.normal.type = ResourceDescriptor::SPRITE;
+    }
+    if (hoverTexture)
+    {
+        m_style.hovered.region = TextureRegion(hoverTexture, 0, 0, hoverTexture->width(), hoverTexture->height());
+        m_style.hovered.type = ResourceDescriptor::SPRITE;
+    }
+    if (pressTexture)
+    {
+        m_style.pressed.region = TextureRegion(pressTexture, 0, 0, pressTexture->width(), pressTexture->height());
+        m_style.pressed.type = ResourceDescriptor::SPRITE;
+    }
+    init();
+    if (texture)
+    {
+        m_width = texture->width();
+        m_height = texture->height();
+    }
 }
 
-Button::Button(const std::wstring& texture, Widget *parent): Widget(parent)
+Button::Button(const std::wstring& texture, Widget *parent):
+    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0)
 {
-    m_mainTexture = ResourceManager::instance()->loadTexture(texture);
-    m_sprite = Sprite(m_mainTexture, this);
-    m_width = m_sprite.width();
-    m_height = m_sprite.height();
+    boost::shared_ptr<Texture> main = ResourceManager::instance()->loadTexture(texture);
+    if (main)
+    {
+        m_style.normal.region = TextureRegion(main, 0, 0, main->width(), main->height());
+        m_style.normal.type = ResourceDescriptor::SPRITE;
+    }
+    init();
+    if (main)
+    {
+        m_width = main->width();
+        m_height = main->height();
+    }
 }
 
-Button::Button(const std::wstring& texture, const std::wstring& hoverTexture, Widget *parent): Widget(parent)
+Button::Button(const std::wstring& texture, const std::wstring& hoverTexture, Widget *parent):
+    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0)
 {
-    m_mainTexture = ResourceManager::instance()->loadTexture(texture);
-    m_hoverTexture = ResourceManager::instance()->loadTexture(hoverTexture);
-    m_sprite = Sprite(m_mainTexture, this);
-    m_width = m_sprite.width();
-    m_height = m_sprite.height();
+    boost::shared_ptr<Texture> main = ResourceManager::instance()->loadTexture(texture);
+    boost::shared_ptr<Texture> hover = ResourceManager::instance()->loadTexture(hoverTexture);
+    if (main)
+    {
+        m_style.normal.region = TextureRegion(main, 0, 0, main->width(), main->height());
+        m_style.normal.type = ResourceDescriptor::SPRITE;
+    }
+    if (hover)
+    {
+        m_style.hovered.region = TextureRegion(hover, 0, 0, hover->width(), hover->height());
+        m_style.hovered.type = ResourceDescriptor::SPRITE;
+    }
+    init();
+    if (main)
+    {
+        m_width = main->width();
+        m_height = main->height();
+    }
 }
 
-Button::Button(const std::wstring& texture, const std::wstring& hoverTexture, const std::wstring& pressTexture, Widget *parent): Widget(parent)
+Button::Button(const std::wstring& texture, const std::wstring& hoverTexture, const std::wstring& pressTexture, Widget *parent):
+    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0)
 {
-    m_mainTexture = ResourceManager::instance()->loadTexture(texture);
-    m_hoverTexture = ResourceManager::instance()->loadTexture(hoverTexture);
-    m_pressedTexture = ResourceManager::instance()->loadTexture(pressTexture);
-    m_sprite = Sprite(m_mainTexture, this);
-    m_width = m_sprite.width();
-    m_height = m_sprite.height();
+    boost::shared_ptr<Texture> main = ResourceManager::instance()->loadTexture(texture);
+    boost::shared_ptr<Texture> hover = ResourceManager::instance()->loadTexture(hoverTexture);
+    boost::shared_ptr<Texture> pressed = ResourceManager::instance()->loadTexture(pressTexture);
+    if (main)
+    {
+        m_style.normal.region = TextureRegion(main, 0, 0, main->width(), main->height());
+        m_style.normal.type = ResourceDescriptor::SPRITE;
+    }
+    if (hover)
+    {
+        m_style.hovered.region = TextureRegion(hover, 0, 0, hover->width(), hover->height());
+        m_style.hovered.type = ResourceDescriptor::SPRITE;
+    }
+    if (pressed)
+    {
+        m_style.pressed.region = TextureRegion(pressed, 0, 0, pressed->width(), pressed->height());
+        m_style.pressed.type = ResourceDescriptor::SPRITE;
+    }
+    init();
+    if (main)
+    {
+        m_width = main->width();
+        m_height = main->height();
+    }
+}
+
+Button::Button(const ButtonStyle& style, Widget* parent):
+    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0), m_style(style)
+{
+    init();
+    if (m_sprite)
+    {
+        m_width = m_sprite->width();
+        m_height = m_sprite->height();
+    }
+}
+
+void Button::init()
+{
+    if (m_style.normal.type == ResourceDescriptor::NINEPATCH)
+    {
+        m_normalSprite = new NinePatch(m_style.normal.ninepatch, this);
+    }
+    else if (m_style.normal.type == ResourceDescriptor::SPRITE)
+    {
+        m_normalSprite = new Sprite(m_style.normal.region.texture, this);
+    }
+    if (m_style.hovered.type == ResourceDescriptor::NINEPATCH)
+    {
+        m_hoverSprite = new NinePatch(m_style.hovered.ninepatch, this);
+    }
+    else if (m_style.hovered.type == ResourceDescriptor::SPRITE)
+    {
+        m_hoverSprite = new Sprite(m_style.hovered.region.texture, this);
+    }
+    if (m_style.pressed.type == ResourceDescriptor::NINEPATCH)
+    {
+        m_pressedSprite = new NinePatch(m_style.pressed.ninepatch, this);
+    }
+    else if (m_style.pressed.type == ResourceDescriptor::SPRITE)
+    {
+        m_pressedSprite = new Sprite(m_style.pressed.region.texture, this);
+    }
+    m_sprite = m_normalSprite;
+}
+
+Button::~Button()
+{
+    if (m_normalSprite)
+        delete m_normalSprite;
+    if (m_hoverSprite);
+    delete m_hoverSprite;
+    if (m_pressedSprite)
+        delete m_pressedSprite;
 }
 
 void Button::draw() const
 {
     if (!prepareDraw())
         return;
-    m_sprite.draw();
+    if (m_sprite)
+        m_sprite->draw();
     endDraw();
 }
 
 void Button::processMain()
 {
     lock();
-    m_sprite.processMain();
+    if (m_normalSprite)
+        m_normalSprite->setGeometry(m_width, m_height);
+    if (m_hoverSprite)
+        m_hoverSprite->setGeometry(m_width, m_height);
+    if (m_pressedSprite)
+        m_pressedSprite->setGeometry(m_width, m_height);
     unlock();
     Widget::processMain();
 }
@@ -103,8 +239,8 @@ void Button::processMain()
 void Button::mouseEnter()
 {
     lock();
-    if (m_hoverTexture)
-        m_sprite.setTexture(m_hoverTexture);
+    if (m_hoverSprite)
+        m_sprite = m_hoverSprite;
     unlock();
     Widget::mouseEnter();
 }
@@ -112,16 +248,16 @@ void Button::mouseEnter()
 void Button::mouseLeave()
 {
     lock();
-    if (m_mainTexture)
-        m_sprite.setTexture(m_mainTexture);
+    if (m_normalSprite)
+        m_sprite = m_normalSprite;
     unlock();
     Widget::mouseLeave();
 }
 void Button::mouseDown(uint8_t key, int x, int y)
 {
     lock();
-    if (m_pressedTexture)
-        m_sprite.setTexture(m_pressedTexture);
+    if (m_pressedSprite)
+        m_sprite = m_pressedSprite;
     Widget::mouseDown(key, x, y);
     unlock();
 }
@@ -129,10 +265,10 @@ void Button::mouseDown(uint8_t key, int x, int y)
 void Button::mouseUp(uint8_t key, int x, int y)
 {
     lock();
-    if (m_hoverTexture)
-        m_sprite.setTexture(m_hoverTexture);
-    else if (m_mainTexture)
-        m_sprite.setTexture(m_mainTexture);
+    if (m_hoverSprite)
+        m_sprite = m_hoverSprite;
+    else if (m_normalSprite)
+        m_sprite = m_normalSprite;
     Widget::mouseUp(key, x, y);
     unlock();
 }
@@ -142,12 +278,15 @@ void Button::mouseClick(int x, int y)
     action(Action(this, Action::BUTTON_CLICKED, Action::Argument()));
 }
 
-Button::Button(const Button& other): Widget(other)
+Button::Button(const Button& other)
 {
-    m_mainTexture = other.m_mainTexture;
-    m_hoverTexture = other.m_hoverTexture;
-    m_pressedTexture = other.m_pressedTexture;
-    m_sprite = other.m_sprite;
+    if (m_normalSprite)
+        delete m_normalSprite;
+    if (m_hoverSprite);
+    delete m_hoverSprite;
+    if (m_pressedSprite)
+        delete m_pressedSprite;
+    Button(other.m_style);
 }
 
 Button& Button::operator=(const Button& other)
@@ -155,10 +294,17 @@ Button& Button::operator=(const Button& other)
     if (this == &other)
         return *this;
     Widget::operator=(other);
-    m_mainTexture = other.m_mainTexture;
-    m_hoverTexture = other.m_hoverTexture;
-    m_pressedTexture = other.m_pressedTexture;
-    m_sprite = other.m_sprite;
+    if (m_normalSprite)
+        delete m_normalSprite;
+    if (m_hoverSprite);
+    delete m_hoverSprite;
+    if (m_pressedSprite)
+        delete m_pressedSprite;
+    m_style = other.m_style;
+    m_normalSprite = 0;
+    m_hoverSprite = 0;
+    m_pressedSprite = 0;
+    init();
     return *this;
 }
 

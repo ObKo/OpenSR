@@ -33,7 +33,8 @@ public:
     static NinePatchDescriptor parseNinePatch(const Json::Value& object, bool &error);
     static NinePatchDescriptor parseNinePatch(const std::string& json, bool &error);
     static std::map<std::wstring, ResourceDescriptor> parseResources(const Json::Value& object, bool &error);
-    static void parseSkin(const std::string& json, bool &error);
+    static ButtonStyle parseButtonStyle(const Json::Value& object, const std::map<std::wstring, ResourceDescriptor>& resources, bool &error);
+    static Skin parseSkin(const std::string& json, bool &error);
 };
 }
 

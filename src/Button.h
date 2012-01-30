@@ -22,6 +22,7 @@
 #include "Widget.h"
 #include "Sprite.h"
 #include <boost/shared_ptr.hpp>
+#include "Styles.h"
 
 namespace Rangers
 {
@@ -38,6 +39,10 @@ public:
     Button(const std::wstring& texture, const std::wstring& hoverTexture, Widget *parent = 0);
     Button(const std::wstring& texture, const std::wstring& hoverTexture, const std::wstring& pressTexture, Widget *parent = 0);
 
+    Button(const ButtonStyle& style, Widget *parent = 0);
+
+    virtual ~Button();
+
     virtual void draw() const;
     virtual void processMain();
 
@@ -51,10 +56,13 @@ public:
     Button& operator=(const Button& other);
 
 private:
-    boost::shared_ptr<Texture> m_mainTexture;
-    boost::shared_ptr<Texture> m_hoverTexture;
-    boost::shared_ptr<Texture> m_pressedTexture;
-    Sprite m_sprite;
+    ButtonStyle m_style;
+    Sprite *m_normalSprite;
+    Sprite *m_hoverSprite;
+    Sprite *m_pressedSprite;
+    Sprite *m_sprite;
+
+    void init();
 };
 }
 

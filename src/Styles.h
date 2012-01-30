@@ -27,7 +27,7 @@ class Texture;
 
 struct ResourceDescriptor
 {
-    enum {NINEPATCH, SPRITE} type;
+    enum {NONE, NINEPATCH, SPRITE} type;
     TextureRegion region;
     NinePatchDescriptor ninepatch;
 };
@@ -44,6 +44,12 @@ struct ScrollBarStyle
     ButtonStyle upButton;
     ButtonStyle scroll;
     ButtonStyle downButton;
+};
+
+struct Skin
+{
+    ButtonStyle buttonStyle;
+    ScrollBarStyle scrollStyle;
 };
 
 }

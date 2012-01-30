@@ -171,17 +171,81 @@ std::map<std::wstring, ResourceDescriptor> JSONHelper::parseResources(const Json
     return result;
 }
 
-void JSONHelper::parseSkin(const std::string& json, bool &error)
+Skin JSONHelper::parseSkin(const std::string& json, bool &error)
 {
     error = false;
+    Skin skin;
     Json::Reader reader;
     Json::Value root;
     if (!reader.parse(json, root))
     {
         Log::error() << "Error parsing JSON: " << reader.getFormatedErrorMessages();
         error = true;
-        return;
+        return Skin();
     }
-    parseResources(root, error);
+    std::map<std::wstring, ResourceDescriptor> resources = parseResources(root, error);
+    Json::Value::Members members = root.getMemberNames();
+    if (std::find(members.begin(), members.end(), "ScrollBarStyle") != members.end())
+    {
+        Json::Value style = root.get("ScrollBarStyle", Json::Value());
+        Json::Value::Members styleMembers = style.getMemberNames();
+        if ((std::find(styleMembers.begin(), styleMembers.end(), "up-button") == styleMembers.end())
+                || (std::find(styleMembers.begin(), styleMembers.end(), "down-button") == styleMembers.end())
+                || (std::find(styleMembers.begin(), styleMembers.end(), "scroll") == styleMembers.end()))
+        {
+            error = true;
+            Log::error() << "Invalid JSON ScrollBarStyle.";
+            return Skin();
+        }
+        skin.scrollStyle.downButton = parseButtonStyle(style.get("down-button", Json::Value()), resources, error);
+        skin.scrollStyle.upButton = parseButtonStyle(style.get("up-button", Json::Value()), resources, error);
+        skin.scrollStyle.scroll = parseButtonStyle(style.get("scroll", Json::Value()), resources, error);
+    }
+    return skin;
 }
+
+ButtonStyle JSONHelper::parseButtonStyle(const Json::Value& object, const std::map< std::wstring, ResourceDescriptor >& resources, bool& error)
+{
+    error = false;
+    ButtonStyle style;
+    Json::Value::Members members = object.getMemberNames();
+    if (std::find(members.begin(), members.end(), "normal") == members.end())
+    {
+        error = true;
+        Log::error() << "Invalid JSON ButtonStyle";
+        return ButtonStyle();
+    }
+    std::wstring normal = fromUTF8(object.get("normal", "").asString().c_str());
+    if (resources.find(normal) == resources.end())
+    {
+        error = true;
+        Log::error() << "No such JSON resource: \"" << normal << "\"";
+        return ButtonStyle();
+    }
+    style.normal = resources.at(normal);
+    if (std::find(members.begin(), members.end(), "hovered") != members.end())
+    {
+        std::wstring hovered = fromUTF8(object.get("hovered", "").asString().c_str());
+        if (resources.find(hovered) == resources.end())
+        {
+            error = true;
+            Log::error() << "No such JSON resource: \"" << hovered << "\"";
+            return ButtonStyle();
+        }
+        style.hovered = resources.at(hovered);
+    }
+    if (std::find(members.begin(), members.end(), "pressed") != members.end())
+    {
+        std::wstring pressed = fromUTF8(object.get("pressed", "").asString().c_str());
+        if (resources.find(pressed) == resources.end())
+        {
+            error = true;
+            Log::error() << "No such JSON resource: \"" << pressed << "\"";
+            return ButtonStyle();
+        }
+        style.pressed = resources.at(pressed);
+    }
+    return style;
+}
+
 }

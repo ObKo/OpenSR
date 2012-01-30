@@ -46,6 +46,10 @@ public:
     int width() const;
     int height() const;
 
+    void setWidth(int width);
+    void setHeight(int height);
+    void setGeometry(int width, int height);
+
     Widget& operator=(const Widget& other);
 
     void addWidget(Widget *w);

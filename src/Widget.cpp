@@ -247,4 +247,23 @@ void Widget::action(const Action& action)
         (*i)->actionPerformed(action);
     unlock();
 }
+
+void Widget::setGeometry(int width, int height)
+{
+    m_width = width;
+    m_height = height;
+    markToUpdate();
+}
+
+void Widget::setHeight(int height)
+{
+    m_height = height;
+    markToUpdate();
+}
+
+void Widget::setWidth(int width)
+{
+    m_width = width;
+    markToUpdate();
+}
 }

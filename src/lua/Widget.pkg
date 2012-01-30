@@ -23,6 +23,10 @@ public:
     int width() const;
     int height() const;
     
+    void setWidth(int width);
+    void setHeight(int height);
+    void setGeometry(int width, int height);
+    
     void addWidget(Rangers::Widget *w);
     void removeWidget(Rangers::Widget *w);
 
