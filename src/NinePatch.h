@@ -29,19 +29,14 @@ class NinePatch: public Sprite
 {
 public:
     NinePatch(Object *parent = 0);
-    NinePatch(const std::vector<TextureRegion>& regions, int rows, int columns,
-              const std::vector<int>& sizeableRows, const std::vector<int>& sizeableColumns, Object *parent = 0);
+    NinePatch(const NinePatchDescriptor &desc, Object *parent = 0);
     NinePatch(const std::wstring& name, Object *parent = 0);
 
     virtual void processMain();
     virtual void draw() const;
 
 private:
-    std::vector<TextureRegion> m_regions;
-    int m_rows;
-    int m_columns;
-    std::vector<int> m_sizeableRows;
-    std::vector<int> m_sizeableColumns;
+    NinePatchDescriptor m_descriptor;
 };
 }
 

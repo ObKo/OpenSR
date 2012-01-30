@@ -34,6 +34,7 @@
 #endif
 
 #include <boost/shared_ptr.hpp>
+#include <vector>
 
 #define BUFFER_OFFSET(i) ((char*)0 + (i))
 
@@ -72,6 +73,15 @@ struct TextureRegion
     TextureRegion();
     boost::shared_ptr<Texture> texture;
     float u1, v1, u2, v2;
+};
+
+struct NinePatchDescriptor
+{
+    int rows;
+    int columns;
+    std::vector<TextureRegion> regions;
+    std::vector<int> sizeableRows;
+    std::vector<int> sizeableColumns;
 };
 
 Rect operator+(const Rect& r1, const Rect& r2);

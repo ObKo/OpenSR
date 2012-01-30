@@ -53,55 +53,58 @@ TextureRegion JSONHelper::parseTextureRegion(const Json::Value& object)
     return TextureRegion(texture, x, y, width, height);
 }
 
-NinePatch JSONHelper::parseNinePatch(const Json::Value& object)
+NinePatchDescriptor JSONHelper::parseNinePatch(const Json::Value& object)
 {
+    NinePatchDescriptor result;
+    result.rows = 0;
+    result.columns = 0;
     if (!object.isObject())
     {
         Log::warning() << "Invalid JSON object.";
-        return NinePatch();
+        return result;
     }
-    int rows = object.get("rows", 0).asInt();
-    int columns = object.get("columns", 0).asInt();
-    std::vector<int> sizeableRows;
-    std::vector<int> sizeableColumns;
-    std::vector<TextureRegion> regions;
+    result.rows = object.get("rows", 0).asInt();
+    result.columns = object.get("columns", 0).asInt();
     Json::Value array = object.get("sizeableRows", 0);
     Json::Value::iterator end = array.end();
     for (Json::Value::iterator i = array.begin(); i != end; ++i)
     {
-        sizeableRows.push_back((*i).asInt());
+        result.sizeableRows.push_back((*i).asInt());
     }
     array = object.get("sizeableColumns", 0);
     end = array.end();
     for (Json::Value::iterator i = array.begin(); i != end; ++i)
     {
-        sizeableColumns.push_back((*i).asInt());
+        result.sizeableColumns.push_back((*i).asInt());
     }
     array = object.get("regions", 0);
     end = array.end();
     for (Json::Value::iterator i = array.begin(); i != end; ++i)
     {
-        regions.push_back(parseTextureRegion(*i));
+        result.regions.push_back(parseTextureRegion(*i));
     }
-    return NinePatch(regions, rows, columns, sizeableRows, sizeableColumns);
+    return result;
 }
 
-NinePatch JSONHelper::parseNinePatch(const std::string& json)
+NinePatchDescriptor JSONHelper::parseNinePatch(const std::string& json)
 {
+    NinePatchDescriptor result;
+    result.rows = 0;
+    result.columns = 0;
     Json::Reader reader;
     Json::Value root;
     if (!reader.parse(json, root))
     {
         Log::error() << "Error parsing JSON: " << reader.getFormatedErrorMessages();
-        return NinePatch();
+        return result;
     }
     Json::Value::Members members = root.getMemberNames();
-    if (std::find(members.begin(), members.end(), "NinePatch") == root.getMemberNames().end())
+    if (std::find(members.begin(), members.end(), "NinePatch") == members.end())
     {
         Log::error() << "Invalid NinePatch JSON";
-        return NinePatch();
+        return result;
     }
 
-    return parseNinePatch(root.get("NinePatch", 0).begin().operator * ());
+    return parseNinePatch(*root.get("NinePatch", 0).begin());
 }
 }

@@ -29,21 +29,22 @@
 
 namespace Rangers
 {
-NinePatch::NinePatch(Object *parent): Sprite(parent), m_rows(0), m_columns(0)
+NinePatch::NinePatch(Object *parent): Sprite(parent)
 {
-
+    m_descriptor.columns = 0;
+    m_descriptor.rows = 0;
 }
 
-NinePatch::NinePatch(const std::vector<TextureRegion>& regions, int rows, int columns,
-                     const std::vector<int>& sizeableRows, const std::vector<int>& sizeableColumns, Object *parent):
-    Sprite(parent), m_regions(regions), m_rows(rows), m_columns(columns), m_sizeableRows(sizeableRows),
-    m_sizeableColumns(sizeableColumns)
+NinePatch::NinePatch(const NinePatchDescriptor &desc, Object *parent):
+    Sprite(parent), m_descriptor(desc)
 {
     markToUpdate();
 }
 
-NinePatch::NinePatch(const std::wstring& name, Object *parent): Sprite(parent), m_rows(0), m_columns(0)
+NinePatch::NinePatch(const std::wstring& name, Object *parent): Sprite(parent)
 {
+    m_descriptor.rows = 0;
+    m_descriptor.columns = 0;
     std::wstring s = suffix(name);
     if (s == L"9.json")
     {
@@ -51,12 +52,12 @@ NinePatch::NinePatch(const std::wstring& name, Object *parent): Sprite(parent), 
         char *jsonData = ResourceManager::instance()->loadData(name, dataSize);
         if (jsonData)
         {
-            NinePatch other = JSONHelper::parseNinePatch(std::string(jsonData, dataSize));
-            m_rows = other.m_rows;
-            m_columns = other.m_columns;
-            m_sizeableColumns = other.m_sizeableColumns;
-            m_sizeableRows = other.m_sizeableRows;
-            m_regions = other.m_regions;
+            m_descriptor = JSONHelper::parseNinePatch(std::string(jsonData, dataSize));
+            m_width = 0;
+            for (int i = 0; i < m_descriptor.columns; i++)
+                m_width += m_descriptor.regions[i].texture->width() * (m_descriptor.regions[i].u2 - m_descriptor.regions[i].u1);
+            for (int i = 0; i < m_descriptor.rows; i++)
+                m_height += m_descriptor.regions[i * m_descriptor.columns].texture->height() * (m_descriptor.regions[i * m_descriptor.columns].v2 - m_descriptor.regions[i * m_descriptor.columns].v1);
         }
     }
     else
@@ -112,7 +113,7 @@ NinePatch::NinePatch(const std::wstring& name, Object *parent): Sprite(parent), 
 
             if (!rows.size())
             {
-                m_rows = 1;
+                m_descriptor.rows = 1;
             }
             else
             {
@@ -121,12 +122,12 @@ NinePatch::NinePatch(const std::wstring& name, Object *parent): Sprite(parent), 
                     firstRowSizeable = true;
                     rows.erase(rows.begin());
                 }
-                m_rows = rows.size() + 1;
+                m_descriptor.rows = rows.size() + 1;
             }
 
             if (!columns.size())
             {
-                m_columns = 1;
+                m_descriptor.columns = 1;
             }
             else
             {
@@ -135,42 +136,42 @@ NinePatch::NinePatch(const std::wstring& name, Object *parent): Sprite(parent), 
                     firstColumnSizeable = true;
                     columns.erase(columns.begin());
                 }
-                m_columns = columns.size() + 1;
+                m_descriptor.columns = columns.size() + 1;
             }
-            for (int i = 0; i < m_rows; i++)
+            for (int i = 0; i < m_descriptor.rows; i++)
             {
                 if (((firstRowSizeable) && !(i & 0x1)) || ((!firstRowSizeable) && (i & 0x1)))
                 {
-                    m_sizeableRows.push_back(i);
+                    m_descriptor.sizeableRows.push_back(i);
                 }
             }
-            for (int i = 0; i < m_columns; i++)
+            for (int i = 0; i < m_descriptor.columns; i++)
             {
                 if (((firstColumnSizeable) && !(i & 0x1)) || ((!firstColumnSizeable) && (i & 0x1)))
                 {
-                    m_sizeableColumns.push_back(i);
+                    m_descriptor.sizeableColumns.push_back(i);
                 }
             }
-            for (int i = 0; i < m_rows; i++)
+            for (int i = 0; i < m_descriptor.rows; i++)
             {
                 float vStart, vEnd;
                 if (i == 0)
                     vStart = 1.0f / m_texture->height();
                 else
                     vStart = rows[i - 1];
-                if (i == (m_rows - 1))
+                if (i == (m_descriptor.rows - 1))
                     vEnd = 1.0f - 1.0f / m_texture->height();
                 else
                     vEnd = rows[i];
 
-                for (int j = 0; j < m_columns; j++)
+                for (int j = 0; j < m_descriptor.columns; j++)
                 {
                     float uStart, uEnd;
                     if (j == 0)
                         uStart = 1.0f / m_texture->width();
                     else
                         uStart = columns[j - 1];
-                    if (j == (m_columns - 1))
+                    if (j == (m_descriptor.columns - 1))
                         uEnd = 1.0f - 1.0f / m_texture->width();
                     else
                         uEnd = columns[j];
@@ -180,7 +181,7 @@ NinePatch::NinePatch(const std::wstring& name, Object *parent): Sprite(parent), 
                     r.u2 = uEnd;
                     r.v1 = vStart;
                     r.v2 = vEnd;
-                    m_regions.push_back(r);
+                    m_descriptor.regions.push_back(r);
                 }
             }
         }
@@ -190,55 +191,8 @@ NinePatch::NinePatch(const std::wstring& name, Object *parent): Sprite(parent), 
 
 void NinePatch::processMain()
 {
-    //TODO: Move some stuff to initialization only.
     Object::processMain();
-
-    //if (!m_texture)
-    //    return;
-
     lock();
-
-    /*if (m_embedded && (!m_columns.size() || !m_rows.size()))
-    {
-        int width = m_texture->width();
-        int height = m_texture->height();
-        glBindTexture(GL_TEXTURE_2D, m_texture->openGLTexture());
-        int realWidth = (width % 4) != 0 ? width + 4 - (width % 4) : width;
-        uint8_t *grayData = new uint8_t[realWidth * height];
-        glGetTexImage(GL_TEXTURE_2D, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, grayData);
-
-        bool black = false;
-
-        for (int i = 1; i < width - 1; i++)
-        {
-            if ((grayData[i] > 127) && black)
-            {
-                m_columns.push_back(float(i) / width);
-                black = false;
-            }
-            else if ((grayData[i] < 128) && !black)
-            {
-                m_columns.push_back(float(i) / width);
-                black = true;
-            }
-
-        }
-        black = false;
-        for (int i = 1; i < height - 1; i++)
-        {
-            if ((grayData[i * realWidth] > 127) && black)
-            {
-                m_rows.push_back(float(i) / height);
-                black = false;
-            }
-            else if ((grayData[i * realWidth] < 128) && !black)
-            {
-                m_rows.push_back(float(i) / height);
-                black = true;
-            }
-        }
-        delete[] grayData;
-    }*/
 
     if (!m_buffer)
     {
@@ -277,81 +231,105 @@ void NinePatch::processMain()
 
     float uStart = 0, uEnd = 0, vStart = 0, vEnd = 0;
 
-    /*if (m_embedded)
-    {
-        uStart = 1.0f / m_texture->width();
-        uEnd = 1.0f - 1.0f / m_texture->width();
-        vStart = 1.0f / m_texture->height();
-        vEnd = 1.0f - 1.0f / m_texture->height();
-    }*/
-
-    std::vector<int> widths;
-    std::vector<int> heights;
+    std::vector<float> widths;
+    std::vector<float> heights;
 
     float residue = m_width;
 
-    for (int i = 0; i != m_columns; i++)
+    for (int i = 0; i != m_descriptor.columns; i++)
     {
-        int width = (m_regions[i].u2 - m_regions[i].u1) * m_regions[i].texture->width();
-        if (std::find(m_sizeableColumns.begin(), m_sizeableColumns.end(), i) == m_sizeableColumns.end())
+        float width = (m_descriptor.regions[i].u2 - m_descriptor.regions[i].u1) * m_descriptor.regions[i].texture->width();
+        if (std::find(m_descriptor.sizeableColumns.begin(), m_descriptor.sizeableColumns.end(), i) == m_descriptor.sizeableColumns.end())
             residue -= width;
         widths.push_back(width);
 
     }
 
-    int size = m_sizeableColumns.size();
-    for (int i = 0; i < size; i++)
+    int size = m_descriptor.sizeableColumns.size();
+    if (!size)
     {
-        widths[m_sizeableColumns[i]] = residue / size;
+        size = m_descriptor.columns;
+        float total = 0;
+        for (int i = 0; i < size; i++)
+        {
+            total += widths[i];
+        }
+        for (int i = 0; i < size; i++)
+        {
+            widths[i] = m_width * widths[i] / total;
+        }
+    }
+    else
+    {
+        for (int i = 0; i < size; i++)
+        {
+            widths[m_descriptor.sizeableColumns[i]] = residue / size;
+        }
     }
 
     residue = m_height;
 
-    for (int i = 0; i != m_rows; i++)
+    for (int i = 0; i != m_descriptor.rows; i++)
     {
-        int height = (m_regions[i * m_columns].v2 - m_regions[i * m_columns].v1) * m_regions[i * m_columns].texture->height();
-        if (std::find(m_sizeableRows.begin(), m_sizeableRows.end(), i) == m_sizeableRows.end())
+        float height = (m_descriptor.regions[i * m_descriptor.columns].v2 - m_descriptor.regions[i * m_descriptor.columns].v1) * m_descriptor.regions[i * m_descriptor.columns].texture->height();
+        if (std::find(m_descriptor.sizeableRows.begin(), m_descriptor.sizeableRows.end(), i) == m_descriptor.sizeableRows.end())
             residue -= height;
         heights.push_back(height);
     }
 
-    size = m_sizeableRows.size();
-    for (int i = 0; i < size; i++)
+    size = m_descriptor.sizeableRows.size();
+    if (!size)
     {
-        heights[m_sizeableRows[i]] = residue / size;
+        size = m_descriptor.rows;
+        float total = 0;
+        for (int i = 0; i < size; i++)
+        {
+            total += heights[i];
+        }
+        for (int i = 0; i < size; i++)
+        {
+            heights[i] = m_height * heights[i] / total;
+        }
+    }
+    else
+    {
+        for (int i = 0; i < size; i++)
+        {
+            heights[m_descriptor.sizeableRows[i]] = residue / size;
+        }
     }
 
-    m_vertexCount = m_rows * m_columns * 4;
+    m_vertexCount = m_descriptor.rows * m_descriptor.columns * 4;
 
     if (m_vertices)
         delete[] m_vertices;
     m_vertices = new Vertex[m_vertexCount];
 
     float x = 0.0f, y = 0.0f;
-    for (int i = 0; i < m_rows; i++)
+    for (int i = 0; i < m_descriptor.rows; i++)
     {
         x = 0.0f;
-        for (int j = 0; j < m_columns; j++)
+        for (int j = 0; j < m_descriptor.columns; j++)
         {
-            m_vertices[(i * m_columns + j) * 4].x = xOffset + x;
-            m_vertices[(i * m_columns + j) * 4].u = m_regions[i * m_columns + j].u1;
-            m_vertices[(i * m_columns + j) * 4].y = yOffset + y;
-            m_vertices[(i * m_columns + j) * 4].v = m_regions[i * m_columns + j].v1;
+            m_vertices[(i * m_descriptor.columns + j) * 4].x = xOffset + x;
+            m_vertices[(i * m_descriptor.columns + j) * 4].u = m_descriptor.regions[i * m_descriptor.columns + j].u1;
+            m_vertices[(i * m_descriptor.columns + j) * 4].y = yOffset + y;
+            m_vertices[(i * m_descriptor.columns + j) * 4].v = m_descriptor.regions[i * m_descriptor.columns + j].v1;
 
-            m_vertices[(i * m_columns + j) * 4 + 1].x = xOffset + x + widths[j];
-            m_vertices[(i * m_columns + j) * 4 + 1].u = m_regions[i * m_columns + j].u2;
-            m_vertices[(i * m_columns + j) * 4 + 1].y = yOffset + y;
-            m_vertices[(i * m_columns + j) * 4 + 1].v = m_regions[i * m_columns + j].v1;
+            m_vertices[(i * m_descriptor.columns + j) * 4 + 1].x = xOffset + x + widths[j];
+            m_vertices[(i * m_descriptor.columns + j) * 4 + 1].u = m_descriptor.regions[i * m_descriptor.columns + j].u2;
+            m_vertices[(i * m_descriptor.columns + j) * 4 + 1].y = yOffset + y;
+            m_vertices[(i * m_descriptor.columns + j) * 4 + 1].v = m_descriptor.regions[i * m_descriptor.columns + j].v1;
 
-            m_vertices[(i * m_columns + j) * 4 + 2].x = xOffset + x + widths[j];
-            m_vertices[(i * m_columns + j) * 4 + 2].u = m_regions[i * m_columns + j].u2;
-            m_vertices[(i * m_columns + j) * 4 + 2].y = yOffset + y + heights[i];
-            m_vertices[(i * m_columns + j) * 4 + 2].v = m_regions[i * m_columns + j].v2;
+            m_vertices[(i * m_descriptor.columns + j) * 4 + 2].x = xOffset + x + widths[j];
+            m_vertices[(i * m_descriptor.columns + j) * 4 + 2].u = m_descriptor.regions[i * m_descriptor.columns + j].u2;
+            m_vertices[(i * m_descriptor.columns + j) * 4 + 2].y = yOffset + y + heights[i];
+            m_vertices[(i * m_descriptor.columns + j) * 4 + 2].v = m_descriptor.regions[i * m_descriptor.columns + j].v2;
 
-            m_vertices[(i * m_columns + j) * 4 + 3].x = xOffset + x;
-            m_vertices[(i * m_columns + j) * 4 + 3].u = m_regions[i * m_columns + j].u1;
-            m_vertices[(i * m_columns + j) * 4 + 3].y = yOffset + y + heights[i];
-            m_vertices[(i * m_columns + j) * 4 + 3].v = m_regions[i * m_columns + j].v2;
+            m_vertices[(i * m_descriptor.columns + j) * 4 + 3].x = xOffset + x;
+            m_vertices[(i * m_descriptor.columns + j) * 4 + 3].u = m_descriptor.regions[i * m_descriptor.columns + j].u1;
+            m_vertices[(i * m_descriptor.columns + j) * 4 + 3].y = yOffset + y + heights[i];
+            m_vertices[(i * m_descriptor.columns + j) * 4 + 3].v = m_descriptor.regions[i * m_descriptor.columns + j].v2;
 
             x += widths[j];
         }
@@ -387,8 +365,8 @@ void NinePatch::draw() const
     glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), BUFFER_OFFSET(sizeof(float) * 2));
 
     int vertexIndex = 0;
-    std::vector<TextureRegion>::const_iterator end = m_regions.end();
-    for (std::vector<TextureRegion>::const_iterator i = m_regions.begin(); i != end; ++i)
+    std::vector<TextureRegion>::const_iterator end = m_descriptor.regions.end();
+    for (std::vector<TextureRegion>::const_iterator i = m_descriptor.regions.begin(); i != end; ++i)
     {
         if (!(*i).texture)
             continue;

@@ -21,7 +21,6 @@
 
 #include <jsoncpp/json.h>
 #include "Types.h"
-#include "NinePatch.h"
 
 namespace Rangers
 {
@@ -29,8 +28,8 @@ class JSONHelper
 {
 public:
     static TextureRegion parseTextureRegion(const Json::Value& object);
-    static NinePatch parseNinePatch(const Json::Value& object);
-    static NinePatch parseNinePatch(const std::string& json);
+    static NinePatchDescriptor parseNinePatch(const Json::Value& object);
+    static NinePatchDescriptor parseNinePatch(const std::string& json);
 };
 }
 
