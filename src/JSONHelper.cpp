@@ -27,11 +27,13 @@
 //TODO: Need error handling.
 namespace Rangers
 {
-TextureRegion JSONHelper::parseTextureRegion(const Json::Value& object)
+TextureRegion JSONHelper::parseTextureRegion(const Json::Value& object, bool &error)
 {
+    error = false;
     if (!object.isObject())
     {
         Log::warning() << "Invalid JSON object.";
+        error = true;
         return TextureRegion(boost::shared_ptr<Texture>(), 0, 0, 0, 0);
     }
     std::wstring textureName = fromUTF8(object.get("texture", "").asString().c_str());
@@ -53,14 +55,16 @@ TextureRegion JSONHelper::parseTextureRegion(const Json::Value& object)
     return TextureRegion(texture, x, y, width, height);
 }
 
-NinePatchDescriptor JSONHelper::parseNinePatch(const Json::Value& object)
+NinePatchDescriptor JSONHelper::parseNinePatch(const Json::Value& object, bool &error)
 {
+    error = false;
     NinePatchDescriptor result;
     result.rows = 0;
     result.columns = 0;
     if (!object.isObject())
     {
         Log::warning() << "Invalid JSON object.";
+        error = true;
         return result;
     }
     result.rows = object.get("rows", 0).asInt();
@@ -81,13 +85,14 @@ NinePatchDescriptor JSONHelper::parseNinePatch(const Json::Value& object)
     end = array.end();
     for (Json::Value::iterator i = array.begin(); i != end; ++i)
     {
-        result.regions.push_back(parseTextureRegion(*i));
+        result.regions.push_back(parseTextureRegion(*i, error));
     }
     return result;
 }
 
-NinePatchDescriptor JSONHelper::parseNinePatch(const std::string& json)
+NinePatchDescriptor JSONHelper::parseNinePatch(const std::string& json, bool &error)
 {
+    error = false;
     NinePatchDescriptor result;
     result.rows = 0;
     result.columns = 0;
@@ -96,15 +101,87 @@ NinePatchDescriptor JSONHelper::parseNinePatch(const std::string& json)
     if (!reader.parse(json, root))
     {
         Log::error() << "Error parsing JSON: " << reader.getFormatedErrorMessages();
+        error = true;
         return result;
     }
     Json::Value::Members members = root.getMemberNames();
     if (std::find(members.begin(), members.end(), "NinePatch") == members.end())
     {
         Log::error() << "Invalid NinePatch JSON";
+        error = true;
         return result;
     }
 
-    return parseNinePatch(*root.get("NinePatch", 0).begin());
+    return parseNinePatch(*root.get("NinePatch", 0).begin(), error);
+}
+
+std::map<std::wstring, ResourceDescriptor> JSONHelper::parseResources(const Json::Value& object, bool &error)
+{
+    std::map<std::wstring, ResourceDescriptor> result;
+    error = false;
+    Json::Value::Members members = object.getMemberNames();
+    if (std::find(members.begin(), members.end(), "NinePatch") != members.end())
+    {
+        Json::Value ninepatches = object.get("NinePatch", Json::Value());
+        Json::Value::iterator end = ninepatches.end();
+        for (Json::Value::iterator it = ninepatches.begin(); it != end; ++it)
+        {
+            if (result.find(fromUTF8(it.memberName())) != result.end())
+            {
+                error = true;
+                Log::error() << "Dublicated JSON resource: " << fromUTF8(it.memberName());
+                return std::map<std::wstring, ResourceDescriptor>();
+            }
+
+            NinePatchDescriptor ninepatch = parseNinePatch(*it, error);
+            if (error)
+            {
+                return std::map<std::wstring, ResourceDescriptor>();
+            }
+            ResourceDescriptor desc;
+            desc.type = ResourceDescriptor::NINEPATCH;
+            desc.ninepatch = ninepatch;
+            result[fromUTF8(it.memberName())] = desc;
+        }
+    }
+    if (std::find(members.begin(), members.end(), "Sprite") != members.end())
+    {
+        Json::Value sprites = object.get("Sprite", Json::Value());
+        Json::Value::iterator end = sprites.end();
+        for (Json::Value::iterator it = sprites.begin(); it != end; ++it)
+        {
+            if (result.find(fromUTF8(it.memberName())) != result.end())
+            {
+                error = true;
+                Log::error() << "Dublicated JSON resource: \"" << fromUTF8(it.memberName()) << "\"";
+                return std::map<std::wstring, ResourceDescriptor>();
+            }
+
+            TextureRegion sprite = parseTextureRegion(*it, error);
+            if (error)
+            {
+                return std::map<std::wstring, ResourceDescriptor>();
+            }
+            ResourceDescriptor desc;
+            desc.type = ResourceDescriptor::SPRITE;
+            desc.region = sprite;
+            result[fromUTF8(it.memberName())] = desc;
+        }
+    }
+    return result;
+}
+
+void JSONHelper::parseSkin(const std::string& json, bool &error)
+{
+    error = false;
+    Json::Reader reader;
+    Json::Value root;
+    if (!reader.parse(json, root))
+    {
+        Log::error() << "Error parsing JSON: " << reader.getFormatedErrorMessages();
+        error = true;
+        return;
+    }
+    parseResources(root, error);
 }
 }

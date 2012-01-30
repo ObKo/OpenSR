@@ -30,6 +30,7 @@ SET(SOURCES
     NinePatch.cpp
     ScrollArea.cpp
     JSONHelper.cpp
+    Styles.cpp
 )
 
 SET(HEADERS 
@@ -64,6 +65,7 @@ SET(HEADERS
     NinePatch.h
     ScrollArea.h
     JSONHelper.h
+    Styles.h
 )
 
 SET(LUA_PACKAGES

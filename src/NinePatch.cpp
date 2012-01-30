@@ -52,7 +52,8 @@ NinePatch::NinePatch(const std::wstring& name, Object *parent): Sprite(parent)
         char *jsonData = ResourceManager::instance()->loadData(name, dataSize);
         if (jsonData)
         {
-            m_descriptor = JSONHelper::parseNinePatch(std::string(jsonData, dataSize));
+            bool parseError = false;
+            m_descriptor = JSONHelper::parseNinePatch(std::string(jsonData, dataSize), parseError);
             m_width = 0;
             for (int i = 0; i < m_descriptor.columns; i++)
                 m_width += m_descriptor.regions[i].texture->width() * (m_descriptor.regions[i].u2 - m_descriptor.regions[i].u1);

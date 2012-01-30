@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 - 2012 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,25 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef RANGERS_JSONHELPER_H
-#define RANGERS_JSONHELPER_H
-
-#include <jsoncpp/json.h>
-#include <map>
-#include "Types.h"
 #include "Styles.h"
 
 namespace Rangers
 {
-class JSONHelper
-{
-public:
-    static TextureRegion parseTextureRegion(const Json::Value& object, bool &error);
-    static NinePatchDescriptor parseNinePatch(const Json::Value& object, bool &error);
-    static NinePatchDescriptor parseNinePatch(const std::string& json, bool &error);
-    static std::map<std::wstring, ResourceDescriptor> parseResources(const Json::Value& object, bool &error);
-    static void parseSkin(const std::string& json, bool &error);
-};
-}
 
-#endif // RANGERS_JSONHELPER_H
+}
