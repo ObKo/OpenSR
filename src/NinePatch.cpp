@@ -63,14 +63,14 @@ NinePatch::NinePatch(const std::wstring& name, Object *parent): Sprite(parent)
     }
     else
     {
-        m_texture = ResourceManager::instance()->loadTexture(name);
-        if (m_texture)
+        m_region = TextureRegion(ResourceManager::instance()->loadTexture(name));
+        if (m_region.texture)
         {
-            int width = m_texture->width();
-            int height = m_texture->height();
+            int width = m_region.texture->width();
+            int height = m_region.texture->height();
             m_width = width - 2;
             m_height = height - 2;
-            glBindTexture(GL_TEXTURE_2D, m_texture->openGLTexture());
+            glBindTexture(GL_TEXTURE_2D, m_region.texture->openGLTexture());
             int realWidth = (width % 4) != 0 ? width + 4 - (width % 4) : width;
             uint8_t *grayData = new uint8_t[realWidth * height];
             glGetTexImage(GL_TEXTURE_2D, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, grayData);
@@ -157,11 +157,11 @@ NinePatch::NinePatch(const std::wstring& name, Object *parent): Sprite(parent)
             {
                 float vStart, vEnd;
                 if (i == 0)
-                    vStart = 1.0f / m_texture->height();
+                    vStart = 1.0f / m_region.texture->height();
                 else
                     vStart = rows[i - 1];
                 if (i == (m_descriptor.rows - 1))
-                    vEnd = 1.0f - 1.0f / m_texture->height();
+                    vEnd = 1.0f - 1.0f / m_region.texture->height();
                 else
                     vEnd = rows[i];
 
@@ -169,15 +169,15 @@ NinePatch::NinePatch(const std::wstring& name, Object *parent): Sprite(parent)
                 {
                     float uStart, uEnd;
                     if (j == 0)
-                        uStart = 1.0f / m_texture->width();
+                        uStart = 1.0f / m_region.texture->width();
                     else
                         uStart = columns[j - 1];
                     if (j == (m_descriptor.columns - 1))
-                        uEnd = 1.0f - 1.0f / m_texture->width();
+                        uEnd = 1.0f - 1.0f / m_region.texture->width();
                     else
                         uEnd = columns[j];
                     TextureRegion r;
-                    r.texture = m_texture;
+                    r.texture = m_region.texture;
                     r.u1 = uStart;
                     r.u2 = uEnd;
                     r.v1 = vStart;

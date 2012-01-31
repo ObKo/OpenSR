@@ -117,14 +117,14 @@ void Label::processMain()
     lock();
 
     if (!m_wordWrap)
-        m_texture = m_font->renderText(m_text);
+        m_region = TextureRegion(m_font->renderText(m_text));
     else
-        m_texture = m_font->renderText(m_text, m_width);
+        m_region = TextureRegion(m_font->renderText(m_text, m_width));
 
     if (!m_fixedSize)
     {
-        m_width = m_texture->width();
-        m_height = m_texture->height();
+        m_width = m_region.texture->width();
+        m_height = m_region.texture->height();
     }
 
     unlock();

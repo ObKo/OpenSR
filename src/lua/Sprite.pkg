@@ -22,6 +22,9 @@ public:
     Sprite(const std::wstring& texture, Rangers::Object *parent, TextureScaling ts);
     Sprite(const std::wstring& texture, Rangers::Object *parent);
     Sprite(const std::wstring& texture);
+	
+	Sprite(const Rangers::TextureRegion& region, Rangers::Object *parent);
+	Sprite(const Rangers::TextureRegion& region);
 
     Sprite(Rangers::Object *parent);
     Sprite(const Rangers::Sprite& other);

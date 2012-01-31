@@ -36,7 +36,7 @@ AnimatedSprite::AnimatedSprite(Object *parent): Sprite(parent)
     m_singleShot = false;
     m_animationStarted = false;
     m_frameDuration = 0;
-    m_texture = boost::shared_ptr<AnimatedTexture>();
+    m_region = TextureRegion(boost::shared_ptr<AnimatedTexture>());
 }
 
 AnimatedSprite::AnimatedSprite(boost::shared_ptr<AnimatedTexture> texture,  Object *parent): Sprite(texture, parent)
@@ -63,6 +63,7 @@ AnimatedSprite::AnimatedSprite(const std::wstring& animation,  Object *parent): 
     m_currentFrame = 0;
     m_singleShot = false;
     boost::shared_ptr<AnimatedTexture> animTexture = ResourceManager::instance()->loadAnimation(animation);
+    m_region = TextureRegion(animTexture);
     if (!animTexture)
     {
         m_animationStarted = false;
@@ -70,7 +71,6 @@ AnimatedSprite::AnimatedSprite(const std::wstring& animation,  Object *parent): 
     }
     else
     {
-        m_texture = animTexture;
         m_animationStarted = true;
 //TODO: Find relations between seek/size and FPS.
         m_frameDuration = animTexture->waitSeek() > 1000 ? 50 : 100;
@@ -109,11 +109,11 @@ AnimatedSprite& AnimatedSprite::operator=(const Rangers::AnimatedSprite& other)
 
 void AnimatedSprite::processLogic(int dt)
 {
-    if (!m_texture)
+    if (!m_region.texture)
         return;
 
     lock();
-    AnimatedTexture *texture = static_cast<AnimatedTexture *>(m_texture.get());
+    AnimatedTexture *texture = static_cast<AnimatedTexture *>(m_region.texture.get());
 
     if (m_animationStarted)
     {
@@ -131,10 +131,10 @@ void AnimatedSprite::processLogic(int dt)
 
 void AnimatedSprite::draw() const
 {
-    if (!m_texture)
+    if (!m_region.texture)
         return;
 
-    GLuint texture = ((AnimatedTexture*)m_texture.get())->openGLTexture(m_currentFrame);
+    GLuint texture = ((AnimatedTexture*)m_region.texture.get())->openGLTexture(m_currentFrame);
     if (!texture)
         return;
 

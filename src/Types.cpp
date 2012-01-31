@@ -89,6 +89,25 @@ TextureRegion::TextureRegion(boost::shared_ptr<Texture> texture, float x, float 
     }
 }
 
+TextureRegion::TextureRegion(boost::shared_ptr<Texture> texture)
+{
+    this->texture = texture;
+    if (texture)
+    {
+        this->u1 = 0.0f;
+        this->u2 = 1.0f;
+        this->v1 = 0.0f;
+        this->v2 = 1.0f;
+    }
+    else
+    {
+        this->u1 = 0.0f;
+        this->u2 = 0.0f;
+        this->v1 = 0.0f;
+        this->v2 = 0.0f;
+    }
+}
+
 TextureRegion::TextureRegion()
 {
     this->texture = boost::shared_ptr<Texture>();

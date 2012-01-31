@@ -66,14 +66,14 @@ void ColorLabel::processMain()
     lock();
 
     if (!m_wordWrap)
-        m_texture = m_font->renderColoredText(m_text, (char(m_colorR * 255) << 16) | (char(m_colorG * 255) << 8) | (char(m_colorB * 255)));
+        m_region = TextureRegion(m_font->renderColoredText(m_text, (char(m_colorR * 255) << 16) | (char(m_colorG * 255) << 8) | (char(m_colorB * 255))));
     else
-        m_texture = m_font->renderColoredText(m_text, (char(m_colorR * 255) << 16) | (char(m_colorG * 255) << 8) | (char(m_colorB * 255)), m_width);
+        m_region = TextureRegion(m_font->renderColoredText(m_text, (char(m_colorR * 255) << 16) | (char(m_colorG * 255) << 8) | (char(m_colorB * 255)), m_width));
 
     if (!m_fixedSize)
     {
-        m_width = m_texture->width();
-        m_height = m_texture->height();
+        m_width = m_region.texture->width();
+        m_height = m_region.texture->height();
     }
     unlock();
     Sprite::processMain();

@@ -36,6 +36,7 @@ public:
     Sprite(Object *parent = 0);
     Sprite(boost::shared_ptr<Texture> texture, Object *parent = 0, TextureScaling  ts = TEXTURE_NORMAL, SpriteXOrigin xpos = POSITION_X_LEFT, SpriteYOrigin ypos = POSITION_Y_TOP);
     Sprite(const std::wstring& texture, Object *parent = 0, TextureScaling  ts = TEXTURE_NORMAL, SpriteXOrigin xpos = POSITION_X_LEFT, SpriteYOrigin ypos = POSITION_Y_TOP);
+    Sprite(const TextureRegion& region, Object *parent = 0);
     Sprite(const Sprite& other);
 
     virtual ~Sprite();
@@ -52,7 +53,7 @@ public:
 
     float width() const;
     float height() const;
-    boost::shared_ptr<Texture> texture() const;
+    TextureRegion region() const;
 
     Sprite& operator=(const Sprite& other);
 
@@ -66,7 +67,7 @@ protected:
     TextureScaling m_scaling;
 
     GLuint m_buffer;
-    boost::shared_ptr<Texture> m_texture;
+    TextureRegion m_region;
 };
 }
 

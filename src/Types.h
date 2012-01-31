@@ -70,6 +70,7 @@ struct TextureRegion
 {
     //! Constructs texture region.
     TextureRegion(boost::shared_ptr<Texture> texture, float x, float y, float width, float height);
+    TextureRegion(boost::shared_ptr<Texture> texture);
     TextureRegion();
     boost::shared_ptr<Texture> texture;
     float u1, v1, u2, v2;

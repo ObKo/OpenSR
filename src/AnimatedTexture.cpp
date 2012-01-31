@@ -72,7 +72,7 @@ AnimatedTexture::AnimatedTexture(const GAIAnimation& a)
     {
         glBindTexture(GL_TEXTURE_2D, m_textures[i]);
 
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_BGRA, a.frames[i].width, a.frames[i].height, 0, GL_BGRA, GL_UNSIGNED_BYTE, a.frames[i].data);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, a.frames[i].width, a.frames[i].height, 0, GL_BGRA, GL_UNSIGNED_BYTE, a.frames[i].data);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);

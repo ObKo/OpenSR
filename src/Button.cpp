@@ -37,7 +37,7 @@ Button::Button(boost::shared_ptr<Texture> texture, Widget *parent):
 {
     if (texture)
     {
-        m_style.normal.region = TextureRegion(texture, 0, 0, texture->width(), texture->height());
+        m_style.normal.region = TextureRegion(texture);
         m_style.normal.type = ResourceDescriptor::SPRITE;
     }
     init();
@@ -53,12 +53,12 @@ Button::Button(boost::shared_ptr<Texture> texture, boost::shared_ptr<Texture> ho
 {
     if (texture)
     {
-        m_style.normal.region = TextureRegion(texture, 0, 0, texture->width(), texture->height());
+        m_style.normal.region = TextureRegion(texture);
         m_style.normal.type = ResourceDescriptor::SPRITE;
     }
     if (hoverTexture)
     {
-        m_style.hovered.region = TextureRegion(hoverTexture, 0, 0, hoverTexture->width(), hoverTexture->height());
+        m_style.hovered.region = TextureRegion(hoverTexture);
         m_style.hovered.type = ResourceDescriptor::SPRITE;
     }
     init();
@@ -74,17 +74,17 @@ Button::Button(boost::shared_ptr<Texture> texture, boost::shared_ptr<Texture> ho
 {
     if (texture)
     {
-        m_style.normal.region = TextureRegion(texture, 0, 0, texture->width(), texture->height());
+        m_style.normal.region = TextureRegion(texture);
         m_style.normal.type = ResourceDescriptor::SPRITE;
     }
     if (hoverTexture)
     {
-        m_style.hovered.region = TextureRegion(hoverTexture, 0, 0, hoverTexture->width(), hoverTexture->height());
+        m_style.hovered.region = TextureRegion(hoverTexture);
         m_style.hovered.type = ResourceDescriptor::SPRITE;
     }
     if (pressTexture)
     {
-        m_style.pressed.region = TextureRegion(pressTexture, 0, 0, pressTexture->width(), pressTexture->height());
+        m_style.pressed.region = TextureRegion(pressTexture);
         m_style.pressed.type = ResourceDescriptor::SPRITE;
     }
     init();
@@ -101,7 +101,7 @@ Button::Button(const std::wstring& texture, Widget *parent):
     boost::shared_ptr<Texture> main = ResourceManager::instance()->loadTexture(texture);
     if (main)
     {
-        m_style.normal.region = TextureRegion(main, 0, 0, main->width(), main->height());
+        m_style.normal.region = TextureRegion(main);
         m_style.normal.type = ResourceDescriptor::SPRITE;
     }
     init();
@@ -119,12 +119,12 @@ Button::Button(const std::wstring& texture, const std::wstring& hoverTexture, Wi
     boost::shared_ptr<Texture> hover = ResourceManager::instance()->loadTexture(hoverTexture);
     if (main)
     {
-        m_style.normal.region = TextureRegion(main, 0, 0, main->width(), main->height());
+        m_style.normal.region = TextureRegion(main);
         m_style.normal.type = ResourceDescriptor::SPRITE;
     }
     if (hover)
     {
-        m_style.hovered.region = TextureRegion(hover, 0, 0, hover->width(), hover->height());
+        m_style.hovered.region = TextureRegion(hover);
         m_style.hovered.type = ResourceDescriptor::SPRITE;
     }
     init();
@@ -143,17 +143,17 @@ Button::Button(const std::wstring& texture, const std::wstring& hoverTexture, co
     boost::shared_ptr<Texture> pressed = ResourceManager::instance()->loadTexture(pressTexture);
     if (main)
     {
-        m_style.normal.region = TextureRegion(main, 0, 0, main->width(), main->height());
+        m_style.normal.region = TextureRegion(main);
         m_style.normal.type = ResourceDescriptor::SPRITE;
     }
     if (hover)
     {
-        m_style.hovered.region = TextureRegion(hover, 0, 0, hover->width(), hover->height());
+        m_style.hovered.region = TextureRegion(hover);
         m_style.hovered.type = ResourceDescriptor::SPRITE;
     }
     if (pressed)
     {
-        m_style.pressed.region = TextureRegion(pressed, 0, 0, pressed->width(), pressed->height());
+        m_style.pressed.region = TextureRegion(pressed);
         m_style.pressed.type = ResourceDescriptor::SPRITE;
     }
     init();

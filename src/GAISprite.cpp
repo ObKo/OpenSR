@@ -37,7 +37,7 @@ GAISprite::GAISprite(Object *parent): AnimatedSprite(parent)
     m_width = 0;
     m_height = 0;
     m_animationStarted = false;
-    m_texture = boost::shared_ptr<Texture>((Texture*)0);
+    m_region = TextureRegion(boost::shared_ptr<Texture>((Texture*)0));
 }
 
 GAISprite::GAISprite(const char *data, int size, const GIFrame& baseFrame, Object *parent): AnimatedSprite(parent)
@@ -63,7 +63,7 @@ GAISprite::GAISprite(const std::wstring& name, Object *parent): AnimatedSprite(p
     m_width = 0;
     m_height = 0;
     m_animationStarted = false;
-    m_texture = boost::shared_ptr<Texture>((Texture*)0);
+    m_region = TextureRegion(boost::shared_ptr<Texture>((Texture*)0));
 
     std::wstring sfx = suffix(name);
     std::transform(sfx.begin(), sfx.end(), sfx.begin(), towlower);
@@ -112,7 +112,7 @@ GAISprite::GAISprite(const GAISprite & other): AnimatedSprite(other)
     m_baseFrameHeight = other.m_baseFrameHeight;
 
     m_textureBuffer = 0;
-    m_texture = boost::shared_ptr<Texture>(new Texture(m_width, m_height));
+    m_region = TextureRegion(boost::shared_ptr<Texture>(new Texture(m_width, m_height)));
     reset();
     m_animationStarted = other.m_animationStarted;
     markToUpdate();
@@ -143,7 +143,7 @@ GAISprite& GAISprite::operator=(const GAISprite & other)
     m_baseFrameHeight = other.m_baseFrameHeight;
 
     m_textureBuffer = 0;
-    m_texture = boost::shared_ptr<Texture>(new Texture(m_width, m_height));
+    m_region = TextureRegion(boost::shared_ptr<Texture>(new Texture(m_width, m_height)));
 
     reset();
     m_animationStarted = other.m_animationStarted;
@@ -199,7 +199,7 @@ void GAISprite::processMain()
 
     if (m_needNextFrame)
     {
-        glBindTexture(GL_TEXTURE_2D, m_texture->openGLTexture());
+        glBindTexture(GL_TEXTURE_2D, m_region.texture->openGLTexture());
         glBindBuffer(GL_PIXEL_UNPACK_BUFFER, m_textureBuffer);
         if (m_currentFrame == 0)
         {
@@ -209,7 +209,7 @@ void GAISprite::processMain()
             //copyImageData(data, m_baseFrameWidth, 0, 0, m_baseFrameWidth, m_baseFrameHeight, m_baseFrame.get());
             glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER);
             //FIXME: null as pointer to rgba looks ugly
-            m_texture->setRawData(m_baseFrameWidth, m_baseFrameHeight, TEXTURE_B8G8R8A8, 0, 4 * m_baseFrameWidth * m_baseFrameHeight);
+            m_region.texture->setRawData(m_baseFrameWidth, m_baseFrameHeight, TEXTURE_B8G8R8A8, 0, 4 * m_baseFrameWidth * m_baseFrameHeight);
         }
         else
         {
@@ -335,7 +335,7 @@ void GAISprite::loadGAI(const char * data, int size, const GIFrame& baseFrame)
         m_animationStarted = true;
     }
     setFrameRate(15);
-    m_texture = boost::shared_ptr<Texture>(new Texture(m_width, m_height));
+    m_region = TextureRegion(boost::shared_ptr<Texture>(new Texture(m_width, m_height)));
 }
 
 void GAISprite::reset()

@@ -45,7 +45,7 @@ Sprite::Sprite(const Rangers::Sprite& other): Object(other)
     m_xOrigin = other.m_xOrigin;
     m_yOrigin = other.m_yOrigin;
     m_scaling = other.m_scaling;
-    m_texture = other.m_texture;
+    m_region = other.m_region;
 
     markToUpdate();
 }
@@ -56,7 +56,7 @@ Sprite::Sprite(boost::shared_ptr<Texture> texture,  Object *parent, TextureScali
     m_buffer = 0;
     m_vertices = 0;
     m_vertexCount = 0;
-    m_texture = texture;
+    m_region = TextureRegion(texture);
     m_scaling = ts;
     if (!texture)
     {
@@ -79,19 +79,41 @@ Sprite::Sprite(const std::wstring& texture,  Object *parent, TextureScaling  ts,
     m_vertices = 0;
     m_vertexCount = 0;
     m_scaling = ts;
-    m_texture = ResourceManager::instance()->loadTexture(texture);
-    if (!m_texture)
+    m_region = TextureRegion(ResourceManager::instance()->loadTexture(texture));
+    if (!m_region.texture)
     {
         m_width = 0;
         m_height = 0;
     }
     else
     {
-        m_width = m_texture->width();
-        m_height = m_texture->height();
+        m_width = m_region.texture->width();
+        m_height = m_region.texture->height();
     }
     m_xOrigin = xpos;
     m_yOrigin = ypos;
+    markToUpdate();
+}
+
+Sprite::Sprite(const TextureRegion& region, Object *parent): Object(parent)
+{
+    m_buffer = 0;
+    m_vertices = 0;
+    m_vertexCount = 0;
+    m_xOrigin = POSITION_X_LEFT;
+    m_yOrigin = POSITION_Y_TOP;
+    m_scaling = TEXTURE_NORMAL;
+    m_region = region;
+    if (!m_region.texture)
+    {
+        m_width = 0;
+        m_height = 0;
+    }
+    else
+    {
+        m_width = m_region.texture->width() * (m_region.u2 - m_region.u1);
+        m_height = m_region.texture->height() * (m_region.v2 - m_region.v1);
+    }
     markToUpdate();
 }
 
@@ -115,7 +137,7 @@ Sprite& Sprite::operator=(const Rangers::Sprite& other)
     m_xOrigin = other.m_xOrigin;
     m_yOrigin = other.m_yOrigin;
     m_scaling = other.m_scaling;
-    m_texture = other.m_texture;
+    m_region = other.m_region;
 
     markToUpdate();
     Object::operator=(other);
@@ -125,13 +147,13 @@ Sprite& Sprite::operator=(const Rangers::Sprite& other)
 
 void Sprite::draw() const
 {
-    if (!m_texture)
+    if (!m_region.texture)
         return;
 
     if (!prepareDraw())
         return;
 
-    glBindTexture(GL_TEXTURE_2D, m_texture->openGLTexture());
+    glBindTexture(GL_TEXTURE_2D, m_region.texture->openGLTexture());
 
     if (m_scaling == TEXTURE_TILE_X)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -178,19 +200,19 @@ void Sprite::setOrigin(SpriteXOrigin xpos, SpriteYOrigin ypos)
 void Sprite::setTexture(boost::shared_ptr<Texture> texture)
 {
     lock();
-    m_texture = texture;
+    m_region = TextureRegion(texture);
     unlock();
 }
 
 void Sprite::setGeometry(float width, float height)
 {
     lock();
-    if (m_texture)
+    if (m_region.texture)
     {
         if (width <= 0)
-            width = m_texture->width();
+            width = m_region.texture->width() * (m_region.u2 - m_region.u1);
         if (height <= 0)
-            height = m_texture->height();
+            height = m_region.texture->height() * (m_region.v2 - m_region.v1);
     }
 
     m_width = width;
@@ -202,9 +224,9 @@ void Sprite::setGeometry(float width, float height)
 void Sprite::setHeight(float height)
 {
     lock();
-    if (m_texture)
+    if (m_region.texture)
         if (height <= 0)
-            height = m_texture->height();
+            height = m_region.texture->height() * (m_region.v2 - m_region.v1);
 
     m_height = height;
     markToUpdate();
@@ -214,9 +236,9 @@ void Sprite::setHeight(float height)
 void Sprite::setWidth(float width)
 {
     lock();
-    if (m_texture)
+    if (m_region.texture)
         if (width <= 0)
-            width = m_texture->width();
+            width = m_region.texture->width() * (m_region.u2 - m_region.u1);
 
     m_width = width;
     markToUpdate();
@@ -237,7 +259,7 @@ void Sprite::processMain()
 {
     Object::processMain();
 
-    if (!m_texture)
+    if (!m_region.texture)
         return;
 
     lock();
@@ -291,22 +313,24 @@ void Sprite::processMain()
         break;
     }
 
+    //FIXME: Scaling on texture region working incorrectly.
+    //TODO: Keepaspect
     switch (m_scaling)
     {
     case TEXTURE_NO:
-        u1 = 0;
-        v1 = 0;
-        u2 = m_width / m_texture->width();
-        v2 = m_height / m_texture->height();
+        u1 = m_region.u1;
+        v1 = m_region.v1;
+        u2 = m_region.u1 + m_width / ((m_region.u2 - m_region.u1) * m_region.texture->width());
+        v2 = m_region.v1 + m_height / ((m_region.v2 - m_region.v1) * m_region.texture->height());
         break;
     case TEXTURE_NORMAL:
-        u1 = 0;
-        v1 = 0;
-        u2 = 1;
-        v2 = 1;
+        u1 = m_region.u1;
+        v1 = m_region.v1;
+        u2 = m_region.u2;
+        v2 = m_region.v2;
         break;
     case TEXTURE_KEEPASPECT:
-        u1 = 0;
+        /*u1 = 0;
         v1 = 0;
         if (m_width / m_texture->width() * m_texture->height() > m_height)
         {
@@ -317,10 +341,14 @@ void Sprite::processMain()
         {
             u2 = 1;
             v2 = m_texture->width() / m_texture->height();
-        }
+        }*/
+        u1 = m_region.u1;
+        v1 = m_region.v1;
+        u2 = m_region.u2;
+        v2 = m_region.v2;
         break;
     case TEXTURE_KEEPASPECT_EXPANDING:
-        u1 = 0;
+        /*u1 = 0;
         v1 = 0;
         if (m_width / m_texture->width() * m_texture->height() > m_height)
         {
@@ -331,25 +359,29 @@ void Sprite::processMain()
         {
             u2 = m_width / m_texture->width();
             v2 = 1;
-        }
+        }*/
+        u1 = m_region.u1;
+        v1 = m_region.v1;
+        u2 = m_region.u2;
+        v2 = m_region.v2;
         break;
     case TEXTURE_TILE_X:
-        u1 = 0;
-        v1 = 0;
-        u2 = m_width / m_texture->width();
-        v2 = 1;
+        u1 = m_region.u1;
+        v1 = m_region.v1;
+        u2 = m_region.u1 + m_width / ((m_region.u2 - m_region.u1) * m_region.texture->width());
+        v2 = m_region.v2;
         break;
     case TEXTURE_TILE_Y:
-        u1 = 0;
-        v1 = 0;
-        u2 = 1;
-        v2 = m_height / m_texture->height();
+        u1 = m_region.u1;
+        v1 = m_region.v1;
+        u2 = m_region.u2;
+        v2 = m_region.v1 + m_height / ((m_region.v2 - m_region.v1) * m_region.texture->height());
         break;
     case TEXTURE_TILE:
-        u1 = 0;
-        v1 = 0;
-        u2 = m_width / m_texture->width();
-        v2 = m_height / m_texture->height();
+        u1 = m_region.u1;
+        v1 = m_region.v1;
+        u2 = m_region.u1 + m_width / ((m_region.u2 - m_region.u1) * m_region.texture->width());
+        v2 = m_region.v1 + m_height / ((m_region.v2 - m_region.v1) * m_region.texture->height());
         break;
     }
 
@@ -387,8 +419,8 @@ float Sprite::width() const
     return m_width;
 }
 
-boost::shared_ptr< Texture > Sprite::texture() const
+TextureRegion Sprite::region() const
 {
-    return m_texture;
+    return m_region;
 }
 }
