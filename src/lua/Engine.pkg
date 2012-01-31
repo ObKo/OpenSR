@@ -1,6 +1,7 @@
 $#include <Engine.h>
 $#include <Font.h>
 $#include <Widget.h>
+$#include <Node.h>
 $#include <Object.h>
 $#include <boost/shared_ptr.hpp>
 
@@ -26,10 +27,7 @@ public:
    
     int screenHeight(void) const;
     int screenWidth(void) const;
-
-    Rangers::Object* getObject(const std::wstring& name);
-    void removeObject(const std::wstring& name);
-    std::wstring addObject(Rangers::Object* object, const std::wstring& name);
-    std::wstring addObject(Rangers::Object* object);
+    
+    Rangers::Node *rootNode();
 };
 }

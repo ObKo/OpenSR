@@ -30,6 +30,7 @@
 #include FT_FREETYPE_H
 #include <cstdio>
 #include <libRanger.h>
+#include <lua.hpp>
 #include "Utils.h"
 #include "Log.h"
 #include "ResourceManager.h"
@@ -64,7 +65,7 @@ long long Engine::getTicks()
 }
 #endif
 
-Engine::Engine(int argc, char **argv): m_argc(argc), m_argv(argv), m_focusedWidget(0)
+Engine::Engine(int argc, char **argv): m_argc(argc), m_argv(argv), m_focusedWidget(0), m_luaConsoleState(0)
 {
     if (engineInstance)
     {
@@ -350,6 +351,7 @@ void Engine::init(int w, int h, bool fullscreen)
     m_fpsLabel.setPosition(5, 5);
 
     m_consoleWidget = ConsoleWidget(m_width, 168);
+    m_luaConsoleState = initLuaState();
 }
 
 boost::shared_ptr<Font> Engine::coreFont() const
@@ -470,72 +472,6 @@ void Engine::markWidgetDeleting(Widget *w)
     m_updateMutex.unlock();
 }
 
-std::wstring Engine::addObject(Object* object, const std::wstring& name)
-{
-    if (!object)
-        return wstring();
-
-    wstring objectName;
-
-    if (name.empty())
-        objectName = L"object";
-    else
-        objectName = name;
-
-    if (!(object->parent()))
-        m_mainNode.addChild(object);
-
-    std::map<std::wstring, Object*>::iterator it = m_objects.find(objectName);
-    if (it != m_objects.end())
-    {
-        int i = 1;
-        wstring n;
-        while (it != m_objects.end())
-        {
-            wostringstream s(objectName);
-            s.seekp(0, ios_base::end);
-            s << i;
-            n = s.str();
-            it = m_objects.find(n);
-            i++;
-        }
-        Log::warning() << L"Object \"" << objectName << "\" exists. Renamed to \"" << n << "\"";
-        m_objects[n] = object;
-        return n;
-    }
-    m_objects[objectName] = object;
-    return objectName;
-}
-
-Object* Engine::getObject(const std::wstring& name) const
-{
-    if (name.empty())
-        return 0;
-    std::map<std::wstring, Object*>::const_iterator it = m_objects.find(name);
-    if (it != m_objects.end())
-        return (*it).second;
-    else
-    {
-        Log::warning() << L"No such object: " << name;
-        return 0;
-    }
-}
-
-void Engine::removeObject(const std::wstring& name)
-{
-    if (name.empty())
-        return;
-
-    std::map<std::wstring, Object*>::iterator it = m_objects.find(name);
-    if (it != m_objects.end())
-    {
-        delete(*it).second;
-        m_objects.erase(it);
-    }
-    else
-        Log::warning() << L"No such object: " << name;
-}
-
 void Engine::processEvents()
 {
     SDL_Event event;
@@ -608,112 +544,19 @@ void Engine::processMouseMove(SDL_MouseMotionEvent e)
     m_currentWidget = 0;
 }
 
+Node* Engine::rootNode()
+{
+    return &m_mainNode;
+}
+
 void Engine::execCommand(const std::wstring& what)
 {
     if (what.empty())
         return;
-    wistringstream args(what);
-    wstring command;
-    args >> command;
 
-    if (command == L"quit")
-        quit(0);
-    else if (command == L"show_fps")
-    {
-        bool enable;
-        args >> enable;
-
-        if (!args.fail())
-        {
-            m_showFPS = enable;
-            Log::info() << L"FPS label " << (m_showFPS ? (L"enabled") : (L"disabled"));
-        }
-    }
-    else if (command == L"add_rpkg")
-    {
-        wstring fileName;
-        args >> fileName;
-
-        if (!args.fail())
-            ResourceManager::instance()->addRPKG(fileName);
-    }
-    else if (command == L"add_dir")
-    {
-        wstring path;
-        args >> path;
-
-        if (!args.fail())
-            ResourceManager::instance()->addDir(path);
-    }
-    else if (command == L"load_sprite")
-    {
-        wstring fileName;
-        args >> fileName;
-
-        if (!args.fail())
-        {
-            float x = 0, y = 0, w = 0, h = 0;
-            int scaling = 1;
-            args >> x >> y >> w >> h >> scaling;
-
-            if (scaling > 5 || scaling < 0)
-                scaling = 1;
-
-            args.clear();
-
-            boost::shared_ptr<Texture> t = ResourceManager::instance()->loadTexture(fileName);
-            if (t)
-            {
-                Sprite *s = new Sprite(t, &m_mainNode, (TextureScaling)scaling);
-                m_mainNode.addChild(s);
-                wstring objName = addObject(s, fileName);
-                s->setGeometry(w, h);
-                s->setPosition(x, y);
-                Log::info() << "Sprite \"" << objName << "\" loaded";
-            }
-        }
-    }
-    else if (command == L"load_asprite")
-    {
-        wstring fileName;
-        args >> fileName;
-
-        if (!args.fail())
-        {
-            float x = 0, y = 0, w = 0, h = 0;
-            int scaling = 1;
-            int currentFrame = 0;
-            args >> currentFrame >> x >> y >> w >> h >> scaling;
-
-            if (scaling > 5 || scaling < 0)
-                scaling = 1;
-
-            args.clear();
-
-            boost::shared_ptr<AnimatedTexture> t = ResourceManager::instance()->loadAnimation(fileName);
-            if (t)
-            {
-                AnimatedSprite *s = new AnimatedSprite(t, &m_mainNode);
-                s->setFrame(currentFrame);
-                m_mainNode.addChild(s);
-                wstring objName = addObject(s, fileName);
-                s->setGeometry(w, h);
-                s->setPosition(x, y);
-                s->setTextureScaling((TextureScaling)scaling);
-                Log::info() << "Animation \"" << objName << "\" loaded";
-            }
-        }
-    }
-    else if (command == L"remove_object")
-    {
-        wstring name;
-        args >> name;
-        removeObject(name);
-    }
-    else
-        Log::error() << wstring(L"Unknown command: ") << command;
-
-    if (args.fail())
-        Log::error() << L"Invalid arguments";
+    int state;
+    std::string line = toUTF8(what);
+    if (state = (luaL_loadbuffer(m_luaConsoleState, line.c_str(), line.length(), "") || lua_pcall(m_luaConsoleState, 0, LUA_MULTRET, 0)))
+        Log::error() << "Cannot exec command: " << lua_tostring(m_luaConsoleState, -1);
 }
 }

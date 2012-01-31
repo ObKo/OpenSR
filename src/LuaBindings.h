@@ -56,6 +56,7 @@ class Texture;
 class Font;
 int execLuaScript(const std::wstring& fileName);
 int execLuaScript(const char *data, size_t size, const std::string& name);
+lua_State *initLuaState();
 std::wstring fromLua(const char *s);
 Font *getPointer(boost::shared_ptr<Font> sp);
 Texture *getPointer(boost::shared_ptr<Texture> sp);

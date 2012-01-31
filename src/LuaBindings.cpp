@@ -46,6 +46,16 @@ int execLuaScript(const std::wstring& name)
 
 int execLuaScript(const char *data, size_t size, const std::string& name)
 {
+    lua_State *luaState = initLuaState();
+    int state;
+    if (state = (luaL_loadbuffer(luaState, data, size, name.c_str()) || lua_pcall(luaState, 0, LUA_MULTRET, 0)))
+        Log::error() << "Cannot exec lua script: " << lua_tostring(luaState, -1);
+    lua_close(luaState);
+    return state;
+}
+
+lua_State *initLuaState()
+{
     lua_State *luaState = lua_open();
     luaopen_base(luaState);
     luaopen_table(luaState);
@@ -71,11 +81,7 @@ int execLuaScript(const char *data, size_t size, const std::string& name)
     lua_setglobal(luaState, "engine");
     tolua_pushusertype(luaState, ResourceManager::instance(), "Rangers::ResourceManager");
     lua_setglobal(luaState, "resources");
-    int state;
-    if (state = (luaL_loadbuffer(luaState, data, size, name.c_str()) || lua_pcall(luaState, 0, LUA_MULTRET, 0)))
-        Log::error() << "Cannot exec lua script: " << lua_tostring(luaState, -1);
-    lua_close(luaState);
-    return state;
+    return luaState;
 }
 
 std::wstring fromLua(const char *s)

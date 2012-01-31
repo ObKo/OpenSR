@@ -22,12 +22,13 @@
 #include "Node.h"
 #include "Label.h"
 #include <list>
-#include "ConsoleWidget.h"
-#include "Texture.h"
+#include <lua.hpp>
 #include <map>
 #include <boost/thread.hpp>
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/property_tree/ptree.hpp>
+#include "ConsoleWidget.h"
+#include "Texture.h"
 
 namespace Rangers
 {
@@ -89,14 +90,12 @@ public:
     //! Global program options
     boost::shared_ptr<boost::property_tree::ptree> properties() const;
 
-    //! Get object by name
-    Object* getObject(const std::wstring& name) const;
-    //! Remove object.
-    void removeObject(const std::wstring& name);
-    //! Add object. Engine becomes owner of object.
-    std::wstring addObject(Object* object, const std::wstring& name = std::wstring());
+    Node *rootNode();
 
 private:
+    void processEvents();
+    void processMouseMove(SDL_MouseMotionEvent e);
+
     int m_argc;
     char **m_argv;
     int m_height;
@@ -115,11 +114,6 @@ private:
     bool m_showFPS;
     long m_frames;
 
-    std::map<std::wstring, Object*> m_objects;
-
-    void processEvents();
-    void processMouseMove(SDL_MouseMotionEvent e);
-
     std::list<Object *> m_updateList;
 
     std::list<Widget *> m_widgets;
@@ -132,6 +126,8 @@ private:
     ConsoleWidget m_consoleWidget;
     boost::shared_ptr<Font> m_coreFont;
     boost::shared_ptr<Font> m_monospaceFont;
+
+    lua_State *m_luaConsoleState;
 };
 }
 
