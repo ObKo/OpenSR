@@ -1,0 +1,32 @@
+$#include <Types.h>
+$#include <Styles.h>
+
+namespace Rangers
+{
+struct ResourceDescriptor
+{
+    enum {NONE, NINEPATCH, SPRITE} type;
+    Rangers::TextureRegion region;
+    Rangers::NinePatchDescriptor ninepatch;
+};
+
+struct ButtonStyle
+{
+    ResourceDescriptor normal;
+    ResourceDescriptor hovered;
+    ResourceDescriptor pressed;
+};
+
+struct ScrollBarStyle
+{
+    ButtonStyle upButton;
+    ButtonStyle scroll;
+    ButtonStyle downButton;
+};
+
+struct Skin
+{
+    ButtonStyle buttonStyle;
+    ScrollBarStyle scrollStyle;
+};
+}

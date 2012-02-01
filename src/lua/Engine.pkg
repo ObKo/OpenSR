@@ -3,6 +3,7 @@ $#include <Font.h>
 $#include <Widget.h>
 $#include <Node.h>
 $#include <Object.h>
+$#include <Styles.h>
 $#include <boost/shared_ptr.hpp>
 
 namespace Rangers
@@ -29,5 +30,8 @@ public:
     int screenWidth(void) const;
     
     Rangers::Node *rootNode();
+    Rangers::Skin defaultSkin() const;
+    void setDefaultSkin(const Rangers::Skin& skin);
+    void setDefaultSkin(const std::wstring& skinPath);
 };
 }

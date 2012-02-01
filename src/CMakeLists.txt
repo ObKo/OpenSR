@@ -90,6 +90,7 @@ SET(LUA_PACKAGES
     lua/CheckBox.pkg
     lua/NinePatch.pkg
     lua/ScrollArea.pkg
+	lua/Styles.pkg
 )
 
 INCLUDE_DIRECTORIES(

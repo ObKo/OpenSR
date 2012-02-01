@@ -47,6 +47,7 @@ int tolua_Node_open(lua_State* tolua_S);
 int tolua_CheckBox_open(lua_State* tolua_S);
 int tolua_NinePatch_open(lua_State* tolua_S);
 int tolua_ScrollArea_open(lua_State* tolua_S);
+int tolua_Styles_open(lua_State* tolua_S);
 
 namespace Rangers
 {

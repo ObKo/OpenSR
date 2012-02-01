@@ -29,6 +29,7 @@
 #include <boost/property_tree/ptree.hpp>
 #include "ConsoleWidget.h"
 #include "Texture.h"
+#include "Styles.h"
 
 namespace Rangers
 {
@@ -92,6 +93,10 @@ public:
 
     Node *rootNode();
 
+    Skin defaultSkin() const;
+    void setDefaultSkin(const Skin& skin);
+    void setDefaultSkin(const std::wstring& skinPath);
+
 private:
     void processEvents();
     void processMouseMove(SDL_MouseMotionEvent e);
@@ -128,6 +133,7 @@ private:
     boost::shared_ptr<Font> m_monospaceFont;
 
     lua_State *m_luaConsoleState;
+    Skin m_skin;
 };
 }
 

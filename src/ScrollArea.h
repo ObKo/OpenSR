@@ -28,9 +28,7 @@ class WidgetNode;
 class ScrollArea: public Widget, ActionListener
 {
 public:
-    ScrollArea(const std::wstring& topButtonTexture, const std::wstring& bottomButtonTexture,
-               const std::wstring& scrollTopTexture, const std::wstring& scrollBottomTexture,
-               const std::wstring& scrollCenterTexture, WidgetNode *node, Widget* parent = 0);
+    ScrollArea(const ScrollBarStyle& style, WidgetNode *node = 0, Widget *parent = 0);
 
     virtual void draw() const;
     virtual void processMain();
@@ -42,24 +40,23 @@ public:
     void setNode(WidgetNode *node);
 
     virtual void mouseMove(int x, int y);
+    virtual void mouseEnter();
+    virtual void mouseLeave();
+
+    virtual void mouseDown(uint8_t key, int x, int y);
+    virtual void mouseUp(uint8_t key, int x, int y);
 
     virtual void actionPerformed(const Action &action);
 
 private:
-    Button m_topButton;
-    Button m_bottomButton;
-    Button m_leftButton;
-    Button m_rightButton;
-    Sprite m_scrollVTop;
-    Sprite m_scrollVBottom;
-    Sprite m_scrollVCenter;
-    Sprite m_scrollHTop;
-    Sprite m_scrollHBottom;
-    Sprite m_scrollHCenter;
+    void updateScrollPosition();
+    Button m_top, m_bottom, m_left, m_right;
+    Button m_vScroll, m_hScroll;
+    float m_vSize, m_vPosition;
+    float m_hSize, m_hPosition;
     WidgetNode *m_node;
-
-    float vSize, vPosition;
-    float hSize, hPosition;
+    float m_scrollStart;
+    enum {NONE, VERTICAL, HORIZONTAL} m_scrollDrag;
 };
 }
 

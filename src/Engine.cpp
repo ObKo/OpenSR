@@ -39,6 +39,8 @@
 #include "LuaWidget.h"
 #include "AnimatedSprite.h"
 #include "Action.h"
+#include "JSONHelper.h"
+#include "Styles.h"
 
 using namespace std;
 
@@ -343,6 +345,9 @@ void Engine::init(int w, int h, bool fullscreen)
         monoFontSize = atoi(monoFontStrings.at(1).c_str());
     m_monospaceFont = ResourceManager::instance()->loadFont(fromLocal(monoFontStrings.at(0).c_str()), monoFontSize);
 
+    if (m_properties->find("graphics.defaultSkin") != m_properties->not_found())
+        setDefaultSkin(fromLocal(m_properties->get<std::string>("graphics.defaultSkin", "").c_str()));
+
     m_frames = 0;
 
     m_mainNode.setPosition(0, 0);
@@ -470,6 +475,24 @@ void Engine::markWidgetDeleting(Widget *w)
     removeWidget(w);
     m_widgetsToDelete.push_back(w);
     m_updateMutex.unlock();
+}
+
+Skin Engine::defaultSkin() const
+{
+    return m_skin;
+}
+
+void Engine::setDefaultSkin(const Skin& skin)
+{
+    m_skin = skin;
+}
+
+void Engine::setDefaultSkin(const std::wstring& skinPath)
+{
+    size_t size;
+    char *json = ResourceManager::instance()->loadData(L"skin.json", size);
+    bool error;
+    m_skin = JSONHelper::parseSkin(std::string(json, size), error);
 }
 
 void Engine::processEvents()

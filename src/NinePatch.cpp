@@ -38,6 +38,11 @@ NinePatch::NinePatch(Object *parent): Sprite(parent)
 NinePatch::NinePatch(const NinePatchDescriptor &desc, Object *parent):
     Sprite(parent), m_descriptor(desc)
 {
+    for (int i = 0; i < m_descriptor.columns; i++)
+        m_width += m_descriptor.regions[i].texture->width() * (m_descriptor.regions[i].u2 - m_descriptor.regions[i].u1);
+    for (int i = 0; i < m_descriptor.rows; i++)
+        m_height += m_descriptor.regions[i * m_descriptor.columns].texture->height() * (m_descriptor.regions[i * m_descriptor.columns].v2 - m_descriptor.regions[i * m_descriptor.columns].v1);
+
     markToUpdate();
 }
 
@@ -54,7 +59,6 @@ NinePatch::NinePatch(const std::wstring& name, Object *parent): Sprite(parent)
         {
             bool parseError = false;
             m_descriptor = JSONHelper::parseNinePatch(std::string(jsonData, dataSize), parseError);
-            m_width = 0;
             for (int i = 0; i < m_descriptor.columns; i++)
                 m_width += m_descriptor.regions[i].texture->width() * (m_descriptor.regions[i].u2 - m_descriptor.regions[i].u1);
             for (int i = 0; i < m_descriptor.rows; i++)

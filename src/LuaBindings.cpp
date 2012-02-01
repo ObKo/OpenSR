@@ -77,6 +77,7 @@ lua_State *initLuaState()
     tolua_CheckBox_open(luaState);
     tolua_NinePatch_open(luaState);
     tolua_ScrollArea_open(luaState);
+    tolua_Styles_open(luaState);
     tolua_pushusertype(luaState, Engine::instance(), "Rangers::Engine");
     lua_setglobal(luaState, "engine");
     tolua_pushusertype(luaState, ResourceManager::instance(), "Rangers::ResourceManager");
