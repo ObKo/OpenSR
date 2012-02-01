@@ -285,7 +285,10 @@ void ScrollArea::mouseUp(uint8_t key, const Vector &p)
             if (m_scrollDrag == HORIZONTAL)
                 scroll = &m_hScroll;
             if ((scroll) && (!scroll->mapToParent(scroll->getBoundingRect()).contains(p)))
+            {
                 scroll->mouseLeave();
+                m_currentChild = 0;
+            }
             m_scrollDrag = NONE;
         }
     }

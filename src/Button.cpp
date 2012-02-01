@@ -37,7 +37,7 @@ Button::Button(boost::shared_ptr<Texture> texture, Widget *parent):
 {
     if (texture)
     {
-        m_style.normal.region = TextureRegion(texture);
+        m_style.normal.resource = ResourceDescriptor::Resource(TextureRegion(texture));
         m_style.normal.type = ResourceDescriptor::SPRITE;
     }
     init();
@@ -53,12 +53,12 @@ Button::Button(boost::shared_ptr<Texture> texture, boost::shared_ptr<Texture> ho
 {
     if (texture)
     {
-        m_style.normal.region = TextureRegion(texture);
+        m_style.normal.resource = ResourceDescriptor::Resource(TextureRegion(texture));
         m_style.normal.type = ResourceDescriptor::SPRITE;
     }
     if (hoverTexture)
     {
-        m_style.hovered.region = TextureRegion(hoverTexture);
+        m_style.hovered.resource = ResourceDescriptor::Resource(TextureRegion(hoverTexture));
         m_style.hovered.type = ResourceDescriptor::SPRITE;
     }
     init();
@@ -74,17 +74,17 @@ Button::Button(boost::shared_ptr<Texture> texture, boost::shared_ptr<Texture> ho
 {
     if (texture)
     {
-        m_style.normal.region = TextureRegion(texture);
+        m_style.normal.resource = ResourceDescriptor::Resource(TextureRegion(texture));
         m_style.normal.type = ResourceDescriptor::SPRITE;
     }
     if (hoverTexture)
     {
-        m_style.hovered.region = TextureRegion(hoverTexture);
+        m_style.hovered.resource = ResourceDescriptor::Resource(TextureRegion(hoverTexture));
         m_style.hovered.type = ResourceDescriptor::SPRITE;
     }
     if (pressTexture)
     {
-        m_style.pressed.region = TextureRegion(pressTexture);
+        m_style.pressed.resource = ResourceDescriptor::Resource(TextureRegion(pressTexture));
         m_style.pressed.type = ResourceDescriptor::SPRITE;
     }
     init();
@@ -101,7 +101,7 @@ Button::Button(const std::wstring& texture, Widget *parent):
     boost::shared_ptr<Texture> main = ResourceManager::instance()->loadTexture(texture);
     if (main)
     {
-        m_style.normal.region = TextureRegion(main);
+        m_style.normal.resource = ResourceDescriptor::Resource(TextureRegion(main));
         m_style.normal.type = ResourceDescriptor::SPRITE;
     }
     init();
@@ -119,12 +119,12 @@ Button::Button(const std::wstring& texture, const std::wstring& hoverTexture, Wi
     boost::shared_ptr<Texture> hover = ResourceManager::instance()->loadTexture(hoverTexture);
     if (main)
     {
-        m_style.normal.region = TextureRegion(main);
+        m_style.normal.resource = ResourceDescriptor::Resource(TextureRegion(main));
         m_style.normal.type = ResourceDescriptor::SPRITE;
     }
     if (hover)
     {
-        m_style.hovered.region = TextureRegion(hover);
+        m_style.hovered.resource = ResourceDescriptor::Resource(TextureRegion(hover));
         m_style.hovered.type = ResourceDescriptor::SPRITE;
     }
     init();
@@ -143,17 +143,17 @@ Button::Button(const std::wstring& texture, const std::wstring& hoverTexture, co
     boost::shared_ptr<Texture> pressed = ResourceManager::instance()->loadTexture(pressTexture);
     if (main)
     {
-        m_style.normal.region = TextureRegion(main);
+        m_style.normal.resource = ResourceDescriptor::Resource(TextureRegion(main));
         m_style.normal.type = ResourceDescriptor::SPRITE;
     }
     if (hover)
     {
-        m_style.hovered.region = TextureRegion(hover);
+        m_style.hovered.resource = ResourceDescriptor::Resource(TextureRegion(hover));
         m_style.hovered.type = ResourceDescriptor::SPRITE;
     }
     if (pressed)
     {
-        m_style.pressed.region = TextureRegion(pressed);
+        m_style.pressed.resource = ResourceDescriptor::Resource(TextureRegion(pressed));
         m_style.pressed.type = ResourceDescriptor::SPRITE;
     }
     init();
@@ -179,27 +179,27 @@ void Button::init()
 {
     if (m_style.normal.type == ResourceDescriptor::NINEPATCH)
     {
-        m_normalSprite = new NinePatch(m_style.normal.ninepatch, this);
+        m_normalSprite = new NinePatch(boost::get<NinePatchDescriptor>(m_style.normal.resource), this);
     }
     else if (m_style.normal.type == ResourceDescriptor::SPRITE)
     {
-        m_normalSprite = new Sprite(m_style.normal.region.texture, this);
+        m_normalSprite = new Sprite(boost::get<TextureRegion>(m_style.normal.resource), this);
     }
     if (m_style.hovered.type == ResourceDescriptor::NINEPATCH)
     {
-        m_hoverSprite = new NinePatch(m_style.hovered.ninepatch, this);
+        m_hoverSprite = new NinePatch(boost::get<NinePatchDescriptor>(m_style.hovered.resource), this);
     }
     else if (m_style.hovered.type == ResourceDescriptor::SPRITE)
     {
-        m_hoverSprite = new Sprite(m_style.hovered.region.texture, this);
+        m_hoverSprite = new Sprite(boost::get<TextureRegion>(m_style.hovered.resource), this);
     }
     if (m_style.pressed.type == ResourceDescriptor::NINEPATCH)
     {
-        m_pressedSprite = new NinePatch(m_style.pressed.ninepatch, this);
+        m_pressedSprite = new NinePatch(boost::get<NinePatchDescriptor>(m_style.pressed.resource), this);
     }
     else if (m_style.pressed.type == ResourceDescriptor::SPRITE)
     {
-        m_pressedSprite = new Sprite(m_style.pressed.region.texture, this);
+        m_pressedSprite = new Sprite(boost::get<TextureRegion>(m_style.pressed.resource), this);
     }
     m_sprite = m_normalSprite;
 }

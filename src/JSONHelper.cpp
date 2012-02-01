@@ -140,7 +140,7 @@ std::map<std::wstring, ResourceDescriptor> JSONHelper::parseResources(const Json
             }
             ResourceDescriptor desc;
             desc.type = ResourceDescriptor::NINEPATCH;
-            desc.ninepatch = ninepatch;
+            desc.resource = ResourceDescriptor::Resource(ninepatch);
             result[fromUTF8(it.memberName())] = desc;
         }
     }
@@ -164,7 +164,7 @@ std::map<std::wstring, ResourceDescriptor> JSONHelper::parseResources(const Json
             }
             ResourceDescriptor desc;
             desc.type = ResourceDescriptor::SPRITE;
-            desc.region = sprite;
+            desc.resource = ResourceDescriptor::Resource(sprite);
             result[fromUTF8(it.memberName())] = desc;
         }
     }

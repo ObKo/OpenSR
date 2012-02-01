@@ -20,6 +20,7 @@
 #define RANGERS_STYLES_H
 
 #include "Types.h"
+#include <boost/variant.hpp>
 
 namespace Rangers
 {
@@ -28,8 +29,8 @@ class Texture;
 struct ResourceDescriptor
 {
     enum {NONE, NINEPATCH, SPRITE} type;
-    TextureRegion region;
-    NinePatchDescriptor ninepatch;
+    typedef boost::variant<TextureRegion, NinePatchDescriptor> Resource;
+    Resource resource;
 };
 
 struct ButtonStyle
