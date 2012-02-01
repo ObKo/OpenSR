@@ -151,11 +151,8 @@ void Widget::mouseDown(uint8_t key, const Vector& p)
     {
         m_currentChild->mouseDown(key, m_currentChild->mapFromParent(p));
     }
-    else
-    {
-        if (key == SDL_BUTTON_LEFT)
-            m_leftMouseButtonPressed = true;
-    }
+    if (key == SDL_BUTTON_LEFT)
+        m_leftMouseButtonPressed = true;
     unlock();
 }
 
@@ -166,13 +163,10 @@ void Widget::mouseUp(uint8_t key, const Vector& p)
     {
         m_currentChild->mouseUp(key, m_currentChild->mapFromParent(p));
     }
-    else
+    if (m_leftMouseButtonPressed && (key == SDL_BUTTON_LEFT))
     {
-        if (m_leftMouseButtonPressed && (key == SDL_BUTTON_LEFT))
-        {
-            m_leftMouseButtonPressed = false;
-            mouseClick(p);
-        }
+        m_leftMouseButtonPressed = false;
+        mouseClick(p);
     }
     unlock();
 }

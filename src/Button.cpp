@@ -257,19 +257,25 @@ void Button::mouseLeave()
 void Button::mouseDown(uint8_t key, const Vector &p)
 {
     lock();
-    if (m_pressedSprite)
-        m_sprite = m_pressedSprite;
     Widget::mouseDown(key, p);
+    if (m_leftMouseButtonPressed)
+    {
+        if (m_pressedSprite)
+            m_sprite = m_pressedSprite;
+    }
     unlock();
 }
 
 void Button::mouseUp(uint8_t key, const Vector &p)
 {
     lock();
-    if (m_hoverSprite)
-        m_sprite = m_hoverSprite;
-    else if (m_normalSprite)
-        m_sprite = m_normalSprite;
+    if (m_leftMouseButtonPressed)
+    {
+        if (m_hoverSprite)
+            m_sprite = m_hoverSprite;
+        else if (m_normalSprite)
+            m_sprite = m_normalSprite;
+    }
     Widget::mouseUp(key, p);
     unlock();
 }

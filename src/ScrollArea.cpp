@@ -254,36 +254,43 @@ void ScrollArea::mouseLeave()
 
 void ScrollArea::mouseDown(uint8_t key, const Vector &p)
 {
-    if (m_vScroll.mapToParent(m_vScroll.getBoundingRect()).contains(p))
-    {
-        m_scrollDrag = VERTICAL;
-        m_scrollStart = p.y;
-    }
-    else if (m_hScroll.mapToParent(m_hScroll.getBoundingRect()).contains(p))
-    {
-        m_scrollDrag = HORIZONTAL;
-        m_scrollStart = p.x;
-    }
     Widget::mouseDown(key, p);
+    if (m_leftMouseButtonPressed)
+    {
+        if (m_vScroll.mapToParent(m_vScroll.getBoundingRect()).contains(p))
+        {
+            m_scrollDrag = VERTICAL;
+            m_scrollStart = p.y;
+        }
+        else if (m_hScroll.mapToParent(m_hScroll.getBoundingRect()).contains(p))
+        {
+            m_scrollDrag = HORIZONTAL;
+            m_scrollStart = p.x;
+        }
+    }
 }
 
 void ScrollArea::mouseUp(uint8_t key, const Vector &p)
 {
-    Widget::mouseUp(key, p);
-    if (m_scrollDrag != NONE)
+    if (m_leftMouseButtonPressed)
     {
-
-        if (!getBoundingRect().contains(p))
-            mouseLeave();
-        Button *scroll = 0;
-        if (m_scrollDrag == VERTICAL)
-            scroll = &m_vScroll;
-        if (m_scrollDrag == HORIZONTAL)
-            scroll = &m_hScroll;
-        if ((scroll) && (!scroll->mapToParent(scroll->getBoundingRect()).contains(p)))
-            scroll->mouseLeave();
-        m_scrollDrag = NONE;
+        Widget::mouseUp(key, p);
+        if (m_scrollDrag != NONE)
+        {
+            if (!getBoundingRect().contains(p))
+                mouseLeave();
+            Button *scroll = 0;
+            if (m_scrollDrag == VERTICAL)
+                scroll = &m_vScroll;
+            if (m_scrollDrag == HORIZONTAL)
+                scroll = &m_hScroll;
+            if ((scroll) && (!scroll->mapToParent(scroll->getBoundingRect()).contains(p)))
+                scroll->mouseLeave();
+            m_scrollDrag = NONE;
+        }
     }
+    else
+        Widget::mouseUp(key, p);
 }
 
 void ScrollArea::updateScrollPosition()
