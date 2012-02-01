@@ -47,7 +47,7 @@ public:
     virtual void mouseEnter();
     virtual void mouseLeave();
 
-    virtual void mouseClick(int x, int y);
+    virtual void mouseClick(const Vector &p);
 
 private:
     boost::shared_ptr<Texture> m_mainTexture;

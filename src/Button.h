@@ -49,9 +49,9 @@ public:
     virtual void mouseEnter();
     virtual void mouseLeave();
 
-    virtual void mouseDown(uint8_t key, int x, int y);
-    virtual void mouseUp(uint8_t key, int x, int y);
-    virtual void mouseClick(int x, int y);
+    virtual void mouseDown(uint8_t key, const Vector &p);
+    virtual void mouseUp(uint8_t key, const Vector &p);
+    virtual void mouseClick(const Vector &p);
 
     Button& operator=(const Button& other);
 

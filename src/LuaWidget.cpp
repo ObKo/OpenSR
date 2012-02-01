@@ -190,51 +190,50 @@ void LuaWidget::mouseLeave()
     Widget::mouseLeave();
 }
 
-void LuaWidget::mouseMove(int x, int y)
+void LuaWidget::mouseMove(const Vector &p)
 {
-    Widget::mouseMove(x, y);
     lock();
     lua_getglobal(m_luaState.get(), "mouseMove");
-    lua_pushinteger(m_luaState.get(), x);
-    lua_pushinteger(m_luaState.get(), y);
+    lua_pushinteger(m_luaState.get(), p.x);
+    lua_pushinteger(m_luaState.get(), p.y);
     lua_pcall(m_luaState.get(), 2, 0, 0);
     unlock();
-    Widget::mouseMove(x, y);
+    Widget::mouseMove(p);
 }
 
-void LuaWidget::mouseDown(uint8_t key, int x, int y)
+void LuaWidget::mouseDown(uint8_t key, const Vector &p)
 {
     lock();
     lua_getglobal(m_luaState.get(), "mouseDown");
     lua_pushinteger(m_luaState.get(), key);
-    lua_pushinteger(m_luaState.get(), x);
-    lua_pushinteger(m_luaState.get(), y);
+    lua_pushinteger(m_luaState.get(), p.x);
+    lua_pushinteger(m_luaState.get(), p.y);
     lua_pcall(m_luaState.get(), 3, 0, 0);
     unlock();
-    Widget::mouseDown(key, x, y);
+    Widget::mouseDown(key, p);
 }
 
-void LuaWidget::mouseUp(uint8_t key, int x, int y)
+void LuaWidget::mouseUp(uint8_t key, const Vector &p)
 {
     lock();
     lua_getglobal(m_luaState.get(), "mouseUp");
     lua_pushinteger(m_luaState.get(), key);
-    lua_pushinteger(m_luaState.get(), x);
-    lua_pushinteger(m_luaState.get(), y);
+    lua_pushinteger(m_luaState.get(), p.x);
+    lua_pushinteger(m_luaState.get(), p.y);
     lua_pcall(m_luaState.get(), 3, 0, 0);
     unlock();
-    Widget::mouseUp(key, x, y);
+    Widget::mouseUp(key, p);
 }
 
-void LuaWidget::mouseClick(int x, int y)
+void LuaWidget::mouseClick(const Vector &p)
 {
     lock();
     lua_getglobal(m_luaState.get(), "mouseClick");
-    lua_pushinteger(m_luaState.get(), x);
-    lua_pushinteger(m_luaState.get(), y);
+    lua_pushinteger(m_luaState.get(), p.x);
+    lua_pushinteger(m_luaState.get(), p.y);
     lua_pcall(m_luaState.get(), 2, 0, 0);
     unlock();
-    Widget::mouseClick(x, y);
+    Widget::mouseClick(p);
 }
 
 void LuaWidget::processLogic(int dt)

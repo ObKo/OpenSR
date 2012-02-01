@@ -12,13 +12,13 @@ public:
     void draw();
 
     Rangers::Rect getBoundingRect();
-    void mouseMove(int x, int y);
     void mouseEnter();
     void mouseLeave();
-    
-    void mouseDown(uint8_t key, int x, int y);
-    void mouseUp(uint8_t key, int x, int y);
-    void mouseClick(int x, int y);
+	
+	void mouseMove(const Rangers::Vector& p);    
+    void mouseDown(uint8_t key, const Rangers::Vector& p);
+    void mouseUp(uint8_t key, const Rangers::Vector& p);
+    void mouseClick(const Rangers::Vector& p);
     
     int width() const;
     int height() const;

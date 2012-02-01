@@ -39,12 +39,12 @@ public:
 
     void setNode(WidgetNode *node);
 
-    virtual void mouseMove(int x, int y);
+    virtual void mouseMove(const Vector &p);
     virtual void mouseEnter();
     virtual void mouseLeave();
 
-    virtual void mouseDown(uint8_t key, int x, int y);
-    virtual void mouseUp(uint8_t key, int x, int y);
+    virtual void mouseDown(uint8_t key, const Vector &p);
+    virtual void mouseUp(uint8_t key, const Vector &p);
 
     virtual void actionPerformed(const Action &action);
 

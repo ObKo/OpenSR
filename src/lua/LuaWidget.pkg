@@ -12,20 +12,6 @@ class LuaWidget: public Widget
 public:
     LuaWidget(const std::wstring& name, Widget *parent);
     LuaWidget(const std::wstring& name);
-
-    void draw();
-
-    Rangers::Rect getBoundingRect();
-    void mouseMove(int x, int y);
-    void mouseEnter();
-    void mouseLeave();
-    
-    void mouseDown(uint8_t key, int x, int y);
-    void mouseUp(uint8_t key, int x, int y);
-    void mouseClick(int x, int y);
-    
-    void processMain();
-    void processLogic(int dt);
     
     class LuaActionListener: public ActionListener
     {

@@ -168,19 +168,18 @@ Rect ScrollArea::getBoundingRect() const
     }
 }
 
-void ScrollArea::mouseMove(int x, int y)
+void ScrollArea::mouseMove(const Vector &p)
 {
     if (!m_node)
         return;
 
     if (m_scrollDrag == NONE)
     {
-        if ((x < m_width - m_top.width()) && (y < m_height - m_left.width()))
+        if ((p.x < m_width - m_top.width()) && (p.y < m_height - m_left.width()))
         {
             if (m_currentChild)
                 m_currentChild->mouseLeave();
-            Vector m = m_node->mapFromParent(Vector(x, y));
-            m_node->mouseMove(m.x, m.y);
+            m_node->mouseMove(m_node->mapFromParent(p));
         }
         else
         {
@@ -189,8 +188,7 @@ void ScrollArea::mouseMove(int x, int y)
                 if ((*i) == m_node)
                     continue;
                 Rect bb = (*i)->mapToParent((*i)->getBoundingRect());
-                Vector mouse = Vector(x, y);
-                if (bb.contains(mouse))
+                if (bb.contains(p))
                 {
                     if ((*i) != m_currentChild)
                     {
@@ -199,8 +197,7 @@ void ScrollArea::mouseMove(int x, int y)
                         m_currentChild = *i;
                         m_currentChild->mouseEnter();
                     }
-                    Vector m = (*i)->mapFromParent(mouse);
-                    (*i)->mouseMove(m.x, m.y);
+                    (*i)->mouseMove((*i)->mapFromParent(p));
                     unlock();
                     return;
                 }
@@ -212,7 +209,7 @@ void ScrollArea::mouseMove(int x, int y)
     }
     else if (m_scrollDrag == VERTICAL)
     {
-        float dy = y - m_scrollStart;
+        float dy = p.y - m_scrollStart;
         float scrollSize;
         if (m_hSize > 1.0f)
         {
@@ -224,11 +221,11 @@ void ScrollArea::mouseMove(int x, int y)
         }
         m_vPosition -= dy / scrollSize;
         updateScrollPosition();
-        m_scrollStart = y;
+        m_scrollStart = p.y;
     }
     else if (m_scrollDrag == HORIZONTAL)
     {
-        float dx = x - m_scrollStart;
+        float dx = p.x - m_scrollStart;
         float scrollSize;
         if (m_vSize > 1.0f)
         {
@@ -240,7 +237,7 @@ void ScrollArea::mouseMove(int x, int y)
         }
         m_hPosition -= dx / scrollSize;
         updateScrollPosition();
-        m_scrollStart = x;
+        m_scrollStart = p.x;
     }
 }
 
@@ -255,36 +252,35 @@ void ScrollArea::mouseLeave()
     Widget::mouseLeave();
 }
 
-void ScrollArea::mouseDown(uint8_t key, int x, int y)
+void ScrollArea::mouseDown(uint8_t key, const Vector &p)
 {
-    Vector pos(x, y);
-    if (m_vScroll.mapToParent(m_vScroll.getBoundingRect()).contains(pos))
+    if (m_vScroll.mapToParent(m_vScroll.getBoundingRect()).contains(p))
     {
         m_scrollDrag = VERTICAL;
-        m_scrollStart = y;
+        m_scrollStart = p.y;
     }
-    else if (m_hScroll.mapToParent(m_hScroll.getBoundingRect()).contains(pos))
+    else if (m_hScroll.mapToParent(m_hScroll.getBoundingRect()).contains(p))
     {
         m_scrollDrag = HORIZONTAL;
-        m_scrollStart = x;
+        m_scrollStart = p.x;
     }
-    Widget::mouseDown(key, x, y);
+    Widget::mouseDown(key, p);
 }
 
-void ScrollArea::mouseUp(uint8_t key, int x, int y)
+void ScrollArea::mouseUp(uint8_t key, const Vector &p)
 {
-    Widget::mouseUp(key, x, y);
+    Widget::mouseUp(key, p);
     if (m_scrollDrag != NONE)
     {
 
-        if (!getBoundingRect().contains(Vector(x, y)))
+        if (!getBoundingRect().contains(p))
             mouseLeave();
         Button *scroll = 0;
         if (m_scrollDrag == VERTICAL)
             scroll = &m_vScroll;
         if (m_scrollDrag == HORIZONTAL)
             scroll = &m_hScroll;
-        if ((scroll) && (!scroll->mapToParent(scroll->getBoundingRect()).contains(Vector(x, y))))
+        if ((scroll) && (!scroll->mapToParent(scroll->getBoundingRect()).contains(p)))
             scroll->mouseLeave();
         m_scrollDrag = NONE;
     }

@@ -185,7 +185,7 @@ void CheckBox::mouseLeave()
     Widget::mouseLeave();
 }
 
-void CheckBox::mouseClick(int x, int y)
+void CheckBox::mouseClick(const Vector &p)
 {
     lock();
     setChecked(!m_checked);

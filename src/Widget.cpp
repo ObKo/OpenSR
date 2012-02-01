@@ -81,14 +81,13 @@ Widget::~Widget()
         wparent->removeWidget(this);
 }
 
-void Widget::mouseMove(int x, int y)
+void Widget::mouseMove(const Vector& p)
 {
     lock();
     for (std::list<Widget*>::reverse_iterator i = m_childWidgets.rbegin(); i != m_childWidgets.rend(); ++i)
     {
         Rect bb = (*i)->mapToParent((*i)->getBoundingRect());
-        Vector mouse = Vector(x, y);
-        if (bb.contains(mouse))
+        if (bb.contains(p))
         {
             if ((*i) != m_currentChild)
             {
@@ -97,8 +96,7 @@ void Widget::mouseMove(int x, int y)
                 m_currentChild = *i;
                 m_currentChild->mouseEnter();
             }
-            Vector m = (*i)->mapFromParent(mouse);
-            (*i)->mouseMove(m.x, m.y);
+            (*i)->mouseMove((*i)->mapFromParent(p));
             unlock();
             return;
         }
@@ -107,6 +105,26 @@ void Widget::mouseMove(int x, int y)
         m_currentChild->mouseLeave();
     m_currentChild = 0;
     unlock();
+}
+
+void Widget::mouseMove(float x, float y)
+{
+    mouseMove(Vector(x, y));
+}
+
+void Widget::mouseDown(uint8_t key, float x, float y)
+{
+    mouseDown(key, Vector(x, y));
+}
+
+void Widget::mouseUp(uint8_t key, float x, float y)
+{
+    mouseUp(key, Vector(x, y));
+}
+
+void Widget::mouseClick(float x, float y)
+{
+    mouseClick(Vector(x, y));
 }
 
 void Widget::mouseEnter()
@@ -126,36 +144,40 @@ void Widget::mouseLeave()
     unlock();
 }
 
-void Widget::mouseDown(uint8_t key, int x, int y)
-{
-    lock();
-    if (key == SDL_BUTTON_LEFT)
-        m_leftMouseButtonPressed = true;
-    if (m_currentChild)
-    {
-        Vector pos = m_currentChild->mapFromParent(Vector(x, y));
-        m_currentChild->mouseDown(key, pos.x, pos.y);
-    }
-    unlock();
-}
-
-void Widget::mouseUp(uint8_t key, int x, int y)
+void Widget::mouseDown(uint8_t key, const Vector& p)
 {
     lock();
     if (m_currentChild)
     {
-        Vector pos = m_currentChild->mapFromParent(Vector(x, y));
-        m_currentChild->mouseUp(key, pos.x, pos.y);
+        m_currentChild->mouseDown(key, m_currentChild->mapFromParent(p));
     }
-    if (m_leftMouseButtonPressed && (key == SDL_BUTTON_LEFT))
+    else
     {
-        m_leftMouseButtonPressed = false;
-        mouseClick(x, y);
+        if (key == SDL_BUTTON_LEFT)
+            m_leftMouseButtonPressed = true;
     }
     unlock();
 }
 
-void Widget::mouseClick(int x, int y)
+void Widget::mouseUp(uint8_t key, const Vector& p)
+{
+    lock();
+    if (m_currentChild)
+    {
+        m_currentChild->mouseUp(key, m_currentChild->mapFromParent(p));
+    }
+    else
+    {
+        if (m_leftMouseButtonPressed && (key == SDL_BUTTON_LEFT))
+        {
+            m_leftMouseButtonPressed = false;
+            mouseClick(p);
+        }
+    }
+    unlock();
+}
+
+void Widget::mouseClick(const Vector &p)
 {
 }
 

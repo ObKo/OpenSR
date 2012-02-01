@@ -54,13 +54,13 @@ public:
     virtual void draw() const;
 
     virtual Rect getBoundingRect() const;
-    virtual void mouseMove(int x, int y);
+
     virtual void mouseEnter();
     virtual void mouseLeave();
-
-    virtual void mouseDown(uint8_t key, int x, int y);
-    virtual void mouseUp(uint8_t key, int x, int y);
-    virtual void mouseClick(int x, int y);
+    virtual void mouseMove(const Vector &p);
+    virtual void mouseDown(uint8_t key, const Vector &p);
+    virtual void mouseUp(uint8_t key, const Vector &p);
+    virtual void mouseClick(const Vector &p);
 
     virtual void processLogic(int dt);
 
