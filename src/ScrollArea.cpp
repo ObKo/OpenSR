@@ -170,6 +170,7 @@ Rect ScrollArea::getBoundingRect() const
 
 void ScrollArea::mouseMove(const Vector &p)
 {
+    lock();
     if (!m_node)
         return;
 
@@ -239,6 +240,7 @@ void ScrollArea::mouseMove(const Vector &p)
         updateScrollPosition();
         m_scrollStart = p.x;
     }
+    unlock();
 }
 
 void ScrollArea::mouseEnter()
@@ -255,7 +257,17 @@ void ScrollArea::mouseLeave()
 void ScrollArea::mouseDown(uint8_t key, const Vector &p)
 {
     Widget::mouseDown(key, p);
-    if (m_leftMouseButtonPressed)
+    if (key == SDL_BUTTON_WHEELUP)
+    {
+        m_vPosition += 10.0f / m_height;
+        updateScrollPosition();
+    }
+    else if (key == SDL_BUTTON_WHEELDOWN)
+    {
+        m_vPosition -= 10.0f / m_height;
+        updateScrollPosition();
+    }
+    else if (m_leftMouseButtonPressed)
     {
         if (m_vScroll.mapToParent(m_vScroll.getBoundingRect()).contains(p))
         {
