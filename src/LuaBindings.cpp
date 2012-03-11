@@ -32,6 +32,9 @@
 #include "Button.h"
 #include "LuaWidget.h"
 #include "WidgetNode.h"
+#include "CheckBox.h"
+#include "ScrollArea.h"
+#include "NinePatch.h"
 #include <libRanger.h>
 #include <fstream>
 #include <string>
@@ -274,6 +277,44 @@ lua_State *initLuaState()
         .def(luabind::constructor<const std::wstring&, const std::wstring&, const std::wstring&, Widget*>())
         .def(luabind::constructor<const std::wstring&, const std::wstring&, const std::wstring&>()),
 
+        luabind::class_<CheckBox, Widget>("CheckBox")
+        .def(luabind::constructor<boost::shared_ptr<Texture>, boost::shared_ptr<Texture>, const std::wstring&, Rangers::Widget*>())
+        .def(luabind::constructor<boost::shared_ptr<Texture>, boost::shared_ptr<Texture>, const std::wstring&>())
+        .def(luabind::constructor<const std::wstring&, const std::wstring&, const std::wstring&, Rangers::Widget*>())
+        .def(luabind::constructor<const std::wstring&, const std::wstring&, const std::wstring&>())
+        .def("setChecked", &CheckBox::setChecked)
+        .def("setText", &CheckBox::setText)
+        .def("checked", &CheckBox::checked)
+        .def("text", &CheckBox::text),
+
+        luabind::class_<NinePatch, Sprite>("NinePatch")
+        .def(luabind::constructor<Object*>())
+        .def(luabind::constructor<const std::wstring&, Object*>())
+        .def(luabind::constructor<>())
+        .def(luabind::constructor<const std::wstring&>()),
+
+        luabind::class_<ScrollArea, Widget>("ScrollArea")
+        .def(luabind::constructor<const ScrollBarStyle&, WidgetNode*, Widget*>())
+        .def(luabind::constructor<const ScrollBarStyle&, WidgetNode*>())
+        .def(luabind::constructor<const ScrollBarStyle&>())
+        .def("setNode", &ScrollArea::setNode),
+
+        luabind::class_<ResourceDescriptor>("ResourceDescriptor"),
+
+        luabind::class_<ButtonStyle>("ButtonStyle")
+        .def_readwrite("normal", &ButtonStyle::normal)
+        .def_readwrite("hovered", &ButtonStyle::hovered)
+        .def_readwrite("pressed", &ButtonStyle::pressed),
+
+        luabind::class_<ScrollBarStyle>("ScrollBarStyle")
+        .def_readwrite("upButton", &ScrollBarStyle::upButton)
+        .def_readwrite("scroll", &ScrollBarStyle::scroll)
+        .def_readwrite("downButton", &ScrollBarStyle::downButton),
+
+        luabind::class_<Skin>("Skin")
+        .def_readwrite("buttonStyle", &Skin::buttonStyle)
+        .def_readwrite("scrollStyle", &Skin::scrollStyle),
+
         luabind::class_<Engine>("Engine")
         .def("quit", &Engine::quit)
         .def("markToUpdate", &Engine::markToUpdate)
@@ -299,11 +340,6 @@ lua_State *initLuaState()
         .def("loadFont", &ResourceManager::loadFont)
     ];
 
-    /*
-    tolua_CheckBox_open(luaState);
-    tolua_NinePatch_open(luaState);
-    tolua_ScrollArea_open(luaState);
-    tolua_Styles_open(luaState);*/
     luabind::globals(luaState)["engine"] = Engine::instance();
     luabind::globals(luaState)["resources"] = ResourceManager::instance();
     return luaState;
