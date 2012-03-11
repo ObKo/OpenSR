@@ -30,7 +30,8 @@ void WidgetNode::draw() const
     if (!prepareDraw())
         return;
 
-    for (std::list<Object*>::const_iterator i = m_children.begin(); i != m_children.end(); i++)
+    std::list<Object*> children = m_children;
+    for (std::list<Object*>::const_iterator i = children.begin(); i != children.end(); i++)
         (*i)->draw();
 
     endDraw();
@@ -39,7 +40,8 @@ void WidgetNode::draw() const
 void WidgetNode::processLogic(int dt)
 {
     lock();
-    for (std::list<Object*>::const_iterator i = m_children.begin(); i != m_children.end(); i++)
+    std::list<Object*> children = m_children;
+    for (std::list<Object*>::const_iterator i = children.begin(); i != children.end(); i++)
         (*i)->processLogic(dt);
     unlock();
 }

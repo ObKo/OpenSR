@@ -25,23 +25,21 @@
 #include "ResourceManager.h"
 #include "LuaBindings.h"
 #include "Engine.h"
-#include <tolua++.h>
 #include <libRanger.h>
+#include <luabind/function.hpp>
+#include <luabind/class.hpp>
+#include <luabind/luabind.hpp>
 
 namespace Rangers
 {
-class LuaDeleter
+void luaDeleter(lua_State*& ptr)
 {
-public:
-    void operator()(lua_State*& ptr)
+    if (ptr)
     {
-        if (ptr)
-        {
-            lua_close(ptr);
-            ptr = 0;
-        }
+        lua_close(ptr);
+        ptr = 0;
     }
-};
+}
 
 //TODO: Lua errors handling
 LuaWidget::LuaActionListener::LuaActionListener(LuaWidget *widget): m_widget(widget)
@@ -52,16 +50,20 @@ LuaWidget::LuaActionListener::LuaActionListener(LuaWidget *widget): m_widget(wid
 void LuaWidget::LuaActionListener::actionPerformed(const Action &action)
 {
     m_widget->lock();
-    lua_getglobal(m_widget->m_luaState.get(), "actionPerformed");
-    if (lua_isnil(m_widget->m_luaState.get(), -1))
+    luabind::object actionPerformedFunc = luabind::globals(m_widget->m_luaState.get())["actionPerformed"];
+    if (!actionPerformedFunc.is_valid())
     {
         m_widget->unlock();
         return;
     }
-    //FIXME: const * -> *
-    tolua_pushusertype(m_widget->m_luaState.get(), (void *)&action, "Rangers::Action");
-    if (lua_pcall(m_widget->m_luaState.get(), 1, 0, 0))
-        Log::warning() << "[LuaWidget] " << lua_tostring(m_widget->m_luaState.get(), -1);
+    try
+    {
+        luabind::call_function<void>(actionPerformedFunc, action);
+    }
+    catch (luabind::error e)
+    {
+        luaErrorHandler(m_widget->m_luaState.get());
+    }
 
     m_widget->unlock();
 }
@@ -102,7 +104,7 @@ LuaWidget::LuaWidget(const std::wstring& name, Widget *parent)
     }
 }
 
-LuaWidget::LuaWidget(Rangers::Widget* parent): Widget(parent), m_luaState(boost::shared_ptr<lua_State>((lua_State*)0, LuaDeleter()))
+LuaWidget::LuaWidget(Rangers::Widget* parent): Widget(parent), m_luaState(boost::shared_ptr<lua_State>((lua_State*)0, luaDeleter))
 {
     m_actionListener = new LuaActionListener(this);
 }
@@ -118,8 +120,7 @@ LuaWidget::LuaWidget(const LuaWidget& other): Widget(other)
     m_actionListener = other.m_actionListener;
     if (m_luaState)
     {
-        tolua_pushusertype(m_luaState.get(), this, "Rangers::LuaWidget");
-        lua_setglobal(m_luaState.get(), "this");
+        luabind::globals(m_luaState.get())["this"] = this;
     }
     //FIXME: Do something with action listener and LUA.
     m_actionListener->setAssociatedWidget(this);
@@ -132,8 +133,7 @@ LuaWidget& LuaWidget::operator=(const LuaWidget& other)
     m_actionListener = other.m_actionListener;
     if (m_luaState)
     {
-        tolua_pushusertype(m_luaState.get(), this, "Rangers::LuaWidget");
-        lua_setglobal(m_luaState.get(), "this");
+        luabind::globals(m_luaState.get())["this"] = this;
     }
     //FIXME: Do something with action listener and LUA.
     m_actionListener->setAssociatedWidget(this);
@@ -155,28 +155,46 @@ void LuaWidget::draw() const
 Rect LuaWidget::getBoundingRect() const
 {
     lock();
-    lua_getglobal(m_luaState.get(), "getBoundingRect");
 
-    lua_pcall(m_luaState.get(), 0, 1, 0);
-
-    Rect *bp = ((Rect*)(tolua_tousertype(m_luaState.get(), -1, 0)));
-    lua_pop(m_luaState.get(), 1);
-
-    if (!bp)
+    luabind::object getBoundingRectFunc = luabind::globals(m_luaState.get())["getBoundingRect"];
+    if (!getBoundingRectFunc.is_valid() || luabind::type(getBoundingRectFunc) != LUA_TFUNCTION)
     {
         unlock();
         return Widget::getBoundingRect();
     }
-
+    Rect bb;
+    try
+    {
+        bb = luabind::call_function<Rect>(getBoundingRectFunc);
+    }
+    catch (luabind::error e)
+    {
+        luaErrorHandler(m_luaState.get());
+        unlock();
+        return Widget::getBoundingRect();
+    }
     unlock();
-    return *bp + Widget::getBoundingRect();
+    return bb + Widget::getBoundingRect();
 }
 
 void LuaWidget::mouseEnter()
 {
     lock();
-    lua_getglobal(m_luaState.get(), "mouseEnter");
-    lua_pcall(m_luaState.get(), 0, 0, 0);
+    luabind::object func = luabind::globals(m_luaState.get())["mouseEnter"];
+    if (!func.is_valid() || luabind::type(func) != LUA_TFUNCTION)
+    {
+        unlock();
+        Widget::mouseEnter();
+        return;
+    }
+    try
+    {
+        luabind::call_function<void>(func);
+    }
+    catch (luabind::error e)
+    {
+        luaErrorHandler(m_luaState.get());
+    }
     unlock();
     Widget::mouseEnter();
 }
@@ -184,8 +202,21 @@ void LuaWidget::mouseEnter()
 void LuaWidget::mouseLeave()
 {
     lock();
-    lua_getglobal(m_luaState.get(), "mouseLeave");
-    lua_pcall(m_luaState.get(), 0, 0, 0);
+    luabind::object func = luabind::globals(m_luaState.get())["mouseLeave"];
+    if (!func.is_valid() || luabind::type(func) != LUA_TFUNCTION)
+    {
+        unlock();
+        Widget::mouseLeave();
+        return;
+    }
+    try
+    {
+        luabind::call_function<void>(func);
+    }
+    catch (luabind::error e)
+    {
+        luaErrorHandler(m_luaState.get());
+    }
     unlock();
     Widget::mouseLeave();
 }
@@ -193,10 +224,21 @@ void LuaWidget::mouseLeave()
 void LuaWidget::mouseMove(const Vector &p)
 {
     lock();
-    lua_getglobal(m_luaState.get(), "mouseMove");
-    lua_pushinteger(m_luaState.get(), p.x);
-    lua_pushinteger(m_luaState.get(), p.y);
-    lua_pcall(m_luaState.get(), 2, 0, 0);
+    luabind::object func = luabind::globals(m_luaState.get())["mouseMove"];
+    if (!func.is_valid() || luabind::type(func) != LUA_TFUNCTION)
+    {
+        unlock();
+        Widget::mouseMove(p);
+        return;
+    }
+    try
+    {
+        luabind::call_function<void>(func, p.x, p.y);
+    }
+    catch (luabind::error e)
+    {
+        luaErrorHandler(m_luaState.get());
+    }
     unlock();
     Widget::mouseMove(p);
 }
@@ -204,11 +246,21 @@ void LuaWidget::mouseMove(const Vector &p)
 void LuaWidget::mouseDown(uint8_t key, const Vector &p)
 {
     lock();
-    lua_getglobal(m_luaState.get(), "mouseDown");
-    lua_pushinteger(m_luaState.get(), key);
-    lua_pushinteger(m_luaState.get(), p.x);
-    lua_pushinteger(m_luaState.get(), p.y);
-    lua_pcall(m_luaState.get(), 3, 0, 0);
+    luabind::object func = luabind::globals(m_luaState.get())["mouseDown"];
+    if (!func.is_valid() || luabind::type(func) != LUA_TFUNCTION)
+    {
+        unlock();
+        Widget::mouseDown(key, p);
+        return;
+    }
+    try
+    {
+        luabind::call_function<void>(func, key, p.x, p.y);
+    }
+    catch (luabind::error e)
+    {
+        luaErrorHandler(m_luaState.get());
+    }
     unlock();
     Widget::mouseDown(key, p);
 }
@@ -216,11 +268,21 @@ void LuaWidget::mouseDown(uint8_t key, const Vector &p)
 void LuaWidget::mouseUp(uint8_t key, const Vector &p)
 {
     lock();
-    lua_getglobal(m_luaState.get(), "mouseUp");
-    lua_pushinteger(m_luaState.get(), key);
-    lua_pushinteger(m_luaState.get(), p.x);
-    lua_pushinteger(m_luaState.get(), p.y);
-    lua_pcall(m_luaState.get(), 3, 0, 0);
+    luabind::object func = luabind::globals(m_luaState.get())["mouseUp"];
+    if (!func.is_valid() || luabind::type(func) != LUA_TFUNCTION)
+    {
+        unlock();
+        Widget::mouseUp(key, p);
+        return;
+    }
+    try
+    {
+        luabind::call_function<void>(func, key, p.x, p.y);
+    }
+    catch (luabind::error e)
+    {
+        luaErrorHandler(m_luaState.get());
+    }
     unlock();
     Widget::mouseUp(key, p);
 }
@@ -228,10 +290,21 @@ void LuaWidget::mouseUp(uint8_t key, const Vector &p)
 void LuaWidget::mouseClick(const Vector &p)
 {
     lock();
-    lua_getglobal(m_luaState.get(), "mouseClick");
-    lua_pushinteger(m_luaState.get(), p.x);
-    lua_pushinteger(m_luaState.get(), p.y);
-    lua_pcall(m_luaState.get(), 2, 0, 0);
+    luabind::object func = luabind::globals(m_luaState.get())["mouseClick"];
+    if (!func.is_valid() || luabind::type(func) != LUA_TFUNCTION)
+    {
+        unlock();
+        Widget::mouseClick(p);
+        return;
+    }
+    try
+    {
+        luabind::call_function<void>(func, p.x, p.y);
+    }
+    catch (luabind::error e)
+    {
+        luaErrorHandler(m_luaState.get());
+    }
     unlock();
     Widget::mouseClick(p);
 }
@@ -239,55 +312,46 @@ void LuaWidget::mouseClick(const Vector &p)
 void LuaWidget::processLogic(int dt)
 {
     lock();
-    for (std::list<Object*>::const_iterator i = m_children.begin(); i != m_children.end(); i++)
+    std::list<Object*> children = m_children;
+    for (std::list<Object*>::const_iterator i = children.begin(); i != children.end(); i++)
         (*i)->processLogic(dt);
-    lua_getglobal(m_luaState.get(), "processLogic");
-    lua_pushinteger(m_luaState.get(), dt);
-    lua_pcall(m_luaState.get(), 1, 0, 0);
+
+    luabind::object func = luabind::globals(m_luaState.get())["processLogic"];
+    if (!func.is_valid() || luabind::type(func) != LUA_TFUNCTION)
+    {
+        unlock();
+        return;
+    }
+    try
+    {
+        luabind::call_function<void>(func, dt);
+    }
+    catch (luabind::error e)
+    {
+        luaErrorHandler(m_luaState.get());
+    }
     unlock();
 }
 
 void LuaWidget::initLuaState()
 {
     m_actionListener = new LuaActionListener(this);
-    m_luaState = boost::shared_ptr<lua_State>(lua_open(), LuaDeleter());
-    luaopen_base(m_luaState.get());
-    luaopen_table(m_luaState.get());
-    luaopen_math(m_luaState.get());
-    tolua_Engine_open(m_luaState.get());
-    tolua_libRanger_open(m_luaState.get());
-    tolua_Object_open(m_luaState.get());
-    tolua_Types_open(m_luaState.get());
-    tolua_ResourceManager_open(m_luaState.get());
-    tolua_Sprite_open(m_luaState.get());
-    tolua_AnimatedSprite_open(m_luaState.get());
-    tolua_LuaBindings_open(m_luaState.get());
-    tolua_AnimatedTexture_open(m_luaState.get());
-    tolua_LuaWidget_open(m_luaState.get());
-    tolua_GAISprite_open(m_luaState.get());
-    tolua_Button_open(m_luaState.get());
-    tolua_Node_open(m_luaState.get());
-    tolua_WidgetNode_open(m_luaState.get());
-    tolua_CheckBox_open(m_luaState.get());
-    tolua_NinePatch_open(m_luaState.get());
-    tolua_ScrollArea_open(m_luaState.get());
-    tolua_Styles_open(m_luaState.get());
-    tolua_pushusertype(m_luaState.get(), this, "Rangers::LuaWidget");
-    lua_setglobal(m_luaState.get(), "this");
-    tolua_pushusertype(m_luaState.get(), m_actionListener, "Rangers::LuaWidget::LuaActionListener");
-    lua_setglobal(m_luaState.get(), "actionListener");
-    tolua_pushusertype(m_luaState.get(), Engine::instance(), "Rangers::Engine");
-    lua_setglobal(m_luaState.get(), "engine");
-    tolua_pushusertype(m_luaState.get(), ResourceManager::instance(), "Rangers::ResourceManager");
-    lua_setglobal(m_luaState.get(), "resources");
+    m_luaState = boost::shared_ptr<lua_State>(Rangers::initLuaState(), luaDeleter);
+    luabind::globals(m_luaState.get())["this"] = this;
+    luabind::globals(m_luaState.get())["actionListener"] = m_actionListener;
+
     lua_atpanic(m_luaState.get(), LuaWidget::luaErrorHandler);
+}
+
+void LuaWidget::dispose()
+{
+    Engine::instance()->markWidgetDeleting(this);
 }
 
 int LuaWidget::luaErrorHandler(lua_State* state)
 {
-    std::wstring error = fromUTF8(lua_tostring(state, 1));
-    lua_getglobal(state, "this");
-    LuaWidget *widget = static_cast<LuaWidget*>(tolua_tousertype(state, -1, 0));
+    std::wstring error = fromUTF8(lua_tostring(state, -1));
+    LuaWidget *widget = luabind::object_cast<LuaWidget*>(luabind::globals(state)["this"]);
     assert(widget != 0);
     Log::error() << "[LuaWidget] " << error;
     Engine::instance()->markWidgetDeleting(widget);

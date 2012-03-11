@@ -51,6 +51,8 @@ public:
 
     virtual ~LuaWidget();
 
+    void dispose();
+
     virtual void draw() const;
 
     virtual Rect getBoundingRect() const;

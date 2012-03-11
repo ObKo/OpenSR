@@ -21,18 +21,35 @@
 #include "ResourceManager.h"
 #include "Engine.h"
 #include "Log.h"
-#include <Font.h>
-#include <Texture.h>
-#include <AnimatedTexture.h>
+#include "Font.h"
+#include "Texture.h"
+#include "AnimatedTexture.h"
 #include "GAISprite.h"
-#include <tolua++.h>
+#include "Object.h"
+#include "ActionListener.h"
+#include "Action.h"
+#include "Widget.h"
+#include "Button.h"
+#include "LuaWidget.h"
+#include "WidgetNode.h"
+#include <libRanger.h>
 #include <fstream>
 #include <string>
 #include <cstring>
 #include <cerrno>
+#include <luabind/function.hpp>
+#include <luabind/class.hpp>
+#include <luabind/adopt_policy.hpp>
+#include <luabind/operator.hpp>
 
 namespace Rangers
 {
+
+bool operator==(Object const& lhs, Object const& rhs)
+{
+    return &lhs == &rhs;
+}
+
 int execLuaScript(const std::wstring& name)
 {
     size_t size;
@@ -56,32 +73,239 @@ int execLuaScript(const char *data, size_t size, const std::string& name)
 
 lua_State *initLuaState()
 {
+    using namespace luabind;
     lua_State *luaState = lua_open();
     luaopen_base(luaState);
     luaopen_table(luaState);
     luaopen_math(luaState);
-    tolua_Engine_open(luaState);
-    tolua_libRanger_open(luaState);
-    tolua_Object_open(luaState);
-    tolua_Types_open(luaState);
-    tolua_ResourceManager_open(luaState);
-    tolua_Sprite_open(luaState);
-    tolua_AnimatedSprite_open(luaState);
-    tolua_LuaBindings_open(luaState);
-    tolua_AnimatedTexture_open(luaState);
-    tolua_LuaWidget_open(luaState);
-    tolua_GAISprite_open(luaState);
-    tolua_Button_open(luaState);
-    tolua_Node_open(luaState);
-    tolua_WidgetNode_open(luaState);
+
+    luabind::open(luaState);
+
+    luabind::module(luaState) [
+        luabind::class_<std::wstring>("wstring"),
+
+        namespace_("libRanger")[
+            def("fromCodec", &fromCodec),
+            def("fromUTF8", &fromUTF8),
+            def("fromASCII", &fromASCII),
+            def("fromLocal", &fromLocal),
+            def("toCodec", (std::string(*)(const char*, const std::wstring&))&toCodec),
+            def("toUTF8", &toUTF8),
+            def("toASCII", &toASCII),
+            def("toLocal", &toLocal),
+            def("split", (std::vector<std::wstring>(*)(const std::wstring&, wchar_t))&split),
+            def("suffix", (std::wstring(*)(const std::wstring&))&suffix),
+            def("trim", (std::wstring(*)(const std::wstring&))&trim),
+            def("basename", (std::wstring(*)(const std::wstring&))&basename),
+            def("directory", (std::wstring(*)(const std::wstring&))&directory)
+        ],
+
+        def("L", &fromLua),
+        def("luaDebug", &luaDebug),
+        def("luaWarning", &luaWarning),
+        def("luaError", &luaError),
+        def("execLuaScript", (int (*)(const std::wstring&))&execLuaScript),
+
+        luabind::class_<Vector>("Vector")
+        .def(luabind::constructor<>())
+        .def(luabind::constructor<float, float>())
+        .def_readwrite("x", &Vector::x)
+        .def_readwrite("x", &Vector::x),
+
+        luabind::class_<Rect>("Rect")
+        .def(luabind::constructor<>())
+        .def(luabind::constructor<float, float, float, float>())
+        .def_readwrite("x1", &Rect::x1)
+        .def_readwrite("x2", &Rect::x2)
+        .def_readwrite("y1", &Rect::y1)
+        .def_readwrite("y2", &Rect::y2),
+
+        //TODO: overloading
+        luabind::class_<Object>("Object")
+        .def(const_self == const_self)
+        .def("draw", &Object::draw)
+        .def("processMain", &Object::processMain)
+        .def("processLogic", &Object::processLogic)
+        .def("setPosition", (void (Object::*)(float, float))&Object::setPosition)
+        .def("setRotation", &Object::setRotation)
+        .def("setColor", &Object::setColor)
+        .def("addChild", &Object::addChild)
+        .def("removeChild", &Object::removeChild)
+        .def("setParent", &Object::setParent)
+        .def("position", &Object::position)
+        .def("rotation", &Object::rotation)
+        .def("layer", &Object::layer)
+        .def("parent", &Object::parent)
+        .def("setLayer", &Object::processLogic),
+
+        luabind::class_<Texture>("Texture")
+        .def("width", &Texture::width)
+        .def("height", &Texture::height),
+
+        luabind::class_<AnimatedTexture, Texture>("AnimatedTexture")
+        .def("waitSeek", &AnimatedTexture::waitSeek)
+        .def("waitSize", &AnimatedTexture::waitSize)
+        .def("frameCount", &AnimatedTexture::frameCount),
+
+        luabind::class_<Sprite, Object>("Sprite")
+        .enum_("TextureScaling")
+        [
+            value("TEXTURE_NO", 0),
+            value("TEXTURE_NORMAL", 1),
+            value("TEXTURE_KEEPASPECT", 2),
+            value("TEXTURE_KEEPASPECT_EXPANDING", 3),
+            value("TEXTURE_TILE_X", 4),
+            value("TEXTURE_TILE_Y", 5),
+            value("TEXTURE_TILE", 6)
+        ]
+        .enum_("SpriteXOrigin")
+        [
+            value("POSITION_X_LEFT", 0),
+            value("POSITION_X_RIGHT", 1),
+            value("POSITION_X_CENTER", 2)
+        ]
+        .enum_("SpriteYOrigin")
+        [
+            value("POSITION_Y_TOP", 0),
+            value("POSITION_Y_BOTTOM", 1),
+            value("POSITION_Y_CENTER", 2)
+        ]
+        .def(luabind::constructor<boost::shared_ptr<Texture>, Object*, TextureScaling, SpriteXOrigin, SpriteYOrigin>())
+        .def(luabind::constructor<boost::shared_ptr<Texture>, Object*>())
+        .def(luabind::constructor<boost::shared_ptr<Texture> >())
+        .def(luabind::constructor<std::wstring, Object*, TextureScaling, SpriteXOrigin, SpriteYOrigin>())
+        .def(luabind::constructor<std::wstring, Object*>())
+        .def(luabind::constructor<std::wstring>())
+        .def(luabind::constructor<const TextureRegion&, Object*>())
+        .def(luabind::constructor<const TextureRegion&>())
+        .def("setOrigin", &Sprite::setOrigin)
+        .def("setGeometry", &Sprite::setGeometry)
+        .def("setTextureScaling", &Sprite::setTextureScaling)
+        .def("setTexture", &Sprite::setTexture)
+        .def("setWidth", &Sprite::setWidth)
+        .def("setHeight", &Sprite::setHeight)
+        .def("width", &Sprite::width)
+        .def("height", &Sprite::height),
+
+        luabind::class_<AnimatedSprite, Sprite>("AnimatedSprite")
+        .def(luabind::constructor<boost::shared_ptr<AnimatedTexture>, Object*>())
+        .def(luabind::constructor<boost::shared_ptr<AnimatedTexture> >())
+        .def(luabind::constructor<std::wstring, Object*>())
+        .def(luabind::constructor<std::wstring>())
+        .def("setSingleShot", &AnimatedSprite::setSingleShot)
+        .def("start", &AnimatedSprite::start)
+        .def("stop", &AnimatedSprite::stop)
+        .def("reset", &AnimatedSprite::reset)
+        .def("isStarted", &AnimatedSprite::isStarted)
+        .def("isSingleShot", &AnimatedSprite::isSingleShot)
+        .def("currentFrame", &AnimatedSprite::currentFrame)
+        .def("frameRate", &AnimatedSprite::frameRate)
+        .def("setFrame", &AnimatedSprite::setFrame)
+        .def("setFrameRate", &AnimatedSprite::setFrameRate),
+
+        luabind::class_<GAISprite, AnimatedSprite>("GAISprite")
+        .def(luabind::constructor<std::wstring, Object*>())
+        .def(luabind::constructor<std::wstring>()),
+
+        luabind::class_<Action>("Action")
+        .enum_("Type")
+        [
+            value("BUTTON_CLICKED", 0),
+            value("KEY_PRESSED", 1),
+            value("CHECKBOX_TOGGLED", 2)
+        ]
+        .def("source", &Action::source)
+        .def("type", &Action::type)
+        .def("getStringArgument", &Action::getStringArgument)
+        .def("getRectArgument", &Action::getRectArgument)
+        .def("getKeyArgument", &Action::getKeyArgument)
+        .def("getBoolArgument", &Action::getBoolArgument),
+
+
+        luabind::class_<ActionListener>("ActionListener")
+        .def("actionPerformed", &ActionListener::actionPerformed),
+
+        luabind::class_<Widget, Object>("Widget")
+        .def("getBoundingRect", &Widget::getBoundingRect)
+        .def("mouseEnter", &Widget::mouseEnter)
+        .def("mouseLeave", &Widget::mouseLeave)
+        .def("mouseMove", (void (Widget::*)(float, float))&Widget::mouseMove)
+        .def("mouseDown", (void (Widget::*)(uint8_t key, float, float))&Widget::mouseDown)
+        .def("mouseUp", (void (Widget::*)(uint8_t key, float, float))&Widget::mouseUp)
+        .def("mouseClick", (void (Widget::*)(float, float))&Widget::mouseClick)
+        .def("width", &Widget::width)
+        .def("height", &Widget::height)
+        .def("setWidth", &Widget::setWidth)
+        .def("setHeight", &Widget::setHeight)
+        .def("setGeometry", &Widget::setGeometry)
+        .def("addWidget", &Widget::addWidget)
+        .def("removeWidget", &Widget::removeWidget)
+        .def("addListener", &Widget::addListener)
+        .def("removeListener", &Widget::removeListener),
+
+
+        luabind::class_<Node, Object>("Node")
+        .def(luabind::constructor<Widget*>())
+        .def(luabind::constructor<>()),
+        luabind::class_<WidgetNode, Widget>("WidgetNode")
+        .def(luabind::constructor<Widget*>())
+        .def(luabind::constructor<>()),
+
+        luabind::class_<LuaWidget, Widget>("LuaWidget")
+        .def(luabind::constructor<const std::wstring&, Widget*>())
+        .def(luabind::constructor<const std::wstring&>())
+        .def("dispose", &LuaWidget::dispose)
+        .scope
+        [
+            class_<LuaWidget::LuaActionListener, ActionListener>("LuaActionListener")
+        ],
+
+        luabind::class_<Button, Widget>("Button")
+        .def(luabind::constructor<boost::shared_ptr<Texture>, Widget*>())
+        .def(luabind::constructor<boost::shared_ptr<Texture> >())
+        .def(luabind::constructor<boost::shared_ptr<Texture>, boost::shared_ptr<Texture>, Widget*>())
+        .def(luabind::constructor<boost::shared_ptr<Texture>, boost::shared_ptr<Texture> >())
+        .def(luabind::constructor<boost::shared_ptr<Texture>, boost::shared_ptr<Texture>, boost::shared_ptr<Texture>, Widget*>())
+        .def(luabind::constructor<boost::shared_ptr<Texture>, boost::shared_ptr<Texture>, boost::shared_ptr<Texture> >())
+        .def(luabind::constructor<const std::wstring&, Widget*>())
+        .def(luabind::constructor<const std::wstring&>())
+        .def(luabind::constructor<const std::wstring&, const std::wstring&, Widget*>())
+        .def(luabind::constructor<const std::wstring&, const std::wstring&>())
+        .def(luabind::constructor<const std::wstring&, const std::wstring&, const std::wstring&, Widget*>())
+        .def(luabind::constructor<const std::wstring&, const std::wstring&, const std::wstring&>()),
+
+        luabind::class_<Engine>("Engine")
+        .def("quit", &Engine::quit)
+        .def("markToUpdate", &Engine::markToUpdate)
+        .def("unmarkToUpdate", &Engine::unmarkToUpdate)
+        .def("addWidget", &Engine::addWidget, adopt(_2))
+        .def("focusWidget", &Engine::focusWidget, adopt(_2))
+        .def("removeWidget", &Engine::removeWidget, adopt(_2))
+        .def("markWidgetDeleting", &Engine::markWidgetDeleting, adopt(_2))
+        .def("coreFont", &Engine::coreFont)
+        .def("serviceFont", &Engine::serviceFont)
+        .def("screenHeight", &Engine::screenHeight)
+        .def("screenWidth", &Engine::screenWidth)
+        .def("rootNode", &Engine::rootNode)
+        .def("defaultSkin", &Engine::defaultSkin)
+        .def("setDefaultSkin", (void (Engine::*)(const std::wstring&))&Engine::setDefaultSkin),
+
+        luabind::class_<ResourceManager>("ResourceManager")
+        .def("addDir", &ResourceManager::addDir)
+        .def("addMapping", &ResourceManager::addMapping)
+        .def("loadTexture", &ResourceManager::loadTexture)
+        .def("loadAnimation", (boost::shared_ptr<Rangers::AnimatedTexture> (ResourceManager::*)(const std::wstring&, bool))&ResourceManager::loadAnimation)
+        .def("loadAnimation", (boost::shared_ptr<Rangers::AnimatedTexture> (ResourceManager::*)(const std::wstring&))&ResourceManager::loadAnimation)
+        .def("loadFont", &ResourceManager::loadFont)
+    ];
+
+    /*
     tolua_CheckBox_open(luaState);
     tolua_NinePatch_open(luaState);
     tolua_ScrollArea_open(luaState);
-    tolua_Styles_open(luaState);
-    tolua_pushusertype(luaState, Engine::instance(), "Rangers::Engine");
-    lua_setglobal(luaState, "engine");
-    tolua_pushusertype(luaState, ResourceManager::instance(), "Rangers::ResourceManager");
-    lua_setglobal(luaState, "resources");
+    tolua_Styles_open(luaState);*/
+    luabind::globals(luaState)["engine"] = Engine::instance();
+    luabind::globals(luaState)["resources"] = ResourceManager::instance();
     return luaState;
 }
 
@@ -90,7 +314,7 @@ std::wstring fromLua(const char *s)
     return Rangers::fromUTF8(s);
 }
 
-Font* getPointer(boost::shared_ptr<Font> sp)
+/*Font* getPointer(boost::shared_ptr<Font> sp)
 {
     return sp.get();
 }
@@ -108,7 +332,7 @@ AnimatedTexture* getPointer(boost::shared_ptr<AnimatedTexture> sp)
 GAISprite *getPointer(boost::shared_ptr<GAISprite> sp)
 {
     return sp.get();
-}
+}*/
 
 void luaDebug(std::wstring s)
 {
@@ -125,7 +349,7 @@ void luaError(std::wstring s)
     Log::error() << L"Lua: " << s;
 }
 
-void freePointer(boost::shared_ptr<Font> *sp)
+/*void freePointer(boost::shared_ptr<Font> *sp)
 {
     delete sp;
 }
@@ -138,5 +362,5 @@ void freePointer(boost::shared_ptr<Texture> *sp)
 void freePointer(boost::shared_ptr<AnimatedTexture> *sp)
 {
     delete sp;
-}
+}*/
 }

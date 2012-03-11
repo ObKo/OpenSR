@@ -28,27 +28,6 @@ extern "C"
 #include <lauxlib.h>
 }
 
-int tolua_libRanger_open(lua_State* tolua_S);
-int tolua_Engine_open(lua_State* tolua_S);
-int tolua_Object_open(lua_State* tolua_S);
-int tolua_Types_open(lua_State* tolua_S);
-int tolua_ResourceManager_open(lua_State* tolua_S);
-int tolua_Sprite_open(lua_State* tolua_S);
-int tolua_AnimatedSprite_open(lua_State* tolua_S);
-int tolua_LuaBindings_open(lua_State* tolua_S);
-int tolua_Texture_open(lua_State* tolua_S);
-int tolua_AnimatedTexture_open(lua_State* tolua_S);
-int tolua_LuaWidget_open(lua_State* tolua_S);
-int tolua_GAISprite_open(lua_State* tolua_S);
-int tolua_Button_open(lua_State* tolua_S);
-int tolua_Widget_open(lua_State* tolua_S);
-int tolua_WidgetNode_open(lua_State* tolua_S);
-int tolua_Node_open(lua_State* tolua_S);
-int tolua_CheckBox_open(lua_State* tolua_S);
-int tolua_NinePatch_open(lua_State* tolua_S);
-int tolua_ScrollArea_open(lua_State* tolua_S);
-int tolua_Styles_open(lua_State* tolua_S);
-
 namespace Rangers
 {
 class AnimatedTexture;
@@ -59,14 +38,6 @@ int execLuaScript(const std::wstring& fileName);
 int execLuaScript(const char *data, size_t size, const std::string& name);
 lua_State *initLuaState();
 std::wstring fromLua(const char *s);
-Font *getPointer(boost::shared_ptr<Font> sp);
-Texture *getPointer(boost::shared_ptr<Texture> sp);
-AnimatedTexture *getPointer(boost::shared_ptr<AnimatedTexture> sp);
-GAISprite *getPointer(boost::shared_ptr<GAISprite> sp);
-
-void freePointer(boost::shared_ptr<Font> *sp);
-void freePointer(boost::shared_ptr<Texture> *sp);
-void freePointer(boost::shared_ptr<AnimatedTexture> *sp);
 
 void luaDebug(std::wstring s);
 void luaWarning(std::wstring s);
