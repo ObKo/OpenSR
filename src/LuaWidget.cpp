@@ -158,8 +158,8 @@ Rect LuaWidget::getBoundingRect() const
 {
     lock();
 
-    luabind::object getBoundingRectFunc = luabind::globals(m_luaState.get())["getBoundingRect"];
-    if (!getBoundingRectFunc.is_valid() || luabind::type(getBoundingRectFunc) != LUA_TFUNCTION)
+    lua_getglobal(m_luaState.get(), "getBoundingRect");
+    if(!lua_isfunction(m_luaState.get(), lua_gettop(m_luaState.get())))
     {
         unlock();
         return Widget::getBoundingRect();
@@ -167,7 +167,7 @@ Rect LuaWidget::getBoundingRect() const
     Rect bb;
     try
     {
-        bb = luabind::call_function<Rect>(getBoundingRectFunc);
+        bb = luabind::call_function<Rect>(m_luaState.get(), "getBoundingRect");
     }
     catch (luabind::error e)
     {
@@ -182,8 +182,8 @@ Rect LuaWidget::getBoundingRect() const
 void LuaWidget::mouseEnter()
 {
     lock();
-    luabind::object func = luabind::globals(m_luaState.get())["mouseEnter"];
-    if (!func.is_valid() || luabind::type(func) != LUA_TFUNCTION)
+    lua_getglobal(m_luaState.get(), "mouseEnter");
+    if(!lua_isfunction(m_luaState.get(), lua_gettop(m_luaState.get())))
     {
         unlock();
         Widget::mouseEnter();
@@ -191,7 +191,7 @@ void LuaWidget::mouseEnter()
     }
     try
     {
-        luabind::call_function<void>(func);
+        luabind::call_function<void>(m_luaState.get(), "mouseEnter");
     }
     catch (luabind::error e)
     {
@@ -204,8 +204,8 @@ void LuaWidget::mouseEnter()
 void LuaWidget::mouseLeave()
 {
     lock();
-    luabind::object func = luabind::globals(m_luaState.get())["mouseLeave"];
-    if (!func.is_valid() || luabind::type(func) != LUA_TFUNCTION)
+    lua_getglobal(m_luaState.get(), "mouseLeave");
+    if(!lua_isfunction(m_luaState.get(), lua_gettop(m_luaState.get())))
     {
         unlock();
         Widget::mouseLeave();
@@ -213,7 +213,7 @@ void LuaWidget::mouseLeave()
     }
     try
     {
-        luabind::call_function<void>(func);
+        luabind::call_function<void>(m_luaState.get(), "mouseLeave");
     }
     catch (luabind::error e)
     {
@@ -226,8 +226,8 @@ void LuaWidget::mouseLeave()
 void LuaWidget::mouseMove(const Vector &p)
 {
     lock();
-    luabind::object func = luabind::globals(m_luaState.get())["mouseMove"];
-    if (!func.is_valid() || luabind::type(func) != LUA_TFUNCTION)
+    lua_getglobal(m_luaState.get(), "mouseMove");
+    if(!lua_isfunction(m_luaState.get(), lua_gettop(m_luaState.get())))
     {
         unlock();
         Widget::mouseMove(p);
@@ -235,7 +235,7 @@ void LuaWidget::mouseMove(const Vector &p)
     }
     try
     {
-        luabind::call_function<void>(func, p.x, p.y);
+        luabind::call_function<void>(m_luaState.get(), "mouseMove", p.x, p.y);
     }
     catch (luabind::error e)
     {
@@ -248,8 +248,8 @@ void LuaWidget::mouseMove(const Vector &p)
 void LuaWidget::mouseDown(uint8_t key, const Vector &p)
 {
     lock();
-    luabind::object func = luabind::globals(m_luaState.get())["mouseDown"];
-    if (!func.is_valid() || luabind::type(func) != LUA_TFUNCTION)
+    lua_getglobal(m_luaState.get(), "mouseDown");
+    if(!lua_isfunction(m_luaState.get(), lua_gettop(m_luaState.get())))
     {
         unlock();
         Widget::mouseDown(key, p);
@@ -257,7 +257,7 @@ void LuaWidget::mouseDown(uint8_t key, const Vector &p)
     }
     try
     {
-        luabind::call_function<void>(func, key, p.x, p.y);
+        luabind::call_function<void>(m_luaState.get(), "mouseDown", key, p.x, p.y);
     }
     catch (luabind::error e)
     {
@@ -270,8 +270,8 @@ void LuaWidget::mouseDown(uint8_t key, const Vector &p)
 void LuaWidget::mouseUp(uint8_t key, const Vector &p)
 {
     lock();
-    luabind::object func = luabind::globals(m_luaState.get())["mouseUp"];
-    if (!func.is_valid() || luabind::type(func) != LUA_TFUNCTION)
+    lua_getglobal(m_luaState.get(), "mouseUp");
+    if(!lua_isfunction(m_luaState.get(), lua_gettop(m_luaState.get())))
     {
         unlock();
         Widget::mouseUp(key, p);
@@ -279,7 +279,7 @@ void LuaWidget::mouseUp(uint8_t key, const Vector &p)
     }
     try
     {
-        luabind::call_function<void>(func, key, p.x, p.y);
+        luabind::call_function<void>(m_luaState.get(), "mouseUp", key, p.x, p.y);
     }
     catch (luabind::error e)
     {
@@ -292,8 +292,8 @@ void LuaWidget::mouseUp(uint8_t key, const Vector &p)
 void LuaWidget::mouseClick(const Vector &p)
 {
     lock();
-    luabind::object func = luabind::globals(m_luaState.get())["mouseClick"];
-    if (!func.is_valid() || luabind::type(func) != LUA_TFUNCTION)
+    lua_getglobal(m_luaState.get(), "mouseClick");
+    if(!lua_isfunction(m_luaState.get(), lua_gettop(m_luaState.get())))
     {
         unlock();
         Widget::mouseClick(p);
@@ -301,7 +301,7 @@ void LuaWidget::mouseClick(const Vector &p)
     }
     try
     {
-        luabind::call_function<void>(func, p.x, p.y);
+        luabind::call_function<void>(m_luaState.get(), "mouseClick", p.x, p.y);
     }
     catch (luabind::error e)
     {
@@ -318,15 +318,15 @@ void LuaWidget::processLogic(int dt)
     for (std::list<Object*>::const_iterator i = children.begin(); i != children.end(); i++)
         (*i)->processLogic(dt);
 
-    luabind::object func = luabind::globals(m_luaState.get())["processLogic"];
-    if (!func.is_valid() || luabind::type(func) != LUA_TFUNCTION)
+    lua_getglobal(m_luaState.get(), "processLogic");
+    if(!lua_isfunction(m_luaState.get(), lua_gettop(m_luaState.get())))
     {
         unlock();
         return;
     }
     try
     {
-        luabind::call_function<void>(func, dt);
+        luabind::call_function<void>(m_luaState.get(), "processLogic", dt);
     }
     catch (luabind::error e)
     {
