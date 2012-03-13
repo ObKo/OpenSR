@@ -50,15 +50,14 @@ LuaWidget::LuaActionListener::LuaActionListener(LuaWidget *widget): m_widget(wid
 void LuaWidget::LuaActionListener::actionPerformed(const Action &action)
 {
     m_widget->lock();
-    luabind::object actionPerformedFunc = luabind::globals(m_widget->m_luaState.get())["actionPerformed"];
-    if (!actionPerformedFunc.is_valid())
+    if (luabind::type(luabind::globals(m_widget->m_luaState.get())["actionPerformed"]) != LUA_TFUNCTION)
     {
         m_widget->unlock();
         return;
     }
     try
     {
-        luabind::call_function<void>(actionPerformedFunc, action);
+        luabind::call_function<void>(m_widget->m_luaState.get(), "actionPerformed", action);
     }
     catch (luabind::error e)
     {
@@ -158,8 +157,7 @@ Rect LuaWidget::getBoundingRect() const
 {
     lock();
 
-    lua_getglobal(m_luaState.get(), "getBoundingRect");
-    if(!lua_isfunction(m_luaState.get(), lua_gettop(m_luaState.get())))
+    if (luabind::type(luabind::globals(m_luaState.get())["getBoundingRect"]) != LUA_TFUNCTION)
     {
         unlock();
         return Widget::getBoundingRect();
@@ -171,7 +169,7 @@ Rect LuaWidget::getBoundingRect() const
     }
     catch (luabind::error e)
     {
-        luaErrorHandler(m_luaState.get());
+        //luaErrorHandler(m_luaState.get());
         unlock();
         return Widget::getBoundingRect();
     }
@@ -182,8 +180,7 @@ Rect LuaWidget::getBoundingRect() const
 void LuaWidget::mouseEnter()
 {
     lock();
-    lua_getglobal(m_luaState.get(), "mouseEnter");
-    if(!lua_isfunction(m_luaState.get(), lua_gettop(m_luaState.get())))
+    if (luabind::type(luabind::globals(m_luaState.get())["mouseEnter"]) != LUA_TFUNCTION)
     {
         unlock();
         Widget::mouseEnter();
@@ -204,8 +201,7 @@ void LuaWidget::mouseEnter()
 void LuaWidget::mouseLeave()
 {
     lock();
-    lua_getglobal(m_luaState.get(), "mouseLeave");
-    if(!lua_isfunction(m_luaState.get(), lua_gettop(m_luaState.get())))
+    if (luabind::type(luabind::globals(m_luaState.get())["mouseLeave"]) != LUA_TFUNCTION)
     {
         unlock();
         Widget::mouseLeave();
@@ -226,8 +222,7 @@ void LuaWidget::mouseLeave()
 void LuaWidget::mouseMove(const Vector &p)
 {
     lock();
-    lua_getglobal(m_luaState.get(), "mouseMove");
-    if(!lua_isfunction(m_luaState.get(), lua_gettop(m_luaState.get())))
+    if (luabind::type(luabind::globals(m_luaState.get())["mouseMove"]) != LUA_TFUNCTION)
     {
         unlock();
         Widget::mouseMove(p);
@@ -248,8 +243,7 @@ void LuaWidget::mouseMove(const Vector &p)
 void LuaWidget::mouseDown(uint8_t key, const Vector &p)
 {
     lock();
-    lua_getglobal(m_luaState.get(), "mouseDown");
-    if(!lua_isfunction(m_luaState.get(), lua_gettop(m_luaState.get())))
+    if (luabind::type(luabind::globals(m_luaState.get())["mouseDown"]) != LUA_TFUNCTION)
     {
         unlock();
         Widget::mouseDown(key, p);
@@ -270,8 +264,7 @@ void LuaWidget::mouseDown(uint8_t key, const Vector &p)
 void LuaWidget::mouseUp(uint8_t key, const Vector &p)
 {
     lock();
-    lua_getglobal(m_luaState.get(), "mouseUp");
-    if(!lua_isfunction(m_luaState.get(), lua_gettop(m_luaState.get())))
+    if (luabind::type(luabind::globals(m_luaState.get())["mouseUp"]) != LUA_TFUNCTION)
     {
         unlock();
         Widget::mouseUp(key, p);
@@ -292,8 +285,7 @@ void LuaWidget::mouseUp(uint8_t key, const Vector &p)
 void LuaWidget::mouseClick(const Vector &p)
 {
     lock();
-    lua_getglobal(m_luaState.get(), "mouseClick");
-    if(!lua_isfunction(m_luaState.get(), lua_gettop(m_luaState.get())))
+    if (luabind::type(luabind::globals(m_luaState.get())["mouseClick"]) != LUA_TFUNCTION)
     {
         unlock();
         Widget::mouseClick(p);
@@ -318,8 +310,7 @@ void LuaWidget::processLogic(int dt)
     for (std::list<Object*>::const_iterator i = children.begin(); i != children.end(); i++)
         (*i)->processLogic(dt);
 
-    lua_getglobal(m_luaState.get(), "processLogic");
-    if(!lua_isfunction(m_luaState.get(), lua_gettop(m_luaState.get())))
+    if (luabind::type(luabind::globals(m_luaState.get())["processLogic"]) != LUA_TFUNCTION)
     {
         unlock();
         return;

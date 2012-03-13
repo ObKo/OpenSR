@@ -259,12 +259,12 @@ void ScrollArea::mouseDown(uint8_t key, const Vector &p)
     Widget::mouseDown(key, p);
     if (key == SDL_BUTTON_WHEELUP)
     {
-        m_vPosition += 10.0f / m_height;
+        m_vPosition += 0.1f;
         updateScrollPosition();
     }
     else if (key == SDL_BUTTON_WHEELDOWN)
     {
-        m_vPosition -= 10.0f / m_height;
+        m_vPosition -= 0.1f;
         updateScrollPosition();
     }
     else if (m_leftMouseButtonPressed)
