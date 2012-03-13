@@ -169,7 +169,7 @@ Rect LuaWidget::getBoundingRect() const
     }
     catch (luabind::error e)
     {
-        //luaErrorHandler(m_luaState.get());
+        luaErrorHandler(m_luaState.get());
         unlock();
         return Widget::getBoundingRect();
     }
