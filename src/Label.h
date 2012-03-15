@@ -35,9 +35,9 @@ public:
 
     void setText(const std::string& text);
     void setText(const std::wstring& text);
+    void setFont(boost::shared_ptr<Font> font);
 
     std::wstring text() const;
-
     float width() const;
     float height() const;
     boost::shared_ptr<Font> font() const;

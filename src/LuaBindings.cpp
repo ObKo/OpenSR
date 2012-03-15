@@ -275,7 +275,15 @@ lua_State *initLuaState()
         .def(luabind::constructor<const std::wstring&, const std::wstring&, Widget*>())
         .def(luabind::constructor<const std::wstring&, const std::wstring&>())
         .def(luabind::constructor<const std::wstring&, const std::wstring&, const std::wstring&, Widget*>())
-        .def(luabind::constructor<const std::wstring&, const std::wstring&, const std::wstring&>()),
+        .def(luabind::constructor<const std::wstring&, const std::wstring&, const std::wstring&>())
+        .def(luabind::constructor<const ButtonStyle&, Widget*>())
+        .def(luabind::constructor<const ButtonStyle&>())
+        .def("color", &Button::color)
+        .def("text", &Button::text)
+        .def("font", &Button::font)
+        .def("setColor", &Button::setColor)
+        .def("setText", &Button::setText)
+        .def("setFont", &Button::setFont),
 
         luabind::class_<CheckBox, Widget>("CheckBox")
         .def(luabind::constructor<boost::shared_ptr<Texture>, boost::shared_ptr<Texture>, const std::wstring&, Rangers::Widget*>())

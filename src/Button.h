@@ -20,12 +20,15 @@
 #define RANGERS_BUTTON_H
 
 #include "Widget.h"
-#include "Sprite.h"
 #include <boost/shared_ptr.hpp>
 #include "Styles.h"
 
 namespace Rangers
 {
+class Label;
+class Sprite;
+class Font;
+
 class Button: public Widget
 {
 public:
@@ -53,10 +56,20 @@ public:
     virtual void mouseUp(uint8_t key, const Vector &p);
     virtual void mouseClick(const Vector &p);
 
+    void setText(const std::wstring& text);
+    void setColor(int color);
+    void setFont(boost::shared_ptr<Font> font);
+
+    std::wstring text() const;
+    int color() const;
+    boost::shared_ptr<Font> font() const;
+
     Button& operator=(const Button& other);
 
 private:
     ButtonStyle m_style;
+    Label *m_label;
+    std::wstring m_text;
     Sprite *m_normalSprite;
     Sprite *m_hoverSprite;
     Sprite *m_pressedSprite;

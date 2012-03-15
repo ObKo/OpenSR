@@ -1,9 +1,9 @@
 {
     "NinePatch":
-	{
-	    "scroll-normal":
-		{
-		    "rows": 3,
+    {
+        "scroll-normal":
+        {
+            "rows": 3,
             "columns": 1,
             "sizeableRows": [1],
             "sizeableColumns": [],
@@ -13,10 +13,10 @@
                 {"texture": "DATA/ScrollBar/2V2_CenterN.gi"},
                 {"texture": "DATA/ScrollBar/2V2_BottomN.gi"}
             ] 
-		},
-		"scroll-hovered":
-		{
-		    "rows": 3,
+        },
+        "scroll-hovered":
+        {
+            "rows": 3,
             "columns": 1,
             "sizeableRows": [1],
             "sizeableColumns": [],
@@ -26,10 +26,10 @@
                 {"texture": "DATA/ScrollBar/2V2_CenterA.gi"},
                 {"texture": "DATA/ScrollBar/2V2_BottomA.gi"}
             ] 
-		},
-		"scroll-pressed":
-		{
-		    "rows": 3,
+        },
+        "scroll-pressed":
+        {
+            "rows": 3,
             "columns": 1,
             "sizeableRows": [1],
             "sizeableColumns": [],
@@ -39,21 +39,36 @@
                 {"texture": "DATA/ScrollBar/2V2_CenterD.gi"},
                 {"texture": "DATA/ScrollBar/2V2_BottomD.gi"}
             ] 
-		}
-	},
-	"Sprite":
-	{
-	    "scroll-up-normal": {"texture": "DATA/ScrollBar/2V2_UpN.gi"},
-		"scroll-up-hovered": {"texture": "DATA/ScrollBar/2V2_UpA.gi"},
-		"scroll-up-pressed": {"texture": "DATA/ScrollBar/2V2_UpD.gi"},
-		"scroll-down-normal": {"texture": "DATA/ScrollBar/2V2_DownN.gi"},
-		"scroll-down-hovered": {"texture": "DATA/ScrollBar/2V2_DownA.gi"},
-		"scroll-down-pressed": {"texture": "DATA/ScrollBar/2V2_DownD.gi"}
-	},
-	"ScrollBarStyle":
-	{
-	    "up-button": {"normal": "scroll-up-normal", "hovered": "scroll-up-hovered", "pressed" : "scroll-up-pressed"},
-		"down-button": {"normal": "scroll-down-normal", "hovered": "scroll-down-hovered", "pressed" : "scroll-down-pressed"},
-		"scroll": {"normal": "scroll-normal", "hovered": "scroll-hovered", "pressed" : "scroll-pressed"}
-	}
+        }
+    },
+    "Sprite":
+    {
+        "scroll-up-normal": {"texture": "DATA/ScrollBar/2V2_UpN.gi"},
+        "scroll-up-hovered": {"texture": "DATA/ScrollBar/2V2_UpA.gi"},
+        "scroll-up-pressed": {"texture": "DATA/ScrollBar/2V2_UpD.gi"},
+        "scroll-down-normal": {"texture": "DATA/ScrollBar/2V2_DownN.gi"},
+        "scroll-down-hovered": {"texture": "DATA/ScrollBar/2V2_DownA.gi"},
+        "scroll-down-pressed": {"texture": "DATA/ScrollBar/2V2_DownD.gi"},
+        "button-normal": {"texture": "DATA/FormOptions2/2PageN.gi"},
+        "button-hovered": {"texture": "DATA/FormOptions2/2PageA.gi"},
+        "button-pressed": {"texture": "DATA/FormOptions2/2PageD.gi"}  
+    },
+    "Font":
+    {
+        "default-button-font": {"file": "DroidSans.ttf", "size": 14}
+    },
+    "ButtonStyle":
+    {
+        "normal": "button-normal",
+        "hovered": "button-hovered",
+        "pressed" : "button-pressed", 
+        "font": "default-button-font", 
+        "color": "#FF88C8E8"
+    },
+    "ScrollBarStyle":
+    {
+        "up-button": {"normal": "scroll-up-normal", "hovered": "scroll-up-hovered", "pressed" : "scroll-up-pressed"},
+        "down-button": {"normal": "scroll-down-normal", "hovered": "scroll-down-hovered", "pressed" : "scroll-down-pressed"},
+        "scroll": {"normal": "scroll-normal", "hovered": "scroll-hovered", "pressed" : "scroll-pressed"}
+    }
 }

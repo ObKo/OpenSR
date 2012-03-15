@@ -25,11 +25,20 @@
 namespace Rangers
 {
 class Texture;
+struct ButtonStyle;
+struct ScrollBarStyle;
+struct FontDescriptor;
+
+struct FontDescriptor
+{
+    std::wstring path;
+    int size;
+};
 
 struct ResourceDescriptor
 {
-    enum {NONE, NINEPATCH, SPRITE} type;
-    typedef boost::variant<TextureRegion, NinePatchDescriptor> Resource;
+    enum {NONE, NINEPATCH, SPRITE, FONT} type;
+    typedef boost::variant<TextureRegion, NinePatchDescriptor, FontDescriptor> Resource;
     Resource resource;
 };
 
@@ -38,6 +47,8 @@ struct ButtonStyle
     ResourceDescriptor normal;
     ResourceDescriptor hovered;
     ResourceDescriptor pressed;
+    int color;
+    FontDescriptor font;
 };
 
 struct ScrollBarStyle

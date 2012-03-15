@@ -110,6 +110,14 @@ void Label::setText(const std::wstring& text)
     unlock();
 }
 
+void Label::setFont(boost::shared_ptr<Font> font)
+{
+    lock();
+    m_font = font;
+    markToUpdate();
+    unlock();
+}
+
 void Label::processMain()
 {
     if (!m_font)

@@ -23,17 +23,18 @@
 #include "ResourceManager.h"
 #include "Texture.h"
 #include "NinePatch.h"
+#include "Label.h"
 
 namespace Rangers
 {
 
 Button::Button(Widget *parent):
-    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0)
+    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0), m_label(0)
 {
 }
 
 Button::Button(boost::shared_ptr<Texture> texture, Widget *parent):
-    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0)
+    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0), m_label(0)
 {
     if (texture)
     {
@@ -49,7 +50,7 @@ Button::Button(boost::shared_ptr<Texture> texture, Widget *parent):
 }
 
 Button::Button(boost::shared_ptr<Texture> texture, boost::shared_ptr<Texture> hoverTexture, Widget *parent):
-    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0)
+    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0), m_label(0)
 {
     if (texture)
     {
@@ -70,7 +71,7 @@ Button::Button(boost::shared_ptr<Texture> texture, boost::shared_ptr<Texture> ho
 }
 
 Button::Button(boost::shared_ptr<Texture> texture, boost::shared_ptr<Texture> hoverTexture, boost::shared_ptr<Texture> pressTexture, Widget *parent):
-    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0)
+    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0), m_label(0)
 {
     if (texture)
     {
@@ -96,7 +97,7 @@ Button::Button(boost::shared_ptr<Texture> texture, boost::shared_ptr<Texture> ho
 }
 
 Button::Button(const std::wstring& texture, Widget *parent):
-    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0)
+    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0), m_label(0)
 {
     boost::shared_ptr<Texture> main = ResourceManager::instance()->loadTexture(texture);
     if (main)
@@ -113,7 +114,7 @@ Button::Button(const std::wstring& texture, Widget *parent):
 }
 
 Button::Button(const std::wstring& texture, const std::wstring& hoverTexture, Widget *parent):
-    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0)
+    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0), m_label(0)
 {
     boost::shared_ptr<Texture> main = ResourceManager::instance()->loadTexture(texture);
     boost::shared_ptr<Texture> hover = ResourceManager::instance()->loadTexture(hoverTexture);
@@ -136,7 +137,7 @@ Button::Button(const std::wstring& texture, const std::wstring& hoverTexture, Wi
 }
 
 Button::Button(const std::wstring& texture, const std::wstring& hoverTexture, const std::wstring& pressTexture, Widget *parent):
-    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0)
+    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0), m_label(0)
 {
     boost::shared_ptr<Texture> main = ResourceManager::instance()->loadTexture(texture);
     boost::shared_ptr<Texture> hover = ResourceManager::instance()->loadTexture(hoverTexture);
@@ -165,7 +166,7 @@ Button::Button(const std::wstring& texture, const std::wstring& hoverTexture, co
 }
 
 Button::Button(const ButtonStyle& style, Widget* parent):
-    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0), m_style(style)
+    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0), m_style(style), m_label(0)
 {
     init();
     if (m_sprite)
@@ -173,6 +174,44 @@ Button::Button(const ButtonStyle& style, Widget* parent):
         m_width = m_sprite->width();
         m_height = m_sprite->height();
     }
+}
+
+void Button::setText(const std::wstring& text)
+{
+    m_text = text;
+    m_label->setText(text);
+}
+
+void Button::setColor(int color)
+{
+    m_label->setColor(((m_style.color >> 16) & 0xff) / 255.0f, ((m_style.color >> 8) & 0xff) / 255.0f, (m_style.color & 0xff) / 255.0f, ((m_style.color >> 24) & 0xff) / 255.0f);
+}
+
+void Button::setFont(boost::shared_ptr<Font> font)
+{
+    m_label->setFont(font);
+    markToUpdate();
+}
+
+std::wstring Button::text() const
+{
+    if (!m_label)
+        return std::wstring();
+    return m_text;
+}
+
+int Button::color() const
+{
+    //TODO: Color in Object;
+    //return m_label
+    return 0;
+}
+
+boost::shared_ptr<Font> Button::font() const
+{
+    if (!m_label)
+        return boost::shared_ptr<Font>();
+    return m_label->font();
 }
 
 void Button::init()
@@ -201,7 +240,15 @@ void Button::init()
     {
         m_pressedSprite = new Sprite(boost::get<TextureRegion>(m_style.pressed.resource), this);
     }
+    if ((m_style.font.path != L"") && (m_style.font.size > 0))
+    {
+        if (!m_label)
+            m_label = new Label(m_text, this, ResourceManager::instance()->loadFont(m_style.font.path, m_style.font.size));
+        m_label->setOrigin(POSITION_X_LEFT, POSITION_Y_TOP);
+        setColor(m_style.color);
+    }
     m_sprite = m_normalSprite;
+    markToUpdate();
 }
 
 Button::~Button()
@@ -212,6 +259,8 @@ Button::~Button()
     delete m_hoverSprite;
     if (m_pressedSprite)
         delete m_pressedSprite;
+    if (m_label)
+        delete m_label;
 }
 
 void Button::draw() const
@@ -220,6 +269,8 @@ void Button::draw() const
         return;
     if (m_sprite)
         m_sprite->draw();
+    if (m_label)
+        m_label->draw();
     endDraw();
 }
 
@@ -232,6 +283,11 @@ void Button::processMain()
         m_hoverSprite->setGeometry(m_width, m_height);
     if (m_pressedSprite)
         m_pressedSprite->setGeometry(m_width, m_height);
+    if (m_label)
+    {
+        double i;
+        m_label->setPosition(int((m_width - m_label->width()) / 2), int((m_height - m_label->height()) / 2));
+    }
     unlock();
     Widget::processMain();
 }

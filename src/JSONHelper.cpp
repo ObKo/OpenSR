@@ -55,6 +55,30 @@ TextureRegion JSONHelper::parseTextureRegion(const Json::Value& object, bool &er
     return TextureRegion(texture, x, y, width, height);
 }
 
+FontDescriptor JSONHelper::parseFont(const Json::Value& object, bool &error)
+{
+    error = false;
+    FontDescriptor font;
+    if (!object.isObject())
+    {
+        Log::warning() << "Invalid JSON object.";
+        error = true;
+        return font;
+    }
+    Json::Value::Members members = object.getMemberNames();
+    if ((std::find(members.begin(), members.end(), "file") == members.end())
+            || (std::find(members.begin(), members.end(), "size") == members.end()))
+    {
+        Log::warning() << "Invalid JSON font.";
+        error = true;
+        return font;
+    }
+    font.path = fromUTF8(object.get("file", "").asString().c_str());
+    font.size = object.get("size", "").asInt();
+
+    return font;
+}
+
 NinePatchDescriptor JSONHelper::parseNinePatch(const Json::Value& object, bool &error)
 {
     error = false;
@@ -168,6 +192,30 @@ std::map<std::wstring, ResourceDescriptor> JSONHelper::parseResources(const Json
             result[fromUTF8(it.memberName())] = desc;
         }
     }
+    if (std::find(members.begin(), members.end(), "Font") != members.end())
+    {
+        Json::Value sprites = object.get("Font", Json::Value());
+        Json::Value::iterator end = sprites.end();
+        for (Json::Value::iterator it = sprites.begin(); it != end; ++it)
+        {
+            if (result.find(fromUTF8(it.memberName())) != result.end())
+            {
+                error = true;
+                Log::error() << "Dublicated JSON resource: \"" << fromUTF8(it.memberName()) << "\"";
+                return std::map<std::wstring, ResourceDescriptor>();
+            }
+
+            FontDescriptor font = parseFont(*it, error);
+            if (error)
+            {
+                return std::map<std::wstring, ResourceDescriptor>();
+            }
+            ResourceDescriptor desc;
+            desc.type = ResourceDescriptor::FONT;
+            desc.resource = ResourceDescriptor::Resource(font);
+            result[fromUTF8(it.memberName())] = desc;
+        }
+    }
     return result;
 }
 
@@ -200,6 +248,13 @@ Skin JSONHelper::parseSkin(const std::string& json, bool &error)
         skin.scrollStyle.downButton = parseButtonStyle(style.get("down-button", Json::Value()), resources, error);
         skin.scrollStyle.upButton = parseButtonStyle(style.get("up-button", Json::Value()), resources, error);
         skin.scrollStyle.scroll = parseButtonStyle(style.get("scroll", Json::Value()), resources, error);
+    }
+    if (std::find(members.begin(), members.end(), "ButtonStyle") != members.end())
+    {
+        Json::Value style = root.get("ButtonStyle", Json::Value());
+        Json::Value::Members styleMembers = style.getMemberNames();
+
+        skin.buttonStyle = parseButtonStyle(style, resources, error);
     }
     return skin;
 }
@@ -244,6 +299,38 @@ ButtonStyle JSONHelper::parseButtonStyle(const Json::Value& object, const std::m
             return ButtonStyle();
         }
         style.pressed = resources.at(pressed);
+    }
+    if (std::find(members.begin(), members.end(), "font") != members.end())
+    {
+        std::wstring font = fromUTF8(object.get("font", "").asString().c_str());
+        if (resources.find(font) == resources.end())
+        {
+            error = true;
+            Log::error() << "No such JSON resource: \"" << font << "\"";
+            return ButtonStyle();
+        }
+        const ResourceDescriptor& d = resources.at(font);
+        if (d.type != ResourceDescriptor::FONT)
+        {
+            error = true;
+            Log::error() << "Invalid JSON button style.";
+            return ButtonStyle();
+        }
+        style.font = boost::get<FontDescriptor>(d.resource);
+    }
+    if (std::find(members.begin(), members.end(), "color") != members.end())
+    {
+        std::istringstream ss(object.get("color", "").asString());
+        uint32_t color;
+        char c;
+        ss >> c >> std::hex >> color;
+        if (ss.fail())
+        {
+            error = true;
+            Log::error() << "Invalid JSON color.";
+            return ButtonStyle();
+        }
+        style.color = color;
     }
     return style;
 }
