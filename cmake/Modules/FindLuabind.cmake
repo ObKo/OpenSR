@@ -10,7 +10,7 @@ IF(LUABIND_LIBRARY AND LUABIND_INCLUDE_DIR)
 ENDIF(LUABIND_LIBRARY AND LUABIND_INCLUDE_DIR)
 
 FIND_PATH(LUABIND_INCLUDE_DIR
-  luabind.hpp
+  luabind/luabind.hpp
   PATHS
   $ENV{LUABIND_DIR}/include
   /usr/local/include
@@ -19,7 +19,6 @@ FIND_PATH(LUABIND_INCLUDE_DIR
   /opt/local/include
   /opt/csw/include
   /opt/include
-  PATH_SUFFIXES luabind
 )
 
 FIND_LIBRARY(LUABIND_LIBRARY

@@ -77,10 +77,8 @@ int execLuaScript(const char *data, size_t size, const std::string& name)
 lua_State *initLuaState()
 {
     using namespace luabind;
-    lua_State *luaState = lua_open();
-    luaopen_base(luaState);
-    luaopen_table(luaState);
-    luaopen_math(luaState);
+    lua_State *luaState = luaL_newstate();
+    luaL_openlibs(luaState);
 
     luabind::open(luaState);
 

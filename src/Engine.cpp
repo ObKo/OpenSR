@@ -79,7 +79,10 @@ Engine::Engine(int argc, char **argv): m_argc(argc), m_argv(argv), m_focusedWidg
     m_properties = boost::shared_ptr<boost::property_tree::ptree>(new boost::property_tree::ptree());
 
 #ifdef WIN32
-    m_configPath = fromLocal((directory(std::string(argv[0])) + "\\OpenSR.ini").c_str());
+	char *path = new char[1024];
+	GetModuleFileName(0, path, 1024);
+    m_configPath = fromLocal((directory(std::string(path)) + "\\OpenSR.ini").c_str());
+	delete[] path;
     configFile.open(m_configPath, ios_base::in);
 #else
     char *path;

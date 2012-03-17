@@ -32,3 +32,12 @@ int main(int argc, char **argv)
     engine.init(1024, 768, false);
     return engine.run();
 }
+
+#ifdef WIN32
+//TODO: Arguments in WinMain
+int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
+{
+	return main(0, 0);
+}
+#endif
+
