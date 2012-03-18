@@ -39,6 +39,63 @@
                 {"texture": "DATA/ScrollBar/2V2_CenterD.gi"},
                 {"texture": "DATA/ScrollBar/2V2_BottomD.gi"}
             ] 
+        },
+        "default-button-normal":
+        {
+            "rows": 3,
+            "columns": 3,
+            "sizeableRows": [1],
+            "sizeableColumns": [1],
+            "regions":
+            [
+                {"texture": "DATA/FormPlanet2/2QuestButN.gi", "x": 0, "y": 0, "width": 58, "height": 10},
+                {"texture": "DATA/FormPlanet2/2QuestButN.gi", "x": 58, "y": 0, "width": 1, "height": 10},
+                {"texture": "DATA/FormPlanet2/2QuestButN.gi", "x": 59, "y": 0, "width": 57, "height": 10},
+                {"texture": "DATA/FormPlanet2/2QuestButN.gi", "x": 0, "y": 10, "width": 58, "height": 1},
+                {"texture": "DATA/FormPlanet2/2QuestButN.gi", "x": 58, "y": 10, "width": 1, "height": 1},
+                {"texture": "DATA/FormPlanet2/2QuestButN.gi", "x": 59, "y": 10, "width": 57, "height": 1},
+                {"texture": "DATA/FormPlanet2/2QuestButN.gi", "x": 0, "y": 11, "width": 58, "height": 10},
+                {"texture": "DATA/FormPlanet2/2QuestButN.gi", "x": 58, "y": 11, "width": 1, "height": 10},
+                {"texture": "DATA/FormPlanet2/2QuestButN.gi", "x": 59, "y": 11, "width": 57, "height": 10}
+            ] 
+        },
+        "default-button-hover":
+        {
+            "rows": 3,
+            "columns": 3,
+            "sizeableRows": [1],
+            "sizeableColumns": [1],
+            "regions":
+            [
+                {"texture": "DATA/FormPlanet2/2QuestButA.gi", "x": 0, "y": 0, "width": 58, "height": 10},
+                {"texture": "DATA/FormPlanet2/2QuestButA.gi", "x": 58, "y": 0, "width": 1, "height": 10},
+                {"texture": "DATA/FormPlanet2/2QuestButA.gi", "x": 59, "y": 0, "width": 57, "height": 10},
+                {"texture": "DATA/FormPlanet2/2QuestButA.gi", "x": 0, "y": 10, "width": 58, "height": 1},
+                {"texture": "DATA/FormPlanet2/2QuestButA.gi", "x": 58, "y": 10, "width": 1, "height": 1},
+                {"texture": "DATA/FormPlanet2/2QuestButA.gi", "x": 59, "y": 10, "width": 57, "height": 1},
+                {"texture": "DATA/FormPlanet2/2QuestButA.gi", "x": 0, "y": 11, "width": 58, "height": 10},
+                {"texture": "DATA/FormPlanet2/2QuestButA.gi", "x": 58, "y": 11, "width": 1, "height": 10},
+                {"texture": "DATA/FormPlanet2/2QuestButA.gi", "x": 59, "y": 11, "width": 57, "height": 10}
+            ] 
+        },
+        "default-button-pressed":
+        {
+            "rows": 3,
+            "columns": 3,
+            "sizeableRows": [1],
+            "sizeableColumns": [1],
+            "regions":
+            [
+                {"texture": "DATA/FormPlanet2/2QuestButD.gi", "x": 0, "y": 0, "width": 58, "height": 10},
+                {"texture": "DATA/FormPlanet2/2QuestButD.gi", "x": 58, "y": 0, "width": 1, "height": 10},
+                {"texture": "DATA/FormPlanet2/2QuestButD.gi", "x": 59, "y": 0, "width": 57, "height": 10},
+                {"texture": "DATA/FormPlanet2/2QuestButD.gi", "x": 0, "y": 10, "width": 58, "height": 1},
+                {"texture": "DATA/FormPlanet2/2QuestButD.gi", "x": 58, "y": 10, "width": 1, "height": 1},
+                {"texture": "DATA/FormPlanet2/2QuestButD.gi", "x": 59, "y": 10, "width": 57, "height": 1},
+                {"texture": "DATA/FormPlanet2/2QuestButD.gi", "x": 0, "y": 11, "width": 58, "height": 10},
+                {"texture": "DATA/FormPlanet2/2QuestButD.gi", "x": 58, "y": 11, "width": 1, "height": 10},
+                {"texture": "DATA/FormPlanet2/2QuestButD.gi", "x": 59, "y": 11, "width": 57, "height": 10}
+            ] 
         }
     },
     "Sprite":
@@ -48,10 +105,7 @@
         "scroll-up-pressed": {"texture": "DATA/ScrollBar/2V2_UpD.gi"},
         "scroll-down-normal": {"texture": "DATA/ScrollBar/2V2_DownN.gi"},
         "scroll-down-hovered": {"texture": "DATA/ScrollBar/2V2_DownA.gi"},
-        "scroll-down-pressed": {"texture": "DATA/ScrollBar/2V2_DownD.gi"},
-        "button-normal": {"texture": "DATA/FormOptions2/2PageN.gi"},
-        "button-hovered": {"texture": "DATA/FormOptions2/2PageA.gi"},
-        "button-pressed": {"texture": "DATA/FormOptions2/2PageD.gi"}  
+        "scroll-down-pressed": {"texture": "DATA/ScrollBar/2V2_DownD.gi"}
     },
     "Font":
     {
@@ -59,11 +113,11 @@
     },
     "ButtonStyle":
     {
-        "normal": "button-normal",
-        "hovered": "button-hovered",
-        "pressed" : "button-pressed", 
+        "normal": "default-button-normal",
+        "hovered": "default-button-hover",
+        "pressed" : "default-button-pressed", 
         "font": "default-button-font", 
-        "color": "#FF88C8E8"
+        "color": "#FF082430"
     },
     "ScrollBarStyle":
     {
