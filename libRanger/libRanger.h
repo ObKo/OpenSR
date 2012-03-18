@@ -28,15 +28,15 @@
 
 #ifdef LIBRANGER_LIBRARY
 #ifdef WIN32
-#define LIBRANGER_DIRECTIVE __declspec(dllexport)
+#define LIBRANGER_API __declspec(dllexport)
 #else
-#define LIBRANGER_DIRECTIVE
+#define LIBRANGER_API
 #endif
 #else
 #ifdef WIN32
-#define LIBRANGER_DIRECTIVE
+#define LIBRANGER_API
 #else
-#define LIBRANGER_DIRECTIVE extern
+#define LIBRANGER_API extern
 #endif
 #endif
 
@@ -252,124 +252,136 @@ enum DDSHeaderCaps2 {DDSCAPS2_CUBEMAP = 0x200, DDSCAPS2_CUBEMAP_POSITIVEX = 0x40
                      DDSCAPS2_VOLUME = 0x200000
                     };
 
+enum PNGType {PNG_INVALID, PNG_GRAY, PNG_RGB, PNG_RGBA};
+
+struct PNGFrame
+{
+    int width;
+    int height;
+    PNGType type;
+    unsigned char *data;
+};
+
 //! Load GI frame type 0
-LIBRANGER_DIRECTIVE GIFrame loadFrameType0(const GIFrameHeader& image);
+LIBRANGER_API GIFrame loadFrameType0(const GIFrameHeader& image);
 //! Load GI frame type 1
-LIBRANGER_DIRECTIVE GIFrame loadFrameType1(const GIFrameHeader& image);
+LIBRANGER_API GIFrame loadFrameType1(const GIFrameHeader& image);
 //! Load GI frame type 2
-LIBRANGER_DIRECTIVE GIFrame loadFrameType2(const GIFrameHeader& image);
+LIBRANGER_API GIFrame loadFrameType2(const GIFrameHeader& image);
 //! Load GI frame type 3
-LIBRANGER_DIRECTIVE GIFrame loadFrameType3(const GIFrameHeader& image);
+LIBRANGER_API GIFrame loadFrameType3(const GIFrameHeader& image);
 //! Load GI frame type 4
-LIBRANGER_DIRECTIVE GIFrame loadFrameType4(const GIFrameHeader& image);
+LIBRANGER_API GIFrame loadFrameType4(const GIFrameHeader& image);
 //! Load GI frame type 5 - dummy
-LIBRANGER_DIRECTIVE GIFrame loadFrameType5(const GIFrameHeader& image, GIFrame *background = 0);
+LIBRANGER_API GIFrame loadFrameType5(const GIFrameHeader& image, GIFrame *background = 0);
 //! Load GI frame
-LIBRANGER_DIRECTIVE GIFrame loadGIImageData(const GIFrameHeader& image, GIFrame *background = 0);
+LIBRANGER_API GIFrame loadGIImageData(const GIFrameHeader& image, GIFrame *background = 0);
 
 //! Load GI frame from file
-LIBRANGER_DIRECTIVE GIFrame loadGIFrame(std::istream& stream, size_t &offset, GIFrame *background = 0, int startX = 0, int startY = 0, int finishX = 0, int finishY = 0);
+LIBRANGER_API GIFrame loadGIFrame(std::istream& stream, size_t &offset, GIFrame *background = 0, int startX = 0, int startY = 0, int finishX = 0, int finishY = 0);
 //! Load GI frame from memory
-LIBRANGER_DIRECTIVE GIFrame loadGIFrame(const char *buffer, size_t &offset, GIFrame *background = 0, int startX = 0, int startY = 0, int finishX = 0, int finishY = 0);
+LIBRANGER_API GIFrame loadGIFrame(const char *buffer, size_t &offset, GIFrame *background = 0, int startX = 0, int startY = 0, int finishX = 0, int finishY = 0);
 
 //! Load HAI animation from file
-LIBRANGER_DIRECTIVE HAIAnimation loadHAI(std::istream& stream);
+LIBRANGER_API HAIAnimation loadHAI(std::istream& stream);
 //! Load HAI animation from memory
-LIBRANGER_DIRECTIVE HAIAnimation loadHAI(const char *data);
+LIBRANGER_API HAIAnimation loadHAI(const char *data);
 
 //! Load GI file
-LIBRANGER_DIRECTIVE GIFrame loadGIFile(std::istream& stream);
+LIBRANGER_API GIFrame loadGIFile(std::istream& stream);
 //! Load GI file from memory
-LIBRANGER_DIRECTIVE GIFrame loadGIFile(const char *data);
+LIBRANGER_API GIFrame loadGIFile(const char *data);
 
 //! Load GAI animation file
-LIBRANGER_DIRECTIVE GAIAnimation loadGAIAnimation(std::istream& stream, size_t &offset, GIFrame *background = 0);
+LIBRANGER_API GAIAnimation loadGAIAnimation(std::istream& stream, size_t &offset, GIFrame *background = 0);
 //! Load GAI animation from memory
-LIBRANGER_DIRECTIVE GAIAnimation loadGAIAnimation(const char *data, GIFrame *background = 0);
+LIBRANGER_API GAIAnimation loadGAIAnimation(const char *data, GIFrame *background = 0);
 //! Load GAI header from file
-LIBRANGER_DIRECTIVE GAIHeader loadGAIHeader(std::istream& stream, size_t &offset);
+LIBRANGER_API GAIHeader loadGAIHeader(std::istream& stream, size_t &offset);
 //! Load GAI header from memory
-LIBRANGER_DIRECTIVE GAIHeader loadGAIHeader(const char *data);
+LIBRANGER_API GAIHeader loadGAIHeader(const char *data);
 
 //! Unpack ZL01 - compressed file
-LIBRANGER_DIRECTIVE unsigned char *unpackZL01(const unsigned char * src, size_t srclen, size_t& destlen);
+LIBRANGER_API unsigned char *unpackZL01(const unsigned char * src, size_t srclen, size_t& destlen);
 //! Unpack ZL02 - compressed file
-LIBRANGER_DIRECTIVE unsigned char *unpackZL02(const unsigned char * src, size_t srclen, size_t& destlen);
+LIBRANGER_API unsigned char *unpackZL02(const unsigned char * src, size_t srclen, size_t& destlen);
 //! Unpack ZL02 - compressed file
-LIBRANGER_DIRECTIVE void unpackZL02(unsigned char * dst, const unsigned char * src, size_t srclen, size_t& destlen);
+LIBRANGER_API void unpackZL02(unsigned char * dst, const unsigned char * src, size_t srclen, size_t& destlen);
 
 //! Load file descriptions from PKG archive
-LIBRANGER_DIRECTIVE PKGItem *loadPKG(std::istream& stream);
+LIBRANGER_API PKGItem *loadPKG(std::istream& stream);
 //! Extract file from PKG archive
-LIBRANGER_DIRECTIVE unsigned char *extractFile(PKGItem item, std::istream& pkgfile);
+LIBRANGER_API unsigned char *extractFile(PKGItem item, std::istream& pkgfile);
 
 //! Compress data to ZLIB format
-LIBRANGER_DIRECTIVE RPKGItem packZLIB(const char * src, size_t srclen);
+LIBRANGER_API RPKGItem packZLIB(const char * src, size_t srclen);
 //! Uncompress data in ZLIB format
-LIBRANGER_DIRECTIVE char *unpackZLIB(RPKGItem item);
+LIBRANGER_API char *unpackZLIB(RPKGItem item);
 
 //! Load file descriptions from RPKG archive
-LIBRANGER_DIRECTIVE std::list<RPKGEntry> loadRPKG(std::istream& stream);
+LIBRANGER_API std::list<RPKGEntry> loadRPKG(std::istream& stream);
 //! Load file from archive
-LIBRANGER_DIRECTIVE char *extractFile(const RPKGEntry& e, std::istream& stream, size_t &size);
+LIBRANGER_API char *extractFile(const RPKGEntry& e, std::istream& stream, size_t &size);
 
 //! Calculate size of RPKG archive header
-LIBRANGER_DIRECTIVE uint32_t calculateRPKGHeaderSize(const std::vector<RPKGEntry>& entryList);
+LIBRANGER_API uint32_t calculateRPKGHeaderSize(const std::vector<RPKGEntry>& entryList);
 //! Add data to RPKG archive
-LIBRANGER_DIRECTIVE void appendRPKGFile(std::ofstream& out, RPKGEntry& e, const char *data, uint32_t size);
+LIBRANGER_API void appendRPKGFile(std::ofstream& out, RPKGEntry& e, const char *data, uint32_t size);
 //! Write RPKG archive header
-LIBRANGER_DIRECTIVE void writeRPKGHeader(std::ofstream& out, const std::vector<RPKGEntry>& entryList);
+LIBRANGER_API void writeRPKGHeader(std::ofstream& out, const std::vector<RPKGEntry>& entryList);
 
 //! Convert text using iconv
-LIBRANGER_DIRECTIVE char* convertText(const char *to, const char *from, const char *what, int srcLength, int &destLength);
+LIBRANGER_API char* convertText(const char *to, const char *from, const char *what, int srcLength, int &destLength);
 
 //! Convert text from charset to wstring
-LIBRANGER_DIRECTIVE std::wstring fromCodec(const char *codec, const char *text, int length = -1);
+LIBRANGER_API std::wstring fromCodec(const char *codec, const char *text, int length = -1);
 //! Convert text from UTF-8 to wstring
-LIBRANGER_DIRECTIVE std::wstring fromUTF8(const char *text, int length = -1);
+LIBRANGER_API std::wstring fromUTF8(const char *text, int length = -1);
 //! Convert text from ASCII to wstring
-LIBRANGER_DIRECTIVE std::wstring fromASCII(const char *text, int length = -1);
+LIBRANGER_API std::wstring fromASCII(const char *text, int length = -1);
 //! Convert text from Local charset to wstring
-LIBRANGER_DIRECTIVE std::wstring fromLocal(const char *text, int length = -1);
+LIBRANGER_API std::wstring fromLocal(const char *text, int length = -1);
 
 //! Convert wstring to charset
-LIBRANGER_DIRECTIVE std::string toCodec(const char *codec, const std::wstring& text);
+LIBRANGER_API std::string toCodec(const char *codec, const std::wstring& text);
 //! Convert wstring to charset
-LIBRANGER_DIRECTIVE char* toCodec(const char *codec, const std::wstring& text, int& destLength);
+LIBRANGER_API char* toCodec(const char *codec, const std::wstring& text, int& destLength);
 
 //! Convert wstring to UTF-8
-LIBRANGER_DIRECTIVE std::string toUTF8(const std::wstring& text);
+LIBRANGER_API std::string toUTF8(const std::wstring& text);
 //! Convert wstring to ASCII
-LIBRANGER_DIRECTIVE std::string toASCII(const std::wstring& text);
+LIBRANGER_API std::string toASCII(const std::wstring& text);
 //! Convert wstring to local charset
-LIBRANGER_DIRECTIVE std::string toLocal(const std::wstring& text);
+LIBRANGER_API std::string toLocal(const std::wstring& text);
 
 //! Split string
-LIBRANGER_DIRECTIVE std::vector<std::wstring> split(const std::wstring& s, wchar_t c);
+LIBRANGER_API std::vector<std::wstring> split(const std::wstring& s, wchar_t c);
 //! Remove leading and trailing whitespace/tabs/newlines from a string
-LIBRANGER_DIRECTIVE std::wstring trim(const std::wstring& s);
+LIBRANGER_API std::wstring trim(const std::wstring& s);
 //! Get file extension
-LIBRANGER_DIRECTIVE std::wstring suffix(const std::wstring& s);
+LIBRANGER_API std::wstring suffix(const std::wstring& s);
 //! Get file basename
-LIBRANGER_DIRECTIVE std::wstring basename(const std::wstring& s);
+LIBRANGER_API std::wstring basename(const std::wstring& s);
 //! Get file dir
-LIBRANGER_DIRECTIVE std::wstring directory(const std::wstring& s);
+LIBRANGER_API std::wstring directory(const std::wstring& s);
 
 //! Split string
-LIBRANGER_DIRECTIVE std::vector<std::string> split(const std::string& s, char c);
+LIBRANGER_API std::vector<std::string> split(const std::string& s, char c);
 //! Remove leading and trailing whitespace/tabs/newlines from a string
-LIBRANGER_DIRECTIVE std::string trim(const std::string& s);
+LIBRANGER_API std::string trim(const std::string& s);
 //! Get file extension
-LIBRANGER_DIRECTIVE std::string suffix(const std::string& s);
+LIBRANGER_API std::string suffix(const std::string& s);
 //! Get file basename
-LIBRANGER_DIRECTIVE std::string basename(const std::string& s);
+LIBRANGER_API std::string basename(const std::string& s);
 //! Get file dir
-LIBRANGER_DIRECTIVE std::string directory(const std::string& s);
+LIBRANGER_API std::string directory(const std::string& s);
 
 //! Create directory path
-LIBRANGER_DIRECTIVE bool createDirPath(const std::wstring& path);
+LIBRANGER_API bool createDirPath(const std::wstring& path);
 //! Check directory writable
-LIBRANGER_DIRECTIVE bool checkDirWritable(const std::wstring& path);
+LIBRANGER_API bool checkDirWritable(const std::wstring& path);
+
+LIBRANGER_API PNGFrame loadPNG(const char *buffer, size_t bufferSize);
 }
 
 #endif

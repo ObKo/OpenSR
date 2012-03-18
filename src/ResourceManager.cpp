@@ -146,6 +146,38 @@ boost::shared_ptr<Texture> ResourceManager::loadTexture(const std::wstring& name
         m_textures[name] = boost::shared_ptr<Texture>(t);
         return m_textures[name];
     }
+    else if (sfx == L"png")
+    {
+        size_t s;
+        char *data = loadData(name, s);
+        if (!data)
+            return boost::shared_ptr<Texture>();
+        PNGFrame frame = loadPNG(data, s);
+        delete[] data;
+        if (frame.type == PNG_INVALID)
+        {
+            Log::warning() << "Invalid/unsupported PNG file";
+            return boost::shared_ptr<Texture>();
+        }
+        TextureType type;
+        switch (frame.type)
+        {
+        case PNG_GRAY:
+            //FIXME: grayscale as alpha
+            type = Rangers::TEXTURE_A8;
+            break;
+        case PNG_RGB:
+            type = Rangers::TEXTURE_R8G8B8;
+            break;
+        case PNG_RGBA:
+            type = Rangers::TEXTURE_R8G8B8A8;
+            break;
+        }
+        Texture *t = new Texture(frame.width, frame.height, type, frame.data);
+        delete[] frame.data;
+        m_textures[name] = boost::shared_ptr<Texture>(t);
+        return m_textures[name];
+    }
     else if (sfx == L"dds")
     {
         size_t size;
