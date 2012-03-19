@@ -192,18 +192,16 @@ Vector Object::mapFromGlobal(const Vector& v) const
 
 Rect Object::mapToParent(const Rect& r) const
 {
-    Vector a(r.x1, r.y1), b(r.x2, r.y1), c(r.x2, r.y2), d(r.x1, r.y2);
+    Vector a(r.x, r.y), b(r.x + r.width, r.y), c(r.x + r.width, r.y + r.height), d(r.x, r.y + r.height);
     a = mapToParent(a);
     b = mapToParent(b);
     c = mapToParent(c);
     d = mapToParent(d);
     Rect result;
-    result.x1 = std::min(
-    		std::min(a.x, b.x),
-    		std::min(c.x, d.x));
-    result.y1 = std::min(std::min(a.y, b.y), std::min(c.y, d.y));
-    result.x2 = std::max(std::max(a.x, b.x), std::max(c.x, d.x));
-    result.y2 = std::max(std::max(a.y, b.y), std::max(c.y, d.y));
+    result.x = std::min(std::min(a.x, b.x), std::min(c.x, d.x));
+    result.y = std::min(std::min(a.y, b.y), std::min(c.y, d.y));
+    result.width = std::max(std::max(a.x, b.x), std::max(c.x, d.x)) - result.x;
+    result.height = std::max(std::max(a.y, b.y), std::max(c.y, d.y)) - result.y;
     return result;
 }
 
@@ -222,16 +220,16 @@ Vector Object::mapToGlobal(const Vector& v) const
 
 Rect Object::mapToGlobal(const Rect& r) const
 {
-    Vector a(r.x1, r.y1), b(r.x2, r.y1), c(r.x2, r.y2), d(r.x1, r.y2);
+    Vector a(r.x, r.y), b(r.x + r.width, r.y), c(r.x + r.width, r.y + r.height), d(r.x, r.y + r.height);
     a = mapToGlobal(a);
     b = mapToGlobal(b);
     c = mapToGlobal(c);
     d = mapToGlobal(d);
     Rect result;
-    result.x1 = std::min(std::min(a.x, b.x), std::min(c.x, d.x));
-    result.y1 = std::min(std::min(a.y, b.y), std::min(c.y, d.y));
-    result.x2 = std::max(std::max(a.x, b.x), std::max(c.x, d.x));
-    result.y2 = std::max(std::max(a.y, b.y), std::max(c.y, d.y));
+    result.x = std::min(std::min(a.x, b.x), std::min(c.x, d.x));
+    result.y = std::min(std::min(a.y, b.y), std::min(c.y, d.y));
+    result.width = std::max(std::max(a.x, b.x), std::max(c.x, d.x)) - result.x;
+    result.height = std::max(std::max(a.y, b.y), std::max(c.y, d.y)) - result.y;
     return result;
     return result;
 }
@@ -277,16 +275,16 @@ Rect Object::mapToScreen(const Rect& r) const
     glGetDoublev(GL_PROJECTION_MATRIX, p);
     glGetIntegerv(GL_VIEWPORT, viewport);
 
-    gluProject(global.x1, global.y1, 0, w, p, viewport, &wx1, &wy1, &wz);
-    gluProject(global.x2, global.y1, 0, w, p, viewport, &wx2, &wy2, &wz);
-    gluProject(global.x2, global.y2, 0, w, p, viewport, &wx3, &wy3, &wz);
-    gluProject(global.x1, global.y2, 0, w, p, viewport, &wx4, &wy4, &wz);
+    gluProject(global.x, global.y, 0, w, p, viewport, &wx1, &wy1, &wz);
+    gluProject(global.x + global.width, global.y, 0, w, p, viewport, &wx2, &wy2, &wz);
+    gluProject(global.x + global.width, global.y + global.height, 0, w, p, viewport, &wx3, &wy3, &wz);
+    gluProject(global.x, global.y + global.height, 0, w, p, viewport, &wx4, &wy4, &wz);
 
     Rect result;
-    result.x1 = std::min(std::min(wx1, wx2), std::min(wx3, wx4));
-    result.y1 = std::min(std::min(wy1, wy2), std::min(wy3, wy4));
-    result.x2 = std::max(std::max(wx1, wx2), std::max(wx3, wx4));
-    result.y2 = std::max(std::max(wy1, wy2), std::max(wy3, wy4));
+    result.x = std::min(std::min(wx1, wx2), std::min(wx3, wx4));
+    result.y = std::min(std::min(wy1, wy2), std::min(wy3, wy4));
+    result.width = std::max(std::max(wx1, wx2), std::max(wx3, wx4)) - result.x;
+    result.height = std::max(std::max(wy1, wy2), std::max(wy3, wy4)) - result.y;
 
     return result;
 }

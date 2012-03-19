@@ -28,18 +28,16 @@ Rect Widget::getBoundingRect() const
 {
     lock();
     Rect r;
-    r.x1 = 0;
-    r.y1 = 0;
-    r.x2 = m_width;
-    r.y2 = m_height;
+    r.x = 0;
+    r.y = 0;
+    r.width = m_width;
+    r.height = m_height;
     for (std::list<Widget*>::const_reverse_iterator i = m_childWidgets.rbegin(); i != m_childWidgets.rend(); i++)
     {
         Rect childRect = (*i)->getBoundingRect();
         Vector position = (*i)->position();
-        childRect.x1 += position.x;
-        childRect.x2 += position.x;
-        childRect.y1 += position.y;
-        childRect.y2 += position.y;
+        childRect.x += position.x;
+        childRect.y += position.y;
         r += childRect;
     }
     unlock();

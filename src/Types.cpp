@@ -35,26 +35,38 @@ Vector::Vector(float x, float y)
 
 Rect::Rect()
 {
-    x1 = 0;
-    y1 = 0;
-    x2 = 0;
-    y2 = 0;
+    x = 0;
+    y = 0;
+    width = -1;
+    height = -1;
 }
 
-Rect::Rect(float x1, float y1, float x2, float y2): x1(x1), y1(y1), x2(x2), y2(y2)
+Rect::Rect(float x1, float y1, float x2, float y2)
 {
+    x = x1;
+    y = y1;
+    width = x2 - x1;
+    height = y2 - y1;
 }
 
 Rect& Rect::operator+=(const Rect& other)
 {
-    if (other.x2 > x2)
-        x2 = other.x2;
-    if (other.y2 > y2)
-        y2 = other.y2;
-    if (other.x1 < x1)
-        x1 = other.x1;
-    if (other.y1 < y1)
-        y1 = other.y1;
+    if(other.width < 0 || other.height < 0 || width < 0 || height < 0)
+        return *this;
+    float ox1 = other.x, oy1 = other.y, ox2 = other.x + other.width, oy2 = other.y + other.height;
+    float x1 = x, y1 = y, x2 = x + width, y2 = y + height;
+    if (ox2 > x2)
+        x2 = ox2;
+    if (oy2 > y2)
+        y2 = oy2;
+    if (ox1 < x1)
+        x1 = ox1;
+    if (oy1 < y1)
+        y1 = oy1;
+    x = x1;
+    y = y1;
+    width = x2 - x1;
+    height = y2 - y1;
     return *this;
 }
 
@@ -67,7 +79,9 @@ Rect operator+(const Rect& r1, const Rect& r2)
 
 bool Rect::contains(const Vector& v)
 {
-    return (v.x > x1) && (v.x < x2) && (v.y > y1) && (v.y < y2);
+    if(width < 0 || height < 0)
+        return false;      
+    return (v.x > x) && (v.x < x + width) && (v.y > y) && (v.y < y + height);
 }
 
 TextureRegion::TextureRegion(boost::shared_ptr<Texture> texture, float x, float y, float width, float height)

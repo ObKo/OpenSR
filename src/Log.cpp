@@ -252,7 +252,7 @@ Log::Logger& Log::Logger::operator <<(unsigned long long v)
 
 Log::Logger& Log::Logger::operator<<(const Rect& r)
 {
-    *m_stream << "[" << r.x1 << ", " << r.y1 << ", " << r.x2 << ", " << r.y2 << "]";
+    *m_stream << "[" << r.x << ", " << r.y << ", " << r.width << ", " << r.height << "]";
     return *this;
 }
 

@@ -54,7 +54,7 @@ void ScrollArea::draw() const
     prepareDraw();
     Rect screenRect = mapToScreen(Rect(0, 0, m_width, m_height));
     glEnable(GL_SCISSOR_TEST);
-    glScissor(screenRect.x1, screenRect.y1 + m_left.width(), screenRect.x2 - screenRect.x1 - m_top.width(), screenRect.y2 - screenRect.y1 - m_left.width());
+    glScissor(screenRect.x, screenRect.y + m_left.width(), screenRect.width - m_top.width(), screenRect.width - m_left.width());
     if (m_node)
         m_node->draw();
     glDisable(GL_SCISSOR_TEST);
@@ -92,13 +92,13 @@ void ScrollArea::processMain()
     if (m_node)
     {
         Rect nodeBB = m_node->getBoundingRect();
-        if (nodeBB.x2 - nodeBB.x1 > m_width)
+        if (nodeBB.width > m_width)
         {
-            m_hSize = (nodeBB.x2 - nodeBB.x1) / m_width;
+            m_hSize = nodeBB.width / m_width;
         }
-        if (nodeBB.y2 - nodeBB.y1 > m_width)
+        if (nodeBB.height > m_height)
         {
-            m_vSize = (nodeBB.y2 - nodeBB.y1) / m_height;
+            m_vSize = nodeBB.height / m_height;
         }
         if (m_hSize > 1.0f)
         {

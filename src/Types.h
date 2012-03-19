@@ -59,8 +59,8 @@ struct Rect
 {
     Rect();
     Rect(float x1, float y1, float x2, float y2);
-    float x1, y1;
-    float x2, y2;
+    float x, y;
+    float width, height;
     Rect& operator+=(const Rect& other);
     bool contains(const Vector& v);
 };

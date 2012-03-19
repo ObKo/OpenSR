@@ -116,10 +116,10 @@ lua_State *initLuaState()
         luabind::class_<Rect>("Rect")
         .def(luabind::constructor<>())
         .def(luabind::constructor<float, float, float, float>())
-        .def_readwrite("x1", &Rect::x1)
-        .def_readwrite("x2", &Rect::x2)
-        .def_readwrite("y1", &Rect::y1)
-        .def_readwrite("y2", &Rect::y2),
+        .def_readwrite("x", &Rect::x)
+        .def_readwrite("y", &Rect::y)
+        .def_readwrite("height", &Rect::height)
+        .def_readwrite("width", &Rect::width),
 
         //TODO: overloading
         luabind::class_<Object>("Object")
