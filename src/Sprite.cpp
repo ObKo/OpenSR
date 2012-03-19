@@ -197,6 +197,22 @@ void Sprite::setOrigin(SpriteXOrigin xpos, SpriteYOrigin ypos)
     unlock();
 }
 
+float Sprite::normalHeight() const
+{
+    if (m_region.texture)
+        return (m_region.v2 - m_region.v1) * m_region.texture->height();
+    else
+        return 0.0f;
+}
+
+float Sprite::normalWidth() const
+{
+    if (m_region.texture)
+        return (m_region.u2 - m_region.u1) * m_region.texture->width();
+    else
+        return 0.0f;
+}
+
 void Sprite::setTexture(boost::shared_ptr<Texture> texture)
 {
     lock();

@@ -117,7 +117,8 @@
         "hovered": "default-button-hover",
         "pressed" : "default-button-pressed", 
         "font": "default-button-font", 
-        "color": "#FF082430"
+        "color": "#FF082430",
+        "content-rect": {"x": 4, "y": 4, "width": 108, "height": 13} 
     },
     "ScrollBarStyle":
     {

@@ -35,6 +35,9 @@ public:
     virtual void processMain();
     virtual void draw() const;
 
+    virtual float normalWidth() const;
+    virtual float normalHeight() const;
+
 private:
     NinePatchDescriptor m_descriptor;
 };

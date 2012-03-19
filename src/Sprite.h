@@ -53,6 +53,10 @@ public:
 
     float width() const;
     float height() const;
+
+    virtual float normalWidth() const;
+    virtual float normalHeight() const;
+
     TextureRegion region() const;
 
     Sprite& operator=(const Sprite& other);

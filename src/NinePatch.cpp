@@ -386,4 +386,28 @@ void NinePatch::draw() const
     glDisableClientState(GL_VERTEX_ARRAY);
     endDraw();
 }
+
+float NinePatch::normalHeight() const
+{
+    float height = 0.0f;
+    for (int i = 0; i < m_descriptor.rows; i++)
+    {
+        const TextureRegion &r = m_descriptor.regions.at(i * m_descriptor.columns);
+        if (r.texture)
+            height += (r.v2 - r.v1) * r.texture->height();
+    }
+    return height;
+}
+
+float NinePatch::normalWidth() const
+{
+    float width = 0.0f;
+    for (int i = 0; i < m_descriptor.columns; i++)
+    {
+        const TextureRegion &r = m_descriptor.regions.at(i);
+        if (r.texture)
+            width += (r.u2 - r.u1) * r.texture->width();
+    }
+    return width;
+}
 }

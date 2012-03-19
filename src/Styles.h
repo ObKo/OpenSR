@@ -49,6 +49,7 @@ struct ButtonStyle
     ResourceDescriptor pressed;
     int color;
     FontDescriptor font;
+    Rect contentRect;
 };
 
 struct ScrollBarStyle

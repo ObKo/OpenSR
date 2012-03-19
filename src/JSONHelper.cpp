@@ -332,6 +332,14 @@ ButtonStyle JSONHelper::parseButtonStyle(const Json::Value& object, const std::m
         }
         style.color = color;
     }
+    if (std::find(members.begin(), members.end(), "content-rect") != members.end())
+    {
+        Json::Value contentRect = object.get("content-rect", Json::Value());
+        style.contentRect.x1 = contentRect.get("x", 0).asInt();
+        style.contentRect.y1 = contentRect.get("y", 0).asInt();
+        style.contentRect.x2 = style.contentRect.x1 + contentRect.get("width", 0).asInt();
+        style.contentRect.y2 = style.contentRect.y1 + contentRect.get("height", 0).asInt();
+    }
     return style;
 }
 

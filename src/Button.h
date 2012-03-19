@@ -59,10 +59,12 @@ public:
     void setText(const std::wstring& text);
     void setColor(int color);
     void setFont(boost::shared_ptr<Font> font);
+    void setAutoResize(bool autoResize);
 
     std::wstring text() const;
     int color() const;
     boost::shared_ptr<Font> font() const;
+    bool autoResize() const;
 
     Button& operator=(const Button& other);
 
@@ -74,6 +76,7 @@ private:
     Sprite *m_hoverSprite;
     Sprite *m_pressedSprite;
     Sprite *m_sprite;
+    bool m_autoResize;
 
     void init();
 };

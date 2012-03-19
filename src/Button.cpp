@@ -29,12 +29,14 @@ namespace Rangers
 {
 
 Button::Button(Widget *parent):
-    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0), m_label(0)
+    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0), m_label(0),
+    m_autoResize(false)
 {
 }
 
 Button::Button(boost::shared_ptr<Texture> texture, Widget *parent):
-    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0), m_label(0)
+    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0), m_label(0),
+    m_autoResize(false)
 {
     if (texture)
     {
@@ -50,7 +52,8 @@ Button::Button(boost::shared_ptr<Texture> texture, Widget *parent):
 }
 
 Button::Button(boost::shared_ptr<Texture> texture, boost::shared_ptr<Texture> hoverTexture, Widget *parent):
-    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0), m_label(0)
+    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0), m_label(0),
+    m_autoResize(false)
 {
     if (texture)
     {
@@ -71,7 +74,8 @@ Button::Button(boost::shared_ptr<Texture> texture, boost::shared_ptr<Texture> ho
 }
 
 Button::Button(boost::shared_ptr<Texture> texture, boost::shared_ptr<Texture> hoverTexture, boost::shared_ptr<Texture> pressTexture, Widget *parent):
-    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0), m_label(0)
+    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0), m_label(0),
+    m_autoResize(false)
 {
     if (texture)
     {
@@ -97,7 +101,8 @@ Button::Button(boost::shared_ptr<Texture> texture, boost::shared_ptr<Texture> ho
 }
 
 Button::Button(const std::wstring& texture, Widget *parent):
-    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0), m_label(0)
+    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0), m_label(0),
+    m_autoResize(false)
 {
     boost::shared_ptr<Texture> main = ResourceManager::instance()->loadTexture(texture);
     if (main)
@@ -114,7 +119,8 @@ Button::Button(const std::wstring& texture, Widget *parent):
 }
 
 Button::Button(const std::wstring& texture, const std::wstring& hoverTexture, Widget *parent):
-    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0), m_label(0)
+    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0), m_label(0),
+    m_autoResize(false)
 {
     boost::shared_ptr<Texture> main = ResourceManager::instance()->loadTexture(texture);
     boost::shared_ptr<Texture> hover = ResourceManager::instance()->loadTexture(hoverTexture);
@@ -137,7 +143,8 @@ Button::Button(const std::wstring& texture, const std::wstring& hoverTexture, Wi
 }
 
 Button::Button(const std::wstring& texture, const std::wstring& hoverTexture, const std::wstring& pressTexture, Widget *parent):
-    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0), m_label(0)
+    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0), m_label(0),
+    m_autoResize(false)
 {
     boost::shared_ptr<Texture> main = ResourceManager::instance()->loadTexture(texture);
     boost::shared_ptr<Texture> hover = ResourceManager::instance()->loadTexture(hoverTexture);
@@ -166,7 +173,8 @@ Button::Button(const std::wstring& texture, const std::wstring& hoverTexture, co
 }
 
 Button::Button(const ButtonStyle& style, Widget* parent):
-    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0), m_style(style), m_label(0)
+    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0), m_style(style), m_label(0),
+    m_autoResize(false)
 {
     init();
     if (m_sprite)
@@ -174,6 +182,16 @@ Button::Button(const ButtonStyle& style, Widget* parent):
         m_width = m_sprite->width();
         m_height = m_sprite->height();
     }
+}
+
+bool Button::autoResize() const
+{
+    return m_autoResize;
+}
+
+void Button::setAutoResize(bool autoResize)
+{
+
 }
 
 void Button::setText(const std::wstring& text)
