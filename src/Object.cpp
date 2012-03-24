@@ -351,6 +351,11 @@ Object* Object::parent() const
     return m_parent;
 }
 
+bool Object::needUpdate() const
+{
+    return m_needUpdate;
+}
+
 void Object::addChild(Object* object)
 {
     lock();

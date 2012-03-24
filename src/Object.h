@@ -54,6 +54,7 @@ public:
     float rotation() const;
     int layer() const;
     Object* parent() const;
+    bool needUpdate() const;
 
     void setLayer(int layer);
 

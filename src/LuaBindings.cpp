@@ -121,6 +121,14 @@ lua_State *initLuaState()
         .def_readwrite("height", &Rect::height)
         .def_readwrite("width", &Rect::width),
 
+        luabind::class_<Font>("Font")
+        .def(luabind::constructor<const std::wstring&, int>())
+        .def("renderText", (boost::shared_ptr<Texture> (Font::*)(const std::wstring&, int) const)&Font::renderText)
+        .def("renderColoredText", (boost::shared_ptr<Texture> (Font::* const)(const std::wstring&, int, int) const)&Font::renderColoredText)
+        .def("size", &Font::size)
+        .def("calculateStringWidth", &Font::calculateStringWidth),
+
+
         //TODO: overloading
         luabind::class_<Object>("Object")
         .def(const_self == const_self)
@@ -281,7 +289,9 @@ lua_State *initLuaState()
         .def("font", &Button::font)
         .def("setColor", &Button::setColor)
         .def("setText", &Button::setText)
-        .def("setFont", &Button::setFont),
+        .def("setFont", &Button::setFont)
+        .def("setAutoResize", &Button::setAutoResize)
+        .def("autoResize", &Button::autoResize),
 
         luabind::class_<CheckBox, Widget>("CheckBox")
         .def(luabind::constructor<boost::shared_ptr<Texture>, boost::shared_ptr<Texture>, const std::wstring&, Rangers::Widget*>())

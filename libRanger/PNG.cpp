@@ -48,7 +48,7 @@ PNGFrame loadPNG(const char *buffer, size_t bufferSize)
     frame.type = PNG_INVALID;
     frame.data = 0;
 
-    if (!png_check_sig((png_const_bytep)buffer, 8))
+    if (!png_check_sig((png_bytep)buffer, 8))
         return frame;
 
     png_structp png_ptr = 0;

@@ -69,6 +69,8 @@ public:
     Button& operator=(const Button& other);
 
 private:
+    void calcAutoRresize();
+
     ButtonStyle m_style;
     Label *m_label;
     std::wstring m_text;

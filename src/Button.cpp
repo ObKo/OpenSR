@@ -24,6 +24,7 @@
 #include "Texture.h"
 #include "NinePatch.h"
 #include "Label.h"
+#include "Font.h"
 
 namespace Rangers
 {
@@ -191,13 +192,16 @@ bool Button::autoResize() const
 
 void Button::setAutoResize(bool autoResize)
 {
-
+    m_autoResize = autoResize;
+    calcAutoRresize();
 }
 
 void Button::setText(const std::wstring& text)
 {
     m_text = text;
     m_label->setText(text);
+    calcAutoRresize();
+    markToUpdate();
 }
 
 void Button::setColor(int color)
@@ -208,6 +212,7 @@ void Button::setColor(int color)
 void Button::setFont(boost::shared_ptr<Font> font)
 {
     m_label->setFont(font);
+    calcAutoRresize();
     markToUpdate();
 }
 
@@ -216,6 +221,34 @@ std::wstring Button::text() const
     if (!m_label)
         return std::wstring();
     return m_text;
+}
+
+void Button::calcAutoRresize()
+{
+    if (!m_autoResize)
+        return;
+    if (!m_label)
+        return;
+    if (!m_normalSprite)
+        return;
+
+    float labelWidth = 0.0f;
+    float labelHeight = 0.0f;
+    if (m_label->font())
+    {
+        labelWidth = m_label->font()->calculateStringWidth(m_text.begin(), m_text.end());
+        labelHeight = m_label->font()->size();
+    }
+    if ((m_style.contentRect.width < 0) || (m_style.contentRect.height < 0))
+    {
+        setGeometry(std::max(labelWidth, m_normalSprite->normalWidth()), std::max(labelHeight, m_normalSprite->normalHeight()));
+    }
+    else
+    {
+        float width = m_normalSprite->normalWidth() + labelWidth - m_style.contentRect.width;
+        float height = m_normalSprite->normalHeight() + labelHeight - m_style.contentRect.height;
+        setGeometry(std::max(width, m_normalSprite->normalWidth()), std::max(height, m_normalSprite->normalHeight()));
+    }
 }
 
 int Button::color() const
@@ -303,8 +336,14 @@ void Button::processMain()
         m_pressedSprite->setGeometry(m_width, m_height);
     if (m_label)
     {
-        double i;
-        m_label->setPosition(int((m_width - m_label->width()) / 2), int((m_height - m_label->height()) / 2));
+        if ((m_style.contentRect.width < 0) || (m_style.contentRect.height < 0) || (!m_normalSprite))
+        {
+            m_label->setPosition(int((m_width - m_label->width()) / 2), int((m_height - m_label->height()) / 2));
+        }
+        else
+        {
+            m_label->setPosition(m_style.contentRect.x, m_style.contentRect.y);
+        }
     }
     unlock();
     Widget::processMain();

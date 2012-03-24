@@ -40,14 +40,13 @@ public:
 
     int calculateStringWidth(const std::wstring::const_iterator& first, const std::wstring::const_iterator& last) const;
 
+    int size() const;
+
+private:
     static void drawGlyph(unsigned char *dest, int destwidth, int destheight,
                           int x, int y, int w, int h, unsigned char *data);
     static void drawGlyph(unsigned char *dest, int destwidth, int destheight,
                           int x, int y, int w, int h, unsigned char *data, unsigned int color);
-
-    int size() const;
-
-private:
     FT_Face m_fontFace;
     int m_fontSize;
     char *m_fontData;
