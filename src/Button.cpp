@@ -328,6 +328,8 @@ void Button::draw() const
 void Button::processMain()
 {
     lock();
+    if (m_label && m_label->needUpdate())
+        m_label->processMain();
     if (m_normalSprite)
         m_normalSprite->setGeometry(m_width, m_height);
     if (m_hoverSprite)
@@ -342,7 +344,16 @@ void Button::processMain()
         }
         else
         {
-            m_label->setPosition(m_style.contentRect.x, m_style.contentRect.y);
+            float x, y;
+            if (m_label->width() < m_style.contentRect.width)
+                x = int(m_style.contentRect.width - m_label->width()) / 2 + m_style.contentRect.x;
+            else
+                x = m_style.contentRect.x;
+            if (m_label->height() < m_style.contentRect.height)
+                y = int(m_style.contentRect.height - m_label->height()) / 2 + m_style.contentRect.y;
+            else
+                y = m_style.contentRect.y;
+            m_label->setPosition(x, y);
         }
     }
     unlock();

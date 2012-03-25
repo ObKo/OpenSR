@@ -54,51 +54,58 @@ Log* Log::instance()
 void Log::writeLogEntry(const LogEntry& s)
 {
     m_bufferMutex.lock();
-    m_logEntries.push_back(s);
-    m_needUpdate = true;
-
-    wstring prefix;
-
-    switch (s.m_level)
+    std::vector<std::wstring> l = split(s.m_text, L'\n');
+    std::vector<std::wstring>::iterator end = l.end();
+    for (std::vector<std::wstring>::iterator i = l.begin(); i != end; ++i)
     {
-    case LDEBUG:
-        prefix = L"[--] ";
-        break;
-    case LINFO:
-        prefix = L"[II] ";
-        break;
-    case LWARNING:
-        prefix = L"[WW] ";
-        break;
-    case LERROR:
-        prefix = L"[EE] ";
-        break;
-    }
+        LogEntry e = s;
+        e.m_text = (*i);
+        m_logEntries.push_back(e);
 
-#ifdef __unix__
-    if (m_colorOutput)
-    {
-        switch (s.m_level)
+        wstring prefix;
+
+        switch (e.m_level)
         {
+        case LDEBUG:
+            prefix = L"[--] ";
+            break;
         case LINFO:
-            prefix = L"\e[0;32m" + prefix;
+            prefix = L"[II] ";
             break;
         case LWARNING:
-            prefix = L"\e[0;33m" + prefix;
+            prefix = L"[WW] ";
             break;
         case LERROR:
-            prefix = L"\e[0;31m" + prefix;
+            prefix = L"[EE] ";
             break;
         }
-        cout << toLocal(prefix + s.m_text) << "\e[0m" << endl;
-    }
-    else
-        cout << toLocal(prefix + s.m_text) << endl;
+
+#ifdef __unix__
+        if (m_colorOutput)
+        {
+            switch (e.m_level)
+            {
+            case LINFO:
+                prefix = L"\e[0;32m" + prefix;
+                break;
+            case LWARNING:
+                prefix = L"\e[0;33m" + prefix;
+                break;
+            case LERROR:
+                prefix = L"\e[0;31m" + prefix;
+                break;
+            }
+            cout << toLocal(prefix + e.m_text) << "\e[0m" << endl;
+        }
+        else
+            cout << toLocal(prefix + e.m_text) << endl;
 #elif _WIN32
-    cout << toLocal(prefix + s.m_text) << endl;
+        cout << toLocal(prefix + e.m_text) << endl;
 #else
-    cout << toLocal(prefix + s.m_text) << endl;
+        cout << toLocal(prefix + e.m_text) << endl;
 #endif
+    }
+    m_needUpdate = true;
 
     m_bufferMutex.unlock();
 }
