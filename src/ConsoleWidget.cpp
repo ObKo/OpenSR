@@ -91,12 +91,12 @@ public:
 
 ConsoleWidget::ConsoleWidget(float w, float h, Widget* parent): Widget(w, h, parent)
 {
-    int editSize = Engine::instance()->serviceFont()->size() + 4;
-    m_lineEdit = LineEditWidget(w, editSize, Engine::instance()->serviceFont(), this);
+    int editSize = Engine::instance()->serviceFont()->size() + 2;
+    m_lineEdit = LineEditWidget(w, Engine::instance()->serviceFont()->size(), Engine::instance()->serviceFont(), this);
     m_logLabel = ColorLabel("", this, Engine::instance()->serviceFont(), POSITION_X_LEFT, POSITION_Y_TOP);
     m_logLabel.setPosition(4, 4);
     m_logLabel.setFixedSize(w - 8, h - editSize - 8);
-    m_lineEdit.setPosition(0, h - editSize);
+    m_lineEdit.setPosition(4, h - editSize);
     m_consoleLines = (h - editSize - 8) / Engine::instance()->serviceFont()->size();
     m_borderVertices = 0;
     m_borderBuffer = 0;
@@ -174,7 +174,8 @@ void ConsoleWidget::draw() const
     glColor3f(1, 1, 1);
     glBindTexture(GL_TEXTURE_2D, 0);
     glLineWidth(1);
-    glDrawArrays(GL_LINE_STRIP, 0, 4);
+    glDrawArrays(GL_LINE_STRIP, 0, 5);
+    glDrawArrays(GL_LINES, 5, 2);
 
     glDisableClientState(GL_ARRAY_BUFFER);
     glDisableClientState(GL_VERTEX_ARRAY);
@@ -232,6 +233,8 @@ void ConsoleWidget::processLogic(int dt)
 
 void ConsoleWidget::processMain()
 {
+    if (m_lineEdit.needUpdate())
+        m_lineEdit.processMain();
     lock();
 
     if (!m_borderBuffer)
@@ -239,17 +242,18 @@ void ConsoleWidget::processMain()
         m_borderVertices = new Vertex[6];
         glGenBuffers(1, &m_borderBuffer);
         glBindBuffer(GL_ARRAY_BUFFER, m_borderBuffer);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * 6, m_borderVertices, GL_DYNAMIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * 7, m_borderVertices, GL_DYNAMIC_DRAW);
         delete m_borderVertices;
     }
 
-    if(!m_texture)
+    if (!m_texture)
     {
         glGenTextures(1, &m_texture);
         unsigned char pattern[16] = {0x80, 0xC0, 0xC0, 0x80,
                                      0xC0, 0x80, 0x80, 0xC0,
                                      0xC0, 0x80, 0x80, 0xC0,
-                                     0x80, 0xC0, 0xC0, 0x80};
+                                     0x80, 0xC0, 0xC0, 0x80
+                                    };
         glBindTexture(GL_TEXTURE_2D, m_texture);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, 4, 4, 0, GL_ALPHA, GL_UNSIGNED_BYTE, pattern);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -278,10 +282,15 @@ void ConsoleWidget::processMain()
     m_borderVertices[3].u = m_width / 4.0f;
     m_borderVertices[3].v = m_height / 4.0f;
 
+    m_borderVertices[4].x = 1;
+    m_borderVertices[4].y = m_height;
+    m_borderVertices[5].x = 1;
+    m_borderVertices[5].y = m_height - m_lineEdit.height() - 1;
+    m_borderVertices[6].x = m_width - 1;
+    m_borderVertices[6].y = m_height - m_lineEdit.height() - 1;
+
     glUnmapBuffer(GL_ARRAY_BUFFER);
 
-    m_lineEdit.processMain();
-    m_logLabel.processMain();
     unlock();
     Widget::processMain();
 }

@@ -21,15 +21,20 @@
 
 #include "Label.h"
 #include "Widget.h"
+#include "Styles.h"
 
 namespace Rangers
 {
+class Sprite;
 class LineEditWidget: public Widget
 {
 public:
     LineEditWidget(float w, float h = 0, boost::shared_ptr<Font> font = boost::shared_ptr<Font>(), Widget* parent = 0);
     LineEditWidget(Widget* parent = 0);
+    LineEditWidget(const LineEditStyle& style, Widget* parent = 0);
     LineEditWidget(const LineEditWidget& other);
+
+    virtual ~LineEditWidget();
 
     virtual void draw() const;
     virtual void processMain();
@@ -42,16 +47,20 @@ public:
 
 private:
     class LineEditWidgetListener;
+    void init();
 
     void keyPressed(const SDL_keysym& key);
 
     Label m_label;
     std::wstring m_text;
-    Vertex *m_borderVertices;
-    GLuint m_borderBuffer;
+    Vertex *m_cursorVertices;
+    GLuint m_cursorBuffer;
     int m_position;
     bool m_cursorVisible;
     int m_cursorTime;
+
+    Sprite *m_background;
+    LineEditStyle m_style;
 };
 }
 

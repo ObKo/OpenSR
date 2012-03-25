@@ -320,7 +320,16 @@ lua_State *initLuaState()
         luabind::class_<ButtonStyle>("ButtonStyle")
         .def_readwrite("normal", &ButtonStyle::normal)
         .def_readwrite("hovered", &ButtonStyle::hovered)
-        .def_readwrite("pressed", &ButtonStyle::pressed),
+        .def_readwrite("pressed", &ButtonStyle::pressed)
+        .def_readwrite("font", &ButtonStyle::font)
+        .def_readwrite("color", &ButtonStyle::color)
+        .def_readwrite("contentRect", &ButtonStyle::contentRect),
+
+        luabind::class_<LineEditStyle>("LineEditStyle")
+        .def_readwrite("background", &LineEditStyle::background)
+        .def_readwrite("font", &LineEditStyle::font)
+        .def_readwrite("color", &LineEditStyle::color)
+        .def_readwrite("contentRect", &LineEditStyle::contentRect),
 
         luabind::class_<ScrollBarStyle>("ScrollBarStyle")
         .def_readwrite("upButton", &ScrollBarStyle::upButton)

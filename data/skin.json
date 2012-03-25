@@ -96,6 +96,25 @@
                 {"texture": "DATA/FormPlanet2/2QuestButD.gi", "x": 58, "y": 11, "width": 1, "height": 10},
                 {"texture": "DATA/FormPlanet2/2QuestButD.gi", "x": 59, "y": 11, "width": 57, "height": 10}
             ] 
+        },
+		"line-edit":
+        {
+            "rows": 3,
+            "columns": 3,
+            "sizeableRows": [1],
+            "sizeableColumns": [1],
+            "regions":
+            [
+                {"texture": "ORC/LineEdit.png", "x": 0, "y": 0, "width": 4, "height": 10},
+                {"texture": "ORC/LineEdit.png", "x": 5, "y": 0, "width": 1, "height": 10},
+                {"texture": "ORC/LineEdit.png", "x": 6, "y": 0, "width": 4, "height": 10},
+                {"texture": "ORC/LineEdit.png", "x": 0, "y": 10, "width": 4, "height": 1},
+                {"texture": "ORC/LineEdit.png", "x": 5, "y": 10, "width": 1, "height": 1},
+                {"texture": "ORC/LineEdit.png", "x": 6, "y": 10, "width": 4, "height": 1},
+                {"texture": "ORC/LineEdit.png", "x": 0, "y": 11, "width": 4, "height": 10},
+                {"texture": "ORC/LineEdit.png", "x": 5, "y": 11, "width": 1, "height": 10},
+                {"texture": "ORC/LineEdit.png", "x": 6, "y": 11, "width": 4, "height": 10}
+            ] 
         }
     },
     "Sprite":
@@ -109,14 +128,21 @@
     },
     "Font":
     {
-        "default-button-font": {"file": "DroidSans.ttf", "size": 14}
+        "default-font": {"file": "DroidSans.ttf", "size": 13}
+    },
+	"LineEditStyle":
+    {
+        "background": "line-edit",
+        "font": "default-font", 
+        "color": "#FF000000",
+        "content-rect": {"x": 5, "y": 3, "width": 1, "height": 13} 
     },
     "ButtonStyle":
     {
         "normal": "default-button-normal",
         "hovered": "default-button-hover",
         "pressed" : "default-button-pressed", 
-        "font": "default-button-font", 
+        "font": "default-font", 
         "color": "#FF082430",
         "content-rect": {"x": 4, "y": 4, "width": 108, "height": 13} 
     },

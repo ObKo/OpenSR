@@ -35,6 +35,7 @@ public:
     static FontDescriptor parseFont(const Json::Value& object, bool &error);
     static std::map<std::wstring, ResourceDescriptor> parseResources(const Json::Value& object, bool &error);
     static ButtonStyle parseButtonStyle(const Json::Value& object, const std::map<std::wstring, ResourceDescriptor>& resources, bool &error);
+    static LineEditStyle parseLineEditStyle(const Json::Value& object, const std::map< std::wstring, ResourceDescriptor >& resources, bool& error);
     static Skin parseSkin(const std::string& json, bool &error);
 };
 }

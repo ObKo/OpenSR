@@ -52,6 +52,14 @@ struct ButtonStyle
     Rect contentRect;
 };
 
+struct LineEditStyle
+{
+    ResourceDescriptor background;
+    int color;
+    FontDescriptor font;
+    Rect contentRect;
+};
+
 struct ScrollBarStyle
 {
     ButtonStyle upButton;
@@ -63,6 +71,7 @@ struct Skin
 {
     ButtonStyle buttonStyle;
     ScrollBarStyle scrollStyle;
+    LineEditStyle lineEditStyle;
 };
 
 }
