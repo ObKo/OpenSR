@@ -63,6 +63,7 @@ struct Rect
     float width, height;
     Rect& operator+=(const Rect& other);
     bool contains(const Vector& v);
+    bool valid() const;
 };
 
 //! Struct that handles region of texture.

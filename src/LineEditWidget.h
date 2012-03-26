@@ -40,6 +40,12 @@ public:
     virtual void processMain();
     virtual void processLogic(int dt);
 
+    virtual int minWidth() const;
+    virtual int minHeight() const;
+    virtual int preferredHeight() const;
+    virtual int maxHeight() const;
+
+
     std::wstring text() const;
     void setText(const std::wstring &s);
 

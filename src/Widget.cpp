@@ -211,6 +211,36 @@ int Widget::width() const
     return m_width;
 }
 
+int Widget::minWidth() const
+{
+    return -1;
+}
+
+int Widget::minHeight() const
+{
+    return -1;
+}
+
+int Widget::preferredWidth() const
+{
+    return -1;
+}
+
+int Widget::preferredHeight() const
+{
+    return -1;
+}
+
+int Widget::maxWidth() const
+{
+    return -1;
+}
+
+int Widget::maxHeight() const
+{
+    return -1;
+}
+
 Widget& Widget::operator=(const Rangers::Widget& other)
 {
     if (this == &other)

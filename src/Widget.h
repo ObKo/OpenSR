@@ -49,6 +49,13 @@ public:
     virtual void mouseUp(uint8_t key, const Vector &p);
     virtual void mouseClick(const Vector &p);
 
+    virtual int minWidth() const;
+    virtual int minHeight() const;
+    virtual int preferredWidth() const;
+    virtual int preferredHeight() const;
+    virtual int maxWidth() const;
+    virtual int maxHeight() const;
+
     int width() const;
     int height() const;
 

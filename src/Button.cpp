@@ -239,7 +239,7 @@ void Button::calcAutoRresize()
         labelWidth = m_label->font()->calculateStringWidth(m_text.begin(), m_text.end());
         labelHeight = m_label->font()->size();
     }
-    if ((m_style.contentRect.width < 0) || (m_style.contentRect.height < 0))
+    if (!m_style.contentRect.valid())
     {
         setGeometry(std::max(labelWidth, m_normalSprite->normalWidth()), std::max(labelHeight, m_normalSprite->normalHeight()));
     }
@@ -250,6 +250,47 @@ void Button::calcAutoRresize()
         setGeometry(std::max(width, m_normalSprite->normalWidth()), std::max(height, m_normalSprite->normalHeight()));
     }
 }
+
+int Button::minHeight() const
+{
+    if (m_label && m_normalSprite)
+        return std::max(m_label->height(), m_normalSprite->normalHeight());
+    if (m_normalSprite)
+        return m_normalSprite->normalHeight();
+    return Widget::minHeight();
+}
+
+int Button::minWidth() const
+{
+    if (m_label && m_normalSprite)
+        return std::max(m_label->width(), m_normalSprite->normalWidth());
+    if (m_normalSprite)
+        return m_normalSprite->normalHeight();
+    return Widget::minWidth();
+}
+
+int Button::preferredHeight() const
+{
+    if (!m_normalSprite)
+        return Widget::preferredHeight();
+
+    if (m_label && m_style.contentRect.valid())
+        return m_normalSprite->normalHeight() + m_label->height() - m_style.contentRect.height;
+
+    return minHeight();
+}
+
+int Button::preferredWidth() const
+{
+    if (!m_normalSprite)
+        return Widget::preferredWidth();
+
+    if (m_label && m_style.contentRect.valid())
+        return m_normalSprite->normalWidth() + m_label->width() - m_style.contentRect.width;
+
+    return minWidth();
+}
+
 
 int Button::color() const
 {
@@ -338,7 +379,7 @@ void Button::processMain()
         m_pressedSprite->setGeometry(m_width, m_height);
     if (m_label)
     {
-        if ((m_style.contentRect.width < 0) || (m_style.contentRect.height < 0) || (!m_normalSprite))
+        if (!m_style.contentRect.valid() || (!m_normalSprite))
         {
             m_label->setPosition(int((m_width - m_label->width()) / 2), int((m_height - m_label->height()) / 2));
         }

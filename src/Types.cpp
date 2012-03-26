@@ -51,7 +51,7 @@ Rect::Rect(float x1, float y1, float x2, float y2)
 
 Rect& Rect::operator+=(const Rect& other)
 {
-    if(other.width < 0 || other.height < 0 || width < 0 || height < 0)
+    if (other.width < 0 || other.height < 0 || width < 0 || height < 0)
         return *this;
     float ox1 = other.x, oy1 = other.y, ox2 = other.x + other.width, oy2 = other.y + other.height;
     float x1 = x, y1 = y, x2 = x + width, y2 = y + height;
@@ -79,9 +79,14 @@ Rect operator+(const Rect& r1, const Rect& r2)
 
 bool Rect::contains(const Vector& v)
 {
-    if(width < 0 || height < 0)
-        return false;      
+    if (width < 0 || height < 0)
+        return false;
     return (v.x > x) && (v.x < x + width) && (v.y > y) && (v.y < y + height);
+}
+
+bool Rect::valid() const
+{
+    return (width >= 0) && (height >= 0);
 }
 
 TextureRegion::TextureRegion(boost::shared_ptr<Texture> texture, float x, float y, float width, float height)

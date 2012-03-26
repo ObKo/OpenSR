@@ -29,6 +29,7 @@ extern "C"
 
 namespace Rangers
 {
+//TODO: min/max/preferred sizes.
 class LuaWidget: public Widget
 {
 public:

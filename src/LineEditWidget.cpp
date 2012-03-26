@@ -207,7 +207,7 @@ void LineEditWidget::processMain()
     glBindBuffer(GL_ARRAY_BUFFER, m_cursorBuffer);
     m_cursorVertices = (Vertex *)glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
 
-    if (m_style.contentRect.width < 0 || m_style.contentRect.height < 0)
+    if (!m_style.contentRect.valid())
     {
         m_label.setPosition(0, 0);
         m_cursorVertices[0].x = cursorPosition;
@@ -297,5 +297,42 @@ void LineEditWidget::setText(const std::wstring& s)
 std::wstring LineEditWidget::text() const
 {
     return m_text;
+}
+
+int LineEditWidget::minHeight() const
+{
+    if (m_background && m_label.font())
+        return std::max(m_label.font()->size(), (int)m_background->normalHeight());
+
+    if (m_label.font())
+        return m_label.font()->size();
+
+    return Widget::minHeight();
+}
+
+int LineEditWidget::minWidth() const
+{
+    std::wstring w = L"W";
+    if (m_background && m_label.font())
+        return std::max(m_label.font()->calculateStringWidth(w.begin(), w.end()), (int)m_background->normalHeight());
+
+    if (m_label.font())
+        return m_label.font()->calculateStringWidth(w.begin(), w.end());
+
+    return Widget::minHeight();
+}
+
+int LineEditWidget::preferredHeight() const
+{
+
+    if (m_background && m_label.font() && m_style.contentRect.valid())
+        return m_background->normalHeight() + m_label.font()->size() - m_style.contentRect.height;
+
+    return minHeight();
+}
+
+int LineEditWidget::maxHeight() const
+{
+    return preferredHeight();
 }
 }

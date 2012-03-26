@@ -25,6 +25,7 @@
 
 namespace Rangers
 {
+//TODO: Legacy code.
 class CheckBox: public Widget
 {
 public:

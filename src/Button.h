@@ -56,6 +56,11 @@ public:
     virtual void mouseUp(uint8_t key, const Vector &p);
     virtual void mouseClick(const Vector &p);
 
+    virtual int minWidth() const;
+    virtual int minHeight() const;
+    virtual int preferredWidth() const;
+    virtual int preferredHeight() const;
+
     void setText(const std::wstring& text);
     void setColor(int color);
     void setFont(boost::shared_ptr<Font> font);

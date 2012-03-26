@@ -129,6 +129,7 @@ lua_State *initLuaState()
         .def("calculateStringWidth", &Font::calculateStringWidth),
 
 
+
         //TODO: overloading
         luabind::class_<Object>("Object")
         .def(const_self == const_self)
@@ -244,6 +245,12 @@ lua_State *initLuaState()
         .def("mouseClick", (void (Widget::*)(float, float))&Widget::mouseClick)
         .def("width", &Widget::width)
         .def("height", &Widget::height)
+        .def("minWidth", &Widget::minWidth)
+        .def("minHeight", &Widget::minHeight)
+        .def("maxWidth", &Widget::maxWidth)
+        .def("maxHeight", &Widget::maxHeight)
+        .def("preferredWidth", &Widget::preferredWidth)
+        .def("preferredHeight", &Widget::preferredHeight)
         .def("setWidth", &Widget::setWidth)
         .def("setHeight", &Widget::setHeight)
         .def("setGeometry", &Widget::setGeometry)
