@@ -101,7 +101,7 @@ int Font::calculateStringWidth(const std::wstring::const_iterator& first, const 
 {
     int width = 0;
     int x = 0;
-    for (std::wstring::const_iterator i = first; i != last; i++)
+    for (std::wstring::const_iterator i = first; i != last; ++i)
     {
         if (*i == L'\n')
         {
@@ -118,6 +118,23 @@ int Font::calculateStringWidth(const std::wstring::const_iterator& first, const 
     }
     width = x > width ? x : width;
     return width;
+}
+
+int Font::maxChars(const std::wstring::const_iterator& first, const std::wstring::const_iterator& last, int width) const
+{
+    int x = 0;
+    for (std::wstring::const_iterator i = first; i != last; ++i)
+    {
+        FT_UInt glyph_index;
+        glyph_index = FT_Get_Char_Index(m_fontFace, *i);
+        FT_Load_Glyph(m_fontFace, glyph_index, FT_LOAD_DEFAULT);
+        //bearingY = bearingY < fontFace->glyph->metrics.horiBearingY >> 6 ? fontFace->glyph->metrics.horiBearingY >> 6 : bearingY;
+
+        x += m_fontFace->glyph->advance.x >> 6;
+        if (x > width)
+            return i - first - 1;
+    }
+    return last - first;
 }
 
 boost::shared_ptr<Texture> Font::renderText(const std::wstring& t, int wrapWidth) const

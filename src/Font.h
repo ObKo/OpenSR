@@ -39,6 +39,7 @@ public:
     boost::shared_ptr<Texture> renderColoredText(const std::wstring& text, int defaultTextColor = 0xFFFFFF, int width = 0) const;
 
     int calculateStringWidth(const std::wstring::const_iterator& first, const std::wstring::const_iterator& last) const;
+    int maxChars(const std::wstring::const_iterator& first, const std::wstring::const_iterator& last, int width) const;
 
     int size() const;
 

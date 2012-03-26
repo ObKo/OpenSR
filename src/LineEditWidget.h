@@ -48,6 +48,7 @@ public:
 private:
     class LineEditWidgetListener;
     void init();
+    void updateText();
 
     void keyPressed(const SDL_keysym& key);
 
@@ -58,6 +59,7 @@ private:
     int m_position;
     bool m_cursorVisible;
     int m_cursorTime;
+    int m_stringOffset;
 
     Sprite *m_background;
     LineEditStyle m_style;

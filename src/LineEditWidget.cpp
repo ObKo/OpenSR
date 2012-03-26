@@ -92,6 +92,7 @@ LineEditWidget::LineEditWidget(Widget* parent): Widget(parent), m_background(0)
     m_position = 0;
     m_cursorVisible = false;
     m_cursorTime = 0;
+    m_stringOffset = 0;
 }
 
 LineEditWidget::LineEditWidget(const LineEditStyle& style, Widget* parent): Widget(parent), m_background(0)
@@ -122,7 +123,31 @@ void LineEditWidget::init()
     m_cursorVisible = true;
     m_cursorBuffer = 0;
     m_cursorVertices = 0;
+    m_stringOffset = 0;
     markToUpdate();
+}
+
+void LineEditWidget::updateText()
+{
+    if (!m_label.font())
+        return;
+    int maxChars;
+    if (m_position < m_stringOffset)
+    {
+        m_stringOffset = m_position;
+    }
+    else
+    {
+        std::wstring::iterator start = m_text.begin() + m_stringOffset;
+        std::wstring::iterator end = m_text.begin() + m_position + 1;
+        while ((maxChars = m_label.font()->maxChars(start, end, m_width)) < end - start)
+        {
+            m_stringOffset = (end - maxChars) - m_text.begin() - 1;
+            start = m_text.begin() + m_stringOffset;
+        }
+    }
+    maxChars = m_label.font()->maxChars(m_text.begin() + m_stringOffset, m_text.end(), m_width);
+    m_label.setText(m_text.substr(m_stringOffset, maxChars + 1));
 }
 
 LineEditWidget::LineEditWidget(const Rangers::LineEditWidget& other): Widget(other)
@@ -169,7 +194,7 @@ void LineEditWidget::processMain()
         m_background->setGeometry(m_width, m_height);
     }
 
-    int cursorPosition = m_label.font()->calculateStringWidth(m_text.begin(), m_text.begin() + m_position);
+    int cursorPosition = m_label.font()->calculateStringWidth(m_text.begin() + m_stringOffset, m_text.begin() + m_position);
     if (!m_cursorBuffer)
     {
         m_cursorVertices = new Vertex[2];
@@ -252,7 +277,8 @@ void LineEditWidget::keyPressed(const SDL_keysym& key)
     }
     if (m_position < 0) m_position = 0;
     if (m_position > m_text.length()) m_position = m_text.length();
-    m_label.setText(m_text);
+    //m_label.setText(m_text);
+    updateText();
     markToUpdate();
 
     unlock();
@@ -263,7 +289,7 @@ void LineEditWidget::setText(const std::wstring& s)
     lock();
     m_text = s;
     m_position = s.length();
-    m_label.setText(s);
+    updateText();
     markToUpdate();
     unlock();
 }
