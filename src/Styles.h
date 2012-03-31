@@ -52,6 +52,26 @@ struct ButtonStyle
     Rect contentRect;
 };
 
+struct CheckBoxStyle
+{
+    ResourceDescriptor normal;
+    ResourceDescriptor hovered;
+    ResourceDescriptor checkedNormal;
+    ResourceDescriptor checkedHovered;
+    int color;
+    FontDescriptor font;
+};
+
+struct RadioButtonStyle
+{
+    ResourceDescriptor normal;
+    ResourceDescriptor hovered;
+    ResourceDescriptor checkedNormal;
+    ResourceDescriptor checkedHovered;
+    int color;
+    FontDescriptor font;
+};
+
 struct LineEditStyle
 {
     ResourceDescriptor background;
@@ -72,6 +92,7 @@ struct Skin
     ButtonStyle buttonStyle;
     ScrollBarStyle scrollStyle;
     LineEditStyle lineEditStyle;
+    CheckBoxStyle checkBoxStyle;
 };
 
 }

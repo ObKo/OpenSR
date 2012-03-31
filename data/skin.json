@@ -124,13 +124,17 @@
         "scroll-up-pressed": {"texture": "DATA/ScrollBar/2V2_UpD.gi"},
         "scroll-down-normal": {"texture": "DATA/ScrollBar/2V2_DownN.gi"},
         "scroll-down-hovered": {"texture": "DATA/ScrollBar/2V2_DownA.gi"},
-        "scroll-down-pressed": {"texture": "DATA/ScrollBar/2V2_DownD.gi"}
+        "scroll-down-pressed": {"texture": "DATA/ScrollBar/2V2_DownD.gi"},
+        "checkbox-normal": {"texture": "ORC/checkbox_normal.png"},
+        "checkbox-hovered": {"texture": "ORC/checkbox_hovered.png"},
+        "checkbox-checked-normal": {"texture": "ORC/checkbox_checked_normal.png"},
+        "checkbox-checked-hovered": {"texture": "ORC/checkbox_checked_hovered.png"}
     },
     "Font":
     {
         "default-font": {"file": "DroidSans.ttf", "size": 13}
     },
-	"LineEditStyle":
+    "LineEditStyle":
     {
         "background": "line-edit",
         "font": "default-font", 
@@ -145,6 +149,15 @@
         "font": "default-font", 
         "color": "#FF082430",
         "content-rect": {"x": 4, "y": 4, "width": 108, "height": 13} 
+    },
+    "CheckBoxStyle":
+    {
+        "normal": "checkbox-normal",
+        "hovered": "checkbox-hovered",
+        "checked-normal" : "checkbox-checked-normal", 
+        "checked-hovered" : "checkbox-checked-hovered", 
+        "font": "default-font", 
+        "color": "#FF082430"
     },
     "ScrollBarStyle":
     {

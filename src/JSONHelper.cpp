@@ -243,25 +243,28 @@ Skin JSONHelper::parseSkin(const std::string& json, bool &error)
         {
             error = true;
             Log::error() << "Invalid JSON ScrollBarStyle.";
-            return Skin();
         }
-        skin.scrollStyle.downButton = parseButtonStyle(style.get("down-button", Json::Value()), resources, error);
-        skin.scrollStyle.upButton = parseButtonStyle(style.get("up-button", Json::Value()), resources, error);
-        skin.scrollStyle.scroll = parseButtonStyle(style.get("scroll", Json::Value()), resources, error);
+        else
+        {
+            skin.scrollStyle.downButton = parseButtonStyle(style.get("down-button", Json::Value()), resources, error);
+            skin.scrollStyle.upButton = parseButtonStyle(style.get("up-button", Json::Value()), resources, error);
+            skin.scrollStyle.scroll = parseButtonStyle(style.get("scroll", Json::Value()), resources, error);
+        }
     }
     if (std::find(members.begin(), members.end(), "ButtonStyle") != members.end())
     {
         Json::Value style = root.get("ButtonStyle", Json::Value());
-        Json::Value::Members styleMembers = style.getMemberNames();
-
         skin.buttonStyle = parseButtonStyle(style, resources, error);
     }
     if (std::find(members.begin(), members.end(), "LineEditStyle") != members.end())
     {
         Json::Value style = root.get("LineEditStyle", Json::Value());
-        Json::Value::Members styleMembers = style.getMemberNames();
-
         skin.lineEditStyle = parseLineEditStyle(style, resources, error);
+    }
+    if (std::find(members.begin(), members.end(), "CheckBoxStyle") != members.end())
+    {
+        Json::Value style = root.get("CheckBoxStyle", Json::Value());
+        skin.checkBoxStyle = parseCheckBoxStyle(style, resources, error);
     }
     return skin;
 }
@@ -271,81 +274,72 @@ ButtonStyle JSONHelper::parseButtonStyle(const Json::Value& object, const std::m
     error = false;
     ButtonStyle style;
     Json::Value::Members members = object.getMemberNames();
-    if (std::find(members.begin(), members.end(), "normal") == members.end())
+
+    style.normal  = getResource(object.get("normal", "").asString(), resources, error);
+
+    if (std::find(members.begin(), members.end(), "hovered") != members.end())
+        style.hovered = getResource(object.get("hovered", "").asString(), resources, error);
+
+    if (std::find(members.begin(), members.end(), "pressed") != members.end())
+        style.pressed = getResource(object.get("pressed", "").asString(), resources, error);
+
+    if (std::find(members.begin(), members.end(), "font") != members.end())
     {
-        error = true;
+        ResourceDescriptor d = getResource(object.get("font", "").asString(), resources, error);
+
+        if (d.type != ResourceDescriptor::FONT)
+            error = true;
+        else
+            style.font = boost::get<FontDescriptor>(d.resource);
+    }
+
+    if (std::find(members.begin(), members.end(), "color") != members.end())
+        style.color = parseColor(object.get("color", "#").asString(), error);
+
+    if (std::find(members.begin(), members.end(), "content-rect") != members.end())
+        style.contentRect = parseRect(object.get("content-rect", Json::Value()), error);
+
+    if (error)
+    {
         Log::error() << "Invalid JSON ButtonStyle";
         return ButtonStyle();
     }
-    std::wstring normal = fromUTF8(object.get("normal", "").asString().c_str());
-    if (resources.find(normal) == resources.end())
-    {
-        error = true;
-        Log::error() << "No such JSON resource: \"" << normal << "\"";
-        return ButtonStyle();
-    }
-    style.normal = resources.at(normal);
+    return style;
+}
+
+CheckBoxStyle JSONHelper::parseCheckBoxStyle(const Json::Value& object, const std::map< std::wstring, ResourceDescriptor >& resources, bool& error)
+{
+    error = false;
+    CheckBoxStyle style;
+    Json::Value::Members members = object.getMemberNames();
+
+    style.normal  = getResource(object.get("normal", "").asString(), resources, error);
+
     if (std::find(members.begin(), members.end(), "hovered") != members.end())
-    {
-        std::wstring hovered = fromUTF8(object.get("hovered", "").asString().c_str());
-        if (resources.find(hovered) == resources.end())
-        {
-            error = true;
-            Log::error() << "No such JSON resource: \"" << hovered << "\"";
-            return ButtonStyle();
-        }
-        style.hovered = resources.at(hovered);
-    }
-    if (std::find(members.begin(), members.end(), "pressed") != members.end())
-    {
-        std::wstring pressed = fromUTF8(object.get("pressed", "").asString().c_str());
-        if (resources.find(pressed) == resources.end())
-        {
-            error = true;
-            Log::error() << "No such JSON resource: \"" << pressed << "\"";
-            return ButtonStyle();
-        }
-        style.pressed = resources.at(pressed);
-    }
+        style.hovered = getResource(object.get("hovered", "").asString(), resources, error);
+
+    style.checkedNormal = getResource(object.get("checked-normal", "").asString(), resources, error);
+
+    if (std::find(members.begin(), members.end(), "checked-hovered") != members.end())
+        style.checkedHovered = getResource(object.get("checked-hovered", "").asString(), resources, error);
+
     if (std::find(members.begin(), members.end(), "font") != members.end())
     {
-        std::wstring font = fromUTF8(object.get("font", "").asString().c_str());
-        if (resources.find(font) == resources.end())
-        {
-            error = true;
-            Log::error() << "No such JSON resource: \"" << font << "\"";
-            return ButtonStyle();
-        }
-        const ResourceDescriptor& d = resources.at(font);
+        ResourceDescriptor d = getResource(object.get("font", "").asString(), resources, error);
+
         if (d.type != ResourceDescriptor::FONT)
-        {
             error = true;
-            Log::error() << "Invalid JSON button style.";
-            return ButtonStyle();
-        }
-        style.font = boost::get<FontDescriptor>(d.resource);
+        else
+            style.font = boost::get<FontDescriptor>(d.resource);
     }
+
     if (std::find(members.begin(), members.end(), "color") != members.end())
+        style.color = parseColor(object.get("color", "#").asString(), error);
+
+    if (error)
     {
-        std::istringstream ss(object.get("color", "").asString());
-        uint32_t color;
-        char c;
-        ss >> c >> std::hex >> color;
-        if (ss.fail())
-        {
-            error = true;
-            Log::error() << "Invalid JSON color.";
-            return ButtonStyle();
-        }
-        style.color = color;
-    }
-    if (std::find(members.begin(), members.end(), "content-rect") != members.end())
-    {
-        Json::Value contentRect = object.get("content-rect", Json::Value());
-        style.contentRect.x = contentRect.get("x", 0).asInt();
-        style.contentRect.y = contentRect.get("y", 0).asInt();
-        style.contentRect.width = contentRect.get("width", 0).asInt();
-        style.contentRect.height = contentRect.get("height", 0).asInt();
+        Log::error() << "Invalid JSON CheckBoxStyle";
+        return CheckBoxStyle();
     }
     return style;
 }
@@ -355,61 +349,80 @@ LineEditStyle JSONHelper::parseLineEditStyle(const Json::Value& object, const st
     error = false;
     LineEditStyle style;
     Json::Value::Members members = object.getMemberNames();
-    if (std::find(members.begin(), members.end(), "background") == members.end())
+
+    style.background = getResource(object.get("background", "").asString(), resources, error);
+
+    if (std::find(members.begin(), members.end(), "font") != members.end())
     {
-        error = true;
+        ResourceDescriptor d = getResource(object.get("font", "").asString(), resources, error);
+
+        if (d.type != ResourceDescriptor::FONT)
+            error = true;
+        else
+            style.font = boost::get<FontDescriptor>(d.resource);
+    }
+
+    if (std::find(members.begin(), members.end(), "color") != members.end())
+        style.color = parseColor(object.get("color", "#").asString(), error);
+
+    if (std::find(members.begin(), members.end(), "content-rect") != members.end())
+        style.contentRect = parseRect(object.get("content-rect", Json::Value()), error);
+
+    if (error)
+    {
         Log::error() << "Invalid JSON LineEditStyle";
         return LineEditStyle();
     }
-    std::wstring background = fromUTF8(object.get("background", "").asString().c_str());
-    if (resources.find(background) == resources.end())
+    return style;
+}
+
+int JSONHelper::parseColor(const std::string& string, bool &error)
+{
+    if (error)
+        return 0;
+    std::istringstream ss(string);
+    uint32_t color;
+    char c;
+    ss >> c >> std::hex >> color;
+    if (ss.fail())
     {
         error = true;
-        Log::error() << "No such JSON resource: \"" << background << "\"";
-        return LineEditStyle();
+        Log::error() << "Invalid JSON color.";
+        color = 0;
     }
-    style.background = resources.at(background);
-    if (std::find(members.begin(), members.end(), "font") != members.end())
+    return color;
+}
+
+ResourceDescriptor JSONHelper::getResource(const std::string& name, const std::map<std::wstring, ResourceDescriptor>& resources, bool &error)
+{
+    if (error)
+        return ResourceDescriptor();
+    if (name.empty())
     {
-        std::wstring font = fromUTF8(object.get("font", "").asString().c_str());
-        if (resources.find(font) == resources.end())
-        {
-            error = true;
-            Log::error() << "No such JSON resource: \"" << font << "\"";
-            return LineEditStyle();
-        }
-        const ResourceDescriptor& d = resources.at(font);
-        if (d.type != ResourceDescriptor::FONT)
-        {
-            error = true;
-            Log::error() << "Invalid JSON LineEditStyle.";
-            return LineEditStyle();
-        }
-        style.font = boost::get<FontDescriptor>(d.resource);
+        error = true;
+        return ResourceDescriptor();
     }
-    if (std::find(members.begin(), members.end(), "color") != members.end())
+    std::wstring n = fromUTF8(name.c_str());
+    if (resources.find(n) == resources.end())
     {
-        std::istringstream ss(object.get("color", "").asString());
-        uint32_t color;
-        char c;
-        ss >> c >> std::hex >> color;
-        if (ss.fail())
-        {
-            error = true;
-            Log::error() << "Invalid JSON color.";
-            return  LineEditStyle();
-        }
-        style.color = color;
+        error = true;
+        Log::error() << "No such JSON resource: \"" << n << "\"";
+        return ResourceDescriptor();
     }
-    if (std::find(members.begin(), members.end(), "content-rect") != members.end())
-    {
-        Json::Value contentRect = object.get("content-rect", Json::Value());
-        style.contentRect.x = contentRect.get("x", 0).asInt();
-        style.contentRect.y = contentRect.get("y", 0).asInt();
-        style.contentRect.width = contentRect.get("width", 0).asInt();
-        style.contentRect.height = contentRect.get("height", 0).asInt();
-    }
-    return style;
+    return resources.at(n);
+}
+
+Rect JSONHelper::parseRect(const Json::Value& object, bool &error)
+{
+    if (error)
+        return Rect();
+
+    Rect rect;
+    rect.x = object.get("x", 0).asInt();
+    rect.y = object.get("y", 0).asInt();
+    rect.width = object.get("width", -1).asInt();
+    rect.height = object.get("height", -1).asInt();
+    return rect;
 }
 
 }

@@ -23,99 +23,64 @@
 #include "ResourceManager.h"
 #include "Texture.h"
 #include "Engine.h"
+#include "NinePatch.h"
 
 namespace Rangers
 {
 
-CheckBox::CheckBox(boost::shared_ptr<Texture> texture, boost::shared_ptr<Texture> checkTexture, const std::wstring &text, Widget *parent): Widget(parent)
+CheckBox::CheckBox(const CheckBoxStyle& style, const std::wstring &text, Widget *parent): Widget(parent),
+    m_checked(false), m_normal(0), m_checkedNormal(0), m_hovered(0), m_checkedHovered(0), m_style(style)
 {
-    m_mainTexture = texture;
-    m_checkTexture = checkTexture;
-    m_checked = false;
-    m_sprite = Sprite(m_mainTexture, this);
-    m_width = m_sprite.width() + m_label.width();
-    m_height = m_sprite.height();
-    m_label = Label(text, this, Engine::instance()->coreFont());
-    m_label.setOrigin(POSITION_X_LEFT, POSITION_Y_TOP);
-    m_label.setPosition(m_sprite.width() + 5, int(m_sprite.height() - m_label.height()) / 2);
-    setText(text);
-}
+    if (m_style.normal.type == ResourceDescriptor::NINEPATCH)
+        m_normal = new NinePatch(boost::get<NinePatchDescriptor>(m_style.normal.resource), this);
+    else if (m_style.normal.type == ResourceDescriptor::SPRITE)
+        m_normal = new Sprite(boost::get<TextureRegion>(m_style.normal.resource), this);
 
-CheckBox::CheckBox(boost::shared_ptr<Texture> texture, boost::shared_ptr<Texture> checkTexture, boost::shared_ptr<Texture> hoverTexture, boost::shared_ptr<Texture> hoverCheckTexture, const std::wstring &text, Widget *parent): Widget(parent)
-{
-    m_mainTexture = texture;
-    m_checkTexture = checkTexture;
-    m_hoverTexture = hoverTexture;
-    m_hoverCheckTexture = hoverCheckTexture;
-    m_checked = false;
-    m_sprite = Sprite(m_mainTexture, this);
-    m_width = m_sprite.width() + m_label.width() + 5;
-    m_height = m_sprite.height();
-    m_label = Label(text, this, Engine::instance()->coreFont());
-    m_label.setOrigin(POSITION_X_LEFT, POSITION_Y_TOP);
-    m_label.setPosition(m_sprite.width() + 5, int(m_sprite.height() - m_label.height()) / 2);
-    setText(text);
-}
+    if (m_style.checkedNormal.type == ResourceDescriptor::NINEPATCH)
+        m_checkedNormal = new NinePatch(boost::get<NinePatchDescriptor>(m_style.checkedNormal.resource), this);
+    else if (m_style.normal.type == ResourceDescriptor::SPRITE)
+        m_checkedNormal = new Sprite(boost::get<TextureRegion>(m_style.checkedNormal.resource), this);
 
-CheckBox::CheckBox(const std::wstring& texture, const std::wstring& checkTexture, const std::wstring &text, Widget *parent): Widget(parent)
-{
-    m_mainTexture = ResourceManager::instance()->loadTexture(texture);
-    m_checkTexture = ResourceManager::instance()->loadTexture(checkTexture);
-    m_checked = false;
-    m_sprite = Sprite(m_mainTexture, this);
-    m_width = m_sprite.width() + m_label.width() + 5;
-    m_height = m_sprite.height();
-    m_label = Label(text, this, Engine::instance()->coreFont());
-    m_label.setOrigin(POSITION_X_LEFT, POSITION_Y_TOP);
-    m_label.setPosition(m_sprite.width() + 5, int(m_sprite.height() - m_label.height()) / 2);
-    setText(text);
-}
+    if (m_style.hovered.type == ResourceDescriptor::NINEPATCH)
+        m_hovered = new NinePatch(boost::get<NinePatchDescriptor>(m_style.hovered.resource), this);
+    else if (m_style.normal.type == ResourceDescriptor::SPRITE)
+        m_hovered = new Sprite(boost::get<TextureRegion>(m_style.hovered.resource), this);
 
-CheckBox::CheckBox(const std::wstring& texture, const std::wstring& checkTexture, const std::wstring& hoverTexture, const std::wstring& hoverCheckTexture, const std::wstring &text, Widget *parent): Widget(parent)
-{
-    m_mainTexture = ResourceManager::instance()->loadTexture(texture);
-    m_checkTexture = ResourceManager::instance()->loadTexture(checkTexture);
-    m_hoverTexture = ResourceManager::instance()->loadTexture(hoverTexture);
-    m_hoverCheckTexture = ResourceManager::instance()->loadTexture(hoverCheckTexture);
-    m_checked = false;
-    m_sprite = Sprite(m_mainTexture, this);
-    m_width = m_sprite.width() + m_label.width() + 5;
-    m_height = m_sprite.height();
-    m_label = Label(text, this, Engine::instance()->coreFont());
-    m_label.setOrigin(POSITION_X_LEFT, POSITION_Y_TOP);
-    m_label.setPosition(m_sprite.width() + 5, int(m_sprite.height() - m_label.height()) / 2);
-    setText(text);
-}
+    if (m_style.checkedHovered.type == ResourceDescriptor::NINEPATCH)
+        m_checkedHovered = new NinePatch(boost::get<NinePatchDescriptor>(m_style.checkedHovered.resource), this);
+    else if (m_style.normal.type == ResourceDescriptor::SPRITE)
+        m_checkedHovered = new Sprite(boost::get<TextureRegion>(m_style.checkedHovered.resource), this);
 
+    if ((m_style.font.path != L"") && (m_style.font.size > 0))
+    {
+        m_label = Label(text, this, ResourceManager::instance()->loadFont(m_style.font.path, m_style.font.size));
+        m_label.setOrigin(POSITION_X_LEFT, POSITION_Y_TOP);
+        //m_label->setColor(m_style.color);
+    }
+    m_sprite = m_normal;
+    markToUpdate();
+}
 
 void CheckBox::setChecked(bool checked)
 {
     lock();
     m_checked = checked;
-    if (m_hoverTexture)
+    if ((m_sprite == m_hovered) || (m_sprite == m_checkedHovered))
     {
         if (m_checked)
-            m_sprite.setTexture(m_hoverCheckTexture);
+            m_sprite = m_checkedHovered;
         else
-            m_sprite.setTexture(m_hoverTexture);
+            m_sprite = m_hovered;
     }
     else
     {
         if (m_checked)
-            m_sprite.setTexture(m_checkTexture);
+            m_sprite = m_checkedNormal;
         else
-            m_sprite.setTexture(m_mainTexture);
+            m_sprite = m_normal;
     }
     unlock();
     markToUpdate();
-}
-
-void CheckBox::setColor(float r, float g, float b, float a)
-{
-    lock();
-    m_label.setColor(r, g, b, a);
-    unlock();
-    Object::setColor(r, g, b, a);
 }
 
 void CheckBox::setText(const std::wstring& text)
@@ -140,7 +105,8 @@ void CheckBox::draw() const
 {
     if (!prepareDraw())
         return;
-    m_sprite.draw();
+    if (m_sprite)
+        m_sprite->draw();
     m_label.draw();
     endDraw();
 }
@@ -148,11 +114,17 @@ void CheckBox::draw() const
 void CheckBox::processMain()
 {
     lock();
-    m_sprite.processMain();
-    m_label.processMain();
-    m_width = m_sprite.width() + m_label.width() + 5;
-    m_height = m_sprite.height();
-    m_label.setPosition(m_sprite.width() + 5, int(m_sprite.height() - m_label.height()) / 2);
+    if (!m_sprite)
+        return;
+
+    if (m_sprite->needUpdate())
+        m_sprite->processMain();
+    if (m_label.needUpdate())
+        m_label.processMain();
+
+    m_width = m_sprite->width() + m_label.width() + 5;
+    m_height = m_sprite->height();
+    m_label.setPosition(m_sprite->width() + 5, int(m_sprite->height() - m_label.height()) / 2);
     unlock();
     Widget::processMain();
 }
@@ -160,12 +132,12 @@ void CheckBox::processMain()
 void CheckBox::mouseEnter()
 {
     lock();
-    if (m_hoverTexture)
+    if (m_hovered && m_checkedHovered)
     {
         if (m_checked)
-            m_sprite.setTexture(m_hoverCheckTexture);
+            m_sprite = m_checkedHovered;
         else
-            m_sprite.setTexture(m_hoverTexture);
+            m_sprite = m_hovered;
     }
     unlock();
     Widget::mouseEnter();
@@ -174,13 +146,10 @@ void CheckBox::mouseEnter()
 void CheckBox::mouseLeave()
 {
     lock();
-    if (m_mainTexture)
-    {
-        if (m_checked)
-            m_sprite.setTexture(m_checkTexture);
-        else
-            m_sprite.setTexture(m_mainTexture);
-    }
+    if (m_checked)
+        m_sprite = m_checkedNormal;
+    else
+        m_sprite = m_normal;
     unlock();
     Widget::mouseLeave();
 }

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg id="svg3122" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" height="17" width="17" version="1.1" xmlns:cc="http://creativecommons.org/ns#" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/">
+ <metadata id="metadata3128">
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:title/>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs id="defs3126">
+  <linearGradient id="linearGradient4044" y2="14.917" gradientUnits="userSpaceOnUse" x2="1.0963" y1="1.0597" x1="15.206">
+   <stop id="stop4040" stop-color="#484848" offset="0"/>
+   <stop id="stop4042" stop-color="#909090" offset="1"/>
+  </linearGradient>
+  <linearGradient id="linearGradient4648" y2="9.0115" gradientUnits="userSpaceOnUse" x2="8.2222" y1="3.6173" x1="13.428">
+   <stop id="stop4642" stop-color="#fff" stop-opacity=".50196" offset="0"/>
+   <stop id="stop4644" stop-color="#fff" stop-opacity="0" offset="1"/>
+  </linearGradient>
+ </defs>
+ <rect id="rect3136" fill-rule="nonzero" rx="5" ry="5" height="17" width="17" y="0" x="0" fill="url(#linearGradient4044)"/>
+ <rect id="rect3136-2-9" fill-rule="nonzero" rx="4.1176" ry="4.1176" height="14" width="14" y="1.5" x="1.5" fill="#000"/>
+ <rect id="rect3136-2-9-2" fill-rule="nonzero" rx="3.5294" ry="3.5294" height="12" width="12" y="2.5" x="2.5" fill="#084f70"/>
+ <rect id="rect3136-2-9-2-5" fill-rule="nonzero" rx="3.5294" ry="3.5294" height="12" width="12" y="2.5" x="2.5" fill="url(#linearGradient4648)"/>
+</svg>

@@ -21,23 +21,17 @@
 
 #include "Widget.h"
 #include "Label.h"
-#include <boost/shared_ptr.hpp>
+#include "Styles.h"
 
 namespace Rangers
 {
-//TODO: Legacy code.
 class CheckBox: public Widget
 {
 public:
-    CheckBox(boost::shared_ptr<Texture> texture, boost::shared_ptr<Texture> checkTexture, const std::wstring &text, Widget *parent = 0);
-    CheckBox(boost::shared_ptr<Texture> texture, boost::shared_ptr<Texture> checkTexture, boost::shared_ptr<Texture> hoverTexture, boost::shared_ptr<Texture> checkHoverTexture, const std::wstring &text, Widget *parent = 0);
-
-    CheckBox(const std::wstring& texture, const std::wstring& checkTexture, const std::wstring &text, Widget *parent = 0);
-    CheckBox(const std::wstring& texture, const std::wstring& checkTexture, const std::wstring& hoverTexture, const std::wstring& checkHoverTexture, const std::wstring &text, Widget *parent = 0);
+    CheckBox(const CheckBoxStyle& style, const std::wstring &text, Widget *parent = 0);
 
     void setChecked(bool checked);
     void setText(const std::wstring& text);
-    void setColor(float r, float g, float b, float a = 1.0f);
 
     bool checked() const;
     std::wstring text() const;
@@ -51,13 +45,14 @@ public:
     virtual void mouseClick(const Vector &p);
 
 private:
-    boost::shared_ptr<Texture> m_mainTexture;
-    boost::shared_ptr<Texture> m_hoverTexture;
-    boost::shared_ptr<Texture> m_checkTexture;
-    boost::shared_ptr<Texture> m_hoverCheckTexture;
     bool m_checked;
-    Sprite m_sprite;
+    Sprite *m_normal;
+    Sprite *m_checkedNormal;
+    Sprite *m_hovered;
+    Sprite *m_checkedHovered;
+    Sprite *m_sprite;
     Label m_label;
+    CheckBoxStyle m_style;
 };
 }
 

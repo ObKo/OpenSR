@@ -301,10 +301,8 @@ lua_State *initLuaState()
         .def("autoResize", &Button::autoResize),
 
         luabind::class_<CheckBox, Widget>("CheckBox")
-        .def(luabind::constructor<boost::shared_ptr<Texture>, boost::shared_ptr<Texture>, const std::wstring&, Rangers::Widget*>())
-        .def(luabind::constructor<boost::shared_ptr<Texture>, boost::shared_ptr<Texture>, const std::wstring&>())
-        .def(luabind::constructor<const std::wstring&, const std::wstring&, const std::wstring&, Rangers::Widget*>())
-        .def(luabind::constructor<const std::wstring&, const std::wstring&, const std::wstring&>())
+        .def(luabind::constructor<const CheckBoxStyle&, const std::wstring&, Rangers::Widget*>())
+        .def(luabind::constructor<const CheckBoxStyle&, const std::wstring&>())
         .def("setChecked", &CheckBox::setChecked)
         .def("setText", &CheckBox::setText)
         .def("checked", &CheckBox::checked)
@@ -343,8 +341,16 @@ lua_State *initLuaState()
         .def_readwrite("scroll", &ScrollBarStyle::scroll)
         .def_readwrite("downButton", &ScrollBarStyle::downButton),
 
+        luabind::class_<CheckBoxStyle>("CheckBoxStyle")
+        .def_readwrite("normal", &CheckBoxStyle::normal)
+        .def_readwrite("checkedNormal", &CheckBoxStyle::checkedNormal)
+        .def_readwrite("hovered", &CheckBoxStyle::hovered)
+        .def_readwrite("checkedHovered", &CheckBoxStyle::checkedHovered),
+
         luabind::class_<Skin>("Skin")
         .def_readwrite("buttonStyle", &Skin::buttonStyle)
+        .def_readwrite("lineEditStyle", &Skin::lineEditStyle)
+        .def_readwrite("checkBoxStyle", &Skin::checkBoxStyle)
         .def_readwrite("scrollStyle", &Skin::scrollStyle),
 
         luabind::class_<Engine>("Engine")
