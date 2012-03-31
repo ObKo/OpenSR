@@ -29,10 +29,13 @@ class CheckBox: public Widget
 {
 public:
     CheckBox(const CheckBoxStyle& style, const std::wstring &text, Widget *parent = 0);
+    virtual ~CheckBox();
 
+    virtual void setColor(int color);
     void setChecked(bool checked);
     void setText(const std::wstring& text);
 
+    virtual int color() const;
     bool checked() const;
     std::wstring text() const;
 
@@ -43,6 +46,8 @@ public:
     virtual void mouseLeave();
 
     virtual void mouseClick(const Vector &p);
+
+
 
 private:
     bool m_checked;

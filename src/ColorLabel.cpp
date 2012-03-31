@@ -66,9 +66,9 @@ void ColorLabel::processMain()
     lock();
 
     if (!m_wordWrap)
-        m_region = TextureRegion(m_font->renderColoredText(m_text, (char(m_colorR * 255) << 16) | (char(m_colorG * 255) << 8) | (char(m_colorB * 255))));
+        m_region = TextureRegion(m_font->renderColoredText(m_text, (m_color >> 8) & 0xffffff));
     else
-        m_region = TextureRegion(m_font->renderColoredText(m_text, (char(m_colorR * 255) << 16) | (char(m_colorG * 255) << 8) | (char(m_colorB * 255)), m_width));
+        m_region = TextureRegion(m_font->renderColoredText(m_text, (m_color >> 8) & 0xffffff));
 
     if (!m_fixedSize)
     {
@@ -79,10 +79,10 @@ void ColorLabel::processMain()
     Sprite::processMain();
 }
 
-void ColorLabel::setColor(float r, float g, float b, float a)
+void ColorLabel::setColor(int color)
 {
     markToUpdate();
-    Object::setColor(r, g, b, a);
+    Object::setColor(color);
 }
 }
 

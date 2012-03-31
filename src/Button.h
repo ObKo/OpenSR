@@ -62,12 +62,12 @@ public:
     virtual int preferredHeight() const;
 
     void setText(const std::wstring& text);
-    void setColor(int color);
+    virtual void setColor(int color);
     void setFont(boost::shared_ptr<Font> font);
     void setAutoResize(bool autoResize);
 
     std::wstring text() const;
-    int color() const;
+    virtual int color() const;
     boost::shared_ptr<Font> font() const;
     bool autoResize() const;
 

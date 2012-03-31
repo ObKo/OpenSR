@@ -46,6 +46,8 @@ public:
     void setRotation(float angle);
     void setColor(float r, float g, float b, float a = 1.0f);
 
+    virtual void setColor(int color);
+
     void addChild(Object *object);
     void removeChild(Object *object);
     void setParent(Object *parent);
@@ -55,6 +57,7 @@ public:
     int layer() const;
     Object* parent() const;
     bool needUpdate() const;
+    virtual int color() const;
 
     void setLayer(int layer);
 
@@ -77,7 +80,7 @@ private:
 
 protected:
     mutable boost::recursive_mutex m_mutex;
-    float m_colorR, m_colorG, m_colorB, m_colorA;
+    int m_color;
     bool m_needUpdate;
     Object *m_parent;
     std::list<Object*> m_children;

@@ -37,6 +37,7 @@ struct FontDescriptor
 
 struct ResourceDescriptor
 {
+    ResourceDescriptor();
     enum {NONE, NINEPATCH, SPRITE, FONT} type;
     typedef boost::variant<TextureRegion, NinePatchDescriptor, FontDescriptor> Resource;
     Resource resource;

@@ -29,10 +29,7 @@ namespace Rangers
 Object::Object(Object *parent): m_layer(0)
 {
     m_rotation = 0;
-    m_colorR = 1.0f;
-    m_colorG = 1.0f;
-    m_colorB = 1.0f;
-    m_colorA = 1.0f;
+    m_color = 0xffffffff;
     m_needUpdate = false;
     m_parent = parent;
     m_position.x = 0;
@@ -46,10 +43,7 @@ Object::Object(const Vector& pos, float rot, int layer, Object *parent): m_layer
 {
     m_position = pos;
     m_rotation = rot;
-    m_colorR = 1.0f;
-    m_colorG = 1.0f;
-    m_colorB = 1.0f;
-    m_colorA = 1.0f;
+    m_color = 0xffffffff;
     m_needUpdate = false;
 
     if (parent)
@@ -66,10 +60,7 @@ Object::Object(const Rangers::Object& other)
     for (std::list<Object*>::iterator i = m_children.begin(); i != m_children.end(); i++)
         (*i)->setParent(this);
 
-    m_colorR = other.m_colorR;
-    m_colorG = other.m_colorG;
-    m_colorB = other.m_colorB;
-    m_colorA = other.m_colorA;
+    m_color = other.m_color;
     m_needUpdate = false;
 
     m_parent = other.parent();
@@ -115,10 +106,7 @@ Object& Object::operator=(const Rangers::Object& other)
     for (std::list<Object*>::iterator i = m_children.begin(); i != m_children.end(); i++)
         (*i)->setParent(this);
 
-    m_colorR = other.m_colorR;
-    m_colorG = other.m_colorG;
-    m_colorB = other.m_colorB;
-    m_colorA = other.m_colorA;
+    m_color = other.m_color;
     m_needUpdate = false;
 
     m_parent = other.m_parent;
@@ -139,7 +127,7 @@ bool Object::prepareDraw() const
     glPushMatrix();
     glTranslatef(m_position.x, m_position.y, 0);
     glRotatef(m_rotation, 0, 0, -1);
-    glColor4f(m_colorR, m_colorG, m_colorB, m_colorA);
+    glColor4ub((m_color >> 24) & 0xff, (m_color >> 16) & 0xff, (m_color >> 8) & 0xff, m_color & 0xff);
     return true;
 }
 
@@ -302,10 +290,19 @@ void Object::endDraw() const
 void Object::setColor(float r, float g, float b, float a)
 {
     lock();
-    m_colorR = r;
-    m_colorG = g;
-    m_colorB = b;
-    m_colorA = a;
+    int color = 0;
+    color |= (int(r * 255.0) & 0xff) << 24;
+    color |= (int(g * 255.0) & 0xff) << 16;
+    color |= (int(b * 255.0) & 0xff) << 8;
+    color |= int(a * 255.0) & 0xff;
+    setColor(color);
+    unlock();
+}
+
+void Object::setColor(int color)
+{
+    lock();
+    m_color = color;
     unlock();
 }
 
@@ -354,6 +351,11 @@ Object* Object::parent() const
 bool Object::needUpdate() const
 {
     return m_needUpdate;
+}
+
+int Object::color() const
+{
+    return m_color;
 }
 
 void Object::addChild(Object* object)

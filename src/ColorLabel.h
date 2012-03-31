@@ -36,7 +36,7 @@ public:
 
     virtual void processMain();
     //! Set default text color
-    void setColor(float r, float g, float b, float a = 1.0f);
+    virtual void setColor(int color);
 };
 }
 

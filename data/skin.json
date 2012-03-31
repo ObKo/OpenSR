@@ -138,7 +138,7 @@
     {
         "background": "line-edit",
         "font": "default-font", 
-        "color": "#FF000000",
+        "color": "#000000FF",
         "content-rect": {"x": 5, "y": 3, "width": 1, "height": 13} 
     },
     "ButtonStyle":
@@ -147,7 +147,7 @@
         "hovered": "default-button-hover",
         "pressed" : "default-button-pressed", 
         "font": "default-font", 
-        "color": "#FF082430",
+        "color": "#082430FF",
         "content-rect": {"x": 4, "y": 4, "width": 108, "height": 13} 
     },
     "CheckBoxStyle":
@@ -157,7 +157,7 @@
         "checked-normal" : "checkbox-checked-normal", 
         "checked-hovered" : "checkbox-checked-hovered", 
         "font": "default-font", 
-        "color": "#FF082430"
+        "color": "#FFFFFFFF"
     },
     "ScrollBarStyle":
     {

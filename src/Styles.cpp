@@ -20,4 +20,8 @@
 
 namespace Rangers
 {
+ResourceDescriptor::ResourceDescriptor()
+{
+    type = NONE;
+}
 }

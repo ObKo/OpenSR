@@ -55,10 +55,32 @@ CheckBox::CheckBox(const CheckBoxStyle& style, const std::wstring &text, Widget 
     {
         m_label = Label(text, this, ResourceManager::instance()->loadFont(m_style.font.path, m_style.font.size));
         m_label.setOrigin(POSITION_X_LEFT, POSITION_Y_TOP);
-        //m_label->setColor(m_style.color);
     }
+    setColor(m_style.color);
     m_sprite = m_normal;
     markToUpdate();
+}
+
+CheckBox::~CheckBox()
+{
+    if (m_normal)
+        delete m_normal;
+    if (m_checkedNormal)
+        delete m_checkedNormal;
+    if (m_hovered)
+        delete m_hovered;
+    if (m_checkedHovered)
+        delete m_checkedHovered;
+}
+
+void CheckBox::setColor(int color)
+{
+    m_label.setColor(color);
+}
+
+int CheckBox::color() const
+{
+    return m_label.color();
 }
 
 void CheckBox::setChecked(bool checked)

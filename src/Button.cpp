@@ -206,7 +206,9 @@ void Button::setText(const std::wstring& text)
 
 void Button::setColor(int color)
 {
-    m_label->setColor(((m_style.color >> 16) & 0xff) / 255.0f, ((m_style.color >> 8) & 0xff) / 255.0f, (m_style.color & 0xff) / 255.0f, ((m_style.color >> 24) & 0xff) / 255.0f);
+    if (!m_label)
+        return;
+    m_label->setColor(color);
 }
 
 void Button::setFont(boost::shared_ptr<Font> font)
@@ -214,6 +216,13 @@ void Button::setFont(boost::shared_ptr<Font> font)
     m_label->setFont(font);
     calcAutoRresize();
     markToUpdate();
+}
+
+int Button::color() const
+{
+    if (!m_label)
+        return 0;
+    return m_label->color();
 }
 
 std::wstring Button::text() const
@@ -291,14 +300,6 @@ int Button::preferredWidth() const
     return minWidth();
 }
 
-
-int Button::color() const
-{
-    //TODO: Color in Object;
-    //return m_label
-    return 0;
-}
-
 boost::shared_ptr<Font> Button::font() const
 {
     if (!m_label)
@@ -337,8 +338,8 @@ void Button::init()
         if (!m_label)
             m_label = new Label(m_text, this, ResourceManager::instance()->loadFont(m_style.font.path, m_style.font.size));
         m_label->setOrigin(POSITION_X_LEFT, POSITION_Y_TOP);
-        setColor(m_style.color);
     }
+    setColor(m_style.color);
     m_sprite = m_normalSprite;
     markToUpdate();
 }
