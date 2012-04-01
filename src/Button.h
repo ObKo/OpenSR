@@ -19,13 +19,13 @@
 #ifndef RANGERS_BUTTON_H
 #define RANGERS_BUTTON_H
 
-#include "Widget.h"
 #include <boost/shared_ptr.hpp>
+#include "Widget.h"
 #include "Styles.h"
+#include "Label.h"
 
 namespace Rangers
 {
-class Label;
 class Sprite;
 class Font;
 
@@ -77,7 +77,7 @@ private:
     void calcAutoRresize();
 
     ButtonStyle m_style;
-    Label *m_label;
+    Label m_label;
     std::wstring m_text;
     Sprite *m_normalSprite;
     Sprite *m_hoverSprite;

@@ -25,18 +25,19 @@
 #include "NinePatch.h"
 #include "Label.h"
 #include "Font.h"
+#include "Engine.h"
 
 namespace Rangers
 {
 
 Button::Button(Widget *parent):
-    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0), m_label(0),
+    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0),
     m_autoResize(false)
 {
 }
 
 Button::Button(boost::shared_ptr<Texture> texture, Widget *parent):
-    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0), m_label(0),
+    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0),
     m_autoResize(false)
 {
     if (texture)
@@ -53,7 +54,7 @@ Button::Button(boost::shared_ptr<Texture> texture, Widget *parent):
 }
 
 Button::Button(boost::shared_ptr<Texture> texture, boost::shared_ptr<Texture> hoverTexture, Widget *parent):
-    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0), m_label(0),
+    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0),
     m_autoResize(false)
 {
     if (texture)
@@ -75,7 +76,7 @@ Button::Button(boost::shared_ptr<Texture> texture, boost::shared_ptr<Texture> ho
 }
 
 Button::Button(boost::shared_ptr<Texture> texture, boost::shared_ptr<Texture> hoverTexture, boost::shared_ptr<Texture> pressTexture, Widget *parent):
-    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0), m_label(0),
+    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0),
     m_autoResize(false)
 {
     if (texture)
@@ -102,7 +103,7 @@ Button::Button(boost::shared_ptr<Texture> texture, boost::shared_ptr<Texture> ho
 }
 
 Button::Button(const std::wstring& texture, Widget *parent):
-    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0), m_label(0),
+    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0),
     m_autoResize(false)
 {
     boost::shared_ptr<Texture> main = ResourceManager::instance()->loadTexture(texture);
@@ -120,7 +121,7 @@ Button::Button(const std::wstring& texture, Widget *parent):
 }
 
 Button::Button(const std::wstring& texture, const std::wstring& hoverTexture, Widget *parent):
-    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0), m_label(0),
+    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0),
     m_autoResize(false)
 {
     boost::shared_ptr<Texture> main = ResourceManager::instance()->loadTexture(texture);
@@ -144,7 +145,7 @@ Button::Button(const std::wstring& texture, const std::wstring& hoverTexture, Wi
 }
 
 Button::Button(const std::wstring& texture, const std::wstring& hoverTexture, const std::wstring& pressTexture, Widget *parent):
-    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0), m_label(0),
+    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0),
     m_autoResize(false)
 {
     boost::shared_ptr<Texture> main = ResourceManager::instance()->loadTexture(texture);
@@ -174,7 +175,7 @@ Button::Button(const std::wstring& texture, const std::wstring& hoverTexture, co
 }
 
 Button::Button(const ButtonStyle& style, Widget* parent):
-    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0), m_style(style), m_label(0),
+    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0), m_style(style),
     m_autoResize(false)
 {
     init();
@@ -199,36 +200,30 @@ void Button::setAutoResize(bool autoResize)
 void Button::setText(const std::wstring& text)
 {
     m_text = text;
-    m_label->setText(text);
+    m_label.setText(text);
     calcAutoRresize();
     markToUpdate();
 }
 
 void Button::setColor(int color)
 {
-    if (!m_label)
-        return;
-    m_label->setColor(color);
+    m_label.setColor(color);
 }
 
 void Button::setFont(boost::shared_ptr<Font> font)
 {
-    m_label->setFont(font);
+    m_label.setFont(font);
     calcAutoRresize();
     markToUpdate();
 }
 
 int Button::color() const
 {
-    if (!m_label)
-        return 0;
-    return m_label->color();
+    return m_label.color();
 }
 
 std::wstring Button::text() const
 {
-    if (!m_label)
-        return std::wstring();
     return m_text;
 }
 
@@ -236,17 +231,15 @@ void Button::calcAutoRresize()
 {
     if (!m_autoResize)
         return;
-    if (!m_label)
-        return;
     if (!m_normalSprite)
         return;
 
     float labelWidth = 0.0f;
     float labelHeight = 0.0f;
-    if (m_label->font())
+    if (m_label.font())
     {
-        labelWidth = m_label->font()->calculateStringWidth(m_text.begin(), m_text.end());
-        labelHeight = m_label->font()->size();
+        labelWidth = m_label.font()->calculateStringWidth(m_text.begin(), m_text.end());
+        labelHeight = m_label.font()->size();
     }
     if (!m_style.contentRect.valid())
     {
@@ -262,19 +255,15 @@ void Button::calcAutoRresize()
 
 int Button::minHeight() const
 {
-    if (m_label && m_normalSprite)
-        return std::max(m_label->height(), m_normalSprite->normalHeight());
     if (m_normalSprite)
-        return m_normalSprite->normalHeight();
+        return std::max(m_label.height(), m_normalSprite->normalHeight());
     return Widget::minHeight();
 }
 
 int Button::minWidth() const
 {
-    if (m_label && m_normalSprite)
-        return std::max(m_label->width(), m_normalSprite->normalWidth());
     if (m_normalSprite)
-        return m_normalSprite->normalHeight();
+        return std::max(m_label.width(), m_normalSprite->normalWidth());
     return Widget::minWidth();
 }
 
@@ -283,8 +272,8 @@ int Button::preferredHeight() const
     if (!m_normalSprite)
         return Widget::preferredHeight();
 
-    if (m_label && m_style.contentRect.valid())
-        return m_normalSprite->normalHeight() + m_label->height() - m_style.contentRect.height;
+    if (m_style.contentRect.valid())
+        return m_normalSprite->normalHeight() + m_label.height() - m_style.contentRect.height;
 
     return minHeight();
 }
@@ -294,17 +283,15 @@ int Button::preferredWidth() const
     if (!m_normalSprite)
         return Widget::preferredWidth();
 
-    if (m_label && m_style.contentRect.valid())
-        return m_normalSprite->normalWidth() + m_label->width() - m_style.contentRect.width;
+    if (m_style.contentRect.valid())
+        return m_normalSprite->normalWidth() + m_label.width() - m_style.contentRect.width;
 
     return minWidth();
 }
 
 boost::shared_ptr<Font> Button::font() const
 {
-    if (!m_label)
-        return boost::shared_ptr<Font>();
-    return m_label->font();
+    return m_label.font();
 }
 
 void Button::init()
@@ -335,10 +322,9 @@ void Button::init()
     }
     if ((m_style.font.path != L"") && (m_style.font.size > 0))
     {
-        if (!m_label)
-            m_label = new Label(m_text, this, ResourceManager::instance()->loadFont(m_style.font.path, m_style.font.size));
-        m_label->setOrigin(POSITION_X_LEFT, POSITION_Y_TOP);
+        m_label = Label(m_text, this, ResourceManager::instance()->loadFont(m_style.font.path, m_style.font.size));
     }
+    m_label.setOrigin(POSITION_X_LEFT, POSITION_Y_TOP);
     setColor(m_style.color);
     m_sprite = m_normalSprite;
     markToUpdate();
@@ -352,8 +338,6 @@ Button::~Button()
     delete m_hoverSprite;
     if (m_pressedSprite)
         delete m_pressedSprite;
-    if (m_label)
-        delete m_label;
 }
 
 void Button::draw() const
@@ -362,41 +346,37 @@ void Button::draw() const
         return;
     if (m_sprite)
         m_sprite->draw();
-    if (m_label)
-        m_label->draw();
+    m_label.draw();
     endDraw();
 }
 
 void Button::processMain()
 {
     lock();
-    if (m_label && m_label->needUpdate())
-        m_label->processMain();
+    if (m_label.needUpdate())
+        m_label.processMain();
     if (m_normalSprite)
         m_normalSprite->setGeometry(m_width, m_height);
     if (m_hoverSprite)
         m_hoverSprite->setGeometry(m_width, m_height);
     if (m_pressedSprite)
         m_pressedSprite->setGeometry(m_width, m_height);
-    if (m_label)
+    if (!m_style.contentRect.valid() || (!m_normalSprite))
     {
-        if (!m_style.contentRect.valid() || (!m_normalSprite))
-        {
-            m_label->setPosition(int((m_width - m_label->width()) / 2), int((m_height - m_label->height()) / 2));
-        }
+        m_label.setPosition(int((m_width - m_label.width()) / 2), int((m_height - m_label.height()) / 2));
+    }
+    else
+    {
+        float x, y;
+        if (m_label.width() < m_style.contentRect.width)
+            x = int(m_style.contentRect.width - m_label.width()) / 2 + m_style.contentRect.x;
         else
-        {
-            float x, y;
-            if (m_label->width() < m_style.contentRect.width)
-                x = int(m_style.contentRect.width - m_label->width()) / 2 + m_style.contentRect.x;
-            else
-                x = m_style.contentRect.x;
-            if (m_label->height() < m_style.contentRect.height)
-                y = int(m_style.contentRect.height - m_label->height()) / 2 + m_style.contentRect.y;
-            else
-                y = m_style.contentRect.y;
-            m_label->setPosition(x, y);
-        }
+            x = m_style.contentRect.x;
+        if (m_label.height() < m_style.contentRect.height)
+            y = int(m_style.contentRect.height - m_label.height()) / 2 + m_style.contentRect.y;
+        else
+            y = m_style.contentRect.y;
+        m_label.setPosition(x, y);
     }
     unlock();
     Widget::processMain();
@@ -451,6 +431,8 @@ void Button::mouseClick(const Vector &p)
     action(Action(this, Action::BUTTON_CLICKED, Action::Argument()));
 }
 
+
+//FIXME: Copy constructor and operator=
 Button::Button(const Button& other)
 {
     if (m_normalSprite)

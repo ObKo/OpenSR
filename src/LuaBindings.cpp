@@ -111,7 +111,7 @@ lua_State *initLuaState()
         .def(luabind::constructor<>())
         .def(luabind::constructor<float, float>())
         .def_readwrite("x", &Vector::x)
-        .def_readwrite("x", &Vector::x),
+        .def_readwrite("y", &Vector::y),
 
         luabind::class_<Rect>("Rect")
         .def(luabind::constructor<>())
