@@ -144,16 +144,6 @@ std::wstring Label::text() const
     return m_text;
 }
 
-float Label::height() const
-{
-    return m_height;
-}
-
-float Label::width() const
-{
-    return m_width;
-}
-
 void Label::setWordWrap(bool wordWrap)
 {
     m_wordWrap = wordWrap;

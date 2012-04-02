@@ -54,7 +54,16 @@ void ScrollArea::draw() const
     prepareDraw();
     Rect screenRect = mapToScreen(Rect(0, 0, m_width, m_height));
     glEnable(GL_SCISSOR_TEST);
-    glScissor(screenRect.x, screenRect.y + m_left.width(), screenRect.width - m_top.width(), screenRect.width - m_left.width());
+    if (m_hSize > 1.0f)
+    {
+        screenRect.y += m_left.width();
+        screenRect.height -= m_left.width();
+    }
+    if (m_vSize > 1.0f)
+    {
+        screenRect.width -= m_top.width();
+    }
+    glScissor(screenRect.x, screenRect.y, screenRect.width, screenRect.height);
     if (m_node)
         m_node->draw();
     glDisable(GL_SCISSOR_TEST);
@@ -279,6 +288,11 @@ void ScrollArea::mouseDown(uint8_t key, const Vector &p)
             m_scrollDrag = HORIZONTAL;
             m_scrollStart = p.x;
         }
+        else
+        {
+            if (m_node)
+                m_node->mouseDown(key, m_node->mapFromParent(p));
+        }
     }
 }
 
@@ -286,7 +300,6 @@ void ScrollArea::mouseUp(uint8_t key, const Vector &p)
 {
     if (m_leftMouseButtonPressed)
     {
-        Widget::mouseUp(key, p);
         if (m_scrollDrag != NONE)
         {
             if (!getBoundingRect().contains(p))
@@ -302,6 +315,11 @@ void ScrollArea::mouseUp(uint8_t key, const Vector &p)
                 m_currentChild = 0;
             }
             m_scrollDrag = NONE;
+        }
+        else
+        {
+            if (m_node)
+                m_node->mouseUp(key, m_node->mapFromParent(p));
         }
     }
     else

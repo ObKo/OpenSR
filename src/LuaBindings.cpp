@@ -128,7 +128,16 @@ lua_State *initLuaState()
         .def("size", &Font::size)
         .def("calculateStringWidth", &Font::calculateStringWidth),
 
-
+        /*luabind::class_<Label, Sprite>("Label")
+        .def(luabind::constructor<const std::wstring&, Object*, boost::shared_ptr<Font> >())
+        .def(luabind::constructor<const std::wstring&, Object*>())
+        .def(luabind::constructor<const std::wstring&>())
+        .def("setText", (void (Label::*)(const std::wstring&))&Label::setText)
+        .def("setFont", &Label::setFont)
+        .def("text", &Label::text)
+        .def("font", &Label::font)
+        .def("setWordWrap", &Label::setWordWrap)
+        .def("setFixedSize", &Label::setFixedSize),*/
 
         //TODO: overloading
         luabind::class_<Object>("Object")
