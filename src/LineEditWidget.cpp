@@ -306,7 +306,8 @@ void LineEditWidget::setText(const std::wstring& s)
 {
     lock();
     m_text = s;
-    m_position = s.length();
+    m_position = 0;
+    m_stringOffset = 0;
     updateText();
     markToUpdate();
     unlock();

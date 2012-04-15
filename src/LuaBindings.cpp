@@ -74,6 +74,46 @@ int execLuaScript(const char *data, size_t size, const std::string& name)
     return state;
 }
 
+int propertiesGetInt(const std::string& name, int defaultValue)
+{
+    return Engine::instance()->properties()->get<int>(name, defaultValue);
+}
+
+float propertiesGetFloat(const std::string& name, float defaultValue)
+{
+    return Engine::instance()->properties()->get<float>(name, defaultValue);
+}
+
+std::string propertiesGetString(const std::string& name, const std::string& defaultValue)
+{
+    return Engine::instance()->properties()->get<std::string>(name, defaultValue);
+}
+
+bool propertiesGetBool(const std::string& name, bool defaultValue)
+{
+    return Engine::instance()->properties()->get<bool>(name, defaultValue);
+}
+
+void propertiesSetInt(const std::string& name, int value)
+{
+    Engine::instance()->properties()->put(name, value);
+}
+
+void propertiesSetFloat(const std::string& name, float value)
+{
+    Engine::instance()->properties()->put(name, value);
+}
+
+void propertiesSetString(const std::string& name, const std::string& value)
+{
+    Engine::instance()->properties()->put(name, value);
+}
+
+void propertiesSetBool(const std::string& name, bool value)
+{
+    Engine::instance()->properties()->put(name, value);
+}
+
 lua_State *initLuaState()
 {
     using namespace luabind;
@@ -102,10 +142,19 @@ lua_State *initLuaState()
         ],
 
         def("L", &fromLua),
+        def("toString", &toUTF8),
         def("luaDebug", &luaDebug),
         def("luaWarning", &luaWarning),
         def("luaError", &luaError),
         def("execLuaScript", (int (*)(const std::wstring&))&execLuaScript),
+        def("propertiesGetInt", &propertiesGetInt),
+        def("propertiesGetFloat", &propertiesGetFloat),
+        def("propertiesGetString", &propertiesGetString),
+        def("propertiesGetBool", &propertiesGetBool),
+        def("propertiesSetInt", &propertiesSetInt),
+        def("propertiesSetFloat", &propertiesSetFloat),
+        def("propertiesSetString", &propertiesSetString),
+        def("propertiesSetBool", &propertiesSetBool),
 
         luabind::class_<Vector>("Vector")
         .def(luabind::constructor<>())
@@ -383,6 +432,7 @@ lua_State *initLuaState()
         .def("screenWidth", &Engine::screenWidth)
         .def("rootNode", &Engine::rootNode)
         .def("defaultSkin", &Engine::defaultSkin)
+        .def("properties", &Engine::properties)
         .def("setDefaultSkin", (void (Engine::*)(const std::wstring&))&Engine::setDefaultSkin),
 
         luabind::class_<ResourceManager>("ResourceManager")
@@ -404,26 +454,6 @@ std::wstring fromLua(const char *s)
     return Rangers::fromUTF8(s);
 }
 
-/*Font* getPointer(boost::shared_ptr<Font> sp)
-{
-    return sp.get();
-}
-
-Texture* getPointer(boost::shared_ptr<Texture> sp)
-{
-    return sp.get();
-}
-
-AnimatedTexture* getPointer(boost::shared_ptr<AnimatedTexture> sp)
-{
-    return sp.get();
-}
-
-GAISprite *getPointer(boost::shared_ptr<GAISprite> sp)
-{
-    return sp.get();
-}*/
-
 void luaDebug(std::wstring s)
 {
     Log::debug() << L"Lua: " << s;
@@ -438,19 +468,4 @@ void luaError(std::wstring s)
 {
     Log::error() << L"Lua: " << s;
 }
-
-/*void freePointer(boost::shared_ptr<Font> *sp)
-{
-    delete sp;
-}
-
-void freePointer(boost::shared_ptr<Texture> *sp)
-{
-    delete sp;
-}
-
-void freePointer(boost::shared_ptr<AnimatedTexture> *sp)
-{
-    delete sp;
-}*/
 }

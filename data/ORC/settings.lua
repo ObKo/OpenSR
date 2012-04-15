@@ -29,8 +29,10 @@ spaceButton:setPosition(formBg:position().x + 26, formBg:position().y + 10)
 
 okButton = Button(L"DATA/FormOptions2/2OkN.gi", L"DATA/FormOptions2/2OkA.gi", L"DATA/FormOptions2/2OkD.gi", this)
 okButton:setPosition(formBottom:position().x + 608 + deltaX, formBottom:position().y + 22)
+okButton:addListener(actionListener)
 cancelButton = Button(L"DATA/FormOptions2/2CancelN.gi", L"DATA/FormOptions2/2CancelA.gi", L"DATA/FormOptions2/2CancelD.gi", this)
 cancelButton:setPosition(formBottom:position().x + 675 + deltaX, formBottom:position().y + 22)
+cancelButton:addListener(actionListener)
 
 autoButton = Button(L"DATA/FormOptions2/2AutoN.gi", L"DATA/FormOptions2/2AutoA.gi", L"DATA/FormOptions2/2AutoD.gi", this)
 autoButton:setPosition(formBottom:position().x + 102, formBottom:position().y + 22)
@@ -66,3 +68,36 @@ fullscreen:setPosition(5, widthEdit:height() + 15)
 scroll = ScrollArea(engine:defaultSkin().scrollStyle, paramNode, this)
 scroll:setPosition(formBg:position().x + 257, formBg:position().y + 149)
 scroll:setGeometry(450 + deltaX, 440 + deltaY)
+
+function loadSettings()
+  widthEdit:setText(L(tostring(propertiesGetInt("graphics.width", 1024))))
+  heightEdit:setText(L(tostring(propertiesGetInt("graphics.height", 768))))
+  fullscreen:setChecked(propertiesGetBool("graphics.fullscreen", false))
+end
+
+function saveSettings()
+  width = tonumber(toString(widthEdit:text()))
+  height = tonumber(toString(heightEdit:text()))
+  fs = fullscreen:checked()
+  propertiesSetInt("graphics.width", width)
+  propertiesSetInt("graphics.height", height)
+  propertiesSetBool("graphics.fullscreen", fs)
+end
+
+function dispose()
+    this:dispose();
+    widget = LuaWidget(L"ORC/startmenu.lua")
+    engine:addWidget(widget)
+end
+
+function actionPerformed(action)
+    if action:source() == okButton then
+        saveSettings()
+        dispose()
+    end
+    if action:source() == cancelButton then
+        dispose()
+    end
+end
+
+loadSettings()

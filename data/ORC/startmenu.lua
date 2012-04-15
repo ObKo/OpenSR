@@ -61,11 +61,11 @@ function actionPerformed(action)
     if action:source() == buttons["exit"] then
         engine:quit(0)
     end
-     if action:source() == buttons["settings"] then
-         this:dispose();
-         widget = LuaWidget(L"ORC/settings.lua")
-         engine:addWidget(widget)
-     end
+    if action:source() == buttons["settings"] then
+        this:dispose();
+        widget = LuaWidget(L"ORC/settings.lua")
+        engine:addWidget(widget)
+    end
 end
  
 function processLogic(dt)
