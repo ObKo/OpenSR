@@ -48,6 +48,14 @@ graphicsButton:setColor(0x00C4E0FF)
 graphicsButton:setPosition(0, 0)
 paramNode = WidgetNode()
 
+widthLabel = Label(L"Width: ", paramNode)
+widthLabel:setPosition(5, 5)
+widthEdit = LineEditWidget(engine:defaultSkin().lineEditStyle, paramNode)
+widthEdit:setWidth(75)
+widthEdit:setPosition(75, 5)
+
+
+
 scroll = ScrollArea(engine:defaultSkin().scrollStyle, paramNode, this)
 scroll:setPosition(formBg:position().x + 257, formBg:position().y + 149)
 scroll:setGeometry(450 + deltaX, 440 + deltaY)

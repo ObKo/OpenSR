@@ -39,6 +39,7 @@ public:
     virtual void draw() const;
     virtual void processMain();
     virtual void processLogic(int dt);
+    virtual void mouseClick(const Vector &p);
 
     virtual int minWidth() const;
     virtual int minHeight() const;

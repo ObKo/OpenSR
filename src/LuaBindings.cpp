@@ -128,17 +128,6 @@ lua_State *initLuaState()
         .def("size", &Font::size)
         .def("calculateStringWidth", &Font::calculateStringWidth),
 
-        /*luabind::class_<Label, Sprite>("Label")
-        .def(luabind::constructor<const std::wstring&, Object*, boost::shared_ptr<Font> >())
-        .def(luabind::constructor<const std::wstring&, Object*>())
-        .def(luabind::constructor<const std::wstring&>())
-        .def("setText", (void (Label::*)(const std::wstring&))&Label::setText)
-        .def("setFont", &Label::setFont)
-        .def("text", &Label::text)
-        .def("font", &Label::font)
-        .def("setWordWrap", &Label::setWordWrap)
-        .def("setFixedSize", &Label::setFixedSize),*/
-
         //TODO: overloading
         luabind::class_<Object>("Object")
         .def(const_self == const_self)
@@ -206,6 +195,17 @@ lua_State *initLuaState()
         .def("setHeight", &Sprite::setHeight)
         .def("width", &Sprite::width)
         .def("height", &Sprite::height),
+
+        luabind::class_<Label, Sprite>("Label")
+        .def(luabind::constructor<const std::wstring&, Object*, boost::shared_ptr<Font> >())
+        .def(luabind::constructor<const std::wstring&, Object*>())
+        .def(luabind::constructor<const std::wstring&>())
+        .def("setText", (void (Label::*)(const std::wstring&))&Label::setText)
+        .def("setFont", &Label::setFont)
+        .def("text", &Label::text)
+        .def("font", &Label::font)
+        .def("setWordWrap", &Label::setWordWrap)
+        .def("setFixedSize", &Label::setFixedSize),
 
         luabind::class_<AnimatedSprite, Sprite>("AnimatedSprite")
         .def(luabind::constructor<boost::shared_ptr<AnimatedTexture>, Object*>())
@@ -317,6 +317,12 @@ lua_State *initLuaState()
         .def("setText", &CheckBox::setText)
         .def("checked", &CheckBox::checked)
         .def("text", &CheckBox::text),
+
+        luabind::class_<LineEditWidget, Widget>("LineEditWidget")
+        .def(luabind::constructor<const LineEditStyle&, Rangers::Widget*>())
+        .def(luabind::constructor<const LineEditStyle&>())
+        .def("setText", &LineEditWidget::setText)
+        .def("text", &LineEditWidget::text),
 
         luabind::class_<NinePatch, Sprite>("NinePatch")
         .def(luabind::constructor<Object*>())

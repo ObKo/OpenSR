@@ -42,7 +42,6 @@ public:
 
 void LineEditWidget::draw() const
 {
-    //TODO: Cursor color
     if (!prepareDraw())
         return;
 
@@ -51,7 +50,7 @@ void LineEditWidget::draw() const
 
     m_label.draw();
 
-    if (m_cursorVisible)
+    if (m_cursorVisible && m_cursorBuffer)
     {
         glBindTexture(GL_TEXTURE_2D, 0);
         glColor3ub((m_style.color >> 16) & 0xff, (m_style.color >> 8) & 0xff, m_style.color & 0xff);
@@ -63,7 +62,6 @@ void LineEditWidget::draw() const
 
         glVertexPointer(2, GL_FLOAT, sizeof(Vertex), 0);
         glLineWidth(1);
-
 
         glDrawArrays(GL_LINES, 0, 2);
 
@@ -116,11 +114,26 @@ void LineEditWidget::init()
         m_label = Label(m_text, this, ResourceManager::instance()->loadFont(m_style.font.path, m_style.font.size));
         m_label.setColor(((m_style.color >> 16) & 0xff) / 255.0f, ((m_style.color >> 8) & 0xff) / 255.0f, (m_style.color & 0xff) / 255.0f, ((m_style.color >> 24) & 0xff) / 255.0f);
     }
+    if (m_style.contentRect.valid() && m_label.font() && m_background)
+    {
+        m_height = std::max(m_background->normalHeight() - m_style.contentRect.height + m_label.font()->size(), m_background->normalHeight());
+        m_width = std::max(m_background->normalWidth(), m_style.contentRect.width);
+    }
+    else if (m_label.font() && m_background)
+    {
+        m_height = std::max(m_background->normalHeight(), (float)m_label.font()->size());
+        m_width = m_background->normalWidth();
+    }
+    else if (m_style.contentRect.valid() && m_label.font())
+    {
+        m_height = std::max(m_style.contentRect.height, (float)m_label.font()->size());
+        m_width = m_style.contentRect.width;
+    }
     m_label.setOrigin(POSITION_X_LEFT, POSITION_Y_TOP);
     addListener(new LineEditWidgetListener());
     m_position = 0;
     m_cursorTime = 0;
-    m_cursorVisible = true;
+    m_cursorVisible = false;
     m_cursorBuffer = 0;
     m_cursorVertices = 0;
     m_stringOffset = 0;
@@ -180,7 +193,11 @@ LineEditWidget& LineEditWidget::operator=(const Rangers::LineEditWidget& other)
     return *this;
 }
 
-
+void LineEditWidget::mouseClick(const Vector& p)
+{
+    Engine::instance()->focusWidget(this);
+    Widget::mouseClick(p);
+}
 
 void LineEditWidget::processMain()
 {
@@ -210,17 +227,17 @@ void LineEditWidget::processMain()
     if (!m_style.contentRect.valid())
     {
         m_label.setPosition(0, 0);
-        m_cursorVertices[0].x = cursorPosition;
+        m_cursorVertices[0].x = cursorPosition - 0.5f;
         m_cursorVertices[0].y = m_label.height();
-        m_cursorVertices[1].x = cursorPosition;
+        m_cursorVertices[1].x = cursorPosition - 0.5f;
         m_cursorVertices[1].y = 0;
     }
     else
     {
         m_label.setPosition(m_style.contentRect.x, m_style.contentRect.y);
-        m_cursorVertices[0].x = m_style.contentRect.x + cursorPosition;
+        m_cursorVertices[0].x = m_style.contentRect.x + cursorPosition - 0.5f;
         m_cursorVertices[0].y = m_label.height();
-        m_cursorVertices[1].x = m_style.contentRect.x + cursorPosition;
+        m_cursorVertices[1].x = m_style.contentRect.x + cursorPosition - 0.5f;
         m_cursorVertices[1].y = m_style.contentRect.y;
     }
 
