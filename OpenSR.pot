@@ -1,0 +1,12 @@
+msgid "Width:"
+msgstr ""
+
+msgid "Height:"
+msgstr ""
+
+msgid "Fullscreen mode"
+msgstr ""
+
+msgid "Graphics"
+msgstr ""
+

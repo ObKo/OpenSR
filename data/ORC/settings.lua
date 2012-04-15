@@ -45,17 +45,17 @@ lowButton:setPosition(formBottom:position().x + 161, formBottom:position().y + 5
 
 graphicsButton = Button(L"DATA/FormOptions2/2PageN.gi", L"DATA/FormOptions2/2PageA.gi", L"DATA/FormOptions2/2PageD.gi", buttonNode)
 graphicsButton:setFont(engine:coreFont());
-graphicsButton:setText(L"Graphics")
+graphicsButton:setText(_("Graphics"))
 graphicsButton:setColor(0x00C4E0FF)
 graphicsButton:setPosition(0, 0)
 paramNode = WidgetNode()
 
-widthLabel = Label(L"Width: ", paramNode)
+widthLabel = Label(_("Width:"), paramNode)
 widthEdit = LineEditWidget(engine:defaultSkin().lineEditStyle, paramNode)
-heightLabel = Label(L"Height: ", paramNode)
+heightLabel = Label(_("Height:"), paramNode)
 heightEdit = LineEditWidget(engine:defaultSkin().lineEditStyle, paramNode)
 
-fullscreen = CheckBox(engine:defaultSkin().checkBoxStyle, L"Fullscreen mode", paramNode)
+fullscreen = CheckBox(engine:defaultSkin().checkBoxStyle, _("Fullscreen mode"), paramNode)
 
 widthEdit:setWidth(50)
 widthEdit:setPosition(100, 5)

@@ -31,6 +31,7 @@
 #include <cstdio>
 #include <libRanger.h>
 #include <lua.hpp>
+#include <libintl.h>
 #include "Utils.h"
 #include "Log.h"
 #include "ResourceManager.h"
@@ -41,6 +42,7 @@
 #include "Action.h"
 #include "JSONHelper.h"
 #include "Styles.h"
+
 
 using namespace std;
 
@@ -74,6 +76,8 @@ Engine::Engine(int argc, char **argv): m_argc(argc), m_argv(argv), m_focusedWidg
         delete engineInstance;
         engineInstance = 0;
     }
+
+    textdomain("OpenSR");
 
     std::ifstream configFile;
     m_properties = boost::shared_ptr<boost::property_tree::ptree>(new boost::property_tree::ptree());
