@@ -252,6 +252,12 @@ void ScrollArea::mouseMove(const Vector &p)
     unlock();
 }
 
+void ScrollArea::processLogic(int dt)
+{
+    if (m_node)
+        m_node->processLogic(dt);
+}
+
 void ScrollArea::mouseEnter()
 {
     Widget::mouseEnter();

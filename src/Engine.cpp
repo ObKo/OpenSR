@@ -469,7 +469,12 @@ Engine *Engine::instance()
 void Engine::focusWidget(Widget* w)
 {
     if (!m_consoleOpenned)
+    {
+        if (m_focusedWidget)
+            m_focusedWidget->unFocus();
         m_focusedWidget = w;
+        w->focus();
+    }
 }
 
 void Engine::markWidgetDeleting(Widget *w)

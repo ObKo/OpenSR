@@ -44,13 +44,13 @@ Rect Widget::getBoundingRect() const
     return r;
 }
 
-Widget::Widget(Widget *parent): Object(parent), m_currentChild(0), m_width(0), m_height(0), m_leftMouseButtonPressed(false)
+Widget::Widget(Widget *parent): Object(parent), m_currentChild(0), m_width(0), m_height(0), m_leftMouseButtonPressed(false), m_focused(false)
 {
     if (parent)
         parent->addWidget(this);
 }
 
-Widget::Widget(float w, float h, Widget *parent): m_width(w), m_height(h), Object(parent), m_currentChild(0), m_leftMouseButtonPressed(false)
+Widget::Widget(float w, float h, Widget *parent): m_width(w), m_height(h), Object(parent), m_currentChild(0), m_leftMouseButtonPressed(false), m_focused(false)
 {
     if (parent)
         parent->addWidget(this);
@@ -64,6 +64,7 @@ Widget::Widget(const Rangers::Widget& other): Object(other)
     m_width = other.m_width;
     m_height = other.m_height;
     m_listeners = other.m_listeners;
+    m_focused = false;
     //FIXME: Ugly downcasting
     Widget* wparent;
     if ((wparent = dynamic_cast<Widget*>(other.m_parent)) != 0)
@@ -247,8 +248,8 @@ Widget& Widget::operator=(const Rangers::Widget& other)
         return *this;
 
     Object::operator=(other);
-    //(std::list<Widget*>::iterator i = m_childWidgets.begin(); i != m_childWidgets.end(); i++)
-    //    i->set
+
+    m_focused = false;
 
     m_childWidgets = other.m_childWidgets;
     m_currentChild = other.m_currentChild;
@@ -290,6 +291,21 @@ void Widget::action(const Action& action)
     for (std::list<ActionListener*>::iterator i = m_listeners.begin(); i != m_listeners.end(); i++)
         (*i)->actionPerformed(action);
     unlock();
+}
+
+bool Widget::isFocused() const
+{
+    return m_focused;
+}
+
+void Widget::focus()
+{
+    m_focused = true;
+}
+
+void Widget::unFocus()
+{
+    m_focused = false;
 }
 
 void Widget::setGeometry(int width, int height)

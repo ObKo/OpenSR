@@ -55,9 +55,12 @@ public:
     virtual int preferredHeight() const;
     virtual int maxWidth() const;
     virtual int maxHeight() const;
+    virtual void focus();
+    virtual void unFocus();
 
     int width() const;
     int height() const;
+    bool isFocused() const;
 
     void setWidth(int width);
     void setHeight(int height);
@@ -79,6 +82,7 @@ protected:
     Widget *m_currentChild;
     int m_width, m_height;
     bool m_leftMouseButtonPressed;
+    bool m_focused;
 };
 }
 

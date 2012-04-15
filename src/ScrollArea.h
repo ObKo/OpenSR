@@ -48,6 +48,8 @@ public:
 
     virtual void actionPerformed(const Action &action);
 
+    virtual void processLogic(int dt);
+
 private:
     void updateScrollPosition();
     Button m_top, m_bottom, m_left, m_right;

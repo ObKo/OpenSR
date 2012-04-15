@@ -132,7 +132,7 @@
     },
     "Font":
     {
-        "default-font": {"file": "DroidSans.ttf", "size": 13}
+        "default-font": {"file": "DroidSans.ttf", "size": 14}
     },
     "LineEditStyle":
     {

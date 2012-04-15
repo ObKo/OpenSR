@@ -24,6 +24,7 @@
 #include <boost/variant/get.hpp>
 #include "ResourceManager.h"
 #include "NinePatch.h"
+#include "Log.h"
 
 namespace Rangers
 {
@@ -50,10 +51,10 @@ void LineEditWidget::draw() const
 
     m_label.draw();
 
-    if (m_cursorVisible && m_cursorBuffer)
+    if (isFocused() && m_cursorVisible && m_cursorBuffer)
     {
         glBindTexture(GL_TEXTURE_2D, 0);
-        glColor3ub((m_style.color >> 16) & 0xff, (m_style.color >> 8) & 0xff, m_style.color & 0xff);
+        glColor3ub((m_style.color >> 24) & 0xff, (m_style.color >> 16) & 0xff, (m_style.color >> 8) & 0xff);
 
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_ARRAY_BUFFER);
@@ -112,7 +113,7 @@ void LineEditWidget::init()
     if ((m_style.font.path != L"") && (m_style.font.size > 0))
     {
         m_label = Label(m_text, this, ResourceManager::instance()->loadFont(m_style.font.path, m_style.font.size));
-        m_label.setColor(((m_style.color >> 16) & 0xff) / 255.0f, ((m_style.color >> 8) & 0xff) / 255.0f, (m_style.color & 0xff) / 255.0f, ((m_style.color >> 24) & 0xff) / 255.0f);
+        m_label.setColor(((m_style.color >> 24) & 0xff) / 255.0f, ((m_style.color >> 16) & 0xff) / 255.0f, ((m_style.color >> 8) & 0xff) / 255.0f, ((m_style.color) & 0xff) / 255.0f);
     }
     if (m_style.contentRect.valid() && m_label.font() && m_background)
     {
