@@ -146,8 +146,10 @@ std::wstring Label::text() const
 
 void Label::setWordWrap(bool wordWrap)
 {
+    lock();
     m_wordWrap = wordWrap;
     markToUpdate();
+    unlock();
 }
 
 void Label::setFixedSize(float width, float height)

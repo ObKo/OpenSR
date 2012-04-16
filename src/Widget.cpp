@@ -300,30 +300,40 @@ bool Widget::isFocused() const
 
 void Widget::focus()
 {
+    lock();
     m_focused = true;
+    unlock();
 }
 
 void Widget::unFocus()
 {
+    lock();
     m_focused = false;
+    unlock();
 }
 
 void Widget::setGeometry(int width, int height)
 {
+    lock();
     m_width = width;
     m_height = height;
     markToUpdate();
+    unlock();
 }
 
 void Widget::setHeight(int height)
 {
+    lock();
     m_height = height;
     markToUpdate();
+    unlock();
 }
 
 void Widget::setWidth(int width)
 {
+    lock();
     m_width = width;
     markToUpdate();
+    unlock();
 }
 }

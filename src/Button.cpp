@@ -193,28 +193,36 @@ bool Button::autoResize() const
 
 void Button::setAutoResize(bool autoResize)
 {
+    lock();
     m_autoResize = autoResize;
     calcAutoRresize();
+    unlock();
 }
 
 void Button::setText(const std::wstring& text)
 {
+    lock();
     m_text = text;
     m_label.setText(text);
     calcAutoRresize();
     markToUpdate();
+    unlock();
 }
 
 void Button::setColor(int color)
 {
+    lock();
     m_label.setColor(color);
+    unlock();
 }
 
 void Button::setFont(boost::shared_ptr<Font> font)
 {
+    lock();
     m_label.setFont(font);
     calcAutoRresize();
     markToUpdate();
+    unlock();
 }
 
 int Button::color() const
@@ -234,6 +242,7 @@ void Button::calcAutoRresize()
     if (!m_normalSprite)
         return;
 
+    lock();
     float labelWidth = 0.0f;
     float labelHeight = 0.0f;
     if (m_label.font())
@@ -251,6 +260,7 @@ void Button::calcAutoRresize()
         float height = m_normalSprite->normalHeight() + labelHeight - m_style.contentRect.height;
         setGeometry(std::max(width, m_normalSprite->normalWidth()), std::max(height, m_normalSprite->normalHeight()));
     }
+    unlock();
 }
 
 int Button::minHeight() const

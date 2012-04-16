@@ -44,8 +44,8 @@ void Node::processLogic(int dt)
 {
     lock();
     std::list<Object*> children = m_children;
+    unlock();
     for (std::list<Object*>::const_iterator i = children.begin(); i != children.end(); i++)
         (*i)->processLogic(dt);
-    unlock();
 }
 }

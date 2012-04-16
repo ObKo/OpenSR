@@ -83,8 +83,6 @@ public:
     //! Current ticks
     static long long getTicks();
 
-    //! Engine fps counter loop
-    static int fpsCounter();
     //! Logic loop
     static int logic();
 
@@ -105,9 +103,10 @@ private:
     char **m_argv;
     int m_height;
     int m_width;
+    int m_fpsTime;
 
     boost::recursive_mutex m_updateMutex;
-    boost::thread *m_fpsThread, *m_logicThread;
+    boost::thread *m_logicThread;
 
     boost::shared_ptr<boost::property_tree::ptree> m_properties;
     std::wstring m_configPath;

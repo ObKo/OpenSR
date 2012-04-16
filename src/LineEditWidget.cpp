@@ -145,6 +145,7 @@ void LineEditWidget::updateText()
 {
     if (!m_label.font())
         return;
+    lock();
     int maxChars;
     if (m_position < m_stringOffset)
     {
@@ -162,6 +163,7 @@ void LineEditWidget::updateText()
     }
     maxChars = m_label.font()->maxChars(m_text.begin() + m_stringOffset, m_text.end(), m_width);
     m_label.setText(m_text.substr(m_stringOffset, maxChars + 1));
+    unlock();
 }
 
 LineEditWidget::LineEditWidget(const Rangers::LineEditWidget& other): Widget(other)
@@ -196,7 +198,9 @@ LineEditWidget& LineEditWidget::operator=(const Rangers::LineEditWidget& other)
 
 void LineEditWidget::mouseClick(const Vector& p)
 {
+    lock();
     Engine::instance()->focusWidget(this);
+    unlock();
     Widget::mouseClick(p);
 }
 

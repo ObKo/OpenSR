@@ -167,23 +167,6 @@ Engine::~Engine()
     }
 }
 
-int Engine::fpsCounter()
-{
-    while (engineInstance->m_gameRunning)
-    {
-        SDL_Delay(1000);
-        ostringstream fps(ostringstream::out);
-        fps << engineInstance->m_frames;
-        if (engineInstance->m_frames >= 60)
-            engineInstance->m_fpsLabel.setColor(0, 1, 0);
-        else
-            engineInstance->m_fpsLabel.setColor(1, 0, 0);
-        engineInstance->m_fpsLabel.setText(fps.str());
-        engineInstance->m_frames = 0;
-    }
-    return 0;
-}
-
 void Engine::addWidget(Widget *w)
 {
     if (!w)
@@ -396,35 +379,50 @@ void Engine::paint()
 int Engine::run()
 {
     m_gameRunning = true;
-    m_fpsThread = new boost::thread(fpsCounter);
     m_logicThread = new boost::thread(logic);
     std::wstring startupScript = fromLocal(m_properties->get<std::string>("engine.startupScript", "startup.lua").c_str());
     execLuaScript(startupScript);
+    m_fpsTime = getTicks();
     while (m_gameRunning)
     {
+        if (getTicks() - m_fpsTime >= 1000)
+        {
+            char str[11];
+            double fps = (float)m_frames / (getTicks() - m_fpsTime) * 1000;
+            snprintf(str, 10, "%.1lf", fps);
+            m_fpsLabel.setText(str);
+            if (fps >= 30)
+                m_fpsLabel.setColor(0.0f, 1.0f, 0.0f);
+            else
+                m_fpsLabel.setColor(1.0f, 0.0f, 0.0f);
+            m_frames = 0;
+            m_fpsTime = getTicks();
+        }
         m_updateMutex.lock();
-        std::list<Widget*>::const_iterator widgetEnd = m_widgetsToDelete.end();
-        for (std::list<Widget*>::const_iterator i = m_widgetsToDelete.begin(); i != widgetEnd; ++i)
+        std::list<Widget*> widgetsToDelete = m_widgetsToDelete;
+        m_widgetsToDelete.clear();
+        std::list<Object *> updateList = m_updateList;
+        m_updateList.clear();
+        m_updateMutex.unlock();
+
+        std::list<Widget*>::const_iterator widgetEnd = widgetsToDelete.end();
+        for (std::list<Widget*>::const_iterator i = widgetsToDelete.begin(); i != widgetEnd; ++i)
         {
             removeWidget(*i);
             delete(*i);
         }
-        m_widgetsToDelete.clear();
 
-        std::list<Object *>::const_iterator end = m_updateList.end();
-        for (std::list<Object *>::const_iterator i = m_updateList.begin(); i != end; ++i)
+        std::list<Object *>::const_iterator end = updateList.end();
+        for (std::list<Object *>::const_iterator i = updateList.begin(); i != end; ++i)
             if ((*i)->needUpdate())
                 (*i)->processMain();
-        m_updateList.clear();
 
-        m_updateMutex.unlock();
 
         ResourceManager::instance()->processMain();
 
         processEvents();
         paint();
     }
-    m_fpsThread->join();
     m_logicThread->join();
     SDL_Quit();
     return m_exitCode;
@@ -515,9 +513,6 @@ void Engine::processEvents()
     {
         switch (event.type)
         {
-            //case SDL_MOUSEBUTTONDOWN:
-            //case SDL_MOUSEBUTTONUP:
-            //currentWidget->
         case SDL_KEYDOWN:
             if (event.key.keysym.sym == SDLK_BACKQUOTE)
             {

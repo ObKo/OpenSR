@@ -75,7 +75,9 @@ CheckBox::~CheckBox()
 
 void CheckBox::setColor(int color)
 {
+    lock();
     m_label.setColor(color);
+    unlock();
 }
 
 int CheckBox::color() const

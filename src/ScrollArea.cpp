@@ -272,15 +272,22 @@ void ScrollArea::mouseLeave()
 void ScrollArea::mouseDown(uint8_t key, const Vector &p)
 {
     Widget::mouseDown(key, p);
+    lock();
     if (key == SDL_BUTTON_WHEELUP)
     {
-        m_vPosition += 0.1f;
-        updateScrollPosition();
+        if (m_vSize > 1.0f)
+        {
+            m_vPosition += 0.1f;
+            updateScrollPosition();
+        }
     }
     else if (key == SDL_BUTTON_WHEELDOWN)
     {
-        m_vPosition -= 0.1f;
-        updateScrollPosition();
+        if (m_vSize > 1.0f)
+        {
+            m_vPosition -= 0.1f;
+            updateScrollPosition();
+        }
     }
     else if (m_leftMouseButtonPressed)
     {
@@ -300,10 +307,12 @@ void ScrollArea::mouseDown(uint8_t key, const Vector &p)
                 m_node->mouseDown(key, m_node->mapFromParent(p));
         }
     }
+    unlock();
 }
 
 void ScrollArea::mouseUp(uint8_t key, const Vector &p)
 {
+    lock();
     if (m_leftMouseButtonPressed)
     {
         if (m_scrollDrag != NONE)
@@ -330,10 +339,12 @@ void ScrollArea::mouseUp(uint8_t key, const Vector &p)
     }
     else
         Widget::mouseUp(key, p);
+    unlock();
 }
 
 void ScrollArea::updateScrollPosition()
 {
+    lock();
     if (m_vPosition >= 0.0f)
         m_vPosition = 0.0f;
     if (m_vPosition < - m_vSize + 1.0f)
@@ -372,6 +383,7 @@ void ScrollArea::updateScrollPosition()
     }
 
     m_node->setPosition((int)(m_hPosition * m_width), (int)(m_vPosition * m_height));
+    unlock();
 }
 
 void ScrollArea::actionPerformed(const Action& action)
@@ -382,6 +394,7 @@ void ScrollArea::actionPerformed(const Action& action)
     if (!m_node)
         return;
 
+    lock();
     if (action.source() == &m_left)
         m_hPosition += 0.1f;
     else if (action.source() == &m_right)
@@ -392,5 +405,6 @@ void ScrollArea::actionPerformed(const Action& action)
         m_vPosition -= 0.1f;
 
     updateScrollPosition();
+    unlock();
 }
 }

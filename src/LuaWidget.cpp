@@ -307,9 +307,11 @@ void LuaWidget::processLogic(int dt)
 {
     lock();
     std::list<Object*> children = m_children;
+    unlock();
     for (std::list<Object*>::const_iterator i = children.begin(); i != children.end(); i++)
         (*i)->processLogic(dt);
 
+    lock();
     if (luabind::type(luabind::globals(m_luaState.get())["processLogic"]) != LUA_TFUNCTION)
     {
         unlock();
