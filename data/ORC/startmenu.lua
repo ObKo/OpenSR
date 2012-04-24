@@ -51,6 +51,7 @@ buttons["exit"]:setPosition(0, 5 * (h + 15))
 
 for k,v in pairs(buttons) do
   v:addListener(actionListener)
+  v:setSounds(L"Sound/ButtonClick.wav", L"Sound/ButtonLeave.WAV", L"Sound/ButtonEnter.wav")
 end
  
 t = 0

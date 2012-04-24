@@ -134,6 +134,12 @@
     {
         "default-font": {"file": "DroidSans.ttf", "size": 14}
     },
+    "Sound":
+    {
+        "button-enter-sound": {"file": "Sound/ButtonEnter.wav"},
+        "button-leave-sound": {"file": "Sound/ButtonLeave.WAV"},
+        "button-click-sound": {"file": "Sound/ButtonClick.wav"}
+    },
     "LineEditStyle":
     {
         "background": "line-edit",
@@ -148,7 +154,10 @@
         "pressed" : "default-button-pressed", 
         "font": "default-font", 
         "color": "#082430FF",
-        "content-rect": {"x": 4, "y": 4, "width": 108, "height": 13} 
+        "content-rect": {"x": 4, "y": 4, "width": 108, "height": 13},
+        "enter-sound": "button-enter-sound",
+        "leave-sound": "button-leave-sound",
+        "click-sound" : "button-click-sound"
     },
     "CheckBoxStyle":
     {

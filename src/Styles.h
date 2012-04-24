@@ -22,6 +22,7 @@
 #include "Types.h"
 #include <boost/variant.hpp>
 
+//TODO: Descriptor for sound
 namespace Rangers
 {
 class Texture;
@@ -38,8 +39,8 @@ struct FontDescriptor
 struct ResourceDescriptor
 {
     ResourceDescriptor();
-    enum {NONE, NINEPATCH, SPRITE, FONT} type;
-    typedef boost::variant<TextureRegion, NinePatchDescriptor, FontDescriptor> Resource;
+    enum {NONE, NINEPATCH, SPRITE, FONT, SOUND} type;
+    typedef boost::variant<TextureRegion, NinePatchDescriptor, FontDescriptor, std::wstring> Resource;
     Resource resource;
 };
 
@@ -51,6 +52,9 @@ struct ButtonStyle
     int color;
     FontDescriptor font;
     Rect contentRect;
+    std::wstring clickSound;
+    std::wstring leaveSound;
+    std::wstring enterSound;
 };
 
 struct CheckBoxStyle

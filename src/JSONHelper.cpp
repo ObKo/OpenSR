@@ -79,6 +79,26 @@ FontDescriptor JSONHelper::parseFont(const Json::Value& object, bool &error)
     return font;
 }
 
+std::wstring JSONHelper::parseSound(const Json::Value& object, bool &error)
+{
+    error = false;
+    std::wstring font;
+    if (!object.isObject())
+    {
+        Log::warning() << "Invalid JSON object.";
+        error = true;
+        return std::wstring();
+    }
+    Json::Value::Members members = object.getMemberNames();
+    if ((std::find(members.begin(), members.end(), "file") == members.end()))
+    {
+        Log::warning() << "Invalid JSON sound.";
+        error = true;
+        return std::wstring();
+    }
+    return fromUTF8(object.get("file", "").asString().c_str());
+}
+
 NinePatchDescriptor JSONHelper::parseNinePatch(const Json::Value& object, bool &error)
 {
     error = false;
@@ -216,6 +236,30 @@ std::map<std::wstring, ResourceDescriptor> JSONHelper::parseResources(const Json
             result[fromUTF8(it.memberName())] = desc;
         }
     }
+    if (std::find(members.begin(), members.end(), "Sound") != members.end())
+    {
+        Json::Value sounds = object.get("Sound", Json::Value());
+        Json::Value::iterator end = sounds.end();
+        for (Json::Value::iterator it = sounds.begin(); it != end; ++it)
+        {
+            if (result.find(fromUTF8(it.memberName())) != result.end())
+            {
+                error = true;
+                Log::error() << "Dublicated JSON resource: \"" << fromUTF8(it.memberName()) << "\"";
+                return std::map<std::wstring, ResourceDescriptor>();
+            }
+
+            std::wstring sound = parseSound(*it, error);
+            if (error)
+            {
+                return std::map<std::wstring, ResourceDescriptor>();
+            }
+            ResourceDescriptor desc;
+            desc.type = ResourceDescriptor::SOUND;
+            desc.resource = ResourceDescriptor::Resource(sound);
+            result[fromUTF8(it.memberName())] = desc;
+        }
+    }
     return result;
 }
 
@@ -298,6 +342,34 @@ ButtonStyle JSONHelper::parseButtonStyle(const Json::Value& object, const std::m
 
     if (std::find(members.begin(), members.end(), "content-rect") != members.end())
         style.contentRect = parseRect(object.get("content-rect", Json::Value()), error);
+
+    if (std::find(members.begin(), members.end(), "enter-sound") != members.end())
+    {
+        ResourceDescriptor d = getResource(object.get("enter-sound", "").asString(), resources, error);
+
+        if (d.type != ResourceDescriptor::SOUND)
+            error = true;
+        else
+            style.enterSound = boost::get<std::wstring>(d.resource);
+    }
+    if (std::find(members.begin(), members.end(), "leave-sound") != members.end())
+    {
+        ResourceDescriptor d = getResource(object.get("leave-sound", "").asString(), resources, error);
+
+        if (d.type != ResourceDescriptor::SOUND)
+            error = true;
+        else
+            style.leaveSound = boost::get<std::wstring>(d.resource);
+    }
+    if (std::find(members.begin(), members.end(), "click-sound") != members.end())
+    {
+        ResourceDescriptor d = getResource(object.get("click-sound", "").asString(), resources, error);
+
+        if (d.type != ResourceDescriptor::SOUND)
+            error = true;
+        else
+            style.clickSound = boost::get<std::wstring>(d.resource);
+    }
 
     if (error)
     {

@@ -24,14 +24,17 @@
 #include "Styles.h"
 #include "Label.h"
 
+
 namespace Rangers
 {
 class Sprite;
 class Font;
+class Sound;
 
 class Button: public Widget
 {
 public:
+    //TODO: Make consrtuctors more consistent
     Button(Widget *parent = 0);
     Button(const Button& other);
     Button(boost::shared_ptr<Texture> texture, Widget *parent = 0);
@@ -65,6 +68,8 @@ public:
     virtual void setColor(int color);
     void setFont(boost::shared_ptr<Font> font);
     void setAutoResize(bool autoResize);
+    void setSounds(boost::shared_ptr<Sound> clickSound, boost::shared_ptr<Sound> leaveSound, boost::shared_ptr<Sound> enterSound);
+    void setSounds(const std::wstring& clickSound, const std::wstring& leaveSound, const std::wstring& enterSound);
 
     std::wstring text() const;
     virtual int color() const;
@@ -84,6 +89,10 @@ private:
     Sprite *m_pressedSprite;
     Sprite *m_sprite;
     bool m_autoResize;
+
+    boost::shared_ptr<Sound> m_enterSound;
+    boost::shared_ptr<Sound> m_leaveSound;
+    boost::shared_ptr<Sound> m_clickSound;
 
     void init();
 };

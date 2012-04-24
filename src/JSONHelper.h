@@ -37,6 +37,7 @@ public:
     static ButtonStyle parseButtonStyle(const Json::Value& object, const std::map<std::wstring, ResourceDescriptor>& resources, bool &error);
     static LineEditStyle parseLineEditStyle(const Json::Value& object, const std::map< std::wstring, ResourceDescriptor >& resources, bool& error);
     static CheckBoxStyle parseCheckBoxStyle(const Json::Value& object, const std::map< std::wstring, ResourceDescriptor >& resources, bool& error);
+    static std::wstring parseSound(const Json::Value& object, bool &error);
     static Skin parseSkin(const std::string& json, bool &error);
 
 private:

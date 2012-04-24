@@ -26,8 +26,8 @@
 #include "Label.h"
 #include "Font.h"
 #include "Engine.h"
-#include "SoundManager.h"
 #include "Sound.h"
+#include "SoundManager.h"
 
 namespace Rangers
 {
@@ -339,7 +339,14 @@ void Button::init()
     m_label.setOrigin(POSITION_X_LEFT, POSITION_Y_TOP);
     setColor(m_style.color);
     m_sprite = m_normalSprite;
-    m_hoverSound = SoundManager::instance()->loadSound(L"Sound/ButtonEnter.wav");
+
+    if (m_style.enterSound != L"")
+        m_enterSound = SoundManager::instance()->loadSound(m_style.enterSound);
+    if (m_style.leaveSound != L"")
+        m_leaveSound = SoundManager::instance()->loadSound(m_style.leaveSound);
+    if (m_style.clickSound != L"")
+        m_clickSound = SoundManager::instance()->loadSound(m_style.clickSound);
+
     markToUpdate();
 }
 
@@ -361,6 +368,24 @@ void Button::draw() const
         m_sprite->draw();
     m_label.draw();
     endDraw();
+}
+
+void Button::setSounds(boost::shared_ptr<Sound> clickSound, boost::shared_ptr<Sound> leaveSound, boost::shared_ptr<Sound> enterSound)
+{
+    lock();
+    m_clickSound = clickSound;
+    m_enterSound = enterSound;
+    m_leaveSound = leaveSound;
+    unlock();
+}
+
+void Button::setSounds(const std::wstring& clickSound, const std::wstring& leaveSound, const std::wstring& enterSound)
+{
+    lock();
+    m_clickSound = SoundManager::instance()->loadSound(clickSound);
+    m_enterSound = SoundManager::instance()->loadSound(enterSound);
+    m_leaveSound = SoundManager::instance()->loadSound(leaveSound);
+    unlock();
 }
 
 void Button::processMain()
@@ -400,7 +425,8 @@ void Button::mouseEnter()
     lock();
     if (m_hoverSprite)
         m_sprite = m_hoverSprite;
-    m_hoverSound->play();
+    if (m_enterSound)
+        m_enterSound->play();
     unlock();
     Widget::mouseEnter();
 }
@@ -410,6 +436,8 @@ void Button::mouseLeave()
     lock();
     if (m_normalSprite)
         m_sprite = m_normalSprite;
+    if (m_leaveSound)
+        m_leaveSound->play();
     unlock();
     Widget::mouseLeave();
 }
@@ -442,6 +470,8 @@ void Button::mouseUp(uint8_t key, const Vector &p)
 
 void Button::mouseClick(const Vector &p)
 {
+    if (m_clickSound)
+        m_clickSound->play();
     action(Action(this, Action::BUTTON_CLICKED, Action::Argument()));
 }
 

@@ -35,6 +35,8 @@
 #include "CheckBox.h"
 #include "ScrollArea.h"
 #include "NinePatch.h"
+#include "SoundManager.h"
+#include "Sound.h"
 #include <libRanger.h>
 #include <fstream>
 #include <string>
@@ -363,6 +365,7 @@ lua_State *initLuaState()
         .def(luabind::constructor<const std::wstring&, const std::wstring&, const std::wstring&>())
         .def(luabind::constructor<const ButtonStyle&, Widget*>())
         .def(luabind::constructor<const ButtonStyle&>())
+        .def("setSounds", (void (Button::*)(const std::wstring&, const std::wstring&, const std::wstring&))&Button::setSounds)
         .def("color", &Button::color)
         .def("text", &Button::text)
         .def("font", &Button::font)
@@ -454,11 +457,19 @@ lua_State *initLuaState()
         .def("loadTexture", &ResourceManager::loadTexture)
         .def("loadAnimation", (boost::shared_ptr<Rangers::AnimatedTexture> (ResourceManager::*)(const std::wstring&, bool))&ResourceManager::loadAnimation)
         .def("loadAnimation", (boost::shared_ptr<Rangers::AnimatedTexture> (ResourceManager::*)(const std::wstring&))&ResourceManager::loadAnimation)
-        .def("loadFont", &ResourceManager::loadFont)
+        .def("loadFont", &ResourceManager::loadFont),
+
+        luabind::class_<Sound>("Sound")
+        .def(luabind::constructor<const std::wstring&>())
+        .def("play", &Sound::play),
+
+        luabind::class_<SoundManager>("SoundManager")
+        .def("loadSound", &SoundManager::loadSound)
     ];
 
     luabind::globals(luaState)["engine"] = Engine::instance();
     luabind::globals(luaState)["resources"] = ResourceManager::instance();
+    luabind::globals(luaState)["sound"] = SoundManager::instance();
     return luaState;
 }
 
