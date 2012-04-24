@@ -60,11 +60,12 @@ long long Engine::getTicks()
 #else
 #include <sys/time.h>
 
-struct timeval tv;
-struct timezone tz;
 long long Engine::getTicks()
 {
-    gettimeofday(&tv, &tz);
+    struct timeval tv;
+    struct timezone tz;
+    if(gettimeofday(&tv, &tz))
+        engineInstance->quit(0);
     return tv.tv_sec * 1000 + tv.tv_usec / 1000;
 }
 #endif
@@ -208,7 +209,7 @@ int Engine::logic()
         int dt = getTicks() - t;
         while (!dt)
         {
-            t = getTicks();
+            //t = getTicks();
             SDL_Delay(1);
             dt = getTicks() - t;
         }
@@ -385,10 +386,11 @@ int Engine::run()
     m_fpsTime = getTicks();
     while (m_gameRunning)
     {
-        if (getTicks() - m_fpsTime >= 1000)
+        int fpsdt;
+        if ((fpsdt = getTicks() - m_fpsTime) >= 1000)
         {
             char str[11];
-            double fps = (float)m_frames / (getTicks() - m_fpsTime) * 1000;
+            double fps = (float)m_frames / fpsdt * 1000;
             snprintf(str, 10, "%.1lf", fps);
             m_fpsLabel.setText(str);
             if (fps >= 30)
@@ -501,6 +503,8 @@ void Engine::setDefaultSkin(const std::wstring& skinPath)
 {
     size_t size;
     char *json = ResourceManager::instance()->loadData(skinPath, size);
+    if(!json)
+        return;
     bool error;
     m_skin = JSONHelper::parseSkin(std::string(json, size), error);
 }

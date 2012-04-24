@@ -31,6 +31,8 @@ SET(SOURCES
     ScrollArea.cpp
     JSONHelper.cpp
     Styles.cpp
+    SoundManager.cpp
+    Sound.cpp
 )
 
 SET(HEADERS 
@@ -66,6 +68,8 @@ SET(HEADERS
     ScrollArea.h
     JSONHelper.h
     Styles.h
+    SoundManager.h
+    Sound.h
 )
 
 INCLUDE_DIRECTORIES(
@@ -80,6 +84,7 @@ INCLUDE_DIRECTORIES(
     ${JSONCPP_INCLUDE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${LUABIND_INCLUDE_DIR}
+    ${SDLMIXER_INCLUDE_DIR}
 )
 
 IF(WIN32)
@@ -101,6 +106,7 @@ TARGET_LINK_LIBRARIES(opensr
     ${GLEW_LIBRARIES}
     ${JSONCPP_LIBRARIES}
     ${LUABIND_LIBRARY}
+    ${SDLMIXER_LIBRARY}
 )
 ELSE(WIN32)
 TARGET_LINK_LIBRARIES(opensr 
@@ -111,6 +117,7 @@ TARGET_LINK_LIBRARIES(opensr
     ${Boost_LIBRARIES}
     ${JSONCPP_LIBRARIES}
     ${LUABIND_LIBRARY}
+    ${SDLMIXER_LIBRARY}
 )
 ENDIF(WIN32)
 TARGET_LINK_LIBRARIES(opensr ranger)

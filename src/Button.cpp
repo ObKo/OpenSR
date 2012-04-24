@@ -26,6 +26,8 @@
 #include "Label.h"
 #include "Font.h"
 #include "Engine.h"
+#include "SoundManager.h"
+#include "Sound.h"
 
 namespace Rangers
 {
@@ -337,6 +339,7 @@ void Button::init()
     m_label.setOrigin(POSITION_X_LEFT, POSITION_Y_TOP);
     setColor(m_style.color);
     m_sprite = m_normalSprite;
+    m_hoverSound = SoundManager::instance()->loadSound(L"Sound/ButtonEnter.wav");
     markToUpdate();
 }
 
@@ -397,6 +400,7 @@ void Button::mouseEnter()
     lock();
     if (m_hoverSprite)
         m_sprite = m_hoverSprite;
+    m_hoverSound->play();
     unlock();
     Widget::mouseEnter();
 }
