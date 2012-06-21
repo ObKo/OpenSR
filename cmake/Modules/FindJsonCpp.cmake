@@ -11,6 +11,7 @@ FIND_PATH(JSONCPP_INCLUDE_DIR NAMES jsoncpp/json.h
   ENV CPATH
   /usr/include
   /usr/local/include
+  /usr/include/jsoncpp
   NO_DEFAULT_PATH
 )
 FIND_PATH(JSONCPP_INCLUDE_DIR NAMES jsoncpp/json.h)
