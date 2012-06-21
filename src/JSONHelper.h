@@ -19,7 +19,7 @@
 #ifndef RANGERS_JSONHELPER_H
 #define RANGERS_JSONHELPER_H
 
-#include <jsoncpp/json.h>
+#include <json/json.h>
 #include <map>
 #include "Types.h"
 #include "Styles.h"
