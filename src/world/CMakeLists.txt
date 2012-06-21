@@ -1,0 +1,64 @@
+SET(WORLD_SOURCES
+    Artifact.cpp
+    CargoHook.cpp
+    DefenceGenerator.cpp
+    DesertPlanet.cpp
+    Droid.cpp
+    Engine.cpp
+    Equipment.cpp
+    Goods.cpp
+    HabitablePlanet.cpp
+    Hull.cpp
+    InteractionContext.cpp
+    Item.cpp
+    LandContext.cpp
+    Meteor.cpp
+    Micromodulus.cpp
+    Planet.cpp
+    Radar.cpp
+    Scanner.cpp
+    Ship.cpp
+    ShipContext.cpp
+    SolarSystem.cpp
+    SpaceBase.cpp
+    SpaceObject.cpp
+    SystemObject.cpp
+    Tank.cpp
+    Types.cpp
+    Weapon.cpp
+    WorldObject.cpp
+   )
+
+SET(WORLD_HEADERS
+    Artifact.h
+    CargoHook.h
+    DefenceGenerator.h
+    DesertPlanet.h
+    Droid.h
+    Engine.h
+    Equipment.h
+    Goods.h
+    HabitablePlanet.h
+    Hull.h
+    InteractionContext.h
+    Item.h
+    LandContext.h
+    Meteor.h
+    Micromodulus.h
+    Planet.h
+    Radar.h
+    Scanner.h
+    Ship.h
+    ShipContext.h
+    SolarSystem.h
+    SpaceBase.h
+    SpaceObject.h
+    SystemObject.h
+    Tank.h
+    Types.h
+    Weapon.h
+    WorldObject.h
+   )
+
+ADD_LIBRARY(world $ {WORLD_SOURCES} $ {WORLD_HEADERS})
+

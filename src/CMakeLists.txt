@@ -1,3 +1,5 @@
+ADD_SUBDIRECTORY(world)
+
 SET(SOURCES
     Engine.cpp
     Node.cpp
@@ -120,4 +122,5 @@ TARGET_LINK_LIBRARIES(opensr
     ${SDLMIXER_LIBRARY}
 )
 ENDIF(WIN32)
-TARGET_LINK_LIBRARIES(opensr ranger)
+TARGET_LINK_LIBRARIES(opensr ranger world)
+
