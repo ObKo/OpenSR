@@ -22,6 +22,7 @@
 #include "InteractionContext.h"
 #include "Item.h"
 #include <list>
+#include <boost/shared_ptr.hpp>
 
 namespace Rangers
 {
@@ -30,13 +31,13 @@ namespace World
 class ShipContext: public InteractionContext
 {
 public:
-    std::list<Item> cargo() const;
+    std::list< boost::shared_ptr<Item> > cargo() const;
 
     virtual bool serialize(std::ostream &stream) const;
     virtual bool deserialize(std::istream &stream);
 protected:
 //	 m_equipment;
-    std::list<Item> m_cargo;
+    std::list< boost::shared_ptr<Item> > m_cargo;
 };
 }
 }

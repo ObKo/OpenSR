@@ -22,7 +22,7 @@ namespace Rangers
 {
 namespace World
 {
-std::list<Item> ShipContext::cargo() const
+std::list< boost::shared_ptr<Item> > ShipContext::cargo() const
 {
     return m_cargo;
 }

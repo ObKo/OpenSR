@@ -34,6 +34,8 @@ public:
     virtual uint32_t type() const;
     virtual bool serialize(std::ostream &stream) const;
     virtual bool deserialize(std::istream &stream);
+
+    static WorldObject* objectByType(uint32_t type);
 protected:
     uint64_t m_objectID;
 };

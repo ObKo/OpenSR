@@ -47,7 +47,7 @@ float SolarSystem::size() const
     return m_size;
 }
 
-std::list< SystemObject > SolarSystem::systemObjects() const
+std::list< boost::shared_ptr<SystemObject> > SolarSystem::systemObjects() const
 {
     return m_systemObjects;
 }

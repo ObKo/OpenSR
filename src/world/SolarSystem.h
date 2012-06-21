@@ -22,6 +22,7 @@
 #include "WorldObject.h"
 #include "SystemObject.h"
 #include <list>
+#include <boost/shared_ptr.hpp>
 
 namespace Rangers
 {
@@ -32,7 +33,7 @@ class SolarSystem: public WorldObject
 public:
     std::wstring name() const;
     Point position() const;
-    std::list<SystemObject> systemObjects() const;
+    std::list< boost::shared_ptr<SystemObject> > systemObjects() const;
     float size() const;
 
     virtual uint32_t type() const;
@@ -41,7 +42,7 @@ public:
 protected:
     Point m_position;
     std::wstring m_name;
-    std::list<SystemObject> m_systemObjects;
+    std::list< boost::shared_ptr<SystemObject> > m_systemObjects;
     float m_size;
 };
 }
