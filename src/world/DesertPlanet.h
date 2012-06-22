@@ -16,8 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WORLD_DESERT_PLANET
-#define WORLD_DESERT_PLANET
+#ifndef WORLD_DESERT_PLANET_H
+#define WORLD_DESERT_PLANET_H
 
 #include "Planet.h"
 

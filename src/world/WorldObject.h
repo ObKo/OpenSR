@@ -16,8 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WORLD_WORLD_OBJECT
-#define WORLD_WORLD_OBJECT
+#ifndef WORLD_WORLD_OBJECT_H
+#define WORLD_WORLD_OBJECT_H
 
 #include <iostream>
 #include <stdint.h>
@@ -34,8 +34,6 @@ public:
     virtual uint32_t type() const;
     virtual bool serialize(std::ostream &stream) const;
     virtual bool deserialize(std::istream &stream);
-
-    static WorldObject* objectByType(uint32_t type);
 protected:
     uint64_t m_objectID;
 };

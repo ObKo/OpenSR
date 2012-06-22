@@ -16,8 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WORLD_HULL
-#define WORLD_HULL
+#ifndef WORLD_HULL_H
+#define WORLD_HULL_H
 
 #include "Equipment.h"
 

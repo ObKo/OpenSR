@@ -17,6 +17,7 @@
 */
 
 #include "SystemObject.h"
+#include "WorldHelper.h"
 
 namespace Rangers
 {
@@ -39,7 +40,7 @@ bool SystemObject::serialize(std::ostream& stream) const
 
 uint32_t SystemObject::type() const
 {
-    return 0x127dbfab;
+    return WorldHelper::TYPE_SYSTEMOBJECT;
 }
 
 }

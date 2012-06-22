@@ -16,8 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WORLD_HABITABLE_PLANET
-#define WORLD_HABITABLE_PLANET
+#ifndef WORLD_HABITABLE_PLANET_H
+#define WORLD_HABITABLE_PLANET_H
 
 #include "Planet.h"
 #include "LandContext.h"

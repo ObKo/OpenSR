@@ -17,6 +17,7 @@
 */
 
 #include "Scanner.h"
+#include "WorldHelper.h"
 
 namespace Rangers
 {
@@ -34,7 +35,7 @@ bool Scanner::serialize(std::ostream& stream) const
 
 uint32_t Scanner::type() const
 {
-    return 0x28ff1510;
+    return WorldHelper::TYPE_SCANNER;
 }
 }
 }

@@ -16,8 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WORLD_SHIP
-#define WORLD_SHIP
+#ifndef WORLD_SHIP_H
+#define WORLD_SHIP_H
 
 #include "SpaceObject.h"
 #include "ShipContext.h"

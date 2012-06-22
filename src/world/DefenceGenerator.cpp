@@ -17,6 +17,7 @@
 */
 
 #include "DefenceGenerator.h"
+#include "WorldHelper.h"
 
 namespace Rangers
 {
@@ -34,7 +35,7 @@ bool DefenceGenerator::serialize(std::ostream& stream) const
 
 uint32_t DefenceGenerator::type() const
 {
-    return 0x29ba7a36;
+    return WorldHelper::TYPE_DEFENCEGENERATOR;
 }
 }
 }

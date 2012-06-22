@@ -17,6 +17,7 @@
 */
 
 #include "SolarSystem.h"
+#include "WorldHelper.h"
 
 namespace Rangers
 {
@@ -54,7 +55,7 @@ std::list< boost::shared_ptr<SystemObject> > SolarSystem::systemObjects() const
 
 uint32_t SolarSystem::type() const
 {
-    return 0x1c832836;
+    return WorldHelper::TYPE_SOLARSYSTEM;
 }
 
 }

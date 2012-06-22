@@ -17,6 +17,7 @@
 */
 
 #include "Engine.h"
+#include "WorldHelper.h"
 
 namespace Rangers
 {
@@ -34,7 +35,7 @@ bool Engine::serialize(std::ostream& stream) const
 
 uint32_t Engine::type() const
 {
-    return 0x756eea2f;
+    return WorldHelper::TYPE_ENGINE;
 }
 }
 }

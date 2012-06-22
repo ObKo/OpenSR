@@ -16,8 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WORLD_INTERACTION_CONTEXT
-#define WORLD_INTERACTION_CONTEXT
+#ifndef WORLD_INTERACTION_CONTEXT_H
+#define WORLD_INTERACTION_CONTEXT_H
 
 #include <iostream>
 #include <stdint.h>

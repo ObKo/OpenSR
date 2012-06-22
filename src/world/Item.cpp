@@ -17,6 +17,7 @@
 */
 
 #include "Item.h"
+#include "WorldHelper.h"
 
 namespace Rangers
 {
@@ -49,7 +50,7 @@ uint32_t Item::size() const
 
 uint32_t Item::type() const
 {
-    return 0x4b74e518;
+    return WorldHelper::TYPE_ITEM;
 }
 }
 }

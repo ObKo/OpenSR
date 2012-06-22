@@ -17,6 +17,7 @@
 */
 
 #include "Droid.h"
+#include "WorldHelper.h"
 
 namespace Rangers
 {
@@ -34,7 +35,7 @@ bool Droid::serialize(std::ostream& stream) const
 
 uint32_t Droid::type() const
 {
-    return 0x7c48b92c;
+    return WorldHelper::TYPE_DROID;
 }
 }
 }

@@ -16,8 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WORLD_DEFENCE_GENERATOR
-#define WORLD_DEFENCE_GENERATOR
+#ifndef WORLD_DEFENCE_GENERATOR_H
+#define WORLD_DEFENCE_GENERATOR_H
 
 #include "Equipment.h"
 

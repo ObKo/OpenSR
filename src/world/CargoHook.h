@@ -16,8 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WORLD_CARGO_HOOK
-#define WORLD_CARGO_HOOK
+#ifndef WORLD_CARGO_HOOK_H
+#define WORLD_CARGO_HOOK_H
 
 #include "Equipment.h"
 

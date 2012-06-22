@@ -17,6 +17,7 @@
 */
 
 #include "Artifact.h"
+#include "WorldHelper.h"
 
 namespace Rangers
 {
@@ -24,7 +25,7 @@ namespace World
 {
 uint32_t Artifact::type() const
 {
-    return 0x17436ae1;
+    return WorldHelper::TYPE_ARTIFACT;
 }
 
 bool Artifact::serialize(std::ostream &stream) const

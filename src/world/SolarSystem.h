@@ -16,8 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WORLD_SOLAR_SYSTEM
-#define WORLD_SOLAR_SYSTEM
+#ifndef WORLD_SOLAR_SYSTEM_H
+#define WORLD_SOLAR_SYSTEM_H
 
 #include "WorldObject.h"
 #include "SystemObject.h"

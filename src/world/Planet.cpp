@@ -17,6 +17,7 @@
 */
 
 #include "Planet.h"
+#include "WorldHelper.h"
 
 namespace Rangers
 {
@@ -44,7 +45,7 @@ bool Planet::serialize(std::ostream& stream) const
 
 uint32_t Planet::type() const
 {
-    return 0x79105c84;
+    return WorldHelper::TYPE_PLANET;
 }
 }
 }

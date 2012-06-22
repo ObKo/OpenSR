@@ -16,8 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WORLD_SHIP_CONTEXT
-#define WORLD_SHIP_CONTEXT
+#ifndef WORLD_SHIP_CONTEXT_H
+#define WORLD_SHIP_CONTEXT_H
 
 #include "InteractionContext.h"
 #include "Item.h"

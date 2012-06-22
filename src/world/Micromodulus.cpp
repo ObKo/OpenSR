@@ -17,6 +17,7 @@
 */
 
 #include "Micromodulus.h"
+#include "WorldHelper.h"
 
 namespace Rangers
 {
@@ -34,7 +35,7 @@ bool Micromodulus::serialize(std::ostream& stream) const
 
 uint32_t Micromodulus::type() const
 {
-    return 0x6921522f;
+    return WorldHelper::TYPE_MICROMODULUS;
 }
 }
 }

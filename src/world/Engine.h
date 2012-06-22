@@ -16,8 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WORLD_ENGINE
-#define WORLD_ENGINE
+#ifndef WORLD_ENGINE_H
+#define WORLD_ENGINE_H
 
 #include "Equipment.h"
 

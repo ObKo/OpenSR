@@ -17,6 +17,7 @@
 */
 
 #include "Meteor.h"
+#include "WorldHelper.h"
 
 namespace Rangers
 {
@@ -49,7 +50,7 @@ float Meteor::speed() const
 
 uint32_t Meteor::type() const
 {
-    return 0x71691dfd;
+    return WorldHelper::TYPE_METEOR;
 }
 }
 }

@@ -16,8 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WORLD_TANK
-#define WORLD_TANK
+#ifndef WORLD_TANK_H
+#define WORLD_TANK_H
 
 #include "Equipment.h"
 

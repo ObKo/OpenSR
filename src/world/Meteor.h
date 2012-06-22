@@ -16,8 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WORLD_METEOR
-#define WORLD_METEOR
+#ifndef WORLD_METEOR_H
+#define WORLD_METEOR_H
 
 #include "SystemObject.h"
 

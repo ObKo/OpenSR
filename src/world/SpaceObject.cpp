@@ -17,6 +17,7 @@
 */
 
 #include "SpaceObject.h"
+#include "WorldHelper.h"
 
 namespace Rangers
 {
@@ -39,7 +40,7 @@ bool SpaceObject::serialize(std::ostream& stream) const
 
 uint32_t SpaceObject::type() const
 {
-    return 0x44357eaf;
+    return WorldHelper::TYPE_SPACEOBJECT;
 }
 }
 }

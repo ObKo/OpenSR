@@ -16,8 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WORLD_SYSTEM_OBJECT
-#define WORLD_SYSTEM_OBJECT
+#ifndef WORLD_SYSTEM_OBJECT_H
+#define WORLD_SYSTEM_OBJECT_H
 
 #include "SpaceObject.h"
 

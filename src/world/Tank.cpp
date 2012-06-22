@@ -17,6 +17,7 @@
 */
 
 #include "Tank.h"
+#include "WorldHelper.h"
 
 namespace Rangers
 {
@@ -34,7 +35,7 @@ bool Tank::serialize(std::ostream& stream) const
 
 uint32_t Tank::type() const
 {
-    return 0x22980928;
+    return WorldHelper::TYPE_TANK;
 }
 
 }

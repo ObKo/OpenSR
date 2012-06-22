@@ -16,8 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WORLD_SCANNER
-#define WORLD_SCANNER
+#ifndef WORLD_SCANNER_H
+#define WORLD_SCANNER_H
 
 #include "Equipment.h"
 

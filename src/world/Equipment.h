@@ -16,8 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WORLD_EQUIPMENT
-#define WORLD_EQUIPMENT
+#ifndef WORLD_EQUIPMENT_H
+#define WORLD_EQUIPMENT_H
 
 #include "Item.h"
 

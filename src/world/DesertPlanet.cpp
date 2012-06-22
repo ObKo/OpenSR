@@ -17,6 +17,7 @@
 */
 
 #include "DesertPlanet.h"
+#include "WorldHelper.h"
 
 namespace Rangers
 {
@@ -34,7 +35,7 @@ bool DesertPlanet::serialize(std::ostream& stream) const
 
 uint32_t DesertPlanet::type() const
 {
-    return 0x116adcbb;
+    return WorldHelper::TYPE_DESERTPLANET;
 }
 }
 }

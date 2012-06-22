@@ -16,8 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WORLD_SPACE_BASE
-#define WORLD_SPACE_BASE
+#ifndef WORLD_SPACE_BASE_H
+#define WORLD_SPACE_BASE_H
 
 #include "SystemObject.h"
 #include "LandContext.h"

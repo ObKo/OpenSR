@@ -16,8 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WORLD_PLANET
-#define WORLD_PLANET
+#ifndef WORLD_PLANET_H
+#define WORLD_PLANET_H
 
 #include "SystemObject.h"
 

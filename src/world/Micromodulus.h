@@ -16,8 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WORLD_MICROMODULUS
-#define WORLD_MICROMODULUS
+#ifndef WORLD_MICROMODULUS_H
+#define WORLD_MICROMODULUS_H
 
 #include "Item.h"
 

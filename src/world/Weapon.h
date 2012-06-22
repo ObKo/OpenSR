@@ -16,8 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WORLD_WEAPON
-#define WORLD_WEAPON
+#ifndef WORLD_WEAPON_H
+#define WORLD_WEAPON_H
 
 #include "Equipment.h"
 

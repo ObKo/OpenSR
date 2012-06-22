@@ -26,8 +26,9 @@ SET(WORLD_SOURCES
     Tank.cpp
     Types.cpp
     Weapon.cpp
+    WorldHelper.cpp
     WorldObject.cpp
-)
+   )
 
 SET(WORLD_HEADERS
     Artifact.h
@@ -57,8 +58,9 @@ SET(WORLD_HEADERS
     Tank.h
     Types.h
     Weapon.h
+    WorldHelper.h
     WorldObject.h
-)
+   )
 
-ADD_LIBRARY(world ${WORLD_SOURCES} ${WORLD_HEADERS})
+ADD_LIBRARY(world $ {WORLD_SOURCES} $ {WORLD_HEADERS})
 

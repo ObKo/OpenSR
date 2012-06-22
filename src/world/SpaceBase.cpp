@@ -17,6 +17,7 @@
 */
 
 #include "SpaceBase.h"
+#include "WorldHelper.h"
 
 namespace Rangers
 {
@@ -44,7 +45,7 @@ ShipContext SpaceBase::shipContext() const
 
 uint32_t SpaceBase::type() const
 {
-    return 0x606e1534;
+    return WorldHelper::TYPE_SPACEBASE;
 }
 }
 }

@@ -16,8 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WORLD_LAND_CONTEXT
-#define WORLD_LAND_CONTEXT
+#ifndef WORLD_LAND_CONTEXT_H
+#define WORLD_LAND_CONTEXT_H
 
 #include "InteractionContext.h"
 

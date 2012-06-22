@@ -17,6 +17,7 @@
 */
 
 #include "Radar.h"
+#include "WorldHelper.h"
 
 namespace Rangers
 {
@@ -34,7 +35,7 @@ bool Radar::serialize(std::ostream& stream) const
 
 uint32_t Radar::type() const
 {
-    return 0x5fcf4370;
+    return WorldHelper::TYPE_RADAR;
 }
 }
 }

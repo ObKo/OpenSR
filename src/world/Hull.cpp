@@ -17,6 +17,7 @@
 */
 
 #include "Hull.h"
+#include "WorldHelper.h"
 
 namespace Rangers
 {
@@ -34,7 +35,7 @@ bool Hull::serialize(std::ostream& stream) const
 
 uint32_t Hull::type() const
 {
-    return 0x3938e105;
+    return WorldHelper::TYPE_HULL;
 }
 }
 }

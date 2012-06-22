@@ -16,8 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WORLD_RADAR
-#define WORLD_RADAR
+#ifndef WORLD_RADAR_H
+#define WORLD_RADAR_H
 
 #include "Equipment.h"
 
