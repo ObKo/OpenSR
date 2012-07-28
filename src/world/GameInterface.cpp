@@ -17,16 +17,16 @@
 */
 
 #include <GameInterface.h>
-#include <../src/Engine.h>
+#include "version.h"
 
 int rangersGameInit()
 {
     return 0;
 }
 
-int rangersEngineVersion()
+int rangersAPIVersion()
 {
-    return 0;
+    return RANGERS_API_VERSION;
 }
 
 void rangersGameSetupLua(lua_State *state)

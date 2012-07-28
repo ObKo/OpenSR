@@ -34,7 +34,7 @@ extern "C"
 #include <lauxlib.h>
 
 GAME_API int rangersGameInit();
-GAME_API int rangersEngineVersion();
+GAME_API int rangersAPIVersion();
 GAME_API void rangersGameSetupLua(lua_State *state);
 GAME_API void rangersGameDeinit();
 }
