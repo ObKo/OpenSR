@@ -62,11 +62,11 @@ char *Rangers::convertText(const char *to, const char *from, const char *what, i
     size_t outbuflength = 4 * (srcLength + 1);
     char *pointer = result;
     char **inp = (char **)&what;
-#ifdef _WIN32
-    iconv(codec, (const char **)inp, &inbuflength, &pointer, &outbuflength);
-#else
+//#ifdef _WIN32
+//    iconv(codec, (const char **)inp, &inbuflength, &pointer, &outbuflength);
+//#else
     iconv(codec, inp, &inbuflength, &pointer, &outbuflength);
-#endif
+//#endif
     size_t l = 4 * (srcLength + 1) - outbuflength;
 
     result = (char *)realloc(result, l);

@@ -6,7 +6,6 @@ SET(SOURCES
     Object.cpp
     Sprite.cpp
     Types.cpp
-    main.cpp
     Texture.cpp
     Label.cpp
     Font.cpp
@@ -96,10 +95,11 @@ IF(WIN32)
     )
 ENDIF(WIN32)
 
-ADD_EXECUTABLE(opensr ${SOURCES} ${HEADERS})
+ADD_LIBRARY(engine SHARED ${SOURCES} ${HEADERS})
+TARGET_LINK_LIBRARIES(engine ranger)
 
 IF(WIN32)
-TARGET_LINK_LIBRARIES(opensr 
+TARGET_LINK_LIBRARIES(engine 
     ${SDL_LIBRARY} 
     ${OPENGL_LIBRARIES} 
     ${FREETYPE_LIBRARIES} 
@@ -111,7 +111,7 @@ TARGET_LINK_LIBRARIES(opensr
     ${SDLMIXER_LIBRARY}
 )
 ELSE(WIN32)
-TARGET_LINK_LIBRARIES(opensr 
+TARGET_LINK_LIBRARIES(engine
     ${SDL_LIBRARY} 
     ${OPENGL_LIBRARIES} 
     ${FREETYPE_LIBRARIES} 
@@ -120,7 +120,9 @@ TARGET_LINK_LIBRARIES(opensr
     ${JSONCPP_LIBRARIES}
     ${LUABIND_LIBRARY}
     ${SDLMIXER_LIBRARY}
+    dl
 )
 ENDIF(WIN32)
-TARGET_LINK_LIBRARIES(opensr ranger world)
 
+ADD_EXECUTABLE(opensr main.cpp)
+TARGET_LINK_LIBRARIES(opensr engine ranger)

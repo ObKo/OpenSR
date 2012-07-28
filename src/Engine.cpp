@@ -30,7 +30,6 @@
 #include FT_FREETYPE_H
 #include <cstdio>
 #include <libRanger.h>
-#include <lua.hpp>
 #include <libintl.h>
 #include "Utils.h"
 #include "Log.h"
@@ -84,11 +83,16 @@ Engine::Engine(int argc, char **argv): m_argc(argc), m_argv(argv), m_focusedWidg
     m_properties = boost::shared_ptr<boost::property_tree::ptree>(new boost::property_tree::ptree());
 
 #ifdef WIN32
-    char *path = new char[1024];
+    wchar_t *path = new wchar_t[1024];
     GetModuleFileName(0, path, 1024);
-    m_configPath = fromLocal((directory(std::string(path)) + "\\OpenSR.ini").c_str());
+    m_configPath = (directory(std::wstring(path)) + L"\\OpenSR.ini");
     delete[] path;
+#ifdef _MSC_VER
     configFile.open(m_configPath, ios_base::in);
+#else
+    configFile.open(toLocal(m_configPath).c_str(), ios_base::in);
+#endif
+
 #else
     char *path;
     if ((path = getenv("XDG_CONFIG_HOME")) == NULL)
@@ -152,7 +156,7 @@ Engine::~Engine()
         Log::error() << "Cannot create dir for config: " << m_configPath;
 
     std::ofstream configFile;
-#ifdef WIN32
+#if defined(WIN32) && defined(_MSC_VER)
     configFile.open(m_configPath, ios_base::out);
 #else
     configFile.open(toLocal(m_configPath).c_str(), ios_base::out);

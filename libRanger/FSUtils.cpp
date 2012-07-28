@@ -21,7 +21,7 @@
 #include <cerrno>
 
 #ifdef WIN32
-#include <Shlobj.h>
+#include <shlobj.h>
 #else
 #include <sys/stat.h>
 int createDir(const std::string &path, mode_t mode)

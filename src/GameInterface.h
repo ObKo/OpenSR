@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2012 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,25 +16,27 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "Engine.h"
-
-using namespace Rangers;
-using namespace std;
-
-#define SDL_main main
-
-int main(int argc, char **argv)
-{
-    Engine engine(argc, argv);
-    engine.init(1024, 768, false);
-    engine.run();
-}
+#ifndef GAMEINTERFACE_H
+#define GAMEINTERFACE_H
 
 #ifdef WIN32
-//TODO: Arguments in WinMain
-int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
-{
-	return main(0, 0);
-}
+#define GAME_API __declspec(dllexport)
+#else
+#define GAME_API
 #endif
 
+#include "Engine.h"
+
+extern "C"
+{
+#include <lua.h>
+#include <lualib.h>
+#include <lauxlib.h>
+
+GAME_API int rangersGameInit();
+GAME_API int rangersEngineVersion();
+GAME_API void rangersGameSetupLua(lua_State *state);
+GAME_API void rangersGameDeinit();
+}
+
+#endif // GAMEINTERFACE_H

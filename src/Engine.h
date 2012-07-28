@@ -19,10 +19,13 @@
 #ifndef RANGERS_ENGINE_H
 #define RANGERS_ENGINE_H
 
+extern "C" {
+#include <lua.h>
+}
+
 #include "Node.h"
 #include "Label.h"
 #include <list>
-#include <lua.hpp>
 #include <map>
 #include <boost/thread.hpp>
 #include <boost/thread/recursive_mutex.hpp>

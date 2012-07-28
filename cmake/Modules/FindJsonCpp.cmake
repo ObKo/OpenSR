@@ -6,12 +6,11 @@
 #  JSONCPP_LIBRARIES - Link these to use squish
 # 
 
-FIND_PATH(JSONCPP_INCLUDE_DIR NAMES json/json.h
+FIND_PATH(JSONCPP_INCLUDE_DIR json/json.h
+  PATH_SUFFIXES jsoncpp
   PATHS
-  ENV CPATH
   /usr/include/jsoncpp
   /usr/local/include/jsoncpp
-  NO_DEFAULT_PATH
 )
 FIND_PATH(JSONCPP_INCLUDE_DIR NAMES json/json.h)
 
@@ -23,7 +22,6 @@ FIND_LIBRARY(JSONCPP_LIBRARIES NAMES jsoncpp
   /usr/lib
   /usr/local/lib64
   /usr/local/lib
-  NO_DEFAULT_PATH
 )
 FIND_LIBRARY(JSONCPP_LIBRARIES NAMES jsoncpp)
 
