@@ -151,6 +151,7 @@ Engine::Engine(int argc, char **argv): m_argc(argc), m_argv(argv), m_focusedWidg
 
 Engine::~Engine()
 {
+	removeWidget(&m_consoleWidget);
     engineInstance = 0;
     if (!createDirPath(m_configPath))
         Log::error() << "Cannot create dir for config: " << m_configPath;
@@ -351,6 +352,7 @@ void Engine::init(int w, int h, bool fullscreen)
 
     m_consoleWidget = ConsoleWidget(m_width, 168);
     m_luaConsoleState = initLuaState();
+	addWidget(&m_consoleWidget);
 }
 
 boost::shared_ptr<Font> Engine::coreFont() const
@@ -480,13 +482,10 @@ Engine *Engine::instance()
 
 void Engine::focusWidget(Widget* w)
 {
-    if (!m_consoleOpenned)
-    {
-        if (m_focusedWidget)
-            m_focusedWidget->unFocus();
-        m_focusedWidget = w;
-        w->focus();
-    }
+    if (m_focusedWidget)
+        m_focusedWidget->unFocus();
+    m_focusedWidget = w;
+    w->focus();
 }
 
 void Engine::markWidgetDeleting(Widget *w)
@@ -528,16 +527,7 @@ void Engine::processEvents()
         case SDL_KEYDOWN:
             if (event.key.keysym.sym == SDLK_BACKQUOTE)
             {
-                if (m_consoleOpenned)
-                {
-                    m_consoleOpenned = false;
-                    m_focusedWidget = 0;
-                }
-                else
-                {
-                    m_consoleOpenned = true;
-                    m_focusedWidget = &m_consoleWidget;
-                }
+                m_consoleOpenned = !m_consoleOpenned;
                 continue;
             }
             if (m_focusedWidget)

@@ -34,12 +34,14 @@ extern "C" {
 #include "Texture.h"
 #include "Styles.h"
 
+#define ENGINE_API __declspec(dllexport)
+
 namespace Rangers
 {
 class Widget;
 class Object;
 //! Main engine class
-class Engine
+class ENGINE_API Engine
 {
 public:
     //! Construct engine from main's args

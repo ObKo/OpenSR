@@ -26,12 +26,12 @@
 
 namespace Rangers
 {
-class ConsoleWidget::ConsoleWidgetListener: public ActionListener
+class ConsoleWidget::ConsoleLineEditListener: public ActionListener
 {
 public:
     void actionPerformed(const Action &action)
     {
-        if (ConsoleWidget *w = dynamic_cast<ConsoleWidget*>(action.source()))
+		if (ConsoleWidget *w = dynamic_cast<ConsoleWidget*>(action.source()->parent()))
         {
             if (action.type() == Action::KEY_PRESSED)
             {
@@ -80,10 +80,6 @@ public:
 
                     //markToUpdate();
                 }
-                else
-                {
-                    w->m_lineEdit.action(Action(&w->m_lineEdit, action.type(), action.argument()));
-                }
             }
         }
     }
@@ -92,7 +88,7 @@ public:
 ConsoleWidget::ConsoleWidget(float w, float h, Widget* parent): Widget(w, h, parent)
 {
     int editSize = Engine::instance()->serviceFont()->size() + 2;
-    m_lineEdit = LineEditWidget(w, Engine::instance()->serviceFont()->size(), Engine::instance()->serviceFont(), this);
+    m_lineEdit = LineEditWidget(w - 8, Engine::instance()->serviceFont()->size(), Engine::instance()->serviceFont(), this);
     m_logLabel = ColorLabel("", this, Engine::instance()->serviceFont(), POSITION_X_LEFT, POSITION_Y_TOP);
     m_logLabel.setPosition(4, 4);
     m_logLabel.setFixedSize(w - 8, h - editSize - 8);
@@ -103,7 +99,7 @@ ConsoleWidget::ConsoleWidget(float w, float h, Widget* parent): Widget(w, h, par
     m_texture = 0;
     markToUpdate();
     m_historyPosition = -1;
-    addListener(new ConsoleWidgetListener());
+    m_lineEdit.addListener(new ConsoleLineEditListener());
 }
 
 ConsoleWidget::ConsoleWidget(const Rangers::ConsoleWidget& other): Widget(other)
@@ -117,7 +113,7 @@ ConsoleWidget::ConsoleWidget(const Rangers::ConsoleWidget& other): Widget(other)
 
     m_historyPosition = other.m_historyPosition;
     m_commandHistory = other.m_commandHistory;
-    addListener(new ConsoleWidgetListener());
+    m_lineEdit.addListener(new ConsoleLineEditListener());
     markToUpdate();
 }
 
@@ -127,7 +123,7 @@ ConsoleWidget::ConsoleWidget(Widget* parent): Widget(parent)
     m_borderBuffer = 0;
     m_texture = 0;
     m_historyPosition = -1;
-    addListener(new ConsoleWidgetListener());
+    m_lineEdit.addListener(new ConsoleLineEditListener());
 }
 
 

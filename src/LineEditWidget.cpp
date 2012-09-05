@@ -147,14 +147,14 @@ void LineEditWidget::updateText()
         return;
     lock();
     int maxChars;
-    if (m_position < m_stringOffset)
+    if (m_position <= m_stringOffset)
     {
-        m_stringOffset = m_position;
+        m_stringOffset = m_position > 0 ? m_position - 1 : 0;
     }
     else
     {
         std::wstring::iterator start = m_text.begin() + m_stringOffset;
-        std::wstring::iterator end = m_text.begin() + m_position + 1;
+        std::wstring::iterator end = m_text.begin() + m_position;
         while ((maxChars = m_label.font()->maxChars(start, end, m_width)) < end - start)
         {
             m_stringOffset = (end - maxChars) - m_text.begin() - 1;
@@ -162,7 +162,7 @@ void LineEditWidget::updateText()
         }
     }
     maxChars = m_label.font()->maxChars(m_text.begin() + m_stringOffset, m_text.end(), m_width);
-    m_label.setText(m_text.substr(m_stringOffset, maxChars + 1));
+    m_label.setText(m_text.substr(m_stringOffset, maxChars));
     unlock();
 }
 

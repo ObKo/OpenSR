@@ -40,7 +40,7 @@ public:
     ConsoleWidget& operator=(const ConsoleWidget& other);
 
 private:
-    class ConsoleWidgetListener;
+    class ConsoleLineEditListener;
     LineEditWidget m_lineEdit;
     ColorLabel m_logLabel;
     Vertex *m_borderVertices;

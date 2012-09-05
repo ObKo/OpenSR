@@ -123,7 +123,7 @@ int Font::calculateStringWidth(const std::wstring::const_iterator& first, const 
 int Font::maxChars(const std::wstring::const_iterator& first, const std::wstring::const_iterator& last, int width) const
 {
     int x = 0;
-    for (std::wstring::const_iterator i = first; i != last; ++i)
+    for (std::wstring::const_iterator i = first; i < last; ++i)
     {
         FT_UInt glyph_index;
         glyph_index = FT_Get_Char_Index(m_fontFace, *i);
