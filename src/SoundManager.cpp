@@ -18,7 +18,7 @@
 
 #include "SoundManager.h"
 #include "Sound.h"
-#include <SDL/SDL_mixer.h>
+#include <SDL_mixer.h>
 
 
 namespace Rangers

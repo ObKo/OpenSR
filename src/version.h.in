@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 - 2012 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,32 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "Sound.h"
-#include "ResourceManager.h"
-#include <SDL_rwops.h>
-#include <SDL_mixer.h>
+#ifndef RANGERS_VERSION_H
+#define RANGERS_VERSION_H
 
-namespace Rangers
-{
-Sound::Sound(const std::wstring& path): m_chunk(0)
-{
-    size_t s;
-    char *wav = ResourceManager::instance()->loadData(path, s);
-    if(wav)
-    {
-        m_chunk = Mix_LoadWAV_RW(SDL_RWFromMem(wav, s), 1);
-        delete[] wav;
-    }
-}
+#define RANGERS_VERSION_MAJOR @MAJOR_VERSION@
+#define RANGERS_VERSION_MINOR @MINOR_VERSION@
+#define RANGERS_VERSION_BUILD @BUILD_VERSION@
+#define RANGERS_API_VERSION @API_VERSION@
 
-Sound::~Sound()
-{
-    if(m_chunk)
-        Mix_FreeChunk(m_chunk);
-}
-
-void Sound::play()
-{
-    Mix_PlayChannel(-1, m_chunk, 0);
-}
-}
+#endif

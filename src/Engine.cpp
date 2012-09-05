@@ -384,7 +384,7 @@ void Engine::paint()
 int Engine::run()
 {
     m_gameRunning = true;
-    m_logicThread = new boost::thread(logic);
+    m_logicThread = new boost::thread(&Engine::logic);
     std::wstring startupScript = fromLocal(m_properties->get<std::string>("engine.startupScript", "startup.lua").c_str());
     execLuaScript(startupScript);
     m_fpsTime = getTicks();
@@ -395,7 +395,11 @@ int Engine::run()
         {
             char str[11];
             double fps = (float)m_frames / fpsdt * 1000;
+#if defined(WIN32) && defined(_MSC_VER)
+            _snprintf(str, 10, "%.1lf", fps);
+#else
             snprintf(str, 10, "%.1lf", fps);
+#endif
             m_fpsLabel.setText(str);
             if (fps >= 30)
                 m_fpsLabel.setColor(0.0f, 1.0f, 0.0f);
