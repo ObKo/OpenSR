@@ -17,7 +17,11 @@
 */
 
 #include "Plugin.h"
+#ifdef _WIN32
+#include <windows.h>
+#else
 #include <dlfcn.h>
+#endif
 #include "Log.h"
 #include "libRanger.h"
 #include "version.h"
@@ -47,6 +51,38 @@ int Plugin::load()
     if (m_loaded)
         return 0;
 #ifdef _WIN32
+	m_handle = LoadLibrary(m_path.c_str());
+    if (!m_handle)
+    {
+        Log::error() << "Cannot load plugin \"" << m_path << ";";
+        return -1;
+    }
+    m_rangersPluginInit = (int (*)())GetProcAddress(m_handle, "rangersPluginInit");
+    m_rangersAPIVersion = (int (*)())GetProcAddress(m_handle, "rangersAPIVersion");
+    m_rangersPluginInitLua = (void (*)(lua_State*))GetProcAddress(m_handle, "rangersPluginInitLua");
+    m_rangersPluginDeinit = (void (*)())GetProcAddress(m_handle, "rangersPluginDeinit");
+
+    if (!m_rangersPluginInit && !m_rangersAPIVersion && !m_rangersPluginInitLua && !m_rangersPluginDeinit)
+    {
+        Log::error() << "Cannot load some plugin symbols";
+        FreeLibrary(m_handle);
+        m_handle = 0;
+        return -1;
+    }
+    if (m_rangersAPIVersion() != RANGERS_API_VERSION)
+    {
+        Log::error() << "Plugin requires API v" << m_rangersAPIVersion() << ", but engine is v" << RANGERS_API_VERSION;
+        FreeLibrary(m_handle);
+        m_handle = 0;
+        return -1;
+    }
+    if (m_rangersPluginInit())
+    {
+        Log::error() << "Error during plugin init";
+        FreeLibrary(m_handle);
+        m_handle = 0;
+        return -1;
+    }
 #else
     m_handle = dlopen(toLocal(m_path).c_str(), RTLD_LAZY);
     if (!m_handle)

@@ -22,6 +22,10 @@
 #include "config.h"
 #include <string>
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 struct lua_State;
 
 namespace Rangers
@@ -46,6 +50,7 @@ private:
     void (*m_rangersPluginInitLua)(lua_State *state);
     void (*m_rangersPluginDeinit)();
 #ifdef _WIN32
+	HMODULE m_handle;
 #else
     void *m_handle;
 #endif

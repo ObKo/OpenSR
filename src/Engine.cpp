@@ -365,8 +365,6 @@ void Engine::init(int w, int h, bool fullscreen)
     m_consoleWidget = ConsoleWidget(m_width, 168);
     m_luaConsoleState = initLuaState();
     addWidget(&m_consoleWidget);
-    Log::debug() << "Engine: " << (long)engineInstance;
-    Log::debug() << "Resources: " << (long)ResourceManager::instance();
 }
 
 boost::shared_ptr<Font> Engine::coreFont() const

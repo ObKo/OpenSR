@@ -35,15 +35,13 @@ int rangersAPIVersion()
 
 int rangersPluginInit()
 {
-    std::cout << "Engine: " << (long)Rangers::Engine::instance();
-    std::cout << "Resource: " << (long)Rangers::ResourceManager::instance();
     return 0;
 }
 
 void rangersPluginInitLua(lua_State *state)
 {
     luabind::module(state) [
-        luabind::def("pluginLuaTest", luaTest)
+       luabind::def("pluginLuaTest", luaTest)
     ];
 }
 

@@ -68,7 +68,7 @@ private:
     boost::recursive_mutex m_bufferMutex;
 };
 
-class Log::Logger
+class RANGERS_ENGINE_API Log::Logger
 {
 public:
     Logger(LogLevel level);
