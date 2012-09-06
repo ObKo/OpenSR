@@ -383,11 +383,11 @@ boost::shared_ptr<AnimatedTexture> ResourceManager::loadAnimation(const std::wst
     return boost::shared_ptr<AnimatedTexture>();
 }
 
-boost::shared_ptr< Font > ResourceManager::loadFont(const std::wstring& name, int size)
+boost::shared_ptr< Font > ResourceManager::loadFont(const std::wstring& name, int size, bool antialiased)
 {
     wostringstream s(name);
     s.seekp(0, ios_base::end);
-    s << size;
+    s << size << antialiased;
     wstring mapName = s.str();
 
     map<wstring, boost::shared_ptr<Font> >::const_iterator it = m_fonts.find(mapName);
@@ -404,7 +404,7 @@ boost::shared_ptr< Font > ResourceManager::loadFont(const std::wstring& name, in
         if (!data)
             return boost::shared_ptr<Font>();
 
-        Font *f = new Font(data, dataSize, size);
+        Font *f = new Font(data, dataSize, size, antialiased);
         delete data;
         m_fonts[mapName] = boost::shared_ptr<Font>(f);
         return m_fonts[mapName];

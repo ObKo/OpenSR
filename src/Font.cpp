@@ -30,21 +30,20 @@ namespace Rangers
 {
 extern FT_Library trueTypeLibrary;
 
-Font::Font(const std::wstring& path, int size)
+Font::Font(const std::wstring& path, int size, bool antialiased):
+    m_antialiased(antialiased), m_fontSize(size), m_fontData(0)
 {
     FT_New_Face(trueTypeLibrary, toLocal(path).c_str(), 0, &m_fontFace);
     FT_Set_Pixel_Sizes(m_fontFace, 0, size);
-    m_fontSize = size;
-    m_fontData = 0;
 }
 
-Font::Font(const char* data, size_t dataSize, int size)
+Font::Font(const char* data, size_t dataSize, int size, bool antialiased):
+    m_antialiased(antialiased), m_fontSize(size), m_fontData(0)
 {
     m_fontData = new char[dataSize];
     memcpy(m_fontData, data, dataSize);
     int error = FT_New_Memory_Face(trueTypeLibrary, (FT_Byte *)m_fontData, dataSize, 0, &m_fontFace);
     FT_Set_Pixel_Sizes(m_fontFace, 0, size);
-    m_fontSize = size;
 }
 
 Font::~Font()
@@ -54,33 +53,64 @@ Font::~Font()
         delete m_fontData;
 }
 
-void Font::drawGlyph(unsigned char *dest, int destwidth, int destheight, int x, int y, int w, int h, unsigned char *data)
+void Font::drawGlyph(unsigned char *dest, int destwidth, int destheight, int x, int y, int w, int h, int pitch, unsigned char *data, bool antialiased)
 {
-
-    for (int i = 0; i < w * h; i++)
+    if (antialiased)
     {
-        //TODO: Replace dirty hack
-        if (((y + i / w) >= destheight) || ((y + i / w) < 0) || (x + i % w < 0) || (x + i % w >= destwidth))
-            continue;
+        for (int i = 0; i < w * h; i++)
+        {
+            //TODO: Replace dirty hack
+            if (((y + i / w) >= destheight) || ((y + i / w) < 0) || (x + i % w < 0) || (x + i % w >= destwidth))
+                continue;
 
-        dest[(y + i / w) * destwidth + x + i % w] |= data[i];
+            dest[(y + i / w) * destwidth + x + i % w] |= data[i];
+        }
+    }
+    else
+    {
+        for (int i = 0; i < w * h; i++)
+        {
+            //TODO: Replace dirty hack
+            if (((y + i / w) >= destheight) || ((y + i / w) < 0) || (x + i % w < 0) || (x + i % w >= destwidth))
+                continue;
+
+            //t = (i / w) * ((w - 1) / 8 + 1) + i % w
+            dest[(y + i / w) * destwidth + x + i % w] |= data[(i / w * pitch) + (i % w) / 8] & (1 << (7 - i % w)) ? 0xff : 0;
+        }
     }
 }
 
-void Font::drawGlyph(unsigned char *dest, int destwidth, int destheight, int x, int y, int w, int h, unsigned char *data, unsigned int color)
+void Font::drawGlyph(unsigned char *dest, int destwidth, int destheight, int x, int y, int w, int h, int pitch, unsigned char *data, unsigned int color, bool antialiased)
 {
-
-    for (int i = 0; i < w * h; i++)
+    if (antialiased)
     {
-        //TODO: Replace dirty hack
-        if (((y + i / w) >= destheight) || ((y + i / w) < 0) || (x + i % w < 0) || (x + i % w >= destwidth))
-            continue;
+        for (int i = 0; i < w * h; i++)
+        {
+            //TODO: Replace dirty hack
+            if (((y + i / w) >= destheight) || ((y + i / w) < 0) || (x + i % w < 0) || (x + i % w >= destwidth))
+                continue;
 
-        dest[((y + i / w) * destwidth + x + i % w) * 4 + 0] = (color & 0xff0000) >> 16;
-        dest[((y + i / w) * destwidth + x + i % w) * 4 + 1] = (color & 0xff00) >> 8;
-        dest[((y + i / w) * destwidth + x + i % w) * 4 + 2] = color & 0xff;
-        dest[((y + i / w) * destwidth + x + i % w) * 4 + 3] = data[i] & 0xff;
+            dest[((y + i / w) * destwidth + x + i % w) * 4 + 0] = (color & 0xff0000) >> 16;
+            dest[((y + i / w) * destwidth + x + i % w) * 4 + 1] = (color & 0xff00) >> 8;
+            dest[((y + i / w) * destwidth + x + i % w) * 4 + 2] = color & 0xff;
+            dest[((y + i / w) * destwidth + x + i % w) * 4 + 3] = data[i] & 0xff;
+        }
     }
+    else
+    {
+        for (int i = 0; i < w * h; i++)
+        {
+            //TODO: Replace dirty hack
+            if (((y + i / w) >= destheight) || ((y + i / w) < 0) || (x + i % w < 0) || (x + i % w >= destwidth))
+                continue;
+
+            dest[((y + i / w) * destwidth + x + i % w) * 4 + 0] = (color & 0xff0000) >> 16;
+            dest[((y + i / w) * destwidth + x + i % w) * 4 + 1] = (color & 0xff00) >> 8;
+            dest[((y + i / w) * destwidth + x + i % w) * 4 + 2] = color & 0xff;
+            dest[((y + i / w) * destwidth + x + i % w) * 4 + 3] = data[(i / w * pitch) + (i % w) / 8] & (1 << (7 - i % w)) ? 0xff : 0;
+        }
+    }
+
 }
 
 boost::shared_ptr<Texture> Font::renderText(const std::string& t, int width) const
@@ -259,12 +289,15 @@ boost::shared_ptr<Texture> Font::renderText(const std::wstring& t, int wrapWidth
             FT_UInt glyph_index;
             glyph_index = FT_Get_Char_Index(m_fontFace, text.at(i));
             FT_Load_Glyph(m_fontFace, glyph_index, FT_LOAD_DEFAULT);
-            FT_Render_Glyph(m_fontFace->glyph, FT_RENDER_MODE_NORMAL);
+            if (m_antialiased)
+                FT_Render_Glyph(m_fontFace->glyph, FT_RENDER_MODE_NORMAL);
+            else
+                FT_Render_Glyph(m_fontFace->glyph, FT_RENDER_MODE_MONO);
 
             drawGlyph(textureData, fullWidth, fullHeight,
                       x + m_fontFace->glyph->bitmap_left, bearingY - m_fontFace->glyph->bitmap_top + line * m_fontSize,
-                      m_fontFace->glyph->bitmap.width, m_fontFace->glyph->bitmap.rows,
-                      m_fontFace->glyph->bitmap.buffer);
+                      m_fontFace->glyph->bitmap.width, m_fontFace->glyph->bitmap.rows, m_fontFace->glyph->bitmap.pitch,
+                      m_fontFace->glyph->bitmap.buffer, m_antialiased);
 
             x += m_fontFace->glyph->advance.x >> 6;
         }
@@ -425,12 +458,15 @@ boost::shared_ptr<Texture> Font::renderColoredText(const std::wstring& t, int de
             FT_UInt glyph_index;
             glyph_index = FT_Get_Char_Index(m_fontFace, text.at(i));
             FT_Load_Glyph(m_fontFace, glyph_index, FT_LOAD_DEFAULT);
-            FT_Render_Glyph(m_fontFace->glyph, FT_RENDER_MODE_NORMAL);
+            if (m_antialiased)
+                FT_Render_Glyph(m_fontFace->glyph, FT_RENDER_MODE_NORMAL);
+            else
+                FT_Render_Glyph(m_fontFace->glyph, FT_RENDER_MODE_MONO);
 
             drawGlyph(textureData, fullWidth, fullHeight,
                       x + m_fontFace->glyph->bitmap_left, bearingY - m_fontFace->glyph->bitmap_top + line * m_fontSize,
-                      m_fontFace->glyph->bitmap.width, m_fontFace->glyph->bitmap.rows,
-                      m_fontFace->glyph->bitmap.buffer, currentColor);
+                      m_fontFace->glyph->bitmap.width, m_fontFace->glyph->bitmap.rows, m_fontFace->glyph->bitmap.pitch,
+                      m_fontFace->glyph->bitmap.buffer, currentColor, m_antialiased);
 
             x += m_fontFace->glyph->advance.x >> 6;
         }

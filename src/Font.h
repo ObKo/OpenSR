@@ -30,8 +30,8 @@ class Texture;
 class RANGERS_ENGINE_API Font
 {
 public:
-    Font(const std::wstring& path, int size);
-    Font(const char *data, size_t dataSize, int size);
+    Font(const std::wstring& path, int size, bool antialiased = true);
+    Font(const char *data, size_t dataSize, int size, bool antialiased = true);
     ~Font();
 
     boost::shared_ptr<Texture> renderText(const std::string& text, int width = 0) const;
@@ -46,12 +46,13 @@ public:
 
 private:
     static void drawGlyph(unsigned char *dest, int destwidth, int destheight,
-                          int x, int y, int w, int h, unsigned char *data);
+                          int x, int y, int w, int h, int pitch, unsigned char *data, bool antialiased);
     static void drawGlyph(unsigned char *dest, int destwidth, int destheight,
-                          int x, int y, int w, int h, unsigned char *data, unsigned int color);
+                          int x, int y, int w, int h, int pitch, unsigned char *data, unsigned int color, bool antialiased);
     FT_Face m_fontFace;
     int m_fontSize;
     char *m_fontData;
+    bool m_antialiased;
 };
 }
 

@@ -331,15 +331,21 @@ void Engine::init(int w, int h, bool fullscreen)
 
     std::vector<std::string> coreFontStrings = split(m_properties->get<std::string>("graphics.corefont", "DroidSans.ttf:14"), ':');
     int coreFontSize = 13;
+    bool coreFontAA = true;
     if (coreFontStrings.size() > 1)
         coreFontSize = atoi(coreFontStrings.at(1).c_str());
-    m_coreFont = ResourceManager::instance()->loadFont(fromLocal(coreFontStrings.at(0).c_str()), coreFontSize);
+    if (coreFontStrings.size() > 2 && coreFontStrings.at(2) == "false")
+        coreFontAA = false;
+    m_coreFont = ResourceManager::instance()->loadFont(fromLocal(coreFontStrings.at(0).c_str()), coreFontSize, coreFontAA);
 
     std::vector<std::string> monoFontStrings = split(m_properties->get<std::string>("graphics.monofont", "DroidSansMono.ttf:13"), ':');
     int monoFontSize = 13;
+    bool monoFontAA = true;
     if (monoFontStrings.size() > 1)
         monoFontSize = atoi(monoFontStrings.at(1).c_str());
-    m_monospaceFont = ResourceManager::instance()->loadFont(fromLocal(monoFontStrings.at(0).c_str()), monoFontSize);
+    if (monoFontStrings.size() > 2 && monoFontStrings.at(2) == "false")
+        monoFontAA = false;
+    m_monospaceFont = ResourceManager::instance()->loadFont(fromLocal(monoFontStrings.at(0).c_str()), monoFontSize, monoFontAA);
 
     setDefaultSkin(fromLocal(m_properties->get<std::string>("graphics.defaultSkin", "").c_str()));
 
@@ -353,6 +359,8 @@ void Engine::init(int w, int h, bool fullscreen)
     m_consoleWidget = ConsoleWidget(m_width, 168);
     m_luaConsoleState = initLuaState();
     addWidget(&m_consoleWidget);
+    Log::debug() << "Engine: " << (long)engineInstance;
+    Log::debug() << "Resources: " << (long)ResourceManager::instance();
 }
 
 boost::shared_ptr<Font> Engine::coreFont() const

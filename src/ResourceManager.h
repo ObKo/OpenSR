@@ -47,7 +47,7 @@ public:
     char* loadData(const std::wstring& name, size_t &size);
     boost::shared_ptr<Texture> loadTexture(const std::wstring& name);
     boost::shared_ptr<AnimatedTexture> loadAnimation(const std::wstring& name, bool backgroundLoading = false);
-    boost::shared_ptr<Font> loadFont(const std::wstring& name, int size);
+    boost::shared_ptr<Font> loadFont(const std::wstring& name, int size, bool antialiased = false);
 
     static ResourceManager *instance();
 

@@ -187,6 +187,7 @@ lua_State *initLuaState()
 
         luabind::class_<Font>("Font")
         .def(luabind::constructor<const std::wstring&, int>())
+        .def(luabind::constructor<const std::wstring&, int, bool>())
         .def("renderText", (boost::shared_ptr<Texture> (Font::*)(const std::wstring&, int) const)&Font::renderText)
         .def("renderColoredText", (boost::shared_ptr<Texture> (Font::* const)(const std::wstring&, int, int) const)&Font::renderColoredText)
         .def("size", &Font::size)
@@ -457,7 +458,8 @@ lua_State *initLuaState()
         .def("loadTexture", &ResourceManager::loadTexture)
         .def("loadAnimation", (boost::shared_ptr<Rangers::AnimatedTexture> (ResourceManager::*)(const std::wstring&, bool))&ResourceManager::loadAnimation)
         .def("loadAnimation", (boost::shared_ptr<Rangers::AnimatedTexture> (ResourceManager::*)(const std::wstring&))&ResourceManager::loadAnimation)
-        .def("loadFont", &ResourceManager::loadFont),
+        .def("loadFont", (boost::shared_ptr<Rangers::Font> (ResourceManager::*)(const std::wstring&, bool))&ResourceManager::loadFont)
+        .def("loadFont", (boost::shared_ptr<Rangers::Font> (ResourceManager::*)(const std::wstring&))&ResourceManager::loadFont),
 
         luabind::class_<Sound>("Sound")
         .def(luabind::constructor<const std::wstring&>())
