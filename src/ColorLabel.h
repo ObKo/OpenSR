@@ -24,7 +24,7 @@
 namespace Rangers
 {
 //! Color text label
-class ColorLabel: public Label
+class RANGERS_ENGINE_API ColorLabel: public Label
 {
 public:
     //! Default constructor

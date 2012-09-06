@@ -18,6 +18,8 @@
 
 #ifndef RANGERS_LOG_H
 #define RANGERS_LOG_H
+
+#include "config.h"
 #include <sstream>
 #include <list>
 #include <boost/thread/recursive_mutex.hpp>
@@ -39,7 +41,7 @@ struct LogEntry
     unsigned int m_timestamp;
 };
 
-class Log
+class RANGERS_ENGINE_API Log
 {
     class Logger;
 

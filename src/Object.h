@@ -25,7 +25,7 @@
 
 namespace Rangers
 {
-class Object
+class RANGERS_ENGINE_API Object
 {
 public:
     Object(Object *parent = 0);

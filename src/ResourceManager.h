@@ -18,6 +18,7 @@
 
 #ifndef RANGERS_RESOURCEMANAGER_H
 #define RANGERS_RESOURCEMANAGER_H
+#include "config.h"
 #include "ResourceAdapter.h"
 #include <map>
 #include <list>
@@ -36,7 +37,7 @@ class GAISprite;
 class LuaWidget;
 class Widget;
 
-class ResourceManager
+class RANGERS_ENGINE_API ResourceManager
 {
 public:
     void addRPKG(const std::wstring& path);

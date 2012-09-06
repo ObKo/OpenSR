@@ -19,12 +19,13 @@
 #ifndef RANGERS_RESOURCEADAPTER_H
 #define RANGERS_RESOURCEADAPTER_H
 
+#include "config.h"
 #include <list>
 #include <string>
 
 namespace Rangers
 {
-class ResourceAdapter
+class RANGERS_ENGINE_API ResourceAdapter
 {
 public:
     virtual std::list<std::wstring> getFiles() const = 0;

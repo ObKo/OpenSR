@@ -24,7 +24,7 @@
 
 namespace Rangers
 {
-class WidgetNode: public Widget
+class RANGERS_ENGINE_API WidgetNode: public Widget
 {
 public:
     WidgetNode(Widget *parent = 0);

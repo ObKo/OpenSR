@@ -25,7 +25,7 @@ namespace Rangers
 {
 class AnimatedTexture;
 //! Animated sprite using animated texture
-class AnimatedSprite: public Sprite
+class RANGERS_ENGINE_API AnimatedSprite: public Sprite
 {
 public:
     AnimatedSprite(Object *parent = 0);

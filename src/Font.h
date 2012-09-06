@@ -18,6 +18,7 @@
 
 #ifndef RANGERS_FONT_H
 #define RANGERS_FONT_H
+#include "config.h"
 #include <string>
 #include <ft2build.h>
 #include <boost/shared_ptr.hpp>
@@ -26,7 +27,7 @@
 namespace Rangers
 {
 class Texture;
-class Font
+class RANGERS_ENGINE_API Font
 {
 public:
     Font(const std::wstring& path, int size);

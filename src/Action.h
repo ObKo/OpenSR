@@ -28,7 +28,7 @@ namespace Rangers
 class Widget;
 class Action;
 
-class Action
+class RANGERS_ENGINE_API Action
 {
 public:
     enum Type {BUTTON_CLICKED, KEY_PRESSED, CHECKBOX_TOGGLED};

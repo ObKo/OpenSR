@@ -25,7 +25,7 @@ namespace Rangers
 {
 class Font;
 class Object;
-class Label: public Sprite
+class RANGERS_ENGINE_API Label: public Sprite
 {
 public:
     Label(Object *parent = 0);

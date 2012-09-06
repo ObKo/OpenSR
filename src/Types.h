@@ -19,6 +19,8 @@
 #ifndef RANGERS_TYPES_H
 #define RANGERS_TYPES_H
 
+#include "config.h"
+
 #define GL_GLEXT_PROTOTYPES
 #include <SDL.h>
 #ifdef _WIN32

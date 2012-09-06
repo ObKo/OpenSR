@@ -25,7 +25,7 @@
 
 namespace Rangers
 {
-class CheckBox: public Widget
+class RANGERS_ENGINE_API CheckBox: public Widget
 {
 public:
     CheckBox(const CheckBoxStyle& style, const std::wstring &text, Widget *parent = 0);

@@ -25,7 +25,7 @@ namespace Rangers
 {
 struct HAIAnimation;
 struct GAIAnimation;
-class AnimatedTexture: public Texture
+class RANGERS_ENGINE_API AnimatedTexture: public Texture
 {
 public:
     //! Create texture from HAI animation

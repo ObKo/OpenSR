@@ -26,7 +26,7 @@
 namespace Rangers
 {
 class Sprite;
-class LineEditWidget: public Widget
+class RANGERS_ENGINE_API LineEditWidget: public Widget
 {
 public:
     LineEditWidget(float w, float h = 0, boost::shared_ptr<Font> font = boost::shared_ptr<Font>(), Widget* parent = 0);

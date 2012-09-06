@@ -23,7 +23,7 @@
 
 namespace Rangers
 {
-class Node: public Object
+class RANGERS_ENGINE_API Node: public Object
 {
 public:
     Node(Rangers::Object *parent = 0);

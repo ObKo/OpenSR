@@ -18,12 +18,14 @@
 
 #ifndef RANGERS_SOUND_H
 #define RANGERS_SOUND_H
+
 #include <string>
+#include "config.h"
 
 struct Mix_Chunk;
 namespace Rangers
 {
-class Sound
+class RANGERS_ENGINE_API Sound
 {
 public:
     Sound(const std::wstring& path);

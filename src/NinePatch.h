@@ -25,7 +25,7 @@
 
 namespace Rangers
 {
-class NinePatch: public Sprite
+class RANGERS_ENGINE_API NinePatch: public Sprite
 {
 public:
     NinePatch(Object *parent = 0);

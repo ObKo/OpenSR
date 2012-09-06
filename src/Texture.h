@@ -27,7 +27,7 @@ enum TextureType {TEXTURE_A8, TEXTURE_R8G8B8A8, TEXTURE_B8G8R8A8, TEXTURE_DXT1, 
                   TEXTURE_DXT5, TEXTURE_R5G6B5, TEXTURE_R8G8B8
                  };
 
-class Texture
+class RANGERS_ENGINE_API Texture
 {
 public:
     Texture();

@@ -25,7 +25,7 @@
 namespace Rangers
 {
 class WidgetNode;
-class ScrollArea: public Widget, ActionListener
+class RANGERS_ENGINE_API ScrollArea: public Widget, ActionListener
 {
 public:
     ScrollArea(const ScrollBarStyle& style, WidgetNode *node = 0, Widget *parent = 0);

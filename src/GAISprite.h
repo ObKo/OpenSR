@@ -26,7 +26,7 @@
 
 namespace Rangers
 {
-class GAISprite: public AnimatedSprite
+class RANGERS_ENGINE_API GAISprite: public AnimatedSprite
 {
 public:
     GAISprite(Object *parent = 0);

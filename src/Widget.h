@@ -25,7 +25,7 @@ namespace Rangers
 {
 class ActionListener;
 class Action;
-class Widget: public Object
+class RANGERS_ENGINE_API Widget: public Object
 {
 public:
     Widget(Widget *parent = 0);

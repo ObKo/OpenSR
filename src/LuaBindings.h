@@ -19,6 +19,7 @@
 #ifndef RANGERS_LUABINDINGS_H
 #define RANGERS_LUABINDINGS_H
 
+#include "config.h"
 #include <boost/shared_ptr.hpp>
 
 extern "C"
@@ -34,14 +35,14 @@ class AnimatedTexture;
 class GAISprite;
 class Texture;
 class Font;
-int execLuaScript(const std::wstring& fileName);
-int execLuaScript(const char *data, size_t size, const std::string& name);
-lua_State *initLuaState();
-std::wstring fromLua(const char *s);
+RANGERS_ENGINE_API int execLuaScript(const std::wstring& fileName);
+RANGERS_ENGINE_API int execLuaScript(const char *data, size_t size, const std::string& name);
+RANGERS_ENGINE_API lua_State *initLuaState();
+RANGERS_ENGINE_API std::wstring fromLua(const char *s);
 
-void luaDebug(std::wstring s);
-void luaWarning(std::wstring s);
-void luaError(std::wstring s);
+RANGERS_ENGINE_API void luaDebug(std::wstring s);
+RANGERS_ENGINE_API void luaWarning(std::wstring s);
+RANGERS_ENGINE_API void luaError(std::wstring s);
 }
 
 #endif

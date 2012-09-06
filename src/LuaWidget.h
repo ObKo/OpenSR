@@ -30,7 +30,7 @@ extern "C"
 namespace Rangers
 {
 //TODO: min/max/preferred sizes.
-class LuaWidget: public Widget
+class RANGERS_ENGINE_API LuaWidget: public Widget
 {
 public:
     class LuaActionListener: public ActionListener

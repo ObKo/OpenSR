@@ -31,7 +31,7 @@ class Sprite;
 class Font;
 class Sound;
 
-class Button: public Widget
+class RANGERS_ENGINE_API Button: public Widget
 {
 public:
     //TODO: Make consrtuctors more consistent

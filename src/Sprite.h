@@ -30,7 +30,7 @@ enum SpriteXOrigin {POSITION_X_LEFT, POSITION_X_RIGHT, POSITION_X_CENTER};
 enum SpriteYOrigin {POSITION_Y_TOP, POSITION_Y_BOTTOM, POSITION_Y_CENTER};
 struct Vertex;
 class Texture;
-class Sprite: public Object
+class RANGERS_ENGINE_API Sprite: public Object
 {
 public:
     Sprite(Object *parent = 0);

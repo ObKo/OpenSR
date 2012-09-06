@@ -26,7 +26,7 @@
 
 namespace Rangers
 {
-class JSONHelper
+class RANGERS_ENGINE_API JSONHelper
 {
 public:
     static TextureRegion parseTextureRegion(const Json::Value& object, bool &error);

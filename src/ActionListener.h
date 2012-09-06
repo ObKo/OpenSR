@@ -22,7 +22,7 @@
 namespace Rangers
 {
 class Action;
-class ActionListener
+class RANGERS_ENGINE_API ActionListener
 {
 public:
     virtual void actionPerformed(const Action &action) = 0;

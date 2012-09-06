@@ -19,13 +19,14 @@
 #ifndef RANGERS_SOUNDMANAGER_H
 #define RANGERS_SOUNDMANAGER_H
 
+#include "config.h"
 #include <boost/shared_ptr.hpp>
 #include <map>
 
 namespace Rangers
 {
 class Sound;
-class SoundManager
+class RANGERS_ENGINE_API SoundManager
 {
 public:
     SoundManager();
