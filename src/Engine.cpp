@@ -41,6 +41,7 @@
 #include "Action.h"
 #include "JSONHelper.h"
 #include "Styles.h"
+#include "Plugin.h"
 
 
 using namespace std;
@@ -166,10 +167,15 @@ Engine::~Engine()
         boost::property_tree::write_ini(configFile, *m_properties);
     configFile.close();
 
-    std::list<Widget *>::iterator end = m_widgets.end();
-    for (std::list<Widget *>::iterator it = m_widgets.begin(); it != end; ++it)
+    std::list<Widget *>::iterator wend = m_widgets.end();
+    for (std::list<Widget *>::iterator it = m_widgets.begin(); it != wend; ++it)
     {
         delete *it;
+    }
+    std::list<Plugin*>::const_iterator pend = m_plugins.end();
+    for (std::list<Plugin*>::const_iterator i = m_plugins.begin(); i != pend; ++i)
+    {
+        delete *i;
     }
 }
 
@@ -587,6 +593,24 @@ void Engine::processMouseMove(SDL_MouseMotionEvent e)
 Node* Engine::rootNode()
 {
     return &m_mainNode;
+}
+
+void Engine::loadPlugin(std::wstring path)
+{
+    Plugin *p = new Plugin(path);
+    if (p->load())
+        return;
+    p->initLua(m_luaConsoleState);
+    m_plugins.push_back(p);
+}
+
+void Engine::initPluginLua(lua_State *state)
+{
+    std::list<Plugin*>::const_iterator end = m_plugins.end();
+    for (std::list<Plugin*>::const_iterator i = m_plugins.begin(); i != end; ++i)
+    {
+        (*i)->initLua(state);
+    }
 }
 
 void Engine::execCommand(const std::wstring& what)

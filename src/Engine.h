@@ -38,6 +38,7 @@ namespace Rangers
 {
 class Widget;
 class Object;
+class Plugin;
 //! Main engine class
 class RANGERS_ENGINE_API Engine
 {
@@ -98,6 +99,9 @@ public:
     void setDefaultSkin(const Skin& skin);
     void setDefaultSkin(const std::wstring& skinPath);
 
+    void loadPlugin(std::wstring path);
+    void initPluginLua(lua_State *state);
+
 private:
     void processEvents();
     void processMouseMove(SDL_MouseMotionEvent e);
@@ -127,6 +131,8 @@ private:
     std::list<Widget *> m_widgetsToDelete;
     Widget *m_currentWidget;
     Widget *m_focusedWidget;
+
+    std::list<Plugin *> m_plugins;
 
     Node m_mainNode;
     Label m_fpsLabel;

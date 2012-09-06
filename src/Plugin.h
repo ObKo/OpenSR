@@ -16,37 +16,40 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <PluginInterface.h>
-#include <ResourceManager.h>
-#include <Log.h>
-#include <luabind/luabind.hpp>
-#include <luabind/function.hpp>
-#include "version.h"
+#ifndef RANGERS_PLUGIN_H
+#define RANGERS_PLUGIN_H
 
-void luaTest()
+#include "config.h"
+#include <string>
+
+struct lua_State;
+
+namespace Rangers
 {
-    Rangers::Log::debug() << "Test from plugin lua!";
+class RANGERS_ENGINE_API Plugin
+{
+public:
+    Plugin(const std::wstring& path);
+
+    int load();
+    bool isLoaded() const;
+
+    void initLua(lua_State *lua);
+
+    ~Plugin();
+
+private:
+    bool m_loaded;
+    std::wstring m_path;
+    int (*m_rangersPluginInit)();
+    int (*m_rangersAPIVersion)();
+    void (*m_rangersPluginInitLua)(lua_State *state);
+    void (*m_rangersPluginDeinit)();
+#ifdef _WIN32
+#else
+    void *m_handle;
+#endif
+};
 }
 
-int rangersAPIVersion()
-{
-    return RANGERS_API_VERSION;
-}
-
-int rangersPluginInit()
-{
-    std::cout << "Engine: " << (long)Rangers::Engine::instance();
-    std::cout << "Resource: " << (long)Rangers::ResourceManager::instance();
-    return 0;
-}
-
-void rangersPluginInitLua(lua_State *state)
-{
-    luabind::module(state) [
-        luabind::def("pluginLuaTest", luaTest)
-    ];
-}
-
-void rangersPluginDeinit()
-{
-}
+#endif // RANGERS_PLUGIN_H

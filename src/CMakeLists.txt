@@ -34,9 +34,10 @@ SET(SOURCES
     Styles.cpp
     SoundManager.cpp
     Sound.cpp
+    Plugin.cpp
 )
 
-SET(HEADERS 
+SET(HEADERS  
     Engine.h
     Node.h
     Object.h
@@ -71,6 +72,7 @@ SET(HEADERS
     Styles.h
     SoundManager.h
     Sound.h
+    Plugin.h
 )
 
 INCLUDE_DIRECTORIES(

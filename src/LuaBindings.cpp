@@ -450,7 +450,9 @@ lua_State *initLuaState()
         .def("rootNode", &Engine::rootNode)
         .def("defaultSkin", &Engine::defaultSkin)
         .def("properties", &Engine::properties)
-        .def("setDefaultSkin", (void (Engine::*)(const std::wstring&))&Engine::setDefaultSkin),
+        .def("setDefaultSkin", (void (Engine::*)(const std::wstring&))&Engine::setDefaultSkin)
+        .def("loadPlugin", &Engine::loadPlugin)
+        .def("initPluginLua", &Engine::initPluginLua),
 
         luabind::class_<ResourceManager>("ResourceManager")
         .def("addDir", &ResourceManager::addDir)
@@ -472,6 +474,8 @@ lua_State *initLuaState()
     luabind::globals(luaState)["engine"] = Engine::instance();
     luabind::globals(luaState)["resources"] = ResourceManager::instance();
     luabind::globals(luaState)["sound"] = SoundManager::instance();
+
+    Engine::instance()->initPluginLua(luaState);
     return luaState;
 }
 

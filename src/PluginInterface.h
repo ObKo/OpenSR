@@ -16,37 +16,27 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <PluginInterface.h>
-#include <ResourceManager.h>
-#include <Log.h>
-#include <luabind/luabind.hpp>
-#include <luabind/function.hpp>
-#include "version.h"
+#ifndef GAMEINTERFACE_H
+#define GAMEINTERFACE_H
 
-void luaTest()
+#ifdef WIN32
+#define RANGERS_PLUGIN_API __declspec(dllexport)
+#else
+#define RANGERS_PLUGIN_API
+#endif
+
+#include "Engine.h"
+
+extern "C"
 {
-    Rangers::Log::debug() << "Test from plugin lua!";
+#include <lua.h>
+#include <lualib.h>
+#include <lauxlib.h>
+
+    RANGERS_PLUGIN_API int rangersPluginInit();
+    RANGERS_PLUGIN_API int rangersAPIVersion();
+    RANGERS_PLUGIN_API void rangersPluginInitLua(lua_State *state);
+    RANGERS_PLUGIN_API void rangersPluginDeinit();
 }
 
-int rangersAPIVersion()
-{
-    return RANGERS_API_VERSION;
-}
-
-int rangersPluginInit()
-{
-    std::cout << "Engine: " << (long)Rangers::Engine::instance();
-    std::cout << "Resource: " << (long)Rangers::ResourceManager::instance();
-    return 0;
-}
-
-void rangersPluginInitLua(lua_State *state)
-{
-    luabind::module(state) [
-        luabind::def("pluginLuaTest", luaTest)
-    ];
-}
-
-void rangersPluginDeinit()
-{
-}
+#endif // GAMEINTERFACE_H
