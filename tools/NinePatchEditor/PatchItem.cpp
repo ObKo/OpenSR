@@ -62,12 +62,12 @@ void PatchItem::updateRects()
 
     foreach(qreal row, m_rows)
     {
-        if(sizeable)
+        if (sizeable)
             rows << Delta(prev, row);
         prev = row;
         sizeable = !sizeable;
     }
-    if(sizeable)
+    if (sizeable)
         rows << Delta(prev, 1.0f);
 
     sizeable = false;
@@ -75,12 +75,12 @@ void PatchItem::updateRects()
 
     foreach(qreal column, m_columns)
     {
-        if(sizeable)
+        if (sizeable)
             columns << Delta(prev, column);
         prev = column;
         sizeable = !sizeable;
     }
-    if(sizeable)
+    if (sizeable)
         columns << Delta(prev, 1.0f);
 
     prepareGeometryChange();
@@ -154,7 +154,7 @@ void PatchItem::hoverMoveEvent(QGraphicsSceneHoverEvent * event)
 
     foreach(qreal row, m_rows)
     {
-        if(qAbs(row - y) < minRow)
+        if (qAbs(row - y) < minRow)
         {
             minRow = qAbs(row - y);
             minRowIndex = i;
@@ -166,7 +166,7 @@ void PatchItem::hoverMoveEvent(QGraphicsSceneHoverEvent * event)
     i = 0;
     foreach(qreal column, m_columns)
     {
-        if(qAbs(column - x) < minColumn)
+        if (qAbs(column - x) < minColumn)
         {
             minColumn = qAbs(column - x);
             minColumnIndex = i;
@@ -174,10 +174,10 @@ void PatchItem::hoverMoveEvent(QGraphicsSceneHoverEvent * event)
         i++;
     }
 
-    if((minRowIndex < 0) && (minColumnIndex < 0))
+    if ((minRowIndex < 0) && (minColumnIndex < 0))
         return;
 
-    if(qMin(minRow, minColumn) > qMax(1.0f / m_imageRect.height(), 1.0f / m_imageRect.width()))
+    if (qMin(minRow, minColumn) > qMax(1.0f / m_imageRect.height(), 1.0f / m_imageRect.width()))
     {
         QCursor c = cursor();
         c.setShape(Qt::ArrowCursor);
@@ -188,7 +188,7 @@ void PatchItem::hoverMoveEvent(QGraphicsSceneHoverEvent * event)
     bool rows = minColumn > minRow;
 
     QCursor c = cursor();
-    if(rows)
+    if (rows)
         c.setShape(Qt::SizeVerCursor);
     else
         c.setShape(Qt::SizeHorCursor);
@@ -210,30 +210,30 @@ void PatchItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent * event)
 void PatchItem::normalize()
 {
     //FIXME: looks strange.
-    if(!m_rows.count())
+    if (!m_rows.count())
         return;
 
     QVector<qreal>::iterator prev = m_rows.begin();
     QVector<qreal>::iterator end = m_rows.end();
     QList<int> removing;
-    for(QVector<qreal>::iterator i = m_rows.begin() + 1; i != end; ++i)
+    for (QVector<qreal>::iterator i = m_rows.begin() + 1; i != end; ++i)
     {
-        if(*prev == *i)
+        if (*prev == *i)
         {
-            if(!removing.contains(prev - m_rows.begin()))
+            if (!removing.contains(prev - m_rows.begin()))
                 removing << prev - m_rows.begin();
-            if(!removing.contains(i - m_rows.begin()))
+            if (!removing.contains(i - m_rows.begin()))
                 removing << i - m_rows.begin();
         }
         prev++;
     }
-    if(((*(end - 1)) >= 1.0f) && (!removing.contains(end - 1 - m_rows.begin())))
+    if (((*(end - 1)) >= 1.0f) && (!removing.contains(end - 1 - m_rows.begin())))
         removing << end - 1 - m_rows.begin();
     qSort(removing);
     int d = 0;
     foreach(int i, removing)
     {
-        if((d > i) || ((i - d) >= m_rows.count()))
+        if ((d > i) || ((i - d) >= m_rows.count()))
             break;
         m_rows.remove(i - d);
         d++;
@@ -242,24 +242,24 @@ void PatchItem::normalize()
     prev = m_columns.begin();
     end = m_columns.end();
     removing.clear();
-    for(QVector<qreal>::iterator i = m_columns.begin() + 1; i != end; ++i)
+    for (QVector<qreal>::iterator i = m_columns.begin() + 1; i != end; ++i)
     {
-        if(*prev == *i)
+        if (*prev == *i)
         {
-            if(!removing.contains(prev - m_columns.begin()))
+            if (!removing.contains(prev - m_columns.begin()))
                 removing << prev - m_columns.begin();
-            if(!removing.contains(i - m_columns.begin()))
+            if (!removing.contains(i - m_columns.begin()))
                 removing << i - m_columns.begin();
         }
         prev++;
     }
-    if(((*(end - 1)) >= 1.0f) && (!removing.contains(end - 1 - m_columns.begin())))
+    if (((*(end - 1)) >= 1.0f) && (!removing.contains(end - 1 - m_columns.begin())))
         removing << end - 1 - m_columns.begin();
     qSort(removing);
     d = 0;
     foreach(int i, removing)
     {
-        if((d > i) || ((i - d) >= m_columns.count()))
+        if ((d > i) || ((i - d) >= m_columns.count()))
             break;
         m_columns.remove(i - d);
         d++;
@@ -270,22 +270,22 @@ void PatchItem::normalize()
 
 void PatchItem::mouseMoveEvent(QGraphicsSceneMouseEvent * event)
 {
-    if(m_currentIndex < 0)
+    if (m_currentIndex < 0)
         return;
 
-    if(m_moveRow)
+    if (m_moveRow)
     {
-        if(m_currentIndex > m_rows.count() - 1)
+        if (m_currentIndex > m_rows.count() - 1)
             return;
         qreal y = event->pos().y() / m_imageRect.height();
         qreal min;
         qreal max;
-        if(m_currentIndex == 0)
+        if (m_currentIndex == 0)
             min = 0.0f;
         else
             min = m_rows[m_currentIndex - 1];
 
-        if(m_currentIndex == m_rows.count() - 1)
+        if (m_currentIndex == m_rows.count() - 1)
             max = 1.0f;
         else
             max = m_rows[m_currentIndex + 1];
@@ -294,18 +294,18 @@ void PatchItem::mouseMoveEvent(QGraphicsSceneMouseEvent * event)
     }
     else
     {
-        if(m_currentIndex > m_columns.count() - 1)
+        if (m_currentIndex > m_columns.count() - 1)
             return;
         qreal x = event->pos().x() / m_imageRect.width();
 
         qreal min;
         qreal max;
-        if(m_currentIndex == 0)
+        if (m_currentIndex == 0)
             min = 0.0f;
         else
             min = m_columns[m_currentIndex - 1];
 
-        if(m_currentIndex == m_columns.count() - 1)
+        if (m_currentIndex == m_columns.count() - 1)
             max = 1.0f;
         else
             max = m_columns[m_currentIndex + 1];
@@ -327,7 +327,7 @@ void PatchItem::mousePressEvent(QGraphicsSceneMouseEvent * event)
 
     foreach(qreal row, m_rows)
     {
-        if(qAbs(row - y) < minRow)
+        if (qAbs(row - y) < minRow)
         {
             minRow = qAbs(row - y);
             minRowIndex = i;
@@ -339,7 +339,7 @@ void PatchItem::mousePressEvent(QGraphicsSceneMouseEvent * event)
     i = 0;
     foreach(qreal column, m_columns)
     {
-        if(qAbs(column - x) < minColumn)
+        if (qAbs(column - x) < minColumn)
         {
             minColumn = qAbs(column - x);
             minColumnIndex = i;
@@ -347,10 +347,10 @@ void PatchItem::mousePressEvent(QGraphicsSceneMouseEvent * event)
         i++;
     }
 
-    if((minRowIndex < 0) && (minColumnIndex < 0))
+    if ((minRowIndex < 0) && (minColumnIndex < 0))
         return;
 
-    if(qMin(minRow, minColumn) > qMax(1.0f / m_imageRect.height(), 1.0f / m_imageRect.width()))
+    if (qMin(minRow, minColumn) > qMax(1.0f / m_imageRect.height(), 1.0f / m_imageRect.width()))
     {
         QCursor c = cursor();
         c.setShape(Qt::ArrowCursor);
@@ -361,7 +361,7 @@ void PatchItem::mousePressEvent(QGraphicsSceneMouseEvent * event)
     bool rows = minColumn > minRow;
 
     QCursor c = cursor();
-    if(rows)
+    if (rows)
         c.setShape(Qt::SizeVerCursor);
     else
         c.setShape(Qt::SizeHorCursor);
@@ -382,17 +382,17 @@ QPoint PatchItem::mapToGrid(const QPointF &point) const
 
 void PatchItem::removeRow(int row)
 {
-    if((row < 0) || (row > m_rows.count()))
+    if ((row < 0) || (row > m_rows.count()))
         return;
 
-    if(!m_rows.count())
+    if (!m_rows.count())
         return;
 
-    if(row == 0)
+    if (row == 0)
     {
         m_rows[0] = 0.0;
     }
-    else if(row == m_rows.count())
+    else if (row == m_rows.count())
     {
         m_rows.pop_back();
     }
@@ -405,17 +405,17 @@ void PatchItem::removeRow(int row)
 
 void PatchItem::removeColumn(int column)
 {
-    if((column < 0) || (column > m_columns.count()))
+    if ((column < 0) || (column > m_columns.count()))
         return;
 
-    if(!m_columns.count())
+    if (!m_columns.count())
         return;
 
-    if(column == 0)
+    if (column == 0)
     {
         m_columns[0] = 0.0;
     }
-    else if(column == m_columns.count())
+    else if (column == m_columns.count())
     {
         m_columns.pop_back();
     }
@@ -430,7 +430,7 @@ void PatchItem::addRow(const QPointF &point)
 {
     qreal start = point.y() / m_imageRect.height();
 
-    if((start > 1.0) || (start < 0.0))
+    if ((start > 1.0) || (start < 0.0))
         return;
 
     m_rows << start << start + 1.0f / m_imageRect.height();
@@ -442,7 +442,7 @@ void PatchItem::addColumn(const QPointF &point)
 {
     qreal start = point.x() / m_imageRect.width();
 
-    if((start > 1.0) || (start < 0.0))
+    if ((start > 1.0) || (start < 0.0))
         return;
 
     m_columns << start << start + 1.0f / m_imageRect.width();

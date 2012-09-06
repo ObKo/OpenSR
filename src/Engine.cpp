@@ -63,7 +63,7 @@ long long Engine::getTicks()
 {
     struct timeval tv;
     struct timezone tz;
-    if(gettimeofday(&tv, &tz))
+    if (gettimeofday(&tv, &tz))
         engineInstance->quit(0);
     return tv.tv_sec * 1000 + tv.tv_usec / 1000;
 }
@@ -151,7 +151,7 @@ Engine::Engine(int argc, char **argv): m_argc(argc), m_argv(argv), m_focusedWidg
 
 Engine::~Engine()
 {
-	removeWidget(&m_consoleWidget);
+    removeWidget(&m_consoleWidget);
     engineInstance = 0;
     if (!createDirPath(m_configPath))
         Log::error() << "Cannot create dir for config: " << m_configPath;
@@ -352,7 +352,7 @@ void Engine::init(int w, int h, bool fullscreen)
 
     m_consoleWidget = ConsoleWidget(m_width, 168);
     m_luaConsoleState = initLuaState();
-	addWidget(&m_consoleWidget);
+    addWidget(&m_consoleWidget);
 }
 
 boost::shared_ptr<Font> Engine::coreFont() const
@@ -510,7 +510,7 @@ void Engine::setDefaultSkin(const std::wstring& skinPath)
 {
     size_t size;
     char *json = ResourceManager::instance()->loadData(skinPath, size);
-    if(!json)
+    if (!json)
         return;
     bool error;
     m_skin = JSONHelper::parseSkin(std::string(json, size), error);

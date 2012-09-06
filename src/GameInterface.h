@@ -20,9 +20,9 @@
 #define GAMEINTERFACE_H
 
 #ifdef WIN32
-#define GAME_API __declspec(dllexport)
+#define RANGERS_GAME_API __declspec(dllexport)
 #else
-#define GAME_API
+#define RANGERS_GAME_API
 #endif
 
 #include "Engine.h"
@@ -33,10 +33,10 @@ extern "C"
 #include <lualib.h>
 #include <lauxlib.h>
 
-GAME_API int rangersGameInit();
-GAME_API int rangersAPIVersion();
-GAME_API void rangersGameSetupLua(lua_State *state);
-GAME_API void rangersGameDeinit();
+    RANGERS_GAME_API int rangersGameInit();
+    RANGERS_GAME_API int rangersAPIVersion();
+    RANGERS_GAME_API void rangersGameSetupLua(lua_State *state);
+    RANGERS_GAME_API void rangersGameDeinit();
 }
 
 #endif // GAMEINTERFACE_H

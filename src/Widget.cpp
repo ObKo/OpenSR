@@ -288,7 +288,7 @@ void Widget::action(const Action& action)
         unlock();
         return;
     }
-	std::list<ActionListener*>::iterator end = m_listeners.end();
+    std::list<ActionListener*>::iterator end = m_listeners.end();
     for (std::list<ActionListener*>::iterator i = m_listeners.begin(); i != end; ++i)
         (*i)->actionPerformed(action);
     unlock();

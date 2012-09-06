@@ -22,7 +22,7 @@ void EditorView::wheelEvent(QWheelEvent *event)
 
 void EditorView::setZoom(qreal zoom)
 {
-    if(zoom <= 0.0)
+    if (zoom <= 0.0)
         return;
 
     scale(zoom / m_zoom, zoom / m_zoom);
@@ -39,7 +39,7 @@ void EditorView::contextMenuEvent(QContextMenuEvent * event)
     QGraphicsItem *i = scene()->itemAt(mapToScene(event->pos()));
     PatchItem *item = dynamic_cast<PatchItem*>(i);
 
-    if(!item)
+    if (!item)
         return;
 
     QPointF itemPoint = item->mapFromScene(mapToScene(event->pos()));
@@ -55,23 +55,23 @@ void EditorView::contextMenuEvent(QContextMenuEvent * event)
 
     QAction *selectedAction = menu.exec(mapToGlobal(event->pos()));
 
-    if(selectedAction == removeRowAction)
+    if (selectedAction == removeRowAction)
     {
         item->removeRow(removeCell.y());
     }
-    else if(selectedAction == removeColumnAction)
+    else if (selectedAction == removeColumnAction)
     {
         item->removeColumn(removeCell.x());
     }
-    else if(selectedAction == addColumnAction)
+    else if (selectedAction == addColumnAction)
     {
         item->addColumn(itemPoint);
     }
-    else if(selectedAction == addRowAction)
+    else if (selectedAction == addRowAction)
     {
         item->addRow(itemPoint);
     }
-    else if(selectedAction == normalizeAction)
+    else if (selectedAction == normalizeAction)
     {
         item->normalize();
     }

@@ -4,8 +4,9 @@
 #include <QMainWindow>
 #include <QGraphicsScene>
 
-namespace Ui {
-    class EditorWindow;
+namespace Ui
+{
+class EditorWindow;
 }
 
 namespace QNPE

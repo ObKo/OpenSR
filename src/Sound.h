@@ -30,9 +30,9 @@ class RANGERS_ENGINE_API Sound
 public:
     Sound(const std::wstring& path);
     virtual ~Sound();
-    
+
     void play();
-    
+
 private:
     Mix_Chunk *m_chunk;
 };

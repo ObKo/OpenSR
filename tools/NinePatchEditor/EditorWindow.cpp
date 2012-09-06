@@ -51,14 +51,14 @@ EditorWindow::~EditorWindow()
 void EditorWindow::openFile()
 {
     QString fileName = QFileDialog::getOpenFileName(this, tr("Open image"), QString(),
-                                                    "Images (*.bmp *.png *.xpm *.jpg *.jpeg);;Android 9-patch (*.9.png)");
-    if(fileName.isEmpty())
+                       "Images (*.bmp *.png *.xpm *.jpg *.jpeg);;Android 9-patch (*.9.png)");
+    if (fileName.isEmpty())
         return;
 
     QPixmap pixmap(fileName);
     QFileInfo file(fileName);
 
-    if(file.completeSuffix() == "9.png")
+    if (file.completeSuffix() == "9.png")
     {
         QImage image = pixmap.toImage();
         qreal width = image.width() - 2;
@@ -66,34 +66,34 @@ void EditorWindow::openFile()
         bool black = false;
         QVector<qreal> rows, columns;
         QRgb pixel;
-        for(int i = 1; i < image.width() - 1; i++)
+        for (int i = 1; i < image.width() - 1; i++)
         {
             pixel = image.pixel(i, 0);
-            if(qAlpha(pixel) != 255)
+            if (qAlpha(pixel) != 255)
                 pixel = 0xffffffff;
-            if((qGray(pixel) > 127) && black)
+            if ((qGray(pixel) > 127) && black)
             {
                 columns << (i - 1) / width;
                 black = false;
             }
-            if((qGray(pixel) < 128) && !black)
+            if ((qGray(pixel) < 128) && !black)
             {
                 columns << (i - 1) / width;
                 black = true;
             }
         }
         black = false;
-        for(int i = 1; i < image.height() - 1; i++)
+        for (int i = 1; i < image.height() - 1; i++)
         {
             pixel = image.pixel(0, i);
-            if(qAlpha(pixel) != 255)
+            if (qAlpha(pixel) != 255)
                 pixel = 0xffffffff;
-            if((qGray(pixel) > 127) && black)
+            if ((qGray(pixel) > 127) && black)
             {
                 rows << (i - 1) / height;
                 black = false;
             }
-            if((qGray(pixel) < 128) && !black)
+            if ((qGray(pixel) < 128) && !black)
             {
                 rows << (i - 1) / height;
                 black = true;
@@ -127,13 +127,13 @@ void EditorWindow::saveFile()
 
     QString selectedFilter;
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save image"), QString(),
-                                                    filterString, &selectedFilter);
-    if(fileName.isEmpty())
+                       filterString, &selectedFilter);
+    if (fileName.isEmpty())
         return;
 
     QFileInfo file(fileName);
 
-    if(selectedFilter == filters.at(0))
+    if (selectedFilter == filters.at(0))
     {
         bool black = false;
         QImage image = m_pixmap->pixmap().toImage();
@@ -144,14 +144,14 @@ void EditorWindow::saveFile()
         QVector<qreal> rows = m_patch->rows();
         QVector<qreal> columns = m_patch->columns();
 
-        for(int i = 1; i < image.width() - 1; i++)
+        for (int i = 1; i < image.width() - 1; i++)
         {
-            if((nextIndex < columns.count()) && (step >= columns[nextIndex]))
+            if ((nextIndex < columns.count()) && (step >= columns[nextIndex]))
             {
                 nextIndex++;
                 black = !black;
             }
-            if(black)
+            if (black)
                 image.setPixel(i, 0, qRgba(0, 0, 0, 255));
             step += 1.0 / (image.width() - 2);
         }
@@ -160,14 +160,14 @@ void EditorWindow::saveFile()
         nextIndex = 0;
         black = false;
 
-        for(int i = 1; i < image.height() - 1; i++)
+        for (int i = 1; i < image.height() - 1; i++)
         {
-            if((nextIndex < rows.count()) && (step >= rows[nextIndex]))
+            if ((nextIndex < rows.count()) && (step >= rows[nextIndex]))
             {
                 nextIndex++;
                 black = !black;
             }
-            if(black)
+            if (black)
                 image.setPixel(0, i, qRgba(0, 0, 0, 255));
             step += 1.0 / (image.height() - 2);
         }
@@ -187,13 +187,13 @@ void EditorWindow::updateScenes(const QList<QRectF> &region)
     QRectF patchRect = m_patch->mapRectToScene(m_patch->boundingRect());
     foreach(QRectF r, region)
     {
-        if(patchRect.intersects(r))
+        if (patchRect.intersects(r))
         {
             needUpdate = true;
             break;
         }
     }
-    if(!needUpdate)
+    if (!needUpdate)
         return;
     m_previewItem->updateRects(m_patch->rows(), m_patch->columns());
 }

@@ -68,8 +68,8 @@ void NinePatchItem::updateRects(const QVector<qreal>& rows, const QVector<qreal>
         {
             //if (columns[0] != 0.0)
             //{
-                residue -= columns[0] * m_pixmap.width();
-                widths << Delta(0, columns[0], columns[0] * m_pixmap.width());
+            residue -= columns[0] * m_pixmap.width();
+            widths << Delta(0, columns[0], columns[0] * m_pixmap.width());
             //}
         }
         currentSizeable = !currentSizeable;
@@ -114,8 +114,8 @@ void NinePatchItem::updateRects(const QVector<qreal>& rows, const QVector<qreal>
         {
             //if (rows[0] != 0.0)
             //{
-                residue -= rows[0]  * m_pixmap.height();
-                heights << Delta(0.0, rows[0], rows[0] * m_pixmap.height());
+            residue -= rows[0]  * m_pixmap.height();
+            heights << Delta(0.0, rows[0], rows[0] * m_pixmap.height());
             //}
         }
         currentSizeable = !currentSizeable;
@@ -158,12 +158,12 @@ void NinePatchItem::updateRects(const QVector<qreal>& rows, const QVector<qreal>
 
 void NinePatchItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget)
 {
-    if(m_sources.count() != m_targets.count())
+    if (m_sources.count() != m_targets.count())
         return;
 
     painter->save();
 
-    for(int i = 0; i < m_sources.count(); i++)
+    for (int i = 0; i < m_sources.count(); i++)
         painter->drawPixmap(m_targets[i], m_pixmap, m_sources[i]);
 
     painter->restore();
@@ -179,28 +179,28 @@ void NinePatchItem::hoverMoveEvent(QGraphicsSceneHoverEvent * event)
     bool left = false, right = false, top = false, bottom = false;
 
     event->accept();
-    if(qAbs(event->pos().x() - m_geometry.left()) < 5)
+    if (qAbs(event->pos().x() - m_geometry.left()) < 5)
         left = true;
-    if(qAbs(event->pos().x() - m_geometry.right()) < 5)
+    if (qAbs(event->pos().x() - m_geometry.right()) < 5)
         right = true;
-    if(qAbs(event->pos().y() - m_geometry.top()) < 5)
+    if (qAbs(event->pos().y() - m_geometry.top()) < 5)
         top = true;
-    if(qAbs(event->pos().y() - m_geometry.bottom()) < 5)
+    if (qAbs(event->pos().y() - m_geometry.bottom()) < 5)
         bottom = true;
 
     QCursor c = cursor();
 
     c.setShape(Qt::ArrowCursor);
 
-    if(left || right)
+    if (left || right)
         c.setShape(Qt::SizeHorCursor);
-    if(top || bottom)
+    if (top || bottom)
         c.setShape(Qt::SizeVerCursor);
 
-    if((left && top) || (right && bottom))
+    if ((left && top) || (right && bottom))
         c.setShape(Qt::SizeFDiagCursor);
 
-    if((right && top) || (left && bottom))
+    if ((right && top) || (left && bottom))
         c.setShape(Qt::SizeBDiagCursor);
 
     setCursor(c);
@@ -211,33 +211,33 @@ void NinePatchItem::mousePressEvent(QGraphicsSceneMouseEvent * event)
     bool left = false, right = false, top = false, bottom = false;
 
     event->accept();
-    if(qAbs(event->pos().x() - m_geometry.left()) < 5)
+    if (qAbs(event->pos().x() - m_geometry.left()) < 5)
         left = true;
-    if(qAbs(event->pos().x() - m_geometry.right()) < 5)
+    if (qAbs(event->pos().x() - m_geometry.right()) < 5)
         right = true;
-    if(qAbs(event->pos().y() - m_geometry.top()) < 5)
+    if (qAbs(event->pos().y() - m_geometry.top()) < 5)
         top = true;
-    if(qAbs(event->pos().y() - m_geometry.bottom()) < 5)
+    if (qAbs(event->pos().y() - m_geometry.bottom()) < 5)
         bottom = true;
 
-    if(left)
+    if (left)
         m_resize = LEFT;
-    if(right)
+    if (right)
         m_resize = RIGHT;
 
-    if(top)
+    if (top)
         m_resize = TOP;
-    if(bottom)
+    if (bottom)
         m_resize = BOTTOM;
 
-    if(left && top)
+    if (left && top)
         m_resize = TOPLEFT;
-    if(right && bottom)
+    if (right && bottom)
         m_resize = BOTTOMRIGHT;
 
-    if(right && top)
+    if (right && top)
         m_resize = TOPRIGHT;
-    if(left && bottom)
+    if (left && bottom)
         m_resize = BOTTOMLEFT;
 }
 
@@ -252,7 +252,7 @@ void NinePatchItem::reset(const QPixmap& pixmap, const QRectF& geometry, const Q
 void NinePatchItem::mouseMoveEvent(QGraphicsSceneMouseEvent * event)
 {
     event->accept();
-    switch(m_resize)
+    switch (m_resize)
     {
     case LEFT:
     case TOPLEFT:
@@ -265,7 +265,7 @@ void NinePatchItem::mouseMoveEvent(QGraphicsSceneMouseEvent * event)
         m_geometry.setRight(event->pos().x());
         break;
     }
-    switch(m_resize)
+    switch (m_resize)
     {
     case TOP:
     case TOPLEFT:
@@ -279,10 +279,10 @@ void NinePatchItem::mouseMoveEvent(QGraphicsSceneMouseEvent * event)
         break;
     }
 
-    if(m_geometry.width() < m_pixmap.width())
+    if (m_geometry.width() < m_pixmap.width())
         m_geometry.setWidth(m_pixmap.width());
 
-    if(m_geometry.height() < m_pixmap.height())
+    if (m_geometry.height() < m_pixmap.height())
         m_geometry.setHeight(m_pixmap.height());
 
     m_geometry.moveTo(0, 0);

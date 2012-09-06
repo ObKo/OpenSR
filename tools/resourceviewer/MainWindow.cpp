@@ -121,7 +121,7 @@ void MainWindow::loadGAI(GAIAnimation anim)
 void MainWindow::openFile()
 {
     QStringList fileNames = QFileDialog::getOpenFileNames(this, tr("Open file"), QString(),
-                       tr("All suported files (*.gai *.hai *.gi *.pkg *.dds *.rpkg)"));
+                            tr("All suported files (*.gai *.hai *.gi *.pkg *.dds *.rpkg)"));
     if (fileNames.isEmpty())
         return;
 

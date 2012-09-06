@@ -27,9 +27,9 @@ SoundManager* SoundManager::m_soundInstance = 0;
 
 SoundManager::SoundManager()
 {
-    if(m_soundInstance)
+    if (m_soundInstance)
         delete m_soundInstance;
-    
+
     Mix_OpenAudio(44100, AUDIO_S16SYS, 2, 1024);
 }
 
@@ -40,9 +40,9 @@ SoundManager::~SoundManager()
 
 SoundManager* SoundManager::instance()
 {
-    if(!m_soundInstance)
+    if (!m_soundInstance)
         m_soundInstance = new SoundManager();
-    
+
     return m_soundInstance;
 }
 
@@ -51,7 +51,7 @@ boost::shared_ptr<Sound> SoundManager::loadSound(const std::wstring& path)
     std::map<std::wstring, boost::shared_ptr<Sound> >::const_iterator it = m_soundCache.find(path);
     if (it != m_soundCache.end())
         return it->second;
-    
+
     boost::shared_ptr<Sound> sound = boost::shared_ptr<Sound>(new Sound(path));
     m_soundCache[path] = sound;
     return sound;

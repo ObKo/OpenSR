@@ -34,7 +34,7 @@ int main(int argc, char **argv)
 //TODO: Arguments in WinMain
 int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-	return main(0, 0);
+    return main(0, 0);
 }
 #endif
 

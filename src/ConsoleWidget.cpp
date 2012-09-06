@@ -31,7 +31,7 @@ class ConsoleWidget::ConsoleLineEditListener: public ActionListener
 public:
     void actionPerformed(const Action &action)
     {
-		if (ConsoleWidget *w = dynamic_cast<ConsoleWidget*>(action.source()->parent()))
+        if (ConsoleWidget *w = dynamic_cast<ConsoleWidget*>(action.source()->parent()))
         {
             if (action.type() == Action::KEY_PRESSED)
             {
