@@ -45,11 +45,9 @@ public:
     int frameCount() const;
     //! Number of loaded frames (background loading)
     int loadedFrames() const;
-    //! Animation need frames to loaded
+    //! Animation need frame loading
     bool needFrames() const;
 
-    //! Set texture tiling
-    void setTiling(bool tx, bool ty);
     //! Append frame (on-demand loading)
     void loadFrame(const char *data, int width, int height, TextureType type, int dataSize = 0);
 

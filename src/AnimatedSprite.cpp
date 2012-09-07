@@ -26,7 +26,6 @@
 namespace Rangers
 {
 /*!
- * \param texture texture
  * \param parent object parent
  */
 AnimatedSprite::AnimatedSprite(Object *parent): Sprite(parent)
@@ -39,6 +38,10 @@ AnimatedSprite::AnimatedSprite(Object *parent): Sprite(parent)
     m_region = TextureRegion(boost::shared_ptr<AnimatedTexture>());
 }
 
+/*!
+ * \param texture texture
+ * \param parent object parent
+ */
 AnimatedSprite::AnimatedSprite(boost::shared_ptr<AnimatedTexture> texture,  Object *parent): Sprite(texture, parent)
 {
     m_animationTime = 0;
@@ -57,6 +60,10 @@ AnimatedSprite::AnimatedSprite(boost::shared_ptr<AnimatedTexture> texture,  Obje
     }
 }
 
+/*!
+ * \param animation animation resource name
+ * \param parent object parent
+ */
 AnimatedSprite::AnimatedSprite(const std::wstring& animation,  Object *parent): Sprite(parent)
 {
     m_animationTime = 0;
@@ -104,8 +111,6 @@ AnimatedSprite& AnimatedSprite::operator=(const Rangers::AnimatedSprite& other)
     Sprite::operator=(other);
     return *this;
 }
-
-
 
 void AnimatedSprite::processLogic(int dt)
 {
@@ -175,16 +180,25 @@ void AnimatedSprite::draw() const
     endDraw();
 }
 
+/*!
+ * \returns current frame number
+ */
 int AnimatedSprite::currentFrame() const
 {
     return m_currentFrame;
 }
 
+/*!
+ * \returns current animation frame
+ */
 float AnimatedSprite::frameRate() const
 {
     return 1000.0f / m_frameDuration;
 }
 
+/*!
+ * \param f frame number
+ */
 void AnimatedSprite::setFrame(int f)
 {
     lock();
@@ -192,6 +206,9 @@ void AnimatedSprite::setFrame(int f)
     unlock();
 }
 
+/*!
+ * \param f new framerate
+ */
 void AnimatedSprite::setFrameRate(float f)
 {
     lock();
@@ -201,6 +218,10 @@ void AnimatedSprite::setFrameRate(float f)
     unlock();
 }
 
+/*!
+ * Set animation being played only once
+ * \param ss animation is single shot
+ */
 void AnimatedSprite::setSingleShot(bool ss)
 {
     lock();
@@ -208,11 +229,17 @@ void AnimatedSprite::setSingleShot(bool ss)
     unlock();
 }
 
+/*!
+ * \returns animation is single shot
+ */
 bool AnimatedSprite::isSingleShot() const
 {
     return m_singleShot;
 }
 
+/*!
+ * \returns animation is playing
+ */
 bool AnimatedSprite::isStarted() const
 {
     return m_animationStarted;

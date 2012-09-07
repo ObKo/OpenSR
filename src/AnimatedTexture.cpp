@@ -109,17 +109,11 @@ GLuint AnimatedTexture::openGLTexture(int i) const
         return m_textures[i];
 }
 
-/*!
- * \return seek
- */
 int AnimatedTexture::waitSeek() const
 {
     return m_waitSeek;
 }
 
-/*!
- * \return size
- */
 int AnimatedTexture::waitSize() const
 {
     return m_waitSize;

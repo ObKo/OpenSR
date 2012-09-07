@@ -22,9 +22,18 @@
 namespace Rangers
 {
 class Action;
+
+//! Action listener interface
+/*!
+ * This class represents Action handler interface.
+ */
 class RANGERS_ENGINE_API ActionListener
 {
 public:
+    //! Action handler function
+    /*!
+     * \param action emitted action
+     */
     virtual void actionPerformed(const Action &action) = 0;
 };
 }

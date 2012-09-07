@@ -24,30 +24,47 @@
 namespace Rangers
 {
 class AnimatedTexture;
+
 //! Animated sprite using animated texture
+/*!
+ * Represents animation with adjustable frame rate.
+ * Animation can be single shot or continuous playing.
+ */
+
 class RANGERS_ENGINE_API AnimatedSprite: public Sprite
 {
 public:
     AnimatedSprite(Object *parent = 0);
     //! Create sprite from animated texture
     AnimatedSprite(boost::shared_ptr<AnimatedTexture> texture,  Object *parent = 0);
+    //! Create sprite from resource name
     AnimatedSprite(const std::wstring& animation,  Object *parent = 0);
     AnimatedSprite(const AnimatedSprite& other);
 
     virtual void processLogic(int dt);
     virtual void draw() const;
 
+    //! Set animation single shot
     void setSingleShot(bool ss);
+    //! Start animation
     void start();
+    //! Stop animation
     void stop();
+    //! Reset animation
     void reset();
 
+    //! Animation is playing
     bool isStarted() const;
+    //! Animation is single shot
     bool isSingleShot() const;
 
+    //! Current animation frame
     int currentFrame() const;
+    //! Animation frames per second
     float frameRate() const;
+    //! Set current frame
     void setFrame(int f);
+    //! Set animation frame rate
     void setFrameRate(float f);
 
     AnimatedSprite& operator=(const AnimatedSprite& other);

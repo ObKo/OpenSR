@@ -40,6 +40,7 @@ Plugin::~Plugin()
     if (m_loaded)
     {
 #ifdef _WIN32
+        FreeLibrary(m_handle);
 #else
         dlclose(m_handle);
 #endif
@@ -51,7 +52,7 @@ int Plugin::load()
     if (m_loaded)
         return 0;
 #ifdef _WIN32
-	m_handle = LoadLibrary(m_path.c_str());
+    m_handle = LoadLibrary(m_path.c_str());
     if (!m_handle)
     {
         Log::error() << "Cannot load plugin \"" << m_path << ";";

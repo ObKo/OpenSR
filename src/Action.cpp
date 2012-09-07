@@ -20,43 +20,82 @@
 #include "Widget.h"
 #include <boost/variant.hpp>
 
+/*!
+ * \var Action::Type Action::BUTTON_CLICKED
+ * UI button clicked. Used, for example, in \ref Button class.
+ * \var Action::Type Action::KEY_PRESSED
+ * Keyboard key pressed. \ref Argument is \ref SDL_keysym
+ * \var Action::Type Action::CHECKBOX_TOGGLED
+ * Checkbox toogled. \ref Argument is \ref bool, represents new checkbox state.
+ */
+
 namespace Rangers
 {
+/*!
+ * \param source action source widget
+ * \param type action type
+ * \param arg action argument
+ */
 Action::Action(Widget *source, Action::Type type, const Action::Argument& arg): m_source(source), m_type(type), m_argument(arg)
 {
 }
 
+/*!
+ * \returns source widget
+ */
 Widget* Action::source() const
 {
     return m_source;
 }
 
+/*!
+ * \returns action type
+ */
 Action::Type Action::type() const
 {
     return m_type;
 }
 
+/*!
+ * \returns action argument
+ */
 Action::Argument Action::argument() const
 {
     return m_argument;
 }
 
+/*!
+ * This is support function for lua.
+ * \returns argument as \ref std::wstring
+ */
 std::wstring Action::getStringArgument(const Action &a)
 {
     return boost::get<std::wstring>(a.argument());
 }
 
+/*!
+ * This is support function for lua.
+ * \returns argument as string \ref Rect
+ */
 Rect Action::getRectArgument(const Action &a)
 {
 
     return boost::get<Rect>(a.argument());
 }
 
+/*!
+ * This is support function for lua.
+ * \returns argument as \ref SDL_keysym
+ */
 SDL_keysym Action::getKeyArgument(const Action &a)
 {
     return boost::get<SDL_keysym>(a.argument());
 }
 
+/*!
+ * This is support function for lua.
+ * \returns argument as boolean
+ */
 bool Action::getBoolArgument(const Action &a)
 {
     return boost::get<bool>(a.argument());
