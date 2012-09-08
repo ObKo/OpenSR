@@ -387,7 +387,7 @@ boost::shared_ptr< Font > ResourceManager::loadFont(const std::wstring& name, in
 {
     wostringstream s(name);
     s.seekp(0, ios_base::end);
-    s << size << antialiased;
+    s << L":" << size << L":" << antialiased;
     wstring mapName = s.str();
 
     map<wstring, boost::shared_ptr<Font> >::const_iterator it = m_fonts.find(mapName);
