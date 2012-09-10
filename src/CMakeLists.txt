@@ -37,43 +37,43 @@ SET(SOURCES
     Plugin.cpp
 )
 
-SET(HEADERS  
-    Engine.h
-    Node.h
-    Object.h
-    Sprite.h
-    Types.h
-    Texture.h
-    Label.h
-    Font.h
-    AnimatedTexture.h
-    AnimatedSprite.h
-    Widget.h
-    Utils.h
-    ConsoleWidget.h
-    LineEditWidget.h
-    Log.h
-    ColorLabel.h
-    ResourceAdapter.h
-    RPKGAdapter.h
-    ResourceManager.h
-    FSAdapter.h
-    LuaBindings.h
-    LuaWidget.h
-    GAISprite.h
-    Button.h
-    Action.h
-    ActionListener.h
-    WidgetNode.h
-    CheckBox.h
-    NinePatch.h
-    ScrollArea.h
-    JSONHelper.h
-    Styles.h
-    SoundManager.h
-    Sound.h
-    Plugin.h
-)
+#SET(HEADERS  
+#    Engine.h
+#    Node.h
+#    Object.h
+#    Sprite.h
+#    Types.h
+#    Texture.h
+#    Label.h
+#    Font.h
+#    AnimatedTexture.h
+#    AnimatedSprite.h
+#    Widget.h
+#    Utils.h
+#    ConsoleWidget.h
+#    LineEditWidget.h
+#    Log.h
+#    ColorLabel.h
+#    ResourceAdapter.h
+#    RPKGAdapter.h
+#    ResourceManager.h
+#    FSAdapter.h
+#    LuaBindings.h
+#    LuaWidget.h
+#    GAISprite.h
+#    Button.h
+#    Action.h
+#    ActionListener.h
+#    WidgetNode.h
+#    CheckBox.h
+#    NinePatch.h
+#    ScrollArea.h
+#    JSONHelper.h
+#    Styles.h
+#    SoundManager.h
+#    Sound.h
+#    Plugin.h
+#)
 
 INCLUDE_DIRECTORIES(
     ${SDL_INCLUDE_DIR}
@@ -81,7 +81,6 @@ INCLUDE_DIRECTORIES(
     ${Boost_INCLUDE_DIRS}
     ${FREETYPE_INCLUDE_DIRS}
     ${ICONV_INCLUDE_DIR}
-    ${CMAKE_SOURCE_DIR}/libRanger
     ${Boost_INCLUDE_DIRS}
     ${LUA_INCLUDE_DIR}
     ${JSONCPP_INCLUDE_DIR}
@@ -90,10 +89,10 @@ INCLUDE_DIRECTORIES(
     ${LUABIND_INCLUDE_DIR}
     ${SDLMIXER_INCLUDE_DIR}
     ${LIBINTL_INCLUDE_DIR}
+    ${CMAKE_SOURCE_DIR}/include/OpenSR
+    ${CMAKE_BINARY_DIR}/include/OpenSR
+    ${CMAKE_SOURCE_DIR}/libRanger
 )
-
-CONFIGURE_FILE(version.h.in version.h @ONLY)
-CONFIGURE_FILE(config.h.in config.h @ONLY)
 
 IF(WIN32)
 IF(MSVC)
@@ -105,7 +104,7 @@ ENDIF(MSVC)
     )
 ENDIF(WIN32)
 
-ADD_LIBRARY(engine SHARED ${SOURCES} ${HEADERS})
+ADD_LIBRARY(engine SHARED ${SOURCES})
 SET_TARGET_PROPERTIES(engine PROPERTIES VERSION "${MAJOR_VERSION}.${MINOR_VERSION}" COMPILE_FLAGS "-DRANGERS_ENGINE_BUILD")
 TARGET_LINK_LIBRARIES(engine ranger)
 

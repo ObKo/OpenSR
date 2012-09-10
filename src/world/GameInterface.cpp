@@ -16,12 +16,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <PluginInterface.h>
-#include <ResourceManager.h>
-#include <Log.h>
+#include <OpenSR/PluginInterface.h>
+#include <OpenSR/ResourceManager.h>
+#include <version.h>
 #include <luabind/luabind.hpp>
 #include <luabind/function.hpp>
-#include "version.h"
 
 #include "WorldObject.h"
 #include "SolarSystem.h"

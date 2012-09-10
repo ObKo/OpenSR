@@ -31,39 +31,39 @@ SET(WORLD_SOURCES
     GameInterface.cpp
 )
 
-SET(WORLD_HEADERS
-    Artifact.h
-    CargoHook.h
-    DefenceGenerator.h
-    DesertPlanet.h
-    Droid.h
-    Engine.h
-    Equipment.h
-    Goods.h
-    HabitablePlanet.h
-    Hull.h
-    InteractionContext.h
-    Item.h
-    LandContext.h
-    Meteor.h
-    Micromodulus.h
-    Planet.h
-    Radar.h
-    Scanner.h
-    Ship.h
-    ShipContext.h
-    SolarSystem.h
-    SpaceBase.h
-    SpaceObject.h
-    SystemObject.h
-    Tank.h
-    Types.h
-    Weapon.h
-    WorldHelper.h
-    WorldObject.h
-)
+#SET(WORLD_HEADERS
+#    Artifact.h
+#    CargoHook.h
+#    DefenceGenerator.h
+#    DesertPlanet.h
+#    Droid.h
+#    Engine.h
+#    Equipment.h
+#    Goods.h
+#    HabitablePlanet.h
+#    Hull.h
+#    InteractionContext.h
+#    Item.h
+#    LandContext.h
+#    Meteor.h
+#    Micromodulus.h
+#    Planet.h
+#    Radar.h
+#    Scanner.h
+#    Ship.h
+#    ShipContext.h
+#    SolarSystem.h
+#    SpaceBase.h
+#    SpaceObject.h
+#    SystemObject.h
+#    Tank.h
+#    Types.h
+#    Weapon.h
+#    WorldHelper.h
+#    WorldObject.h
+#)
 
-CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/src/version.h.in version.h @ONLY)
+#CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/include/OpenSR/version.h.in version.h @ONLY)
 
 INCLUDE_DIRECTORIES(
     ${SDL_INCLUDE_DIR}
@@ -71,7 +71,6 @@ INCLUDE_DIRECTORIES(
     ${Boost_INCLUDE_DIRS}
     ${FREETYPE_INCLUDE_DIRS}
     ${ICONV_INCLUDE_DIR}
-    ${CMAKE_SOURCE_DIR}/libRanger
     ${Boost_INCLUDE_DIRS}
     ${LUA_INCLUDE_DIR}
     ${JSONCPP_INCLUDE_DIR}
@@ -79,9 +78,10 @@ INCLUDE_DIRECTORIES(
     ${CMAKE_CURRENT_BINARY_DIR}
     ${LUABIND_INCLUDE_DIR}
     ${SDLMIXER_INCLUDE_DIR}
-    ${CMAKE_SOURCE_DIR}/src
-    ${CMAKE_BINARY_DIR}/src
+    ${CMAKE_SOURCE_DIR}/include/
+    ${CMAKE_BINARY_DIR}/include/OpenSR/
+    ${CMAKE_SOURCE_DIR}/libRanger
 )
 
-ADD_LIBRARY(world SHARED ${WORLD_SOURCES} ${WORLD_HEADERS})
+ADD_LIBRARY(world SHARED ${WORLD_SOURCES})
 TARGET_LINK_LIBRARIES(world engine)
