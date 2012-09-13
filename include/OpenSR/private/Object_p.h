@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 - 2012 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2012 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,36 +16,34 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef RANGERS_CONSOLEWIDGET_H
-#define RANGERS_CONSOLEWIDGET_H
+#ifndef RANGERS_OBJECT_P_H
+#define RANGERS_OBJECT_P_H
 
-#include "Widget.h"
+#include "global.h"
+#include "Types.h"
+#include <list>
+#include <boost/thread/recursive_mutex.hpp>
 
 namespace Rangers
 {
-class ConsoleWidgetPrivate;
-//! Console widget
-class ConsoleWidget: public Widget
+class Object;
+class ObjectPrivate
 {
-    RANGERS_DECLARE_PRIVATE(ConsoleWidget)
+    RANGERS_DECLARE_PUBLIC(Object)
 public:
-    ConsoleWidget(float w, float h, Widget* parent = 0);
-    ConsoleWidget(const ConsoleWidget& other);
-    ConsoleWidget(Widget *parent = 0);
-
-    virtual void draw() const;
-    virtual void processMain();
-    virtual void processLogic(int dt);
-
-    ConsoleWidget& operator=(const ConsoleWidget& other);
+    virtual ~ObjectPrivate();
+       
+    int m_layer;
+    mutable boost::recursive_mutex m_mutex;
+    int m_color;
+    bool m_needUpdate;
+    Object *m_parent;
+    std::list<Object*> m_children;
+    Vector m_position;
+    float m_rotation;
     
-protected:
-    ConsoleWidget(ConsoleWidgetPrivate &p, Widget *parent = 0);
-    ConsoleWidget(ConsoleWidgetPrivate &p, const ConsoleWidget& other);
-
-private:
-    class ConsoleLineEditListener;
+    Object *m_q;
 };
 }
 
-#endif // CONSOLEWIDGET_H
+#endif

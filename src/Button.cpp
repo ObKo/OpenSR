@@ -29,174 +29,248 @@
 #include "Sound.h"
 #include "SoundManager.h"
 
+#include "private/Button_p.h"
+
 namespace Rangers
 {
 
 Button::Button(Widget *parent):
-    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0),
-    m_autoResize(false)
+    Widget(*(new ButtonPrivate()), parent)
 {
+    RANGERS_D(Button);
+    d->m_hoverSprite = 0;
+    d->m_pressedSprite = 0;
+    d->m_sprite = 0;
+    d->m_normalSprite = 0;
+    d->m_autoResize = false;
 }
 
 Button::Button(boost::shared_ptr<Texture> texture, Widget *parent):
-    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0),
-    m_autoResize(false)
+    Widget(*(new ButtonPrivate()), parent)
 {
+    RANGERS_D(Button);
+    
+    d->m_hoverSprite = 0;
+    d->m_pressedSprite = 0;
+    d->m_sprite = 0;
+    d->m_normalSprite = 0;
+    d->m_autoResize = false;
+    
     if (texture)
     {
-        m_style.normal.resource = ResourceDescriptor::Resource(TextureRegion(texture));
-        m_style.normal.type = ResourceDescriptor::SPRITE;
+        d->m_style.normal.resource = ResourceDescriptor::Resource(TextureRegion(texture));
+        d->m_style.normal.type = ResourceDescriptor::SPRITE;
     }
     init();
     if (texture)
     {
-        m_width = texture->width();
-        m_height = texture->height();
+        d->m_width = texture->width();
+        d->m_height = texture->height();
     }
 }
 
 Button::Button(boost::shared_ptr<Texture> texture, boost::shared_ptr<Texture> hoverTexture, Widget *parent):
-    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0),
-    m_autoResize(false)
+    Widget(*(new ButtonPrivate()), parent)
 {
+    RANGERS_D(Button);
+    
+    d->m_hoverSprite = 0;
+    d->m_pressedSprite = 0;
+    d->m_sprite = 0;
+    d->m_normalSprite = 0;
+    d->m_autoResize = false;
+    
     if (texture)
     {
-        m_style.normal.resource = ResourceDescriptor::Resource(TextureRegion(texture));
-        m_style.normal.type = ResourceDescriptor::SPRITE;
+        d->m_style.normal.resource = ResourceDescriptor::Resource(TextureRegion(texture));
+        d->m_style.normal.type = ResourceDescriptor::SPRITE;
     }
     if (hoverTexture)
     {
-        m_style.hovered.resource = ResourceDescriptor::Resource(TextureRegion(hoverTexture));
-        m_style.hovered.type = ResourceDescriptor::SPRITE;
+        d->m_style.hovered.resource = ResourceDescriptor::Resource(TextureRegion(hoverTexture));
+        d->m_style.hovered.type = ResourceDescriptor::SPRITE;
     }
     init();
     if (texture)
     {
-        m_width = texture->width();
-        m_height = texture->height();
+        d->m_width = texture->width();
+        d->m_height = texture->height();
     }
 }
 
 Button::Button(boost::shared_ptr<Texture> texture, boost::shared_ptr<Texture> hoverTexture, boost::shared_ptr<Texture> pressTexture, Widget *parent):
-    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0),
-    m_autoResize(false)
+    Widget(*(new ButtonPrivate()), parent)
 {
+    RANGERS_D(Button);
+    
+    d->m_hoverSprite = 0;
+    d->m_pressedSprite = 0;
+    d->m_sprite = 0;
+    d->m_normalSprite = 0;
+    d->m_autoResize = false;
+    
     if (texture)
     {
-        m_style.normal.resource = ResourceDescriptor::Resource(TextureRegion(texture));
-        m_style.normal.type = ResourceDescriptor::SPRITE;
+        d->m_style.normal.resource = ResourceDescriptor::Resource(TextureRegion(texture));
+        d->m_style.normal.type = ResourceDescriptor::SPRITE;
     }
     if (hoverTexture)
     {
-        m_style.hovered.resource = ResourceDescriptor::Resource(TextureRegion(hoverTexture));
-        m_style.hovered.type = ResourceDescriptor::SPRITE;
+        d->m_style.hovered.resource = ResourceDescriptor::Resource(TextureRegion(hoverTexture));
+        d->m_style.hovered.type = ResourceDescriptor::SPRITE;
     }
     if (pressTexture)
     {
-        m_style.pressed.resource = ResourceDescriptor::Resource(TextureRegion(pressTexture));
-        m_style.pressed.type = ResourceDescriptor::SPRITE;
+        d->m_style.pressed.resource = ResourceDescriptor::Resource(TextureRegion(pressTexture));
+        d->m_style.pressed.type = ResourceDescriptor::SPRITE;
     }
     init();
     if (texture)
     {
-        m_width = texture->width();
-        m_height = texture->height();
+        d->m_width = texture->width();
+        d->m_height = texture->height();
     }
 }
 
 Button::Button(const std::wstring& texture, Widget *parent):
-    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0),
-    m_autoResize(false)
+    Widget(*(new ButtonPrivate()), parent)
 {
+    RANGERS_D(Button);
+    
+    d->m_hoverSprite = 0;
+    d->m_pressedSprite = 0;
+    d->m_sprite = 0;
+    d->m_normalSprite = 0;
+    d->m_autoResize = false;
+    
     boost::shared_ptr<Texture> main = ResourceManager::instance()->loadTexture(texture);
     if (main)
     {
-        m_style.normal.resource = ResourceDescriptor::Resource(TextureRegion(main));
-        m_style.normal.type = ResourceDescriptor::SPRITE;
+        d->m_style.normal.resource = ResourceDescriptor::Resource(TextureRegion(main));
+        d->m_style.normal.type = ResourceDescriptor::SPRITE;
     }
     init();
     if (main)
     {
-        m_width = main->width();
-        m_height = main->height();
+        d->m_width = main->width();
+        d->m_height = main->height();
     }
 }
 
 Button::Button(const std::wstring& texture, const std::wstring& hoverTexture, Widget *parent):
-    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0),
-    m_autoResize(false)
+    Widget(*(new ButtonPrivate()), parent)
 {
+    RANGERS_D(Button);
+    
+    d->m_hoverSprite = 0;
+    d->m_pressedSprite = 0;
+    d->m_sprite = 0;
+    d->m_normalSprite = 0;
+    d->m_autoResize = false;
+    
     boost::shared_ptr<Texture> main = ResourceManager::instance()->loadTexture(texture);
     boost::shared_ptr<Texture> hover = ResourceManager::instance()->loadTexture(hoverTexture);
     if (main)
     {
-        m_style.normal.resource = ResourceDescriptor::Resource(TextureRegion(main));
-        m_style.normal.type = ResourceDescriptor::SPRITE;
+        d->m_style.normal.resource = ResourceDescriptor::Resource(TextureRegion(main));
+        d->m_style.normal.type = ResourceDescriptor::SPRITE;
     }
     if (hover)
     {
-        m_style.hovered.resource = ResourceDescriptor::Resource(TextureRegion(hover));
-        m_style.hovered.type = ResourceDescriptor::SPRITE;
+        d->m_style.hovered.resource = ResourceDescriptor::Resource(TextureRegion(hover));
+        d->m_style.hovered.type = ResourceDescriptor::SPRITE;
     }
     init();
     if (main)
     {
-        m_width = main->width();
-        m_height = main->height();
+        d->m_width = main->width();
+        d->m_height = main->height();
     }
 }
 
 Button::Button(const std::wstring& texture, const std::wstring& hoverTexture, const std::wstring& pressTexture, Widget *parent):
-    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0),
-    m_autoResize(false)
+    Widget(*(new ButtonPrivate()), parent)
 {
+    RANGERS_D(Button);
+    
+    d->m_hoverSprite = 0;
+    d->m_pressedSprite = 0;
+    d->m_sprite = 0;
+    d->m_normalSprite = 0;
+    d->m_autoResize = false;
+    
     boost::shared_ptr<Texture> main = ResourceManager::instance()->loadTexture(texture);
     boost::shared_ptr<Texture> hover = ResourceManager::instance()->loadTexture(hoverTexture);
     boost::shared_ptr<Texture> pressed = ResourceManager::instance()->loadTexture(pressTexture);
     if (main)
     {
-        m_style.normal.resource = ResourceDescriptor::Resource(TextureRegion(main));
-        m_style.normal.type = ResourceDescriptor::SPRITE;
+        d->m_style.normal.resource = ResourceDescriptor::Resource(TextureRegion(main));
+        d->m_style.normal.type = ResourceDescriptor::SPRITE;
     }
     if (hover)
     {
-        m_style.hovered.resource = ResourceDescriptor::Resource(TextureRegion(hover));
-        m_style.hovered.type = ResourceDescriptor::SPRITE;
+        d->m_style.hovered.resource = ResourceDescriptor::Resource(TextureRegion(hover));
+        d->m_style.hovered.type = ResourceDescriptor::SPRITE;
     }
     if (pressed)
     {
-        m_style.pressed.resource = ResourceDescriptor::Resource(TextureRegion(pressed));
-        m_style.pressed.type = ResourceDescriptor::SPRITE;
+        d->m_style.pressed.resource = ResourceDescriptor::Resource(TextureRegion(pressed));
+        d->m_style.pressed.type = ResourceDescriptor::SPRITE;
     }
     init();
     if (main)
     {
-        m_width = main->width();
-        m_height = main->height();
+        d->m_width = main->width();
+        d->m_height = main->height();
     }
 }
 
 Button::Button(const ButtonStyle& style, Widget* parent):
-    Widget(parent), m_hoverSprite(0), m_pressedSprite(0), m_sprite(0), m_normalSprite(0), m_style(style),
-    m_autoResize(false)
+    Widget(*(new ButtonPrivate()), parent)
 {
+    RANGERS_D(Button);
+    
+    d->m_hoverSprite = 0;
+    d->m_pressedSprite = 0;
+    d->m_sprite = 0;
+    d->m_normalSprite = 0;
+    d->m_autoResize = false;
+    
     init();
-    if (m_sprite)
+    if (d->m_sprite)
     {
-        m_width = m_sprite->width();
-        m_height = m_sprite->height();
+        d->m_width = d->m_sprite->width();
+        d->m_height = d->m_sprite->height();
     }
+}
+
+
+Button::Button(ButtonPrivate &p, Widget *parent): Widget(p, parent)
+{
+    RANGERS_D(Button);
+    d->m_hoverSprite = 0;
+    d->m_pressedSprite = 0;
+    d->m_sprite = 0;
+    d->m_normalSprite = 0;
+    d->m_autoResize = false;
+}
+
+Button::Button(ButtonPrivate &p, const Button& other): Widget(p, other)
+{
+    Button(other.d_func()->m_style);
 }
 
 bool Button::autoResize() const
 {
-    return m_autoResize;
+    RANGERS_D(const Button);
+    return d->m_autoResize;
 }
 
 void Button::setAutoResize(bool autoResize)
 {
     lock();
-    m_autoResize = autoResize;
+    RANGERS_D(Button);
+    d->m_autoResize = autoResize;
     calcAutoRresize();
     unlock();
 }
@@ -204,8 +278,9 @@ void Button::setAutoResize(bool autoResize)
 void Button::setText(const std::wstring& text)
 {
     lock();
-    m_text = text;
-    m_label.setText(text);
+    RANGERS_D(Button);
+    d->m_text = text;
+    d->m_label.setText(text);
     calcAutoRresize();
     markToUpdate();
     unlock();
@@ -214,14 +289,16 @@ void Button::setText(const std::wstring& text)
 void Button::setColor(int color)
 {
     lock();
-    m_label.setColor(color);
+    RANGERS_D(Button);
+    d->m_label.setColor(color);
     unlock();
 }
 
 void Button::setFont(boost::shared_ptr<Font> font)
 {
     lock();
-    m_label.setFont(font);
+    RANGERS_D(Button);
+    d->m_label.setFont(font);
     calcAutoRresize();
     markToUpdate();
     unlock();
@@ -229,192 +306,206 @@ void Button::setFont(boost::shared_ptr<Font> font)
 
 int Button::color() const
 {
-    return m_label.color();
+    RANGERS_D(const Button);
+    return d->m_label.color();
 }
 
 std::wstring Button::text() const
 {
-    return m_text;
+    RANGERS_D(const Button);
+    return d->m_text;
 }
 
 void Button::calcAutoRresize()
 {
-    if (!m_autoResize)
+    RANGERS_D(Button);
+    if (!d->m_autoResize)
         return;
-    if (!m_normalSprite)
+    if (!d->m_normalSprite)
         return;
 
     lock();
     float labelWidth = 0.0f;
     float labelHeight = 0.0f;
-    if (m_label.font())
+    if (d->m_label.font())
     {
-        labelWidth = m_label.font()->calculateStringWidth(m_text.begin(), m_text.end());
-        labelHeight = m_label.font()->size();
+        labelWidth = d->m_label.font()->calculateStringWidth(d->m_text.begin(), d->m_text.end());
+        labelHeight = d->m_label.font()->size();
     }
-    if (!m_style.contentRect.valid())
+    if (!d->m_style.contentRect.valid())
     {
-        setGeometry(std::max(labelWidth, m_normalSprite->normalWidth()), std::max(labelHeight, m_normalSprite->normalHeight()));
+        setGeometry(std::max(labelWidth, d->m_normalSprite->normalWidth()), std::max(labelHeight, d->m_normalSprite->normalHeight()));
     }
     else
     {
-        float width = m_normalSprite->normalWidth() + labelWidth - m_style.contentRect.width;
-        float height = m_normalSprite->normalHeight() + labelHeight - m_style.contentRect.height;
-        setGeometry(std::max(width, m_normalSprite->normalWidth()), std::max(height, m_normalSprite->normalHeight()));
+        float width = d->m_normalSprite->normalWidth() + labelWidth - d->m_style.contentRect.width;
+        float height = d->m_normalSprite->normalHeight() + labelHeight - d->m_style.contentRect.height;
+        setGeometry(std::max(width, d->m_normalSprite->normalWidth()), std::max(height, d->m_normalSprite->normalHeight()));
     }
     unlock();
 }
 
 int Button::minHeight() const
 {
-    if (m_normalSprite)
-        return std::max(m_label.height(), m_normalSprite->normalHeight());
+    RANGERS_D(const Button);
+    if (d->m_normalSprite)
+        return std::max(d->m_label.height(), d->m_normalSprite->normalHeight());
     return Widget::minHeight();
 }
 
 int Button::minWidth() const
 {
-    if (m_normalSprite)
-        return std::max(m_label.width(), m_normalSprite->normalWidth());
+    RANGERS_D(const Button);
+    if (d->m_normalSprite)
+        return std::max(d->m_label.width(), d->m_normalSprite->normalWidth());
     return Widget::minWidth();
 }
 
 int Button::preferredHeight() const
 {
-    if (!m_normalSprite)
+    RANGERS_D(const Button);
+    if (!d->m_normalSprite)
         return Widget::preferredHeight();
 
-    if (m_style.contentRect.valid())
-        return m_normalSprite->normalHeight() + m_label.height() - m_style.contentRect.height;
+    if (d->m_style.contentRect.valid())
+        return d->m_normalSprite->normalHeight() + d->m_label.height() - d->m_style.contentRect.height;
 
     return minHeight();
 }
 
 int Button::preferredWidth() const
 {
-    if (!m_normalSprite)
+    RANGERS_D(const Button);
+    if (!d->m_normalSprite)
         return Widget::preferredWidth();
 
-    if (m_style.contentRect.valid())
-        return m_normalSprite->normalWidth() + m_label.width() - m_style.contentRect.width;
+    if (d->m_style.contentRect.valid())
+        return d->m_normalSprite->normalWidth() + d->m_label.width() - d->m_style.contentRect.width;
 
     return minWidth();
 }
 
 boost::shared_ptr<Font> Button::font() const
 {
-    return m_label.font();
+    RANGERS_D(const Button);
+    return d->m_label.font();
 }
 
 void Button::init()
 {
-    if (m_style.normal.type == ResourceDescriptor::NINEPATCH)
+    RANGERS_D(Button);
+    if (d->m_style.normal.type == ResourceDescriptor::NINEPATCH)
     {
-        m_normalSprite = new NinePatch(boost::get<NinePatchDescriptor>(m_style.normal.resource), this);
+        d->m_normalSprite = new NinePatch(boost::get<NinePatchDescriptor>(d->m_style.normal.resource), this);
     }
-    else if (m_style.normal.type == ResourceDescriptor::SPRITE)
+    else if (d->m_style.normal.type == ResourceDescriptor::SPRITE)
     {
-        m_normalSprite = new Sprite(boost::get<TextureRegion>(m_style.normal.resource), this);
+        d->m_normalSprite = new Sprite(boost::get<TextureRegion>(d->m_style.normal.resource), this);
     }
-    if (m_style.hovered.type == ResourceDescriptor::NINEPATCH)
+    if (d->m_style.hovered.type == ResourceDescriptor::NINEPATCH)
     {
-        m_hoverSprite = new NinePatch(boost::get<NinePatchDescriptor>(m_style.hovered.resource), this);
+        d->m_hoverSprite = new NinePatch(boost::get<NinePatchDescriptor>(d->m_style.hovered.resource), this);
     }
-    else if (m_style.hovered.type == ResourceDescriptor::SPRITE)
+    else if (d->m_style.hovered.type == ResourceDescriptor::SPRITE)
     {
-        m_hoverSprite = new Sprite(boost::get<TextureRegion>(m_style.hovered.resource), this);
+        d->m_hoverSprite = new Sprite(boost::get<TextureRegion>(d->m_style.hovered.resource), this);
     }
-    if (m_style.pressed.type == ResourceDescriptor::NINEPATCH)
+    if (d->m_style.pressed.type == ResourceDescriptor::NINEPATCH)
     {
-        m_pressedSprite = new NinePatch(boost::get<NinePatchDescriptor>(m_style.pressed.resource), this);
+        d->m_pressedSprite = new NinePatch(boost::get<NinePatchDescriptor>(d->m_style.pressed.resource), this);
     }
-    else if (m_style.pressed.type == ResourceDescriptor::SPRITE)
+    else if (d->m_style.pressed.type == ResourceDescriptor::SPRITE)
     {
-        m_pressedSprite = new Sprite(boost::get<TextureRegion>(m_style.pressed.resource), this);
+        d->m_pressedSprite = new Sprite(boost::get<TextureRegion>(d->m_style.pressed.resource), this);
     }
-    if ((m_style.font.path != L"") && (m_style.font.size > 0))
+    if ((d->m_style.font.path != L"") && (d->m_style.font.size > 0))
     {
-        m_label = Label(m_text, this, ResourceManager::instance()->loadFont(m_style.font.path, m_style.font.size));
+        d->m_label = Label(d->m_text, this, ResourceManager::instance()->loadFont(d->m_style.font.path, d->m_style.font.size));
     }
-    m_label.setOrigin(POSITION_X_LEFT, POSITION_Y_TOP);
-    setColor(m_style.color);
-    m_sprite = m_normalSprite;
+    d->m_label.setOrigin(POSITION_X_LEFT, POSITION_Y_TOP);
+    setColor(d->m_style.color);
+    d->m_sprite = d->m_normalSprite;
 
-    if (m_style.enterSound != L"")
-        m_enterSound = SoundManager::instance()->loadSound(m_style.enterSound);
-    if (m_style.leaveSound != L"")
-        m_leaveSound = SoundManager::instance()->loadSound(m_style.leaveSound);
-    if (m_style.clickSound != L"")
-        m_clickSound = SoundManager::instance()->loadSound(m_style.clickSound);
+    if (d->m_style.enterSound != L"")
+        d->m_enterSound = SoundManager::instance()->loadSound(d->m_style.enterSound);
+    if (d->m_style.leaveSound != L"")
+        d->m_leaveSound = SoundManager::instance()->loadSound(d->m_style.leaveSound);
+    if (d->m_style.clickSound != L"")
+        d->m_clickSound = SoundManager::instance()->loadSound(d->m_style.clickSound);
 
     markToUpdate();
 }
 
 Button::~Button()
 {
-    if (m_normalSprite)
-        delete m_normalSprite;
-    if (m_hoverSprite);
-    delete m_hoverSprite;
-    if (m_pressedSprite)
-        delete m_pressedSprite;
+    RANGERS_D(const Button);
+    if (d->m_normalSprite)
+        delete d->m_normalSprite;
+    if (d->m_hoverSprite)
+        delete d->m_hoverSprite;
+    if (d->m_pressedSprite)
+        delete d->m_pressedSprite;
 }
 
 void Button::draw() const
 {
+    RANGERS_D(const Button);
     if (!prepareDraw())
         return;
-    if (m_sprite)
-        m_sprite->draw();
-    m_label.draw();
+    if (d->m_sprite)
+        d->m_sprite->draw();
+    d->m_label.draw();
     endDraw();
 }
 
 void Button::setSounds(boost::shared_ptr<Sound> clickSound, boost::shared_ptr<Sound> leaveSound, boost::shared_ptr<Sound> enterSound)
 {
     lock();
-    m_clickSound = clickSound;
-    m_enterSound = enterSound;
-    m_leaveSound = leaveSound;
+    RANGERS_D(Button);
+    d->m_clickSound = clickSound;
+    d->m_enterSound = enterSound;
+    d->m_leaveSound = leaveSound;
     unlock();
 }
 
 void Button::setSounds(const std::wstring& clickSound, const std::wstring& leaveSound, const std::wstring& enterSound)
 {
     lock();
-    m_clickSound = SoundManager::instance()->loadSound(clickSound);
-    m_enterSound = SoundManager::instance()->loadSound(enterSound);
-    m_leaveSound = SoundManager::instance()->loadSound(leaveSound);
+    RANGERS_D(Button);
+    d->m_clickSound = SoundManager::instance()->loadSound(clickSound);
+    d->m_enterSound = SoundManager::instance()->loadSound(enterSound);
+    d->m_leaveSound = SoundManager::instance()->loadSound(leaveSound);
     unlock();
 }
 
 void Button::processMain()
 {
     lock();
-    if (m_label.needUpdate())
-        m_label.processMain();
-    if (m_normalSprite)
-        m_normalSprite->setGeometry(m_width, m_height);
-    if (m_hoverSprite)
-        m_hoverSprite->setGeometry(m_width, m_height);
-    if (m_pressedSprite)
-        m_pressedSprite->setGeometry(m_width, m_height);
-    if (!m_style.contentRect.valid() || (!m_normalSprite))
+    RANGERS_D(Button);
+    if (d->m_label.needUpdate())
+        d->m_label.processMain();
+    if (d->m_normalSprite)
+        d->m_normalSprite->setGeometry(d->m_width, d->m_height);
+    if (d->m_hoverSprite)
+        d->m_hoverSprite->setGeometry(d->m_width, d->m_height);
+    if (d->m_pressedSprite)
+        d->m_pressedSprite->setGeometry(d->m_width, d->m_height);
+    if (!d->m_style.contentRect.valid() || (!d->m_normalSprite))
     {
-        m_label.setPosition(int((m_width - m_label.width()) / 2), int((m_height - m_label.height()) / 2));
+        d->m_label.setPosition(int((d->m_width - d->m_label.width()) / 2), int((d->m_height - d->m_label.height()) / 2));
     }
     else
     {
         float x, y;
-        if (m_label.width() < m_style.contentRect.width)
-            x = int(m_style.contentRect.width - m_label.width()) / 2 + m_style.contentRect.x;
+        if (d->m_label.width() < d->m_style.contentRect.width)
+            x = int(d->m_style.contentRect.width - d->m_label.width()) / 2 + d->m_style.contentRect.x;
         else
-            x = m_style.contentRect.x;
-        if (m_label.height() < m_style.contentRect.height)
-            y = int(m_style.contentRect.height - m_label.height()) / 2 + m_style.contentRect.y;
+            x = d->m_style.contentRect.x;
+        if (d->m_label.height() < d->m_style.contentRect.height)
+            y = int(d->m_style.contentRect.height - d->m_label.height()) / 2 + d->m_style.contentRect.y;
         else
-            y = m_style.contentRect.y;
-        m_label.setPosition(x, y);
+            y = d->m_style.contentRect.y;
+        d->m_label.setPosition(x, y);
     }
     unlock();
     Widget::processMain();
@@ -423,10 +514,11 @@ void Button::processMain()
 void Button::mouseEnter()
 {
     lock();
-    if (m_hoverSprite)
-        m_sprite = m_hoverSprite;
-    if (m_enterSound)
-        m_enterSound->play();
+    RANGERS_D(Button);
+    if (d->m_hoverSprite)
+        d->m_sprite = d->m_hoverSprite;
+    if (d->m_enterSound)
+        d->m_enterSound->play();
     unlock();
     Widget::mouseEnter();
 }
@@ -434,10 +526,11 @@ void Button::mouseEnter()
 void Button::mouseLeave()
 {
     lock();
-    if (m_normalSprite)
-        m_sprite = m_normalSprite;
-    if (m_leaveSound)
-        m_leaveSound->play();
+    RANGERS_D(Button);
+    if (d->m_normalSprite)
+        d->m_sprite = d->m_normalSprite;
+    if (d->m_leaveSound)
+        d->m_leaveSound->play();
     unlock();
     Widget::mouseLeave();
 }
@@ -445,11 +538,12 @@ void Button::mouseLeave()
 void Button::mouseDown(uint8_t key, const Vector &p)
 {
     lock();
+    RANGERS_D(Button);
     Widget::mouseDown(key, p);
-    if (m_leftMouseButtonPressed)
+    if (d->m_leftMouseButtonPressed)
     {
-        if (m_pressedSprite)
-            m_sprite = m_pressedSprite;
+        if (d->m_pressedSprite)
+            d->m_sprite = d->m_pressedSprite;
     }
     unlock();
 }
@@ -457,12 +551,13 @@ void Button::mouseDown(uint8_t key, const Vector &p)
 void Button::mouseUp(uint8_t key, const Vector &p)
 {
     lock();
-    if (m_leftMouseButtonPressed)
+    RANGERS_D(Button);
+    if (d->m_leftMouseButtonPressed)
     {
-        if (m_hoverSprite)
-            m_sprite = m_hoverSprite;
-        else if (m_normalSprite)
-            m_sprite = m_normalSprite;
+        if (d->m_hoverSprite)
+            d->m_sprite = d->m_hoverSprite;
+        else if (d->m_normalSprite)
+            d->m_sprite = d->m_normalSprite;
     }
     Widget::mouseUp(key, p);
     unlock();
@@ -470,39 +565,35 @@ void Button::mouseUp(uint8_t key, const Vector &p)
 
 void Button::mouseClick(const Vector &p)
 {
-    if (m_clickSound)
-        m_clickSound->play();
+    RANGERS_D(Button);
+    if (d->m_clickSound)
+        d->m_clickSound->play();
     action(Action(this, Action::BUTTON_CLICKED, Action::Argument()));
 }
 
 
 //FIXME: Copy constructor and operator=
-Button::Button(const Button& other)
+Button::Button(const Button& other): Widget(*(new ButtonPrivate()), other)
 {
-    if (m_normalSprite)
-        delete m_normalSprite;
-    if (m_hoverSprite);
-    delete m_hoverSprite;
-    if (m_pressedSprite)
-        delete m_pressedSprite;
-    Button(other.m_style);
+    Button(other.d_func()->m_style);
 }
 
 Button& Button::operator=(const Button& other)
 {
     if (this == &other)
         return *this;
+    RANGERS_D(Button);
     Widget::operator=(other);
-    if (m_normalSprite)
-        delete m_normalSprite;
-    if (m_hoverSprite);
-    delete m_hoverSprite;
-    if (m_pressedSprite)
-        delete m_pressedSprite;
-    m_style = other.m_style;
-    m_normalSprite = 0;
-    m_hoverSprite = 0;
-    m_pressedSprite = 0;
+    if (d->m_normalSprite)
+        delete d->m_normalSprite;
+    if (d->m_hoverSprite);
+    delete d->m_hoverSprite;
+    if (d->m_pressedSprite)
+        delete d->m_pressedSprite;
+    d->m_style = other.d_func()->m_style;
+    d->m_normalSprite = 0;
+    d->m_hoverSprite = 0;
+    d->m_pressedSprite = 0;
     init();
     return *this;
 }

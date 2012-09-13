@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2012 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -25,8 +25,10 @@ namespace Rangers
 {
 class Font;
 class Object;
+class LabelPrivate;
 class RANGERS_ENGINE_API Label: public Sprite
 {
+    RANGERS_DECLARE_PRIVATE(Label)
 public:
     Label(Object *parent = 0);
     Label(const std::string& text, Object *parent = 0, boost::shared_ptr<Font> font = boost::shared_ptr<Font>(), SpriteXOrigin xpos = POSITION_X_LEFT, SpriteYOrigin ypos = POSITION_Y_TOP);
@@ -48,10 +50,9 @@ public:
     Label& operator=(const Label& other);
 
 protected:
-    boost::shared_ptr<Font> m_font;
-    std::wstring m_text;
-    bool m_wordWrap;
-    bool m_fixedSize;
+    Label(LabelPrivate &p, Object *parent = 0);
+    Label(LabelPrivate &p, const Label& other);
+
 };
 }
 

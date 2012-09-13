@@ -23,9 +23,11 @@
 
 namespace Rangers
 {
+class ColorLabelPrivate;
 //! Color text label
 class RANGERS_ENGINE_API ColorLabel: public Label
 {
+    RANGERS_DECLARE_PRIVATE(ColorLabel)
 public:
     //! Default constructor
     ColorLabel(Object *parent = 0);
@@ -37,6 +39,9 @@ public:
     virtual void processMain();
     //! Set default text color
     virtual void setColor(int color);
+    
+protected:
+    ColorLabel(ColorLabelPrivate &p, Object *parent = 0);
 };
 }
 

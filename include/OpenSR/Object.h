@@ -19,14 +19,17 @@
 #ifndef RANGERS_OBJECT_H
 #define RANGERS_OBJECT_H
 
+#include "global.h"
 #include "Types.h"
 #include <boost/thread/recursive_mutex.hpp>
 #include <list>
 
 namespace Rangers
 {
+class ObjectPrivate;
 class RANGERS_ENGINE_API Object
 {
+    RANGERS_DECLARE_PRIVATE(Object)
 public:
     Object(Object *parent = 0);
     Object(const Vector& pos, float rot, int layer = 0, Object *parent = 0);
@@ -75,18 +78,12 @@ public:
 
     Object& operator=(const Object& other);
 
-private:
-    int m_layer;
-
 protected:
-    mutable boost::recursive_mutex m_mutex;
-    int m_color;
-    bool m_needUpdate;
-    Object *m_parent;
-    std::list<Object*> m_children;
-    Vector m_position;
-    float m_rotation;
-
+    Object(ObjectPrivate &p, Object *parent = 0);
+    Object(ObjectPrivate &p, const Object& other);
+    
+    ObjectPrivate *m_d;
+    
     bool prepareDraw() const;
     void endDraw() const;
     void lock() const;

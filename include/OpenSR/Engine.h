@@ -19,29 +19,28 @@
 #ifndef RANGERS_ENGINE_H
 #define RANGERS_ENGINE_H
 
-extern "C" {
-#include <lua.h>
-}
-
-#include "Node.h"
-#include "Label.h"
-#include <list>
-#include <map>
-#include <boost/thread.hpp>
-#include <boost/thread/recursive_mutex.hpp>
+#include <string>
+#include <boost/shared_ptr.hpp>
 #include <boost/property_tree/ptree.hpp>
-#include "ConsoleWidget.h"
-#include "Texture.h"
+#include "global.h"
 #include "Styles.h"
+
+struct lua_State;
+struct SDL_MouseMotionEvent;
 
 namespace Rangers
 {
 class Widget;
 class Object;
 class Plugin;
+class Font;
+class Node;
 //! Main engine class
 class RANGERS_ENGINE_API Engine
 {
+    class EnginePrivate;
+    RANGERS_DECLARE_PRIVATE(Engine)
+    
 public:
     //! Construct engine from main's args
     Engine(int argc, char **argv);
@@ -99,49 +98,11 @@ public:
     void setDefaultSkin(const Skin& skin);
     void setDefaultSkin(const std::wstring& skinPath);
 
-    void loadPlugin(std::wstring path);
+    void loadPlugin(const std::wstring &path);
     void initPluginLua(lua_State *state);
 
-private:
-    void processEvents();
-    void processMouseMove(SDL_MouseMotionEvent e);
-
-    int m_argc;
-    char **m_argv;
-    int m_height;
-    int m_width;
-    int m_fpsTime;
-
-    boost::recursive_mutex m_updateMutex;
-    boost::thread *m_logicThread;
-
-    boost::shared_ptr<boost::property_tree::ptree> m_properties;
-    std::wstring m_configPath;
-    std::wstring m_mainDataDir;
-
-    int m_exitCode;
-    bool m_gameRunning;
-    bool m_consoleOpenned;
-    bool m_showFPS;
-    long m_frames;
-
-    std::list<Object *> m_updateList;
-
-    std::list<Widget *> m_widgets;
-    std::list<Widget *> m_widgetsToDelete;
-    Widget *m_currentWidget;
-    Widget *m_focusedWidget;
-
-    std::list<Plugin *> m_plugins;
-
-    Node m_mainNode;
-    Label m_fpsLabel;
-    ConsoleWidget m_consoleWidget;
-    boost::shared_ptr<Font> m_coreFont;
-    boost::shared_ptr<Font> m_monospaceFont;
-
-    lua_State *m_luaConsoleState;
-    Skin m_skin;
+private:    
+    EnginePrivate *m_d;
 };
 }
 

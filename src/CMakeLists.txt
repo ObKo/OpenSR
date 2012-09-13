@@ -37,44 +37,6 @@ SET(SOURCES
     Plugin.cpp
 )
 
-#SET(HEADERS  
-#    Engine.h
-#    Node.h
-#    Object.h
-#    Sprite.h
-#    Types.h
-#    Texture.h
-#    Label.h
-#    Font.h
-#    AnimatedTexture.h
-#    AnimatedSprite.h
-#    Widget.h
-#    Utils.h
-#    ConsoleWidget.h
-#    LineEditWidget.h
-#    Log.h
-#    ColorLabel.h
-#    ResourceAdapter.h
-#    RPKGAdapter.h
-#    ResourceManager.h
-#    FSAdapter.h
-#    LuaBindings.h
-#    LuaWidget.h
-#    GAISprite.h
-#    Button.h
-#    Action.h
-#    ActionListener.h
-#    WidgetNode.h
-#    CheckBox.h
-#    NinePatch.h
-#    ScrollArea.h
-#    JSONHelper.h
-#    Styles.h
-#    SoundManager.h
-#    Sound.h
-#    Plugin.h
-#)
-
 INCLUDE_DIRECTORIES(
     ${SDL_INCLUDE_DIR}
     ${OPENGL_INCLUDE_DIR}

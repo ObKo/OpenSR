@@ -17,14 +17,25 @@
 */
 
 #include "LuaBindings.h"
-#include "libRanger.h"
-#include "ResourceManager.h"
+
+#include <libRanger.h>
+#include <fstream>
+#include <string>
+#include <cstring>
+#include <cerrno>
+#include <luabind/function.hpp>
+#include <luabind/class.hpp>
+#include <luabind/adopt_policy.hpp>
+#include <luabind/operator.hpp>
+#include <libintl.h>
+
+#include "GAISprite.h"
 #include "Engine.h"
+#include "ResourceManager.h"
 #include "Log.h"
 #include "Font.h"
 #include "Texture.h"
 #include "AnimatedTexture.h"
-#include "GAISprite.h"
 #include "Object.h"
 #include "ActionListener.h"
 #include "Action.h"
@@ -37,16 +48,10 @@
 #include "NinePatch.h"
 #include "SoundManager.h"
 #include "Sound.h"
-#include <libRanger.h>
-#include <fstream>
-#include <string>
-#include <cstring>
-#include <cerrno>
-#include <luabind/function.hpp>
-#include <luabind/class.hpp>
-#include <luabind/adopt_policy.hpp>
-#include <luabind/operator.hpp>
-#include <libintl.h>
+#include "AnimatedSprite.h"
+#include "LineEditWidget.h"
+#include "Label.h"
+#include "Node.h"
 
 namespace Rangers
 {

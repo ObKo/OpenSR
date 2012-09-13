@@ -18,16 +18,20 @@
 
 #ifndef RANGERS_SCROLLAREA_H
 #define RANGERS_SCROLLAREA_H
+
 #include "Widget.h"
-#include "Button.h"
 #include "ActionListener.h"
 
 namespace Rangers
 {
 class WidgetNode;
+class ScrollAreaPrivate;
+struct ScrollBarStyle;
 class RANGERS_ENGINE_API ScrollArea: public Widget, ActionListener
 {
+    RANGERS_DECLARE_PRIVATE(ScrollArea)
 public:
+    ScrollArea(Widget* parent = 0);
     ScrollArea(const ScrollBarStyle& style, WidgetNode *node = 0, Widget *parent = 0);
 
     virtual void draw() const;
@@ -49,16 +53,12 @@ public:
     virtual void actionPerformed(const Action &action);
 
     virtual void processLogic(int dt);
-
+    
+protected:
+    ScrollArea(ScrollAreaPrivate &p, Widget *parent = 0);
+    
 private:
     void updateScrollPosition();
-    Button m_top, m_bottom, m_left, m_right;
-    Button m_vScroll, m_hScroll;
-    float m_vSize, m_vPosition;
-    float m_hSize, m_hPosition;
-    WidgetNode *m_node;
-    float m_scrollStart;
-    enum {NONE, VERTICAL, HORIZONTAL} m_scrollDrag;
 };
 }
 

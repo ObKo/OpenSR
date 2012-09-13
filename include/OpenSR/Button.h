@@ -19,20 +19,18 @@
 #ifndef RANGERS_BUTTON_H
 #define RANGERS_BUTTON_H
 
-#include <boost/shared_ptr.hpp>
 #include "Widget.h"
-#include "Styles.h"
-#include "Label.h"
-
 
 namespace Rangers
 {
-class Sprite;
+class ButtonPrivate;
 class Font;
 class Sound;
+struct ButtonStyle;
 
 class RANGERS_ENGINE_API Button: public Widget
 {
+    RANGERS_DECLARE_PRIVATE(Button);
 public:
     //TODO: Make consrtuctors more consistent
     Button(Widget *parent = 0);
@@ -77,23 +75,13 @@ public:
     bool autoResize() const;
 
     Button& operator=(const Button& other);
+    
+protected:
+    Button(ButtonPrivate &p, Widget *parent = 0);
+    Button(ButtonPrivate &p, const Button& other);
 
 private:
     void calcAutoRresize();
-
-    ButtonStyle m_style;
-    Label m_label;
-    std::wstring m_text;
-    Sprite *m_normalSprite;
-    Sprite *m_hoverSprite;
-    Sprite *m_pressedSprite;
-    Sprite *m_sprite;
-    bool m_autoResize;
-
-    boost::shared_ptr<Sound> m_enterSound;
-    boost::shared_ptr<Sound> m_leaveSound;
-    boost::shared_ptr<Sound> m_clickSound;
-
     void init();
 };
 }

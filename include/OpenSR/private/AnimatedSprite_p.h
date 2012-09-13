@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 - 2012 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2012 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,24 +16,23 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef RANGERS_WIDGETNODE_H
-#define RANGERS_WIDGETNODE_H
+#ifndef RANGERS_ANIMATED_SPRITE_P_H
+#define RANGERS_ANIMATED_SPRITE_P_H
 
-#include "Widget.h"
+#include "Sprite_p.h"
 
 namespace Rangers
 {
-class WidgetNodePrivate;
-class RANGERS_ENGINE_API WidgetNode: public Widget
+class AnimatedSpritePrivate: public SpritePrivate
 {
-    RANGERS_DECLARE_PRIVATE(WidgetNode)
-public:
-    WidgetNode(Widget *parent = 0);
-    virtual void draw() const;
-    virtual void processLogic(int dt);
+    RANGERS_DECLARE_PUBLIC(AnimatedSprite)
+public:    
+    int m_animationTime;
+    int m_currentFrame;
+    int m_frameDuration;
+    bool m_singleShot;
+    bool m_animationStarted;
     
-protected:
-    WidgetNode(WidgetNodePrivate &p, Widget *parent = 0);
 };
 }
 

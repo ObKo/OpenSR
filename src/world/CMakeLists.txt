@@ -31,40 +31,6 @@ SET(WORLD_SOURCES
     GameInterface.cpp
 )
 
-#SET(WORLD_HEADERS
-#    Artifact.h
-#    CargoHook.h
-#    DefenceGenerator.h
-#    DesertPlanet.h
-#    Droid.h
-#    Engine.h
-#    Equipment.h
-#    Goods.h
-#    HabitablePlanet.h
-#    Hull.h
-#    InteractionContext.h
-#    Item.h
-#    LandContext.h
-#    Meteor.h
-#    Micromodulus.h
-#    Planet.h
-#    Radar.h
-#    Scanner.h
-#    Ship.h
-#    ShipContext.h
-#    SolarSystem.h
-#    SpaceBase.h
-#    SpaceObject.h
-#    SystemObject.h
-#    Tank.h
-#    Types.h
-#    Weapon.h
-#    WorldHelper.h
-#    WorldObject.h
-#)
-
-#CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/include/OpenSR/version.h.in version.h @ONLY)
-
 INCLUDE_DIRECTORIES(
     ${SDL_INCLUDE_DIR}
     ${OPENGL_INCLUDE_DIR}

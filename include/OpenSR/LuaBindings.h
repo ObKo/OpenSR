@@ -31,10 +31,6 @@ extern "C"
 
 namespace Rangers
 {
-class AnimatedTexture;
-class GAISprite;
-class Texture;
-class Font;
 RANGERS_ENGINE_API int execLuaScript(const std::wstring& fileName);
 RANGERS_ENGINE_API int execLuaScript(const char *data, size_t size, const std::string& name);
 RANGERS_ENGINE_API lua_State *initLuaState();

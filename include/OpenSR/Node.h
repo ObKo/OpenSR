@@ -23,12 +23,17 @@
 
 namespace Rangers
 {
+class NodePrivate;
 class RANGERS_ENGINE_API Node: public Object
 {
+    RANGERS_DECLARE_PRIVATE(Node)
 public:
     Node(Rangers::Object *parent = 0);
     virtual void draw() const;
     virtual void processLogic(int dt);
+    
+protected:
+    Node(NodePrivate &p, Object *parent = 0);
 };
 }
 #endif

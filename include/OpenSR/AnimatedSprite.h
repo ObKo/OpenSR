@@ -23,7 +23,9 @@
 
 namespace Rangers
 {
+class AnimatedSprite;
 class AnimatedTexture;
+class AnimatedSpritePrivate;
 
 //! Animated sprite using animated texture
 /*!
@@ -33,6 +35,7 @@ class AnimatedTexture;
 
 class RANGERS_ENGINE_API AnimatedSprite: public Sprite
 {
+    RANGERS_DECLARE_PRIVATE(AnimatedSprite)
 public:
     AnimatedSprite(Object *parent = 0);
     //! Create sprite from animated texture
@@ -70,11 +73,8 @@ public:
     AnimatedSprite& operator=(const AnimatedSprite& other);
 
 protected:
-    int m_animationTime;
-    int m_currentFrame;
-    int m_frameDuration;
-    bool m_singleShot;
-    bool m_animationStarted;
+    AnimatedSprite(AnimatedSpritePrivate &p, Object *parent = 0);
+    AnimatedSprite(AnimatedSpritePrivate &p, const AnimatedSprite& other);
 };
 }
 

@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2012 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,14 +20,14 @@
 #define RANGERS_GAISPRITE_H
 
 #include "AnimatedSprite.h"
-#include <vector>
-#include <boost/shared_array.hpp>
-#include <libRanger.h>
 
 namespace Rangers
 {
+class GAISpritePrivate;
+struct GIFrame;
 class RANGERS_ENGINE_API GAISprite: public AnimatedSprite
 {
+    RANGERS_DECLARE_PRIVATE(GAISprite)
 public:
     GAISprite(Object *parent = 0);
     GAISprite(const char *data, int size, const GIFrame& baseFrame, Object *parent = 0);
@@ -43,20 +43,15 @@ public:
     void reset();
 
     GAISprite& operator=(const GAISprite& other);
+    
+protected:
+    GAISprite(GAISpritePrivate &p, Object *parent = 0);
+    GAISprite(GAISpritePrivate &p, const GAISprite& other);
 
 private:
     void drawFrame(int i);
     void loadGIFrame5(const char *data, unsigned char *background, int startX, int startY, int finishX, int finishY);
     void loadGAI(const char *data, int size, const GIFrame& baseFrame);
-
-    std::vector< boost::shared_array<char> > m_gaiFrames;
-    bool m_needNextFrame;
-    GAIHeader m_gaiHeader;
-    GLuint m_textureBuffer;
-
-    int m_baseFrameWidth;
-    int m_baseFrameHeight;
-    boost::shared_array<unsigned char> m_baseFrame;
 };
 
 }

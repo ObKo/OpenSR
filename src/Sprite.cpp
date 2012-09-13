@@ -19,125 +19,166 @@
 #include "Sprite.h"
 #include "Engine.h"
 #include "ResourceManager.h"
+#include "Texture.h"
+#include "private/Sprite_p.h"
 
 namespace Rangers
 {
-Sprite::Sprite(Object *parent): Object(parent)
+Sprite::Sprite(Object *parent): Object(*(new SpritePrivate), parent)
 {
-    m_buffer = 0;
-    m_vertices = 0;
-    m_vertexCount = 0;
-    m_width = 0;
-    m_height = 0;
-    m_xOrigin = POSITION_X_LEFT;
-    m_yOrigin = POSITION_Y_TOP;
-    m_scaling = TEXTURE_NORMAL;
+    RANGERS_D(Sprite);
+    d->m_buffer = 0;
+    d->m_vertices = 0;
+    d->m_vertexCount = 0;
+    d->m_width = 0;
+    d->m_height = 0;
+    d->m_xOrigin = POSITION_X_LEFT;
+    d->m_yOrigin = POSITION_Y_TOP;
+    d->m_scaling = TEXTURE_NORMAL;
 }
 
-Sprite::Sprite(const Rangers::Sprite& other): Object(other)
+Sprite::Sprite(const Rangers::Sprite& other): Object(*(new SpritePrivate), other)
 {
-    m_buffer = 0;
-    m_vertices = 0;
-    m_vertexCount = 0;
+    RANGERS_D(Sprite);
+    d->m_buffer = 0;
+    d->m_vertices = 0;
+    d->m_vertexCount = 0;
 
-    m_width = other.m_width;
-    m_height = other.m_height;
-    m_xOrigin = other.m_xOrigin;
-    m_yOrigin = other.m_yOrigin;
-    m_scaling = other.m_scaling;
-    m_region = other.m_region;
+    d->m_width = other.d_func()->m_width;
+    d->m_height = other.d_func()->m_height;
+    d->m_xOrigin = other.d_func()->m_xOrigin;
+    d->m_yOrigin = other.d_func()->m_yOrigin;
+    d->m_scaling = other.d_func()->m_scaling;
+    d->m_region = other.d_func()->m_region;
+
+    markToUpdate();
+}
+
+Sprite::Sprite(SpritePrivate &p, const Sprite& other): Object(p, other)
+{
+    RANGERS_D(Sprite);
+    d->m_buffer = 0;
+    d->m_vertices = 0;
+    d->m_vertexCount = 0;
+
+    d->m_width = other.d_func()->m_width;
+    d->m_height = other.d_func()->m_height;
+    d->m_xOrigin = other.d_func()->m_xOrigin;
+    d->m_yOrigin = other.d_func()->m_yOrigin;
+    d->m_scaling = other.d_func()->m_scaling;
+    d->m_region = other.d_func()->m_region;
 
     markToUpdate();
 }
 
 
-Sprite::Sprite(boost::shared_ptr<Texture> texture,  Object *parent, TextureScaling  ts, SpriteXOrigin xpos, SpriteYOrigin ypos): Object(parent)
+Sprite::Sprite(boost::shared_ptr<Texture> texture,  Object *parent, TextureScaling  ts, SpriteXOrigin xpos, SpriteYOrigin ypos): Object(*(new SpritePrivate), parent)
 {
-    m_buffer = 0;
-    m_vertices = 0;
-    m_vertexCount = 0;
-    m_region = TextureRegion(texture);
-    m_scaling = ts;
+    RANGERS_D(Sprite);
+    d->m_buffer = 0;
+    d->m_vertices = 0;
+    d->m_vertexCount = 0;
+    d->m_region = TextureRegion(texture);
+    d->m_scaling = ts;
     if (!texture)
     {
-        m_width = 0;
-        m_height = 0;
+        d->m_width = 0;
+        d->m_height = 0;
     }
     else
     {
-        m_width = texture->width();
-        m_height = texture->height();
+        d->m_width = texture->width();
+        d->m_height = texture->height();
     }
-    m_xOrigin = xpos;
-    m_yOrigin = ypos;
+    d->m_xOrigin = xpos;
+    d->m_yOrigin = ypos;
     markToUpdate();
 }
 
-Sprite::Sprite(const std::wstring& texture,  Object *parent, TextureScaling  ts, SpriteXOrigin xpos, SpriteYOrigin ypos): Object(parent)
+Sprite::Sprite(const std::wstring& texture,  Object *parent, TextureScaling  ts, SpriteXOrigin xpos, SpriteYOrigin ypos): Object(*(new SpritePrivate), parent)
 {
-    m_buffer = 0;
-    m_vertices = 0;
-    m_vertexCount = 0;
-    m_scaling = ts;
-    m_region = TextureRegion(ResourceManager::instance()->loadTexture(texture));
-    if (!m_region.texture)
+    RANGERS_D(Sprite);
+    d->m_buffer = 0;
+    d->m_vertices = 0;
+    d->m_vertexCount = 0;
+    d->m_scaling = ts;
+    d->m_region = TextureRegion(ResourceManager::instance()->loadTexture(texture));
+    if (!d->m_region.texture)
     {
-        m_width = 0;
-        m_height = 0;
+        d->m_width = 0;
+        d->m_height = 0;
     }
     else
     {
-        m_width = m_region.texture->width();
-        m_height = m_region.texture->height();
+        d->m_width = d->m_region.texture->width();
+        d->m_height = d->m_region.texture->height();
     }
-    m_xOrigin = xpos;
-    m_yOrigin = ypos;
+    d->m_xOrigin = xpos;
+    d->m_yOrigin = ypos;
     markToUpdate();
 }
 
-Sprite::Sprite(const TextureRegion& region, Object *parent): Object(parent)
+Sprite::Sprite(const TextureRegion& region, Object *parent): Object(*(new SpritePrivate), parent)
 {
-    m_buffer = 0;
-    m_vertices = 0;
-    m_vertexCount = 0;
-    m_xOrigin = POSITION_X_LEFT;
-    m_yOrigin = POSITION_Y_TOP;
-    m_scaling = TEXTURE_NORMAL;
-    m_region = region;
-    if (!m_region.texture)
+    RANGERS_D(Sprite);
+    d->m_buffer = 0;
+    d->m_vertices = 0;
+    d->m_vertexCount = 0;
+    d->m_xOrigin = POSITION_X_LEFT;
+    d->m_yOrigin = POSITION_Y_TOP;
+    d->m_scaling = TEXTURE_NORMAL;
+    d->m_region = region;
+    if (!d->m_region.texture)
     {
-        m_width = 0;
-        m_height = 0;
+        d->m_width = 0;
+        d->m_height = 0;
     }
     else
     {
-        m_width = m_region.texture->width() * (m_region.u2 - m_region.u1);
-        m_height = m_region.texture->height() * (m_region.v2 - m_region.v1);
+        d->m_width = d->m_region.texture->width() * (d->m_region.u2 - d->m_region.u1);
+        d->m_height = d->m_region.texture->height() * (d->m_region.v2 - d->m_region.v1);
     }
     markToUpdate();
+}
+
+
+Sprite::Sprite(SpritePrivate &p, Object *parent): Object(p, parent)
+{
+    RANGERS_D(Sprite);
+    d->m_buffer = 0;
+    d->m_vertices = 0;
+    d->m_vertexCount = 0;
+    d->m_width = 0;
+    d->m_height = 0;
+    d->m_xOrigin = POSITION_X_LEFT;
+    d->m_yOrigin = POSITION_Y_TOP;
+    d->m_scaling = TEXTURE_NORMAL;
 }
 
 Sprite::~Sprite()
 {
-    if (m_buffer)
-        glDeleteBuffers(1, &m_buffer);
+    RANGERS_D(Sprite);
+    if (d->m_buffer)
+        glDeleteBuffers(1, &d->m_buffer);
 }
 
 Sprite& Sprite::operator=(const Rangers::Sprite& other)
 {
     if (this == &other)
         return *this;
+    
+    RANGERS_D(Sprite);
 
-    m_buffer = 0;
-    m_vertices = 0;
-    m_vertexCount = 0;
+    d->m_buffer = 0;
+    d->m_vertices = 0;
+    d->m_vertexCount = 0;
 
-    m_width = other.m_width;
-    m_height = other.m_height;
-    m_xOrigin = other.m_xOrigin;
-    m_yOrigin = other.m_yOrigin;
-    m_scaling = other.m_scaling;
-    m_region = other.m_region;
+    d->m_width = other.d_func()->m_width;
+    d->m_height = other.d_func()->m_height;
+    d->m_xOrigin = other.d_func()->m_xOrigin;
+    d->m_yOrigin = other.d_func()->m_yOrigin;
+    d->m_scaling = other.d_func()->m_scaling;
+    d->m_region = other.d_func()->m_region;
 
     markToUpdate();
     Object::operator=(other);
@@ -147,25 +188,26 @@ Sprite& Sprite::operator=(const Rangers::Sprite& other)
 
 void Sprite::draw() const
 {
-    if (!m_region.texture)
+    RANGERS_D(const Sprite);
+    if (!d->m_region.texture)
         return;
 
     if (!prepareDraw())
         return;
 
-    glBindTexture(GL_TEXTURE_2D, m_region.texture->openGLTexture());
+    glBindTexture(GL_TEXTURE_2D, d->m_region.texture->openGLTexture());
 
-    if (m_scaling == TEXTURE_TILE_X)
+    if (d->m_scaling == TEXTURE_TILE_X)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     else
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
 
-    if (m_scaling == TEXTURE_TILE_Y)
+    if (d->m_scaling == TEXTURE_TILE_Y)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     else
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 
-    if (m_scaling == TEXTURE_TILE)
+    if (d->m_scaling == TEXTURE_TILE)
     {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -175,12 +217,12 @@ void Sprite::draw() const
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glEnableClientState(GL_ARRAY_BUFFER);
 
-    glBindBuffer(GL_ARRAY_BUFFER, m_buffer);
+    glBindBuffer(GL_ARRAY_BUFFER, d->m_buffer);
 
     glVertexPointer(2, GL_FLOAT, sizeof(Vertex), 0);
     glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), BUFFER_OFFSET(sizeof(float) * 2));
 
-    glDrawArrays(GL_QUADS, 0, m_vertexCount);
+    glDrawArrays(GL_QUADS, 0, d->m_vertexCount);
 
     glDisableClientState(GL_ARRAY_BUFFER);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -191,24 +233,27 @@ void Sprite::draw() const
 void Sprite::setOrigin(SpriteXOrigin xpos, SpriteYOrigin ypos)
 {
     lock();
-    m_xOrigin = xpos;
-    m_yOrigin = ypos;
+    RANGERS_D(Sprite);
+    d->m_xOrigin = xpos;
+    d->m_yOrigin = ypos;
     markToUpdate();
     unlock();
 }
 
 float Sprite::normalHeight() const
 {
-    if (m_region.texture)
-        return (m_region.v2 - m_region.v1) * m_region.texture->height();
+    RANGERS_D(const Sprite);
+    if (d->m_region.texture)
+        return (d->m_region.v2 - d->m_region.v1) * d->m_region.texture->height();
     else
         return 0.0f;
 }
 
 float Sprite::normalWidth() const
 {
-    if (m_region.texture)
-        return (m_region.u2 - m_region.u1) * m_region.texture->width();
+    RANGERS_D(const Sprite);
+    if (d->m_region.texture)
+        return (d->m_region.u2 - d->m_region.u1) * d->m_region.texture->width();
     else
         return 0.0f;
 }
@@ -216,23 +261,25 @@ float Sprite::normalWidth() const
 void Sprite::setTexture(boost::shared_ptr<Texture> texture)
 {
     lock();
-    m_region = TextureRegion(texture);
+    RANGERS_D(Sprite);
+    d->m_region = TextureRegion(texture);
     unlock();
 }
 
 void Sprite::setGeometry(float width, float height)
 {
     lock();
-    if (m_region.texture)
+    RANGERS_D(Sprite);
+    if (d->m_region.texture)
     {
         if (width <= 0)
-            width = m_region.texture->width() * (m_region.u2 - m_region.u1);
+            width = d->m_region.texture->width() * (d->m_region.u2 - d->m_region.u1);
         if (height <= 0)
-            height = m_region.texture->height() * (m_region.v2 - m_region.v1);
+            height = d->m_region.texture->height() * (d->m_region.v2 - d->m_region.v1);
     }
 
-    m_width = width;
-    m_height = height;
+    d->m_width = width;
+    d->m_height = height;
     markToUpdate();
     unlock();
 }
@@ -240,11 +287,12 @@ void Sprite::setGeometry(float width, float height)
 void Sprite::setHeight(float height)
 {
     lock();
-    if (m_region.texture)
+    RANGERS_D(Sprite);
+    if (d->m_region.texture)
         if (height <= 0)
-            height = m_region.texture->height() * (m_region.v2 - m_region.v1);
+            height = d->m_region.texture->height() * (d->m_region.v2 - d->m_region.v1);
 
-    m_height = height;
+    d->m_height = height;
     markToUpdate();
     unlock();
 }
@@ -252,11 +300,12 @@ void Sprite::setHeight(float height)
 void Sprite::setWidth(float width)
 {
     lock();
-    if (m_region.texture)
+    RANGERS_D(Sprite);
+    if (d->m_region.texture)
         if (width <= 0)
-            width = m_region.texture->width() * (m_region.u2 - m_region.u1);
+            width = d->m_region.texture->width() * (d->m_region.u2 - d->m_region.u1);
 
-    m_width = width;
+    d->m_width = width;
     markToUpdate();
     unlock();
 }
@@ -265,7 +314,8 @@ void Sprite::setWidth(float width)
 void Sprite::setTextureScaling(TextureScaling ts)
 {
     lock();
-    m_scaling = ts;
+    RANGERS_D(Sprite);
+    d->m_scaling = ts;
     markToUpdate();
     unlock();
 }
@@ -274,76 +324,77 @@ void Sprite::setTextureScaling(TextureScaling ts)
 void Sprite::processMain()
 {
     Object::processMain();
-
-    if (!m_region.texture)
+ 
+    RANGERS_D(Sprite);
+    if (!d->m_region.texture)
         return;
 
     lock();
-    if (!m_buffer)
+    if (!d->m_buffer)
     {
-        m_vertices = new Vertex[4];
-        m_vertexCount = 4;
-        memset(m_vertices, 0, m_vertexCount * sizeof(Vertex));
+        d->m_vertices = new Vertex[4];
+        d->m_vertexCount = 4;
+        memset(d->m_vertices, 0, d->m_vertexCount * sizeof(Vertex));
 
-        glGenBuffers(1, &m_buffer);
-        glBindBuffer(GL_ARRAY_BUFFER, m_buffer);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * m_vertexCount, m_vertices, GL_DYNAMIC_DRAW);
-        delete m_vertices;
+        glGenBuffers(1, &d->m_buffer);
+        glBindBuffer(GL_ARRAY_BUFFER, d->m_buffer);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * d->m_vertexCount, d->m_vertices, GL_DYNAMIC_DRAW);
+        delete d->m_vertices;
     }
 
-    glBindBuffer(GL_ARRAY_BUFFER, m_buffer);
-    m_vertices = (Vertex *)glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+    glBindBuffer(GL_ARRAY_BUFFER, d->m_buffer);
+    d->m_vertices = (Vertex *)glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
 
     float x1 = 0, x2 = 0, y1 = 0, y2 = 0;
     float u1 = 0, u2 = 0, v1 = 0, v2 = 0;
 
-    switch (m_xOrigin)
+    switch (d->m_xOrigin)
     {
     case POSITION_X_CENTER:
-        x1 = -m_width / 2.0f;
-        x2 = m_width / 2.0f;
+        x1 = -d->m_width / 2.0f;
+        x2 = d->m_width / 2.0f;
         break;
     case POSITION_X_LEFT:
         x1 = 0;
-        x2 = m_width;
+        x2 = d->m_width;
         break;
     case POSITION_X_RIGHT:
-        x1 = -m_width;
+        x1 = -d->m_width;
         x2 = 0;
         break;
     }
 
-    switch (m_yOrigin)
+    switch (d->m_yOrigin)
     {
     case POSITION_Y_CENTER:
-        y1 = -m_height / 2.0f;
-        y2 = m_height / 2.0f;
+        y1 = -d->m_height / 2.0f;
+        y2 = d->m_height / 2.0f;
         break;
     case POSITION_Y_TOP:
         y1 = 0;
-        y2 = m_height;
+        y2 = d->m_height;
         break;
     case POSITION_Y_BOTTOM:
-        y1 = -m_height;
+        y1 = -d->m_height;
         y2 = 0;
         break;
     }
 
     //FIXME: Scaling on texture region working incorrectly.
     //TODO: Keepaspect
-    switch (m_scaling)
+    switch (d->m_scaling)
     {
     case TEXTURE_NO:
-        u1 = m_region.u1;
-        v1 = m_region.v1;
-        u2 = m_region.u1 + m_width / ((m_region.u2 - m_region.u1) * m_region.texture->width());
-        v2 = m_region.v1 + m_height / ((m_region.v2 - m_region.v1) * m_region.texture->height());
+        u1 = d->m_region.u1;
+        v1 = d->m_region.v1;
+        u2 = d->m_region.u1 + d->m_width / ((d->m_region.u2 - d->m_region.u1) * d->m_region.texture->width());
+        v2 = d->m_region.v1 + d->m_height / ((d->m_region.v2 - d->m_region.v1) * d->m_region.texture->height());
         break;
     case TEXTURE_NORMAL:
-        u1 = m_region.u1;
-        v1 = m_region.v1;
-        u2 = m_region.u2;
-        v2 = m_region.v2;
+        u1 = d->m_region.u1;
+        v1 = d->m_region.v1;
+        u2 = d->m_region.u2;
+        v2 = d->m_region.v2;
         break;
     case TEXTURE_KEEPASPECT:
         /*u1 = 0;
@@ -358,10 +409,10 @@ void Sprite::processMain()
             u2 = 1;
             v2 = m_texture->width() / m_texture->height();
         }*/
-        u1 = m_region.u1;
-        v1 = m_region.v1;
-        u2 = m_region.u2;
-        v2 = m_region.v2;
+        u1 = d->m_region.u1;
+        v1 = d->m_region.v1;
+        u2 = d->m_region.u2;
+        v2 = d->m_region.v2;
         break;
     case TEXTURE_KEEPASPECT_EXPANDING:
         /*u1 = 0;
@@ -376,50 +427,50 @@ void Sprite::processMain()
             u2 = m_width / m_texture->width();
             v2 = 1;
         }*/
-        u1 = m_region.u1;
-        v1 = m_region.v1;
-        u2 = m_region.u2;
-        v2 = m_region.v2;
+        u1 = d->m_region.u1;
+        v1 = d->m_region.v1;
+        u2 = d->m_region.u2;
+        v2 = d->m_region.v2;
         break;
     case TEXTURE_TILE_X:
-        u1 = m_region.u1;
-        v1 = m_region.v1;
-        u2 = m_region.u1 + m_width / ((m_region.u2 - m_region.u1) * m_region.texture->width());
-        v2 = m_region.v2;
+        u1 = d->m_region.u1;
+        v1 = d->m_region.v1;
+        u2 = d->m_region.u1 + d->m_width / ((d->m_region.u2 - d->m_region.u1) * d->m_region.texture->width());
+        v2 = d->m_region.v2;
         break;
     case TEXTURE_TILE_Y:
-        u1 = m_region.u1;
-        v1 = m_region.v1;
-        u2 = m_region.u2;
-        v2 = m_region.v1 + m_height / ((m_region.v2 - m_region.v1) * m_region.texture->height());
+        u1 = d->m_region.u1;
+        v1 = d->m_region.v1;
+        u2 = d->m_region.u2;
+        v2 = d->m_region.v1 + d->m_height / ((d->m_region.v2 - d->m_region.v1) * d->m_region.texture->height());
         break;
     case TEXTURE_TILE:
-        u1 = m_region.u1;
-        v1 = m_region.v1;
-        u2 = m_region.u1 + m_width / ((m_region.u2 - m_region.u1) * m_region.texture->width());
-        v2 = m_region.v1 + m_height / ((m_region.v2 - m_region.v1) * m_region.texture->height());
+        u1 = d->m_region.u1;
+        v1 = d->m_region.v1;
+        u2 = d->m_region.u1 + d->m_width / ((d->m_region.u2 - d->m_region.u1) * d->m_region.texture->width());
+        v2 = d->m_region.v1 + d->m_height / ((d->m_region.v2 - d->m_region.v1) * d->m_region.texture->height());
         break;
     }
 
-    m_vertices[0].x = x1;
-    m_vertices[0].y = y1;
-    m_vertices[0].u = u1;
-    m_vertices[0].v = v1;
+    d->m_vertices[0].x = x1;
+    d->m_vertices[0].y = y1;
+    d->m_vertices[0].u = u1;
+    d->m_vertices[0].v = v1;
 
-    m_vertices[1].x = x2;
-    m_vertices[1].y = y1;
-    m_vertices[1].u = u2;
-    m_vertices[1].v = v1;
+    d->m_vertices[1].x = x2;
+    d->m_vertices[1].y = y1;
+    d->m_vertices[1].u = u2;
+    d->m_vertices[1].v = v1;
 
-    m_vertices[2].x = x2;
-    m_vertices[2].y = y2;
-    m_vertices[2].u = u2;
-    m_vertices[2].v = v2;
+    d->m_vertices[2].x = x2;
+    d->m_vertices[2].y = y2;
+    d->m_vertices[2].u = u2;
+    d->m_vertices[2].v = v2;
 
-    m_vertices[3].x = x1;
-    m_vertices[3].y = y2;
-    m_vertices[3].u = u1;
-    m_vertices[3].v = v2;
+    d->m_vertices[3].x = x1;
+    d->m_vertices[3].y = y2;
+    d->m_vertices[3].u = u1;
+    d->m_vertices[3].v = v2;
 
     glUnmapBuffer(GL_ARRAY_BUFFER);
     unlock();
@@ -427,16 +478,19 @@ void Sprite::processMain()
 
 float Sprite::height() const
 {
-    return m_height;
+    RANGERS_D(const Sprite);
+    return d->m_height;
 }
 
 float Sprite::width() const
 {
-    return m_width;
+    RANGERS_D(const Sprite);
+    return d->m_width;
 }
 
 TextureRegion Sprite::region() const
 {
-    return m_region;
+    RANGERS_D(const Sprite);
+    return d->m_region;
 }
 }

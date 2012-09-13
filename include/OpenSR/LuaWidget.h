@@ -22,30 +22,16 @@
 #include "Widget.h"
 #include "ActionListener.h"
 
-extern "C"
-{
-#include <lua.h>
-}
+struct lua_State;
 
 namespace Rangers
 {
+class LuaWidgetPrivate;
 //TODO: min/max/preferred sizes.
 class RANGERS_ENGINE_API LuaWidget: public Widget
-{
+{   
+    RANGERS_DECLARE_PRIVATE(LuaWidget)
 public:
-    class LuaActionListener: public ActionListener
-    {
-    public:
-        LuaActionListener(LuaWidget *widget);
-        void actionPerformed(const Action &action);
-
-        LuaWidget* associatedWidget() const;
-        void setAssociatedWidget(LuaWidget *widget);
-
-    private:
-        LuaWidget *m_widget;
-    };
-
     LuaWidget(const char *data, size_t size, const std::string& name, Widget *parent = 0);
     LuaWidget(const std::wstring& name, Widget *parent = 0);
     LuaWidget(Widget *parent = 0);
@@ -66,16 +52,26 @@ public:
     virtual void mouseClick(const Vector &p);
 
     virtual void processLogic(int dt);
+    
+    class LuaActionListener: public ActionListener
+    {
+    public:
+	LuaActionListener(LuaWidget *widget);
+	void actionPerformed(const Action &action);
+
+	LuaWidget* associatedWidget() const;
+	void setAssociatedWidget(LuaWidget *widget);
+
+    private:
+	LuaWidget *m_widget;
+    };
 
 private:
     LuaWidget(const LuaWidget& other);
     LuaWidget& operator=(const LuaWidget& other);
 
     void initLuaState();
-
-    boost::shared_ptr<lua_State> m_luaState;
-    LuaActionListener *m_actionListener;
-
+    
     static int luaErrorHandler(lua_State* state);
 };
 }

@@ -18,19 +18,25 @@
 
 #include "WidgetNode.h"
 
+#include "private/WidgetNode_p.h"
+
 namespace Rangers
 {
-WidgetNode::WidgetNode(Widget *parent): Widget(parent)
+WidgetNode::WidgetNode(Widget *parent): Widget(*(new WidgetNodePrivate()), parent)
 {
+}
 
+WidgetNode::WidgetNode(WidgetNodePrivate &p, Widget *parent): Widget(p, parent)
+{
 }
 
 void WidgetNode::draw() const
 {
+    RANGERS_D(const WidgetNode);
     if (!prepareDraw())
         return;
 
-    std::list<Object*> children = m_children;
+    std::list<Object*> children = d->m_children;
     for (std::list<Object*>::const_iterator i = children.begin(); i != children.end(); i++)
         (*i)->draw();
 
@@ -40,7 +46,8 @@ void WidgetNode::draw() const
 void WidgetNode::processLogic(int dt)
 {
     lock();
-    std::list<Object*> children = m_children;
+    RANGERS_D(WidgetNode);
+    std::list<Object*> children = d->m_children;
     unlock();
     for (std::list<Object*>::const_iterator i = children.begin(); i != children.end(); i++)
         (*i)->processLogic(dt);

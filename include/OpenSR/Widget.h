@@ -23,10 +23,13 @@
 
 namespace Rangers
 {
+class WidgetPrivate;
 class ActionListener;
 class Action;
+
 class RANGERS_ENGINE_API Widget: public Object
 {
+    RANGERS_DECLARE_PRIVATE(Widget)
 public:
     Widget(Widget *parent = 0);
     Widget(float w, float h, Widget *parent = 0);
@@ -77,12 +80,8 @@ public:
     void action(const Action& action);
 
 protected:
-    std::list<Widget *> m_childWidgets;
-    std::list<ActionListener*> m_listeners;
-    Widget *m_currentChild;
-    int m_width, m_height;
-    bool m_leftMouseButtonPressed;
-    bool m_focused;
+    Widget(WidgetPrivate &p, Widget *parent = 0);
+    Widget(WidgetPrivate &p, const Widget& other);
 };
 }
 

@@ -21,83 +21,114 @@
 #include "Engine.h"
 #include "Object.h"
 #include "Font.h"
+#include "Texture.h"
+
+#include "private/Label_p.h"
 
 namespace Rangers
 {
-Label::Label(Object *parent): Sprite(parent)
+Label::Label(Object *parent): Sprite(*(new LabelPrivate()), parent)
 {
-    m_vertexCount = 0;
-    m_font = boost::shared_ptr<Font>();
-    m_vertices = 0;
-    m_wordWrap = false;
-    m_fixedSize = false;
-    m_scaling = TEXTURE_NO;
+    RANGERS_D(Label);
+    d->m_vertexCount = 0;
+    d->m_font = boost::shared_ptr<Font>();
+    d->m_vertices = 0;
+    d->m_wordWrap = false;
+    d->m_fixedSize = false;
+    d->m_scaling = TEXTURE_NO;
 }
 
-Label::Label(const std::string& text, Object *parent, boost::shared_ptr<Font> font, SpriteXOrigin xpos, SpriteYOrigin ypos): Sprite(parent)
+Label::Label(const std::string& text, Object *parent, boost::shared_ptr<Font> font, SpriteXOrigin xpos, SpriteYOrigin ypos): Sprite(*(new LabelPrivate()), parent)
 {
+    RANGERS_D(Label);
     if (!font)
-        m_font = Engine::instance()->coreFont();
+        d->m_font = Engine::instance()->coreFont();
     else
-        m_font = font;
+        d->m_font = font;
 
-    m_xOrigin = xpos;
-    m_yOrigin = ypos;
+    d->m_xOrigin = xpos;
+    d->m_yOrigin = ypos;
     setText(text);
-    m_wordWrap = false;
-    m_fixedSize = false;
-    m_scaling = TEXTURE_NO;
+    d->m_wordWrap = false;
+    d->m_fixedSize = false;
+    d->m_scaling = TEXTURE_NO;
 }
 
-Label::Label(const std::wstring& text, Object *parent, boost::shared_ptr<Font> font, SpriteXOrigin xpos, SpriteYOrigin ypos): Sprite(parent)
+Label::Label(const std::wstring& text, Object *parent, boost::shared_ptr<Font> font, SpriteXOrigin xpos, SpriteYOrigin ypos): Sprite(*(new LabelPrivate()), parent)
 {
+    RANGERS_D(Label);
     if (!font)
-        m_font = Engine::instance()->coreFont();
+        d->m_font = Engine::instance()->coreFont();
     else
-        m_font = font;
+        d->m_font = font;
 
-    m_xOrigin = xpos;
-    m_yOrigin = ypos;
+    d->m_xOrigin = xpos;
+    d->m_yOrigin = ypos;
     setText(text);
-    m_wordWrap = false;
-    m_fixedSize = false;
-    m_scaling = TEXTURE_NO;
+    d->m_wordWrap = false;
+    d->m_fixedSize = false;
+    d->m_scaling = TEXTURE_NO;
 }
 
-Label::Label(const Rangers::Label& other): Sprite(other)
+Label::Label(const Rangers::Label& other): Sprite(*(new LabelPrivate()), other)
 {
-    m_font = other.m_font;
-    m_text = other.m_text;
-    m_wordWrap = other.m_wordWrap;
-    m_fixedSize = other.m_fixedSize;
+    RANGERS_D(Label);
+    d->m_font = other.d_func()->m_font;
+    d->m_text = other.d_func()->m_text;
+    d->m_wordWrap = other.d_func()->m_wordWrap;
+    d->m_fixedSize = other.d_func()->m_fixedSize;
 }
 
 Label& Label::operator=(const Rangers::Label& other)
 {
+    RANGERS_D(Label);
     if (this == &other)
         return *this;
 
-    m_font = other.m_font;
-    m_text = other.m_text;
-    m_wordWrap = other.m_wordWrap;
-    m_fixedSize = other.m_fixedSize;
+    d->m_font = other.d_func()->m_font;
+    d->m_text = other.d_func()->m_text;
+    d->m_wordWrap = other.d_func()->m_wordWrap;
+    d->m_fixedSize = other.d_func()->m_fixedSize;
 
     Sprite::operator=(other);
     return *this;
 }
 
 
+Label::Label(LabelPrivate &p, Object *parent): Sprite(p, parent) 
+{
+    RANGERS_D(Label);
+    d->m_vertexCount = 0;
+    d->m_font = boost::shared_ptr<Font>();
+    d->m_vertices = 0;
+    d->m_wordWrap = false;
+    d->m_fixedSize = false;
+    d->m_scaling = TEXTURE_NO;
+}
+
+Label::Label(LabelPrivate &p, const Label& other): Sprite(p, other)
+{
+    RANGERS_D(Label);
+    d->m_font = other.d_func()->m_font;
+    d->m_text = other.d_func()->m_text;
+    d->m_wordWrap = other.d_func()->m_wordWrap;
+    d->m_fixedSize = other.d_func()->m_fixedSize;
+}
+
+
 boost::shared_ptr< Font > Label::font() const
 {
-    return m_font;
+    RANGERS_D(const Label);
+    return d->m_font;
 }
 
 
 void Label::setText(const std::string& text)
 {
     lock();
-    m_text.assign(text.length(), '\0');
-    std::copy(text.begin(), text.end(), m_text.begin());
+    RANGERS_D(Label);
+    d->m_text.assign(text.length(), '\0');
+    std::copy(text.begin(), text.end(), d->m_text.begin());
     markToUpdate();
     unlock();
 }
@@ -105,7 +136,8 @@ void Label::setText(const std::string& text)
 void Label::setText(const std::wstring& text)
 {
     lock();
-    m_text = text;
+    RANGERS_D(Label);
+    d->m_text = text;
     markToUpdate();
     unlock();
 }
@@ -113,26 +145,28 @@ void Label::setText(const std::wstring& text)
 void Label::setFont(boost::shared_ptr<Font> font)
 {
     lock();
-    m_font = font;
+    RANGERS_D(Label);
+    d->m_font = font;
     markToUpdate();
     unlock();
 }
 
 void Label::processMain()
 {
-    if (!m_font)
+    RANGERS_D(Label);
+    if (!d->m_font)
         return;
     lock();
 
-    if (!m_wordWrap)
-        m_region = TextureRegion(m_font->renderText(m_text));
+    if (!d->m_wordWrap)
+        d->m_region = TextureRegion(d->m_font->renderText(d->m_text));
     else
-        m_region = TextureRegion(m_font->renderText(m_text, m_width));
+        d->m_region = TextureRegion(d->m_font->renderText(d->m_text, d->m_width));
 
-    if (!m_fixedSize)
+    if (!d->m_fixedSize)
     {
-        m_width = m_region.texture->width();
-        m_height = m_region.texture->height();
+        d->m_width = d->m_region.texture->width();
+        d->m_height = d->m_region.texture->height();
     }
 
     unlock();
@@ -141,13 +175,15 @@ void Label::processMain()
 
 std::wstring Label::text() const
 {
-    return m_text;
+    RANGERS_D(const Label);
+    return d->m_text;
 }
 
 void Label::setWordWrap(bool wordWrap)
 {
     lock();
-    m_wordWrap = wordWrap;
+    RANGERS_D(Label);
+    d->m_wordWrap = wordWrap;
     markToUpdate();
     unlock();
 }
@@ -155,14 +191,15 @@ void Label::setWordWrap(bool wordWrap)
 void Label::setFixedSize(float width, float height)
 {
     lock();
+    RANGERS_D(Label);
     if ((width > 0) && (height > 0))
     {
-        m_width = width;
-        m_height = height;
-        m_fixedSize = true;
+        d->m_width = width;
+        d->m_height = height;
+        d->m_fixedSize = true;
     }
     else
-        m_fixedSize = false;
+        d->m_fixedSize = false;
     markToUpdate();
     unlock();
 }

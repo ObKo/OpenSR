@@ -33,7 +33,6 @@ class Sprite;
 class AnimatedSprite;
 class Object;
 struct GAIAnimation;
-class GAISprite;
 class LuaWidget;
 class Widget;
 

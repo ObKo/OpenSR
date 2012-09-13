@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 - 2012 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2012 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,24 +16,26 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef RANGERS_WIDGETNODE_H
-#define RANGERS_WIDGETNODE_H
+#ifndef RANGERS_SCROLL_AREA_P_H
+#define RANGERS_SCROLL_AREA_P_H
 
-#include "Widget.h"
+#include "Widget_p.h"
+#include "Button.h"
 
 namespace Rangers
 {
-class WidgetNodePrivate;
-class RANGERS_ENGINE_API WidgetNode: public Widget
+class WidgetNode;
+class ScrollAreaPrivate: public WidgetPrivate
 {
-    RANGERS_DECLARE_PRIVATE(WidgetNode)
+    RANGERS_DECLARE_PUBLIC(ScrollArea)
 public:
-    WidgetNode(Widget *parent = 0);
-    virtual void draw() const;
-    virtual void processLogic(int dt);
-    
-protected:
-    WidgetNode(WidgetNodePrivate &p, Widget *parent = 0);
+    Button m_top, m_bottom, m_left, m_right;
+    Button m_vScroll, m_hScroll;
+    float m_vSize, m_vPosition;
+    float m_hSize, m_hPosition;
+    WidgetNode *m_node;
+    float m_scrollStart;
+    enum {NONE, VERTICAL, HORIZONTAL} m_scrollDrag;
 };
 }
 

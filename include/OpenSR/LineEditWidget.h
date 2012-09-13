@@ -19,15 +19,18 @@
 #ifndef RANGERS_LINEEDITWIDGET_H
 #define RANGERS_LINEEDITWIDGET_H
 
-#include "Label.h"
 #include "Widget.h"
-#include "Styles.h"
 
 namespace Rangers
 {
 class Sprite;
+class Font;
+struct LineEditStyle;
+class LineEditWidgetPrivate;
+
 class RANGERS_ENGINE_API LineEditWidget: public Widget
 {
+    RANGERS_DECLARE_PRIVATE(LineEditWidget)
 public:
     LineEditWidget(float w, float h = 0, boost::shared_ptr<Font> font = boost::shared_ptr<Font>(), Widget* parent = 0);
     LineEditWidget(Widget* parent = 0);
@@ -46,30 +49,21 @@ public:
     virtual int preferredHeight() const;
     virtual int maxHeight() const;
 
-
     std::wstring text() const;
     void setText(const std::wstring &s);
 
     LineEditWidget& operator=(const LineEditWidget& other);
 
+protected:
+    LineEditWidget(LineEditWidgetPrivate &p, Widget *parent = 0);
+    LineEditWidget(LineEditWidgetPrivate &p, const LineEditWidget& other);
+    
 private:
     class LineEditWidgetListener;
+    
     void init();
     void updateText();
-
     void keyPressed(const SDL_keysym& key);
-
-    Label m_label;
-    std::wstring m_text;
-    Vertex *m_cursorVertices;
-    GLuint m_cursorBuffer;
-    int m_position;
-    bool m_cursorVisible;
-    int m_cursorTime;
-    int m_stringOffset;
-
-    Sprite *m_background;
-    LineEditStyle m_style;
 };
 }
 

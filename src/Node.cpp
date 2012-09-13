@@ -19,21 +19,27 @@
 #include "Node.h"
 #include <stdexcept>
 
+#include "private/Node_p.h"
+
 using namespace boost;
 
 namespace Rangers
 {
-Node::Node(Rangers::Object *parent): Object(parent)
+Node::Node(Object *parent): Object(*(new NodePrivate()), parent)
 {
+}
 
+Node::Node(NodePrivate &p, Object *parent): Object(p, parent)
+{
 }
 
 void Node::draw() const
 {
+    RANGERS_D(const Node);
     if (!prepareDraw())
         return;
 
-    std::list<Object*> children = m_children;
+    std::list<Object*> children = d->m_children;
     for (std::list<Object*>::const_iterator i = children.begin(); i != children.end(); i++)
         (*i)->draw();
 
@@ -42,8 +48,9 @@ void Node::draw() const
 
 void Node::processLogic(int dt)
 {
+    RANGERS_D(Node);
     lock();
-    std::list<Object*> children = m_children;
+    std::list<Object*> children = d->m_children;
     unlock();
     for (std::list<Object*>::const_iterator i = children.begin(); i != children.end(); i++)
         (*i)->processLogic(dt);

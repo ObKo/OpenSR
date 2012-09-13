@@ -19,6 +19,9 @@
 #include "ColorLabel.h"
 #include "Font.h"
 #include "Texture.h"
+#include "Engine.h"
+
+#include "private/ColorLabel_p.h"
 
 using namespace std;
 namespace Rangers
@@ -32,7 +35,7 @@ namespace Rangers
 /*!
  * \param parent parent object
  */
-ColorLabel::ColorLabel(Object* parent): Label(parent)
+ColorLabel::ColorLabel(Object* parent): Label(*(new ColorLabelPrivate()), parent)
 {
 
 }
@@ -44,9 +47,20 @@ ColorLabel::ColorLabel(Object* parent): Label(parent)
  * \param xpos sprite x origin
  * \param ypos sprite y origin
  */
-ColorLabel::ColorLabel(const std::string& text, Object* parent, boost::shared_ptr< Font > font, SpriteXOrigin xpos, SpriteYOrigin ypos): Label(text, parent, font, xpos, ypos)
+ColorLabel::ColorLabel(const std::string& text, Object* parent, boost::shared_ptr< Font > font, SpriteXOrigin xpos, SpriteYOrigin ypos): Label(*(new ColorLabelPrivate()), parent)
 {
+    RANGERS_D(ColorLabel);
+    if (!font)
+        d->m_font = Engine::instance()->coreFont();
+    else
+        d->m_font = font;
 
+    d->m_xOrigin = xpos;
+    d->m_yOrigin = ypos;
+    setText(text);
+    d->m_wordWrap = false;
+    d->m_fixedSize = false;
+    d->m_scaling = TEXTURE_NO;
 }
 
 /*!
@@ -56,24 +70,40 @@ ColorLabel::ColorLabel(const std::string& text, Object* parent, boost::shared_pt
  * \param xpos sprite x origin
  * \param ypos sprite y origin
  */
-ColorLabel::ColorLabel(const std::wstring& text, Object* parent, boost::shared_ptr< Font > font, SpriteXOrigin xpos, SpriteYOrigin ypos): Label(text, parent, font, xpos, ypos)
+ColorLabel::ColorLabel(const std::wstring& text, Object* parent, boost::shared_ptr< Font > font, SpriteXOrigin xpos, SpriteYOrigin ypos): Label(*(new ColorLabelPrivate()), parent)
 {
+    RANGERS_D(ColorLabel);
+    if (!font)
+        d->m_font = Engine::instance()->coreFont();
+    else
+        d->m_font = font;
 
+    d->m_xOrigin = xpos;
+    d->m_yOrigin = ypos;
+    setText(text);
+    d->m_wordWrap = false;
+    d->m_fixedSize = false;
+    d->m_scaling = TEXTURE_NO;
+}
+
+ColorLabel::ColorLabel(ColorLabelPrivate &p, Object *parent): Label(p, parent)
+{
 }
 
 void ColorLabel::processMain()
 {
     lock();
+    RANGERS_D(ColorLabel);
 
-    if (!m_wordWrap)
-        m_region = TextureRegion(m_font->renderColoredText(m_text, (m_color >> 8) & 0xffffff));
+    if (!d->m_wordWrap)
+        d->m_region = TextureRegion(d->m_font->renderColoredText(d->m_text, (d->m_color >> 8) & 0xffffff));
     else
-        m_region = TextureRegion(m_font->renderColoredText(m_text, (m_color >> 8) & 0xffffff));
+        d->m_region = TextureRegion(d->m_font->renderColoredText(d->m_text, (d->m_color >> 8) & 0xffffff));
 
-    if (!m_fixedSize)
+    if (!d->m_fixedSize)
     {
-        m_width = m_region.texture->width();
-        m_height = m_region.texture->height();
+        d->m_width = d->m_region.texture->width();
+        d->m_height = d->m_region.texture->height();
     }
     unlock();
     Sprite::processMain();

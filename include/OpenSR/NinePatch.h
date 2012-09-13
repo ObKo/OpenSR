@@ -20,13 +20,13 @@
 #define RANGERS_NINEPATCH_H
 
 #include "Sprite.h"
-#include <vector>
-#include "Types.h"
 
 namespace Rangers
 {
+class NinePatchPrivate;
 class RANGERS_ENGINE_API NinePatch: public Sprite
 {
+    RANGERS_DECLARE_PRIVATE(NinePatch)
 public:
     NinePatch(Object *parent = 0);
     NinePatch(const NinePatchDescriptor &desc, Object *parent = 0);
@@ -38,8 +38,8 @@ public:
     virtual float normalWidth() const;
     virtual float normalHeight() const;
 
-private:
-    NinePatchDescriptor m_descriptor;
+protected:
+    NinePatch(NinePatchPrivate &p, Object *parent = 0);
 };
 }
 

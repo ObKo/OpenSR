@@ -28,10 +28,13 @@ enum TextureScaling {TEXTURE_NO, TEXTURE_NORMAL, TEXTURE_KEEPASPECT, TEXTURE_KEE
                     };
 enum SpriteXOrigin {POSITION_X_LEFT, POSITION_X_RIGHT, POSITION_X_CENTER};
 enum SpriteYOrigin {POSITION_Y_TOP, POSITION_Y_BOTTOM, POSITION_Y_CENTER};
-struct Vertex;
+
 class Texture;
+
+class SpritePrivate;
 class RANGERS_ENGINE_API Sprite: public Object
 {
+    RANGERS_DECLARE_PRIVATE(Sprite)
 public:
     Sprite(Object *parent = 0);
     Sprite(boost::shared_ptr<Texture> texture, Object *parent = 0, TextureScaling  ts = TEXTURE_NORMAL, SpriteXOrigin xpos = POSITION_X_LEFT, SpriteYOrigin ypos = POSITION_Y_TOP);
@@ -59,19 +62,11 @@ public:
 
     TextureRegion region() const;
 
-    Sprite& operator=(const Sprite& other);
-
+    Sprite& operator=(const Sprite& other); 
+    
 protected:
-    Vertex *m_vertices;
-    int m_vertexCount;
-
-    float m_width, m_height;
-    SpriteXOrigin m_xOrigin;
-    SpriteYOrigin m_yOrigin;
-    TextureScaling m_scaling;
-
-    GLuint m_buffer;
-    TextureRegion m_region;
+    Sprite(SpritePrivate &p, Object *parent = 0);
+    Sprite(SpritePrivate &p, const Sprite& other);
 };
 }
 

@@ -20,13 +20,14 @@
 #define RANGERS_CHECKBOX_H
 
 #include "Widget.h"
-#include "Label.h"
-#include "Styles.h"
 
 namespace Rangers
 {
+class CheckBoxPrivate;
+struct CheckBoxStyle;
 class RANGERS_ENGINE_API CheckBox: public Widget
 {
+    RANGERS_DECLARE_PRIVATE(CheckBox);
 public:
     CheckBox(const CheckBoxStyle& style, const std::wstring &text, Widget *parent = 0);
     virtual ~CheckBox();
@@ -46,18 +47,10 @@ public:
     virtual void mouseLeave();
 
     virtual void mouseClick(const Vector &p);
-
-
-
-private:
-    bool m_checked;
-    Sprite *m_normal;
-    Sprite *m_checkedNormal;
-    Sprite *m_hovered;
-    Sprite *m_checkedHovered;
-    Sprite *m_sprite;
-    Label m_label;
-    CheckBoxStyle m_style;
+    
+protected:
+    CheckBox(CheckBoxPrivate &p, Widget *parent = 0);
+    CheckBox(CheckBoxPrivate &p, const CheckBox& other);
 };
 }
 
