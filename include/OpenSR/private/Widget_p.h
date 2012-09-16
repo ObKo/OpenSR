@@ -19,15 +19,18 @@
 #ifndef RANGERS_WIDGET_P_H
 #define RANGERS_WIDGET_P_H
 
-#include "Widget.h"
 #include "Object_p.h"
 
 namespace Rangers
 {
+class Widget;
+class ActionListener;
 class WidgetPrivate: public ObjectPrivate
 {
     RANGERS_DECLARE_PUBLIC(Widget)
-public:    
+public:
+    WidgetPrivate();
+
     std::list<Widget *> m_childWidgets;
     std::list<ActionListener*> m_listeners;
     Widget *m_currentChild;

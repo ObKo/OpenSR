@@ -53,12 +53,9 @@ public:
     virtual void actionPerformed(const Action &action);
 
     virtual void processLogic(int dt);
-    
+
 protected:
     ScrollArea(ScrollAreaPrivate &p, Widget *parent = 0);
-    
-private:
-    void updateScrollPosition();
 };
 }
 

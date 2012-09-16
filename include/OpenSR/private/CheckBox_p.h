@@ -22,6 +22,7 @@
 #include "Widget_p.h"
 
 #include "Label.h"
+#include "Styles.h"
 
 namespace Rangers
 {
@@ -29,6 +30,8 @@ class CheckBoxPrivate: public WidgetPrivate
 {
     RANGERS_DECLARE_PUBLIC(CheckBox)
 public:
+    CheckBoxPrivate();
+
     bool m_checked;
     Sprite *m_normal;
     Sprite *m_checkedNormal;

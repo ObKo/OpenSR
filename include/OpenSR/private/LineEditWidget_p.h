@@ -29,7 +29,9 @@ namespace Rangers
 class LineEditWidgetPrivate: public WidgetPrivate
 {
     RANGERS_DECLARE_PUBLIC(LineEditWidget)
-public:    
+public:
+    LineEditWidgetPrivate();
+
     Label m_label;
     std::wstring m_text;
     Vertex *m_cursorVertices;
@@ -41,6 +43,10 @@ public:
 
     Sprite *m_background;
     LineEditStyle m_style;
+
+    void init();
+    void updateText();
+    void keyPressed(const SDL_keysym& key);
 };
 }
 

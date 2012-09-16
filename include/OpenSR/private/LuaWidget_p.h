@@ -29,8 +29,13 @@ class LuaWidgetPrivate: public WidgetPrivate
 {
     RANGERS_DECLARE_PUBLIC(LuaWidget)
 public:
+    LuaWidgetPrivate();
+
     boost::shared_ptr<lua_State> m_luaState;
     LuaWidget::LuaActionListener *m_actionListener;
+
+    void initLuaState();
+    static int luaErrorHandler(lua_State* state);
 };
 }
 

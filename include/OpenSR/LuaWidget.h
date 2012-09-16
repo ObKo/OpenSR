@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2012 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ namespace Rangers
 class LuaWidgetPrivate;
 //TODO: min/max/preferred sizes.
 class RANGERS_ENGINE_API LuaWidget: public Widget
-{   
+{
     RANGERS_DECLARE_PRIVATE(LuaWidget)
 public:
     LuaWidget(const char *data, size_t size, const std::string& name, Widget *parent = 0);
@@ -52,27 +52,23 @@ public:
     virtual void mouseClick(const Vector &p);
 
     virtual void processLogic(int dt);
-    
+
     class LuaActionListener: public ActionListener
     {
     public:
-	LuaActionListener(LuaWidget *widget);
-	void actionPerformed(const Action &action);
+        LuaActionListener(LuaWidget *widget);
+        void actionPerformed(const Action &action);
 
-	LuaWidget* associatedWidget() const;
-	void setAssociatedWidget(LuaWidget *widget);
+        LuaWidget* associatedWidget() const;
+        void setAssociatedWidget(LuaWidget *widget);
 
     private:
-	LuaWidget *m_widget;
+        LuaWidget *m_widget;
     };
 
 private:
     LuaWidget(const LuaWidget& other);
     LuaWidget& operator=(const LuaWidget& other);
-
-    void initLuaState();
-    
-    static int luaErrorHandler(lua_State* state);
 };
 }
 

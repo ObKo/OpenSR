@@ -20,13 +20,16 @@
 #define RANGERS_BUTTON_P_H
 
 #include "Widget_p.h"
+#include "Styles.h"
 
 namespace Rangers
 {
 class ButtonPrivate: public WidgetPrivate
 {
     RANGERS_DECLARE_PUBLIC(Button)
-public:    
+public:
+    ButtonPrivate();
+
     ButtonStyle m_style;
     Label m_label;
     std::wstring m_text;

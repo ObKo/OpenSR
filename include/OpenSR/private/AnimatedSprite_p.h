@@ -26,13 +26,15 @@ namespace Rangers
 class AnimatedSpritePrivate: public SpritePrivate
 {
     RANGERS_DECLARE_PUBLIC(AnimatedSprite)
-public:    
+public:
+    AnimatedSpritePrivate();
+
     int m_animationTime;
     int m_currentFrame;
     int m_frameDuration;
     bool m_singleShot;
     bool m_animationStarted;
-    
+
 };
 }
 

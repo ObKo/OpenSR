@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2012 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,26 +18,28 @@
 
 #include "CheckBox.h"
 #include "Sprite.h"
-#include "Log.h"
 #include "Action.h"
 #include "ResourceManager.h"
 #include "Texture.h"
-#include "Engine.h"
 #include "NinePatch.h"
 
 #include "private/CheckBox_p.h"
 
 namespace Rangers
 {
+CheckBoxPrivate::CheckBoxPrivate()
+{
+    m_checked = false;
+    m_normal = 0;
+    m_checkedNormal = 0;
+    m_hovered = 0;
+    m_checkedHovered = 0;
+    m_sprite = 0;
+}
 
 CheckBox::CheckBox(const CheckBoxStyle& style, const std::wstring &text, Widget *parent): Widget(*(new CheckBoxPrivate()), parent)
 {
     RANGERS_D(CheckBox);
-    d->m_checked = false;
-    d->m_normal = 0;
-    d->m_checkedNormal = 0;
-    d->m_hovered = 0;
-    d->m_checkedHovered = 0;
     d->m_style = style;
     if (d->m_style.normal.type == ResourceDescriptor::NINEPATCH)
         d->m_normal = new NinePatch(boost::get<NinePatchDescriptor>(d->m_style.normal.resource), this);

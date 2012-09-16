@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2012 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,8 +18,6 @@
 
 
 #include "AnimatedSprite.h"
-#include <string>
-#include "Engine.h"
 #include "ResourceManager.h"
 #include "AnimatedTexture.h"
 
@@ -27,18 +25,20 @@
 
 namespace Rangers
 {
+AnimatedSpritePrivate::AnimatedSpritePrivate(): SpritePrivate()
+{
+    m_animationTime = 0;
+    m_currentFrame = 0;
+    m_singleShot = false;
+    m_animationStarted = false;
+    m_frameDuration = 0;
+    m_region = TextureRegion(boost::shared_ptr<AnimatedTexture>());
+}
 /*!
  * \param parent object parent
  */
 AnimatedSprite::AnimatedSprite(Object *parent): Sprite(*(new AnimatedSpritePrivate()), parent)
 {
-    RANGERS_D(AnimatedSprite);
-    d->m_animationTime = 0;
-    d->m_currentFrame = 0;
-    d->m_singleShot = false;
-    d->m_animationStarted = false;
-    d->m_frameDuration = 0;
-    d->m_region = TextureRegion(boost::shared_ptr<AnimatedTexture>());
 }
 
 /*!
@@ -48,16 +48,8 @@ AnimatedSprite::AnimatedSprite(Object *parent): Sprite(*(new AnimatedSpritePriva
 AnimatedSprite::AnimatedSprite(boost::shared_ptr<AnimatedTexture> texture, Object *parent): Sprite(*(new AnimatedSpritePrivate()), parent)
 {
     RANGERS_D(AnimatedSprite);
-    d->m_animationTime = 0;
-    d->m_currentFrame = 0;
-    d->m_singleShot = false;
     d->m_region = TextureRegion(texture);
-    if (!texture)
-    {
-        d->m_animationStarted = false;
-        d->m_frameDuration = 0;
-    }
-    else
+    if (texture)
     {
         d->m_animationStarted = true;
 //TODO: Find relations between seek/size and FPS.
@@ -72,17 +64,9 @@ AnimatedSprite::AnimatedSprite(boost::shared_ptr<AnimatedTexture> texture, Objec
 AnimatedSprite::AnimatedSprite(const std::wstring& animation, Object *parent): Sprite(*(new AnimatedSpritePrivate()), parent)
 {
     RANGERS_D(AnimatedSprite);
-    d->m_animationTime = 0;
-    d->m_currentFrame = 0;
-    d->m_singleShot = false;
     boost::shared_ptr<AnimatedTexture> animTexture = ResourceManager::instance()->loadAnimation(animation);
     d->m_region = TextureRegion(animTexture);
-    if (!animTexture)
-    {
-        d->m_animationStarted = false;
-        d->m_frameDuration = 0;
-    }
-    else
+    if (animTexture)
     {
         d->m_animationStarted = true;
 //TODO: Find relations between seek/size and FPS.
@@ -108,7 +92,7 @@ AnimatedSprite& AnimatedSprite::operator=(const Rangers::AnimatedSprite& other)
     RANGERS_D(AnimatedSprite);
     if (this == &other)
         return *this;
-    
+
     d->m_animationTime = other.d_func()->m_animationTime;
     d->m_currentFrame = other.d_func()->m_currentFrame;
     d->m_singleShot = other.d_func()->m_singleShot;
@@ -201,7 +185,7 @@ void AnimatedSprite::draw() const
     glBindBuffer(GL_ARRAY_BUFFER, d->m_buffer);
 
     glVertexPointer(2, GL_FLOAT, sizeof(Vertex), 0);
-    glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), BUFFER_OFFSET(sizeof(float) * 2));
+    glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), OPENGL_BUFFER_OFFSET(sizeof(float) * 2));
 
     glDrawArrays(GL_QUADS, 0, d->m_vertexCount);
 

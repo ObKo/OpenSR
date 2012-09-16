@@ -43,15 +43,10 @@ public:
     void reset();
 
     GAISprite& operator=(const GAISprite& other);
-    
+
 protected:
     GAISprite(GAISpritePrivate &p, Object *parent = 0);
     GAISprite(GAISpritePrivate &p, const GAISprite& other);
-
-private:
-    void drawFrame(int i);
-    void loadGIFrame5(const char *data, unsigned char *background, int startX, int startY, int finishX, int finishY);
-    void loadGAI(const char *data, int size, const GIFrame& baseFrame);
 };
 
 }

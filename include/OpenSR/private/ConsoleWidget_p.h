@@ -30,6 +30,8 @@ class ConsoleWidgetPrivate: public WidgetPrivate
 {
     RANGERS_DECLARE_PUBLIC(ConsoleWidget)
 public:
+    ConsoleWidgetPrivate();
+
     LineEditWidget m_lineEdit;
     ColorLabel m_logLabel;
     Vertex *m_borderVertices;

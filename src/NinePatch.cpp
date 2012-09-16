@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2012 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,7 +20,6 @@
 #include "Texture.h"
 #include <vector>
 #include <cfloat>
-#include "Log.h"
 #include <algorithm>
 #include <libRanger.h>
 #include "JSONHelper.h"
@@ -382,7 +381,7 @@ void NinePatch::draw() const
     glBindBuffer(GL_ARRAY_BUFFER, d->m_buffer);
 
     glVertexPointer(2, GL_FLOAT, sizeof(Vertex), 0);
-    glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), BUFFER_OFFSET(sizeof(float) * 2));
+    glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), OPENGL_BUFFER_OFFSET(sizeof(float) * 2));
 
     int vertexIndex = 0;
     std::vector<TextureRegion>::const_iterator end = d->m_descriptor.regions.end();

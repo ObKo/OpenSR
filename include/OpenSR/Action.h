@@ -21,7 +21,7 @@
 
 #include <boost/variant.hpp>
 #include "Types.h"
-#include "SDL_keysym.h"
+#include <SDL.h>
 
 namespace Rangers
 {

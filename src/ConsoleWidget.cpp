@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2012 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 */
 
 #include "ConsoleWidget.h"
+#include <SDL.h>
 #include "Engine.h"
 #include "Log.h"
 #include "Font.h"
@@ -87,6 +88,15 @@ public:
     }
 };
 
+ConsoleWidgetPrivate::ConsoleWidgetPrivate()
+{
+    m_borderVertices = 0;
+    m_borderBuffer = 0;
+    m_texture = 0;
+    m_consoleLines = 0;
+    m_historyPosition = -1;
+}
+
 ConsoleWidget::ConsoleWidget(float w, float h, Widget* parent): Widget(*(new ConsoleWidgetPrivate()), parent)
 {
     RANGERS_D(ConsoleWidget);
@@ -99,10 +109,6 @@ ConsoleWidget::ConsoleWidget(float w, float h, Widget* parent): Widget(*(new Con
     d->m_logLabel.setFixedSize(w - 8, h - editSize - 8);
     d->m_lineEdit.setPosition(4, h - editSize);
     d->m_consoleLines = (h - editSize - 8) / Engine::instance()->serviceFont()->size();
-    d->m_borderVertices = 0;
-    d->m_borderBuffer = 0;
-    d->m_texture = 0;
-    d->m_historyPosition = -1;
     d->m_lineEdit.addListener(new ConsoleLineEditListener());
     markToUpdate();
 }
@@ -112,9 +118,6 @@ ConsoleWidget::ConsoleWidget(const Rangers::ConsoleWidget& other): Widget(*(new 
     RANGERS_D(ConsoleWidget);
     d->m_lineEdit = other.d_func()->m_lineEdit;
     d->m_logLabel = other.d_func()->m_logLabel;
-    d->m_borderVertices = 0;
-    d->m_borderBuffer = 0;
-    d->m_texture = 0;
     d->m_consoleLines = other.d_func()->m_consoleLines;
 
     d->m_historyPosition = other.d_func()->m_historyPosition;
@@ -126,10 +129,6 @@ ConsoleWidget::ConsoleWidget(const Rangers::ConsoleWidget& other): Widget(*(new 
 ConsoleWidget::ConsoleWidget(Widget* parent): Widget(*(new ConsoleWidgetPrivate()), parent)
 {
     RANGERS_D(ConsoleWidget);
-    d->m_borderVertices = 0;
-    d->m_borderBuffer = 0;
-    d->m_texture = 0;
-    d->m_historyPosition = -1;
     d->m_lineEdit.addListener(new ConsoleLineEditListener());
 }
 
@@ -157,10 +156,6 @@ ConsoleWidget& ConsoleWidget::operator=(const Rangers::ConsoleWidget& other)
 ConsoleWidget::ConsoleWidget(ConsoleWidgetPrivate &p, Widget *parent): Widget(p, parent)
 {
     RANGERS_D(ConsoleWidget);
-    d->m_borderVertices = 0;
-    d->m_borderBuffer = 0;
-    d->m_texture = 0;
-    d->m_historyPosition = -1;
     d->m_lineEdit.addListener(new ConsoleLineEditListener());
 }
 
@@ -169,9 +164,6 @@ ConsoleWidget::ConsoleWidget(ConsoleWidgetPrivate &p, const ConsoleWidget& other
     RANGERS_D(ConsoleWidget);
     d->m_lineEdit = other.d_func()->m_lineEdit;
     d->m_logLabel = other.d_func()->m_logLabel;
-    d->m_borderVertices = 0;
-    d->m_borderBuffer = 0;
-    d->m_texture = 0;
     d->m_consoleLines = other.d_func()->m_consoleLines;
 
     d->m_historyPosition = other.d_func()->m_historyPosition;
@@ -195,7 +187,7 @@ void ConsoleWidget::draw() const
     glBindBuffer(GL_ARRAY_BUFFER, d->m_borderBuffer);
 
     glVertexPointer(2, GL_FLOAT, sizeof(Vertex), 0);
-    glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), BUFFER_OFFSET(sizeof(float) * 2));
+    glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), OPENGL_BUFFER_OFFSET(sizeof(float) * 2));
 
     glColor3f(0, 0, 0);
     glDrawArrays(GL_QUADS, 0, 4);
@@ -209,7 +201,6 @@ void ConsoleWidget::draw() const
     glDisableClientState(GL_ARRAY_BUFFER);
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-
 
     d->m_lineEdit.draw();
     d->m_logLabel.draw();

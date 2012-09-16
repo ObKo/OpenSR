@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2012 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,14 +18,12 @@
 
 #include "Button.h"
 #include "Sprite.h"
-#include "Log.h"
 #include "Action.h"
 #include "ResourceManager.h"
 #include "Texture.h"
 #include "NinePatch.h"
 #include "Label.h"
 #include "Font.h"
-#include "Engine.h"
 #include "Sound.h"
 #include "SoundManager.h"
 
@@ -33,29 +31,25 @@
 
 namespace Rangers
 {
+ButtonPrivate::ButtonPrivate(): WidgetPrivate()
+{
+    m_hoverSprite = 0;
+    m_autoResize = false;
+    m_pressedSprite = 0;
+    m_sprite = 0;
+    m_normalSprite = 0;
+}
 
 Button::Button(Widget *parent):
     Widget(*(new ButtonPrivate()), parent)
 {
-    RANGERS_D(Button);
-    d->m_hoverSprite = 0;
-    d->m_pressedSprite = 0;
-    d->m_sprite = 0;
-    d->m_normalSprite = 0;
-    d->m_autoResize = false;
 }
 
 Button::Button(boost::shared_ptr<Texture> texture, Widget *parent):
     Widget(*(new ButtonPrivate()), parent)
 {
     RANGERS_D(Button);
-    
-    d->m_hoverSprite = 0;
-    d->m_pressedSprite = 0;
-    d->m_sprite = 0;
-    d->m_normalSprite = 0;
-    d->m_autoResize = false;
-    
+
     if (texture)
     {
         d->m_style.normal.resource = ResourceDescriptor::Resource(TextureRegion(texture));
@@ -73,13 +67,7 @@ Button::Button(boost::shared_ptr<Texture> texture, boost::shared_ptr<Texture> ho
     Widget(*(new ButtonPrivate()), parent)
 {
     RANGERS_D(Button);
-    
-    d->m_hoverSprite = 0;
-    d->m_pressedSprite = 0;
-    d->m_sprite = 0;
-    d->m_normalSprite = 0;
-    d->m_autoResize = false;
-    
+
     if (texture)
     {
         d->m_style.normal.resource = ResourceDescriptor::Resource(TextureRegion(texture));
@@ -102,13 +90,7 @@ Button::Button(boost::shared_ptr<Texture> texture, boost::shared_ptr<Texture> ho
     Widget(*(new ButtonPrivate()), parent)
 {
     RANGERS_D(Button);
-    
-    d->m_hoverSprite = 0;
-    d->m_pressedSprite = 0;
-    d->m_sprite = 0;
-    d->m_normalSprite = 0;
-    d->m_autoResize = false;
-    
+
     if (texture)
     {
         d->m_style.normal.resource = ResourceDescriptor::Resource(TextureRegion(texture));
@@ -136,13 +118,7 @@ Button::Button(const std::wstring& texture, Widget *parent):
     Widget(*(new ButtonPrivate()), parent)
 {
     RANGERS_D(Button);
-    
-    d->m_hoverSprite = 0;
-    d->m_pressedSprite = 0;
-    d->m_sprite = 0;
-    d->m_normalSprite = 0;
-    d->m_autoResize = false;
-    
+
     boost::shared_ptr<Texture> main = ResourceManager::instance()->loadTexture(texture);
     if (main)
     {
@@ -161,13 +137,7 @@ Button::Button(const std::wstring& texture, const std::wstring& hoverTexture, Wi
     Widget(*(new ButtonPrivate()), parent)
 {
     RANGERS_D(Button);
-    
-    d->m_hoverSprite = 0;
-    d->m_pressedSprite = 0;
-    d->m_sprite = 0;
-    d->m_normalSprite = 0;
-    d->m_autoResize = false;
-    
+
     boost::shared_ptr<Texture> main = ResourceManager::instance()->loadTexture(texture);
     boost::shared_ptr<Texture> hover = ResourceManager::instance()->loadTexture(hoverTexture);
     if (main)
@@ -192,13 +162,7 @@ Button::Button(const std::wstring& texture, const std::wstring& hoverTexture, co
     Widget(*(new ButtonPrivate()), parent)
 {
     RANGERS_D(Button);
-    
-    d->m_hoverSprite = 0;
-    d->m_pressedSprite = 0;
-    d->m_sprite = 0;
-    d->m_normalSprite = 0;
-    d->m_autoResize = false;
-    
+
     boost::shared_ptr<Texture> main = ResourceManager::instance()->loadTexture(texture);
     boost::shared_ptr<Texture> hover = ResourceManager::instance()->loadTexture(hoverTexture);
     boost::shared_ptr<Texture> pressed = ResourceManager::instance()->loadTexture(pressTexture);
@@ -229,13 +193,7 @@ Button::Button(const ButtonStyle& style, Widget* parent):
     Widget(*(new ButtonPrivate()), parent)
 {
     RANGERS_D(Button);
-    
-    d->m_hoverSprite = 0;
-    d->m_pressedSprite = 0;
-    d->m_sprite = 0;
-    d->m_normalSprite = 0;
-    d->m_autoResize = false;
-    
+
     init();
     if (d->m_sprite)
     {
@@ -247,12 +205,6 @@ Button::Button(const ButtonStyle& style, Widget* parent):
 
 Button::Button(ButtonPrivate &p, Widget *parent): Widget(p, parent)
 {
-    RANGERS_D(Button);
-    d->m_hoverSprite = 0;
-    d->m_pressedSprite = 0;
-    d->m_sprite = 0;
-    d->m_normalSprite = 0;
-    d->m_autoResize = false;
 }
 
 Button::Button(ButtonPrivate &p, const Button& other): Widget(p, other)

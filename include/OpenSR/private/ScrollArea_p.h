@@ -29,6 +29,8 @@ class ScrollAreaPrivate: public WidgetPrivate
 {
     RANGERS_DECLARE_PUBLIC(ScrollArea)
 public:
+    ScrollAreaPrivate();
+
     Button m_top, m_bottom, m_left, m_right;
     Button m_vScroll, m_hScroll;
     float m_vSize, m_vPosition;
@@ -36,6 +38,7 @@ public:
     WidgetNode *m_node;
     float m_scrollStart;
     enum {NONE, VERTICAL, HORIZONTAL} m_scrollDrag;
+    void updateScrollPosition();
 };
 }
 

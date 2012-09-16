@@ -26,12 +26,13 @@ namespace Rangers
 class LabelPrivate: public SpritePrivate
 {
     RANGERS_DECLARE_PUBLIC(Label)
-public:    
+public:
+    LabelPrivate();
+
     boost::shared_ptr<Font> m_font;
     std::wstring m_text;
     bool m_wordWrap;
     bool m_fixedSize;
-    
 };
 }
 

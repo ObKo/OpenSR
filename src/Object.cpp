@@ -32,16 +32,20 @@ ObjectPrivate::~ObjectPrivate()
 {
 }
 
+ObjectPrivate::ObjectPrivate()
+{
+    m_rotation = 0;
+    m_color = 0xffffffff;
+    m_needUpdate = false;
+    m_parent = 0;
+    m_position.x = 0.0f;
+    m_position.y = 0.0f;
+    m_layer = 0;
+}
+
 Object::Object(Object *parent): m_d(new ObjectPrivate())
 {
     RANGERS_D(Object);
-    d->m_rotation = 0;
-    d->m_color = 0xffffffff;
-    d->m_needUpdate = false;
-    d->m_parent = parent;
-    d->m_position.x = 0;
-    d->m_position.y = 0;
-    d->m_layer = 0;
 
     if (parent)
         parent->addChild(this);
@@ -54,8 +58,6 @@ Object::Object(const Vector& pos, float rot, int layer, Object *parent): m_d(new
     d->m_layer = layer;
     d->m_position = pos;
     d->m_rotation = rot;
-    d->m_color = 0xffffffff;
-    d->m_needUpdate = false;
 
     if (parent)
         parent->addChild(this);
@@ -68,7 +70,7 @@ Object::Object(const Rangers::Object& other): m_d(new ObjectPrivate())
     for (std::list<Object*>::iterator i = d->m_children.begin(); i != d->m_children.end(); i++)
         if ((*i)->parent() == this)
             (*i)->setParent(0);
-	
+
     d->m_children = other.m_d->m_children;
     for (std::list<Object*>::iterator i = d->m_children.begin(); i != d->m_children.end(); i++)
         (*i)->setParent(this);
@@ -96,7 +98,7 @@ Object::Object(ObjectPrivate &p, const Object& other): m_d(&p)
     for (std::list<Object*>::iterator i = d->m_children.begin(); i != d->m_children.end(); i++)
         if ((*i)->parent() == this)
             (*i)->setParent(0);
-	
+
     d->m_children = other.m_d->m_children;
     for (std::list<Object*>::iterator i = d->m_children.begin(); i != d->m_children.end(); i++)
         (*i)->setParent(this);
@@ -121,13 +123,6 @@ Object::Object(ObjectPrivate &p, const Object& other): m_d(&p)
 Object::Object(ObjectPrivate &dd, Object* parent): m_d(&dd)
 {
     RANGERS_D(Object);
-    d->m_rotation = 0;
-    d->m_color = 0xffffffff;
-    d->m_needUpdate = false;
-    d->m_parent = parent;
-    d->m_position.x = 0;
-    d->m_position.y = 0;
-    d->m_layer = 0;
 
     if (parent)
         parent->addChild(this);
@@ -409,7 +404,7 @@ float Object::rotation() const
 }
 
 int Object::layer() const
-{    
+{
     RANGERS_D(const Object);
     return d->m_layer;
 }

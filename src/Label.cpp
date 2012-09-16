@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2012 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,9 +17,7 @@
 */
 
 #include "Label.h"
-#include <string>
 #include "Engine.h"
-#include "Object.h"
 #include "Font.h"
 #include "Texture.h"
 
@@ -27,15 +25,16 @@
 
 namespace Rangers
 {
+LabelPrivate::LabelPrivate(): SpritePrivate()
+{
+    m_font = boost::shared_ptr<Font>();
+    m_wordWrap = false;
+    m_fixedSize = false;
+    m_scaling = TEXTURE_NO;
+}
+
 Label::Label(Object *parent): Sprite(*(new LabelPrivate()), parent)
 {
-    RANGERS_D(Label);
-    d->m_vertexCount = 0;
-    d->m_font = boost::shared_ptr<Font>();
-    d->m_vertices = 0;
-    d->m_wordWrap = false;
-    d->m_fixedSize = false;
-    d->m_scaling = TEXTURE_NO;
 }
 
 Label::Label(const std::string& text, Object *parent, boost::shared_ptr<Font> font, SpriteXOrigin xpos, SpriteYOrigin ypos): Sprite(*(new LabelPrivate()), parent)
@@ -49,9 +48,6 @@ Label::Label(const std::string& text, Object *parent, boost::shared_ptr<Font> fo
     d->m_xOrigin = xpos;
     d->m_yOrigin = ypos;
     setText(text);
-    d->m_wordWrap = false;
-    d->m_fixedSize = false;
-    d->m_scaling = TEXTURE_NO;
 }
 
 Label::Label(const std::wstring& text, Object *parent, boost::shared_ptr<Font> font, SpriteXOrigin xpos, SpriteYOrigin ypos): Sprite(*(new LabelPrivate()), parent)
@@ -65,9 +61,6 @@ Label::Label(const std::wstring& text, Object *parent, boost::shared_ptr<Font> f
     d->m_xOrigin = xpos;
     d->m_yOrigin = ypos;
     setText(text);
-    d->m_wordWrap = false;
-    d->m_fixedSize = false;
-    d->m_scaling = TEXTURE_NO;
 }
 
 Label::Label(const Rangers::Label& other): Sprite(*(new LabelPrivate()), other)
@@ -95,15 +88,8 @@ Label& Label::operator=(const Rangers::Label& other)
 }
 
 
-Label::Label(LabelPrivate &p, Object *parent): Sprite(p, parent) 
+Label::Label(LabelPrivate &p, Object *parent): Sprite(p, parent)
 {
-    RANGERS_D(Label);
-    d->m_vertexCount = 0;
-    d->m_font = boost::shared_ptr<Font>();
-    d->m_vertices = 0;
-    d->m_wordWrap = false;
-    d->m_fixedSize = false;
-    d->m_scaling = TEXTURE_NO;
 }
 
 Label::Label(LabelPrivate &p, const Label& other): Sprite(p, other)

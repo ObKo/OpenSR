@@ -19,7 +19,6 @@
 #ifndef RANGERS_SPRITE_P_H
 #define RANGERS_SPRITE_P_H
 
-#include "Sprite.h"
 #include "Object_p.h"
 
 namespace Rangers
@@ -27,7 +26,9 @@ namespace Rangers
 class SpritePrivate: public ObjectPrivate
 {
     RANGERS_DECLARE_PUBLIC(Sprite)
-public:    
+public:
+    SpritePrivate();
+
     Vertex *m_vertices;
     int m_vertexCount;
 

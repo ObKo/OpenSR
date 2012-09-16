@@ -28,6 +28,7 @@
 #include <luabind/adopt_policy.hpp>
 #include <luabind/operator.hpp>
 #include <libintl.h>
+#include <SDL.h>
 
 #include "GAISprite.h"
 #include "Engine.h"

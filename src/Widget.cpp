@@ -17,8 +17,7 @@
 */
 
 #include "Widget.h"
-#include <iostream>
-#include "Log.h"
+#include <SDL.h>
 #include "Action.h"
 #include "ActionListener.h"
 
@@ -26,16 +25,19 @@
 
 namespace Rangers
 {
+WidgetPrivate::WidgetPrivate(): ObjectPrivate()
+{
+    m_currentChild = 0;
+    m_width = 0;
+    m_height = 0;
+    m_leftMouseButtonPressed = false;
+    m_focused = false;
+}
+
 Widget::Widget(Widget *parent): Object(*(new WidgetPrivate()), parent)
 {
     RANGERS_D(Widget);
-    
-    d->m_currentChild = 0;
-    d->m_width = 0;
-    d->m_height = 0;
-    d->m_leftMouseButtonPressed = false;
-    d->m_focused = false;
-    
+
     if (parent)
         parent->addWidget(this);
 }
@@ -43,13 +45,10 @@ Widget::Widget(Widget *parent): Object(*(new WidgetPrivate()), parent)
 Widget::Widget(float w, float h, Widget *parent): Object(*(new WidgetPrivate()), parent)
 {
     RANGERS_D(Widget);
-    
-    d->m_currentChild = 0;
+
     d->m_width = w;
     d->m_height = h;
-    d->m_leftMouseButtonPressed = false;
-    d->m_focused = false;
-    
+
     if (parent)
         parent->addWidget(this);
 }
@@ -57,7 +56,7 @@ Widget::Widget(float w, float h, Widget *parent): Object(*(new WidgetPrivate()),
 Widget::Widget(const Rangers::Widget& other): Object(*(new WidgetPrivate()), other)
 {
     RANGERS_D(Widget);
-   
+
     d->m_childWidgets = other.d_func()->m_childWidgets;
     d->m_currentChild = other.d_func()->m_currentChild;
     d->m_leftMouseButtonPressed = other.d_func()->m_leftMouseButtonPressed;
@@ -75,7 +74,7 @@ Widget::Widget(const Rangers::Widget& other): Object(*(new WidgetPrivate()), oth
 Widget::Widget(WidgetPrivate &p, const Widget& other): Object(p, other)
 {
     RANGERS_D(Widget);
-   
+
     d->m_childWidgets = other.d_func()->m_childWidgets;
     d->m_currentChild = other.d_func()->m_currentChild;
     d->m_leftMouseButtonPressed = other.d_func()->m_leftMouseButtonPressed;
@@ -93,13 +92,7 @@ Widget::Widget(WidgetPrivate &p, const Widget& other): Object(p, other)
 Widget::Widget(WidgetPrivate &p, Widget *parent): Object(p, parent)
 {
     RANGERS_D(Widget);
-    
-    d->m_currentChild = 0;
-    d->m_width = 0;
-    d->m_height = 0;
-    d->m_leftMouseButtonPressed = false;
-    d->m_focused = false;
-    
+
     if (parent)
         parent->addWidget(this);
 }
@@ -309,7 +302,7 @@ Widget& Widget::operator=(const Rangers::Widget& other)
 {
     if (this == &other)
         return *this;
-    
+
     RANGERS_D(Widget);
 
     Object::operator=(other);

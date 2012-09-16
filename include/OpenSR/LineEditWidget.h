@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2012 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 
 #include "Widget.h"
 
+struct SDL_keysym;
 namespace Rangers
 {
 class Sprite;
@@ -57,13 +58,9 @@ public:
 protected:
     LineEditWidget(LineEditWidgetPrivate &p, Widget *parent = 0);
     LineEditWidget(LineEditWidgetPrivate &p, const LineEditWidget& other);
-    
+
 private:
     class LineEditWidgetListener;
-    
-    void init();
-    void updateText();
-    void keyPressed(const SDL_keysym& key);
 };
 }
 

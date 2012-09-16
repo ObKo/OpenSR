@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2012 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 */
 
 #include "LineEditWidget.h"
+#include <SDL.h>
 #include "Engine.h"
 #include "Font.h"
 #include "ActionListener.h"
@@ -24,7 +25,6 @@
 #include <boost/variant/get.hpp>
 #include "ResourceManager.h"
 #include "NinePatch.h"
-#include "Log.h"
 
 #include "private/LineEditWidget_p.h"
 
@@ -38,10 +38,21 @@ public:
         if (LineEditWidget *w = dynamic_cast<LineEditWidget *>(action.source()))
         {
             if (action.type() == Action::KEY_PRESSED)
-                w->keyPressed(boost::get<SDL_keysym>(action.argument()));
+                w->d_func()->keyPressed(boost::get<SDL_keysym>(action.argument()));
         }
     }
 };
+
+LineEditWidgetPrivate::LineEditWidgetPrivate()
+{
+    m_background = 0;
+    m_cursorVertices = 0;
+    m_cursorBuffer = 0;
+    m_position = 0;
+    m_cursorVisible = false;
+    m_cursorTime = 0;
+    m_stringOffset = 0;
+}
 
 void LineEditWidget::draw() const
 {
@@ -79,46 +90,28 @@ LineEditWidget::LineEditWidget(float w, float h, boost::shared_ptr< Font > font,
     Widget(*(new LineEditWidgetPrivate()), parent)
 {
     RANGERS_D(LineEditWidget);
-    d->m_background = 0;
     if (!font)
         font = Engine::instance()->coreFont();
     d->m_label = Label(L"", this, font, POSITION_X_LEFT, POSITION_Y_TOP);
     d->m_height = h > font->size() + 4 ? h : font->size() + 4;
     d->m_width = w;
     d->m_style.color = 0xffffffff;
-    init();
+    d->init();
 }
 
 LineEditWidget::LineEditWidget(Widget* parent): Widget(*(new LineEditWidgetPrivate()), parent)
 {
-    RANGERS_D(LineEditWidget);
-    d->m_background = 0;
-    d->m_cursorVertices = 0;
-    d->m_cursorBuffer = 0;
-    d->m_position = 0;
-    d->m_cursorVisible = false;
-    d->m_cursorTime = 0;
-    d->m_stringOffset = 0;
 }
 
 LineEditWidget::LineEditWidget(const LineEditStyle& style, Widget* parent): Widget(*(new LineEditWidgetPrivate()), parent)
 {
     RANGERS_D(LineEditWidget);
-    d->m_background = 0;
     d->m_style = style;
-    init();
+    d->init();
 }
 
 LineEditWidget::LineEditWidget(LineEditWidgetPrivate &p, Widget *parent): Widget(p, parent)
 {
-    RANGERS_D(LineEditWidget);
-    d->m_background = 0;
-    d->m_cursorVertices = 0;
-    d->m_cursorBuffer = 0;
-    d->m_position = 0;
-    d->m_cursorVisible = false;
-    d->m_cursorTime = 0;
-    d->m_stringOffset = 0;
 }
 
 LineEditWidget::LineEditWidget(LineEditWidgetPrivate &p, const LineEditWidget& other):  Widget(p, other)
@@ -127,75 +120,75 @@ LineEditWidget::LineEditWidget(LineEditWidgetPrivate &p, const LineEditWidget& o
     d->m_style = other.d_func()->m_style;
     d->m_label = other.d_func()->m_label;
     d->m_text = other.d_func()->m_text;
-    init();
+    d->init();
 }
 
-void LineEditWidget::init()
+void LineEditWidgetPrivate::init()
 {
-    RANGERS_D(LineEditWidget);
-    if (d->m_style.background.type == ResourceDescriptor::NINEPATCH)
+    RANGERS_Q(LineEditWidget);
+    if (m_style.background.type == ResourceDescriptor::NINEPATCH)
     {
-        d->m_background = new NinePatch(boost::get<NinePatchDescriptor>(d->m_style.background.resource), this);
+        m_background = new NinePatch(boost::get<NinePatchDescriptor>(m_style.background.resource), q);
     }
-    else if (d->m_style.background.type == ResourceDescriptor::SPRITE)
+    else if (m_style.background.type == ResourceDescriptor::SPRITE)
     {
-        d->m_background = new Sprite(boost::get<TextureRegion>(d->m_style.background.resource), this);
+        m_background = new Sprite(boost::get<TextureRegion>(m_style.background.resource), q);
     }
-    if ((d->m_style.font.path != L"") && (d->m_style.font.size > 0))
+    if ((m_style.font.path != L"") && (m_style.font.size > 0))
     {
-        d->m_label = Label(d->m_text, this, ResourceManager::instance()->loadFont(d->m_style.font.path, d->m_style.font.size));
-        d->m_label.setColor(((d->m_style.color >> 24) & 0xff) / 255.0f, ((d->m_style.color >> 16) & 0xff) / 255.0f, ((d->m_style.color >> 8) & 0xff) / 255.0f, ((d->m_style.color) & 0xff) / 255.0f);
+        m_label = Label(m_text, q, ResourceManager::instance()->loadFont(m_style.font.path, m_style.font.size));
+        m_label.setColor(((m_style.color >> 24) & 0xff) / 255.0f, ((m_style.color >> 16) & 0xff) / 255.0f, ((m_style.color >> 8) & 0xff) / 255.0f, ((m_style.color) & 0xff) / 255.0f);
     }
-    if (d->m_style.contentRect.valid() && d->m_label.font() && d->m_background)
+    if (m_style.contentRect.valid() && m_label.font() && m_background)
     {
-        d->m_height = std::max(d->m_background->normalHeight() - d->m_style.contentRect.height + d->m_label.font()->size(), d->m_background->normalHeight());
-        d->m_width = std::max(d->m_background->normalWidth(), d->m_style.contentRect.width);
+        m_height = std::max(m_background->normalHeight() - m_style.contentRect.height + m_label.font()->size(), m_background->normalHeight());
+        m_width = std::max(m_background->normalWidth(), m_style.contentRect.width);
     }
-    else if (d->m_label.font() && d->m_background)
+    else if (m_label.font() && m_background)
     {
-        d->m_height = std::max(d->m_background->normalHeight(), (float)d->m_label.font()->size());
-        d->m_width = d->m_background->normalWidth();
+        m_height = std::max(m_background->normalHeight(), (float)m_label.font()->size());
+        m_width = m_background->normalWidth();
     }
-    else if (d->m_style.contentRect.valid() && d->m_label.font())
+    else if (m_style.contentRect.valid() && m_label.font())
     {
-        d->m_height = std::max(d->m_style.contentRect.height, (float)d->m_label.font()->size());
-        d->m_width = d->m_style.contentRect.width;
+        m_height = std::max(m_style.contentRect.height, (float)m_label.font()->size());
+        m_width = m_style.contentRect.width;
     }
-    d->m_label.setOrigin(POSITION_X_LEFT, POSITION_Y_TOP);
-    addListener(new LineEditWidgetListener());
-    d->m_position = 0;
-    d->m_cursorTime = 0;
-    d->m_cursorVisible = false;
-    d->m_cursorBuffer = 0;
-    d->m_cursorVertices = 0;
-    d->m_stringOffset = 0;
-    markToUpdate();
+    m_label.setOrigin(POSITION_X_LEFT, POSITION_Y_TOP);
+    q->addListener(new LineEditWidget::LineEditWidgetListener());
+    m_position = 0;
+    m_cursorTime = 0;
+    m_cursorVisible = false;
+    m_cursorBuffer = 0;
+    m_cursorVertices = 0;
+    m_stringOffset = 0;
+    q->markToUpdate();
 }
 
-void LineEditWidget::updateText()
+void LineEditWidgetPrivate::updateText()
 {
-    RANGERS_D(LineEditWidget);
-    if (!d->m_label.font())
+    RANGERS_Q(LineEditWidget);
+    if (!m_label.font())
         return;
-    lock();
+    q->lock();
     int maxChars;
-    if (d->m_position <= d->m_stringOffset)
+    if (m_position <= m_stringOffset)
     {
-        d->m_stringOffset = d->m_position > 0 ? d->m_position - 1 : 0;
+        m_stringOffset = m_position > 0 ? m_position - 1 : 0;
     }
     else
     {
-        std::wstring::iterator start = d->m_text.begin() + d->m_stringOffset;
-        std::wstring::iterator end = d->m_text.begin() + d->m_position;
-        while ((maxChars = d->m_label.font()->maxChars(start, end, d->m_width)) < end - start)
+        std::wstring::iterator start = m_text.begin() + m_stringOffset;
+        std::wstring::iterator end = m_text.begin() + m_position;
+        while ((maxChars = m_label.font()->maxChars(start, end, m_width)) < end - start)
         {
-            d->m_stringOffset = (end - maxChars) - d->m_text.begin() - 1;
-            start = d->m_text.begin() + d->m_stringOffset;
+            m_stringOffset = (end - maxChars) - m_text.begin() - 1;
+            start = m_text.begin() + m_stringOffset;
         }
     }
-    maxChars = d->m_label.font()->maxChars(d->m_text.begin() + d->m_stringOffset, d->m_text.end(), d->m_width);
-    d->m_label.setText(d->m_text.substr(d->m_stringOffset, maxChars));
-    unlock();
+    maxChars = m_label.font()->maxChars(m_text.begin() + m_stringOffset, m_text.end(), m_width);
+    m_label.setText(m_text.substr(m_stringOffset, maxChars));
+    q->unlock();
 }
 
 LineEditWidget::LineEditWidget(const Rangers::LineEditWidget& other): Widget(*(new LineEditWidgetPrivate()), other)
@@ -204,7 +197,7 @@ LineEditWidget::LineEditWidget(const Rangers::LineEditWidget& other): Widget(*(n
     d->m_style = other.d_func()->m_style;
     d->m_label = other.d_func()->m_label;
     d->m_text = other.d_func()->m_text;
-    init();
+    d->init();
 }
 
 LineEditWidget::~LineEditWidget()
@@ -223,7 +216,7 @@ LineEditWidget& LineEditWidget::operator=(const Rangers::LineEditWidget& other)
     d->m_style = other.d_func()->m_style;
     d->m_label = other.d_func()->m_label;
     d->m_text = other.d_func()->m_text;
-    init();
+    d->init();
 
     Widget::operator=(other);
     return *this;
@@ -241,7 +234,7 @@ void LineEditWidget::mouseClick(const Vector& p)
 void LineEditWidget::processMain()
 {
     RANGERS_D(LineEditWidget);
-    
+
     if (d->m_label.needUpdate())
         d->m_label.processMain();
 
@@ -302,46 +295,48 @@ void LineEditWidget::processLogic(int dt)
 }
 
 
-void LineEditWidget::keyPressed(const SDL_keysym& key)
+void LineEditWidgetPrivate::keyPressed(const SDL_keysym& key)
 {
-    lock();
-    RANGERS_D(LineEditWidget);
+    RANGERS_Q(LineEditWidget);
+    q->lock();
 
     if (key.sym == SDLK_RETURN);
     else if (key.sym == SDLK_LEFT)
-        d->m_position--;
+        m_position--;
     else if (key.sym == SDLK_RIGHT)
-        d->m_position++;
+        m_position++;
     else if (key.sym == SDLK_ESCAPE)
-        d->m_text.clear();
+        m_text.clear();
     else if (key.sym == SDLK_BACKSPACE)
     {
-        if (d->m_text.size())
-            if (d->m_position > 0)
-                d->m_text.erase(d->m_position - 1, 1);
-        d->m_position--;
+        if (m_text.size())
+            if (m_position > 0)
+                m_text.erase(m_position - 1, 1);
+        m_position--;
     }
     else if (key.sym == SDLK_DELETE)
     {
-        if (d->m_text.size())
-            if (d->m_position < d->m_text.length())
-                d->m_text.erase(d->m_position, 1);
+        if (m_text.size())
+            if (m_position < m_text.length())
+                m_text.erase(m_position, 1);
     }
     else if (key.unicode && !(key.mod & (KMOD_ALT | KMOD_META | KMOD_CTRL)))
     {
         if (key.unicode == '\t')
-            d->m_text.insert(d->m_position, 1, ' ');
+            m_text.insert(m_position, 1, ' ');
         else
-            d->m_text.insert(d->m_position, 1, key.unicode);
-        d->m_position++;
+            m_text.insert(m_position, 1, key.unicode);
+        m_position++;
     }
-    if (d->m_position < 0) d->m_position = 0;
-    if (d->m_position > d->m_text.length()) d->m_position = d->m_text.length();
+    if (m_position < 0)
+        m_position = 0;
+    if (m_position > m_text.length())
+        m_position = m_text.length();
     //m_label.setText(m_text);
     updateText();
-    markToUpdate();
+    q->markToUpdate();
 
-    unlock();
+    q->unlock();
 }
 
 void LineEditWidget::setText(const std::wstring& s)
@@ -351,7 +346,7 @@ void LineEditWidget::setText(const std::wstring& s)
     d->m_text = s;
     d->m_position = 0;
     d->m_stringOffset = 0;
-    updateText();
+    d->updateText();
     markToUpdate();
     unlock();
 }

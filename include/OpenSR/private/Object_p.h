@@ -31,8 +31,9 @@ class ObjectPrivate
 {
     RANGERS_DECLARE_PUBLIC(Object)
 public:
+    ObjectPrivate();
     virtual ~ObjectPrivate();
-       
+
     int m_layer;
     mutable boost::recursive_mutex m_mutex;
     int m_color;
@@ -41,7 +42,7 @@ public:
     std::list<Object*> m_children;
     Vector m_position;
     float m_rotation;
-    
+
     Object *m_q;
 };
 }

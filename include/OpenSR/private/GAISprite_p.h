@@ -31,6 +31,8 @@ class GAISpritePrivate: public AnimatedSpritePrivate
 {
     RANGERS_DECLARE_PUBLIC(GAISprite)
 public:
+    GAISpritePrivate();
+
     std::vector< boost::shared_array<char> > m_gaiFrames;
     bool m_needNextFrame;
     GAIHeader m_gaiHeader;
@@ -39,6 +41,10 @@ public:
     int m_baseFrameWidth;
     int m_baseFrameHeight;
     boost::shared_array<unsigned char> m_baseFrame;
+
+    void drawFrame(int i);
+    void loadGIFrame5(const char *data, unsigned char *background, int startX, int startY, int finishX, int finishY);
+    void loadGAI(const char *data, int size, const GIFrame& baseFrame);
 };
 }
 

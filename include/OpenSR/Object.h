@@ -21,8 +21,6 @@
 
 #include "global.h"
 #include "Types.h"
-#include <boost/thread/recursive_mutex.hpp>
-#include <list>
 
 namespace Rangers
 {
@@ -81,9 +79,9 @@ public:
 protected:
     Object(ObjectPrivate &p, Object *parent = 0);
     Object(ObjectPrivate &p, const Object& other);
-    
+
     ObjectPrivate *m_d;
-    
+
     bool prepareDraw() const;
     void endDraw() const;
     void lock() const;

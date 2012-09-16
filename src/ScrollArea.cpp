@@ -25,12 +25,21 @@
 
 namespace Rangers
 {
+ScrollAreaPrivate::ScrollAreaPrivate()
+{
+    m_node = 0;
+    m_scrollDrag = ScrollAreaPrivate::NONE;
+    m_vPosition = 0.0f;
+    m_hPosition = 0.0f;
+    m_hSize = 0.0f;
+    m_vSize = 0.0f;
+}
+
 ScrollArea::ScrollArea(const ScrollBarStyle& style, WidgetNode *node, Widget *parent):
     Widget(*(new ScrollAreaPrivate()), parent)
 {
     RANGERS_D(ScrollArea);
-    
-    d->m_node = 0;
+
     d->m_scrollDrag = ScrollAreaPrivate::NONE;
     d->m_top = Button(style.upButton, this);
     d->m_top.addListener(this);
@@ -48,45 +57,25 @@ ScrollArea::ScrollArea(const ScrollBarStyle& style, WidgetNode *node, Widget *pa
     d->m_hScroll = Button(style.scroll, this);
     d->m_hScroll.setRotation(90);
 
-    d->m_vPosition = 0.0f;
-    d->m_hPosition = 0.0f;
-    d->m_hSize = 0.0f;
-    d->m_vSize = 0.0f;
     setNode(node);
 }
 
 ScrollArea::ScrollArea(Widget *parent):
     Widget(*(new ScrollAreaPrivate()), parent)
 {
-    RANGERS_D(ScrollArea);
-    
-    d->m_node = 0;
-    d->m_scrollDrag = ScrollAreaPrivate::NONE;
-    d->m_vPosition = 0.0f;
-    d->m_hPosition = 0.0f;
-    d->m_hSize = 0.0f;
-    d->m_vSize = 0.0f;
 }
 
 ScrollArea::ScrollArea(ScrollAreaPrivate &p, Widget *parent):
     Widget(p, parent)
 {
-    RANGERS_D(ScrollArea);
-    
-    d->m_node = 0;
-    d->m_scrollDrag = ScrollAreaPrivate::NONE;
-    d->m_vPosition = 0.0f;
-    d->m_hPosition = 0.0f;
-    d->m_hSize = 0.0f;
-    d->m_vSize = 0.0f;
 }
 
 void ScrollArea::draw() const
 {
     RANGERS_D(const ScrollArea);
-    if(!prepareDraw())
+    if (!prepareDraw())
         return;
-    
+
     Rect screenRect = mapToScreen(Rect(0, 0, d->m_width, d->m_height));
     glEnable(GL_SCISSOR_TEST);
     if (d->m_hSize > 1.0f)
@@ -271,7 +260,7 @@ void ScrollArea::mouseMove(const Vector &p)
             scrollSize = (d->m_height - d->m_bottom.height() - d->m_top.height()) / (d->m_vSize);
         }
         d->m_vPosition -= dy / scrollSize;
-        updateScrollPosition();
+        d->updateScrollPosition();
         d->m_scrollStart = p.y;
     }
     else if (d->m_scrollDrag == ScrollAreaPrivate::HORIZONTAL)
@@ -287,7 +276,7 @@ void ScrollArea::mouseMove(const Vector &p)
             scrollSize = (d->m_width - d->m_right.height() - d->m_left.height()) / (d->m_hSize);
         }
         d->m_hPosition -= dx / scrollSize;
-        updateScrollPosition();
+        d->updateScrollPosition();
         d->m_scrollStart = p.x;
     }
     unlock();
@@ -322,7 +311,7 @@ void ScrollArea::mouseDown(uint8_t key, const Vector &p)
         if (d->m_vSize > 1.0f)
         {
             d->m_vPosition += 0.1f;
-            updateScrollPosition();
+            d->updateScrollPosition();
         }
     }
     else if (key == SDL_BUTTON_WHEELDOWN)
@@ -330,7 +319,7 @@ void ScrollArea::mouseDown(uint8_t key, const Vector &p)
         if (d->m_vSize > 1.0f)
         {
             d->m_vPosition -= 0.1f;
-            updateScrollPosition();
+            d->updateScrollPosition();
         }
     }
     else if (d->m_leftMouseButtonPressed)
@@ -387,49 +376,49 @@ void ScrollArea::mouseUp(uint8_t key, const Vector &p)
     unlock();
 }
 
-void ScrollArea::updateScrollPosition()
+void ScrollAreaPrivate::updateScrollPosition()
 {
-    lock();
-    RANGERS_D(ScrollArea);
-    if (d->m_vPosition >= 0.0f)
-        d->m_vPosition = 0.0f;
-    if (d->m_vPosition < - d->m_vSize + 1.0f)
-        d->m_vPosition = - d->m_vSize + 1.0f;
-    if (d->m_hPosition < - d->m_hSize + 1.0f)
-        d->m_hPosition = - d->m_hSize + 1.0f;
-    if (d->m_hPosition >= 0.0f)
-        d->m_hPosition = 0.0f;
+    RANGERS_Q(ScrollArea);
+    q->lock();
+    if (m_vPosition >= 0.0f)
+        m_vPosition = 0.0f;
+    if (m_vPosition < - m_vSize + 1.0f)
+        m_vPosition = - m_vSize + 1.0f;
+    if (m_hPosition < - m_hSize + 1.0f)
+        m_hPosition = - m_hSize + 1.0f;
+    if (m_hPosition >= 0.0f)
+        m_hPosition = 0.0f;
 
-    if (d->m_hSize > 1.0f)
+    if (m_hSize > 1.0f)
     {
         float scrollSize;
-        if (d->m_vSize > 1.0f)
+        if (m_vSize > 1.0f)
         {
-            scrollSize = (d->m_width - d->m_bottom.width() - d->m_right.height() - d->m_left.height()) / (d->m_hSize);
+            scrollSize = (m_width - m_bottom.width() - m_right.height() - m_left.height()) / (m_hSize);
         }
         else
         {
-            scrollSize = (d->m_width - d->m_right.height() - d->m_left.height()) / (d->m_hSize);
+            scrollSize = (m_width - m_right.height() - m_left.height()) / (m_hSize);
         }
-        d->m_hScroll.setPosition((int)(-d->m_hPosition * scrollSize + d->m_left.height()), d->m_height);
+        m_hScroll.setPosition((int)(- m_hPosition * scrollSize + m_left.height()), m_height);
 
     }
-    if (d->m_vSize > 1.0f)
+    if (m_vSize > 1.0f)
     {
         float scrollSize;
-        if (d->m_hSize > 1.0f)
+        if (m_hSize > 1.0f)
         {
-            scrollSize = (d->m_height - d->m_right.width() - d->m_bottom.height() - d->m_top.height()) / (d->m_vSize);
+            scrollSize = (m_height - m_right.width() - m_bottom.height() - m_top.height()) / (m_vSize);
         }
         else
         {
-            scrollSize = (d->m_height - d->m_bottom.height() - d->m_top.height()) / (d->m_vSize);
+            scrollSize = (m_height - m_bottom.height() - m_top.height()) / (m_vSize);
         }
-        d->m_vScroll.setPosition(d->m_width - d->m_top.width(), (int)(-d->m_vPosition * scrollSize + d->m_top.height()));
+        m_vScroll.setPosition(m_width - m_top.width(), (int)(- m_vPosition * scrollSize + m_top.height()));
     }
 
-    d->m_node->setPosition((int)(d->m_hPosition * d->m_width), (int)(d->m_vPosition * d->m_height));
-    unlock();
+    m_node->setPosition((int)(m_hPosition * m_width), (int)(m_vPosition * m_height));
+    q->unlock();
 }
 
 void ScrollArea::actionPerformed(const Action& action)
@@ -451,7 +440,7 @@ void ScrollArea::actionPerformed(const Action& action)
     else if (action.source() == &d->m_bottom)
         d->m_vPosition -= 0.1f;
 
-    updateScrollPosition();
+    d->updateScrollPosition();
     unlock();
 }
 }

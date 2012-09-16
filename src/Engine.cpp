@@ -18,6 +18,7 @@
 
 #include "Engine.h"
 
+#include "config.h"
 #include <cstdlib>
 #include <stdexcept>
 #include <SDL.h>
@@ -28,7 +29,6 @@
 #include <boost/property_tree/ptree.hpp>
 #include <ft2build.h>
 #include FT_FREETYPE_H
-#include <stdio.h>
 #include <cstdio>
 #include <libRanger.h>
 #include <libintl.h>
@@ -81,12 +81,12 @@ Engine::EnginePrivate::~EnginePrivate()
 Engine::Engine(int argc, char **argv): m_d(new EnginePrivate())
 {
     RANGERS_D(Engine);
-    
+
     d->m_argc = argc;
     d->m_argv = argv;
     d->m_focusedWidget = 0;
     d->m_luaConsoleState = 0;
-    
+
     if (engineInstance)
     {
         delete engineInstance;

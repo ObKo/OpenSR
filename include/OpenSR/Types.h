@@ -21,24 +21,8 @@
 
 #include "config.h"
 
-#define GL_GLEXT_PROTOTYPES
-#include <SDL.h>
-#ifdef _WIN32
-#include <windows.h>
-#include <GL/glew.h>
-#include <GL/gl.h>
-#elif __APPLE__
-#include <OpenGL/gl.h>
-#include <OpenGL/glext.h>
-#else
-#include <GL/gl.h>
-#include <GL/glext.h>
-#endif
-
 #include <boost/shared_ptr.hpp>
 #include <vector>
-
-#define BUFFER_OFFSET(i) ((char*)0 + (i))
 
 namespace Rangers
 {

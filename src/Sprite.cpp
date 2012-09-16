@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2012 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,32 +17,32 @@
 */
 
 #include "Sprite.h"
-#include "Engine.h"
 #include "ResourceManager.h"
 #include "Texture.h"
+
 #include "private/Sprite_p.h"
 
 namespace Rangers
 {
+SpritePrivate::SpritePrivate(): ObjectPrivate()
+{
+    m_vertices = 0;
+    m_vertexCount = 0;
+    m_width = 0;
+    m_height = 0;
+    m_xOrigin = POSITION_X_LEFT;
+    m_yOrigin = POSITION_Y_TOP;
+    m_scaling = TEXTURE_NORMAL;
+    m_buffer = 0;
+}
+
 Sprite::Sprite(Object *parent): Object(*(new SpritePrivate), parent)
 {
-    RANGERS_D(Sprite);
-    d->m_buffer = 0;
-    d->m_vertices = 0;
-    d->m_vertexCount = 0;
-    d->m_width = 0;
-    d->m_height = 0;
-    d->m_xOrigin = POSITION_X_LEFT;
-    d->m_yOrigin = POSITION_Y_TOP;
-    d->m_scaling = TEXTURE_NORMAL;
 }
 
 Sprite::Sprite(const Rangers::Sprite& other): Object(*(new SpritePrivate), other)
 {
     RANGERS_D(Sprite);
-    d->m_buffer = 0;
-    d->m_vertices = 0;
-    d->m_vertexCount = 0;
 
     d->m_width = other.d_func()->m_width;
     d->m_height = other.d_func()->m_height;
@@ -57,9 +57,6 @@ Sprite::Sprite(const Rangers::Sprite& other): Object(*(new SpritePrivate), other
 Sprite::Sprite(SpritePrivate &p, const Sprite& other): Object(p, other)
 {
     RANGERS_D(Sprite);
-    d->m_buffer = 0;
-    d->m_vertices = 0;
-    d->m_vertexCount = 0;
 
     d->m_width = other.d_func()->m_width;
     d->m_height = other.d_func()->m_height;
@@ -75,17 +72,10 @@ Sprite::Sprite(SpritePrivate &p, const Sprite& other): Object(p, other)
 Sprite::Sprite(boost::shared_ptr<Texture> texture,  Object *parent, TextureScaling  ts, SpriteXOrigin xpos, SpriteYOrigin ypos): Object(*(new SpritePrivate), parent)
 {
     RANGERS_D(Sprite);
-    d->m_buffer = 0;
-    d->m_vertices = 0;
-    d->m_vertexCount = 0;
+
     d->m_region = TextureRegion(texture);
     d->m_scaling = ts;
-    if (!texture)
-    {
-        d->m_width = 0;
-        d->m_height = 0;
-    }
-    else
+    if (texture)
     {
         d->m_width = texture->width();
         d->m_height = texture->height();
@@ -98,17 +88,9 @@ Sprite::Sprite(boost::shared_ptr<Texture> texture,  Object *parent, TextureScali
 Sprite::Sprite(const std::wstring& texture,  Object *parent, TextureScaling  ts, SpriteXOrigin xpos, SpriteYOrigin ypos): Object(*(new SpritePrivate), parent)
 {
     RANGERS_D(Sprite);
-    d->m_buffer = 0;
-    d->m_vertices = 0;
-    d->m_vertexCount = 0;
     d->m_scaling = ts;
     d->m_region = TextureRegion(ResourceManager::instance()->loadTexture(texture));
-    if (!d->m_region.texture)
-    {
-        d->m_width = 0;
-        d->m_height = 0;
-    }
-    else
+    if (d->m_region.texture)
     {
         d->m_width = d->m_region.texture->width();
         d->m_height = d->m_region.texture->height();
@@ -121,19 +103,11 @@ Sprite::Sprite(const std::wstring& texture,  Object *parent, TextureScaling  ts,
 Sprite::Sprite(const TextureRegion& region, Object *parent): Object(*(new SpritePrivate), parent)
 {
     RANGERS_D(Sprite);
-    d->m_buffer = 0;
-    d->m_vertices = 0;
-    d->m_vertexCount = 0;
     d->m_xOrigin = POSITION_X_LEFT;
     d->m_yOrigin = POSITION_Y_TOP;
     d->m_scaling = TEXTURE_NORMAL;
     d->m_region = region;
-    if (!d->m_region.texture)
-    {
-        d->m_width = 0;
-        d->m_height = 0;
-    }
-    else
+    if (d->m_region.texture)
     {
         d->m_width = d->m_region.texture->width() * (d->m_region.u2 - d->m_region.u1);
         d->m_height = d->m_region.texture->height() * (d->m_region.v2 - d->m_region.v1);
@@ -144,15 +118,6 @@ Sprite::Sprite(const TextureRegion& region, Object *parent): Object(*(new Sprite
 
 Sprite::Sprite(SpritePrivate &p, Object *parent): Object(p, parent)
 {
-    RANGERS_D(Sprite);
-    d->m_buffer = 0;
-    d->m_vertices = 0;
-    d->m_vertexCount = 0;
-    d->m_width = 0;
-    d->m_height = 0;
-    d->m_xOrigin = POSITION_X_LEFT;
-    d->m_yOrigin = POSITION_Y_TOP;
-    d->m_scaling = TEXTURE_NORMAL;
 }
 
 Sprite::~Sprite()
@@ -166,7 +131,7 @@ Sprite& Sprite::operator=(const Rangers::Sprite& other)
 {
     if (this == &other)
         return *this;
-    
+
     RANGERS_D(Sprite);
 
     d->m_buffer = 0;
@@ -220,7 +185,7 @@ void Sprite::draw() const
     glBindBuffer(GL_ARRAY_BUFFER, d->m_buffer);
 
     glVertexPointer(2, GL_FLOAT, sizeof(Vertex), 0);
-    glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), BUFFER_OFFSET(sizeof(float) * 2));
+    glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), OPENGL_BUFFER_OFFSET(sizeof(float) * 2));
 
     glDrawArrays(GL_QUADS, 0, d->m_vertexCount);
 
@@ -324,7 +289,7 @@ void Sprite::setTextureScaling(TextureScaling ts)
 void Sprite::processMain()
 {
     Object::processMain();
- 
+
     RANGERS_D(Sprite);
     if (!d->m_region.texture)
         return;
