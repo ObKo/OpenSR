@@ -228,7 +228,7 @@ std::vector<std::wstring> Rangers::split(const std::wstring& s, wchar_t c)
 std::wstring Rangers::suffix(const std::wstring& s)
 {
     int pos;
-    int lastPos, dotPos;
+    int lastPos, dotPos = std::wstring::npos;
 
     if ((pos = s.rfind(L'.')) == std::wstring::npos)
         return std::wstring();
@@ -242,7 +242,10 @@ std::wstring Rangers::suffix(const std::wstring& s)
         dotPos = pos;
         pos = s.rfind(L'.', pos - 1);
     }
-    return s.substr(dotPos + 1);
+    if (dotPos != std::wstring::npos)
+        return s.substr(dotPos + 1);
+    else
+        return std::wstring();
 }
 
 /*!

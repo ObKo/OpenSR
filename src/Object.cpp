@@ -25,6 +25,7 @@
 #define DEG2RAD(x) (x * boost::math::constants::pi<double>() / 180.0)
 
 #include "private/Object_p.h"
+#include <Log.h>
 
 namespace Rangers
 {

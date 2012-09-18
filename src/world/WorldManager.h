@@ -16,31 +16,37 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WORLD_WORLD_OBJECT_H
-#define WORLD_WORLD_OBJECT_H
+#ifndef WORLD_WORLD_MANAGER_H
+#define WORLD_WORLD_MANAGER_H
 
+#include <map>
 #include <list>
-#include <iostream>
+#include <string>
 #include <stdint.h>
 
 namespace Rangers
 {
 namespace World
 {
-class WorldObject
+class WorldObject;
+class WorldManager
 {
 public:
-    WorldObject(uint64_t id = 0);
+    static WorldManager& instance();
 
-    uint64_t id() const;
+    void addObject(WorldObject *object);
+    void removeObject(WorldObject *object);
+    void removeObject(uint64_t id);
 
-    virtual uint32_t type() const;
-    virtual bool serialize(std::ostream &stream) const;
-    virtual bool deserialize(std::istream &stream);
-    virtual std::list<uint64_t> dependencies();
+    bool saveWorld(const std::wstring& file) const;
 
-protected:
-    uint64_t m_objectID;
+    static uint64_t getNextId();
+
+private:
+    void getSavingList(WorldObject *object, std::list<WorldObject*>& list, std::map<uint64_t, WorldObject*>& remainingObjects);
+    std::map<uint64_t, WorldObject*> m_objects;
+
+    static uint64_t m_idCounter;
 };
 }
 }

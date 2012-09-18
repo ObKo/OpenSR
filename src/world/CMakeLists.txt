@@ -29,6 +29,7 @@ SET(WORLD_SOURCES
     WorldHelper.cpp
     WorldObject.cpp
     GameInterface.cpp
+    WorldManager;
 )
 
 INCLUDE_DIRECTORIES(

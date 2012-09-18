@@ -635,9 +635,22 @@ Node* Engine::rootNode()
 void Engine::loadPlugin(const std::wstring& path)
 {
     RANGERS_D(Engine);
-    Plugin *p = new Plugin(path);
+
+    std::wstring realPath = path;
+
+    if (suffix(realPath).empty())
+#ifdef WIN32
+        realPath += L".dll";
+#else
+        realPath += L".so";
+#endif
+
+    Plugin *p = new Plugin(realPath);
     if (p->load())
+    {
+        delete p;
         return;
+    }
     p->initLua(d->luaConsoleState);
     d->plugins.push_back(p);
 }

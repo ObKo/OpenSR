@@ -18,11 +18,18 @@
 
 #include "WorldObject.h"
 #include "WorldHelper.h"
+#include "WorldManager.h"
 
 namespace Rangers
 {
 namespace World
 {
+WorldObject::WorldObject(uint64_t id): m_objectID(id)
+{
+    if (!id)
+        m_objectID = WorldManager::getNextId();
+}
+
 bool WorldObject::deserialize(std::istream& stream)
 {
     return true;
@@ -36,6 +43,11 @@ uint64_t WorldObject::id() const
 bool WorldObject::serialize(std::ostream& stream) const
 {
     return true;
+}
+
+std::list<uint64_t> WorldObject::dependencies()
+{
+    return std::list<uint64_t>();
 }
 
 uint32_t WorldObject::type() const
