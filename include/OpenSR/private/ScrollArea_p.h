@@ -31,13 +31,13 @@ class ScrollAreaPrivate: public WidgetPrivate
 public:
     ScrollAreaPrivate();
 
-    Button m_top, m_bottom, m_left, m_right;
-    Button m_vScroll, m_hScroll;
-    float m_vSize, m_vPosition;
-    float m_hSize, m_hPosition;
-    WidgetNode *m_node;
-    float m_scrollStart;
-    enum {NONE, VERTICAL, HORIZONTAL} m_scrollDrag;
+    Button top, bottom, left, right;
+    Button vScroll, hScroll;
+    float vSize, vPosition;
+    float hSize, hPosition;
+    WidgetNode *node;
+    float scrollStart;
+    enum {NONE, VERTICAL, HORIZONTAL} scrollDrag;
     void updateScrollPosition();
 };
 }

@@ -27,12 +27,12 @@ namespace Rangers
 {
 AnimatedSpritePrivate::AnimatedSpritePrivate(): SpritePrivate()
 {
-    m_animationTime = 0;
-    m_currentFrame = 0;
-    m_singleShot = false;
-    m_animationStarted = false;
-    m_frameDuration = 0;
-    m_region = TextureRegion(boost::shared_ptr<AnimatedTexture>());
+    animationTime = 0;
+    currentFrame = 0;
+    singleShot = false;
+    animationStarted = false;
+    frameDuration = 0;
+    region = TextureRegion(boost::shared_ptr<AnimatedTexture>());
 }
 /*!
  * \param parent object parent
@@ -48,12 +48,12 @@ AnimatedSprite::AnimatedSprite(Object *parent): Sprite(*(new AnimatedSpritePriva
 AnimatedSprite::AnimatedSprite(boost::shared_ptr<AnimatedTexture> texture, Object *parent): Sprite(*(new AnimatedSpritePrivate()), parent)
 {
     RANGERS_D(AnimatedSprite);
-    d->m_region = TextureRegion(texture);
+    d->region = TextureRegion(texture);
     if (texture)
     {
-        d->m_animationStarted = true;
+        d->animationStarted = true;
 //TODO: Find relations between seek/size and FPS.
-        d->m_frameDuration = texture->waitSeek() > 1000 ? 50 : 100;
+        d->frameDuration = texture->waitSeek() > 1000 ? 50 : 100;
     }
 }
 
@@ -65,14 +65,14 @@ AnimatedSprite::AnimatedSprite(const std::wstring& animation, Object *parent): S
 {
     RANGERS_D(AnimatedSprite);
     boost::shared_ptr<AnimatedTexture> animTexture = ResourceManager::instance()->loadAnimation(animation);
-    d->m_region = TextureRegion(animTexture);
+    d->region = TextureRegion(animTexture);
     if (animTexture)
     {
-        d->m_animationStarted = true;
+        d->animationStarted = true;
 //TODO: Find relations between seek/size and FPS.
-        d->m_frameDuration = animTexture->waitSeek() > 1000 ? 50 : 100;
-        d->m_width = animTexture->width();
-        d->m_height = animTexture->height();
+        d->frameDuration = animTexture->waitSeek() > 1000 ? 50 : 100;
+        d->width = animTexture->width();
+        d->height = animTexture->height();
     }
     markToUpdate();
 }
@@ -80,11 +80,11 @@ AnimatedSprite::AnimatedSprite(const std::wstring& animation, Object *parent): S
 AnimatedSprite::AnimatedSprite(const Rangers::AnimatedSprite& other): Sprite(*(new AnimatedSpritePrivate()), other)
 {
     RANGERS_D(AnimatedSprite);
-    d->m_animationTime = other.d_func()->m_animationTime;
-    d->m_currentFrame = other.d_func()->m_currentFrame;
-    d->m_singleShot = other.d_func()->m_singleShot;
-    d->m_animationStarted = other.d_func()->m_animationStarted;
-    d->m_frameDuration = other.d_func()->m_frameDuration;
+    d->animationTime = other.d_func()->animationTime;
+    d->currentFrame = other.d_func()->currentFrame;
+    d->singleShot = other.d_func()->singleShot;
+    d->animationStarted = other.d_func()->animationStarted;
+    d->frameDuration = other.d_func()->frameDuration;
 }
 
 AnimatedSprite& AnimatedSprite::operator=(const Rangers::AnimatedSprite& other)
@@ -93,12 +93,12 @@ AnimatedSprite& AnimatedSprite::operator=(const Rangers::AnimatedSprite& other)
     if (this == &other)
         return *this;
 
-    d->m_animationTime = other.d_func()->m_animationTime;
-    d->m_currentFrame = other.d_func()->m_currentFrame;
-    d->m_singleShot = other.d_func()->m_singleShot;
-    d->m_animationStarted = other.d_func()->m_animationStarted;
-    d->m_currentFrame = other.d_func()->m_currentFrame;
-    d->m_frameDuration = other.d_func()->m_frameDuration;
+    d->animationTime = other.d_func()->animationTime;
+    d->currentFrame = other.d_func()->currentFrame;
+    d->singleShot = other.d_func()->singleShot;
+    d->animationStarted = other.d_func()->animationStarted;
+    d->currentFrame = other.d_func()->currentFrame;
+    d->frameDuration = other.d_func()->frameDuration;
 
     Sprite::operator=(other);
     return *this;
@@ -107,43 +107,37 @@ AnimatedSprite& AnimatedSprite::operator=(const Rangers::AnimatedSprite& other)
 AnimatedSprite::AnimatedSprite(AnimatedSpritePrivate &p, Object *parent): Sprite(p, parent)
 {
     RANGERS_D(AnimatedSprite);
-    d->m_animationTime = 0;
-    d->m_currentFrame = 0;
-    d->m_singleShot = false;
-    d->m_animationStarted = false;
-    d->m_frameDuration = 0;
-    d->m_region = TextureRegion(boost::shared_ptr<AnimatedTexture>());
 }
 
 AnimatedSprite::AnimatedSprite(AnimatedSpritePrivate &p, const AnimatedSprite& other): Sprite(p, other)
 {
     RANGERS_D(AnimatedSprite);
-    d->m_animationTime = other.d_func()->m_animationTime;
-    d->m_currentFrame = other.d_func()->m_currentFrame;
-    d->m_singleShot = other.d_func()->m_singleShot;
-    d->m_animationStarted = other.d_func()->m_animationStarted;
-    d->m_frameDuration = other.d_func()->m_frameDuration;
+    d->animationTime = other.d_func()->animationTime;
+    d->currentFrame = other.d_func()->currentFrame;
+    d->singleShot = other.d_func()->singleShot;
+    d->animationStarted = other.d_func()->animationStarted;
+    d->frameDuration = other.d_func()->frameDuration;
 }
 
 void AnimatedSprite::processLogic(int dt)
 {
     RANGERS_D(AnimatedSprite);
-    if (!d->m_region.texture)
+    if (!d->region.texture)
         return;
 
     lock();
-    AnimatedTexture *texture = static_cast<AnimatedTexture *>(d->m_region.texture.get());
+    AnimatedTexture *texture = static_cast<AnimatedTexture *>(d->region.texture.get());
 
-    if (d->m_animationStarted)
+    if (d->animationStarted)
     {
-        while (d->m_animationTime > d->m_frameDuration)
+        while (d->animationTime > d->frameDuration)
         {
-            if ((texture->loadedFrames() == texture->frameCount()) || (d->m_currentFrame < texture->loadedFrames() - 1))
-                d->m_currentFrame = (d->m_currentFrame + 1) % texture->frameCount();
-            d->m_animationTime -= d->m_frameDuration;
+            if ((texture->loadedFrames() == texture->frameCount()) || (d->currentFrame < texture->loadedFrames() - 1))
+                d->currentFrame = (d->currentFrame + 1) % texture->frameCount();
+            d->animationTime -= d->frameDuration;
         }
 
-        d->m_animationTime += dt;
+        d->animationTime += dt;
     }
     unlock();
 }
@@ -151,10 +145,10 @@ void AnimatedSprite::processLogic(int dt)
 void AnimatedSprite::draw() const
 {
     RANGERS_D(const AnimatedSprite);
-    if (!d->m_region.texture)
+    if (!d->region.texture)
         return;
 
-    GLuint texture = ((AnimatedTexture*)d->m_region.texture.get())->openGLTexture(d->m_currentFrame);
+    GLuint texture = ((AnimatedTexture*)d->region.texture.get())->openGLTexture(d->currentFrame);
     if (!texture)
         return;
 
@@ -162,17 +156,17 @@ void AnimatedSprite::draw() const
         return;
 
     glBindTexture(GL_TEXTURE_2D, texture);
-    if (d->m_scaling == TEXTURE_TILE_X)
+    if (d->scaling == TEXTURE_TILE_X)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     else
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
 
-    if (d->m_scaling == TEXTURE_TILE_Y)
+    if (d->scaling == TEXTURE_TILE_Y)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     else
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 
-    if (d->m_scaling == TEXTURE_TILE)
+    if (d->scaling == TEXTURE_TILE)
     {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -182,12 +176,12 @@ void AnimatedSprite::draw() const
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glEnableClientState(GL_ARRAY_BUFFER);
 
-    glBindBuffer(GL_ARRAY_BUFFER, d->m_buffer);
+    glBindBuffer(GL_ARRAY_BUFFER, d->buffer);
 
     glVertexPointer(2, GL_FLOAT, sizeof(Vertex), 0);
     glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), OPENGL_BUFFER_OFFSET(sizeof(float) * 2));
 
-    glDrawArrays(GL_QUADS, 0, d->m_vertexCount);
+    glDrawArrays(GL_QUADS, 0, d->vertexCount);
 
     glDisableClientState(GL_ARRAY_BUFFER);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -201,7 +195,7 @@ void AnimatedSprite::draw() const
 int AnimatedSprite::currentFrame() const
 {
     RANGERS_D(const AnimatedSprite);
-    return d->m_currentFrame;
+    return d->currentFrame;
 }
 
 /*!
@@ -210,7 +204,7 @@ int AnimatedSprite::currentFrame() const
 float AnimatedSprite::frameRate() const
 {
     RANGERS_D(const AnimatedSprite);
-    return 1000.0f / d->m_frameDuration;
+    return 1000.0f / d->frameDuration;
 }
 
 /*!
@@ -220,7 +214,7 @@ void AnimatedSprite::setFrame(int f)
 {
     lock();
     RANGERS_D(AnimatedSprite);
-    d->m_currentFrame = f;
+    d->currentFrame = f;
     unlock();
 }
 
@@ -232,8 +226,8 @@ void AnimatedSprite::setFrameRate(float f)
     lock();
     RANGERS_D(AnimatedSprite);
     if (f <= 0.0f)
-        d->m_frameDuration = INT_MAX;
-    d->m_frameDuration = 1000.0f / f;
+        d->frameDuration = INT_MAX;
+    d->frameDuration = 1000.0f / f;
     unlock();
 }
 
@@ -245,7 +239,7 @@ void AnimatedSprite::setSingleShot(bool ss)
 {
     lock();
     RANGERS_D(AnimatedSprite);
-    d->m_singleShot = ss;
+    d->singleShot = ss;
     unlock();
 }
 
@@ -255,7 +249,7 @@ void AnimatedSprite::setSingleShot(bool ss)
 bool AnimatedSprite::isSingleShot() const
 {
     RANGERS_D(const AnimatedSprite);
-    return d->m_singleShot;
+    return d->singleShot;
 }
 
 /*!
@@ -264,14 +258,14 @@ bool AnimatedSprite::isSingleShot() const
 bool AnimatedSprite::isStarted() const
 {
     RANGERS_D(const AnimatedSprite);
-    return d->m_animationStarted;
+    return d->animationStarted;
 }
 
 void AnimatedSprite::start()
 {
     lock();
     RANGERS_D(AnimatedSprite);
-    d->m_animationStarted = true;
+    d->animationStarted = true;
     unlock();
 }
 
@@ -279,7 +273,7 @@ void AnimatedSprite::stop()
 {
     lock();
     RANGERS_D(AnimatedSprite);
-    d->m_animationStarted = false;
+    d->animationStarted = false;
     unlock();
 }
 
@@ -287,9 +281,9 @@ void AnimatedSprite::reset()
 {
     lock();
     RANGERS_D(AnimatedSprite);
-    d->m_animationStarted = false;
-    d->m_currentFrame = 0;
-    d->m_animationTime = 0;
+    d->animationStarted = false;
+    d->currentFrame = 0;
+    d->animationTime = 0;
     unlock();
 }
 }

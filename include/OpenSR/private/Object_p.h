@@ -34,14 +34,14 @@ public:
     ObjectPrivate();
     virtual ~ObjectPrivate();
 
-    int m_layer;
-    mutable boost::recursive_mutex m_mutex;
-    int m_color;
-    bool m_needUpdate;
-    Object *m_parent;
-    std::list<Object*> m_children;
-    Vector m_position;
-    float m_rotation;
+    int layer;
+    mutable boost::recursive_mutex mutex;
+    int color;
+    bool needUpdate;
+    Object *parent;
+    std::list<Object*> children;
+    Vector position;
+    float rotation;
 
     Object *m_q;
 };

@@ -29,16 +29,16 @@ class SpritePrivate: public ObjectPrivate
 public:
     SpritePrivate();
 
-    Vertex *m_vertices;
-    int m_vertexCount;
+    Vertex *vertices;
+    int vertexCount;
 
-    float m_width, m_height;
-    SpriteXOrigin m_xOrigin;
-    SpriteYOrigin m_yOrigin;
-    TextureScaling m_scaling;
+    float width, height;
+    SpriteXOrigin xOrigin;
+    SpriteYOrigin yOrigin;
+    TextureScaling scaling;
 
-    GLuint m_buffer;
-    TextureRegion m_region;
+    GLuint buffer;
+    TextureRegion region;
 };
 }
 

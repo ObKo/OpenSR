@@ -82,10 +82,10 @@ Engine::Engine(int argc, char **argv): m_d(new EnginePrivate())
 {
     RANGERS_D(Engine);
 
-    d->m_argc = argc;
-    d->m_argv = argv;
-    d->m_focusedWidget = 0;
-    d->m_luaConsoleState = 0;
+    d->argc = argc;
+    d->argv = argv;
+    d->focusedWidget = 0;
+    d->luaConsoleState = 0;
 
     if (engineInstance)
     {
@@ -96,17 +96,17 @@ Engine::Engine(int argc, char **argv): m_d(new EnginePrivate())
     textdomain("OpenSR");
 
     std::ifstream configFile;
-    d->m_properties = boost::shared_ptr<boost::property_tree::ptree>(new boost::property_tree::ptree());
+    d->properties = boost::shared_ptr<boost::property_tree::ptree>(new boost::property_tree::ptree());
 
 #ifdef WIN32
     wchar_t *path = new wchar_t[1024];
     GetModuleFileName(0, path, 1024);
-    d->m_configPath = (directory(std::wstring(path)) + L"\\OpenSR.ini");
+    d->configPath = (directory(std::wstring(path)) + L"\\OpenSR.ini");
     delete[] path;
 #ifdef _MSC_VER
-    configFile.open(m_configPath, ios_base::in);
+    configFile.open(configPath, ios_base::in);
 #else
-    configFile.open(toLocal(m_configPath).c_str(), ios_base::in);
+    configFile.open(toLocal(configPath).c_str(), ios_base::in);
 #endif
 
 #else
@@ -115,34 +115,34 @@ Engine::Engine(int argc, char **argv): m_d(new EnginePrivate())
     {
         if ((path = getenv("HOME")) == NULL)
         {
-            d->m_configPath = fromLocal((directory(std::string(argv[0])) + "/OpenSR.conf").c_str());
+            d->configPath = fromLocal((directory(std::string(argv[0])) + "/OpenSR.conf").c_str());
         }
         else
         {
-            d->m_configPath = fromLocal((std::string(path) + "/.OpenSR/OpenSR.conf").c_str());
+            d->configPath = fromLocal((std::string(path) + "/.OpenSR/OpenSR.conf").c_str());
         }
     }
     else
-        d->m_configPath = fromLocal((std::string(path) + "/OpenSR/OpenSR.conf").c_str());
-    configFile.open(toLocal(d->m_configPath).c_str(), ios_base::in);
+        d->configPath = fromLocal((std::string(path) + "/OpenSR/OpenSR.conf").c_str());
+    configFile.open(toLocal(d->configPath).c_str(), ios_base::in);
 #endif
 
     if (configFile.is_open())
     {
         try
         {
-            boost::property_tree::read_ini(configFile, *d->m_properties);
+            boost::property_tree::read_ini(configFile, *d->properties);
         }
         catch (boost::property_tree::ini_parser_error &error)
         {
-            Log::error() << "Error parsing ini file " << d->m_configPath << ":" << error.line() << ": " << error.message();
+            Log::error() << "Error parsing ini file " << d->configPath << ":" << error.line() << ": " << error.message();
         }
     }
 
     configFile.close();
 
 #ifdef WIN32
-    Log::instance()->setColorOutput(d->m_properties->get<bool>("log.color", false));
+    Log::instance()->setColorOutput(d->properties->get<bool>("log.color", false));
 #else
     bool colorTerminal = false;
     const char *term = getenv("TERM");
@@ -154,43 +154,43 @@ Engine::Engine(int argc, char **argv): m_d(new EnginePrivate())
                 || (terminal.find("color") != string::npos))
             colorTerminal = true;
     }
-    Log::instance()->setColorOutput(d->m_properties->get<bool>("log.color", colorTerminal));
+    Log::instance()->setColorOutput(d->properties->get<bool>("log.color", colorTerminal));
 #endif
 
     engineInstance = this;
-    d->m_currentWidget = 0;
-    d->m_focusedWidget = 0;
-    d->m_consoleOpenned = false;
-    d->m_showFPS = true;
-    d->m_frames = 0;
+    d->currentWidget = 0;
+    d->focusedWidget = 0;
+    d->consoleOpenned = false;
+    d->showFPS = true;
+    d->frames = 0;
     d->m_q = this;
 }
 
 Engine::~Engine()
 {
     RANGERS_D(Engine);
-    removeWidget(&d->m_consoleWidget);
+    removeWidget(&d->consoleWidget);
     engineInstance = 0;
-    if (!createDirPath(d->m_configPath))
-        Log::error() << "Cannot create dir for config: " << d->m_configPath;
+    if (!createDirPath(d->configPath))
+        Log::error() << "Cannot create dir for config: " << d->configPath;
 
     std::ofstream configFile;
 #if defined(WIN32) && defined(_MSC_VER)
-    configFile.open(d->m_configPath, ios_base::out);
+    configFile.open(d->configPath, ios_base::out);
 #else
-    configFile.open(toLocal(d->m_configPath).c_str(), ios_base::out);
+    configFile.open(toLocal(d->configPath).c_str(), ios_base::out);
 #endif
     if (configFile.is_open())
-        boost::property_tree::write_ini(configFile, *d->m_properties);
+        boost::property_tree::write_ini(configFile, *d->properties);
     configFile.close();
 
-    std::list<Widget *>::iterator wend = d->m_widgets.end();
-    for (std::list<Widget *>::iterator it = d->m_widgets.begin(); it != wend; ++it)
+    std::list<Widget *>::iterator wend = d->widgets.end();
+    for (std::list<Widget *>::iterator it = d->widgets.begin(); it != wend; ++it)
     {
         delete *it;
     }
-    std::list<Plugin*>::const_iterator pend = d->m_plugins.end();
-    for (std::list<Plugin*>::const_iterator i = d->m_plugins.begin(); i != pend; ++i)
+    std::list<Plugin*>::const_iterator pend = d->plugins.end();
+    for (std::list<Plugin*>::const_iterator i = d->plugins.begin(); i != pend; ++i)
     {
         delete *i;
     }
@@ -203,39 +203,39 @@ void Engine::addWidget(Widget *w)
     if (!w)
         return;
 
-    d->m_mainNode.addChild(w);
+    d->mainNode.addChild(w);
 
-    std::list<Widget*>::iterator end = d->m_widgets.end();
-    for (std::list<Widget*>::iterator i = d->m_widgets.begin(); i != end; ++i)
+    std::list<Widget*>::iterator end = d->widgets.end();
+    for (std::list<Widget*>::iterator i = d->widgets.begin(); i != end; ++i)
     {
         if ((*i)->layer() < w->layer())
         {
-            d->m_widgets.insert(i, w);
+            d->widgets.insert(i, w);
             return;
         }
     }
-    d->m_widgets.push_back(w);
+    d->widgets.push_back(w);
 }
 
 void Engine::removeWidget(Widget *w)
 {
     RANGERS_D(Engine);
-    if (w == d->m_currentWidget)
-        d->m_currentWidget = 0;
-    if (w == d->m_focusedWidget)
-        d->m_focusedWidget = 0;
-    d->m_widgets.remove(w);
-    d->m_mainNode.removeChild(w);
+    if (w == d->currentWidget)
+        d->currentWidget = 0;
+    if (w == d->focusedWidget)
+        d->focusedWidget = 0;
+    d->widgets.remove(w);
+    d->mainNode.removeChild(w);
 
-    d->m_updateMutex.lock();
-    d->m_updateList.remove(w);
-    d->m_updateMutex.unlock();
+    d->updateMutex.lock();
+    d->updateList.remove(w);
+    d->updateMutex.unlock();
 }
 
 int Engine::logic()
 {
     long t = getTicks();
-    while (engineInstance->m_d->m_gameRunning)
+    while (engineInstance->m_d->gameRunning)
     {
         int dt = getTicks() - t;
         while (!dt)
@@ -244,9 +244,9 @@ int Engine::logic()
             SDL_Delay(1);
             dt = getTicks() - t;
         }
-        engineInstance->m_d->m_mainNode.processLogic(dt);
-        if (engineInstance->m_d->m_consoleOpenned)
-            engineInstance->m_d->m_consoleWidget.processLogic(dt);
+        engineInstance->m_d->mainNode.processLogic(dt);
+        if (engineInstance->m_d->consoleOpenned)
+            engineInstance->m_d->consoleWidget.processLogic(dt);
         t = getTicks();
     }
     return 0;
@@ -258,23 +258,23 @@ void Engine::init(int w, int h, bool fullscreen)
     if (SDL_Init(SDL_INIT_VIDEO) != 0)
         throw std::runtime_error("Unable to init SDL");
 
-    d->m_mainDataDir = fromLocal(d->m_properties->get<std::string>("data.mainDataDir", "").c_str());
-    if (d->m_mainDataDir != L"")
+    d->mainDataDir = fromLocal(d->properties->get<std::string>("data.mainDataDir", "").c_str());
+    if (d->mainDataDir != L"")
     {
-        if (!createDirPath(d->m_mainDataDir) && !checkDirWritable(d->m_mainDataDir))
+        if (!createDirPath(d->mainDataDir) && !checkDirWritable(d->mainDataDir))
         {
-            Log::error() << "Cannot create data dir or dir not writable: " << d->m_mainDataDir;
-            d->m_mainDataDir = L"";
+            Log::error() << "Cannot create data dir or dir not writable: " << d->mainDataDir;
+            d->mainDataDir = L"";
         }
     }
-    Log::info() << d->m_mainDataDir;
+    Log::info() << d->mainDataDir;
 #ifdef WIN32
-    if (d->m_mainDataDir == L"")
+    if (d->mainDataDir == L"")
     {
-        d->m_mainDataDir = fromLocal((directory(std::string(m_argv[0]))).c_str());
+        d->mainDataDir = fromLocal((directory(std::string(argv[0]))).c_str());
     }
 #else
-    if (d->m_mainDataDir == L"")
+    if (d->mainDataDir == L"")
     {
 #ifdef __linux
         char *path;
@@ -283,32 +283,32 @@ void Engine::init(int w, int h, bool fullscreen)
 #endif
             if ((path = getenv("HOME")) != NULL)
             {
-                d->m_mainDataDir = fromLocal((std::string(path) + "/.OpenSR/").c_str());
-                if (!createDirPath(d->m_mainDataDir) && !checkDirWritable(d->m_mainDataDir))
+                d->mainDataDir = fromLocal((std::string(path) + "/.OpenSR/").c_str());
+                if (!createDirPath(d->mainDataDir) && !checkDirWritable(d->mainDataDir))
                 {
-                    Log::error() << "Cannot create data dir or dir not writable: " << d->m_mainDataDir;
-                    d->m_mainDataDir = L"";
+                    Log::error() << "Cannot create data dir or dir not writable: " << d->mainDataDir;
+                    d->mainDataDir = L"";
                 }
             }
 #ifdef __linux
         }
         else
         {
-            d->m_mainDataDir = fromLocal((std::string(path) + "/OpenSR/").c_str());
-            if (!createDirPath(d->m_mainDataDir) && !checkDirWritable(d->m_mainDataDir))
+            d->mainDataDir = fromLocal((std::string(path) + "/OpenSR/").c_str());
+            if (!createDirPath(d->mainDataDir) && !checkDirWritable(d->mainDataDir))
             {
-                Log::error() << "Cannot create data dir or dir not writable: " << d->m_mainDataDir;
-                d->m_mainDataDir = L"";
+                Log::error() << "Cannot create data dir or dir not writable: " << d->mainDataDir;
+                d->mainDataDir = L"";
             }
         }
 #endif
     }
 #endif
-    if (d->m_mainDataDir == L"")
+    if (d->mainDataDir == L"")
         throw std::runtime_error("No writable data dir available.");
 
-    Log::debug() << "Using data dir: " << d->m_mainDataDir;
-    ResourceManager::instance()->addDir(d->m_mainDataDir);
+    Log::debug() << "Using data dir: " << d->mainDataDir;
+    ResourceManager::instance()->addDir(d->mainDataDir);
 #ifdef __linux
     char *pathes;
     if ((pathes = getenv("XDG_DATA_DIRS")) != NULL)
@@ -324,9 +324,9 @@ void Engine::init(int w, int h, bool fullscreen)
     }
 #endif
 
-    w = d->m_properties->get<int>("graphics.width", w);
-    h = d->m_properties->get<int>("graphics.height", h);
-    fullscreen = d->m_properties->get<bool>("graphics.fullscreen", fullscreen);
+    w = d->properties->get<int>("graphics.width", w);
+    h = d->properties->get<int>("graphics.height", h);
+    fullscreen = d->properties->get<bool>("graphics.fullscreen", fullscreen);
 
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_Surface* screen = SDL_SetVideoMode(w, h, 32, SDL_OPENGL | (fullscreen ? SDL_FULLSCREEN : 0));
@@ -334,8 +334,8 @@ void Engine::init(int w, int h, bool fullscreen)
     SDL_EnableKeyRepeat(660, 40);
     SDL_EnableUNICODE(1);
 
-    d->m_width = screen->w;
-    d->m_height = screen->h;
+    d->width = screen->w;
+    d->height = screen->h;
 
 #ifdef _WIN32
     glewInit();
@@ -351,53 +351,53 @@ void Engine::init(int w, int h, bool fullscreen)
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    glViewport(0, 0, d->m_width, d->m_height);
+    glViewport(0, 0, d->width, d->height);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(0.0f, d->m_width, d->m_height, 0.0f, -1.0f, 1.0f);
+    glOrtho(0.0f, d->width, d->height, 0.0f, -1.0f, 1.0f);
 
-    std::vector<std::string> coreFontStrings = split(d->m_properties->get<std::string>("graphics.corefont", "DroidSans.ttf:14"), ':');
+    std::vector<std::string> coreFontStrings = split(d->properties->get<std::string>("graphics.corefont", "DroidSans.ttf:14"), ':');
     int coreFontSize = 13;
     bool coreFontAA = true;
     if (coreFontStrings.size() > 1)
         coreFontSize = atoi(coreFontStrings.at(1).c_str());
     if (coreFontStrings.size() > 2 && coreFontStrings.at(2) == "false")
         coreFontAA = false;
-    d->m_coreFont = ResourceManager::instance()->loadFont(fromLocal(coreFontStrings.at(0).c_str()), coreFontSize, coreFontAA);
+    d->coreFont = ResourceManager::instance()->loadFont(fromLocal(coreFontStrings.at(0).c_str()), coreFontSize, coreFontAA);
 
-    std::vector<std::string> monoFontStrings = split(d->m_properties->get<std::string>("graphics.monofont", "DroidSansMono.ttf:13"), ':');
+    std::vector<std::string> monoFontStrings = split(d->properties->get<std::string>("graphics.monofont", "DroidSansMono.ttf:13"), ':');
     int monoFontSize = 13;
     bool monoFontAA = true;
     if (monoFontStrings.size() > 1)
         monoFontSize = atoi(monoFontStrings.at(1).c_str());
     if (monoFontStrings.size() > 2 && monoFontStrings.at(2) == "false")
         monoFontAA = false;
-    d->m_monospaceFont = ResourceManager::instance()->loadFont(fromLocal(monoFontStrings.at(0).c_str()), monoFontSize, monoFontAA);
+    d->monospaceFont = ResourceManager::instance()->loadFont(fromLocal(monoFontStrings.at(0).c_str()), monoFontSize, monoFontAA);
 
-    setDefaultSkin(fromLocal(d->m_properties->get<std::string>("graphics.defaultSkin", "").c_str()));
+    setDefaultSkin(fromLocal(d->properties->get<std::string>("graphics.defaultSkin", "").c_str()));
 
-    d->m_frames = 0;
+    d->frames = 0;
 
-    d->m_mainNode.setPosition(0, 0);
+    d->mainNode.setPosition(0, 0);
 
-    d->m_fpsLabel = Label("0", 0, d->m_monospaceFont, POSITION_X_LEFT, POSITION_Y_TOP);
-    d->m_fpsLabel.setPosition(5, 5);
+    d->fpsLabel = Label("0", 0, d->monospaceFont, POSITION_X_LEFT, POSITION_Y_TOP);
+    d->fpsLabel.setPosition(5, 5);
 
-    d->m_consoleWidget = ConsoleWidget(d->m_width, 168);
-    d->m_luaConsoleState = initLuaState();
-    addWidget(&d->m_consoleWidget);
+    d->consoleWidget = ConsoleWidget(d->width, 168);
+    d->luaConsoleState = initLuaState();
+    addWidget(&d->consoleWidget);
 }
 
 boost::shared_ptr<Font> Engine::coreFont() const
 {
     RANGERS_D(const Engine);
-    return d->m_coreFont;
+    return d->coreFont;
 }
 
 boost::shared_ptr<Font> Engine::serviceFont() const
 {
     RANGERS_D(const Engine);
-    return d->m_monospaceFont;
+    return d->monospaceFont;
 }
 
 void Engine::paint()
@@ -409,12 +409,12 @@ void Engine::paint()
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    d->m_mainNode.draw();
-    if (d->m_consoleOpenned)
-        d->m_consoleWidget.draw();
-    if (d->m_showFPS)
-        d->m_fpsLabel.draw();
-    d->m_frames++;
+    d->mainNode.draw();
+    if (d->consoleOpenned)
+        d->consoleWidget.draw();
+    if (d->showFPS)
+        d->fpsLabel.draw();
+    d->frames++;
 
     SDL_GL_SwapBuffers();
 }
@@ -422,37 +422,37 @@ void Engine::paint()
 int Engine::run()
 {
     RANGERS_D(Engine);
-    d->m_gameRunning = true;
-    d->m_logicThread = new boost::thread(&Engine::logic);
-    std::wstring startupScript = fromLocal(d->m_properties->get<std::string>("engine.startupScript", "startup.lua").c_str());
+    d->gameRunning = true;
+    d->logicThread = new boost::thread(&Engine::logic);
+    std::wstring startupScript = fromLocal(d->properties->get<std::string>("engine.startupScript", "startup.lua").c_str());
     execLuaScript(startupScript);
-    d->m_fpsTime = getTicks();
-    while (d->m_gameRunning)
+    d->fpsTime = getTicks();
+    while (d->gameRunning)
     {
         int fpsdt;
-        if ((fpsdt = getTicks() - d->m_fpsTime) >= 1000)
+        if ((fpsdt = getTicks() - d->fpsTime) >= 1000)
         {
             char str[11];
-            double fps = (float)d->m_frames / fpsdt * 1000;
+            double fps = (float)d->frames / fpsdt * 1000;
 #if defined(WIN32) && defined(_MSC_VER)
             _snprintf(str, 10, "%.1lf", fps);
 #else
             snprintf(str, 10, "%.1lf", fps);
 #endif
-            d->m_fpsLabel.setText(str);
+            d->fpsLabel.setText(str);
             if (fps >= 30)
-                d->m_fpsLabel.setColor(0.0f, 1.0f, 0.0f);
+                d->fpsLabel.setColor(0.0f, 1.0f, 0.0f);
             else
-                d->m_fpsLabel.setColor(1.0f, 0.0f, 0.0f);
-            d->m_frames = 0;
-            d->m_fpsTime = getTicks();
+                d->fpsLabel.setColor(1.0f, 0.0f, 0.0f);
+            d->frames = 0;
+            d->fpsTime = getTicks();
         }
-        d->m_updateMutex.lock();
-        std::list<Widget*> widgetsToDelete = d->m_widgetsToDelete;
-        d->m_widgetsToDelete.clear();
-        std::list<Object *> updateList = d->m_updateList;
-        d->m_updateList.clear();
-        d->m_updateMutex.unlock();
+        d->updateMutex.lock();
+        std::list<Widget*> widgetsToDelete = d->widgetsToDelete;
+        d->widgetsToDelete.clear();
+        std::list<Object *> updateList = d->updateList;
+        d->updateList.clear();
+        d->updateMutex.unlock();
 
         std::list<Widget*>::const_iterator widgetEnd = widgetsToDelete.end();
         for (std::list<Widget*>::const_iterator i = widgetsToDelete.begin(); i != widgetEnd; ++i)
@@ -472,50 +472,50 @@ int Engine::run()
         d->processEvents();
         paint();
     }
-    d->m_logicThread->join();
+    d->logicThread->join();
     SDL_Quit();
-    return d->m_exitCode;
+    return d->exitCode;
 }
 
 void Engine::markToUpdate(Object* object)
 {
     RANGERS_D(Engine);
-    d->m_updateMutex.lock();
-    d->m_updateList.push_back(object);
-    d->m_updateMutex.unlock();
+    d->updateMutex.lock();
+    d->updateList.push_back(object);
+    d->updateMutex.unlock();
 }
 
 void Engine::unmarkToUpdate(Object* object)
 {
     RANGERS_D(Engine);
-    d->m_updateMutex.lock();
-    d->m_updateList.remove(object);
-    d->m_updateMutex.unlock();
+    d->updateMutex.lock();
+    d->updateList.remove(object);
+    d->updateMutex.unlock();
 }
 
 void Engine::quit(int code)
 {
     RANGERS_D(Engine);
-    d->m_gameRunning = false;
-    d->m_exitCode = code;
+    d->gameRunning = false;
+    d->exitCode = code;
 }
 
 int Engine::screenHeight() const
 {
     RANGERS_D(const Engine);
-    return d->m_height;
+    return d->height;
 }
 
 int Engine::screenWidth() const
 {
     RANGERS_D(const Engine);
-    return d->m_width;
+    return d->width;
 }
 
 boost::shared_ptr<boost::property_tree::ptree> Engine::properties() const
 {
     RANGERS_D(const Engine);
-    return d->m_properties;
+    return d->properties;
 }
 
 Engine *Engine::instance()
@@ -526,31 +526,31 @@ Engine *Engine::instance()
 void Engine::focusWidget(Widget* w)
 {
     RANGERS_D(Engine);
-    if (d->m_focusedWidget)
-        d->m_focusedWidget->unFocus();
-    d->m_focusedWidget = w;
+    if (d->focusedWidget)
+        d->focusedWidget->unFocus();
+    d->focusedWidget = w;
     w->focus();
 }
 
 void Engine::markWidgetDeleting(Widget *w)
 {
     RANGERS_D(Engine);
-    d->m_updateMutex.lock();
+    d->updateMutex.lock();
     removeWidget(w);
-    d->m_widgetsToDelete.push_back(w);
-    d->m_updateMutex.unlock();
+    d->widgetsToDelete.push_back(w);
+    d->updateMutex.unlock();
 }
 
 Skin Engine::defaultSkin() const
 {
     RANGERS_D(const Engine);
-    return d->m_skin;
+    return d->skin;
 }
 
 void Engine::setDefaultSkin(const Skin& skin)
 {
     RANGERS_D(Engine);
-    d->m_skin = skin;
+    d->skin = skin;
 }
 
 void Engine::setDefaultSkin(const std::wstring& skinPath)
@@ -561,7 +561,7 @@ void Engine::setDefaultSkin(const std::wstring& skinPath)
     if (!json)
         return;
     bool error;
-    d->m_skin = JSONHelper::parseSkin(std::string(json, size), error);
+    d->skin = JSONHelper::parseSkin(std::string(json, size), error);
 }
 
 void Engine::EnginePrivate::processEvents()
@@ -576,22 +576,22 @@ void Engine::EnginePrivate::processEvents()
         case SDL_KEYDOWN:
             if (event.key.keysym.sym == SDLK_BACKQUOTE)
             {
-                m_consoleOpenned = !m_consoleOpenned;
+                consoleOpenned = !consoleOpenned;
                 continue;
             }
-            if (m_focusedWidget)
-                m_focusedWidget->action(Action(m_focusedWidget, Rangers::Action::KEY_PRESSED, event.key.keysym));
+            if (focusedWidget)
+                focusedWidget->action(Action(focusedWidget, Rangers::Action::KEY_PRESSED, event.key.keysym));
             break;
         case SDL_MOUSEMOTION:
             processMouseMove(event.motion);
             break;
         case SDL_MOUSEBUTTONDOWN:
-            if (m_currentWidget)
-                m_currentWidget->mouseDown(event.button.button, event.button.x, event.button.y);
+            if (currentWidget)
+                currentWidget->mouseDown(event.button.button, event.button.x, event.button.y);
             break;
         case SDL_MOUSEBUTTONUP:
-            if (m_currentWidget)
-                m_currentWidget->mouseUp(event.button.button, event.button.x, event.button.y);
+            if (currentWidget)
+                currentWidget->mouseUp(event.button.button, event.button.x, event.button.y);
             break;
         case SDL_QUIT:
             q->quit();
@@ -603,33 +603,33 @@ void Engine::EnginePrivate::processEvents()
 void Engine::EnginePrivate::processMouseMove(const SDL_MouseMotionEvent &e)
 {
     RANGERS_Q(Engine);
-    for (std::list<Widget*>::iterator i = m_widgets.begin(); i != m_widgets.end(); i++)
+    for (std::list<Widget*>::iterator i = widgets.begin(); i != widgets.end(); i++)
     {
         Rect bb = (*i)->mapToGlobal((*i)->getBoundingRect());
-        Vector globalMouse = m_mainNode.mapFromScreen(Vector(e.x, e.y));
+        Vector globalMouse = mainNode.mapFromScreen(Vector(e.x, e.y));
         if (bb.contains(globalMouse))
         {
-            if ((*i) != m_currentWidget)
+            if ((*i) != currentWidget)
             {
-                if (m_currentWidget)
-                    m_currentWidget->mouseLeave();
-                m_currentWidget = *i;
-                m_currentWidget->mouseEnter();
+                if (currentWidget)
+                    currentWidget->mouseLeave();
+                currentWidget = *i;
+                currentWidget->mouseEnter();
             }
             Vector mouse = (*i)->mapFromParent(globalMouse);
             (*i)->mouseMove(mouse.x, mouse.y);
             return;
         }
     }
-    if (m_currentWidget)
-        m_currentWidget->mouseLeave();
-    m_currentWidget = 0;
+    if (currentWidget)
+        currentWidget->mouseLeave();
+    currentWidget = 0;
 }
 
 Node* Engine::rootNode()
 {
     RANGERS_D(Engine);
-    return &d->m_mainNode;
+    return &d->mainNode;
 }
 
 void Engine::loadPlugin(const std::wstring& path)
@@ -638,15 +638,15 @@ void Engine::loadPlugin(const std::wstring& path)
     Plugin *p = new Plugin(path);
     if (p->load())
         return;
-    p->initLua(d->m_luaConsoleState);
-    d->m_plugins.push_back(p);
+    p->initLua(d->luaConsoleState);
+    d->plugins.push_back(p);
 }
 
 void Engine::initPluginLua(lua_State *state)
 {
     RANGERS_D(Engine);
-    std::list<Plugin*>::const_iterator end = d->m_plugins.end();
-    for (std::list<Plugin*>::const_iterator i = d->m_plugins.begin(); i != end; ++i)
+    std::list<Plugin*>::const_iterator end = d->plugins.end();
+    for (std::list<Plugin*>::const_iterator i = d->plugins.begin(); i != end; ++i)
     {
         (*i)->initLua(state);
     }
@@ -660,7 +660,7 @@ void Engine::execCommand(const std::wstring& what)
 
     int state;
     std::string line = toUTF8(what);
-    if (state = (luaL_loadbuffer(d->m_luaConsoleState, line.c_str(), line.length(), "") || lua_pcall(d->m_luaConsoleState, 0, LUA_MULTRET, 0)))
-        Log::error() << "Cannot exec command: " << lua_tostring(d->m_luaConsoleState, -1);
+    if (state = (luaL_loadbuffer(d->luaConsoleState, line.c_str(), line.length(), "") || lua_pcall(d->luaConsoleState, 0, LUA_MULTRET, 0)))
+        Log::error() << "Cannot exec command: " << lua_tostring(d->luaConsoleState, -1);
 }
 }

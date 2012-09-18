@@ -27,7 +27,7 @@ class NinePatchPrivate: public SpritePrivate
 {
     RANGERS_DECLARE_PUBLIC(NinePatch)
 public:    
-    NinePatchDescriptor m_descriptor;
+    NinePatchDescriptor descriptor;
 };
 }
 

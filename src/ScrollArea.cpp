@@ -27,12 +27,12 @@ namespace Rangers
 {
 ScrollAreaPrivate::ScrollAreaPrivate()
 {
-    m_node = 0;
-    m_scrollDrag = ScrollAreaPrivate::NONE;
-    m_vPosition = 0.0f;
-    m_hPosition = 0.0f;
-    m_hSize = 0.0f;
-    m_vSize = 0.0f;
+    node = 0;
+    scrollDrag = ScrollAreaPrivate::NONE;
+    vPosition = 0.0f;
+    hPosition = 0.0f;
+    hSize = 0.0f;
+    vSize = 0.0f;
 }
 
 ScrollArea::ScrollArea(const ScrollBarStyle& style, WidgetNode *node, Widget *parent):
@@ -40,22 +40,22 @@ ScrollArea::ScrollArea(const ScrollBarStyle& style, WidgetNode *node, Widget *pa
 {
     RANGERS_D(ScrollArea);
 
-    d->m_scrollDrag = ScrollAreaPrivate::NONE;
-    d->m_top = Button(style.upButton, this);
-    d->m_top.addListener(this);
-    d->m_bottom = Button(style.downButton, this);
-    d->m_bottom.addListener(this);
+    d->scrollDrag = ScrollAreaPrivate::NONE;
+    d->top = Button(style.upButton, this);
+    d->top.addListener(this);
+    d->bottom = Button(style.downButton, this);
+    d->bottom.addListener(this);
 
-    d->m_left = Button(style.upButton, this);
-    d->m_left.setRotation(90);
-    d->m_left.addListener(this);
-    d->m_right = Button(style.downButton, this);
-    d->m_right.setRotation(90);
-    d->m_right.addListener(this);
+    d->left = Button(style.upButton, this);
+    d->left.setRotation(90);
+    d->left.addListener(this);
+    d->right = Button(style.downButton, this);
+    d->right.setRotation(90);
+    d->right.addListener(this);
 
-    d->m_vScroll = Button(style.scroll, this);
-    d->m_hScroll = Button(style.scroll, this);
-    d->m_hScroll.setRotation(90);
+    d->vScroll = Button(style.scroll, this);
+    d->hScroll = Button(style.scroll, this);
+    d->hScroll.setRotation(90);
 
     setNode(node);
 }
@@ -76,32 +76,32 @@ void ScrollArea::draw() const
     if (!prepareDraw())
         return;
 
-    Rect screenRect = mapToScreen(Rect(0, 0, d->m_width, d->m_height));
+    Rect screenRect = mapToScreen(Rect(0, 0, d->width, d->height));
     glEnable(GL_SCISSOR_TEST);
-    if (d->m_hSize > 1.0f)
+    if (d->hSize > 1.0f)
     {
-        screenRect.y += d->m_left.width();
-        screenRect.height -= d->m_left.width();
+        screenRect.y += d->left.width();
+        screenRect.height -= d->left.width();
     }
-    if (d->m_vSize > 1.0f)
+    if (d->vSize > 1.0f)
     {
-        screenRect.width -= d->m_top.width();
+        screenRect.width -= d->top.width();
     }
     glScissor(screenRect.x, screenRect.y, screenRect.width, screenRect.height);
-    if (d->m_node)
-        d->m_node->draw();
+    if (d->node)
+        d->node->draw();
     glDisable(GL_SCISSOR_TEST);
-    if (d->m_hSize > 1.0f)
+    if (d->hSize > 1.0f)
     {
-        d->m_hScroll.draw();
-        d->m_left.draw();
-        d->m_right.draw();
+        d->hScroll.draw();
+        d->left.draw();
+        d->right.draw();
     }
-    if (d->m_vSize > 1.0f)
+    if (d->vSize > 1.0f)
     {
-        d->m_vScroll.draw();
-        d->m_top.draw();
-        d->m_bottom.draw();
+        d->vScroll.draw();
+        d->top.draw();
+        d->bottom.draw();
     }
     endDraw();
 }
@@ -109,12 +109,12 @@ void ScrollArea::draw() const
 void ScrollArea::setNode(WidgetNode* node)
 {
     RANGERS_D(ScrollArea);
-    if (d->m_node)
-        removeWidget(d->m_node);
-    d->m_node = node;
-    if (d->m_node)
+    if (d->node)
+        removeWidget(d->node);
+    d->node = node;
+    if (d->node)
     {
-        addWidget(d->m_node);
+        addWidget(d->node);
     }
     markToUpdate();
 }
@@ -122,80 +122,80 @@ void ScrollArea::setNode(WidgetNode* node)
 void ScrollArea::processMain()
 {
     RANGERS_D(ScrollArea);
-    d->m_vSize = 0.0f;
-    d->m_hSize = 0.0f;
-    if (d->m_node)
+    d->vSize = 0.0f;
+    d->hSize = 0.0f;
+    if (d->node)
     {
-        Rect nodeBB = d->m_node->getBoundingRect();
-        if (nodeBB.width > d->m_width)
+        Rect nodeBB = d->node->getBoundingRect();
+        if (nodeBB.width > d->width)
         {
-            d->m_hSize = nodeBB.width / d->m_width;
+            d->hSize = nodeBB.width / d->width;
         }
-        if (nodeBB.height > d->m_height)
+        if (nodeBB.height > d->height)
         {
-            d->m_vSize = nodeBB.height / d->m_height;
+            d->vSize = nodeBB.height / d->height;
         }
-        if (d->m_hSize > 1.0f)
+        if (d->hSize > 1.0f)
         {
             float scrollSize;
-            if (d->m_vSize > 1.0f)
+            if (d->vSize > 1.0f)
             {
-                d->m_left.setPosition(0, d->m_height);
-                d->m_right.setPosition(d->m_width - d->m_right.height() - d->m_bottom.width(), d->m_height);
-                scrollSize = (d->m_width - d->m_bottom.width() - d->m_right.height() - d->m_left.height()) / (d->m_hSize);
+                d->left.setPosition(0, d->height);
+                d->right.setPosition(d->width - d->right.height() - d->bottom.width(), d->height);
+                scrollSize = (d->width - d->bottom.width() - d->right.height() - d->left.height()) / (d->hSize);
             }
             else
             {
-                d->m_left.setPosition(0, d->m_height);
-                d->m_right.setPosition(d->m_width - d->m_right.height(), d->m_height);
-                scrollSize = (d->m_width - d->m_right.height() - d->m_left.height()) / (d->m_hSize);
+                d->left.setPosition(0, d->height);
+                d->right.setPosition(d->width - d->right.height(), d->height);
+                scrollSize = (d->width - d->right.height() - d->left.height()) / (d->hSize);
             }
-            d->m_hScroll.setHeight(scrollSize);
+            d->hScroll.setHeight(scrollSize);
         }
-        if (d->m_vSize > 1.0f)
+        if (d->vSize > 1.0f)
         {
             float scrollSize;
-            if (d->m_hSize > 1.0f)
+            if (d->hSize > 1.0f)
             {
-                d->m_top.setPosition(d->m_width - d->m_top.width(), 0);
-                d->m_bottom.setPosition(d->m_width - d->m_top.width(), d->m_height - d->m_right.width() - d->m_bottom.height());
+                d->top.setPosition(d->width - d->top.width(), 0);
+                d->bottom.setPosition(d->width - d->top.width(), d->height - d->right.width() - d->bottom.height());
 
-                scrollSize = (d->m_height - d->m_right.width() - d->m_bottom.height() - d->m_top.height()) / (d->m_vSize);
+                scrollSize = (d->height - d->right.width() - d->bottom.height() - d->top.height()) / (d->vSize);
             }
             else
             {
-                d->m_top.setPosition(d->m_width - d->m_top.width(), 0);
-                d->m_bottom.setPosition(d->m_width - d->m_top.width(), d->m_height - d->m_bottom.height());
+                d->top.setPosition(d->width - d->top.width(), 0);
+                d->bottom.setPosition(d->width - d->top.width(), d->height - d->bottom.height());
 
-                scrollSize = (d->m_height - d->m_bottom.height() - d->m_top.height()) / (d->m_vSize);
+                scrollSize = (d->height - d->bottom.height() - d->top.height()) / (d->vSize);
             }
-            d->m_vScroll.setHeight(scrollSize);
+            d->vScroll.setHeight(scrollSize);
         }
-        d->m_hScroll.setPosition(d->m_left.height(), d->m_height);
-        d->m_vScroll.setPosition(d->m_width - d->m_top.width(), d->m_top.height());
+        d->hScroll.setPosition(d->left.height(), d->height);
+        d->vScroll.setPosition(d->width - d->top.width(), d->top.height());
     }
 }
 
 void ScrollArea::setWidth(float width)
 {
     RANGERS_D(ScrollArea);
-    d->m_width = width;
+    d->width = width;
     markToUpdate();
 }
 
 void ScrollArea::setHeight(float height)
 {
     RANGERS_D(ScrollArea);
-    d->m_height = height;
+    d->height = height;
     markToUpdate();
 }
 
 Rect ScrollArea::getBoundingRect() const
 {
     RANGERS_D(const ScrollArea);
-    if (d->m_scrollDrag == ScrollAreaPrivate::NONE)
+    if (d->scrollDrag == ScrollAreaPrivate::NONE)
     {
-        return Rect(0, 0, d->m_width, d->m_height);
+        return Rect(0, 0, d->width, d->height);
     }
     else
     {
@@ -210,74 +210,74 @@ void ScrollArea::mouseMove(const Vector &p)
 {
     lock();
     RANGERS_D(ScrollArea);
-    if (!d->m_node)
+    if (!d->node)
         return;
 
-    if (d->m_scrollDrag == ScrollAreaPrivate::NONE)
+    if (d->scrollDrag == ScrollAreaPrivate::NONE)
     {
-        if ((p.x < d->m_width - d->m_top.width()) && (p.y < d->m_height - d->m_left.width()))
+        if ((p.x < d->width - d->top.width()) && (p.y < d->height - d->left.width()))
         {
-            if (d->m_currentChild)
-                d->m_currentChild->mouseLeave();
-            d->m_node->mouseMove(d->m_node->mapFromParent(p));
+            if (d->currentChild)
+                d->currentChild->mouseLeave();
+            d->node->mouseMove(d->node->mapFromParent(p));
         }
         else
         {
-            for (std::list<Widget*>::reverse_iterator i = d->m_childWidgets.rbegin(); i != d->m_childWidgets.rend(); ++i)
+            for (std::list<Widget*>::reverse_iterator i = d->childWidgets.rbegin(); i != d->childWidgets.rend(); ++i)
             {
-                if ((*i) == d->m_node)
+                if ((*i) == d->node)
                     continue;
                 Rect bb = (*i)->mapToParent((*i)->getBoundingRect());
                 if (bb.contains(p))
                 {
-                    if ((*i) != d->m_currentChild)
+                    if ((*i) != d->currentChild)
                     {
-                        if (d->m_currentChild)
-                            d->m_currentChild->mouseLeave();
-                        d->m_currentChild = *i;
-                        d->m_currentChild->mouseEnter();
+                        if (d->currentChild)
+                            d->currentChild->mouseLeave();
+                        d->currentChild = *i;
+                        d->currentChild->mouseEnter();
                     }
                     (*i)->mouseMove((*i)->mapFromParent(p));
                     unlock();
                     return;
                 }
             }
-            if (d->m_currentChild)
-                d->m_currentChild->mouseLeave();
-            d->m_currentChild = 0;
+            if (d->currentChild)
+                d->currentChild->mouseLeave();
+            d->currentChild = 0;
         }
     }
-    else if (d->m_scrollDrag == ScrollAreaPrivate::VERTICAL)
+    else if (d->scrollDrag == ScrollAreaPrivate::VERTICAL)
     {
-        float dy = p.y - d->m_scrollStart;
+        float dy = p.y - d->scrollStart;
         float scrollSize;
-        if (d->m_hSize > 1.0f)
+        if (d->hSize > 1.0f)
         {
-            scrollSize = (d->m_height - d->m_right.width() - d->m_bottom.height() - d->m_top.height()) / (d->m_vSize);
+            scrollSize = (d->height - d->right.width() - d->bottom.height() - d->top.height()) / (d->vSize);
         }
         else
         {
-            scrollSize = (d->m_height - d->m_bottom.height() - d->m_top.height()) / (d->m_vSize);
+            scrollSize = (d->height - d->bottom.height() - d->top.height()) / (d->vSize);
         }
-        d->m_vPosition -= dy / scrollSize;
+        d->vPosition -= dy / scrollSize;
         d->updateScrollPosition();
-        d->m_scrollStart = p.y;
+        d->scrollStart = p.y;
     }
-    else if (d->m_scrollDrag == ScrollAreaPrivate::HORIZONTAL)
+    else if (d->scrollDrag == ScrollAreaPrivate::HORIZONTAL)
     {
-        float dx = p.x - d->m_scrollStart;
+        float dx = p.x - d->scrollStart;
         float scrollSize;
-        if (d->m_vSize > 1.0f)
+        if (d->vSize > 1.0f)
         {
-            scrollSize = (d->m_width - d->m_bottom.width() - d->m_right.height() - d->m_left.height()) / (d->m_hSize);
+            scrollSize = (d->width - d->bottom.width() - d->right.height() - d->left.height()) / (d->hSize);
         }
         else
         {
-            scrollSize = (d->m_width - d->m_right.height() - d->m_left.height()) / (d->m_hSize);
+            scrollSize = (d->width - d->right.height() - d->left.height()) / (d->hSize);
         }
-        d->m_hPosition -= dx / scrollSize;
+        d->hPosition -= dx / scrollSize;
         d->updateScrollPosition();
-        d->m_scrollStart = p.x;
+        d->scrollStart = p.x;
     }
     unlock();
 }
@@ -285,8 +285,8 @@ void ScrollArea::mouseMove(const Vector &p)
 void ScrollArea::processLogic(int dt)
 {
     RANGERS_D(ScrollArea);
-    if (d->m_node)
-        d->m_node->processLogic(dt);
+    if (d->node)
+        d->node->processLogic(dt);
 }
 
 void ScrollArea::mouseEnter()
@@ -297,7 +297,7 @@ void ScrollArea::mouseEnter()
 void ScrollArea::mouseLeave()
 {
     RANGERS_D(ScrollArea);
-    d->m_scrollDrag = ScrollAreaPrivate::NONE;
+    d->scrollDrag = ScrollAreaPrivate::NONE;
     Widget::mouseLeave();
 }
 
@@ -308,36 +308,36 @@ void ScrollArea::mouseDown(uint8_t key, const Vector &p)
     RANGERS_D(ScrollArea);
     if (key == SDL_BUTTON_WHEELUP)
     {
-        if (d->m_vSize > 1.0f)
+        if (d->vSize > 1.0f)
         {
-            d->m_vPosition += 0.1f;
+            d->vPosition += 0.1f;
             d->updateScrollPosition();
         }
     }
     else if (key == SDL_BUTTON_WHEELDOWN)
     {
-        if (d->m_vSize > 1.0f)
+        if (d->vSize > 1.0f)
         {
-            d->m_vPosition -= 0.1f;
+            d->vPosition -= 0.1f;
             d->updateScrollPosition();
         }
     }
-    else if (d->m_leftMouseButtonPressed)
+    else if (d->leftMouseButtonPressed)
     {
-        if (d->m_vScroll.mapToParent(d->m_vScroll.getBoundingRect()).contains(p))
+        if (d->vScroll.mapToParent(d->vScroll.getBoundingRect()).contains(p))
         {
-            d->m_scrollDrag = ScrollAreaPrivate::VERTICAL;
-            d->m_scrollStart = p.y;
+            d->scrollDrag = ScrollAreaPrivate::VERTICAL;
+            d->scrollStart = p.y;
         }
-        else if (d->m_hScroll.mapToParent(d->m_hScroll.getBoundingRect()).contains(p))
+        else if (d->hScroll.mapToParent(d->hScroll.getBoundingRect()).contains(p))
         {
-            d->m_scrollDrag = ScrollAreaPrivate::HORIZONTAL;
-            d->m_scrollStart = p.x;
+            d->scrollDrag = ScrollAreaPrivate::HORIZONTAL;
+            d->scrollStart = p.x;
         }
         else
         {
-            if (d->m_node)
-                d->m_node->mouseDown(key, d->m_node->mapFromParent(p));
+            if (d->node)
+                d->node->mouseDown(key, d->node->mapFromParent(p));
         }
     }
     unlock();
@@ -347,28 +347,28 @@ void ScrollArea::mouseUp(uint8_t key, const Vector &p)
 {
     lock();
     RANGERS_D(ScrollArea);
-    if (d->m_leftMouseButtonPressed)
+    if (d->leftMouseButtonPressed)
     {
-        if (d->m_scrollDrag != ScrollAreaPrivate::NONE)
+        if (d->scrollDrag != ScrollAreaPrivate::NONE)
         {
             if (!getBoundingRect().contains(p))
                 mouseLeave();
             Button *scroll = 0;
-            if (d->m_scrollDrag == ScrollAreaPrivate::VERTICAL)
-                scroll = &d->m_vScroll;
-            if (d->m_scrollDrag == ScrollAreaPrivate::HORIZONTAL)
-                scroll = &d->m_hScroll;
+            if (d->scrollDrag == ScrollAreaPrivate::VERTICAL)
+                scroll = &d->vScroll;
+            if (d->scrollDrag == ScrollAreaPrivate::HORIZONTAL)
+                scroll = &d->hScroll;
             if ((scroll) && (!scroll->mapToParent(scroll->getBoundingRect()).contains(p)))
             {
                 scroll->mouseLeave();
-                d->m_currentChild = 0;
+                d->currentChild = 0;
             }
-            d->m_scrollDrag = ScrollAreaPrivate::NONE;
+            d->scrollDrag = ScrollAreaPrivate::NONE;
         }
         else
         {
-            if (d->m_node)
-                d->m_node->mouseUp(key, d->m_node->mapFromParent(p));
+            if (d->node)
+                d->node->mouseUp(key, d->node->mapFromParent(p));
         }
     }
     else
@@ -380,44 +380,44 @@ void ScrollAreaPrivate::updateScrollPosition()
 {
     RANGERS_Q(ScrollArea);
     q->lock();
-    if (m_vPosition >= 0.0f)
-        m_vPosition = 0.0f;
-    if (m_vPosition < - m_vSize + 1.0f)
-        m_vPosition = - m_vSize + 1.0f;
-    if (m_hPosition < - m_hSize + 1.0f)
-        m_hPosition = - m_hSize + 1.0f;
-    if (m_hPosition >= 0.0f)
-        m_hPosition = 0.0f;
+    if (vPosition >= 0.0f)
+        vPosition = 0.0f;
+    if (vPosition < - vSize + 1.0f)
+        vPosition = - vSize + 1.0f;
+    if (hPosition < - hSize + 1.0f)
+        hPosition = - hSize + 1.0f;
+    if (hPosition >= 0.0f)
+        hPosition = 0.0f;
 
-    if (m_hSize > 1.0f)
+    if (hSize > 1.0f)
     {
         float scrollSize;
-        if (m_vSize > 1.0f)
+        if (vSize > 1.0f)
         {
-            scrollSize = (m_width - m_bottom.width() - m_right.height() - m_left.height()) / (m_hSize);
+            scrollSize = (width - bottom.width() - right.height() - left.height()) / (hSize);
         }
         else
         {
-            scrollSize = (m_width - m_right.height() - m_left.height()) / (m_hSize);
+            scrollSize = (width - right.height() - left.height()) / (hSize);
         }
-        m_hScroll.setPosition((int)(- m_hPosition * scrollSize + m_left.height()), m_height);
+        hScroll.setPosition((int)(- hPosition * scrollSize + left.height()), height);
 
     }
-    if (m_vSize > 1.0f)
+    if (vSize > 1.0f)
     {
         float scrollSize;
-        if (m_hSize > 1.0f)
+        if (hSize > 1.0f)
         {
-            scrollSize = (m_height - m_right.width() - m_bottom.height() - m_top.height()) / (m_vSize);
+            scrollSize = (height - right.width() - bottom.height() - top.height()) / (vSize);
         }
         else
         {
-            scrollSize = (m_height - m_bottom.height() - m_top.height()) / (m_vSize);
+            scrollSize = (height - bottom.height() - top.height()) / (vSize);
         }
-        m_vScroll.setPosition(m_width - m_top.width(), (int)(- m_vPosition * scrollSize + m_top.height()));
+        vScroll.setPosition(width - top.width(), (int)(- vPosition * scrollSize + top.height()));
     }
 
-    m_node->setPosition((int)(m_hPosition * m_width), (int)(m_vPosition * m_height));
+    node->setPosition((int)(hPosition * width), (int)(vPosition * height));
     q->unlock();
 }
 
@@ -427,18 +427,18 @@ void ScrollArea::actionPerformed(const Action& action)
     if (action.type() != Rangers::Action::BUTTON_CLICKED)
         return;
 
-    if (!d->m_node)
+    if (!d->node)
         return;
 
     lock();
-    if (action.source() == &d->m_left)
-        d->m_hPosition += 0.1f;
-    else if (action.source() == &d->m_right)
-        d->m_hPosition -= 0.1f;
-    else if (action.source() == &d->m_top)
-        d->m_vPosition += 0.1f;
-    else if (action.source() == &d->m_bottom)
-        d->m_vPosition -= 0.1f;
+    if (action.source() == &d->left)
+        d->hPosition += 0.1f;
+    else if (action.source() == &d->right)
+        d->hPosition -= 0.1f;
+    else if (action.source() == &d->top)
+        d->vPosition += 0.1f;
+    else if (action.source() == &d->bottom)
+        d->vPosition -= 0.1f;
 
     d->updateScrollPosition();
     unlock();

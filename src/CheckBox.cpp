@@ -29,93 +29,93 @@ namespace Rangers
 {
 CheckBoxPrivate::CheckBoxPrivate()
 {
-    m_checked = false;
-    m_normal = 0;
-    m_checkedNormal = 0;
-    m_hovered = 0;
-    m_checkedHovered = 0;
-    m_sprite = 0;
+    checked = false;
+    normal = 0;
+    checkedNormal = 0;
+    hovered = 0;
+    checkedHovered = 0;
+    sprite = 0;
 }
 
 CheckBox::CheckBox(const CheckBoxStyle& style, const std::wstring &text, Widget *parent): Widget(*(new CheckBoxPrivate()), parent)
 {
     RANGERS_D(CheckBox);
-    d->m_style = style;
-    if (d->m_style.normal.type == ResourceDescriptor::NINEPATCH)
-        d->m_normal = new NinePatch(boost::get<NinePatchDescriptor>(d->m_style.normal.resource), this);
-    else if (d->m_style.normal.type == ResourceDescriptor::SPRITE)
-        d->m_normal = new Sprite(boost::get<TextureRegion>(d->m_style.normal.resource), this);
+    d->style = style;
+    if (d->style.normal.type == ResourceDescriptor::NINEPATCH)
+        d->normal = new NinePatch(boost::get<NinePatchDescriptor>(d->style.normal.resource), this);
+    else if (d->style.normal.type == ResourceDescriptor::SPRITE)
+        d->normal = new Sprite(boost::get<TextureRegion>(d->style.normal.resource), this);
 
-    if (d->m_style.checkedNormal.type == ResourceDescriptor::NINEPATCH)
-        d->m_checkedNormal = new NinePatch(boost::get<NinePatchDescriptor>(d->m_style.checkedNormal.resource), this);
-    else if (d->m_style.normal.type == ResourceDescriptor::SPRITE)
-        d->m_checkedNormal = new Sprite(boost::get<TextureRegion>(d->m_style.checkedNormal.resource), this);
+    if (d->style.checkedNormal.type == ResourceDescriptor::NINEPATCH)
+        d->checkedNormal = new NinePatch(boost::get<NinePatchDescriptor>(d->style.checkedNormal.resource), this);
+    else if (d->style.normal.type == ResourceDescriptor::SPRITE)
+        d->checkedNormal = new Sprite(boost::get<TextureRegion>(d->style.checkedNormal.resource), this);
 
-    if (d->m_style.hovered.type == ResourceDescriptor::NINEPATCH)
-        d->m_hovered = new NinePatch(boost::get<NinePatchDescriptor>(d->m_style.hovered.resource), this);
-    else if (d->m_style.normal.type == ResourceDescriptor::SPRITE)
-        d->m_hovered = new Sprite(boost::get<TextureRegion>(d->m_style.hovered.resource), this);
+    if (d->style.hovered.type == ResourceDescriptor::NINEPATCH)
+        d->hovered = new NinePatch(boost::get<NinePatchDescriptor>(d->style.hovered.resource), this);
+    else if (d->style.normal.type == ResourceDescriptor::SPRITE)
+        d->hovered = new Sprite(boost::get<TextureRegion>(d->style.hovered.resource), this);
 
-    if (d->m_style.checkedHovered.type == ResourceDescriptor::NINEPATCH)
-        d->m_checkedHovered = new NinePatch(boost::get<NinePatchDescriptor>(d->m_style.checkedHovered.resource), this);
-    else if (d->m_style.normal.type == ResourceDescriptor::SPRITE)
-        d->m_checkedHovered = new Sprite(boost::get<TextureRegion>(d->m_style.checkedHovered.resource), this);
+    if (d->style.checkedHovered.type == ResourceDescriptor::NINEPATCH)
+        d->checkedHovered = new NinePatch(boost::get<NinePatchDescriptor>(d->style.checkedHovered.resource), this);
+    else if (d->style.normal.type == ResourceDescriptor::SPRITE)
+        d->checkedHovered = new Sprite(boost::get<TextureRegion>(d->style.checkedHovered.resource), this);
 
-    if ((d->m_style.font.path != L"") && (d->m_style.font.size > 0))
+    if ((d->style.font.path != L"") && (d->style.font.size > 0))
     {
-        d->m_label = Label(text, this, ResourceManager::instance()->loadFont(d->m_style.font.path, d->m_style.font.size));
-        d->m_label.setOrigin(POSITION_X_LEFT, POSITION_Y_TOP);
+        d->label = Label(text, this, ResourceManager::instance()->loadFont(d->style.font.path, d->style.font.size));
+        d->label.setOrigin(POSITION_X_LEFT, POSITION_Y_TOP);
     }
-    setColor(d->m_style.color);
-    d->m_sprite = d->m_normal;
+    setColor(d->style.color);
+    d->sprite = d->normal;
     markToUpdate();
 }
 
 CheckBox::~CheckBox()
 {
     RANGERS_D(CheckBox);
-    if (d->m_normal)
-        delete d->m_normal;
-    if (d->m_checkedNormal)
-        delete d->m_checkedNormal;
-    if (d->m_hovered)
-        delete d->m_hovered;
-    if (d->m_checkedHovered)
-        delete d->m_checkedHovered;
+    if (d->normal)
+        delete d->normal;
+    if (d->checkedNormal)
+        delete d->checkedNormal;
+    if (d->hovered)
+        delete d->hovered;
+    if (d->checkedHovered)
+        delete d->checkedHovered;
 }
 
 void CheckBox::setColor(int color)
 {
     lock();
     RANGERS_D(CheckBox);
-    d->m_label.setColor(color);
+    d->label.setColor(color);
     unlock();
 }
 
 int CheckBox::color() const
 {
     RANGERS_D(const CheckBox);
-    return d->m_label.color();
+    return d->label.color();
 }
 
 void CheckBox::setChecked(bool checked)
 {
     lock();
     RANGERS_D(CheckBox);
-    d->m_checked = checked;
-    if ((d->m_sprite == d->m_hovered) || (d->m_sprite == d->m_checkedHovered))
+    d->checked = checked;
+    if ((d->sprite == d->hovered) || (d->sprite == d->checkedHovered))
     {
-        if (d->m_checked)
-            d->m_sprite = d->m_checkedHovered;
+        if (d->checked)
+            d->sprite = d->checkedHovered;
         else
-            d->m_sprite = d->m_hovered;
+            d->sprite = d->hovered;
     }
     else
     {
-        if (d->m_checked)
-            d->m_sprite = d->m_checkedNormal;
+        if (d->checked)
+            d->sprite = d->checkedNormal;
         else
-            d->m_sprite = d->m_normal;
+            d->sprite = d->normal;
     }
     unlock();
     markToUpdate();
@@ -125,7 +125,7 @@ void CheckBox::setText(const std::wstring& text)
 {
     lock();
     RANGERS_D(CheckBox);
-    d->m_label.setText(text);
+    d->label.setText(text);
     markToUpdate();
     unlock();
 }
@@ -133,13 +133,13 @@ void CheckBox::setText(const std::wstring& text)
 bool CheckBox::checked() const
 {
     RANGERS_D(const CheckBox);
-    return d->m_checked;
+    return d->checked;
 }
 
 std::wstring CheckBox::text() const
 {
     RANGERS_D(const CheckBox);
-    return d->m_label.text();
+    return d->label.text();
 }
 
 void CheckBox::draw() const
@@ -147,9 +147,9 @@ void CheckBox::draw() const
     RANGERS_D(const CheckBox);
     if (!prepareDraw())
         return;
-    if (d->m_sprite)
-        d->m_sprite->draw();
-    d->m_label.draw();
+    if (d->sprite)
+        d->sprite->draw();
+    d->label.draw();
     endDraw();
 }
 
@@ -157,17 +157,17 @@ void CheckBox::processMain()
 {
     lock();
     RANGERS_D(CheckBox);
-    if (!d->m_sprite)
+    if (!d->sprite)
         return;
 
-    if (d->m_sprite->needUpdate())
-        d->m_sprite->processMain();
-    if (d->m_label.needUpdate())
-        d->m_label.processMain();
+    if (d->sprite->needUpdate())
+        d->sprite->processMain();
+    if (d->label.needUpdate())
+        d->label.processMain();
 
-    d->m_width = d->m_sprite->width() + d->m_label.width() + 5;
-    d->m_height = d->m_sprite->height();
-    d->m_label.setPosition(d->m_sprite->width() + 5, int(d->m_sprite->height() - d->m_label.height()) / 2);
+    d->width = d->sprite->width() + d->label.width() + 5;
+    d->height = d->sprite->height();
+    d->label.setPosition(d->sprite->width() + 5, int(d->sprite->height() - d->label.height()) / 2);
     unlock();
     Widget::processMain();
 }
@@ -176,12 +176,12 @@ void CheckBox::mouseEnter()
 {
     lock();
     RANGERS_D(CheckBox);
-    if (d->m_hovered && d->m_checkedHovered)
+    if (d->hovered && d->checkedHovered)
     {
-        if (d->m_checked)
-            d->m_sprite = d->m_checkedHovered;
+        if (d->checked)
+            d->sprite = d->checkedHovered;
         else
-            d->m_sprite = d->m_hovered;
+            d->sprite = d->hovered;
     }
     unlock();
     Widget::mouseEnter();
@@ -191,10 +191,10 @@ void CheckBox::mouseLeave()
 {
     lock();
     RANGERS_D(CheckBox);
-    if (d->m_checked)
-        d->m_sprite = d->m_checkedNormal;
+    if (d->checked)
+        d->sprite = d->checkedNormal;
     else
-        d->m_sprite = d->m_normal;
+        d->sprite = d->normal;
     unlock();
     Widget::mouseLeave();
 }
@@ -203,8 +203,8 @@ void CheckBox::mouseClick(const Vector &p)
 {
     lock();
     RANGERS_D(CheckBox);
-    setChecked(!d->m_checked);
-    action(Action(this, Action::CHECKBOX_TOGGLED, Action::Argument(d->m_checked)));
+    setChecked(!d->checked);
+    action(Action(this, Action::CHECKBOX_TOGGLED, Action::Argument(d->checked)));
     unlock();
 }
 }

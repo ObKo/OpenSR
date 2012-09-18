@@ -27,11 +27,11 @@ namespace Rangers
 {
 WidgetPrivate::WidgetPrivate(): ObjectPrivate()
 {
-    m_currentChild = 0;
-    m_width = 0;
-    m_height = 0;
-    m_leftMouseButtonPressed = false;
-    m_focused = false;
+    currentChild = 0;
+    width = 0;
+    height = 0;
+    leftMouseButtonPressed = false;
+    focused = false;
 }
 
 Widget::Widget(Widget *parent): Object(*(new WidgetPrivate()), parent)
@@ -46,8 +46,8 @@ Widget::Widget(float w, float h, Widget *parent): Object(*(new WidgetPrivate()),
 {
     RANGERS_D(Widget);
 
-    d->m_width = w;
-    d->m_height = h;
+    d->width = w;
+    d->height = h;
 
     if (parent)
         parent->addWidget(this);
@@ -57,16 +57,16 @@ Widget::Widget(const Rangers::Widget& other): Object(*(new WidgetPrivate()), oth
 {
     RANGERS_D(Widget);
 
-    d->m_childWidgets = other.d_func()->m_childWidgets;
-    d->m_currentChild = other.d_func()->m_currentChild;
-    d->m_leftMouseButtonPressed = other.d_func()->m_leftMouseButtonPressed;
-    d->m_width = other.d_func()->m_width;
-    d->m_height = other.d_func()->m_height;
-    d->m_listeners = other.d_func()->m_listeners;
-    d->m_focused = false;
+    d->childWidgets = other.d_func()->childWidgets;
+    d->currentChild = other.d_func()->currentChild;
+    d->leftMouseButtonPressed = other.d_func()->leftMouseButtonPressed;
+    d->width = other.d_func()->width;
+    d->height = other.d_func()->height;
+    d->listeners = other.d_func()->listeners;
+    d->focused = false;
     //FIXME: Ugly downcasting
     Widget* wparent;
-    if ((wparent = dynamic_cast<Widget*>(other.d_func()->m_parent)) != 0)
+    if ((wparent = dynamic_cast<Widget*>(other.d_func()->parent)) != 0)
         wparent->addWidget(this);
     markToUpdate();
 }
@@ -75,16 +75,16 @@ Widget::Widget(WidgetPrivate &p, const Widget& other): Object(p, other)
 {
     RANGERS_D(Widget);
 
-    d->m_childWidgets = other.d_func()->m_childWidgets;
-    d->m_currentChild = other.d_func()->m_currentChild;
-    d->m_leftMouseButtonPressed = other.d_func()->m_leftMouseButtonPressed;
-    d->m_width = other.d_func()->m_width;
-    d->m_height = other.d_func()->m_height;
-    d->m_listeners = other.d_func()->m_listeners;
-    d->m_focused = false;
+    d->childWidgets = other.d_func()->childWidgets;
+    d->currentChild = other.d_func()->currentChild;
+    d->leftMouseButtonPressed = other.d_func()->leftMouseButtonPressed;
+    d->width = other.d_func()->width;
+    d->height = other.d_func()->height;
+    d->listeners = other.d_func()->listeners;
+    d->focused = false;
     //FIXME: Ugly downcasting
     Widget* wparent;
-    if ((wparent = dynamic_cast<Widget*>(other.d_func()->m_parent)) != 0)
+    if ((wparent = dynamic_cast<Widget*>(other.d_func()->parent)) != 0)
         wparent->addWidget(this);
     markToUpdate();
 }
@@ -102,7 +102,7 @@ Widget::~Widget()
     RANGERS_D(Widget);
     //FIXME: Ugly downcasting
     Widget* wparent;
-    if ((wparent = dynamic_cast<Widget*>(d->m_parent)) != 0)
+    if ((wparent = dynamic_cast<Widget*>(d->parent)) != 0)
         wparent->removeWidget(this);
 }
 
@@ -110,26 +110,26 @@ void Widget::mouseMove(const Vector& p)
 {
     RANGERS_D(Widget);
     lock();
-    for (std::list<Widget*>::reverse_iterator i = d->m_childWidgets.rbegin(); i != d->m_childWidgets.rend(); ++i)
+    for (std::list<Widget*>::reverse_iterator i = d->childWidgets.rbegin(); i != d->childWidgets.rend(); ++i)
     {
         Rect bb = (*i)->mapToParent((*i)->getBoundingRect());
         if (bb.contains(p))
         {
-            if ((*i) != d->m_currentChild)
+            if ((*i) != d->currentChild)
             {
-                if (d->m_currentChild)
-                    d->m_currentChild->mouseLeave();
-                d->m_currentChild = *i;
-                d->m_currentChild->mouseEnter();
+                if (d->currentChild)
+                    d->currentChild->mouseLeave();
+                d->currentChild = *i;
+                d->currentChild->mouseEnter();
             }
             (*i)->mouseMove((*i)->mapFromParent(p));
             unlock();
             return;
         }
     }
-    if (d->m_currentChild)
-        d->m_currentChild->mouseLeave();
-    d->m_currentChild = 0;
+    if (d->currentChild)
+        d->currentChild->mouseLeave();
+    d->currentChild = 0;
     unlock();
 }
 
@@ -140,9 +140,9 @@ Rect Widget::getBoundingRect() const
     Rect r;
     r.x = 0;
     r.y = 0;
-    r.width = d->m_width;
-    r.height = d->m_height;
-    for (std::list<Widget*>::const_reverse_iterator i = d->m_childWidgets.rbegin(); i != d->m_childWidgets.rend(); i++)
+    r.width = d->width;
+    r.height = d->height;
+    for (std::list<Widget*>::const_reverse_iterator i = d->childWidgets.rbegin(); i != d->childWidgets.rend(); i++)
     {
         Rect childRect = (*i)->getBoundingRect();
         Vector position = (*i)->position();
@@ -178,7 +178,7 @@ void Widget::mouseEnter()
 {
     RANGERS_D(Widget);
     lock();
-    d->m_leftMouseButtonPressed = false;
+    d->leftMouseButtonPressed = false;
     unlock();
 }
 
@@ -186,10 +186,10 @@ void Widget::mouseLeave()
 {
     RANGERS_D(Widget);
     lock();
-    if (d->m_currentChild)
-        d->m_currentChild->mouseLeave();
-    d->m_currentChild = 0;
-    d->m_leftMouseButtonPressed = false;
+    if (d->currentChild)
+        d->currentChild->mouseLeave();
+    d->currentChild = 0;
+    d->leftMouseButtonPressed = false;
     unlock();
 }
 
@@ -197,12 +197,12 @@ void Widget::mouseDown(uint8_t key, const Vector& p)
 {
     RANGERS_D(Widget);
     lock();
-    if (d->m_currentChild)
+    if (d->currentChild)
     {
-        d->m_currentChild->mouseDown(key, d->m_currentChild->mapFromParent(p));
+        d->currentChild->mouseDown(key, d->currentChild->mapFromParent(p));
     }
     if (key == SDL_BUTTON_LEFT)
-        d->m_leftMouseButtonPressed = true;
+        d->leftMouseButtonPressed = true;
     unlock();
 }
 
@@ -210,13 +210,13 @@ void Widget::mouseUp(uint8_t key, const Vector& p)
 {
     RANGERS_D(Widget);
     lock();
-    if (d->m_currentChild)
+    if (d->currentChild)
     {
-        d->m_currentChild->mouseUp(key, d->m_currentChild->mapFromParent(p));
+        d->currentChild->mouseUp(key, d->currentChild->mapFromParent(p));
     }
-    if (d->m_leftMouseButtonPressed && (key == SDL_BUTTON_LEFT))
+    if (d->leftMouseButtonPressed && (key == SDL_BUTTON_LEFT))
     {
-        d->m_leftMouseButtonPressed = false;
+        d->leftMouseButtonPressed = false;
         mouseClick(p);
     }
     unlock();
@@ -232,16 +232,16 @@ void Widget::addWidget(Widget* w)
     lock();
     if (w->parent() != this)
         addChild(w);
-    for (std::list<Widget*>::iterator i = d->m_childWidgets.begin(); i != d->m_childWidgets.end(); i++)
+    for (std::list<Widget*>::iterator i = d->childWidgets.begin(); i != d->childWidgets.end(); i++)
     {
         if ((*i)->layer() > w->layer())
         {
-            d->m_childWidgets.insert(i, w);
+            d->childWidgets.insert(i, w);
             unlock();
             return;
         }
     }
-    d->m_childWidgets.push_back(w);
+    d->childWidgets.push_back(w);
     unlock();
 }
 
@@ -249,23 +249,23 @@ void Widget::removeWidget(Widget* w)
 {
     RANGERS_D(Widget);
     lock();
-    d->m_childWidgets.remove(w);
+    d->childWidgets.remove(w);
     removeChild(w);
-    if (d->m_currentChild == w)
-        d->m_currentChild = 0;
+    if (d->currentChild == w)
+        d->currentChild = 0;
     unlock();
 }
 
 int Widget::height() const
 {
     RANGERS_D(const Widget);
-    return d->m_height;
+    return d->height;
 }
 
 int Widget::width() const
 {
     RANGERS_D(const Widget);
-    return d->m_width;
+    return d->width;
 }
 
 int Widget::minWidth() const
@@ -307,18 +307,18 @@ Widget& Widget::operator=(const Rangers::Widget& other)
 
     Object::operator=(other);
 
-    d->m_focused = false;
+    d->focused = false;
 
-    d->m_childWidgets = other.d_func()->m_childWidgets;
-    d->m_currentChild = other.d_func()->m_currentChild;
-    d->m_leftMouseButtonPressed = other.d_func()->m_leftMouseButtonPressed;
+    d->childWidgets = other.d_func()->childWidgets;
+    d->currentChild = other.d_func()->currentChild;
+    d->leftMouseButtonPressed = other.d_func()->leftMouseButtonPressed;
 
-    d->m_width = other.d_func()->m_width;
-    d->m_height = other.d_func()->m_height;
-    d->m_listeners = other.d_func()->m_listeners;
+    d->width = other.d_func()->width;
+    d->height = other.d_func()->height;
+    d->listeners = other.d_func()->listeners;
     //FIXME: Ugly downcasting
     Widget* wparent;
-    if ((wparent = dynamic_cast<Widget*>(other.d_func()->m_parent)) != 0)
+    if ((wparent = dynamic_cast<Widget*>(other.d_func()->parent)) != 0)
         wparent->addWidget(this);
     markToUpdate();
     return *this;
@@ -328,7 +328,7 @@ void Widget::addListener(ActionListener* listener)
 {
     RANGERS_D(Widget);
     lock();
-    d->m_listeners.push_back(listener);
+    d->listeners.push_back(listener);
     unlock();
 }
 
@@ -336,7 +336,7 @@ void Widget::removeListener(ActionListener* listener)
 {
     RANGERS_D(Widget);
     lock();
-    d->m_listeners.remove(listener);
+    d->listeners.remove(listener);
     unlock();
 }
 
@@ -344,13 +344,13 @@ void Widget::action(const Action& action)
 {
     RANGERS_D(Widget);
     lock();
-    if (!d->m_listeners.size())
+    if (!d->listeners.size())
     {
         unlock();
         return;
     }
-    std::list<ActionListener*>::iterator end = d->m_listeners.end();
-    for (std::list<ActionListener*>::iterator i = d->m_listeners.begin(); i != end; ++i)
+    std::list<ActionListener*>::iterator end = d->listeners.end();
+    for (std::list<ActionListener*>::iterator i = d->listeners.begin(); i != end; ++i)
         (*i)->actionPerformed(action);
     unlock();
 }
@@ -358,14 +358,14 @@ void Widget::action(const Action& action)
 bool Widget::isFocused() const
 {
     RANGERS_D(const Widget);
-    return d->m_focused;
+    return d->focused;
 }
 
 void Widget::focus()
 {
     RANGERS_D(Widget);
     lock();
-    d->m_focused = true;
+    d->focused = true;
     unlock();
 }
 
@@ -373,7 +373,7 @@ void Widget::unFocus()
 {
     RANGERS_D(Widget);
     lock();
-    d->m_focused = false;
+    d->focused = false;
     unlock();
 }
 
@@ -381,8 +381,8 @@ void Widget::setGeometry(int width, int height)
 {
     RANGERS_D(Widget);
     lock();
-    d->m_width = width;
-    d->m_height = height;
+    d->width = width;
+    d->height = height;
     markToUpdate();
     unlock();
 }
@@ -391,7 +391,7 @@ void Widget::setHeight(int height)
 {
     RANGERS_D(Widget);
     lock();
-    d->m_height = height;
+    d->height = height;
     markToUpdate();
     unlock();
 }
@@ -400,7 +400,7 @@ void Widget::setWidth(int width)
 {
     RANGERS_D(Widget);
     lock();
-    d->m_width = width;
+    d->width = width;
     markToUpdate();
     unlock();
 }

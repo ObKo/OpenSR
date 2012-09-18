@@ -32,15 +32,15 @@ class ConsoleWidgetPrivate: public WidgetPrivate
 public:
     ConsoleWidgetPrivate();
 
-    LineEditWidget m_lineEdit;
-    ColorLabel m_logLabel;
-    Vertex *m_borderVertices;
-    GLuint m_borderBuffer;
-    GLuint m_texture;
-    int m_consoleLines;
+    LineEditWidget lineEdit;
+    ColorLabel logLabel;
+    Vertex *borderVertices;
+    GLuint borderBuffer;
+    GLuint texture;
+    int consoleLines;
 
-    int m_historyPosition;
-    std::vector<std::wstring> m_commandHistory;
+    int historyPosition;
+    std::vector<std::wstring> commandHistory;
 };
 }
 

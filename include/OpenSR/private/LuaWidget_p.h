@@ -31,8 +31,8 @@ class LuaWidgetPrivate: public WidgetPrivate
 public:
     LuaWidgetPrivate();
 
-    boost::shared_ptr<lua_State> m_luaState;
-    LuaWidget::LuaActionListener *m_actionListener;
+    boost::shared_ptr<lua_State> luaState;
+    LuaWidget::LuaActionListener *actionListener;
 
     void initLuaState();
     static int luaErrorHandler(lua_State* state);

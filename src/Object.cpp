@@ -34,13 +34,13 @@ ObjectPrivate::~ObjectPrivate()
 
 ObjectPrivate::ObjectPrivate()
 {
-    m_rotation = 0;
-    m_color = 0xffffffff;
-    m_needUpdate = false;
-    m_parent = 0;
-    m_position.x = 0.0f;
-    m_position.y = 0.0f;
-    m_layer = 0;
+    rotation = 0;
+    color = 0xffffffff;
+    needUpdate = false;
+    parent = 0;
+    position.x = 0.0f;
+    position.y = 0.0f;
+    layer = 0;
 }
 
 Object::Object(Object *parent): m_d(new ObjectPrivate())
@@ -55,9 +55,9 @@ Object::Object(Object *parent): m_d(new ObjectPrivate())
 Object::Object(const Vector& pos, float rot, int layer, Object *parent): m_d(new ObjectPrivate())
 {
     RANGERS_D(Object);
-    d->m_layer = layer;
-    d->m_position = pos;
-    d->m_rotation = rot;
+    d->layer = layer;
+    d->position = pos;
+    d->rotation = rot;
 
     if (parent)
         parent->addChild(this);
@@ -67,27 +67,27 @@ Object::Object(const Vector& pos, float rot, int layer, Object *parent): m_d(new
 Object::Object(const Rangers::Object& other): m_d(new ObjectPrivate())
 {
     RANGERS_D(Object);
-    for (std::list<Object*>::iterator i = d->m_children.begin(); i != d->m_children.end(); i++)
+    for (std::list<Object*>::iterator i = d->children.begin(); i != d->children.end(); i++)
         if ((*i)->parent() == this)
             (*i)->setParent(0);
 
-    d->m_children = other.m_d->m_children;
-    for (std::list<Object*>::iterator i = d->m_children.begin(); i != d->m_children.end(); i++)
+    d->children = other.d_func()->children;
+    for (std::list<Object*>::iterator i = d->children.begin(); i != d->children.end(); i++)
         (*i)->setParent(this);
 
-    d->m_color = other.m_d->m_color;
-    d->m_needUpdate = false;
+    d->color = other.d_func()->color;
+    d->needUpdate = false;
 
-    d->m_parent = other.parent();
+    d->parent = other.parent();
 
-    if (d->m_parent)
-        d->m_parent->addChild(this);
+    if (d->parent)
+        d->parent->addChild(this);
 
     //for(std::list<Object*>::const_iterator it = other.objectChilds.begin(); it < other.objectChilds.end(); it++)
     //	objectChilds.push_back(new Object(*(*it)));
 
-    d->m_position = other.m_d->m_position;
-    d->m_rotation = other.m_d->m_rotation;
+    d->position = other.d_func()->position;
+    d->rotation = other.d_func()->rotation;
     markToUpdate();
     d->m_q = this;
 }
@@ -95,27 +95,27 @@ Object::Object(const Rangers::Object& other): m_d(new ObjectPrivate())
 Object::Object(ObjectPrivate &p, const Object& other): m_d(&p)
 {
     RANGERS_D(Object);
-    for (std::list<Object*>::iterator i = d->m_children.begin(); i != d->m_children.end(); i++)
+    for (std::list<Object*>::iterator i = d->children.begin(); i != d->children.end(); i++)
         if ((*i)->parent() == this)
             (*i)->setParent(0);
 
-    d->m_children = other.m_d->m_children;
-    for (std::list<Object*>::iterator i = d->m_children.begin(); i != d->m_children.end(); i++)
+    d->children = other.d_func()->children;
+    for (std::list<Object*>::iterator i = d->children.begin(); i != d->children.end(); i++)
         (*i)->setParent(this);
 
-    d->m_color = other.m_d->m_color;
-    d->m_needUpdate = false;
+    d->color = other.d_func()->color;
+    d->needUpdate = false;
 
-    d->m_parent = other.parent();
+    d->parent = other.parent();
 
-    if (d->m_parent)
-        d->m_parent->addChild(this);
+    if (d->parent)
+        d->parent->addChild(this);
 
     //for(std::list<Object*>::const_iterator it = other.objectChilds.begin(); it < other.objectChilds.end(); it++)
     //	objectChilds.push_back(new Object(*(*it)));
 
-    d->m_position = other.m_d->m_position;
-    d->m_rotation = other.m_d->m_rotation;
+    d->position = other.d_func()->position;
+    d->rotation = other.d_func()->rotation;
     markToUpdate();
     d->m_q = this;
 }
@@ -132,16 +132,16 @@ Object::Object(ObjectPrivate &dd, Object* parent): m_d(&dd)
 Object::~Object()
 {
     RANGERS_D(Object);
-    for (std::list<Object*>::iterator i = d->m_children.begin(); i != d->m_children.end(); i++)
+    for (std::list<Object*>::iterator i = d->children.begin(); i != d->children.end(); i++)
         if ((*i)->parent() == this)
             (*i)->setParent(0);
 
-    if (d->m_parent)
-        d->m_parent->removeChild(this);
+    if (d->parent)
+        d->parent->removeChild(this);
 
     if (Engine::instance())
         Engine::instance()->unmarkToUpdate(this);
-    delete m_d;
+    delete d;
 }
 
 Object& Object::operator=(const Rangers::Object& other)
@@ -150,24 +150,24 @@ Object& Object::operator=(const Rangers::Object& other)
     if (this == &other)
         return *this;
 
-    for (std::list<Object*>::iterator i = d->m_children.begin(); i != d->m_children.end(); i++)
+    for (std::list<Object*>::iterator i = d->children.begin(); i != d->children.end(); i++)
         if ((*i)->parent() == this)
             (*i)->setParent(0);
 
-    d->m_children = other.m_d->m_children;
-    for (std::list<Object*>::iterator i = d->m_children.begin(); i != d->m_children.end(); i++)
+    d->children = other.d_func()->children;
+    for (std::list<Object*>::iterator i = d->children.begin(); i != d->children.end(); i++)
         (*i)->setParent(this);
 
-    d->m_color = other.m_d->m_color;
-    d->m_needUpdate = false;
+    d->color = other.d_func()->color;
+    d->needUpdate = false;
 
-    d->m_parent = other.m_d->m_parent;
+    d->parent = other.d_func()->parent;
 
-    if (d->m_parent)
-        d->m_parent->addChild(this);
+    if (d->parent)
+        d->parent->addChild(this);
 
-    d->m_position = other.m_d->m_position;
-    d->m_rotation = other.m_d->m_rotation;
+    d->position = other.d_func()->position;
+    d->rotation = other.d_func()->rotation;
     markToUpdate();
     d->m_q = this;
     return *this;
@@ -179,9 +179,9 @@ bool Object::prepareDraw() const
     lock();
     RANGERS_D(const Object);
     glPushMatrix();
-    glTranslatef(d->m_position.x, d->m_position.y, 0);
-    glRotatef(d->m_rotation, 0, 0, -1);
-    glColor4ub((d->m_color >> 24) & 0xff, (d->m_color >> 16) & 0xff, (d->m_color >> 8) & 0xff, d->m_color & 0xff);
+    glTranslatef(d->position.x, d->position.y, 0);
+    glRotatef(d->rotation, 0, 0, -1);
+    glColor4ub((d->color >> 24) & 0xff, (d->color >> 16) & 0xff, (d->color >> 8) & 0xff, d->color & 0xff);
     return true;
 }
 
@@ -189,18 +189,18 @@ void Object::processMain()
 {
     lock();
     RANGERS_D(Object);
-    d->m_needUpdate = false;
+    d->needUpdate = false;
     unlock();
 }
 
 Vector Object::mapFromParent(const Vector& v) const
 {
     RANGERS_D(const Object);
-    float c = cos(DEG2RAD(d->m_rotation));
-    float s = -sin(DEG2RAD(d->m_rotation));
+    float c = cos(DEG2RAD(d->rotation));
+    float s = -sin(DEG2RAD(d->rotation));
     Vector result;
-    result.x = c * (v.x - d->m_position.x) + s * (v.y - d->m_position.y);
-    result.y = -s * (v.x - d->m_position.x) + c * (v.y - d->m_position.y);
+    result.x = c * (v.x - d->position.x) + s * (v.y - d->position.y);
+    result.y = -s * (v.x - d->position.x) + c * (v.y - d->position.y);
     return result;
 }
 
@@ -208,11 +208,11 @@ Vector Object::mapFromParent(const Vector& v) const
 Vector Object::mapToParent(const Vector& v) const
 {
     RANGERS_D(const Object);
-    float c = cos(DEG2RAD(d->m_rotation));
-    float s = -sin(DEG2RAD(d->m_rotation));
+    float c = cos(DEG2RAD(d->rotation));
+    float s = -sin(DEG2RAD(d->rotation));
     Vector result;
-    result.x = c * v.x - s * v.y + d->m_position.x;
-    result.y = s * v.x + c * v.y + d->m_position.y;
+    result.x = c * v.x - s * v.y + d->position.x;
+    result.y = s * v.x + c * v.y + d->position.y;
     return result;
 }
 
@@ -221,7 +221,7 @@ Vector Object::mapFromGlobal(const Vector& v) const
     RANGERS_D(const Object);
     std::stack<const Object*> objects;
     objects.push(this);
-    Object *currentParent = d->m_parent;
+    Object *currentParent = d->parent;
     while (currentParent != 0)
     {
         objects.push(currentParent);
@@ -256,7 +256,7 @@ Vector Object::mapToGlobal(const Vector& v) const
 {
     RANGERS_D(const Object);
     Vector result = mapToParent(v);
-    Object *currentParent = d->m_parent;
+    Object *currentParent = d->parent;
     while (currentParent != 0)
     {
         result = currentParent->mapToParent(result);
@@ -362,7 +362,7 @@ void Object::setColor(int color)
 {
     lock();
     RANGERS_D(Object);
-    d->m_color = color;
+    d->color = color;
     unlock();
 }
 
@@ -370,8 +370,8 @@ void Object::setPosition(float x, float y)
 {
     lock();
     RANGERS_D(Object);
-    d->m_position.x = x;
-    d->m_position.y = y;
+    d->position.x = x;
+    d->position.y = y;
     unlock();
 }
 
@@ -379,7 +379,7 @@ void Object::setPosition(const Vector& pos)
 {
     lock();
     RANGERS_D(Object);
-    d->m_position = pos;
+    d->position = pos;
     unlock();
 }
 
@@ -387,44 +387,44 @@ void Object::setRotation(float angle)
 {
     lock();
     RANGERS_D(Object);
-    d->m_rotation = angle;
+    d->rotation = angle;
     unlock();
 }
 
 const Vector& Object::position() const
 {
     RANGERS_D(const Object);
-    return d->m_position;
+    return d->position;
 }
 
 float Object::rotation() const
 {
     RANGERS_D(const Object);
-    return d->m_rotation;
+    return d->rotation;
 }
 
 int Object::layer() const
 {
     RANGERS_D(const Object);
-    return d->m_layer;
+    return d->layer;
 }
 
 Object* Object::parent() const
 {
     RANGERS_D(const Object);
-    return d->m_parent;
+    return d->parent;
 }
 
 bool Object::needUpdate() const
 {
     RANGERS_D(const Object);
-    return d->m_needUpdate;
+    return d->needUpdate;
 }
 
 int Object::color() const
 {
     RANGERS_D(const Object);
-    return d->m_color;
+    return d->color;
 }
 
 void Object::addChild(Object* object)
@@ -432,16 +432,16 @@ void Object::addChild(Object* object)
     lock();
     RANGERS_D(Object);
     object->setParent(this);
-    for (std::list<Object*>::iterator i = d->m_children.begin(); i != d->m_children.end(); i++)
+    for (std::list<Object*>::iterator i = d->children.begin(); i != d->children.end(); i++)
     {
         if ((*i)->layer() > object->layer())
         {
-            d->m_children.insert(i, object);
+            d->children.insert(i, object);
             unlock();
             return;
         }
     }
-    d->m_children.push_back(object);
+    d->children.push_back(object);
     unlock();
 }
 
@@ -449,7 +449,7 @@ void Object::setParent(Object *parent)
 {
     lock();
     RANGERS_D(Object);
-    d->m_parent = parent;
+    d->parent = parent;
     unlock();
 }
 
@@ -458,7 +458,7 @@ void Object::removeChild(Object* object)
     lock();
     RANGERS_D(Object);
     object->setParent(0);
-    d->m_children.remove(object);
+    d->children.remove(object);
     unlock();
 }
 
@@ -466,8 +466,8 @@ void Object::setLayer(int layer)
 {
     lock();
     RANGERS_D(Object);
-    d->m_layer = layer;
-    if (Object *parent = d->m_parent)
+    d->layer = layer;
+    if (Object *parent = d->parent)
     {
         parent->removeChild(this);
         parent->addChild(this);
@@ -479,9 +479,9 @@ void Object::setLayer(int layer)
 void Object::markToUpdate()
 {
     RANGERS_D(Object);
-    if (!d->m_needUpdate)
+    if (!d->needUpdate)
     {
-        d->m_needUpdate = true;
+        d->needUpdate = true;
         Engine::instance()->markToUpdate(this);
     }
 }
@@ -489,12 +489,12 @@ void Object::markToUpdate()
 void Object::lock() const
 {
     RANGERS_D(const Object);
-    d->m_mutex.lock();
+    d->mutex.lock();
 }
 
 void Object::unlock() const
 {
     RANGERS_D(const Object);
-    d->m_mutex.unlock();
+    d->mutex.unlock();
 }
 }

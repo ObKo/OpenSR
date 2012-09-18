@@ -51,16 +51,16 @@ ColorLabel::ColorLabel(const std::string& text, Object* parent, boost::shared_pt
 {
     RANGERS_D(ColorLabel);
     if (!font)
-        d->m_font = Engine::instance()->coreFont();
+        d->font = Engine::instance()->coreFont();
     else
-        d->m_font = font;
+        d->font = font;
 
-    d->m_xOrigin = xpos;
-    d->m_yOrigin = ypos;
+    d->xOrigin = xpos;
+    d->yOrigin = ypos;
     setText(text);
-    d->m_wordWrap = false;
-    d->m_fixedSize = false;
-    d->m_scaling = TEXTURE_NO;
+    d->wordWrap = false;
+    d->fixedSize = false;
+    d->scaling = TEXTURE_NO;
 }
 
 /*!
@@ -74,16 +74,16 @@ ColorLabel::ColorLabel(const std::wstring& text, Object* parent, boost::shared_p
 {
     RANGERS_D(ColorLabel);
     if (!font)
-        d->m_font = Engine::instance()->coreFont();
+        d->font = Engine::instance()->coreFont();
     else
-        d->m_font = font;
+        d->font = font;
 
-    d->m_xOrigin = xpos;
-    d->m_yOrigin = ypos;
+    d->xOrigin = xpos;
+    d->yOrigin = ypos;
     setText(text);
-    d->m_wordWrap = false;
-    d->m_fixedSize = false;
-    d->m_scaling = TEXTURE_NO;
+    d->wordWrap = false;
+    d->fixedSize = false;
+    d->scaling = TEXTURE_NO;
 }
 
 ColorLabel::ColorLabel(ColorLabelPrivate &p, Object *parent): Label(p, parent)
@@ -95,15 +95,15 @@ void ColorLabel::processMain()
     lock();
     RANGERS_D(ColorLabel);
 
-    if (!d->m_wordWrap)
-        d->m_region = TextureRegion(d->m_font->renderColoredText(d->m_text, (d->m_color >> 8) & 0xffffff));
+    if (!d->wordWrap)
+        d->region = TextureRegion(d->font->renderColoredText(d->text, (d->color >> 8) & 0xffffff));
     else
-        d->m_region = TextureRegion(d->m_font->renderColoredText(d->m_text, (d->m_color >> 8) & 0xffffff));
+        d->region = TextureRegion(d->font->renderColoredText(d->text, (d->color >> 8) & 0xffffff));
 
-    if (!d->m_fixedSize)
+    if (!d->fixedSize)
     {
-        d->m_width = d->m_region.texture->width();
-        d->m_height = d->m_region.texture->height();
+        d->width = d->region.texture->width();
+        d->height = d->region.texture->height();
     }
     unlock();
     Sprite::processMain();

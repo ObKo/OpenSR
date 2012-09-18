@@ -30,18 +30,18 @@ class ButtonPrivate: public WidgetPrivate
 public:
     ButtonPrivate();
 
-    ButtonStyle m_style;
-    Label m_label;
-    std::wstring m_text;
-    Sprite *m_normalSprite;
-    Sprite *m_hoverSprite;
-    Sprite *m_pressedSprite;
-    Sprite *m_sprite;
-    bool m_autoResize;
+    ButtonStyle style;
+    Label label;
+    std::wstring text;
+    Sprite *normalSprite;
+    Sprite *hoverSprite;
+    Sprite *pressedSprite;
+    Sprite *sprite;
+    bool autoResize;
 
-    boost::shared_ptr<Sound> m_enterSound;
-    boost::shared_ptr<Sound> m_leaveSound;
-    boost::shared_ptr<Sound> m_clickSound;
+    boost::shared_ptr<Sound> enterSound;
+    boost::shared_ptr<Sound> leaveSound;
+    boost::shared_ptr<Sound> clickSound;
 };
 }
 

@@ -33,14 +33,14 @@ class GAISpritePrivate: public AnimatedSpritePrivate
 public:
     GAISpritePrivate();
 
-    std::vector< boost::shared_array<char> > m_gaiFrames;
-    bool m_needNextFrame;
-    GAIHeader m_gaiHeader;
-    GLuint m_textureBuffer;
+    std::vector< boost::shared_array<char> > gaiFrames;
+    bool needNextFrame;
+    GAIHeader gaiHeader;
+    GLuint textureBuffer;
 
-    int m_baseFrameWidth;
-    int m_baseFrameHeight;
-    boost::shared_array<unsigned char> m_baseFrame;
+    int baseFrameWidth;
+    int baseFrameHeight;
+    boost::shared_array<unsigned char> baseFrame;
 
     void drawFrame(int i);
     void loadGIFrame5(const char *data, unsigned char *background, int startX, int startY, int finishX, int finishY);

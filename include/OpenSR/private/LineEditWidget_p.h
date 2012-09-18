@@ -32,17 +32,17 @@ class LineEditWidgetPrivate: public WidgetPrivate
 public:
     LineEditWidgetPrivate();
 
-    Label m_label;
-    std::wstring m_text;
-    Vertex *m_cursorVertices;
-    GLuint m_cursorBuffer;
-    int m_position;
-    bool m_cursorVisible;
-    int m_cursorTime;
-    int m_stringOffset;
+    Label label;
+    std::wstring text;
+    Vertex *cursorVertices;
+    GLuint cursorBuffer;
+    int position;
+    bool cursorVisible;
+    int cursorTime;
+    int stringOffset;
 
-    Sprite *m_background;
-    LineEditStyle m_style;
+    Sprite *background;
+    LineEditStyle style;
 
     void init();
     void updateText();

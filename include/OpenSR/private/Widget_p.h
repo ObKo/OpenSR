@@ -31,12 +31,12 @@ class WidgetPrivate: public ObjectPrivate
 public:
     WidgetPrivate();
 
-    std::list<Widget *> m_childWidgets;
-    std::list<ActionListener*> m_listeners;
-    Widget *m_currentChild;
-    int m_width, m_height;
-    bool m_leftMouseButtonPressed;
-    bool m_focused;
+    std::list<Widget *> childWidgets;
+    std::list<ActionListener*> listeners;
+    Widget *currentChild;
+    int width, height;
+    bool leftMouseButtonPressed;
+    bool focused;
 };
 }
 

@@ -29,10 +29,10 @@ class LabelPrivate: public SpritePrivate
 public:
     LabelPrivate();
 
-    boost::shared_ptr<Font> m_font;
-    std::wstring m_text;
-    bool m_wordWrap;
-    bool m_fixedSize;
+    boost::shared_ptr<Font> font;
+    std::wstring text;
+    bool wordWrap;
+    bool fixedSize;
 };
 }
 

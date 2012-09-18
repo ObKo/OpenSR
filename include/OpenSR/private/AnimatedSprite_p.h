@@ -29,11 +29,11 @@ class AnimatedSpritePrivate: public SpritePrivate
 public:
     AnimatedSpritePrivate();
 
-    int m_animationTime;
-    int m_currentFrame;
-    int m_frameDuration;
-    bool m_singleShot;
-    bool m_animationStarted;
+    int animationTime;
+    int currentFrame;
+    int frameDuration;
+    bool singleShot;
+    bool animationStarted;
 
 };
 }

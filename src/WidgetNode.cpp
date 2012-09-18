@@ -36,7 +36,7 @@ void WidgetNode::draw() const
     if (!prepareDraw())
         return;
 
-    std::list<Object*> children = d->m_children;
+    std::list<Object*> children = d->children;
     for (std::list<Object*>::const_iterator i = children.begin(); i != children.end(); i++)
         (*i)->draw();
 
@@ -47,7 +47,7 @@ void WidgetNode::processLogic(int dt)
 {
     lock();
     RANGERS_D(WidgetNode);
-    std::list<Object*> children = d->m_children;
+    std::list<Object*> children = d->children;
     unlock();
     for (std::list<Object*>::const_iterator i = children.begin(); i != children.end(); i++)
         (*i)->processLogic(dt);

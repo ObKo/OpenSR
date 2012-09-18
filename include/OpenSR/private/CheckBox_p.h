@@ -32,14 +32,14 @@ class CheckBoxPrivate: public WidgetPrivate
 public:
     CheckBoxPrivate();
 
-    bool m_checked;
-    Sprite *m_normal;
-    Sprite *m_checkedNormal;
-    Sprite *m_hovered;
-    Sprite *m_checkedHovered;
-    Sprite *m_sprite;
-    Label m_label;
-    CheckBoxStyle m_style;
+    bool checked;
+    Sprite *normal;
+    Sprite *checkedNormal;
+    Sprite *hovered;
+    Sprite *checkedHovered;
+    Sprite *sprite;
+    Label label;
+    CheckBoxStyle style;
 };
 }
 

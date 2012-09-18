@@ -46,42 +46,42 @@ public:
     EnginePrivate();
     virtual ~EnginePrivate();
        
-    int m_argc;
-    char **m_argv;
-    int m_height;
-    int m_width;
-    int m_fpsTime;
+    int argc;
+    char **argv;
+    int height;
+    int width;
+    int fpsTime;
 
-    boost::recursive_mutex m_updateMutex;
-    boost::thread *m_logicThread;
+    boost::recursive_mutex updateMutex;
+    boost::thread *logicThread;
 
-    boost::shared_ptr<boost::property_tree::ptree> m_properties;
-    std::wstring m_configPath;
-    std::wstring m_mainDataDir;
+    boost::shared_ptr<boost::property_tree::ptree> properties;
+    std::wstring configPath;
+    std::wstring mainDataDir;
 
-    int m_exitCode;
-    bool m_gameRunning;
-    bool m_consoleOpenned;
-    bool m_showFPS;
-    long m_frames;
+    int exitCode;
+    bool gameRunning;
+    bool consoleOpenned;
+    bool showFPS;
+    long frames;
 
-    std::list<Object *> m_updateList;
+    std::list<Object *> updateList;
 
-    std::list<Widget *> m_widgets;
-    std::list<Widget *> m_widgetsToDelete;
-    Widget *m_currentWidget;
-    Widget *m_focusedWidget;
+    std::list<Widget *> widgets;
+    std::list<Widget *> widgetsToDelete;
+    Widget *currentWidget;
+    Widget *focusedWidget;
 
-    std::list<Plugin *> m_plugins;
+    std::list<Plugin *> plugins;
 
-    Node m_mainNode;
-    Label m_fpsLabel;
-    ConsoleWidget m_consoleWidget;
-    boost::shared_ptr<Font> m_coreFont;
-    boost::shared_ptr<Font> m_monospaceFont;
+    Node mainNode;
+    Label fpsLabel;
+    ConsoleWidget consoleWidget;
+    boost::shared_ptr<Font> coreFont;
+    boost::shared_ptr<Font> monospaceFont;
 
-    lua_State *m_luaConsoleState;
-    Skin m_skin;
+    lua_State *luaConsoleState;
+    Skin skin;
     
     Engine *m_q;
     
