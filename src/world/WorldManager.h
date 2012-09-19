@@ -42,6 +42,8 @@ public:
     void generateWorld();
     bool saveWorld(const std::wstring& file) const;
 
+    boost::shared_ptr<WorldObject> getObject(uint64_t id);
+
     static uint64_t getNextId();
 
 private:

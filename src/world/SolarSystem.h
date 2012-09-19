@@ -33,7 +33,7 @@ class SolarSystem: public WorldObject
 public:
     SolarSystem(uint64_t id = 0);
 
-    std::wstring name() const;
+    std::string name() const;
     Point position() const;
     std::list< boost::shared_ptr<SystemObject> > systemObjects() const;
     float size() const;
@@ -41,7 +41,7 @@ public:
     void addObject(boost::shared_ptr<SystemObject> object);
     void removeObject(boost::shared_ptr<SystemObject> object);
 
-    void setName(const std::wstring& name);
+    void setName(const std::string& name);
     void setPosition(const Point& point);
     void setSize(float size);
 
@@ -52,7 +52,7 @@ public:
 
 protected:
     Point m_position;
-    std::wstring m_name;
+    std::string m_name;
     std::list< boost::shared_ptr<SystemObject> > m_systemObjects;
     float m_size;
 };

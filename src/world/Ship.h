@@ -31,17 +31,17 @@ class Ship: public SpaceObject
 public:
     Ship(uint64_t id = 0);
 
-    std::wstring name() const;
+    std::string name() const;
     ShipContext context() const;
 
-    void setName(const std::wstring& name);
+    void setName(const std::string& name);
     void setContext(const ShipContext& context);
 
     virtual uint32_t type() const;
     virtual bool serialize(std::ostream &stream) const;
     virtual bool deserialize(std::istream &stream);
 protected:
-    std::wstring m_name;
+    std::string m_name;
     ShipContext m_context;
 };
 }

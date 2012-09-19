@@ -37,17 +37,48 @@ uint32_t Item::cost() const
 
 bool Item::deserialize(std::istream& stream)
 {
-    return WorldObject::deserialize(stream);
+    if (!WorldObject::deserialize(stream))
+        return false;
+
+    uint32_t nameLength;
+
+    stream.read((char *)&m_size, sizeof(uint32_t));
+    stream.read((char *)&m_cost, sizeof(uint32_t));
+    stream.read((char *)&nameLength, sizeof(uint32_t));
+
+    if (!stream.good())
+        return false;
+
+    char *str = new char[nameLength + 1];
+    stream.read(str, nameLength);
+    str[nameLength] = '\0';
+
+    if (!stream.good())
+        return false;
+
+    return true;
 }
 
-std::wstring Item::name() const
+std::string Item::name() const
 {
     return m_name;
 }
 
 bool Item::serialize(std::ostream& stream) const
 {
-    return WorldObject::serialize(stream);
+    if (!WorldObject::serialize(stream))
+        return false;
+    uint32_t nameLength = m_name.length();
+
+    stream.write((const char *)&m_size, sizeof(uint32_t));
+    stream.write((const char *)&m_cost, sizeof(uint32_t));
+    stream.write((const char *)&nameLength, sizeof(uint32_t));
+    stream.write(m_name.c_str(), m_name.length());
+
+    if (!stream.good())
+        return false;
+
+    return true;
 }
 
 uint32_t Item::size() const
@@ -60,7 +91,7 @@ uint32_t Item::type() const
     return WorldHelper::TYPE_ITEM;
 }
 
-void Item::setName(const std::wstring& name)
+void Item::setName(const std::string& name)
 {
     m_name = name;
 }

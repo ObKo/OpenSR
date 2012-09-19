@@ -32,6 +32,20 @@ WorldObject::WorldObject(uint64_t id): m_objectID(id)
 
 bool WorldObject::deserialize(std::istream& stream)
 {
+    uint32_t classType;
+    uint32_t sig;
+    stream.read((char *)&sig, 4);
+    if (sig != *((uint32_t*)"OSRW"))
+        return false;
+
+    stream.read((char *)&classType, 4);
+    if (classType != type())
+        return false;
+
+    stream.read((char *)&m_objectID, 8);
+
+    if (!stream.good())
+        return false;
     return true;
 }
 
@@ -47,7 +61,7 @@ bool WorldObject::serialize(std::ostream& stream) const
     stream.write((const char *)&sig, 4);
     stream.write((const char *)&classType, 4);
     stream.write((const char *)&m_objectID, 8);
-    if (stream.bad())
+    if (!stream.good())
         return false;
     return true;
 }

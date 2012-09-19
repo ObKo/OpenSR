@@ -37,7 +37,7 @@ bool Ship::deserialize(std::istream& stream)
     return SpaceObject::deserialize(stream);
 }
 
-std::wstring Ship::name() const
+std::string Ship::name() const
 {
     return m_name;
 }
@@ -52,7 +52,7 @@ uint32_t Ship::type() const
     return WorldHelper::TYPE_SHIP;
 }
 
-void Ship::setName(const std::wstring& name)
+void Ship::setName(const std::string& name)
 {
     m_name = name;
 }

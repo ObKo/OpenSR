@@ -30,15 +30,15 @@ class SystemObject: public SpaceObject
 public:
     SystemObject(uint64_t id = 0);
 
-    std::wstring name() const;
+    std::string name() const;
 
-    void setName(const std::wstring& name);
+    void setName(const std::string& name);
 
     virtual uint32_t type() const;
     virtual bool serialize(std::ostream &stream) const;
     virtual bool deserialize(std::istream &stream);
 protected:
-    std::wstring m_name;
+    std::string m_name;
 };
 }
 }

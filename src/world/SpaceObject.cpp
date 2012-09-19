@@ -18,6 +18,7 @@
 
 #include "SpaceObject.h"
 #include "WorldHelper.h"
+#include <map>
 
 namespace Rangers
 {
@@ -31,7 +32,15 @@ SpaceObject::SpaceObject(uint64_t id): WorldObject(id)
 
 bool SpaceObject::deserialize(std::istream& stream)
 {
-    return WorldObject::deserialize(stream);
+    if (!WorldObject::deserialize(stream))
+        return false;
+
+    stream.read((char *)&m_position, sizeof(Point));
+
+    if (!stream.good())
+        return false;
+
+    return true;
 }
 
 Point SpaceObject::position() const
@@ -41,7 +50,15 @@ Point SpaceObject::position() const
 
 bool SpaceObject::serialize(std::ostream& stream) const
 {
-    return WorldObject::serialize(stream);
+    if (!WorldObject::serialize(stream))
+        return false;
+
+    stream.write((const char *)&m_position, sizeof(Point));
+
+    if (!stream.good())
+        return false;
+
+    return true;
 }
 
 uint32_t SpaceObject::type() const

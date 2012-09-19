@@ -32,7 +32,7 @@ bool SystemObject::deserialize(std::istream& stream)
     return SpaceObject::deserialize(stream);
 }
 
-std::wstring SystemObject::name() const
+std::string SystemObject::name() const
 {
     return m_name;
 }
@@ -47,7 +47,7 @@ uint32_t SystemObject::type() const
     return WorldHelper::TYPE_SYSTEMOBJECT;
 }
 
-void SystemObject::setName(const std::wstring& name)
+void SystemObject::setName(const std::string& name)
 {
     m_name = name;
 }
