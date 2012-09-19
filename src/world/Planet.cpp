@@ -23,6 +23,10 @@ namespace Rangers
 {
 namespace World
 {
+Planet::Planet(uint64_t id): SystemObject(id)
+{
+}
+
 bool Planet::deserialize(std::istream& stream)
 {
     return SystemObject::deserialize(stream);
@@ -46,6 +50,16 @@ bool Planet::serialize(std::ostream& stream) const
 uint32_t Planet::type() const
 {
     return WorldHelper::TYPE_PLANET;
+}
+
+void Planet::setRadius(float radius)
+{
+    m_radius = radius;
+}
+
+void Planet::setOrbit(float orbit)
+{
+    m_orbit = orbit;
 }
 }
 }

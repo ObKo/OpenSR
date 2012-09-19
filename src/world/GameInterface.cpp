@@ -51,6 +51,7 @@
 #include "ShipContext.h"
 #include "Types.h"
 #include "WorldHelper.h"
+#include "WorldManager.h"
 
 using namespace luabind;
 using namespace Rangers::World;
@@ -94,29 +95,41 @@ void rangersPluginInitLua(lua_State *state)
             .def("name", &SolarSystem::name)
             .def("position", &SolarSystem::position)
             .def("systemObjects", &SolarSystem::systemObjects)
-            .def("size", &SolarSystem::size),
+            .def("size", &SolarSystem::size)
+            .def("addObject", &SolarSystem::addObject)
+            .def("removeObject", &SolarSystem::removeObject)
+            .def("setName", &SolarSystem::setName)
+            .def("setPosition", &SolarSystem::setPosition)
+            .def("setSize", &SolarSystem::setSize),
 
             luabind::class_<Item, WorldObject>("Item")
             .def(luabind::constructor<>())
             .def("name", &Item::name)
             .def("size", &Item::size)
-            .def("cost", &Item::cost),
+            .def("cost", &Item::cost)
+            .def("setName", &Item::setName)
+            .def("setSize", &Item::setSize)
+            .def("setCost", &Item::setCost),
 
             luabind::class_<SpaceObject, WorldObject>("SpaceObject")
             .def(luabind::constructor<>())
-            .def("position", &SpaceObject::position),
+            .def("position", &SpaceObject::position)
+            .def("setPosition", &SpaceObject::setPosition),
 
             luabind::class_<Artifact, Item>("Artifact")
             .def(luabind::constructor<>()),
 
             luabind::class_<Equipment, Item>("Equipment")
             .def(luabind::constructor<>())
-            .def("race", &Equipment::race),
+            .def("race", &Equipment::race)
+            .def("setRace", &Equipment::setRace),
 
             luabind::class_<Goods, Item>("Goods")
             .def(luabind::constructor<>())
             .def("quantity", &Goods::quantity)
-            .def("price", &Goods::price),
+            .def("price", &Goods::price)
+            .def("setQuantity", &Goods::setQuantity)
+            .def("setPrice", &Goods::setPrice),
 
             luabind::class_<Micromodulus, Item>("Micromodulus")
             .def(luabind::constructor<>()),
@@ -124,11 +137,14 @@ void rangersPluginInitLua(lua_State *state)
             luabind::class_<Ship, SpaceObject>("Ship")
             .def(luabind::constructor<>())
             .def("name", &Ship::name)
-            .def("context", &Ship::context),
+            .def("context", &Ship::context)
+            .def("setName", &Ship::setName)
+            .def("setContext", &Ship::setContext),
 
             luabind::class_<SystemObject, SpaceObject>("SystemObject")
             .def(luabind::constructor<>())
-            .def("name", &SystemObject::name),
+            .def("name", &SystemObject::name)
+            .def("setName", &SystemObject::setName),
 
             luabind::class_<CargoHook, Equipment>("CargoHook")
             .def(luabind::constructor<>()),
@@ -158,22 +174,54 @@ void rangersPluginInitLua(lua_State *state)
             .def(luabind::constructor<>()),
 
             luabind::class_<Meteor, SystemObject>("Meteor")
-            .def(luabind::constructor<>()),
+            .def(luabind::constructor<>())
+            .def("focus", &Meteor::focus)
+            .def("mineral", &Meteor::mineral)
+            .def("speed", &Meteor::speed)
+            .def("setFocus", &Meteor::setFocus)
+            .def("setMineral", &Meteor::setMineral)
+            .def("setSpeed", &Meteor::setSpeed),
 
             luabind::class_<Planet, SystemObject>("Planet")
-            .def(luabind::constructor<>()),
+            .def(luabind::constructor<>())
+            .def("radius", &Planet::radius)
+            .def("orbit", &Planet::orbit)
+            .def("setRadius", &Planet::setRadius)
+            .def("setOrbit", &Planet::setOrbit),
 
             luabind::class_<SpaceBase, SystemObject>("SpaceBase")
-            .def(luabind::constructor<>()),
+            .def(luabind::constructor<>())
+            .def("landContext", &SpaceBase::landContext)
+            .def("shipContext", &SpaceBase::shipContext)
+            .def("setLandContext", &SpaceBase::setLandContext)
+            .def("setShipContext", &SpaceBase::setShipContext),
 
             luabind::class_<DesertPlanet, Planet>("DesertPlanet")
             .def(luabind::constructor<>()),
 
             luabind::class_<HabitablePlanet, Planet>("HabitablePlanet")
-            .def(luabind::constructor<>()),
+            .def(luabind::constructor<>())
+            .def("population", &HabitablePlanet::population)
+            .def("invader", &HabitablePlanet::invader)
+            .def("landContext", &HabitablePlanet::landContext)
+            .def("setPopulation", &HabitablePlanet::setPopulation)
+            .def("setInvader", &HabitablePlanet::setInvader)
+            .def("setLandContext", &HabitablePlanet::setLandContext),
 
             luabind::class_<WorldHelper>("WorldHelper")
-            .def("objectByType", &WorldHelper::objectByType)
+            .def("objectByType", &WorldHelper::objectByType),
+
+            luabind::class_<WorldManager>("WorldManager")
+            .def(luabind::constructor<>())
+            .def("removeObject", (void (WorldManager::*)(boost::shared_ptr<WorldObject>))&WorldManager::removeObject)
+            .def("removeObject", (void (WorldManager::*)(uint64_t))&WorldManager::removeObject)
+            .def("addObject", &WorldManager::addObject)
+            .def("generateWorld", &WorldManager::generateWorld)
+            .def("saveWorld", &WorldManager::saveWorld)
+            .scope
+            [
+                def("instance", &WorldManager::instance)
+            ]
         ]
     ];
 }

@@ -28,8 +28,13 @@ namespace World
 class Goods: public Item
 {
 public:
-    uint32_t quantity() const;
+    Goods(uint64_t id = 0);
+
     uint32_t price() const;
+    uint32_t quantity() const;
+
+    void setPrice(uint32_t price);
+    void setQuantity(uint32_t quantity);
 
     virtual uint32_t type() const;
     virtual bool serialize(std::ostream &stream) const;

@@ -23,6 +23,12 @@ namespace Rangers
 {
 namespace World
 {
+SpaceObject::SpaceObject(uint64_t id): WorldObject(id)
+{
+    m_position.x = 0;
+    m_position.y = 0;
+}
+
 bool SpaceObject::deserialize(std::istream& stream)
 {
     return WorldObject::deserialize(stream);
@@ -42,5 +48,11 @@ uint32_t SpaceObject::type() const
 {
     return WorldHelper::TYPE_SPACEOBJECT;
 }
+
+void SpaceObject::setPosition(const Point& point)
+{
+    m_position = point;
+}
+
 }
 }

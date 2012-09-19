@@ -16,30 +16,21 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "Artifact.h"
-#include "WorldHelper.h"
+#ifndef RANGERS_GLOBAL_H
+#define RANGERS_GLOBAL_H
 
-namespace Rangers
-{
-namespace World
-{
-Artifact::Artifact(uint64_t id): Item(id)
-{
-}
+#define RANGERS_DECLARE_PRIVATE(Class) \
+   inline Class##Private* d_func() { return reinterpret_cast<Class##Private *>(m_d); } \
+   inline const Class##Private* d_func() const { return reinterpret_cast<const Class##Private *>(m_d); } \
+   friend class Class##Private;
+   
+#define RANGERS_D(Class) Class##Private * const d = d_func()
+   
+#define RANGERS_DECLARE_PUBLIC(Class)                  \
+   inline Class* q_func() { return static_cast<Class *>(m_q); } \
+   inline const Class* q_func() const { return static_cast<const Class *>(m_q); } \
+   friend class Class;
+   
+#define RANGERS_Q(Class) Class * const q = q_func()
 
-uint32_t Artifact::type() const
-{
-    return WorldHelper::TYPE_ARTIFACT;
-}
-
-bool Artifact::serialize(std::ostream &stream) const
-{
-    return Item::serialize(stream);
-}
-
-bool Artifact::deserialize(std::istream &stream)
-{
-    return Item::deserialize(stream);
-}
-}
-}
+#endif

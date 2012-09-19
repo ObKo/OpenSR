@@ -23,6 +23,10 @@ namespace Rangers
 {
 namespace World
 {
+Weapon::Weapon(uint64_t id): Equipment(id)
+{
+}
+
 bool Weapon::deserialize(std::istream& stream)
 {
     return Equipment::deserialize(stream);

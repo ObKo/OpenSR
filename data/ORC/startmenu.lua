@@ -67,6 +67,11 @@ function actionPerformed(action)
         widget = LuaWidget(L"ORC/settings.lua")
         engine:addWidget(widget)
     end
+    if action:source() == buttons["newGame"] then 
+        worldManager = World.WorldManager.instance()
+        worldManager:generateWorld()
+        worldManager:saveWorld(L"test.rws")
+    end
 end
  
 function processLogic(dt)

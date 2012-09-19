@@ -23,6 +23,10 @@ namespace Rangers
 {
 namespace World
 {
+Ship::Ship(uint64_t id): SpaceObject(id)
+{
+}
+
 ShipContext Ship::context() const
 {
     return m_context;
@@ -48,5 +52,14 @@ uint32_t Ship::type() const
     return WorldHelper::TYPE_SHIP;
 }
 
+void Ship::setName(const std::wstring& name)
+{
+    m_name = name;
+}
+
+void Ship::setContext(const ShipContext& context)
+{
+    m_context = context;
+}
 }
 }

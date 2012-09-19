@@ -25,6 +25,9 @@ namespace World
 {
 struct Point
 {
+    Point(float _x, float _y);
+    Point();
+
     float x;
     float y;
 };

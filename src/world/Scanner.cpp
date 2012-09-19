@@ -23,6 +23,10 @@ namespace Rangers
 {
 namespace World
 {
+Scanner::Scanner(uint64_t id): Equipment(id)
+{
+}
+
 bool Scanner::deserialize(std::istream& stream)
 {
     return Equipment::deserialize(stream);

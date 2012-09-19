@@ -28,7 +28,11 @@ namespace World
 class Equipment: public Item
 {
 public:
+    Equipment(uint64_t id = 0);
+
     uint32_t race() const;
+
+    void setRace(uint32_t race);
 
     virtual uint32_t type() const;
     virtual bool serialize(std::ostream &stream) const;

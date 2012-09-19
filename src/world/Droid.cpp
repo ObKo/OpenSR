@@ -23,6 +23,10 @@ namespace Rangers
 {
 namespace World
 {
+Droid::Droid(uint64_t id): Equipment(id)
+{
+}
+
 bool Droid::deserialize(std::istream& stream)
 {
     return Equipment::deserialize(stream);

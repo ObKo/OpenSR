@@ -23,6 +23,10 @@ namespace Rangers
 {
 namespace World
 {
+Micromodulus::Micromodulus(uint64_t id): Item(id)
+{
+}
+
 bool Micromodulus::deserialize(std::istream& stream)
 {
     return Item::deserialize(stream);

@@ -31,14 +31,25 @@ namespace World
 class SolarSystem: public WorldObject
 {
 public:
+    SolarSystem(uint64_t id = 0);
+
     std::wstring name() const;
     Point position() const;
     std::list< boost::shared_ptr<SystemObject> > systemObjects() const;
     float size() const;
 
+    void addObject(boost::shared_ptr<SystemObject> object);
+    void removeObject(boost::shared_ptr<SystemObject> object);
+
+    void setName(const std::wstring& name);
+    void setPosition(const Point& point);
+    void setSize(float size);
+
     virtual uint32_t type() const;
     virtual bool serialize(std::ostream &stream) const;
     virtual bool deserialize(std::istream &stream);
+    virtual std::list<uint64_t> dependencies();
+
 protected:
     Point m_position;
     std::wstring m_name;

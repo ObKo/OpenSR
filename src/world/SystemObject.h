@@ -28,7 +28,11 @@ namespace World
 class SystemObject: public SpaceObject
 {
 public:
+    SystemObject(uint64_t id = 0);
+
     std::wstring name() const;
+
+    void setName(const std::wstring& name);
 
     virtual uint32_t type() const;
     virtual bool serialize(std::ostream &stream) const;

@@ -23,6 +23,13 @@ namespace Rangers
 {
 namespace World
 {
+
+Item::Item(uint64_t id): WorldObject(id)
+{
+    m_size = 0;
+    m_cost = 0;
+}
+
 uint32_t Item::cost() const
 {
     return m_cost;
@@ -51,6 +58,21 @@ uint32_t Item::size() const
 uint32_t Item::type() const
 {
     return WorldHelper::TYPE_ITEM;
+}
+
+void Item::setName(const std::wstring& name)
+{
+    m_name = name;
+}
+
+void Item::setSize(uint32_t size)
+{
+    m_size = size;
+}
+
+void Item::setCost(uint32_t cost)
+{
+    m_cost = cost;
 }
 }
 }

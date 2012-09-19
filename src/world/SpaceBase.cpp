@@ -23,6 +23,10 @@ namespace Rangers
 {
 namespace World
 {
+SpaceBase::SpaceBase(uint64_t id): SystemObject(id)
+{
+}
+
 bool SpaceBase::deserialize(std::istream& stream)
 {
     return SystemObject::deserialize(stream);
@@ -47,5 +51,16 @@ uint32_t SpaceBase::type() const
 {
     return WorldHelper::TYPE_SPACEBASE;
 }
+
+void SpaceBase::setLandContext(const LandContext& landContext)
+{
+    m_landContext = landContext;
+}
+
+void SpaceBase::setShipContext(const ShipContext& shipContext)
+{
+    m_shipContext = shipContext;
+}
+
 }
 }

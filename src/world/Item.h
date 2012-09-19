@@ -28,9 +28,15 @@ namespace World
 class Item: public WorldObject
 {
 public:
+    Item(uint64_t id = 0);
+
     std::wstring name() const;
     uint32_t size() const;
     uint32_t cost() const;
+
+    void setName(const std::wstring& name);
+    void setSize(uint32_t size);
+    void setCost(uint32_t cost);
 
     virtual uint32_t type() const;
     virtual bool serialize(std::ostream &stream) const;

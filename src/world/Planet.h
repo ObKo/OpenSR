@@ -28,8 +28,13 @@ namespace World
 class Planet: public SystemObject
 {
 public:
+    Planet(uint64_t id = 0);
+
     float radius() const;
     float orbit() const;
+
+    void setRadius(float radius);
+    void setOrbit(float orbit);
 
     virtual uint32_t type() const;
     virtual bool serialize(std::ostream &stream) const;

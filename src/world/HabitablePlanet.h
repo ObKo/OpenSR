@@ -29,9 +29,15 @@ namespace World
 class HabitablePlanet: public Planet
 {
 public:
+    HabitablePlanet(uint64_t id = 0);
+
     uint32_t invader() const;
     uint32_t population() const;
     LandContext landContext() const;
+
+    void setPopulation(uint32_t population);
+    void setInvader(uint32_t invader);
+    void setLandContext(const LandContext& landContext);
 
     virtual uint32_t type() const;
     virtual bool serialize(std::ostream &stream) const;

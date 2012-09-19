@@ -28,9 +28,15 @@ namespace World
 class Meteor: public SystemObject
 {
 public:
+    Meteor(uint64_t id = 0);
+
     Point focus() const;
     float speed() const;
     float mineral() const;
+
+    void setFocus(const Point& focus);
+    void setSpeed(float speed);
+    void setMineral(float mineral);
 
     virtual uint32_t type() const;
     virtual bool serialize(std::ostream &stream) const;

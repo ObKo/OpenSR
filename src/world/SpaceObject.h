@@ -29,7 +29,11 @@ namespace World
 class SpaceObject: public WorldObject
 {
 public:
+    SpaceObject(uint64_t id = 0);
+
     Point position() const;
+
+    void setPosition(const Point& point);
 
     virtual uint32_t type() const;
     virtual bool serialize(std::ostream &stream) const;

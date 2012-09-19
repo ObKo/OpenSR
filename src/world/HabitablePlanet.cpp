@@ -23,6 +23,10 @@ namespace Rangers
 {
 namespace World
 {
+HabitablePlanet::HabitablePlanet(uint64_t id): Planet(id)
+{
+}
+
 bool HabitablePlanet::deserialize(std::istream& stream)
 {
     return Planet::deserialize(stream);
@@ -51,6 +55,21 @@ bool HabitablePlanet::serialize(std::ostream& stream) const
 uint32_t HabitablePlanet::type() const
 {
     return WorldHelper::TYPE_HABITABLEPLANET;
+}
+
+void HabitablePlanet::setPopulation(uint32_t population)
+{
+    m_population = population;
+}
+
+void HabitablePlanet::setInvader(uint32_t invader)
+{
+    m_invader = invader;
+}
+
+void HabitablePlanet::setLandContext(const LandContext& landContext)
+{
+    m_landContext = landContext;
 }
 }
 }

@@ -23,6 +23,10 @@ namespace Rangers
 {
 namespace World
 {
+DefenceGenerator::DefenceGenerator(uint64_t id): Equipment(id)
+{
+}
+
 bool DefenceGenerator::deserialize(std::istream& stream)
 {
     return Equipment::deserialize(stream);

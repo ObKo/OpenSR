@@ -23,6 +23,13 @@ namespace Rangers
 {
 namespace World
 {
+SolarSystem::SolarSystem(uint64_t id) : WorldObject(id)
+{
+    m_position.x = 0.0f;
+    m_position.y = 0.0f;
+    m_size = 0.0f;
+}
+
 bool SolarSystem::deserialize(std::istream& stream)
 {
     return WorldObject::deserialize(stream);
@@ -58,5 +65,40 @@ uint32_t SolarSystem::type() const
     return WorldHelper::TYPE_SOLARSYSTEM;
 }
 
+std::list< uint64_t > SolarSystem::dependencies()
+{
+    std::list<uint64_t> objectlist = WorldObject::dependencies();
+    std::list<boost::shared_ptr<SystemObject> >::const_iterator end = m_systemObjects.end();
+    for (std::list< boost::shared_ptr<SystemObject> >::const_iterator i = m_systemObjects.begin(); i != end; ++i)
+    {
+        objectlist.push_back((*i)->id());
+    }
+    return objectlist;
+}
+
+void SolarSystem::addObject(boost::shared_ptr<SystemObject> object)
+{
+    m_systemObjects.push_back(object);
+}
+
+void SolarSystem::removeObject(boost::shared_ptr<SystemObject> object)
+{
+    m_systemObjects.remove(object);
+}
+
+void SolarSystem::setName(const std::wstring& name)
+{
+    m_name = name;
+}
+
+void SolarSystem::setPosition(const Point& point)
+{
+    m_position = point;
+}
+
+void SolarSystem::setSize(float size)
+{
+    m_size = size;
+}
 }
 }

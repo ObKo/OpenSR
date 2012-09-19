@@ -18,3 +18,20 @@
 
 #include "Types.h"
 
+namespace Rangers
+{
+namespace World
+{
+Point::Point(float _x, float _y)
+{
+    x = _x;
+    y = _y;
+}
+
+Point::Point()
+{
+    x = 0.0f;
+    y = 0.0f;
+}
+}
+}

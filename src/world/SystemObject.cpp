@@ -23,6 +23,10 @@ namespace Rangers
 {
 namespace World
 {
+SystemObject::SystemObject(uint64_t id): SpaceObject(id)
+{
+}
+
 bool SystemObject::deserialize(std::istream& stream)
 {
     return SpaceObject::deserialize(stream);
@@ -43,5 +47,9 @@ uint32_t SystemObject::type() const
     return WorldHelper::TYPE_SYSTEMOBJECT;
 }
 
+void SystemObject::setName(const std::wstring& name)
+{
+    m_name = name;
+}
 }
 }

@@ -23,6 +23,10 @@ namespace Rangers
 {
 namespace World
 {
+CargoHook::CargoHook(uint64_t id): Equipment(id)
+{
+}
+
 bool CargoHook::deserialize(std::istream& stream)
 {
     return Equipment::deserialize(stream);

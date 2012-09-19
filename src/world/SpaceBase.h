@@ -30,8 +30,13 @@ namespace World
 class SpaceBase: public SystemObject
 {
 public:
+    SpaceBase(uint64_t id = 0);
+
     LandContext landContext() const;
     ShipContext shipContext() const;
+
+    void setLandContext(const LandContext& landContext);
+    void setShipContext(const ShipContext& shipContext);
 
     virtual uint32_t type() const;
     virtual bool serialize(std::ostream &stream) const;

@@ -23,6 +23,7 @@
 #include <list>
 #include <string>
 #include <stdint.h>
+#include <boost/shared_ptr.hpp>
 
 namespace Rangers
 {
@@ -34,17 +35,18 @@ class WorldManager
 public:
     static WorldManager& instance();
 
-    void addObject(WorldObject *object);
-    void removeObject(WorldObject *object);
+    boost::shared_ptr<WorldObject> addObject(WorldObject *object);
+    void removeObject(boost::shared_ptr<WorldObject> object);
     void removeObject(uint64_t id);
 
+    void generateWorld();
     bool saveWorld(const std::wstring& file) const;
 
     static uint64_t getNextId();
 
 private:
-    void getSavingList(WorldObject *object, std::list<WorldObject*>& list, std::map<uint64_t, WorldObject*>& remainingObjects);
-    std::map<uint64_t, WorldObject*> m_objects;
+    void getSavingList(boost::shared_ptr<WorldObject> object, std::list<boost::shared_ptr<WorldObject> >& list, std::map<uint64_t, boost::shared_ptr<WorldObject> >& remainingObjects) const;
+    std::map<uint64_t, boost::shared_ptr<WorldObject> > m_objects;
 
     static uint64_t m_idCounter;
 };

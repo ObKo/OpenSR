@@ -23,6 +23,10 @@ namespace Rangers
 {
 namespace World
 {
+DesertPlanet::DesertPlanet(uint64_t id): Planet(id)
+{
+}
+
 bool DesertPlanet::deserialize(std::istream& stream)
 {
     return Planet::deserialize(stream);

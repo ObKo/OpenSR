@@ -18,6 +18,11 @@
 
 #include "WorldManager.h"
 #include "WorldObject.h"
+#include "SolarSystem.h"
+#include "DesertPlanet.h"
+
+#include <fstream>
+#include <libRanger.h>
 
 namespace Rangers
 {
@@ -31,25 +36,68 @@ WorldManager& WorldManager::instance()
     return manager;
 }
 
-void WorldManager::addObject(WorldObject *object)
+boost::shared_ptr<WorldObject> WorldManager::addObject(WorldObject *object)
 {
-    m_objects[object->id()] = object;
+    boost::shared_ptr<WorldObject> result = boost::shared_ptr<WorldObject>(object);
+    m_objects[object->id()] = result;
+    return result;
 }
-void WorldManager::removeObject(WorldObject *object)
+void WorldManager::removeObject(boost::shared_ptr<WorldObject> object)
 {
-    std::map<uint64_t, WorldObject*>::iterator i = m_objects.find(object->id());
+    std::map<uint64_t, boost::shared_ptr<WorldObject> >::iterator i = m_objects.find(object->id());
     if (i != m_objects.end())
         m_objects.erase(i);
 }
 void WorldManager::removeObject(uint64_t id)
 {
-    std::map<uint64_t, WorldObject*>::iterator i = m_objects.find(id);
+    std::map<uint64_t, boost::shared_ptr<WorldObject> >::iterator i = m_objects.find(id);
     if (i != m_objects.end())
         m_objects.erase(i);
 }
 
+void WorldManager::generateWorld()
+{
+    boost::shared_ptr<SolarSystem> system = boost::static_pointer_cast<SolarSystem>(addObject(new SolarSystem()));
+    boost::shared_ptr<DesertPlanet> planet = boost::static_pointer_cast<DesertPlanet>(addObject(new DesertPlanet()));
+
+    system->setName(L"Test system");
+    system->setSize(1000.0f);
+    system->setPosition(Point(0.0f, 0.0f));
+
+    planet->setOrbit(200.0f);
+    planet->setRadius(20.0f);
+    planet->setName(L"Planet");
+    planet->setPosition(Point(200.0f, 0.0f));
+
+    system->addObject(planet);
+}
+
 bool WorldManager::saveWorld(const std::wstring& file) const
 {
+    std::map<uint64_t, boost::shared_ptr<WorldObject> > objects = m_objects;
+    std::list<boost::shared_ptr<WorldObject> > savingList;
+
+    while (objects.size())
+    {
+        boost::shared_ptr<WorldObject> object = (*objects.begin()).second;
+        getSavingList(object, savingList, objects);
+    }
+
+    std::ofstream worldFile;
+
+#if defined(WIN32) && defined(_MSC_VER)
+    worldFile.open(file);
+#else
+    worldFile.open(toLocal(file).c_str());
+#endif
+
+    std::list<boost::shared_ptr<WorldObject> >::const_iterator end = savingList.end();
+    for (std::list<boost::shared_ptr<WorldObject> >::const_iterator i = savingList.begin(); i != end; ++i)
+    {
+        (*i)->serialize(worldFile);
+    }
+
+    worldFile.close();
 }
 
 uint64_t WorldManager::getNextId()
@@ -57,23 +105,23 @@ uint64_t WorldManager::getNextId()
     return ++m_idCounter;
 }
 
-void WorldManager::getSavingList(WorldObject *object, std::list<WorldObject*>& list, std::map<uint64_t, WorldObject*>& remainingObjects)
+void WorldManager::getSavingList(boost::shared_ptr<WorldObject> object, std::list<boost::shared_ptr<WorldObject> >& list, std::map<uint64_t, boost::shared_ptr<WorldObject> >& remainingObjects) const
 {
     if (!object)
         return;
+
     std::list<uint64_t> dependencies = object->dependencies();
+
     std::list<uint64_t>::const_iterator end = dependencies.end();
     for (std::list<uint64_t>::const_iterator i = dependencies.begin(); i != end; ++i)
     {
-        std::map<uint64_t, WorldObject*>::iterator j = remainingObjects.find(*i);
+        std::map<uint64_t, boost::shared_ptr<WorldObject> >::iterator j = remainingObjects.find(*i);
         if (j != remainingObjects.end())
         {
             getSavingList((*j).second, list, remainingObjects);
-            list.push_back((*j).second);
-            remainingObjects.erase(j);
         }
     }
-    std::map<uint64_t, WorldObject*>::iterator i = remainingObjects.find(object->id());
+    std::map<uint64_t, boost::shared_ptr<WorldObject> >::iterator i = remainingObjects.find(object->id());
     if (i != remainingObjects.end())
     {
         list.push_back(object);

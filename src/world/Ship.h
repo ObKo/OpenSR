@@ -29,8 +29,13 @@ namespace World
 class Ship: public SpaceObject
 {
 public:
+    Ship(uint64_t id = 0);
+
     std::wstring name() const;
     ShipContext context() const;
+
+    void setName(const std::wstring& name);
+    void setContext(const ShipContext& context);
 
     virtual uint32_t type() const;
     virtual bool serialize(std::ostream &stream) const;

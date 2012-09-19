@@ -23,6 +23,10 @@ namespace Rangers
 {
 namespace World
 {
+Meteor::Meteor(uint64_t id): SystemObject(id)
+{
+}
+
 bool Meteor::deserialize(std::istream& stream)
 {
     return SystemObject::deserialize(stream);
@@ -51,6 +55,21 @@ float Meteor::speed() const
 uint32_t Meteor::type() const
 {
     return WorldHelper::TYPE_METEOR;
+}
+
+void Meteor::setFocus(const Point& focus)
+{
+    m_focus = focus;
+}
+
+void Meteor::setSpeed(float speed)
+{
+    m_speed = speed;
+}
+
+void Meteor::setMineral(float mineral)
+{
+    m_mineral = mineral;
 }
 }
 }

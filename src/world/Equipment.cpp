@@ -23,6 +23,10 @@ namespace Rangers
 {
 namespace World
 {
+Equipment::Equipment(uint64_t id): Item(id)
+{
+}
+
 bool Equipment::deserialize(std::istream& stream)
 {
     return Item::deserialize(stream);
@@ -41,6 +45,11 @@ bool Equipment::serialize(std::ostream& stream) const
 uint32_t Equipment::type() const
 {
     return WorldHelper::TYPE_EQUIPMENT;
+}
+
+void Equipment::setRace(uint32_t race)
+{
+    m_race = race;
 }
 }
 }

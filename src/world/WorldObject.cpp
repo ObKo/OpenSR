@@ -42,6 +42,13 @@ uint64_t WorldObject::id() const
 
 bool WorldObject::serialize(std::ostream& stream) const
 {
+    uint32_t classType = type();
+    uint32_t sig = *((uint32_t*)"OSRW");
+    stream.write((const char *)&sig, 4);
+    stream.write((const char *)&classType, 4);
+    stream.write((const char *)&m_objectID, 8);
+    if (stream.bad())
+        return false;
     return true;
 }
 

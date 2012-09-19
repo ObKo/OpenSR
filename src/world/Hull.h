@@ -28,6 +28,8 @@ namespace World
 class Hull: public Equipment
 {
 public:
+    Hull(uint64_t id = 0);
+
     virtual uint32_t type() const;
     virtual bool serialize(std::ostream &stream) const;
     virtual bool deserialize(std::istream &stream);

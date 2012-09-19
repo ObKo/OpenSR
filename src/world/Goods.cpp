@@ -23,6 +23,10 @@ namespace Rangers
 {
 namespace World
 {
+Goods::Goods(uint64_t id): Item(id)
+{
+}
+
 bool Goods::deserialize(std::istream& stream)
 {
     return Item::deserialize(stream);
@@ -46,6 +50,16 @@ bool Goods::serialize(std::ostream& stream) const
 uint32_t Goods::type() const
 {
     return WorldHelper::TYPE_GOODS;
+}
+
+void Goods::setPrice(uint32_t price)
+{
+    m_price = price;
+}
+
+void Goods::setQuantity(uint32_t quantity)
+{
+    m_quantity = quantity;
 }
 }
 }
