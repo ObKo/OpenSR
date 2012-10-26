@@ -71,6 +71,9 @@ function actionPerformed(action)
         worldManager = World.WorldManager.instance()
         worldManager:generateWorld()
         worldManager:saveWorld(L"test.rws")
+        widget = World.SystemWidget(worldManager:currentSolarSystem())
+        engine:addWidget(widget)
+        this:dispose();
     end
 end
  

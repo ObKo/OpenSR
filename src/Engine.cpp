@@ -384,6 +384,7 @@ void Engine::init(int w, int h, bool fullscreen)
     d->fpsLabel.setPosition(5, 5);
 
     d->consoleWidget = ConsoleWidget(d->width, 168);
+    d->consoleWidget.setPosition(0, -d->consoleWidget.height());
     d->luaConsoleState = initLuaState();
     addWidget(&d->consoleWidget);
 }
@@ -577,6 +578,10 @@ void Engine::EnginePrivate::processEvents()
             if (event.key.keysym.sym == SDLK_BACKQUOTE)
             {
                 consoleOpenned = !consoleOpenned;
+                if (!consoleOpenned)
+                    consoleWidget.setPosition(0, -consoleWidget.height());
+                else
+                    consoleWidget.setPosition(0, 0);
                 continue;
             }
             if (focusedWidget)

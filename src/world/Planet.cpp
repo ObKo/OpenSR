@@ -29,7 +29,13 @@ Planet::Planet(uint64_t id): SystemObject(id)
 
 bool Planet::deserialize(std::istream& stream)
 {
-    return SystemObject::deserialize(stream);
+    if (!SystemObject::deserialize(stream))
+        return false;
+
+    stream.read((char *)&m_radius, sizeof(float));
+    stream.read((char *)&m_orbit, sizeof(float));
+
+    return true;
 }
 
 float Planet::orbit() const
@@ -44,7 +50,13 @@ float Planet::radius() const
 
 bool Planet::serialize(std::ostream& stream) const
 {
-    return SystemObject::serialize(stream);
+    if (!SystemObject::serialize(stream))
+        return false;
+
+    stream.write((const char *)&m_radius, sizeof(float));
+    stream.write((const char *)&m_orbit, sizeof(float));
+
+    return true;
 }
 
 uint32_t Planet::type() const

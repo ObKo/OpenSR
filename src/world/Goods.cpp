@@ -29,7 +29,16 @@ Goods::Goods(uint64_t id): Item(id)
 
 bool Goods::deserialize(std::istream& stream)
 {
-    return Item::deserialize(stream);
+    if (!Item::deserialize(stream))
+        return false;
+
+    stream.read((char *)&m_quantity, sizeof(uint32_t));
+    stream.read((char *)&m_price, sizeof(uint32_t));
+
+    if (!stream.good())
+        return false;
+
+    return true;
 }
 
 uint32_t Goods::price() const
@@ -44,7 +53,16 @@ uint32_t Goods::quantity() const
 
 bool Goods::serialize(std::ostream& stream) const
 {
-    return Item::serialize(stream);
+    if (!Item::serialize(stream))
+        return false;
+
+    stream.write((const char *)&m_quantity, sizeof(uint32_t));
+    stream.write((const char *)&m_price, sizeof(uint32_t));
+
+    if (!stream.good())
+        return false;
+
+    return true;
 }
 
 uint32_t Goods::type() const

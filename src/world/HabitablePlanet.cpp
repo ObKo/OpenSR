@@ -29,7 +29,19 @@ HabitablePlanet::HabitablePlanet(uint64_t id): Planet(id)
 
 bool HabitablePlanet::deserialize(std::istream& stream)
 {
-    return Planet::deserialize(stream);
+    if (!Planet::deserialize(stream))
+        return false;
+
+    stream.read((char *)&m_population, sizeof(uint32_t));
+    stream.read((char *)&m_invader, sizeof(uint32_t));
+
+    if (!stream.good())
+        return false;
+
+    if (!m_landContext.deserialize(stream))
+        return false;
+
+    return true;
 }
 
 uint32_t HabitablePlanet::invader() const
@@ -49,7 +61,19 @@ uint32_t HabitablePlanet::population() const
 
 bool HabitablePlanet::serialize(std::ostream& stream) const
 {
-    return Planet::serialize(stream);
+    if (!Planet::serialize(stream))
+        return false;
+
+    stream.write((const char *)&m_population, sizeof(uint32_t));
+    stream.write((const char *)&m_invader, sizeof(uint32_t));
+
+    if (!stream.good())
+        return false;
+
+    if (!m_landContext.serialize(stream))
+        return false;
+
+    return true;
 }
 
 uint32_t HabitablePlanet::type() const

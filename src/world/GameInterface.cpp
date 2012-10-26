@@ -52,9 +52,15 @@
 #include "Types.h"
 #include "WorldHelper.h"
 #include "WorldManager.h"
+#include "SystemWidget.h"
 
 using namespace luabind;
 using namespace Rangers::World;
+
+namespace Rangers
+{
+class Widget;
+}
 
 int rangersAPIVersion()
 {
@@ -211,6 +217,11 @@ void rangersPluginInitLua(lua_State *state)
             luabind::class_<WorldHelper>("WorldHelper")
             .def("objectByType", &WorldHelper::objectByType),
 
+            luabind::class_<SystemWidget, Rangers::Widget>("SystemWidget")
+            .def(luabind::constructor<boost::shared_ptr<SolarSystem>, Rangers::Widget*>())
+            .def(luabind::constructor<boost::shared_ptr<SolarSystem> >())
+            .def(luabind::constructor<>()),
+
             luabind::class_<WorldManager>("WorldManager")
             .def(luabind::constructor<>())
             .def("removeObject", (void (WorldManager::*)(boost::shared_ptr<WorldObject>))&WorldManager::removeObject)
@@ -218,6 +229,7 @@ void rangersPluginInitLua(lua_State *state)
             .def("addObject", &WorldManager::addObject)
             .def("generateWorld", &WorldManager::generateWorld)
             .def("saveWorld", &WorldManager::saveWorld)
+            .def("currentSolarSystem", &WorldManager::currentSolarSystem)
             .scope
             [
                 def("instance", &WorldManager::instance)

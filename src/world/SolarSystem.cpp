@@ -49,6 +49,9 @@ bool SolarSystem::deserialize(std::istream& stream)
     stream.read(str, nameLength);
     str[nameLength] = '\0';
 
+    m_name = std::string(str);
+    delete[] str;
+
     stream.read((char *)&m_size, sizeof(float));
 
     stream.read((char *)&objectCount, sizeof(uint32_t));

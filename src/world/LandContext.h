@@ -27,12 +27,13 @@ namespace World
 {
 class LandContext: public InteractionContext
 {
+public:
+    virtual bool serialize(std::ostream &stream) const;
+    virtual bool deserialize(std::istream &stream);
 protected:
 //	 m_shop;
 //	 m_itemShop;
 //	 m_hangar;
-    virtual bool serialize(std::ostream &stream) const;
-    virtual bool deserialize(std::istream &stream);
 };
 }
 }

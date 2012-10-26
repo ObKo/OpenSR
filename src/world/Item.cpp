@@ -53,6 +53,9 @@ bool Item::deserialize(std::istream& stream)
     stream.read(str, nameLength);
     str[nameLength] = '\0';
 
+    m_name = std::string(str);
+    delete[] str;
+
     if (!stream.good())
         return false;
 

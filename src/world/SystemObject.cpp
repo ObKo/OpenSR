@@ -29,7 +29,27 @@ SystemObject::SystemObject(uint64_t id): SpaceObject(id)
 
 bool SystemObject::deserialize(std::istream& stream)
 {
-    return SpaceObject::deserialize(stream);
+    if (!SpaceObject::deserialize(stream))
+        return false;
+
+    uint32_t nameLength;
+
+    stream.read((char *)&nameLength, sizeof(uint32_t));
+
+    if (!stream.good())
+        return false;
+
+    char *str = new char[nameLength + 1];
+    stream.read(str, nameLength);
+    str[nameLength] = '\0';
+
+    m_name = std::string(str);
+    delete[] str;
+
+    if (!stream.good())
+        return false;
+
+    return true;
 }
 
 std::string SystemObject::name() const
@@ -39,7 +59,18 @@ std::string SystemObject::name() const
 
 bool SystemObject::serialize(std::ostream& stream) const
 {
-    return SpaceObject::serialize(stream);
+    if (!SpaceObject::serialize(stream))
+        return false;
+
+    uint32_t nameLength = m_name.length();
+
+    stream.write((const char *)&nameLength, sizeof(uint32_t));
+    stream.write(m_name.c_str(), m_name.length());
+
+    if (!stream.good())
+        return false;
+
+    return true;
 }
 
 uint32_t SystemObject::type() const

@@ -29,7 +29,15 @@ Equipment::Equipment(uint64_t id): Item(id)
 
 bool Equipment::deserialize(std::istream& stream)
 {
-    return Item::deserialize(stream);
+    if (!Item::deserialize(stream))
+        return false;
+
+    stream.read((char *)&m_race, sizeof(uint32_t));
+
+    if (!stream.good())
+        return false;
+
+    return true;
 }
 
 uint32_t Equipment::race() const
@@ -39,7 +47,15 @@ uint32_t Equipment::race() const
 
 bool Equipment::serialize(std::ostream& stream) const
 {
-    return Item::serialize(stream);
+    if (!Item::serialize(stream))
+        return false;
+
+    stream.write((const char *)&m_race, sizeof(uint32_t));
+
+    if (!stream.good())
+        return false;
+
+    return true;
 }
 
 uint32_t Equipment::type() const

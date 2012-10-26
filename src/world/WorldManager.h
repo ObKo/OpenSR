@@ -30,6 +30,7 @@ namespace Rangers
 namespace World
 {
 class WorldObject;
+class SolarSystem;
 class WorldManager
 {
 public:
@@ -44,11 +45,17 @@ public:
 
     boost::shared_ptr<WorldObject> getObject(uint64_t id);
 
+    std::list<boost::shared_ptr<SolarSystem> > solarSystems() const;
+    boost::shared_ptr<SolarSystem> currentSolarSystem() const;
+
     static uint64_t getNextId();
 
 private:
     void getSavingList(boost::shared_ptr<WorldObject> object, std::list<boost::shared_ptr<WorldObject> >& list, std::map<uint64_t, boost::shared_ptr<WorldObject> >& remainingObjects) const;
+
     std::map<uint64_t, boost::shared_ptr<WorldObject> > m_objects;
+    std::list<boost::shared_ptr<SolarSystem> > m_solarSystems;
+    boost::shared_ptr<SolarSystem> m_currentSystem;
 
     static uint64_t m_idCounter;
 };

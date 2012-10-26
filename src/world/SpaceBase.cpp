@@ -29,7 +29,15 @@ SpaceBase::SpaceBase(uint64_t id): SystemObject(id)
 
 bool SpaceBase::deserialize(std::istream& stream)
 {
-    return SystemObject::deserialize(stream);
+    if (!SystemObject::deserialize(stream))
+        return false;
+
+    if (!m_landContext.deserialize(stream))
+        return false;
+    if (!m_shipContext.deserialize(stream))
+        return false;
+
+    return true;
 }
 
 LandContext SpaceBase::landContext() const
@@ -39,7 +47,15 @@ LandContext SpaceBase::landContext() const
 
 bool SpaceBase::serialize(std::ostream& stream) const
 {
-    return SystemObject::serialize(stream);
+    if (!SystemObject::serialize(stream))
+        return false;
+
+    if (!m_landContext.serialize(stream))
+        return false;
+    if (!m_shipContext.serialize(stream))
+        return false;
+
+    return true;
 }
 
 ShipContext SpaceBase::shipContext() const

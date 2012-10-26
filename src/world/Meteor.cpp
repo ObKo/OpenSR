@@ -29,7 +29,17 @@ Meteor::Meteor(uint64_t id): SystemObject(id)
 
 bool Meteor::deserialize(std::istream& stream)
 {
-    return SystemObject::deserialize(stream);
+    if (!SystemObject::deserialize(stream))
+        return false;
+
+    stream.read((char *)&m_focus, sizeof(Point));
+    stream.read((char *)&m_speed, sizeof(float));
+    stream.read((char *)&m_mineral, sizeof(float));
+
+    if (!stream.good())
+        return false;
+
+    return true;
 }
 
 Point Meteor::focus() const
@@ -44,7 +54,17 @@ float Meteor::mineral() const
 
 bool Meteor::serialize(std::ostream& stream) const
 {
-    return SystemObject::serialize(stream);
+    if (!SystemObject::serialize(stream))
+        return false;
+
+    stream.write((const char *)&m_focus, sizeof(Point));
+    stream.write((const char *)&m_speed, sizeof(float));
+    stream.write((const char *)&m_mineral, sizeof(float));
+
+    if (!stream.good())
+        return false;
+
+    return true;
 }
 
 float Meteor::speed() const

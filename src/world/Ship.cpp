@@ -34,7 +34,30 @@ ShipContext Ship::context() const
 
 bool Ship::deserialize(std::istream& stream)
 {
-    return SpaceObject::deserialize(stream);
+    if (!SpaceObject::deserialize(stream))
+        return false;
+
+    uint32_t nameLength;
+
+    stream.read((char *)&nameLength, sizeof(uint32_t));
+
+    if (!stream.good())
+        return false;
+
+    char *str = new char[nameLength + 1];
+    stream.read(str, nameLength);
+    str[nameLength] = '\0';
+
+    m_name = std::string(str);
+    delete[] str;
+
+    if (!stream.good())
+        return false;
+
+    if (!m_context.deserialize(stream))
+        return false;
+
+    return true;
 }
 
 std::string Ship::name() const
@@ -44,7 +67,21 @@ std::string Ship::name() const
 
 bool Ship::serialize(std::ostream& stream) const
 {
-    return SpaceObject::serialize(stream);
+    if (!SpaceObject::serialize(stream))
+        return false;
+
+    uint32_t nameLength = m_name.length();
+
+    stream.write((const char *)&nameLength, sizeof(uint32_t));
+    stream.write(m_name.c_str(), m_name.length());
+
+    if (!stream.good())
+        return false;
+
+    if (!m_context.serialize(stream))
+        return false;
+
+    return true;
 }
 
 uint32_t Ship::type() const

@@ -20,9 +20,11 @@
 #include "WorldObject.h"
 #include "SolarSystem.h"
 #include "DesertPlanet.h"
+#include "HabitablePlanet.h"
 
 #include <fstream>
 #include <libRanger.h>
+#include <OpenSR/Log.h>
 
 namespace Rangers
 {
@@ -59,6 +61,7 @@ void WorldManager::generateWorld()
 {
     boost::shared_ptr<SolarSystem> system = boost::static_pointer_cast<SolarSystem>(addObject(new SolarSystem()));
     boost::shared_ptr<DesertPlanet> planet = boost::static_pointer_cast<DesertPlanet>(addObject(new DesertPlanet()));
+    boost::shared_ptr<HabitablePlanet> hPlanet = boost::static_pointer_cast<HabitablePlanet>(addObject(new HabitablePlanet()));
 
     system->setName("Test system");
     system->setSize(1000.0f);
@@ -69,7 +72,27 @@ void WorldManager::generateWorld()
     planet->setName("Planet");
     planet->setPosition(Point(200.0f, 0.0f));
 
+    hPlanet->setOrbit(150.0f);
+    hPlanet->setRadius(30.0f);
+    hPlanet->setName("Malok's planet");
+    hPlanet->setPosition(Point(-150.0f, 0.0f));
+    hPlanet->setInvader(0);
+    hPlanet->setPopulation(1000000);
+
+    m_currentSystem = system;
+    m_solarSystems.push_back(system);
+
     system->addObject(planet);
+}
+
+std::list<boost::shared_ptr<SolarSystem> > WorldManager::solarSystems() const
+{
+    return m_solarSystems;
+}
+
+boost::shared_ptr<SolarSystem> WorldManager::currentSolarSystem() const
+{
+    return m_currentSystem;
 }
 
 bool WorldManager::saveWorld(const std::wstring& file) const
@@ -94,7 +117,11 @@ bool WorldManager::saveWorld(const std::wstring& file) const
     std::list<boost::shared_ptr<WorldObject> >::const_iterator end = savingList.end();
     for (std::list<boost::shared_ptr<WorldObject> >::const_iterator i = savingList.begin(); i != end; ++i)
     {
-        (*i)->serialize(worldFile);
+        if (!(*i)->serialize(worldFile))
+        {
+            Log::error() << "Cannot serialize world!";
+            break;
+        }
     }
 
     worldFile.close();
