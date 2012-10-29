@@ -1,10 +1,17 @@
 #ifndef PLANETVIEWER_H
 #define PLANETVIEWER_H
 
-#include <QGLWidget>
 #include <QPaintEvent>
 #include <QImage>
 #include <QTimer>
+
+#ifdef Q_OS_WIN32
+#include <GL/glew.h>
+#else
+#include <GL/glut.h>
+#include <GL/glext.h>
+#endif
+#include <QGLWidget>
 
 class PlanetViewer : public QGLWidget
 {

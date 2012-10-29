@@ -2,7 +2,7 @@
 #include "ui_MainWindow.h"
 
 #define _USE_MATH_DEFINES
-#include <cmath>
+#include <math.h>
 #include <QFileDialog>
 
 MainWindow::MainWindow(QWidget *parent) :

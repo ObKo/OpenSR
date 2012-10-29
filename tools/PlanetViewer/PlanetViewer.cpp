@@ -6,12 +6,11 @@
 #include <QDebug>
 #include <QPixmap>
 #include <QPainter>
-#include <cmath>
+#include <math.h>
 #include <limits>
+
 #include <GL/gl.h>
-#include <GL/glext.h>
 #include <GL/glu.h>
-#include <GL/glut.h>
 
 struct Vertex
 {
@@ -149,7 +148,7 @@ void PlanetViewer::initializeGL()
     memcpy(fShaderData, data.data(), data.size() + 1);
 
     glShaderSource(vShader, 1, &vertexShader, NULL);
-    glShaderSource(fShader, 1, &fShaderData, NULL);
+    glShaderSource(fShader, 1, (const char**)&fShaderData, NULL);
 
     glCompileShader(vShader);
     glCompileShader(fShader);
@@ -260,7 +259,7 @@ void PlanetViewer::resizeGL(int width, int height)
     glOrtho(0.0f, width, height, 0.0f, -1.0f, 1.0f);
 }
 
-void generatePlanetImage(QImage &image, const QImage &texture, int radius, double phase)
+/*void generatePlanetImage(QImage &image, const QImage &texture, int radius, double phase)
 {
     image.fill(Qt::NoAlpha);
     for (int z = -radius; z < radius; z++)
@@ -288,7 +287,7 @@ void generatePlanetImage(QImage &image, const QImage &texture, int radius, doubl
                 image.setPixel(radius + y, radius + z, texture.pixel(round(u), round(v)));
         }
     }
-}
+}*/
 
 void PlanetViewer::rotatePlanet()
 {
