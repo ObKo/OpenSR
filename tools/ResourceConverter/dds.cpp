@@ -45,7 +45,6 @@ void blitBGRAToRGB24(const unsigned char *bgra, unsigned char *rgb24, int width,
 
 int convertImageToDDS(const std::string& inFile, const std::string& outFile, DDSType type)
 {
-    ilInit();
     ILuint image;
     ilGenImages(1, &image);
     ilBindImage(image);

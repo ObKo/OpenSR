@@ -1,6 +1,5 @@
 #include "PlanetViewer.h"
 
-#define GL_GLEXT_PROTOTYPES
 #define _USE_MATH_DEFINES
 
 #include <QDebug>
@@ -108,6 +107,9 @@ void PlanetViewer::setSolarAngle(double angle)
 
 void PlanetViewer::initializeGL()
 {
+#ifdef Q_OS_WIN32
+    glewInit();
+#endif
     glDisable(GL_DEPTH_TEST);
     glEnable(GL_TEXTURE_2D);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);

@@ -20,7 +20,10 @@
 #include "dds.h"
 #include "gai.h"
 #include "gi.h"
+#include "planet.h"
 #include <iostream>
+#include <IL/il.h>
+#include <IL/ilu.h>
 #include <algorithm>
 
 void showHelp()
@@ -35,6 +38,7 @@ void showHelp()
     std::cout << "\tgi2png gi_file png_file - convert GI image file from original game to png." << std::endl;
     std::cout << "\tgi2dds compression gi_file dds_file - convert GI image file from original game to dds format." << std::endl;
     std::cout << "\tgai2dds compression gai_file dds_file - convert GAI animation file from original game to dds animation." << std::endl;
+    std::cout << "\tcreate_planet png_color_file png_gray_file planet_file - create planet image from color and grayscale image." << std::endl;
 }
 
 int main(int argc, char **argv)
@@ -44,6 +48,8 @@ int main(int argc, char **argv)
         showHelp();
         return 0;
     }
+    ilInit();
+    iluInit();
     if (std::string(argv[1]) == "pkg2rpkg")
     {
         if (argc < 4)
@@ -154,6 +160,15 @@ int main(int argc, char **argv)
             return 0;
         }
         Rangers::gai2dds(argv[3], argv[4], compression);
+    }
+    else if (std::string(argv[1]) == "create_planet")
+    {
+        if (argc < 5)
+        {
+            showHelp();
+            return 0;
+        }
+        Rangers::createPlanet(argv[2], argv[3], argv[4]);
     }
     else
     {

@@ -73,5 +73,5 @@ void main()
     float x = sqrt(0.5f * 0.5f - (tex_coord.x - 0.5f) * (tex_coord.x - 0.5f) - (tex_coord.y - 0.5f) * (tex_coord.y - 0.5f));
     vec3 normal = normalize(vec3(x, tex_coord.x - 0.5f, tex_coord.y - 0.5f));
     float diffuse = max(dot(normal, vec3(0.5f, cos(solarAngle), sin(solarAngle))), 0.0);
-    gl_FragColor.rgb = gl_FragColor.rgb * (diffuse + 0.2f);
+    gl_FragColor.rgb = gl_FragColor.rgb * (diffuse + 0.3f);
 };
