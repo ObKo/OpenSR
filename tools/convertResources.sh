@@ -4,7 +4,7 @@
 # from original game to png images with alpha channel.
 #  This script uses psdparse (http://www.telegraphics.com.au/svn/psdparse/)
 
-RESOURCE_CONVETER=build/tools/ResourceConverter/rangersresconv
+RESOURCE_CONVETER=opensr-resourceconverter
 PSD_PARSE=psdparse
 INPUT_DIR=data
 OUTPUT_DIR=data/ORC
