@@ -1,3 +1,21 @@
+/*
+    OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
+    Copyright (C) 2012 Kosyak <ObKo@mail.ru>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include "PlanetViewer.h"
 
 #define _USE_MATH_DEFINES
@@ -28,8 +46,6 @@ const char *vertexShader = ""
                            "}";
 }
 
-void generatePlanetImage(QImage &image, const QImage &texture, int radius, double phase);
-
 PlanetViewer::PlanetViewer(QWidget *parent) :
     QGLWidget(parent)
 {
@@ -41,6 +57,7 @@ PlanetViewer::PlanetViewer(QWidget *parent) :
     m_cloudPhaseSpeed = 10.0f;
     m_planetSize = 256;
     m_cloudEnabled = true;
+    m_ambientColor = 0xffffffff;
 
     m_timer.setInterval(30);
     m_timer.setSingleShot(false);
@@ -52,14 +69,14 @@ PlanetViewer::PlanetViewer(QWidget *parent) :
 void PlanetViewer::setCloudTexture(const QPixmap& cloud)
 {
     m_cloudTexture = cloud;
-    glDeleteTextures(1, &m_cloudTextureID);
+    deleteTexture(m_cloudTextureID);
     m_cloudTextureID = bindTexture(m_cloudTexture);
 }
 
 void PlanetViewer::setTexture(const QPixmap& texture)
 {
     m_texture = texture;
-    glDeleteTextures(1, &m_textureID);
+    deleteTexture(m_textureID);
     m_textureID = bindTexture(m_texture);
 }
 
@@ -103,6 +120,16 @@ double PlanetViewer::solarAngle() const
 void PlanetViewer::setSolarAngle(double angle)
 {
     m_solarAngle = angle;
+}
+
+QColor PlanetViewer::ambientColor() const
+{
+    return QColor::fromRgb(m_ambientColor);
+}
+
+void PlanetViewer::setAmbientColor(const QColor& color)
+{
+    m_ambientColor = color.rgb();
 }
 
 void PlanetViewer::initializeGL()
@@ -175,6 +202,7 @@ void PlanetViewer::initializeGL()
     m_cloudEnableArgument = glGetUniformLocation(m_shaderProgram, "cloudEnabled");
     m_colorCorrectionArgument = glGetUniformLocation(m_shaderProgram, "colorCorrection");
     m_solarAngleArgument = glGetUniformLocation(m_shaderProgram, "solarAngle");
+    m_ambientColorArgument = glGetUniformLocation(m_shaderProgram, "ambientColor");
 }
 
 void PlanetViewer::updateSize()
@@ -184,20 +212,20 @@ void PlanetViewer::updateSize()
     glBindBuffer(GL_ARRAY_BUFFER, m_buffer);
     vertices = (Vertex *)glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
 
-    vertices[0].x = 0.0f;
-    vertices[0].y = 0.0f;
+    vertices[0].x = - m_planetSize / 2.0f;
+    vertices[0].y = - m_planetSize / 2.0f;
     vertices[0].u = 0.0f;
     vertices[0].v = 0.0f;
-    vertices[1].x = m_planetSize;
-    vertices[1].y = 0.0f;
+    vertices[1].x = m_planetSize / 2.0f;
+    vertices[1].y = - m_planetSize / 2.0f;
     vertices[1].u = 1.0f;
     vertices[1].v = 0.0f;
-    vertices[2].x = m_planetSize;
-    vertices[2].y = m_planetSize;
+    vertices[2].x = m_planetSize / 2.0f;
+    vertices[2].y = m_planetSize / 2.0f;
     vertices[2].u = 1.0f;
     vertices[2].v = 1.0f;
-    vertices[3].x = 0.0f;
-    vertices[3].y = m_planetSize;
+    vertices[3].x = - m_planetSize / 2.0f;
+    vertices[3].y = m_planetSize / 2.0f;
     vertices[3].u = 0.0f;
     vertices[3].v = 1.0f;
 
@@ -221,6 +249,9 @@ void PlanetViewer::paintGL()
     glUniform1i(m_cloudEnableArgument, m_cloudEnabled);
     glUniform1i(m_colorCorrectionArgument, m_colorCorrection);
     glUniform1f(m_solarAngleArgument, (float)m_solarAngle);
+
+    glUniform3f(m_ambientColorArgument, ((m_ambientColor >> 16) & 0xff) / 255.0f,
+                ((m_ambientColor >> 8) & 0xff) / 255.0f, ((m_ambientColor) & 0xff) / 255.0f);
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, m_textureID);
@@ -258,38 +289,62 @@ void PlanetViewer::resizeGL(int width, int height)
     glViewport(0, 0, width, height);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(0.0f, width, height, 0.0f, -1.0f, 1.0f);
+    glOrtho(-width / 2.0f, width / 2.0f, height / 2.0f, -height / 2.0f, -1.0f, 1.0f);
 }
 
-/*void generatePlanetImage(QImage &image, const QImage &texture, int radius, double phase)
+QRgb getColor(const QImage &texture, int px, int py, int size, float radius, bool cloud)
+{
+    float x = sqrt(radius * radius - (px - size / 2.0f) * (px - size / 2.0f) - (py - size / 2.0f) * (py - size / 2.0f));
+    float r = sqrt(x * x + (px - size / 2.0f) * (px - size / 2.0f) + (py - size / 2.0f) * (py - size / 2.0f));
+    float lambda = atan((px - size / 2.0f) / x);
+    float theta = acos((py - size / 2.0f) / r);
+    float rx, ry;
+    rx = 0.5f + (1.0f / (2.0f * M_PI) * lambda);
+    ry = 0.5f + cos(theta) / 2.0f;
+
+    QRgb color;
+
+    if ((r > radius - 0.001f) && (r <= radius + 0.001f) && (rx == rx) && (ry == ry))
+    {
+        color = texture.pixel(rx * texture.width(), ry * texture.height());
+
+        if (!cloud)
+        {
+            float y = 0.299 * qRed(color) + 0.587 * qGreen(color) + 0.114 * qBlue(color);
+            float u = -0.14713 * qRed(color) - 0.28886 * qGreen(color) + 0.436 * qBlue(color);
+            float v = 0.615 * qRed(color) - 0.51499 * qGreen(color) - 0.10001 * qBlue(color);
+            y = y * (127.0 + qAlpha(color) / 2.0f) / 255.0f;
+            y = y > 255.0f ? 255.0f : (y < 0.0 ? 0.0f : y);
+            u = u > 255.0f ? 255.0f : (u < 0.0 ? 0.0f : u);
+            v = v > 255.0f ? 255.0f : (v < 0.0 ? 0.0f : v);
+            color = qRgb((y + 1.13983 * v), (y - 0.39465 * u - 0.58060 * v), (y + 2.03211 * u));
+        }
+        color = qRgb(qRed(color), qGreen(color), qBlue(color));
+    }
+    else
+        color = 0;
+
+    return color;
+}
+
+void PlanetViewer::generatePlanetImage(QImage &image, const QImage &texture, int size)
 {
     image.fill(Qt::NoAlpha);
-    for (int z = -radius; z < radius; z++)
+    QRgb t0, t1;
+    for (int i = 0; i < size; i++)
     {
-        for (int y = -radius; y < radius; y++)
+        for (int j = 0; j < size; j++)
         {
-            double x = sqrt(radius * radius - z * z - y * y);
-            double r = sqrt(x * x + y * y + z * z);
-            double lambda = atan(double(y) / x) + phase;
-            double theta = acos(double(z) / r);
+            float tr = sqrt((i - size / 2) * (i - size / 2) + (j - size / 2) * (j - size / 2));
+            t0 = getColor(texture, i, j, size, size / 2.0f, false);
 
-            while (lambda > M_PI)
-                lambda -= 2 * M_PI;
+            if ((tr > sqrt(size / 2 * size / 2) - 2) && (tr <= sqrt(size / 2 * size / 2)))
+                t0 = (t0 & 0xffffff) | (((int)round((sqrt(size / 2 * size / 2) - tr) * 64) << 24) & 0xff000000);
 
-            while (lambda < -M_PI)
-                lambda += 2 * M_PI;
-
-            double u = texture.width() / 2 - ((texture.width() - 1) / (2.0 * M_PI) * lambda);
-            double v = (texture.height() - 1) * theta / (M_PI);
-
-            if ((u >= texture.width()) || (v >= texture.height()) || (u < 0) || (v < 0) || (v != v) || (u != u))
-                continue;
-
-            if ((r > radius - 0.5) && (r < radius + 0.5))
-                image.setPixel(radius + y, radius + z, texture.pixel(round(u), round(v)));
+            image.setPixel(i, j, t0);
         }
     }
-}*/
+};
 
 void PlanetViewer::rotatePlanet()
 {

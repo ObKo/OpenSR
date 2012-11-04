@@ -2,15 +2,17 @@ FIND_PACKAGE(Qt4 REQUIRED COMPONENTS QtCore QtGui QtOpenGL)
 
 INCLUDE(${QT_USE_FILE})
 
-SET(PW_HEADERS
+SET(PW_HEADERS 
     MainWindow.h
     PlanetViewer.h
+    PlanetModel.h
 )
 
 SET(PW_SOURCES
     main.cpp
     MainWindow.cpp
     PlanetViewer.cpp
+    PlanetModel.cpp
 )
 
 SET(PW_UI
@@ -18,6 +20,7 @@ SET(PW_UI
 )
 
 INCLUDE_DIRECTORIES(
+  ${JSONCPP_INCLUDE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_SOURCE_DIR}/libRanger
   ${CMAKE_CURRENT_SOURCE_DIR}
@@ -39,9 +42,9 @@ ADD_EXECUTABLE(opensr-planetviewer  ${PWRES_SOURCES} ${PW_SOURCES} ${PW_UI_SOURC
 
 IF(WIN32)
     SET_TARGET_PROPERTIES(opensr-planetviewer ranger PROPERTIES COMPILE_FLAGS "/Zc:wchar_t-")
-    TARGET_LINK_LIBRARIES(opensr-planetviewer ranger ${GLEW_LIBRARIES} ${QT_LIBRARIES} ${OPENGL_LIBRARIES})
+    TARGET_LINK_LIBRARIES(opensr-planetviewer ranger ${GLEW_LIBRARIES} ${QT_LIBRARIES} ${OPENGL_LIBRARIES} ${JSONCPP_LIBRARIES})
 ELSE(WIN32)
-    TARGET_LINK_LIBRARIES(opensr-planetviewer ranger ${QT_LIBRARIES} ${OPENGL_LIBRARIES})
+    TARGET_LINK_LIBRARIES(opensr-planetviewer ranger ${QT_LIBRARIES} ${OPENGL_LIBRARIES} ${JSONCPP_LIBRARIES})
 ENDIF(WIN32)
 
 INSTALL(TARGETS opensr-planetviewer RUNTIME DESTINATION bin)

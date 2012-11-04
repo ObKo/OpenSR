@@ -1,9 +1,28 @@
+/*
+    OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
+    Copyright (C) 2012 Kosyak <ObKo@mail.ru>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #ifndef PLANETVIEWER_H
 #define PLANETVIEWER_H
 
 #include <QPaintEvent>
 #include <QImage>
 #include <QTimer>
+#include <QColor>
 
 #ifdef Q_OS_WIN32
 #include <GL/glew.h>
@@ -25,6 +44,7 @@ public:
     bool cloudEnabled() const;
     bool colorCorrection() const;
     double solarAngle() const;
+    QColor ambientColor() const;
 
     void setPlanetSpeed(double speed);
     void setCloudSpeed(double speed);
@@ -34,6 +54,9 @@ public:
     void setSolarAngle(double angle);
     void setCloudTexture(const QPixmap& cloud);
     void setTexture(const QPixmap& cloud);
+    void setAmbientColor(const QColor& color);
+
+    static void generatePlanetImage(QImage &image, const QImage &texture, int size);
 
 protected:
     void initializeGL();
@@ -57,6 +80,7 @@ private:
     float m_solarAngle;
 
     int m_planetSize;
+    int m_ambientColor;
 
     GLuint m_buffer;
     GLuint m_textureID;
@@ -70,6 +94,7 @@ private:
     GLuint m_cloudEnableArgument;
     GLuint m_colorCorrectionArgument;
     GLuint m_solarAngleArgument;
+    GLuint m_ambientColorArgument;
 
 private Q_SLOTS:
     void rotatePlanet();

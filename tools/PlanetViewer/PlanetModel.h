@@ -16,48 +16,45 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef PLANETMODEL_H
+#define PLANETMODEL_H
 
-#include <QMainWindow>
+#include <QAbstractListModel>
+#include <QMap>
 #include <QSettings>
-#include "PlanetModel.h"
+#include <QIcon>
 
-namespace Ui
+struct Planet
 {
-class MainWindow;
-}
+    QString id;
+    QString texture;
+    QString cloud;
+    bool hasCloud;
+    float speed;
+    float cloudSpeed;
+    int size;
+    QColor ambientColor;
+};
 
-class MainWindow : public QMainWindow
+class PlanetModel: public QAbstractListModel
 {
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
-    ~MainWindow();
+    virtual int rowCount(const QModelIndex& parent = QModelIndex()) const;
+    virtual QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
 
-protected:
-    void closeEvent(QCloseEvent *event);
+    void addPlanet(const Planet &planet);
+    Planet getPlanet(const QModelIndex& i) const;
+    void removePlanets(const QModelIndexList& list);
 
-private Q_SLOTS:
-    void updateParams();
-
-    void setColor();
-    void openCloudTexture();
-    void openTexture();
-
-    void addPlanet();
-    void removePlanet();
-    void setDataDir();
-    void loadPlanet(const QModelIndex& index);
-
-    void save();
-    void open();
+    void saveJSON(const QString& file) const;
+    void loadJSON(const QString& file);
 
 private:
-    Ui::MainWindow *ui;
-    PlanetModel m_model;
+    QMap<QString, Planet> m_planets;
+    QMap<QString, QIcon> m_icons;
     QSettings m_settings;
 };
 
-#endif // MAINWINDOW_H
+#endif // PLANETMODEL_H
