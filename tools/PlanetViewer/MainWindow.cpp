@@ -26,7 +26,7 @@
 #include <QColorDialog>
 #include <QMessageBox>
 #include <QDebug>
-#include <boost/concept_check.hpp>
+#include <libRanger.h>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -43,6 +43,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->cloud->setChecked(ui->planetWidget->cloudEnabled());
     ui->colorCorrection->setChecked(ui->planetWidget->colorCorrection());
     ui->solarAngle->setValue((int)(ui->planetWidget->solarAngle() * 180 / M_PI) - 90);
+    ui->ring->setChecked(ui->planetWidget->ringEnabled());
 
     QColor c = ui->planetWidget->ambientColor();
     QString colorText = QString("#%1%2%3").arg((ushort)((c.rgba() >> 16) & 0xff), 2, 16, QChar('0'))
@@ -57,9 +58,11 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->cloudSpeed, SIGNAL(valueChanged(double)), this, SLOT(updateParams()));
     connect(ui->planetSize, SIGNAL(valueChanged(int)), this, SLOT(updateParams()));
     connect(ui->cloud, SIGNAL(toggled(bool)), this, SLOT(updateParams()));
+    connect(ui->ring, SIGNAL(toggled(bool)), this, SLOT(updateParams()));
     connect(ui->colorCorrection, SIGNAL(toggled(bool)), this, SLOT(updateParams()));
     connect(ui->solarAngle, SIGNAL(valueChanged(int)), this, SLOT(updateParams()));
 
+    connect(ui->ringBrowse, SIGNAL(clicked()), this, SLOT(openRingTexture()));
     connect(ui->textureBrowse, SIGNAL(clicked()), this, SLOT(openTexture()));
     connect(ui->cloudBrowse, SIGNAL(clicked()), this, SLOT(openCloudTexture()));
     connect(ui->colorButton, SIGNAL(clicked()), this, SLOT(setColor()));
@@ -77,7 +80,35 @@ void MainWindow::openCloudTexture()
     if (name.isEmpty())
         return;
     ui->cloudTexture->setText(QDir(m_settings.value("data/dataDir", "").toString()).relativeFilePath(name));
-    ui->planetWidget->setCloudTexture(QPixmap(name));
+    ui->planetWidget->setCloudTexture(QImage(name));
+}
+
+void MainWindow::openRingTexture()
+{
+    QString name = QFileDialog::getOpenFileName(this, tr("Open texture"), m_settings.value("data/dataDir", "").toString());
+    if (name.isEmpty())
+        return;
+
+    if (QFileInfo(name).suffix() == "gi")
+    {
+        Rangers::GIFrame frame;
+        QFile f(name);
+        if (!f.open(QIODevice::ReadOnly))
+        {
+            ui->planetWidget->setRingTexture(QImage());
+            return;
+        }
+        QByteArray data = f.readAll();
+        f.close();
+        frame = Rangers::loadGIFile(data.data());
+        ui->planetWidget->setRingTexture(QImage(frame.data, frame.width, frame.height, QImage::Format_ARGB32).mirrored(false, true));
+        delete[] frame.data;
+    }
+    else
+    {
+        ui->planetWidget->setRingTexture(QImage(name));
+    }
+    ui->ringTexture->setText(QDir(m_settings.value("data/dataDir", "").toString()).relativeFilePath(name));
 }
 
 void MainWindow::openTexture()
@@ -86,7 +117,7 @@ void MainWindow::openTexture()
     if (name.isEmpty())
         return;
     ui->texture->setText(QDir(m_settings.value("data/dataDir", "").toString()).relativeFilePath(name));
-    ui->planetWidget->setTexture(QPixmap(name));
+    ui->planetWidget->setTexture(QImage(name));
 }
 
 void MainWindow::setDataDir()
@@ -122,14 +153,38 @@ void MainWindow::loadPlanet(const QModelIndex& index)
     ui->planetSize->setValue(p.size);
     ui->planetSpeed->setValue(p.speed);
     ui->texture->setText(p.texture);
+    ui->ring->setChecked(p.hasRing);
+    ui->ringTexture->setText(p.ring);
 
     ui->planetWidget->setAmbientColor(p.ambientColor);
     ui->planetWidget->setPlanetSpeed(p.speed);
     ui->planetWidget->setCloudSpeed(p.cloudSpeed);
     ui->planetWidget->setPlanetSize(p.size);
     ui->planetWidget->setCloudEnabled(p.hasCloud);
-    ui->planetWidget->setTexture(QPixmap(QDir(m_settings.value("data/dataDir", "").toString()).absoluteFilePath(p.texture)));
-    ui->planetWidget->setCloudTexture(QPixmap(QDir(m_settings.value("data/dataDir", "").toString()).absoluteFilePath(p.cloud)));
+    ui->planetWidget->setRingEnabled(p.hasRing);
+    ui->planetWidget->setTexture(QImage(QDir(m_settings.value("data/dataDir", "").toString()).absoluteFilePath(p.texture)));
+    ui->planetWidget->setCloudTexture(QImage(QDir(m_settings.value("data/dataDir", "").toString()).absoluteFilePath(p.cloud)));
+
+    QString ringPath = QDir(m_settings.value("data/dataDir", "").toString()).absoluteFilePath(p.ring);
+    if (QFileInfo(ringPath).suffix() == "gi")
+    {
+        Rangers::GIFrame frame;
+        QFile f(ringPath);
+        if (!f.open(QIODevice::ReadOnly))
+        {
+            ui->planetWidget->setRingTexture(QImage());
+            return;
+        }
+        QByteArray data = f.readAll();
+        f.close();
+        frame = Rangers::loadGIFile(data.data());
+        ui->planetWidget->setRingTexture(QImage(frame.data, frame.width, frame.height, QImage::Format_ARGB32).mirrored(false, true));
+        delete[] frame.data;
+    }
+    else
+    {
+        ui->planetWidget->setRingTexture(QImage(ringPath));
+    }
 }
 
 void MainWindow::save()
@@ -172,6 +227,8 @@ void MainWindow::addPlanet()
     p.size = ui->planetSize->value();
     p.speed = ui->planetSpeed->value();
     p.texture = ui->texture->text();
+    p.ring = ui->ringTexture->text();
+    p.hasRing = ui->ring->isChecked();
     m_model.addPlanet(p);
 }
 
@@ -201,6 +258,7 @@ void MainWindow::updateParams()
     ui->planetWidget->setCloudEnabled(ui->cloud->isChecked());
     ui->planetWidget->setColorCorrection(ui->colorCorrection->isChecked());
     ui->planetWidget->setSolarAngle((ui->solarAngle->value() + 90) / 180.0 * M_PI);
+    ui->planetWidget->setRingEnabled(ui->ring->isChecked());
 }
 
 void MainWindow::closeEvent(QCloseEvent* event)

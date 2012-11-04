@@ -56,8 +56,11 @@ PlanetViewer::PlanetViewer(QWidget *parent) :
     m_phaseSpeed = 15.0f;
     m_cloudPhaseSpeed = 10.0f;
     m_planetSize = 256;
-    m_cloudEnabled = true;
+    m_cloudEnabled = false;
+    m_ringEnabled = false;
     m_ambientColor = 0xffffffff;
+    m_ringBuffer = 0;
+    m_ringTextureID = 0;
 
     m_timer.setInterval(30);
     m_timer.setSingleShot(false);
@@ -66,21 +69,37 @@ PlanetViewer::PlanetViewer(QWidget *parent) :
     m_timer.start();
 }
 
-void PlanetViewer::setCloudTexture(const QPixmap& cloud)
+void PlanetViewer::setCloudTexture(const QImage& cloud)
 {
     m_cloudTexture = cloud;
     deleteTexture(m_cloudTextureID);
     m_cloudTextureID = bindTexture(m_cloudTexture);
 }
 
-void PlanetViewer::setTexture(const QPixmap& texture)
+void PlanetViewer::setTexture(const QImage& texture)
 {
     m_texture = texture;
     deleteTexture(m_textureID);
     m_textureID = bindTexture(m_texture);
 }
 
-void setTexture(const QPixmap& cloud);
+void PlanetViewer::setRingTexture(const QImage& ring)
+{
+    m_ringTexture = ring;
+    deleteTexture(m_ringTextureID);
+    m_ringTextureID = bindTexture(m_ringTexture);
+    updateSize();
+}
+
+bool PlanetViewer::ringEnabled() const
+{
+    return m_ringEnabled;
+}
+
+void PlanetViewer::setRingEnabled(bool enabled)
+{
+    m_ringEnabled = enabled;
+}
 
 bool PlanetViewer::cloudEnabled() const
 {
@@ -153,6 +172,9 @@ void PlanetViewer::initializeGL()
 
     glGenBuffers(1, &m_buffer);
     glBindBuffer(GL_ARRAY_BUFFER, m_buffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * 4, vertices, GL_DYNAMIC_DRAW);
+    glGenBuffers(1, &m_ringBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, m_ringBuffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * 4, vertices, GL_DYNAMIC_DRAW);
     delete[] vertices;
 
@@ -230,6 +252,28 @@ void PlanetViewer::updateSize()
     vertices[3].v = 1.0f;
 
     glUnmapBuffer(GL_ARRAY_BUFFER);
+
+    glBindBuffer(GL_ARRAY_BUFFER, m_ringBuffer);
+    vertices = (Vertex *)glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+
+    vertices[0].x = - m_ringTexture.width() / 2.0f;
+    vertices[0].y = - m_ringTexture.height() / 2.0f;
+    vertices[0].u = 0.0f;
+    vertices[0].v = 0.0f;
+    vertices[1].x = m_ringTexture.width() / 2.0f;
+    vertices[1].y = - m_ringTexture.height() / 2.0f;
+    vertices[1].u = 1.0f;
+    vertices[1].v = 0.0f;
+    vertices[2].x = m_ringTexture.width() / 2.0f;
+    vertices[2].y = m_ringTexture.height() / 2.0f;
+    vertices[2].u = 1.0f;
+    vertices[2].v = 1.0f;
+    vertices[3].x = - m_ringTexture.width() / 2.0f;
+    vertices[3].y = m_ringTexture.height() / 2.0f;
+    vertices[3].u = 0.0f;
+    vertices[3].v = 1.0f;
+
+    glUnmapBuffer(GL_ARRAY_BUFFER);
 }
 
 void PlanetViewer::paintGL()
@@ -272,6 +316,28 @@ void PlanetViewer::paintGL()
     glDisableClientState(GL_ARRAY_BUFFER);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     glDisableClientState(GL_VERTEX_ARRAY);
+
+    if (m_ringEnabled)
+    {
+        glUseProgram(0);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, m_ringTextureID);
+
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        glEnableClientState(GL_ARRAY_BUFFER);
+
+        glBindBuffer(GL_ARRAY_BUFFER, m_ringBuffer);
+
+        glVertexPointer(2, GL_FLOAT, sizeof(Vertex), (char*)0);
+        glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), (char*)0 + sizeof(float) * 2);
+
+        glDrawArrays(GL_QUADS, 0, 4);
+
+        glDisableClientState(GL_ARRAY_BUFFER);
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+        glDisableClientState(GL_VERTEX_ARRAY);
+    }
 }
 
 bool PlanetViewer::colorCorrection() const

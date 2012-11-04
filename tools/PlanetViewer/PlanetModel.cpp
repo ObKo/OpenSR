@@ -77,11 +77,17 @@ void PlanetModel::saveJSON(const QString& file) const
         planet["size"] = p.size;
         planet["speed"] = p.speed;
         planet["texture"] = p.texture.toUtf8().data();
+        planet["hasRing"] = p.hasRing;
 
         if (p.hasCloud)
         {
             planet["cloud"] = p.cloud.toUtf8().data();
             planet["cloudSpeed"] = p.cloudSpeed;
+        }
+
+        if (p.hasRing)
+        {
+            planet["ring"] = p.ring.toUtf8().data();
         }
 
         root[p.id.toLatin1().data()] = planet;
@@ -126,6 +132,7 @@ void PlanetModel::loadJSON(const QString& file)
         p.hasCloud = (*i).get("hasCloud", false).asBool();
         p.id = QString::fromLatin1(i.key().asCString());
         p.size = (*i).get("size", 32).asInt();
+        p.hasRing = (*i).get("hasRing", false).asBool();
 
         if (p.hasCloud)
         {
@@ -135,6 +142,10 @@ void PlanetModel::loadJSON(const QString& file)
         else
         {
             p.cloudSpeed = 0.0f;
+        }
+        if (p.hasRing)
+        {
+            p.ring = QString::fromUtf8((*i).get("ring", "").asCString());
         }
         planets.append(p);
     }
