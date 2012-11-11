@@ -344,8 +344,6 @@ LIBRANGER_API std::wstring fromLocal(const char *text, int length = -1);
 
 //! Convert wstring to charset
 LIBRANGER_API std::string toCodec(const char *codec, const std::wstring& text);
-//! Convert wstring to charset
-LIBRANGER_API char* toCodec(const char *codec, const std::wstring& text, int& destLength);
 
 //! Convert wstring to UTF-8
 LIBRANGER_API std::string toUTF8(const std::wstring& text);

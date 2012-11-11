@@ -46,18 +46,21 @@ public:
     bool colorCorrection() const;
     double solarAngle() const;
     QColor ambientColor() const;
+    bool ringBackgroundEnabled() const;
 
     void setPlanetSpeed(double speed);
     void setCloudSpeed(double speed);
     void setPlanetSize(int size);
     void setCloudEnabled(bool enabled);
     void setRingEnabled(bool enabled);
+    void setRingBackgroundEnabled(bool enabled);
     void setColorCorrection(bool correction);
     void setSolarAngle(double angle);
-    void setCloudTexture(const QImage& cloud);
-    void setTexture(const QImage& cloud);
-    void setRingTexture(const QImage& ring);
+    void setCloudTexture(const QString& cloud);
+    void setTexture(const QString& texture);
+    void setRingTexture(const QString& ring);
     void setAmbientColor(const QColor& color);
+    void setRingBackground(const QString& ring);
 
     static void generatePlanetImage(QImage &image, const QImage &texture, int size);
 
@@ -69,9 +72,12 @@ protected:
 private:
     void updateSize();
 
+    QImage loadImage(const QString& file);
+
     QImage m_texture;
     QImage m_cloudTexture;
     QImage m_ringTexture;
+    QImage m_ringBackgroundTexture;
 
     double m_phase;
     double m_cloudPhase;
@@ -82,6 +88,7 @@ private:
     bool m_cloudEnabled;
     bool m_colorCorrection;
     bool m_ringEnabled;
+    bool m_ringBackgroundEnabled;
     float m_solarAngle;
 
     int m_planetSize;
@@ -89,9 +96,11 @@ private:
 
     GLuint m_buffer;
     GLuint m_ringBuffer;
+    GLuint m_ringBackgroundBuffer;
     GLuint m_textureID;
     GLuint m_cloudTextureID;
     GLuint m_ringTextureID;
+    GLuint m_ringBackgroundTextureID;
 
     GLuint m_shaderProgram;
     GLuint m_phaseArgument;

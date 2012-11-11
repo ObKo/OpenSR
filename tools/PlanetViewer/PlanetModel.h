@@ -34,7 +34,9 @@ struct Planet
     float cloudSpeed;
     int size;
     QString ring;
+    QString ringBackground;
     bool hasRing;
+    bool hasRingBackground;
     QColor ambientColor;
 };
 

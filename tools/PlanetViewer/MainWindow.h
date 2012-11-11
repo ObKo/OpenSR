@@ -45,6 +45,7 @@ private Q_SLOTS:
     void setColor();
     void openCloudTexture();
     void openRingTexture();
+    void openRingBackgroundTexture();
     void openTexture();
 
     void addPlanet();

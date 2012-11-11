@@ -44,22 +44,26 @@
  */
 char *Rangers::convertText(const char *to, const char *from, const char *what, int srcLength, int &destLength)
 {
+    if (!strcmp(to, from))
+    {
+        char *result = new char[srcLength];
+        memcpy(result, what, srcLength);
+        destLength = srcLength;
+        return result;
+    }
     iconv_t codec = iconv_open(to, from);
     if (codec == (iconv_t) - 1)
     {
         std::cerr << "Cannot open text codec: " << strerror(errno) << std::endl;
-        char *r = new char[srcLength + 1];
-        destLength = srcLength + 1;
-        memcpy(r, what, srcLength + 1);
-        return r;
+        return 0;
     }
     if (srcLength < 0)
-        srcLength = strlen(what);
-    char *result = new char[4 * (srcLength + 1)];
-    memset(result, 0, 4 * (srcLength + 1));
+        srcLength = strlen(what) + 1;
+    char *result = new char[4 * srcLength];
+    memset(result, 0, 4 * srcLength);
 
-    size_t inbuflength = srcLength + 1;
-    size_t outbuflength = 4 * (srcLength + 1);
+    size_t inbuflength = srcLength;
+    size_t outbuflength = 4 * srcLength;
     char *pointer = result;
     char **inp = (char **)&what;
 #ifdef ICONV_SECOND_ARGUMENT_IS_CONST
@@ -67,7 +71,7 @@ char *Rangers::convertText(const char *to, const char *from, const char *what, i
 #else
     iconv(codec, inp, &inbuflength, &pointer, &outbuflength);
 #endif
-    size_t l = 4 * (srcLength + 1) - outbuflength;
+    size_t l = 4 * srcLength - outbuflength;
 
     result = (char *)realloc(result, l);
     iconv_close(codec);
@@ -83,8 +87,11 @@ char *Rangers::convertText(const char *to, const char *from, const char *what, i
  */
 std::wstring Rangers::fromCodec(const char *codec, const char *text, int length)
 {
+    if (length == 0)
+        return std::wstring();
+
     if (length < 0)
-        length = strlen(text);
+        length = strlen(text) + 1;
 
     int outl;
 
@@ -127,6 +134,9 @@ std::string Rangers::toCodec(const char *codec, const std::wstring& text)
 #else
     char *data = convertText(codec, "WCHAR_T", (char *)text.c_str(), (text.length() + 1) * sizeof(wchar_t), resultLength);
 #endif
+    if (!data)
+        return std::string();
+
     std::string str(data);
     delete[] data;
     return str;
@@ -137,7 +147,7 @@ std::string Rangers::toCodec(const char *codec, const std::wstring& text)
  * \param text input string
  * \return converted string
  */
-char* Rangers::toCodec(const char *codec, const std::wstring& text, int& resultLength)
+/*char* Rangers::toCodec(const char *codec, const std::wstring& text, int& resultLength)
 {
 //FIXME: Workaround about not working WCHAR_T on Windows XP
 #ifdef _WIN32
@@ -146,7 +156,7 @@ char* Rangers::toCodec(const char *codec, const std::wstring& text, int& resultL
     char *data = convertText(codec, "WCHAR_T", (char *)text.c_str(), (text.length() + 1) * sizeof(wchar_t), resultLength);
 #endif
     return data;
-}
+}*/
 
 /*!
  * \param text input string
@@ -208,16 +218,17 @@ std::wstring Rangers::fromLocal(const char *text, int length)
 std::vector<std::wstring> Rangers::split(const std::wstring& s, wchar_t c)
 {
     std::vector<std::wstring> array;
-    for (std::wstring::const_iterator it = s.begin(); it != s.end();)
+    std::wstring::const_iterator begin = s.begin();
+    std::wstring::const_iterator it = s.begin();
+    for (std::wstring::const_iterator it = s.begin(); it != s.end(); ++it)
     {
-        while ((it != s.end()) && ((*it) == c))
-            it++;
-        std::wstring::const_iterator begin = it;
-        while ((it != s.end()) && ((*it) != c))
-            it++;
-        if (it != begin)
+        if (*it == c)
+        {
             array.push_back(s.substr(begin - s.begin(), it - begin));
+            begin = it + 1;
+        }
     }
+    array.push_back(s.substr(begin - s.begin(), s.end() - begin));
     return array;
 }
 
@@ -240,8 +251,11 @@ std::wstring Rangers::suffix(const std::wstring& s)
     while ((pos != std::wstring::npos) && (pos > lastPos))
     {
         dotPos = pos;
+        if (pos == 0)
+            break;
         pos = s.rfind(L'.', pos - 1);
     }
+
     if (dotPos != std::wstring::npos)
         return s.substr(dotPos + 1);
     else
@@ -254,7 +268,15 @@ std::wstring Rangers::suffix(const std::wstring& s)
  */
 std::wstring Rangers::basename(const std::wstring& s)
 {
-    int endpos = s.rfind(L'.');
+    std::wstring suf = suffix(s);
+
+    int endpos;
+
+    if (suf != L"")
+        endpos = s.rfind(suffix(s)) - 1;
+    else
+        endpos = s.rfind(L'.');
+
     int startpos = s.rfind(L'/');
 
     if (endpos == std::wstring::npos)
@@ -284,7 +306,7 @@ std::wstring Rangers::directory(const std::wstring& s)
 #ifdef WIN32
         if ((pos = s.rfind(L'\\')) == std::wstring::npos)
 #endif
-            return s;
+            return std::wstring();
     return s.substr(0, pos + 1);
 }
 
@@ -296,16 +318,17 @@ std::wstring Rangers::directory(const std::wstring& s)
 std::vector<std::string> Rangers::split(const std::string& s, char c)
 {
     std::vector<std::string> array;
-    for (std::string::const_iterator it = s.begin(); it != s.end();)
+    std::string::const_iterator begin = s.begin();
+    std::string::const_iterator it = s.begin();
+    for (std::string::const_iterator it = s.begin(); it != s.end(); ++it)
     {
-        while ((it != s.end()) && ((*it) == c))
-            it++;
-        std::string::const_iterator begin = it;
-        while ((it != s.end()) && ((*it) != c))
-            it++;
-        if (it != begin)
+        if (*it == c)
+        {
             array.push_back(s.substr(begin - s.begin(), it - begin));
+            begin = it + 1;
+        }
     }
+    array.push_back(s.substr(begin - s.begin(), s.end() - begin));
     return array;
 }
 
@@ -316,10 +339,27 @@ std::vector<std::string> Rangers::split(const std::string& s, char c)
 std::string Rangers::suffix(const std::string& s)
 {
     int pos;
-    if ((pos = s.rfind(L'.')) == std::string::npos)
+    int lastPos, dotPos = std::string::npos;
+
+    if ((pos = s.rfind('.')) == std::string::npos)
         return std::string();
+
+    if ((lastPos = s.rfind('/')) == std::string::npos)
+        if ((lastPos = s.rfind('\\')) == std::string::npos)
+            lastPos = -1;
+
+    while ((pos != std::string::npos) && (pos > lastPos))
+    {
+        dotPos = pos;
+        if (pos == 0)
+            break;
+        pos = s.rfind('.', pos - 1);
+    }
+
+    if (dotPos != std::string::npos)
+        return s.substr(dotPos + 1);
     else
-        return s.substr(pos + 1);
+        return std::string();
 }
 
 /*!
@@ -328,12 +368,16 @@ std::string Rangers::suffix(const std::string& s)
  */
 std::string Rangers::basename(const std::string& s)
 {
-    int endpos = s.rfind(L'.');
-    int startpos = s.rfind(L'/');
-#ifdef WIN32
-    if (startpos == std::wstring::npos)
-        startpos = s.rfind(L'\\');
-#endif
+    std::string suf = suffix(s);
+
+    int endpos;
+
+    if (suf != "")
+        endpos = s.rfind(suffix(s)) - 1;
+    else
+        endpos = s.rfind('.');
+
+    int startpos = s.rfind('/');
 
     if (endpos == std::string::npos)
     {
@@ -358,12 +402,12 @@ std::string Rangers::basename(const std::string& s)
 std::string Rangers::directory(const std::string& s)
 {
     int pos;
-    if ((pos = s.rfind(L'/')) == std::string::npos)
+    if ((pos = s.rfind('/')) == std::string::npos)
 #ifdef WIN32
-        if ((pos = s.rfind(L'\\')) == std::string::npos)
+        if ((pos = s.rfind('\\')) == std::string::npos)
 #endif
-            return s;
-    return s.substr(0, pos);
+            return std::string();
+    return s.substr(0, pos + 1);
 }
 
 /*!
