@@ -230,12 +230,13 @@ void rangersPluginInitLua(lua_State *state)
             .def("generateWorld", &WorldManager::generateWorld)
             .def("saveWorld", &WorldManager::saveWorld)
             .def("currentSolarSystem", &WorldManager::currentSolarSystem)
-            .scope
-            [
-                def("instance", &WorldManager::instance)
-            ]
+//            .scope
+//            [
+//                def("instance", &WorldManager::instance)
+//            ]
         ]
     ];
+    luabind::globals(state)["worldManager"] = WorldManager::instance();
 }
 
 void rangersPluginDeinit()

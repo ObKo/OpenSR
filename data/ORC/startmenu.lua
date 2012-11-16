@@ -68,7 +68,6 @@ function actionPerformed(action)
         engine:addWidget(widget)
     end
     if action:source() == buttons["newGame"] then 
-        worldManager = World.WorldManager.instance()
         worldManager:generateWorld()
         worldManager:saveWorld(L"test.rws")
         widget = World.SystemWidget(worldManager:currentSolarSystem())

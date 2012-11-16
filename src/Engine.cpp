@@ -276,8 +276,8 @@ void Engine::init(int w, int h, bool fullscreen)
 #else
     if (d->mainDataDir == L"")
     {
-#ifdef __linux
         char *path;
+#ifdef __linux
         if ((path = getenv("XDG_DATA_HOME")) == NULL)
         {
 #endif
@@ -646,6 +646,8 @@ void Engine::loadPlugin(const std::wstring& path)
     if (suffix(realPath).empty())
 #ifdef WIN32
         realPath += L".dll";
+#elif __APPLE__
+        realPath += L".dylib";
 #else
         realPath += L".so";
 #endif

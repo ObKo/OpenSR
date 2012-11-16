@@ -16,18 +16,17 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <SDL/SDL.h>
 #include "Engine.h"
 
 using namespace Rangers;
 using namespace std;
 
-#define SDL_main main
-
 int main(int argc, char **argv)
 {
     Engine engine(argc, argv);
     engine.init(1024, 768, false);
-    engine.run();
+    return engine.run();
 }
 
 #ifdef WIN32
