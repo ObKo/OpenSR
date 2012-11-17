@@ -58,9 +58,6 @@ public:
 protected:
     LineEditWidget(LineEditWidgetPrivate &p, Widget *parent = 0);
     LineEditWidget(LineEditWidgetPrivate &p, const LineEditWidget& other);
-
-private:
-    class LineEditWidgetListener;
 };
 }
 

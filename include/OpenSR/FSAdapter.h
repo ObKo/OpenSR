@@ -27,7 +27,7 @@ class FSAdapter: public ResourceAdapter
 {
 public:
     void load(const std::wstring& path);
-    ~FSAdapter();
+    virtual ~FSAdapter();
 
     std::list<std::wstring> getFiles() const;
     char* loadData(const std::wstring& name, size_t& size);

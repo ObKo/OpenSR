@@ -303,7 +303,7 @@ boost::shared_ptr<Texture> Font::renderText(const std::wstring& t, int wrapWidth
         }
     }
     Texture *texture = new Texture(fullWidth, fullHeight, TEXTURE_A8, textureData);
-    delete textureData;
+    delete[] textureData;
     return boost::shared_ptr<Texture>(texture);
 }
 
@@ -472,7 +472,7 @@ boost::shared_ptr<Texture> Font::renderColoredText(const std::wstring& t, int de
         }
     }
     Texture *texture = new Texture(fullWidth, fullHeight, TEXTURE_R8G8B8A8, textureData);
-    delete textureData;
+    delete[] textureData;
     return boost::shared_ptr<Texture>(texture);
 }
 

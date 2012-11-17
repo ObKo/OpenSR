@@ -140,9 +140,9 @@ boost::shared_ptr<Texture> ResourceManager::loadTexture(const std::wstring& name
         if (!data)
             return boost::shared_ptr<Texture>();
         GIFrame frame = loadGIFile(data);
-        delete data;
+        delete[] data;
         Texture *t = new Texture(frame.width, frame.height, Rangers::TEXTURE_B8G8R8A8, frame.data);
-        delete frame.data;
+        delete[] frame.data;
         m_textures[name] = boost::shared_ptr<Texture>(t);
         return m_textures[name];
     }
@@ -405,7 +405,7 @@ boost::shared_ptr< Font > ResourceManager::loadFont(const std::wstring& name, in
             return boost::shared_ptr<Font>();
 
         Font *f = new Font(data, dataSize, size, antialiased);
-        delete data;
+        delete[] data;
         m_fonts[mapName] = boost::shared_ptr<Font>(f);
         return m_fonts[mapName];
     }

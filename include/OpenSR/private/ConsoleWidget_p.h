@@ -23,6 +23,7 @@
 
 #include "LineEditWidget.h"
 #include "ColorLabel.h"
+#include "ActionListener.h"
 
 namespace Rangers
 {
@@ -30,6 +31,12 @@ class ConsoleWidgetPrivate: public WidgetPrivate
 {
     RANGERS_DECLARE_PUBLIC(ConsoleWidget)
 public:
+    class ConsoleLineEditListener: public ActionListener
+    {
+    public:
+        void actionPerformed(const Action &action);
+    };
+
     ConsoleWidgetPrivate();
 
     LineEditWidget lineEdit;
@@ -41,6 +48,8 @@ public:
 
     int historyPosition;
     std::vector<std::wstring> commandHistory;
+
+    ConsoleLineEditListener listener;
 };
 }
 

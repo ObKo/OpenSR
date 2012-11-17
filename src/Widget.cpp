@@ -315,7 +315,7 @@ Widget& Widget::operator=(const Rangers::Widget& other)
 
     d->width = other.d_func()->width;
     d->height = other.d_func()->height;
-    d->listeners = other.d_func()->listeners;
+    //d->listeners = other.d_func()->listeners;
     //FIXME: Ugly downcasting
     Widget* wparent;
     if ((wparent = dynamic_cast<Widget*>(other.d_func()->parent)) != 0)

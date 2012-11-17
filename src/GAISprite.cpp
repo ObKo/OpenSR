@@ -76,6 +76,7 @@ GAISprite::GAISprite(const std::wstring& name, Object *parent): AnimatedSprite(*
                     GIFrame bgFrame = loadGIFile(bgFrameData);
                     delete[] bgFrameData;
                     d->loadGAI(data, s, bgFrame);
+                    delete[] bgFrame.data;
                 }
             }
             delete[] data;
@@ -284,7 +285,7 @@ void GAISpritePrivate::loadGIFrame5(const char * data, unsigned char * backgroun
     if (image.layers[0].size)
         drawF5ToBGRA(background + (image.layers[0].startY * width + image.layers[0].startX) * 4, width * 4, (const unsigned char *)image.layers[0].data);
 
-    delete image.layers;
+    delete[] image.layers;
 }
 
 void GAISpritePrivate::drawFrame(int i)

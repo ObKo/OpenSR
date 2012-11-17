@@ -987,7 +987,7 @@ GIFrame Rangers::loadGIFile(const char *data)
     GIFrame resultFrame = loadGIImageData(image);
 
     for (int i = 0; i < image.layerCount; i++)
-        delete image.layers[i].data;
+        delete[] image.layers[i].data;
 
     delete[] image.layers;
 

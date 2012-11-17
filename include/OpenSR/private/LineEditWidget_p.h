@@ -23,6 +23,7 @@
 
 #include "Label.h"
 #include "Styles.h"
+#include "ActionListener.h"
 
 namespace Rangers
 {
@@ -30,6 +31,12 @@ class LineEditWidgetPrivate: public WidgetPrivate
 {
     RANGERS_DECLARE_PUBLIC(LineEditWidget)
 public:
+
+    class LineEditWidgetListener: public ActionListener
+    {
+        void actionPerformed(const Action &action);
+    };
+
     LineEditWidgetPrivate();
 
     Label label;
@@ -43,6 +50,8 @@ public:
 
     Sprite *background;
     LineEditStyle style;
+
+    LineEditWidgetListener listener;
 
     void init();
     void updateText();

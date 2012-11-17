@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2012 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -28,6 +28,8 @@ namespace Rangers
 class RANGERS_ENGINE_API ResourceAdapter
 {
 public:
+    virtual ~ResourceAdapter();
+
     virtual std::list<std::wstring> getFiles() const = 0;
     virtual char *loadData(const std::wstring& name, size_t& size) = 0;
 };

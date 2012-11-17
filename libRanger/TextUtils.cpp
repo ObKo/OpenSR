@@ -46,7 +46,7 @@ char *Rangers::convertText(const char *to, const char *from, const char *what, i
 {
     if (!strcmp(to, from))
     {
-        char *result = new char[srcLength];
+        char *result = (char*)malloc(srcLength);
         memcpy(result, what, srcLength);
         destLength = srcLength;
         return result;
@@ -59,7 +59,7 @@ char *Rangers::convertText(const char *to, const char *from, const char *what, i
     }
     if (srcLength < 0)
         srcLength = strlen(what) + 1;
-    char *result = new char[4 * srcLength];
+    char *result = (char*)malloc(4 * srcLength);
     memset(result, 0, 4 * srcLength);
 
     size_t inbuflength = srcLength;
@@ -106,7 +106,7 @@ std::wstring Rangers::fromCodec(const char *codec, const char *text, int length)
         return std::wstring();
 
     std::wstring result = std::wstring((wchar_t *)data);
-    delete[] data;
+    free(data);
     return result;
 }
 
@@ -138,7 +138,7 @@ std::string Rangers::toCodec(const char *codec, const std::wstring& text)
         return std::string();
 
     std::string str(data);
-    delete[] data;
+    free(data);
     return str;
 }
 

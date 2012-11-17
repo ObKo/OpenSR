@@ -184,6 +184,8 @@ Engine::~Engine()
         boost::property_tree::write_ini(configFile, *d->properties);
     configFile.close();
 
+    lua_close(d->luaConsoleState);
+
     std::list<Widget *>::iterator wend = d->widgets.end();
     for (std::list<Widget *>::iterator it = d->widgets.begin(); it != wend; ++it)
     {

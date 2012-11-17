@@ -38,13 +38,10 @@ public:
     virtual void processLogic(int dt);
 
     ConsoleWidget& operator=(const ConsoleWidget& other);
-    
+
 protected:
     ConsoleWidget(ConsoleWidgetPrivate &p, Widget *parent = 0);
     ConsoleWidget(ConsoleWidgetPrivate &p, const ConsoleWidget& other);
-
-private:
-    class ConsoleLineEditListener;
 };
 }
 

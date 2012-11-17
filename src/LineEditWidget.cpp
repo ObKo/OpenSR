@@ -30,18 +30,15 @@
 
 namespace Rangers
 {
-class LineEditWidget::LineEditWidgetListener: public ActionListener
+
+void LineEditWidgetPrivate::LineEditWidgetListener::actionPerformed(const Action &action)
 {
-public:
-    void actionPerformed(const Action &action)
+    if (LineEditWidget *w = dynamic_cast<LineEditWidget *>(action.source()))
     {
-        if (LineEditWidget *w = dynamic_cast<LineEditWidget *>(action.source()))
-        {
-            if (action.type() == Action::KEY_PRESSED)
-                w->d_func()->keyPressed(boost::get<SDL_keysym>(action.argument()));
-        }
+        if (action.type() == Action::KEY_PRESSED)
+            w->d_func()->keyPressed(boost::get<SDL_keysym>(action.argument()));
     }
-};
+}
 
 LineEditWidgetPrivate::LineEditWidgetPrivate()
 {
@@ -155,13 +152,14 @@ void LineEditWidgetPrivate::init()
         width = style.contentRect.width;
     }
     label.setOrigin(POSITION_X_LEFT, POSITION_Y_TOP);
-    q->addListener(new LineEditWidget::LineEditWidgetListener());
     position = 0;
     cursorTime = 0;
     cursorVisible = false;
     cursorBuffer = 0;
     cursorVertices = 0;
     stringOffset = 0;
+    listeners.clear();
+    listeners.push_back(&listener);
     q->markToUpdate();
 }
 
