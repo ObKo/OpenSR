@@ -38,19 +38,19 @@ void ConsoleWidgetPrivate::ConsoleLineEditListener::actionPerformed(const Action
             SDL_keysym key = boost::get<SDL_keysym>(action.argument());
             if (key.sym == SDLK_RETURN)
             {
-                if (w->d_func()->lineEdit.text() != L"")
+                if (w->d_func()->lineEdit->text() != L"")
                 {
-                    w->d_func()->commandHistory.push_back(w->d_func()->lineEdit.text());
+                    w->d_func()->commandHistory.push_back(w->d_func()->lineEdit->text());
                     w->d_func()->historyPosition = -1;
-                    Engine::instance()->execCommand(w->d_func()->lineEdit.text());
-                    w->d_func()->lineEdit.setText(L"");
+                    Engine::instance()->execCommand(w->d_func()->lineEdit->text());
+                    w->d_func()->lineEdit->setText(L"");
                 }
             }
             else if (key.sym == SDLK_UP)
             {
-                if (w->d_func()->historyPosition == -1 && w->d_func()->lineEdit.text() != L"")
+                if (w->d_func()->historyPosition == -1 && w->d_func()->lineEdit->text() != L"")
                 {
-                    w->d_func()->commandHistory.push_back(w->d_func()->lineEdit.text());
+                    w->d_func()->commandHistory.push_back(w->d_func()->lineEdit->text());
                     w->d_func()->historyPosition = w->d_func()->commandHistory.size() - 1;
                 }
 
@@ -60,7 +60,7 @@ void ConsoleWidgetPrivate::ConsoleLineEditListener::actionPerformed(const Action
                 if (w->d_func()->historyPosition > 0)
                 {
                     w->d_func()->historyPosition--;
-                    w->d_func()->lineEdit.setText(w->d_func()->commandHistory[w->d_func()->historyPosition]);
+                    w->d_func()->lineEdit->setText(w->d_func()->commandHistory[w->d_func()->historyPosition]);
                 }
 
                 //markToUpdate();
@@ -70,12 +70,12 @@ void ConsoleWidgetPrivate::ConsoleLineEditListener::actionPerformed(const Action
                 if (w->d_func()->historyPosition < w->d_func()->commandHistory.size() - 1)
                 {
                     w->d_func()->historyPosition++;
-                    w->d_func()->lineEdit.setText(w->d_func()->commandHistory[w->d_func()->historyPosition]);
+                    w->d_func()->lineEdit->setText(w->d_func()->commandHistory[w->d_func()->historyPosition]);
                 }
                 else
                 {
                     w->d_func()->historyPosition = -1;
-                    w->d_func()->lineEdit.setText(L"");
+                    w->d_func()->lineEdit->setText(L"");
                 }
 
                 //markToUpdate();
@@ -91,6 +91,8 @@ ConsoleWidgetPrivate::ConsoleWidgetPrivate()
     texture = 0;
     consoleLines = 0;
     historyPosition = -1;
+    lineEdit = 0;
+    logLabel = 0;
 }
 
 ConsoleWidget::ConsoleWidget(float w, float h, Widget* parent): Widget(*(new ConsoleWidgetPrivate()), parent)
@@ -99,26 +101,13 @@ ConsoleWidget::ConsoleWidget(float w, float h, Widget* parent): Widget(*(new Con
     d->width = w;
     d->height = h;
     int editSize = Engine::instance()->serviceFont()->size() + 2;
-    d->lineEdit = LineEditWidget(w - 8, Engine::instance()->serviceFont()->size(), Engine::instance()->serviceFont(), this);
-    d->logLabel = ColorLabel("", this, Engine::instance()->serviceFont(), POSITION_X_LEFT, POSITION_Y_TOP);
-    d->logLabel.setPosition(4, 4);
-    d->logLabel.setFixedSize(w - 8, h - editSize - 8);
-    d->lineEdit.setPosition(4, h - editSize);
+    d->lineEdit = new LineEditWidget(w - 8, Engine::instance()->serviceFont()->size(), Engine::instance()->serviceFont(), this);
+    d->logLabel = new ColorLabel("", this, Engine::instance()->serviceFont(), POSITION_X_LEFT, POSITION_Y_TOP);
+    d->logLabel->setPosition(4, 4);
+    d->logLabel->setFixedSize(w - 8, h - editSize - 8);
+    d->lineEdit->setPosition(4, h - editSize);
     d->consoleLines = (h - editSize - 8) / Engine::instance()->serviceFont()->size();
-    d->lineEdit.addListener(&d->listener);
-    markToUpdate();
-}
-
-ConsoleWidget::ConsoleWidget(const Rangers::ConsoleWidget& other): Widget(*(new ConsoleWidgetPrivate()), other)
-{
-    RANGERS_D(ConsoleWidget);
-    d->lineEdit = other.d_func()->lineEdit;
-    d->logLabel = other.d_func()->logLabel;
-    d->consoleLines = other.d_func()->consoleLines;
-
-    d->historyPosition = other.d_func()->historyPosition;
-    d->commandHistory = other.d_func()->commandHistory;
-    d->lineEdit.addListener(&d->listener);
+    d->lineEdit->addListener(&d->listener);
     markToUpdate();
 }
 
@@ -126,43 +115,16 @@ ConsoleWidget::ConsoleWidget(Widget* parent): Widget(*(new ConsoleWidgetPrivate(
 {
 }
 
-ConsoleWidget& ConsoleWidget::operator=(const Rangers::ConsoleWidget& other)
-{
-    if (this == &other)
-        return *this;
-
-    RANGERS_D(ConsoleWidget);
-    d->lineEdit = other.d_func()->lineEdit;
-    d->logLabel = other.d_func()->logLabel;
-    d->borderVertices = 0;
-    d->borderBuffer = 0;
-    d->consoleLines = other.d_func()->consoleLines;
-
-    d->historyPosition = other.d_func()->historyPosition;
-    d->commandHistory = other.d_func()->commandHistory;
-
-    d->lineEdit.addListener(&d->listener);
-    markToUpdate();
-
-    Widget::operator=(other);
-    return *this;
-}
-
 ConsoleWidget::ConsoleWidget(ConsoleWidgetPrivate &p, Widget *parent): Widget(p, parent)
 {
 }
 
-ConsoleWidget::ConsoleWidget(ConsoleWidgetPrivate &p, const ConsoleWidget& other): Widget(p, other)
+ConsoleWidget::~ConsoleWidget()
 {
     RANGERS_D(ConsoleWidget);
-    d->lineEdit = other.d_func()->lineEdit;
-    d->logLabel = other.d_func()->logLabel;
-    d->consoleLines = other.d_func()->consoleLines;
 
-    d->historyPosition = other.d_func()->historyPosition;
-    d->commandHistory = other.d_func()->commandHistory;
-    d->lineEdit.addListener(&d->listener);
-    markToUpdate();
+    delete d->lineEdit;
+    delete d->logLabel;
 }
 
 void ConsoleWidget::draw() const
@@ -195,8 +157,8 @@ void ConsoleWidget::draw() const
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
-    d->lineEdit.draw();
-    d->logLabel.draw();
+    d->lineEdit->draw();
+    d->logLabel->draw();
     endDraw();
 }
 
@@ -204,7 +166,7 @@ void ConsoleWidget::processLogic(int dt)
 {
     lock();
     RANGERS_D(ConsoleWidget);
-    d->lineEdit.processLogic(dt);
+    d->lineEdit->processLogic(dt);
 
     if (Log::instance()->needUpdate())
     {
@@ -238,7 +200,7 @@ void ConsoleWidget::processLogic(int dt)
             text += e.m_text + L"\\cR\n";
         }
 
-        d->logLabel.setText(text);
+        d->logLabel->setText(text);
     }
     unlock();
 
@@ -300,9 +262,9 @@ void ConsoleWidget::processMain()
     d->borderVertices[4].x = 1;
     d->borderVertices[4].y = d->height;
     d->borderVertices[5].x = 1;
-    d->borderVertices[5].y = d->height - d->lineEdit.height() - 1;
+    d->borderVertices[5].y = d->height - d->lineEdit->height() - 1;
     d->borderVertices[6].x = d->width - 1;
-    d->borderVertices[6].y = d->height - d->lineEdit.height() - 1;
+    d->borderVertices[6].y = d->height - d->lineEdit->height() - 1;
 
     glUnmapBuffer(GL_ARRAY_BUFFER);
 

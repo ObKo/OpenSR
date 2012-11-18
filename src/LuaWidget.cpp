@@ -121,37 +121,6 @@ LuaWidget::~LuaWidget()
         delete d->actionListener;
 }
 
-LuaWidget::LuaWidget(const LuaWidget& other): Widget(*(new LuaWidgetPrivate()), other)
-{
-    RANGERS_D(LuaWidget);
-    d->luaState = other.d_func()->luaState;
-    d->actionListener = other.d_func()->actionListener;
-    if (d->luaState)
-    {
-        luabind::globals(d->luaState.get())["this"] = this;
-    }
-    //FIXME: Do something with action listener and LUA.
-    if (d->actionListener)
-        d->actionListener->setAssociatedWidget(this);
-}
-
-LuaWidget& LuaWidget::operator=(const LuaWidget& other)
-{
-    RANGERS_D(LuaWidget);
-    Widget::operator=(other);
-    d->luaState = other.d_func()->luaState;
-    d->actionListener = other.d_func()->actionListener;
-    if (d->luaState)
-    {
-        luabind::globals(d->luaState.get())["this"] = this;
-    }
-    //FIXME: Do something with action listener and LUA.
-    if (d->actionListener)
-        d->actionListener->setAssociatedWidget(this);
-
-    return *this;
-}
-
 void LuaWidget::draw() const
 {
     RANGERS_D(const LuaWidget);

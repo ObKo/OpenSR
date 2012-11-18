@@ -65,62 +65,6 @@ Object::Object(const Vector& pos, float rot, int layer, Object *parent): m_d(new
     d->m_q = this;
 }
 
-Object::Object(const Rangers::Object& other): m_d(new ObjectPrivate())
-{
-    RANGERS_D(Object);
-    for (std::list<Object*>::iterator i = d->children.begin(); i != d->children.end(); i++)
-        if ((*i)->parent() == this)
-            (*i)->setParent(0);
-
-    d->children = other.d_func()->children;
-    for (std::list<Object*>::iterator i = d->children.begin(); i != d->children.end(); i++)
-        (*i)->setParent(this);
-
-    d->color = other.d_func()->color;
-    d->needUpdate = false;
-
-    d->parent = other.parent();
-
-    if (d->parent)
-        d->parent->addChild(this);
-
-    //for(std::list<Object*>::const_iterator it = other.objectChilds.begin(); it < other.objectChilds.end(); it++)
-    //	objectChilds.push_back(new Object(*(*it)));
-
-    d->position = other.d_func()->position;
-    d->rotation = other.d_func()->rotation;
-    markToUpdate();
-    d->m_q = this;
-}
-
-Object::Object(ObjectPrivate &p, const Object& other): m_d(&p)
-{
-    RANGERS_D(Object);
-    for (std::list<Object*>::iterator i = d->children.begin(); i != d->children.end(); i++)
-        if ((*i)->parent() == this)
-            (*i)->setParent(0);
-
-    d->children = other.d_func()->children;
-    for (std::list<Object*>::iterator i = d->children.begin(); i != d->children.end(); i++)
-        (*i)->setParent(this);
-
-    d->color = other.d_func()->color;
-    d->needUpdate = false;
-
-    d->parent = other.parent();
-
-    if (d->parent)
-        d->parent->addChild(this);
-
-    //for(std::list<Object*>::const_iterator it = other.objectChilds.begin(); it < other.objectChilds.end(); it++)
-    //	objectChilds.push_back(new Object(*(*it)));
-
-    d->position = other.d_func()->position;
-    d->rotation = other.d_func()->rotation;
-    markToUpdate();
-    d->m_q = this;
-}
-
 Object::Object(ObjectPrivate &dd, Object* parent): m_d(&dd)
 {
     RANGERS_D(Object);
@@ -144,36 +88,6 @@ Object::~Object()
         Engine::instance()->unmarkToUpdate(this);
     delete d;
 }
-
-Object& Object::operator=(const Rangers::Object& other)
-{
-    RANGERS_D(Object);
-    if (this == &other)
-        return *this;
-
-    for (std::list<Object*>::iterator i = d->children.begin(); i != d->children.end(); i++)
-        if ((*i)->parent() == this)
-            (*i)->setParent(0);
-
-    d->children = other.d_func()->children;
-    for (std::list<Object*>::iterator i = d->children.begin(); i != d->children.end(); i++)
-        (*i)->setParent(this);
-
-    d->color = other.d_func()->color;
-    d->needUpdate = false;
-
-    d->parent = other.d_func()->parent;
-
-    if (d->parent)
-        d->parent->addChild(this);
-
-    d->position = other.d_func()->position;
-    d->rotation = other.d_func()->rotation;
-    markToUpdate();
-    d->m_q = this;
-    return *this;
-}
-
 
 bool Object::prepareDraw() const
 {

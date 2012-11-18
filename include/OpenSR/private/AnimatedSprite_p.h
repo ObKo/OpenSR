@@ -34,7 +34,6 @@ public:
     int frameDuration;
     bool singleShot;
     bool animationStarted;
-
 };
 }
 

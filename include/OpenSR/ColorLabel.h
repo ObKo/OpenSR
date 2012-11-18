@@ -42,6 +42,8 @@ public:
 
 protected:
     ColorLabel(ColorLabelPrivate &p, Object *parent = 0);
+
+    RANGERS_DISABLE_COPY(ColorLabel)
 };
 }
 

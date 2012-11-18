@@ -63,44 +63,9 @@ Label::Label(const std::wstring& text, Object *parent, boost::shared_ptr<Font> f
     setText(text);
 }
 
-Label::Label(const Rangers::Label& other): Sprite(*(new LabelPrivate()), other)
-{
-    RANGERS_D(Label);
-    d->font = other.d_func()->font;
-    d->text = other.d_func()->text;
-    d->wordWrap = other.d_func()->wordWrap;
-    d->fixedSize = other.d_func()->fixedSize;
-}
-
-Label& Label::operator=(const Rangers::Label& other)
-{
-    RANGERS_D(Label);
-    if (this == &other)
-        return *this;
-
-    d->font = other.d_func()->font;
-    d->text = other.d_func()->text;
-    d->wordWrap = other.d_func()->wordWrap;
-    d->fixedSize = other.d_func()->fixedSize;
-
-    Sprite::operator=(other);
-    return *this;
-}
-
-
 Label::Label(LabelPrivate &p, Object *parent): Sprite(p, parent)
 {
 }
-
-Label::Label(LabelPrivate &p, const Label& other): Sprite(p, other)
-{
-    RANGERS_D(Label);
-    d->font = other.d_func()->font;
-    d->text = other.d_func()->text;
-    d->wordWrap = other.d_func()->wordWrap;
-    d->fixedSize = other.d_func()->fixedSize;
-}
-
 
 boost::shared_ptr< Font > Label::font() const
 {

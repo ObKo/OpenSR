@@ -40,7 +40,7 @@ class RANGERS_ENGINE_API Engine
 {
     class EnginePrivate;
     RANGERS_DECLARE_PRIVATE(Engine)
-    
+
 public:
     //! Construct engine from main's args
     Engine(int argc, char **argv);
@@ -61,14 +61,18 @@ public:
     void markToUpdate(Object* object);
     //! Disable object been updated in main (OpenGL) thread
     void unmarkToUpdate(Object* object);
-    //! Add widget for mouse input handling
+    //! Add widget to top widgets
     void addWidget(Widget *w);
-    //! Remove widget from mouse input handling
+    //! Remove widget from top widgets
     void removeWidget(Widget *w);
     //! Focus widget for key input handling
     void focusWidget(Widget *w);
+    //! Unfocus widget for key input handling
+    void unfocusWidget(Widget *w);
     //! Mark widget to be deleted in main loop.
     void markWidgetDeleting(Widget *w);
+    //! Widget is destructed now.
+    void widgetDestructed(Widget *w);
 
     //! Current screen height
     int screenHeight() const;
@@ -101,7 +105,7 @@ public:
     void loadPlugin(const std::wstring &path);
     void initPluginLua(lua_State *state);
 
-private:    
+private:
     EnginePrivate *m_d;
 };
 }

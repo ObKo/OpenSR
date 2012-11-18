@@ -31,8 +31,8 @@ class ScrollAreaPrivate: public WidgetPrivate
 public:
     ScrollAreaPrivate();
 
-    Button top, bottom, left, right;
-    Button vScroll, hScroll;
+    Button *top, *bottom, *left, *right;
+    Button *vScroll, *hScroll;
     float vSize, vPosition;
     float hSize, hPosition;
     WidgetNode *node;

@@ -50,7 +50,8 @@ public:
 
 protected:
     CheckBox(CheckBoxPrivate &p, Widget *parent = 0);
-    CheckBox(CheckBoxPrivate &p, const CheckBox& other);
+
+    RANGERS_DISABLE_COPY(CheckBox)
 };
 }
 

@@ -40,35 +40,6 @@ Sprite::Sprite(Object *parent): Object(*(new SpritePrivate), parent)
 {
 }
 
-Sprite::Sprite(const Rangers::Sprite& other): Object(*(new SpritePrivate), other)
-{
-    RANGERS_D(Sprite);
-
-    d->width = other.d_func()->width;
-    d->height = other.d_func()->height;
-    d->xOrigin = other.d_func()->xOrigin;
-    d->yOrigin = other.d_func()->yOrigin;
-    d->scaling = other.d_func()->scaling;
-    d->region = other.d_func()->region;
-
-    markToUpdate();
-}
-
-Sprite::Sprite(SpritePrivate &p, const Sprite& other): Object(p, other)
-{
-    RANGERS_D(Sprite);
-
-    d->width = other.d_func()->width;
-    d->height = other.d_func()->height;
-    d->xOrigin = other.d_func()->xOrigin;
-    d->yOrigin = other.d_func()->yOrigin;
-    d->scaling = other.d_func()->scaling;
-    d->region = other.d_func()->region;
-
-    markToUpdate();
-}
-
-
 Sprite::Sprite(boost::shared_ptr<Texture> texture,  Object *parent, TextureScaling  ts, SpriteXOrigin xpos, SpriteYOrigin ypos): Object(*(new SpritePrivate), parent)
 {
     RANGERS_D(Sprite);
@@ -126,30 +97,6 @@ Sprite::~Sprite()
     if (d->buffer)
         glDeleteBuffers(1, &d->buffer);
 }
-
-Sprite& Sprite::operator=(const Rangers::Sprite& other)
-{
-    if (this == &other)
-        return *this;
-
-    RANGERS_D(Sprite);
-
-    d->buffer = 0;
-    d->vertices = 0;
-    d->vertexCount = 0;
-
-    d->width = other.d_func()->width;
-    d->height = other.d_func()->height;
-    d->xOrigin = other.d_func()->xOrigin;
-    d->yOrigin = other.d_func()->yOrigin;
-    d->scaling = other.d_func()->scaling;
-    d->region = other.d_func()->region;
-
-    markToUpdate();
-    Object::operator=(other);
-    return *this;
-}
-
 
 void Sprite::draw() const
 {

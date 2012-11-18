@@ -56,6 +56,8 @@ public:
 
 protected:
     ScrollArea(ScrollAreaPrivate &p, Widget *parent = 0);
+
+    RANGERS_DISABLE_COPY(ScrollArea)
 };
 }
 

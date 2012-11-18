@@ -31,7 +31,7 @@ public:
     ButtonPrivate();
 
     ButtonStyle style;
-    Label label;
+    Label *label;
     std::wstring text;
     Sprite *normalSprite;
     Sprite *hoverSprite;

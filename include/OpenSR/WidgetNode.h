@@ -31,9 +31,11 @@ public:
     WidgetNode(Widget *parent = 0);
     virtual void draw() const;
     virtual void processLogic(int dt);
-    
+
 protected:
     WidgetNode(WidgetNodePrivate &p, Widget *parent = 0);
+
+    RANGERS_DISABLE_COPY(WidgetNode)
 };
 }
 

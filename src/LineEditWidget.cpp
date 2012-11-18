@@ -49,6 +49,7 @@ LineEditWidgetPrivate::LineEditWidgetPrivate()
     cursorVisible = false;
     cursorTime = 0;
     stringOffset = 0;
+    label = 0;
 }
 
 void LineEditWidget::draw() const
@@ -60,7 +61,7 @@ void LineEditWidget::draw() const
     if (d->background)
         d->background->draw();
 
-    d->label.draw();
+    d->label->draw();
 
     if (isFocused() && d->cursorVisible && d->cursorBuffer)
     {
@@ -89,7 +90,7 @@ LineEditWidget::LineEditWidget(float w, float h, boost::shared_ptr< Font > font,
     RANGERS_D(LineEditWidget);
     if (!font)
         font = Engine::instance()->coreFont();
-    d->label = Label(L"", this, font, POSITION_X_LEFT, POSITION_Y_TOP);
+    d->label = new Label(L"", this, font, POSITION_X_LEFT, POSITION_Y_TOP);
     d->height = h > font->size() + 4 ? h : font->size() + 4;
     d->width = w;
     d->style.color = 0xffffffff;
@@ -111,15 +112,6 @@ LineEditWidget::LineEditWidget(LineEditWidgetPrivate &p, Widget *parent): Widget
 {
 }
 
-LineEditWidget::LineEditWidget(LineEditWidgetPrivate &p, const LineEditWidget& other):  Widget(p, other)
-{
-    RANGERS_D(LineEditWidget);
-    d->style = other.d_func()->style;
-    d->label = other.d_func()->label;
-    d->text = other.d_func()->text;
-    d->init();
-}
-
 void LineEditWidgetPrivate::init()
 {
     RANGERS_Q(LineEditWidget);
@@ -133,25 +125,30 @@ void LineEditWidgetPrivate::init()
     }
     if ((style.font.path != L"") && (style.font.size > 0))
     {
-        label = Label(text, q, ResourceManager::instance()->loadFont(style.font.path, style.font.size));
-        label.setColor(((style.color >> 24) & 0xff) / 255.0f, ((style.color >> 16) & 0xff) / 255.0f, ((style.color >> 8) & 0xff) / 255.0f, ((style.color) & 0xff) / 255.0f);
+        label = new Label(text, q, ResourceManager::instance()->loadFont(style.font.path, style.font.size));
+        label->setColor(((style.color >> 24) & 0xff) / 255.0f, ((style.color >> 16) & 0xff) / 255.0f, ((style.color >> 8) & 0xff) / 255.0f, ((style.color) & 0xff) / 255.0f);
     }
-    if (style.contentRect.valid() && label.font() && background)
+    else
     {
-        height = std::max(background->normalHeight() - style.contentRect.height + label.font()->size(), background->normalHeight());
+        if (!label)
+            label = new Label(q);
+    }
+    if (style.contentRect.valid() && label->font() && background)
+    {
+        height = std::max(background->normalHeight() - style.contentRect.height + label->font()->size(), background->normalHeight());
         width = std::max(background->normalWidth(), style.contentRect.width);
     }
-    else if (label.font() && background)
+    else if (label->font() && background)
     {
-        height = std::max(background->normalHeight(), (float)label.font()->size());
+        height = std::max(background->normalHeight(), (float)label->font()->size());
         width = background->normalWidth();
     }
-    else if (style.contentRect.valid() && label.font())
+    else if (style.contentRect.valid() && label->font())
     {
-        height = std::max(style.contentRect.height, (float)label.font()->size());
+        height = std::max(style.contentRect.height, (float)label->font()->size());
         width = style.contentRect.width;
     }
-    label.setOrigin(POSITION_X_LEFT, POSITION_Y_TOP);
+    label->setOrigin(POSITION_X_LEFT, POSITION_Y_TOP);
     position = 0;
     cursorTime = 0;
     cursorVisible = false;
@@ -166,7 +163,7 @@ void LineEditWidgetPrivate::init()
 void LineEditWidgetPrivate::updateText()
 {
     RANGERS_Q(LineEditWidget);
-    if (!label.font())
+    if (!label->font())
         return;
     q->lock();
     int maxChars;
@@ -178,24 +175,15 @@ void LineEditWidgetPrivate::updateText()
     {
         std::wstring::iterator start = text.begin() + stringOffset;
         std::wstring::iterator end = text.begin() + position;
-        while ((maxChars = label.font()->maxChars(start, end, width)) < end - start)
+        while ((maxChars = label->font()->maxChars(start, end, width)) < end - start)
         {
             stringOffset = (end - maxChars) - text.begin() - 1;
             start = text.begin() + stringOffset;
         }
     }
-    maxChars = label.font()->maxChars(text.begin() + stringOffset, text.end(), width);
-    label.setText(text.substr(stringOffset, maxChars));
+    maxChars = label->font()->maxChars(text.begin() + stringOffset, text.end(), width);
+    label->setText(text.substr(stringOffset, maxChars));
     q->unlock();
-}
-
-LineEditWidget::LineEditWidget(const Rangers::LineEditWidget& other): Widget(*(new LineEditWidgetPrivate()), other)
-{
-    RANGERS_D(LineEditWidget);
-    d->style = other.d_func()->style;
-    d->label = other.d_func()->label;
-    d->text = other.d_func()->text;
-    d->init();
 }
 
 LineEditWidget::~LineEditWidget()
@@ -203,21 +191,9 @@ LineEditWidget::~LineEditWidget()
     RANGERS_D(LineEditWidget);
     if (d->background)
         delete d->background;
-}
 
-LineEditWidget& LineEditWidget::operator=(const Rangers::LineEditWidget& other)
-{
-    if (this == &other)
-        return *this;
-
-    RANGERS_D(LineEditWidget);
-    d->style = other.d_func()->style;
-    d->label = other.d_func()->label;
-    d->text = other.d_func()->text;
-    d->init();
-
-    Widget::operator=(other);
-    return *this;
+    if (d->label)
+        delete d->label;
 }
 
 void LineEditWidget::mouseClick(const Vector& p)
@@ -233,8 +209,8 @@ void LineEditWidget::processMain()
 {
     RANGERS_D(LineEditWidget);
 
-    if (d->label.needUpdate())
-        d->label.processMain();
+    if (d->label->needUpdate())
+        d->label->processMain();
 
     lock();
 
@@ -243,7 +219,7 @@ void LineEditWidget::processMain()
         d->background->setGeometry(d->width, d->height);
     }
 
-    int cursorPosition = d->label.font()->calculateStringWidth(d->text.begin() + d->stringOffset, d->text.begin() + d->position);
+    int cursorPosition = d->label->font()->calculateStringWidth(d->text.begin() + d->stringOffset, d->text.begin() + d->position);
     if (!d->cursorBuffer)
     {
         d->cursorVertices = new Vertex[2];
@@ -258,17 +234,17 @@ void LineEditWidget::processMain()
 
     if (!d->style.contentRect.valid())
     {
-        d->label.setPosition(0, 0);
+        d->label->setPosition(0, 0);
         d->cursorVertices[0].x = cursorPosition - 0.5f;
-        d->cursorVertices[0].y = d->label.height();
+        d->cursorVertices[0].y = d->label->height();
         d->cursorVertices[1].x = cursorPosition - 0.5f;
         d->cursorVertices[1].y = 0;
     }
     else
     {
-        d->label.setPosition(d->style.contentRect.x, d->style.contentRect.y);
+        d->label->setPosition(d->style.contentRect.x, d->style.contentRect.y);
         d->cursorVertices[0].x = d->style.contentRect.x + cursorPosition - 0.5f;
-        d->cursorVertices[0].y = d->label.height();
+        d->cursorVertices[0].y = d->label->height();
         d->cursorVertices[1].x = d->style.contentRect.x + cursorPosition - 0.5f;
         d->cursorVertices[1].y = d->style.contentRect.y;
     }
@@ -358,11 +334,11 @@ std::wstring LineEditWidget::text() const
 int LineEditWidget::minHeight() const
 {
     RANGERS_D(const LineEditWidget);
-    if (d->background && d->label.font())
-        return std::max(d->label.font()->size(), (int)d->background->normalHeight());
+    if (d->background && d->label->font())
+        return std::max(d->label->font()->size(), (int)d->background->normalHeight());
 
-    if (d->label.font())
-        return d->label.font()->size();
+    if (d->label->font())
+        return d->label->font()->size();
 
     return Widget::minHeight();
 }
@@ -371,11 +347,11 @@ int LineEditWidget::minWidth() const
 {
     RANGERS_D(const LineEditWidget);
     std::wstring w = L"W";
-    if (d->background && d->label.font())
-        return std::max(d->label.font()->calculateStringWidth(w.begin(), w.end()), (int)d->background->normalHeight());
+    if (d->background && d->label->font())
+        return std::max(d->label->font()->calculateStringWidth(w.begin(), w.end()), (int)d->background->normalHeight());
 
-    if (d->label.font())
-        return d->label.font()->calculateStringWidth(w.begin(), w.end());
+    if (d->label->font())
+        return d->label->font()->calculateStringWidth(w.begin(), w.end());
 
     return Widget::minHeight();
 }
@@ -383,8 +359,8 @@ int LineEditWidget::minWidth() const
 int LineEditWidget::preferredHeight() const
 {
     RANGERS_D(const LineEditWidget);
-    if (d->background && d->label.font() && d->style.contentRect.valid())
-        return d->background->normalHeight() + d->label.font()->size() - d->style.contentRect.height;
+    if (d->background && d->label->font() && d->style.contentRect.valid())
+        return d->background->normalHeight() + d->label->font()->size() - d->style.contentRect.height;
 
     return minHeight();
 }

@@ -88,45 +88,8 @@ GAISprite::GAISprite(const std::wstring& name, Object *parent): AnimatedSprite(*
     markToUpdate();
 }
 
-GAISprite::GAISprite(const GAISprite & other): AnimatedSprite(*(new GAISpritePrivate()), other)
-{
-    RANGERS_D(GAISprite);
-    d->gaiFrames.assign(other.d_func()->gaiFrames.begin(), other.d_func()->gaiFrames.end());
-    d->needNextFrame = true;
-    d->gaiHeader = other.d_func()->gaiHeader;
-
-    d->baseFrame = other.d_func()->baseFrame;
-    d->baseFrameWidth = other.d_func()->baseFrameWidth;
-    d->baseFrameHeight = other.d_func()->baseFrameHeight;
-
-    d->textureBuffer = 0;
-    d->region = TextureRegion(boost::shared_ptr<Texture>(new Texture(d->width, d->height)));
-    reset();
-    d->animationStarted = other.d_func()->animationStarted;
-    markToUpdate();
-}
-
-
 GAISprite::GAISprite(GAISpritePrivate &p, Object *parent): AnimatedSprite(p, parent)
 {
-}
-
-GAISprite::GAISprite(GAISpritePrivate &p, const GAISprite& other): AnimatedSprite(p, other)
-{
-    RANGERS_D(GAISprite);
-    d->gaiFrames.assign(other.d_func()->gaiFrames.begin(), other.d_func()->gaiFrames.end());
-    d->needNextFrame = true;
-    d->gaiHeader = other.d_func()->gaiHeader;
-
-    d->baseFrame = other.d_func()->baseFrame;
-    d->baseFrameWidth = other.d_func()->baseFrameWidth;
-    d->baseFrameHeight = other.d_func()->baseFrameHeight;
-
-    d->textureBuffer = 0;
-    d->region = TextureRegion(boost::shared_ptr<Texture>(new Texture(d->width, d->height)));
-    reset();
-    d->animationStarted = other.d_func()->animationStarted;
-    markToUpdate();
 }
 
 GAISprite::~GAISprite()
@@ -134,36 +97,6 @@ GAISprite::~GAISprite()
     RANGERS_D(GAISprite);
     if (d->textureBuffer)
         glDeleteBuffers(1, &d->textureBuffer);
-}
-
-GAISprite& GAISprite::operator=(const GAISprite & other)
-{
-    if (this == &other)
-        return *this;
-
-    RANGERS_D(GAISprite);
-
-    AnimatedSprite::operator=(other);
-
-    if (d->textureBuffer)
-        glDeleteBuffers(1, &d->textureBuffer);
-
-    d->gaiFrames.assign(other.d_func()->gaiFrames.begin(), other.d_func()->gaiFrames.end());
-    d->needNextFrame = true;
-    d->gaiHeader = other.d_func()->gaiHeader;
-
-    d->baseFrame = other.d_func()->baseFrame;
-    d->baseFrameWidth = other.d_func()->baseFrameWidth;
-    d->baseFrameHeight = other.d_func()->baseFrameHeight;
-
-    d->textureBuffer = 0;
-    d->region = TextureRegion(boost::shared_ptr<Texture>(new Texture(d->width, d->height)));
-
-    reset();
-    d->animationStarted = other.d_func()->animationStarted;
-    markToUpdate();
-
-    return *this;
 }
 
 void GAISprite::processLogic(int dt)

@@ -164,13 +164,17 @@ Engine::Engine(int argc, char **argv): m_d(new EnginePrivate())
     d->showFPS = true;
     d->frames = 0;
     d->m_q = this;
+    d->mainNode = 0;
+    d->consoleWidget = 0;
+    d->fpsLabel = 0;
 }
 
 Engine::~Engine()
 {
-    RANGERS_D(Engine);
-    removeWidget(&d->consoleWidget);
     engineInstance = 0;
+
+    RANGERS_D(Engine);
+    removeWidget(d->consoleWidget);
     if (!createDirPath(d->configPath))
         Log::error() << "Cannot create dir for config: " << d->configPath;
 
@@ -196,6 +200,9 @@ Engine::~Engine()
     {
         delete *i;
     }
+    delete d->consoleWidget;
+    delete d->fpsLabel;
+    delete d->mainNode;
     delete m_d;
 }
 
@@ -205,7 +212,7 @@ void Engine::addWidget(Widget *w)
     if (!w)
         return;
 
-    d->mainNode.addChild(w);
+    d->mainNode->addChild(w);
 
     std::list<Widget*>::iterator end = d->widgets.end();
     for (std::list<Widget*>::iterator i = d->widgets.begin(); i != end; ++i)
@@ -227,8 +234,23 @@ void Engine::removeWidget(Widget *w)
     if (w == d->focusedWidget)
         d->focusedWidget = 0;
     d->widgets.remove(w);
-    d->mainNode.removeChild(w);
+    d->mainNode->removeChild(w);
 
+    d->updateMutex.lock();
+    d->updateList.remove(w);
+    d->updateMutex.unlock();
+}
+
+void Engine::widgetDestructed(Widget *w)
+{
+    if (!engineInstance)
+        return;
+
+    RANGERS_D(Engine);
+    if (w == d->currentWidget)
+        d->currentWidget = 0;
+    if (w == d->focusedWidget)
+        d->focusedWidget = 0;
     d->updateMutex.lock();
     d->updateList.remove(w);
     d->updateMutex.unlock();
@@ -246,9 +268,9 @@ int Engine::logic()
             SDL_Delay(1);
             dt = getTicks() - t;
         }
-        engineInstance->m_d->mainNode.processLogic(dt);
+        engineInstance->m_d->mainNode->processLogic(dt);
         if (engineInstance->m_d->consoleOpenned)
-            engineInstance->m_d->consoleWidget.processLogic(dt);
+            engineInstance->m_d->consoleWidget->processLogic(dt);
         t = getTicks();
     }
     return 0;
@@ -380,15 +402,16 @@ void Engine::init(int w, int h, bool fullscreen)
 
     d->frames = 0;
 
-    d->mainNode.setPosition(0, 0);
+    d->mainNode = new Node();
+    d->mainNode->setPosition(0, 0);
 
-    d->fpsLabel = Label("0", 0, d->monospaceFont, POSITION_X_LEFT, POSITION_Y_TOP);
-    d->fpsLabel.setPosition(5, 5);
+    d->fpsLabel = new Label("0", 0, d->monospaceFont, POSITION_X_LEFT, POSITION_Y_TOP);
+    d->fpsLabel->setPosition(5, 5);
 
-    d->consoleWidget = ConsoleWidget(d->width, 168);
-    d->consoleWidget.setPosition(0, -d->consoleWidget.height());
+    d->consoleWidget = new ConsoleWidget(d->width, 168);
+    d->consoleWidget->setPosition(0, -d->consoleWidget->height());
     d->luaConsoleState = initLuaState();
-    addWidget(&d->consoleWidget);
+    addWidget(d->consoleWidget);
 }
 
 boost::shared_ptr<Font> Engine::coreFont() const
@@ -412,11 +435,11 @@ void Engine::paint()
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    d->mainNode.draw();
+    d->mainNode->draw();
     if (d->consoleOpenned)
-        d->consoleWidget.draw();
+        d->consoleWidget->draw();
     if (d->showFPS)
-        d->fpsLabel.draw();
+        d->fpsLabel->draw();
     d->frames++;
 
     SDL_GL_SwapBuffers();
@@ -442,11 +465,11 @@ int Engine::run()
 #else
             snprintf(str, 10, "%.1lf", fps);
 #endif
-            d->fpsLabel.setText(str);
+            d->fpsLabel->setText(str);
             if (fps >= 30)
-                d->fpsLabel.setColor(0.0f, 1.0f, 0.0f);
+                d->fpsLabel->setColor(0.0f, 1.0f, 0.0f);
             else
-                d->fpsLabel.setColor(1.0f, 0.0f, 0.0f);
+                d->fpsLabel->setColor(1.0f, 0.0f, 0.0f);
             d->frames = 0;
             d->fpsTime = getTicks();
         }
@@ -535,6 +558,15 @@ void Engine::focusWidget(Widget* w)
     w->focus();
 }
 
+void Engine::unfocusWidget(Widget* w)
+{
+    RANGERS_D(Engine);
+    if (d->focusedWidget != w)
+        return;
+    d->focusedWidget->unFocus();
+    d->focusedWidget = 0;
+}
+
 void Engine::markWidgetDeleting(Widget *w)
 {
     RANGERS_D(Engine);
@@ -581,9 +613,9 @@ void Engine::EnginePrivate::processEvents()
             {
                 consoleOpenned = !consoleOpenned;
                 if (!consoleOpenned)
-                    consoleWidget.setPosition(0, -consoleWidget.height());
+                    consoleWidget->setPosition(0, -consoleWidget->height());
                 else
-                    consoleWidget.setPosition(0, 0);
+                    consoleWidget->setPosition(0, 0);
                 continue;
             }
             if (focusedWidget)
@@ -613,7 +645,7 @@ void Engine::EnginePrivate::processMouseMove(const SDL_MouseMotionEvent &e)
     for (std::list<Widget*>::iterator i = widgets.begin(); i != widgets.end(); i++)
     {
         Rect bb = (*i)->mapToGlobal((*i)->getBoundingRect());
-        Vector globalMouse = mainNode.mapFromScreen(Vector(e.x, e.y));
+        Vector globalMouse = mainNode->mapFromScreen(Vector(e.x, e.y));
         if (bb.contains(globalMouse))
         {
             if ((*i) != currentWidget)
@@ -636,7 +668,7 @@ void Engine::EnginePrivate::processMouseMove(const SDL_MouseMotionEvent &e)
 Node* Engine::rootNode()
 {
     RANGERS_D(Engine);
-    return &d->mainNode;
+    return d->mainNode;
 }
 
 void Engine::loadPlugin(const std::wstring& path)

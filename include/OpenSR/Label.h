@@ -33,7 +33,6 @@ public:
     Label(Object *parent = 0);
     Label(const std::string& text, Object *parent = 0, boost::shared_ptr<Font> font = boost::shared_ptr<Font>(), SpriteXOrigin xpos = POSITION_X_LEFT, SpriteYOrigin ypos = POSITION_Y_TOP);
     Label(const std::wstring& text, Object *parent = 0, boost::shared_ptr<Font> font = boost::shared_ptr<Font>(), SpriteXOrigin xpos = POSITION_X_LEFT, SpriteYOrigin ypos = POSITION_Y_TOP);
-    Label(const Label& other);
 
     void setText(const std::string& text);
     void setText(const std::wstring& text);
@@ -47,12 +46,10 @@ public:
 
     virtual void processMain();
 
-    Label& operator=(const Label& other);
-
 protected:
     Label(LabelPrivate &p, Object *parent = 0);
-    Label(LabelPrivate &p, const Label& other);
 
+    RANGERS_DISABLE_COPY(Label)
 };
 }
 

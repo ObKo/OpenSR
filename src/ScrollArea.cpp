@@ -33,6 +33,12 @@ ScrollAreaPrivate::ScrollAreaPrivate()
     hPosition = 0.0f;
     hSize = 0.0f;
     vSize = 0.0f;
+    bottom = 0;
+    top = 0;
+    left = 0;
+    right = 0;
+    vScroll = 0;
+    hScroll = 0;
 }
 
 ScrollArea::ScrollArea(const ScrollBarStyle& style, WidgetNode *node, Widget *parent):
@@ -41,21 +47,21 @@ ScrollArea::ScrollArea(const ScrollBarStyle& style, WidgetNode *node, Widget *pa
     RANGERS_D(ScrollArea);
 
     d->scrollDrag = ScrollAreaPrivate::NONE;
-    d->top = Button(style.upButton, this);
-    d->top.addListener(this);
-    d->bottom = Button(style.downButton, this);
-    d->bottom.addListener(this);
+    d->top = new Button(style.upButton, this);
+    d->top->addListener(this);
+    d->bottom = new Button(style.downButton, this);
+    d->bottom->addListener(this);
 
-    d->left = Button(style.upButton, this);
-    d->left.setRotation(90);
-    d->left.addListener(this);
-    d->right = Button(style.downButton, this);
-    d->right.setRotation(90);
-    d->right.addListener(this);
+    d->left = new Button(style.upButton, this);
+    d->left->setRotation(90);
+    d->left->addListener(this);
+    d->right = new Button(style.downButton, this);
+    d->right->setRotation(90);
+    d->right->addListener(this);
 
-    d->vScroll = Button(style.scroll, this);
-    d->hScroll = Button(style.scroll, this);
-    d->hScroll.setRotation(90);
+    d->vScroll = new Button(style.scroll, this);
+    d->hScroll = new Button(style.scroll, this);
+    d->hScroll->setRotation(90);
 
     setNode(node);
 }
@@ -68,6 +74,13 @@ ScrollArea::ScrollArea(Widget *parent):
 ScrollArea::ScrollArea(ScrollAreaPrivate &p, Widget *parent):
     Widget(p, parent)
 {
+    RANGERS_D(ScrollArea);
+    d->left = new Button(this);
+    d->right = new Button(this);
+    d->top = new Button(this);
+    d->bottom = new Button(this);
+    d->vScroll = new Button(this);
+    d->hScroll = new Button(this);
 }
 
 void ScrollArea::draw() const
@@ -80,12 +93,12 @@ void ScrollArea::draw() const
     glEnable(GL_SCISSOR_TEST);
     if (d->hSize > 1.0f)
     {
-        screenRect.y += d->left.width();
-        screenRect.height -= d->left.width();
+        screenRect.y += d->left->width();
+        screenRect.height -= d->left->width();
     }
     if (d->vSize > 1.0f)
     {
-        screenRect.width -= d->top.width();
+        screenRect.width -= d->top->width();
     }
     glScissor(screenRect.x, screenRect.y, screenRect.width, screenRect.height);
     if (d->node)
@@ -93,15 +106,15 @@ void ScrollArea::draw() const
     glDisable(GL_SCISSOR_TEST);
     if (d->hSize > 1.0f)
     {
-        d->hScroll.draw();
-        d->left.draw();
-        d->right.draw();
+        d->hScroll->draw();
+        d->left->draw();
+        d->right->draw();
     }
     if (d->vSize > 1.0f)
     {
-        d->vScroll.draw();
-        d->top.draw();
-        d->bottom.draw();
+        d->vScroll->draw();
+        d->top->draw();
+        d->bottom->draw();
     }
     endDraw();
 }
@@ -140,39 +153,39 @@ void ScrollArea::processMain()
             float scrollSize;
             if (d->vSize > 1.0f)
             {
-                d->left.setPosition(0, d->height);
-                d->right.setPosition(d->width - d->right.height() - d->bottom.width(), d->height);
-                scrollSize = (d->width - d->bottom.width() - d->right.height() - d->left.height()) / (d->hSize);
+                d->left->setPosition(0, d->height);
+                d->right->setPosition(d->width - d->right->height() - d->bottom->width(), d->height);
+                scrollSize = (d->width - d->bottom->width() - d->right->height() - d->left->height()) / (d->hSize);
             }
             else
             {
-                d->left.setPosition(0, d->height);
-                d->right.setPosition(d->width - d->right.height(), d->height);
-                scrollSize = (d->width - d->right.height() - d->left.height()) / (d->hSize);
+                d->left->setPosition(0, d->height);
+                d->right->setPosition(d->width - d->right->height(), d->height);
+                scrollSize = (d->width - d->right->height() - d->left->height()) / (d->hSize);
             }
-            d->hScroll.setHeight(scrollSize);
+            d->hScroll->setHeight(scrollSize);
         }
         if (d->vSize > 1.0f)
         {
             float scrollSize;
             if (d->hSize > 1.0f)
             {
-                d->top.setPosition(d->width - d->top.width(), 0);
-                d->bottom.setPosition(d->width - d->top.width(), d->height - d->right.width() - d->bottom.height());
+                d->top->setPosition(d->width - d->top->width(), 0);
+                d->bottom->setPosition(d->width - d->top->width(), d->height - d->right->width() - d->bottom->height());
 
-                scrollSize = (d->height - d->right.width() - d->bottom.height() - d->top.height()) / (d->vSize);
+                scrollSize = (d->height - d->right->width() - d->bottom->height() - d->top->height()) / (d->vSize);
             }
             else
             {
-                d->top.setPosition(d->width - d->top.width(), 0);
-                d->bottom.setPosition(d->width - d->top.width(), d->height - d->bottom.height());
+                d->top->setPosition(d->width - d->top->width(), 0);
+                d->bottom->setPosition(d->width - d->top->width(), d->height - d->bottom->height());
 
-                scrollSize = (d->height - d->bottom.height() - d->top.height()) / (d->vSize);
+                scrollSize = (d->height - d->bottom->height() - d->top->height()) / (d->vSize);
             }
-            d->vScroll.setHeight(scrollSize);
+            d->vScroll->setHeight(scrollSize);
         }
-        d->hScroll.setPosition(d->left.height(), d->height);
-        d->vScroll.setPosition(d->width - d->top.width(), d->top.height());
+        d->hScroll->setPosition(d->left->height(), d->height);
+        d->vScroll->setPosition(d->width - d->top->width(), d->top->height());
     }
 }
 
@@ -215,7 +228,7 @@ void ScrollArea::mouseMove(const Vector &p)
 
     if (d->scrollDrag == ScrollAreaPrivate::NONE)
     {
-        if ((p.x < d->width - d->top.width()) && (p.y < d->height - d->left.width()))
+        if ((p.x < d->width - d->top->width()) && (p.y < d->height - d->left->width()))
         {
             if (d->currentChild)
                 d->currentChild->mouseLeave();
@@ -253,11 +266,11 @@ void ScrollArea::mouseMove(const Vector &p)
         float scrollSize;
         if (d->hSize > 1.0f)
         {
-            scrollSize = (d->height - d->right.width() - d->bottom.height() - d->top.height()) / (d->vSize);
+            scrollSize = (d->height - d->right->width() - d->bottom->height() - d->top->height()) / (d->vSize);
         }
         else
         {
-            scrollSize = (d->height - d->bottom.height() - d->top.height()) / (d->vSize);
+            scrollSize = (d->height - d->bottom->height() - d->top->height()) / (d->vSize);
         }
         d->vPosition -= dy / scrollSize;
         d->updateScrollPosition();
@@ -269,11 +282,11 @@ void ScrollArea::mouseMove(const Vector &p)
         float scrollSize;
         if (d->vSize > 1.0f)
         {
-            scrollSize = (d->width - d->bottom.width() - d->right.height() - d->left.height()) / (d->hSize);
+            scrollSize = (d->width - d->bottom->width() - d->right->height() - d->left->height()) / (d->hSize);
         }
         else
         {
-            scrollSize = (d->width - d->right.height() - d->left.height()) / (d->hSize);
+            scrollSize = (d->width - d->right->height() - d->left->height()) / (d->hSize);
         }
         d->hPosition -= dx / scrollSize;
         d->updateScrollPosition();
@@ -324,12 +337,12 @@ void ScrollArea::mouseDown(uint8_t key, const Vector &p)
     }
     else if (d->leftMouseButtonPressed)
     {
-        if (d->vScroll.mapToParent(d->vScroll.getBoundingRect()).contains(p))
+        if (d->vScroll->mapToParent(d->vScroll->getBoundingRect()).contains(p))
         {
             d->scrollDrag = ScrollAreaPrivate::VERTICAL;
             d->scrollStart = p.y;
         }
-        else if (d->hScroll.mapToParent(d->hScroll.getBoundingRect()).contains(p))
+        else if (d->hScroll->mapToParent(d->hScroll->getBoundingRect()).contains(p))
         {
             d->scrollDrag = ScrollAreaPrivate::HORIZONTAL;
             d->scrollStart = p.x;
@@ -355,9 +368,9 @@ void ScrollArea::mouseUp(uint8_t key, const Vector &p)
                 mouseLeave();
             Button *scroll = 0;
             if (d->scrollDrag == ScrollAreaPrivate::VERTICAL)
-                scroll = &d->vScroll;
+                scroll = d->vScroll;
             if (d->scrollDrag == ScrollAreaPrivate::HORIZONTAL)
-                scroll = &d->hScroll;
+                scroll = d->hScroll;
             if ((scroll) && (!scroll->mapToParent(scroll->getBoundingRect()).contains(p)))
             {
                 scroll->mouseLeave();
@@ -394,13 +407,13 @@ void ScrollAreaPrivate::updateScrollPosition()
         float scrollSize;
         if (vSize > 1.0f)
         {
-            scrollSize = (width - bottom.width() - right.height() - left.height()) / (hSize);
+            scrollSize = (width - bottom->width() - right->height() - left->height()) / (hSize);
         }
         else
         {
-            scrollSize = (width - right.height() - left.height()) / (hSize);
+            scrollSize = (width - right->height() - left->height()) / (hSize);
         }
-        hScroll.setPosition((int)(- hPosition * scrollSize + left.height()), height);
+        hScroll->setPosition((int)(- hPosition * scrollSize + left->height()), height);
 
     }
     if (vSize > 1.0f)
@@ -408,13 +421,13 @@ void ScrollAreaPrivate::updateScrollPosition()
         float scrollSize;
         if (hSize > 1.0f)
         {
-            scrollSize = (height - right.width() - bottom.height() - top.height()) / (vSize);
+            scrollSize = (height - right->width() - bottom->height() - top->height()) / (vSize);
         }
         else
         {
-            scrollSize = (height - bottom.height() - top.height()) / (vSize);
+            scrollSize = (height - bottom->height() - top->height()) / (vSize);
         }
-        vScroll.setPosition(width - top.width(), (int)(- vPosition * scrollSize + top.height()));
+        vScroll->setPosition(width - top->width(), (int)(- vPosition * scrollSize + top->height()));
     }
 
     node->setPosition((int)(hPosition * width), (int)(vPosition * height));
@@ -431,13 +444,13 @@ void ScrollArea::actionPerformed(const Action& action)
         return;
 
     lock();
-    if (action.source() == &d->left)
+    if (action.source() == d->left)
         d->hPosition += 0.1f;
-    else if (action.source() == &d->right)
+    else if (action.source() == d->right)
         d->hPosition -= 0.1f;
-    else if (action.source() == &d->top)
+    else if (action.source() == d->top)
         d->vPosition += 0.1f;
-    else if (action.source() == &d->bottom)
+    else if (action.source() == d->bottom)
         d->vPosition -= 0.1f;
 
     d->updateScrollPosition();

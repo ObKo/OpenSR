@@ -20,17 +20,22 @@
 #define RANGERS_GLOBAL_H
 
 #define RANGERS_DECLARE_PRIVATE(Class) \
-   inline Class##Private* d_func() { return reinterpret_cast<Class##Private *>(m_d); } \
-   inline const Class##Private* d_func() const { return reinterpret_cast<const Class##Private *>(m_d); } \
-   friend class Class##Private;
-   
+    inline Class##Private* d_func() { return reinterpret_cast<Class##Private *>(m_d); } \
+    inline const Class##Private* d_func() const { return reinterpret_cast<const Class##Private *>(m_d); } \
+    friend class Class##Private;
+
 #define RANGERS_D(Class) Class##Private * const d = d_func()
-   
+
 #define RANGERS_DECLARE_PUBLIC(Class)                  \
-   inline Class* q_func() { return static_cast<Class *>(m_q); } \
-   inline const Class* q_func() const { return static_cast<const Class *>(m_q); } \
-   friend class Class;
-   
+    inline Class* q_func() { return static_cast<Class *>(m_q); } \
+    inline const Class* q_func() const { return static_cast<const Class *>(m_q); } \
+    friend class Class;
+
 #define RANGERS_Q(Class) Class * const q = q_func()
+
+#define RANGERS_DISABLE_COPY(Class) \
+    private: \
+    Class(const Class& other); \
+    Class &operator=(const Class& other);
 
 #endif

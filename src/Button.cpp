@@ -38,6 +38,7 @@ ButtonPrivate::ButtonPrivate(): WidgetPrivate()
     pressedSprite = 0;
     sprite = 0;
     normalSprite = 0;
+    label = 0;
 }
 
 Button::Button(Widget *parent):
@@ -207,11 +208,6 @@ Button::Button(ButtonPrivate &p, Widget *parent): Widget(p, parent)
 {
 }
 
-Button::Button(ButtonPrivate &p, const Button& other): Widget(p, other)
-{
-    Button(other.d_func()->style);
-}
-
 bool Button::autoResize() const
 {
     RANGERS_D(const Button);
@@ -232,7 +228,7 @@ void Button::setText(const std::wstring& text)
     lock();
     RANGERS_D(Button);
     d->text = text;
-    d->label.setText(text);
+    d->label->setText(text);
     calcAutoRresize();
     markToUpdate();
     unlock();
@@ -242,7 +238,7 @@ void Button::setColor(int color)
 {
     lock();
     RANGERS_D(Button);
-    d->label.setColor(color);
+    d->label->setColor(color);
     unlock();
 }
 
@@ -250,7 +246,7 @@ void Button::setFont(boost::shared_ptr<Font> font)
 {
     lock();
     RANGERS_D(Button);
-    d->label.setFont(font);
+    d->label->setFont(font);
     calcAutoRresize();
     markToUpdate();
     unlock();
@@ -259,7 +255,7 @@ void Button::setFont(boost::shared_ptr<Font> font)
 int Button::color() const
 {
     RANGERS_D(const Button);
-    return d->label.color();
+    return d->label->color();
 }
 
 std::wstring Button::text() const
@@ -279,10 +275,10 @@ void Button::calcAutoRresize()
     lock();
     float labelWidth = 0.0f;
     float labelHeight = 0.0f;
-    if (d->label.font())
+    if (d->label->font())
     {
-        labelWidth = d->label.font()->calculateStringWidth(d->text.begin(), d->text.end());
-        labelHeight = d->label.font()->size();
+        labelWidth = d->label->font()->calculateStringWidth(d->text.begin(), d->text.end());
+        labelHeight = d->label->font()->size();
     }
     if (!d->style.contentRect.valid())
     {
@@ -301,7 +297,7 @@ int Button::minHeight() const
 {
     RANGERS_D(const Button);
     if (d->normalSprite)
-        return std::max(d->label.height(), d->normalSprite->normalHeight());
+        return std::max(d->label->height(), d->normalSprite->normalHeight());
     return Widget::minHeight();
 }
 
@@ -309,7 +305,7 @@ int Button::minWidth() const
 {
     RANGERS_D(const Button);
     if (d->normalSprite)
-        return std::max(d->label.width(), d->normalSprite->normalWidth());
+        return std::max(d->label->width(), d->normalSprite->normalWidth());
     return Widget::minWidth();
 }
 
@@ -320,7 +316,7 @@ int Button::preferredHeight() const
         return Widget::preferredHeight();
 
     if (d->style.contentRect.valid())
-        return d->normalSprite->normalHeight() + d->label.height() - d->style.contentRect.height;
+        return d->normalSprite->normalHeight() + d->label->height() - d->style.contentRect.height;
 
     return minHeight();
 }
@@ -332,7 +328,7 @@ int Button::preferredWidth() const
         return Widget::preferredWidth();
 
     if (d->style.contentRect.valid())
-        return d->normalSprite->normalWidth() + d->label.width() - d->style.contentRect.width;
+        return d->normalSprite->normalWidth() + d->label->width() - d->style.contentRect.width;
 
     return minWidth();
 }
@@ -340,7 +336,7 @@ int Button::preferredWidth() const
 boost::shared_ptr<Font> Button::font() const
 {
     RANGERS_D(const Button);
-    return d->label.font();
+    return d->label->font();
 }
 
 void Button::init()
@@ -372,9 +368,13 @@ void Button::init()
     }
     if ((d->style.font.path != L"") && (d->style.font.size > 0))
     {
-        d->label = Label(d->text, this, ResourceManager::instance()->loadFont(d->style.font.path, d->style.font.size));
+        d->label = new Label(d->text, this, ResourceManager::instance()->loadFont(d->style.font.path, d->style.font.size));
     }
-    d->label.setOrigin(POSITION_X_LEFT, POSITION_Y_TOP);
+    else
+    {
+        d->label = new Label(this);
+    }
+    d->label->setOrigin(POSITION_X_LEFT, POSITION_Y_TOP);
     setColor(d->style.color);
     d->sprite = d->normalSprite;
 
@@ -397,6 +397,7 @@ Button::~Button()
         delete d->hoverSprite;
     if (d->pressedSprite)
         delete d->pressedSprite;
+    delete d->label;
 }
 
 void Button::draw() const
@@ -406,7 +407,7 @@ void Button::draw() const
         return;
     if (d->sprite)
         d->sprite->draw();
-    d->label.draw();
+    d->label->draw();
     endDraw();
 }
 
@@ -434,8 +435,8 @@ void Button::processMain()
 {
     lock();
     RANGERS_D(Button);
-    if (d->label.needUpdate())
-        d->label.processMain();
+    if (d->label->needUpdate())
+        d->label->processMain();
     if (d->normalSprite)
         d->normalSprite->setGeometry(d->width, d->height);
     if (d->hoverSprite)
@@ -444,20 +445,20 @@ void Button::processMain()
         d->pressedSprite->setGeometry(d->width, d->height);
     if (!d->style.contentRect.valid() || (!d->normalSprite))
     {
-        d->label.setPosition(int((d->width - d->label.width()) / 2), int((d->height - d->label.height()) / 2));
+        d->label->setPosition(int((d->width - d->label->width()) / 2), int((d->height - d->label->height()) / 2));
     }
     else
     {
         float x, y;
-        if (d->label.width() < d->style.contentRect.width)
-            x = int(d->style.contentRect.width - d->label.width()) / 2 + d->style.contentRect.x;
+        if (d->label->width() < d->style.contentRect.width)
+            x = int(d->style.contentRect.width - d->label->width()) / 2 + d->style.contentRect.x;
         else
             x = d->style.contentRect.x;
-        if (d->label.height() < d->style.contentRect.height)
-            y = int(d->style.contentRect.height - d->label.height()) / 2 + d->style.contentRect.y;
+        if (d->label->height() < d->style.contentRect.height)
+            y = int(d->style.contentRect.height - d->label->height()) / 2 + d->style.contentRect.y;
         else
             y = d->style.contentRect.y;
-        d->label.setPosition(x, y);
+        d->label->setPosition(x, y);
     }
     unlock();
     Widget::processMain();
@@ -521,33 +522,6 @@ void Button::mouseClick(const Vector &p)
     if (d->clickSound)
         d->clickSound->play();
     action(Action(this, Action::BUTTON_CLICKED, Action::Argument()));
-}
-
-
-//FIXME: Copy constructor and operator=
-Button::Button(const Button& other): Widget(*(new ButtonPrivate()), other)
-{
-    Button(other.d_func()->style);
-}
-
-Button& Button::operator=(const Button& other)
-{
-    if (this == &other)
-        return *this;
-    RANGERS_D(Button);
-    Widget::operator=(other);
-    if (d->normalSprite)
-        delete d->normalSprite;
-    if (d->hoverSprite);
-    delete d->hoverSprite;
-    if (d->pressedSprite)
-        delete d->pressedSprite;
-    d->style = other.d_func()->style;
-    d->normalSprite = 0;
-    d->hoverSprite = 0;
-    d->pressedSprite = 0;
-    init();
-    return *this;
 }
 
 }

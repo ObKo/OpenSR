@@ -34,7 +34,6 @@ class RANGERS_ENGINE_API Button: public Widget
 public:
     //TODO: Make consrtuctors more consistent
     Button(Widget *parent = 0);
-    Button(const Button& other);
     Button(boost::shared_ptr<Texture> texture, Widget *parent = 0);
     Button(boost::shared_ptr<Texture> texture, boost::shared_ptr<Texture> hoverTexture, Widget *parent = 0);
     Button(boost::shared_ptr<Texture> texture, boost::shared_ptr<Texture> hoverTexture, boost::shared_ptr<Texture> pressTexture, Widget *parent = 0);
@@ -74,15 +73,14 @@ public:
     boost::shared_ptr<Font> font() const;
     bool autoResize() const;
 
-    Button& operator=(const Button& other);
-    
 protected:
     Button(ButtonPrivate &p, Widget *parent = 0);
-    Button(ButtonPrivate &p, const Button& other);
 
 private:
     void calcAutoRresize();
     void init();
+
+    RANGERS_DISABLE_COPY(Button)
 };
 }
 

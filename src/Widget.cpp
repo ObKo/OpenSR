@@ -22,6 +22,7 @@
 #include "ActionListener.h"
 
 #include "private/Widget_p.h"
+#include <Engine.h>
 
 namespace Rangers
 {
@@ -53,42 +54,6 @@ Widget::Widget(float w, float h, Widget *parent): Object(*(new WidgetPrivate()),
         parent->addWidget(this);
 }
 
-Widget::Widget(const Rangers::Widget& other): Object(*(new WidgetPrivate()), other)
-{
-    RANGERS_D(Widget);
-
-    d->childWidgets = other.d_func()->childWidgets;
-    d->currentChild = other.d_func()->currentChild;
-    d->leftMouseButtonPressed = other.d_func()->leftMouseButtonPressed;
-    d->width = other.d_func()->width;
-    d->height = other.d_func()->height;
-    d->listeners = other.d_func()->listeners;
-    d->focused = false;
-    //FIXME: Ugly downcasting
-    Widget* wparent;
-    if ((wparent = dynamic_cast<Widget*>(other.d_func()->parent)) != 0)
-        wparent->addWidget(this);
-    markToUpdate();
-}
-
-Widget::Widget(WidgetPrivate &p, const Widget& other): Object(p, other)
-{
-    RANGERS_D(Widget);
-
-    d->childWidgets = other.d_func()->childWidgets;
-    d->currentChild = other.d_func()->currentChild;
-    d->leftMouseButtonPressed = other.d_func()->leftMouseButtonPressed;
-    d->width = other.d_func()->width;
-    d->height = other.d_func()->height;
-    d->listeners = other.d_func()->listeners;
-    d->focused = false;
-    //FIXME: Ugly downcasting
-    Widget* wparent;
-    if ((wparent = dynamic_cast<Widget*>(other.d_func()->parent)) != 0)
-        wparent->addWidget(this);
-    markToUpdate();
-}
-
 Widget::Widget(WidgetPrivate &p, Widget *parent): Object(p, parent)
 {
     RANGERS_D(Widget);
@@ -104,6 +69,8 @@ Widget::~Widget()
     Widget* wparent;
     if ((wparent = dynamic_cast<Widget*>(d->parent)) != 0)
         wparent->removeWidget(this);
+
+    Engine::instance()->widgetDestructed(this);
 }
 
 void Widget::mouseMove(const Vector& p)
@@ -296,32 +263,6 @@ int Widget::maxWidth() const
 int Widget::maxHeight() const
 {
     return -1;
-}
-
-Widget& Widget::operator=(const Rangers::Widget& other)
-{
-    if (this == &other)
-        return *this;
-
-    RANGERS_D(Widget);
-
-    Object::operator=(other);
-
-    d->focused = false;
-
-    d->childWidgets = other.d_func()->childWidgets;
-    d->currentChild = other.d_func()->currentChild;
-    d->leftMouseButtonPressed = other.d_func()->leftMouseButtonPressed;
-
-    d->width = other.d_func()->width;
-    d->height = other.d_func()->height;
-    //d->listeners = other.d_func()->listeners;
-    //FIXME: Ugly downcasting
-    Widget* wparent;
-    if ((wparent = dynamic_cast<Widget*>(other.d_func()->parent)) != 0)
-        wparent->addWidget(this);
-    markToUpdate();
-    return *this;
 }
 
 void Widget::addListener(ActionListener* listener)

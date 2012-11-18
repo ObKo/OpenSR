@@ -31,9 +31,11 @@ public:
     Node(Rangers::Object *parent = 0);
     virtual void draw() const;
     virtual void processLogic(int dt);
-    
+
 protected:
     Node(NodePrivate &p, Object *parent = 0);
+
+    RANGERS_DISABLE_COPY(Node)
 };
 }
 #endif

@@ -32,7 +32,6 @@ public:
     GAISprite(Object *parent = 0);
     GAISprite(const char *data, int size, const GIFrame& baseFrame, Object *parent = 0);
     GAISprite(const std::wstring& name, Object *parent = 0);
-    GAISprite(const GAISprite &other);
     virtual ~GAISprite();
 
     virtual void draw() const;
@@ -42,11 +41,10 @@ public:
 
     void reset();
 
-    GAISprite& operator=(const GAISprite& other);
-
 protected:
     GAISprite(GAISpritePrivate &p, Object *parent = 0);
-    GAISprite(GAISpritePrivate &p, const GAISprite& other);
+
+    RANGERS_DISABLE_COPY(GAISprite);
 };
 
 }

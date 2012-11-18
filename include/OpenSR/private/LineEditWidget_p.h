@@ -39,7 +39,7 @@ public:
 
     LineEditWidgetPrivate();
 
-    Label label;
+    Label *label;
     std::wstring text;
     Vertex *cursorVertices;
     GLuint cursorBuffer;

@@ -35,6 +35,7 @@ CheckBoxPrivate::CheckBoxPrivate()
     hovered = 0;
     checkedHovered = 0;
     sprite = 0;
+    label = 0;
 }
 
 CheckBox::CheckBox(const CheckBoxStyle& style, const std::wstring &text, Widget *parent): Widget(*(new CheckBoxPrivate()), parent)
@@ -63,9 +64,13 @@ CheckBox::CheckBox(const CheckBoxStyle& style, const std::wstring &text, Widget 
 
     if ((d->style.font.path != L"") && (d->style.font.size > 0))
     {
-        d->label = Label(text, this, ResourceManager::instance()->loadFont(d->style.font.path, d->style.font.size));
-        d->label.setOrigin(POSITION_X_LEFT, POSITION_Y_TOP);
+        d->label = new Label(text, this, ResourceManager::instance()->loadFont(d->style.font.path, d->style.font.size));
     }
+    else
+    {
+        d->label = new Label(this);
+    }
+    d->label->setOrigin(POSITION_X_LEFT, POSITION_Y_TOP);
     setColor(d->style.color);
     d->sprite = d->normal;
     markToUpdate();
@@ -82,20 +87,21 @@ CheckBox::~CheckBox()
         delete d->hovered;
     if (d->checkedHovered)
         delete d->checkedHovered;
+    delete d->label;
 }
 
 void CheckBox::setColor(int color)
 {
     lock();
     RANGERS_D(CheckBox);
-    d->label.setColor(color);
+    d->label->setColor(color);
     unlock();
 }
 
 int CheckBox::color() const
 {
     RANGERS_D(const CheckBox);
-    return d->label.color();
+    return d->label->color();
 }
 
 void CheckBox::setChecked(bool checked)
@@ -125,7 +131,7 @@ void CheckBox::setText(const std::wstring& text)
 {
     lock();
     RANGERS_D(CheckBox);
-    d->label.setText(text);
+    d->label->setText(text);
     markToUpdate();
     unlock();
 }
@@ -139,7 +145,7 @@ bool CheckBox::checked() const
 std::wstring CheckBox::text() const
 {
     RANGERS_D(const CheckBox);
-    return d->label.text();
+    return d->label->text();
 }
 
 void CheckBox::draw() const
@@ -149,7 +155,7 @@ void CheckBox::draw() const
         return;
     if (d->sprite)
         d->sprite->draw();
-    d->label.draw();
+    d->label->draw();
     endDraw();
 }
 
@@ -162,12 +168,12 @@ void CheckBox::processMain()
 
     if (d->sprite->needUpdate())
         d->sprite->processMain();
-    if (d->label.needUpdate())
-        d->label.processMain();
+    if (d->label->needUpdate())
+        d->label->processMain();
 
-    d->width = d->sprite->width() + d->label.width() + 5;
+    d->width = d->sprite->width() + d->label->width() + 5;
     d->height = d->sprite->height();
-    d->label.setPosition(d->sprite->width() + 5, int(d->sprite->height() - d->label.height()) / 2);
+    d->label->setPosition(d->sprite->width() + 5, int(d->sprite->height() - d->label->height()) / 2);
     unlock();
     Widget::processMain();
 }

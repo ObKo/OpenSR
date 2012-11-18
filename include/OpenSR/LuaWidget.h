@@ -66,9 +66,7 @@ public:
         LuaWidget *m_widget;
     };
 
-private:
-    LuaWidget(const LuaWidget& other);
-    LuaWidget& operator=(const LuaWidget& other);
+    RANGERS_DISABLE_COPY(LuaWidget)
 };
 }
 

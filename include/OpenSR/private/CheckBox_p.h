@@ -38,7 +38,7 @@ public:
     Sprite *hovered;
     Sprite *checkedHovered;
     Sprite *sprite;
-    Label label;
+    Label *label;
     CheckBoxStyle style;
 };
 }

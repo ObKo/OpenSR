@@ -45,7 +45,7 @@ class Engine::EnginePrivate
 public:
     EnginePrivate();
     virtual ~EnginePrivate();
-       
+
     int argc;
     char **argv;
     int height;
@@ -74,17 +74,17 @@ public:
 
     std::list<Plugin *> plugins;
 
-    Node mainNode;
-    Label fpsLabel;
-    ConsoleWidget consoleWidget;
+    Node *mainNode;
+    Label *fpsLabel;
+    ConsoleWidget *consoleWidget;
     boost::shared_ptr<Font> coreFont;
     boost::shared_ptr<Font> monospaceFont;
 
     lua_State *luaConsoleState;
     Skin skin;
-    
+
     Engine *m_q;
-    
+
     void processEvents();
     void processMouseMove(const SDL_MouseMotionEvent& e);
 };

@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2012 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -40,7 +40,6 @@ public:
     Sprite(boost::shared_ptr<Texture> texture, Object *parent = 0, TextureScaling  ts = TEXTURE_NORMAL, SpriteXOrigin xpos = POSITION_X_LEFT, SpriteYOrigin ypos = POSITION_Y_TOP);
     Sprite(const std::wstring& texture, Object *parent = 0, TextureScaling  ts = TEXTURE_NORMAL, SpriteXOrigin xpos = POSITION_X_LEFT, SpriteYOrigin ypos = POSITION_Y_TOP);
     Sprite(const TextureRegion& region, Object *parent = 0);
-    Sprite(const Sprite& other);
 
     virtual ~Sprite();
 
@@ -62,11 +61,10 @@ public:
 
     TextureRegion region() const;
 
-    Sprite& operator=(const Sprite& other); 
-    
 protected:
     Sprite(SpritePrivate &p, Object *parent = 0);
-    Sprite(SpritePrivate &p, const Sprite& other);
+
+    RANGERS_DISABLE_COPY(Sprite)
 };
 }
 

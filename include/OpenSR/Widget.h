@@ -33,7 +33,6 @@ class RANGERS_ENGINE_API Widget: public Object
 public:
     Widget(Widget *parent = 0);
     Widget(float w, float h, Widget *parent = 0);
-    Widget(const Widget& other);
 
     virtual ~Widget();
 
@@ -69,8 +68,6 @@ public:
     void setHeight(int height);
     void setGeometry(int width, int height);
 
-    Widget& operator=(const Widget& other);
-
     void addWidget(Widget *w);
     void removeWidget(Widget *w);
 
@@ -81,7 +78,8 @@ public:
 
 protected:
     Widget(WidgetPrivate &p, Widget *parent = 0);
-    Widget(WidgetPrivate &p, const Widget& other);
+
+    RANGERS_DISABLE_COPY(Widget)
 };
 }
 

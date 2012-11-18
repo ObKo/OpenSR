@@ -31,7 +31,6 @@ class RANGERS_ENGINE_API Object
 public:
     Object(Object *parent = 0);
     Object(const Vector& pos, float rot, int layer = 0, Object *parent = 0);
-    Object(const Object& other);
 
     virtual ~Object();
 
@@ -74,11 +73,8 @@ public:
     Rect mapToGlobal(const Rect& r) const;
     Rect mapToScreen(const Rect& r) const;
 
-    Object& operator=(const Object& other);
-
 protected:
     Object(ObjectPrivate &p, Object *parent = 0);
-    Object(ObjectPrivate &p, const Object& other);
 
     ObjectPrivate *m_d;
 
@@ -87,6 +83,8 @@ protected:
     void lock() const;
     void unlock() const;
     void markToUpdate();
+
+    RANGERS_DISABLE_COPY(Object)
 };
 }
 

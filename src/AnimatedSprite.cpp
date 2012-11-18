@@ -77,46 +77,9 @@ AnimatedSprite::AnimatedSprite(const std::wstring& animation, Object *parent): S
     markToUpdate();
 }
 
-AnimatedSprite::AnimatedSprite(const Rangers::AnimatedSprite& other): Sprite(*(new AnimatedSpritePrivate()), other)
-{
-    RANGERS_D(AnimatedSprite);
-    d->animationTime = other.d_func()->animationTime;
-    d->currentFrame = other.d_func()->currentFrame;
-    d->singleShot = other.d_func()->singleShot;
-    d->animationStarted = other.d_func()->animationStarted;
-    d->frameDuration = other.d_func()->frameDuration;
-}
-
-AnimatedSprite& AnimatedSprite::operator=(const Rangers::AnimatedSprite& other)
-{
-    RANGERS_D(AnimatedSprite);
-    if (this == &other)
-        return *this;
-
-    d->animationTime = other.d_func()->animationTime;
-    d->currentFrame = other.d_func()->currentFrame;
-    d->singleShot = other.d_func()->singleShot;
-    d->animationStarted = other.d_func()->animationStarted;
-    d->currentFrame = other.d_func()->currentFrame;
-    d->frameDuration = other.d_func()->frameDuration;
-
-    Sprite::operator=(other);
-    return *this;
-}
-
 AnimatedSprite::AnimatedSprite(AnimatedSpritePrivate &p, Object *parent): Sprite(p, parent)
 {
     RANGERS_D(AnimatedSprite);
-}
-
-AnimatedSprite::AnimatedSprite(AnimatedSpritePrivate &p, const AnimatedSprite& other): Sprite(p, other)
-{
-    RANGERS_D(AnimatedSprite);
-    d->animationTime = other.d_func()->animationTime;
-    d->currentFrame = other.d_func()->currentFrame;
-    d->singleShot = other.d_func()->singleShot;
-    d->animationStarted = other.d_func()->animationStarted;
-    d->frameDuration = other.d_func()->frameDuration;
 }
 
 void AnimatedSprite::processLogic(int dt)

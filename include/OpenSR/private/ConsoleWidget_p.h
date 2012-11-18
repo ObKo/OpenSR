@@ -39,8 +39,8 @@ public:
 
     ConsoleWidgetPrivate();
 
-    LineEditWidget lineEdit;
-    ColorLabel logLabel;
+    LineEditWidget *lineEdit;
+    ColorLabel *logLabel;
     Vertex *borderVertices;
     GLuint borderBuffer;
     GLuint texture;

@@ -30,18 +30,18 @@ class ConsoleWidget: public Widget
     RANGERS_DECLARE_PRIVATE(ConsoleWidget)
 public:
     ConsoleWidget(float w, float h, Widget* parent = 0);
-    ConsoleWidget(const ConsoleWidget& other);
     ConsoleWidget(Widget *parent = 0);
+
+    virtual ~ConsoleWidget();
 
     virtual void draw() const;
     virtual void processMain();
     virtual void processLogic(int dt);
 
-    ConsoleWidget& operator=(const ConsoleWidget& other);
-
 protected:
     ConsoleWidget(ConsoleWidgetPrivate &p, Widget *parent = 0);
-    ConsoleWidget(ConsoleWidgetPrivate &p, const ConsoleWidget& other);
+
+    RANGERS_DISABLE_COPY(ConsoleWidget)
 };
 }
 

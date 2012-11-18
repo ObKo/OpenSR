@@ -42,7 +42,6 @@ public:
     AnimatedSprite(boost::shared_ptr<AnimatedTexture> texture,  Object *parent = 0);
     //! Create sprite from resource name
     AnimatedSprite(const std::wstring& animation,  Object *parent = 0);
-    AnimatedSprite(const AnimatedSprite& other);
 
     virtual void processLogic(int dt);
     virtual void draw() const;
@@ -70,11 +69,10 @@ public:
     //! Set animation frame rate
     void setFrameRate(float f);
 
-    AnimatedSprite& operator=(const AnimatedSprite& other);
-
 protected:
     AnimatedSprite(AnimatedSpritePrivate &p, Object *parent = 0);
-    AnimatedSprite(AnimatedSpritePrivate &p, const AnimatedSprite& other);
+
+    RANGERS_DISABLE_COPY(AnimatedSprite)
 };
 }
 

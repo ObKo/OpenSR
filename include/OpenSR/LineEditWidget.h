@@ -36,7 +36,6 @@ public:
     LineEditWidget(float w, float h = 0, boost::shared_ptr<Font> font = boost::shared_ptr<Font>(), Widget* parent = 0);
     LineEditWidget(Widget* parent = 0);
     LineEditWidget(const LineEditStyle& style, Widget* parent = 0);
-    LineEditWidget(const LineEditWidget& other);
 
     virtual ~LineEditWidget();
 
@@ -53,11 +52,10 @@ public:
     std::wstring text() const;
     void setText(const std::wstring &s);
 
-    LineEditWidget& operator=(const LineEditWidget& other);
-
 protected:
     LineEditWidget(LineEditWidgetPrivate &p, Widget *parent = 0);
-    LineEditWidget(LineEditWidgetPrivate &p, const LineEditWidget& other);
+
+    RANGERS_DISABLE_COPY(LineEditWidget)
 };
 }
 
