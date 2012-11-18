@@ -20,6 +20,7 @@
 #define RANGERS_WIDGET_H
 
 #include "Object.h"
+#include <list>
 
 namespace Rangers
 {
@@ -63,13 +64,16 @@ public:
     int width() const;
     int height() const;
     bool isFocused() const;
+    bool isVisible() const;
 
     void setWidth(int width);
     void setHeight(int height);
     void setGeometry(int width, int height);
+    void setVisible(bool visible);
 
     void addWidget(Widget *w);
     void removeWidget(Widget *w);
+    std::list<Widget *> childWidgets() const;
 
     void addListener(ActionListener* listener);
     void removeListener(ActionListener* listener);
@@ -78,6 +82,8 @@ public:
 
 protected:
     Widget(WidgetPrivate &p, Widget *parent = 0);
+
+    virtual bool prepareDraw() const;
 
     RANGERS_DISABLE_COPY(Widget)
 };

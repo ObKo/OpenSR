@@ -71,8 +71,8 @@ public:
     void unfocusWidget(Widget *w);
     //! Mark widget to be deleted in main loop.
     void markWidgetDeleting(Widget *w);
-    //! Widget is destructed now.
-    void widgetDestructed(Widget *w);
+    //! Widget will be hidden now.
+    void widgetHide(Widget *w);
 
     //! Current screen height
     int screenHeight() const;

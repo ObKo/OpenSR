@@ -242,29 +242,29 @@ void ConsoleWidget::processMain()
     glBindBuffer(GL_ARRAY_BUFFER, d->borderBuffer);
 
     d->borderVertices = (Vertex *)glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
-    d->borderVertices[0].x = 1;
-    d->borderVertices[0].y = d->height;
+    d->borderVertices[0].x = 0.5f;
+    d->borderVertices[0].y = d->height + 0.5f;
     d->borderVertices[0].u = 0;
     d->borderVertices[0].v = d->height / 4.0f;
-    d->borderVertices[1].x = 1;
-    d->borderVertices[1].y = 1;
+    d->borderVertices[1].x = 0.5f;
+    d->borderVertices[1].y = 0.5f;
     d->borderVertices[1].u = 0;
     d->borderVertices[1].v = 0;
-    d->borderVertices[2].x = d->width - 1;
-    d->borderVertices[2].y = 1;
+    d->borderVertices[2].x = d->width - 0.5f;
+    d->borderVertices[2].y = 0.5f;
     d->borderVertices[2].u = d->width / 4.0f;
     d->borderVertices[2].v = 0;
-    d->borderVertices[3].x = d->width - 1;
-    d->borderVertices[3].y = d->height;
+    d->borderVertices[3].x = d->width - 0.5f;
+    d->borderVertices[3].y = d->height + 0.5f;
     d->borderVertices[3].u = d->width / 4.0f;
     d->borderVertices[3].v = d->height / 4.0f;
 
-    d->borderVertices[4].x = 1;
-    d->borderVertices[4].y = d->height;
-    d->borderVertices[5].x = 1;
-    d->borderVertices[5].y = d->height - d->lineEdit->height() - 1;
-    d->borderVertices[6].x = d->width - 1;
-    d->borderVertices[6].y = d->height - d->lineEdit->height() - 1;
+    d->borderVertices[4].x = 0.5f;
+    d->borderVertices[4].y = d->height + 0.5f;
+    d->borderVertices[5].x = 0.5f;
+    d->borderVertices[5].y = d->height - d->lineEdit->height() - 0.5f;
+    d->borderVertices[6].x = d->width - 0.5f;
+    d->borderVertices[6].y = d->height - d->lineEdit->height() - 0.5f;
 
     glUnmapBuffer(GL_ARRAY_BUFFER);
 

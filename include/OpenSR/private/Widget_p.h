@@ -37,6 +37,7 @@ public:
     int width, height;
     bool leftMouseButtonPressed;
     bool focused;
+    bool visible;
 };
 }
 

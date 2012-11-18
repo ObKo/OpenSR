@@ -78,8 +78,8 @@ protected:
 
     ObjectPrivate *m_d;
 
-    bool prepareDraw() const;
-    void endDraw() const;
+    virtual bool prepareDraw() const;
+    virtual void endDraw() const;
     void lock() const;
     void unlock() const;
     void markToUpdate();

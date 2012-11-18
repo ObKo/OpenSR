@@ -229,31 +229,51 @@ void Engine::addWidget(Widget *w)
 void Engine::removeWidget(Widget *w)
 {
     RANGERS_D(Engine);
-    if (w == d->currentWidget)
-        d->currentWidget = 0;
-    if (w == d->focusedWidget)
-        d->focusedWidget = 0;
+    widgetHide(w);
     d->widgets.remove(w);
     d->mainNode->removeChild(w);
-
-    d->updateMutex.lock();
-    d->updateList.remove(w);
-    d->updateMutex.unlock();
 }
 
-void Engine::widgetDestructed(Widget *w)
+/*!
+ * Tells engine that w will be hidden or destroyed, so engine can remove it from mouse and key handling.
+ */
+
+void Engine::widgetHide(Widget *w)
 {
     if (!engineInstance)
         return;
 
+    if (!w)
+        return;
+
     RANGERS_D(Engine);
-    if (w == d->currentWidget)
-        d->currentWidget = 0;
-    if (w == d->focusedWidget)
-        d->focusedWidget = 0;
-    d->updateMutex.lock();
-    d->updateList.remove(w);
-    d->updateMutex.unlock();
+
+    std::list<Widget*> children = w->childWidgets();
+
+    if (d->currentWidget)
+    {
+        std::list<Widget*>::const_iterator end = children.end();
+        for (std::list<Widget*>::const_iterator i = children.begin(); i != end; ++i)
+        {
+            if ((*i) == d->currentWidget)
+            {
+                d->currentWidget = 0;
+                (*i)->mouseLeave();
+            }
+        }
+    }
+    if (d->focusedWidget)
+    {
+        std::list<Widget*>::const_iterator end = children.end();
+        for (std::list<Widget*>::const_iterator i = children.begin(); i != end; ++i)
+        {
+            if ((*i) == d->focusedWidget)
+            {
+                d->focusedWidget = 0;
+                (*i)->unFocus();
+            }
+        }
+    }
 }
 
 int Engine::logic()
@@ -409,7 +429,7 @@ void Engine::init(int w, int h, bool fullscreen)
     d->fpsLabel->setPosition(5, 5);
 
     d->consoleWidget = new ConsoleWidget(d->width, 168);
-    d->consoleWidget->setPosition(0, -d->consoleWidget->height());
+    //d->consoleWidget->setPosition(0, -d->consoleWidget->height());
     d->luaConsoleState = initLuaState();
     addWidget(d->consoleWidget);
 }
@@ -612,10 +632,7 @@ void Engine::EnginePrivate::processEvents()
             if (event.key.keysym.sym == SDLK_BACKQUOTE)
             {
                 consoleOpenned = !consoleOpenned;
-                if (!consoleOpenned)
-                    consoleWidget->setPosition(0, -consoleWidget->height());
-                else
-                    consoleWidget->setPosition(0, 0);
+                consoleWidget->setVisible(consoleOpenned);
                 continue;
             }
             if (focusedWidget)
@@ -646,7 +663,7 @@ void Engine::EnginePrivate::processMouseMove(const SDL_MouseMotionEvent &e)
     {
         Rect bb = (*i)->mapToGlobal((*i)->getBoundingRect());
         Vector globalMouse = mainNode->mapFromScreen(Vector(e.x, e.y));
-        if (bb.contains(globalMouse))
+        if ((*i)->isVisible() && bb.contains(globalMouse))
         {
             if ((*i) != currentWidget)
             {

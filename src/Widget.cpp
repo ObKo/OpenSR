@@ -33,6 +33,7 @@ WidgetPrivate::WidgetPrivate(): ObjectPrivate()
     height = 0;
     leftMouseButtonPressed = false;
     focused = false;
+    visible = true;
 }
 
 Widget::Widget(Widget *parent): Object(*(new WidgetPrivate()), parent)
@@ -70,7 +71,7 @@ Widget::~Widget()
     if ((wparent = dynamic_cast<Widget*>(d->parent)) != 0)
         wparent->removeWidget(this);
 
-    Engine::instance()->widgetDestructed(this);
+    Engine::instance()->widgetHide(this);
 }
 
 void Widget::mouseMove(const Vector& p)
@@ -80,7 +81,7 @@ void Widget::mouseMove(const Vector& p)
     for (std::list<Widget*>::reverse_iterator i = d->childWidgets.rbegin(); i != d->childWidgets.rend(); ++i)
     {
         Rect bb = (*i)->mapToParent((*i)->getBoundingRect());
-        if (bb.contains(p))
+        if ((*i)->isVisible() && bb.contains(p))
         {
             if ((*i) != d->currentChild)
             {
@@ -223,6 +224,12 @@ void Widget::removeWidget(Widget* w)
     unlock();
 }
 
+std::list<Widget *> Widget::childWidgets() const
+{
+    RANGERS_D(const Widget);
+    return d->childWidgets;
+}
+
 int Widget::height() const
 {
     RANGERS_D(const Widget);
@@ -345,4 +352,25 @@ void Widget::setWidth(int width)
     markToUpdate();
     unlock();
 }
+
+bool Widget::isVisible() const
+{
+    RANGERS_D(const Widget);
+    return d->visible;
+}
+
+void Widget::setVisible(bool visible)
+{
+    RANGERS_D(Widget);
+    d->visible = visible;
+    if (!visible)
+        Engine::instance()->widgetHide(this);
+}
+
+bool Widget::prepareDraw() const
+{
+    RANGERS_D(const Widget);
+    return d->visible && Object::prepareDraw();
+}
+
 }
