@@ -104,9 +104,9 @@ Engine::Engine(int argc, char **argv): m_d(new EnginePrivate())
     d->configPath = (directory(std::wstring(path)) + L"\\OpenSR.ini");
     delete[] path;
 #ifdef _MSC_VER
-    configFile.open(configPath, ios_base::in);
+    configFile.open(d->configPath, ios_base::in);
 #else
-    configFile.open(toLocal(configPath).c_str(), ios_base::in);
+    configFile.open(toLocal(d->configPath).c_str(), ios_base::in);
 #endif
 
 #else
@@ -315,7 +315,7 @@ void Engine::init(int w, int h, bool fullscreen)
 #ifdef WIN32
     if (d->mainDataDir == L"")
     {
-        d->mainDataDir = fromLocal((directory(std::string(argv[0]))).c_str());
+        d->mainDataDir = fromLocal((directory(std::string(d->argv[0]))).c_str());
     }
 #else
     if (d->mainDataDir == L"")
