@@ -252,25 +252,41 @@ void Engine::widgetHide(Widget *w)
 
     if (d->currentWidget)
     {
-        std::list<Widget*>::const_iterator end = children.end();
-        for (std::list<Widget*>::const_iterator i = children.begin(); i != end; ++i)
+        if (w == d->currentWidget)
         {
-            if ((*i) == d->currentWidget)
+            d->currentWidget = 0;
+            w->mouseLeave();
+        }
+        else
+        {
+            std::list<Widget*>::const_iterator end = children.end();
+            for (std::list<Widget*>::const_iterator i = children.begin(); i != end; ++i)
             {
-                d->currentWidget = 0;
-                (*i)->mouseLeave();
+                if ((*i) == d->currentWidget)
+                {
+                    d->currentWidget = 0;
+                    (*i)->mouseLeave();
+                }
             }
         }
     }
     if (d->focusedWidget)
     {
-        std::list<Widget*>::const_iterator end = children.end();
-        for (std::list<Widget*>::const_iterator i = children.begin(); i != end; ++i)
+        if (w == d->focusedWidget)
         {
-            if ((*i) == d->focusedWidget)
+            d->focusedWidget = 0;
+            w->unFocus();
+        }
+        else
+        {
+            std::list<Widget*>::const_iterator end = children.end();
+            for (std::list<Widget*>::const_iterator i = children.begin(); i != end; ++i)
             {
-                d->focusedWidget = 0;
-                (*i)->unFocus();
+                if ((*i) == d->focusedWidget)
+                {
+                    d->focusedWidget = 0;
+                    (*i)->unFocus();
+                }
             }
         }
     }

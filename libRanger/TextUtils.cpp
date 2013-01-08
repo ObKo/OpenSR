@@ -197,17 +197,17 @@ std::string Rangers::toLocal(const std::wstring& text)
 
 std::wstring Rangers::fromLocal(const char *text, int length)
 {
-    const char *codec;
+    std::string codec;
 #ifdef _WIN32
     int cp = GetACP();
     std::ostringstream ss;
     ss << "CP" << cp;
-    codec = ss.str().c_str();
+    codec = ss.str();
 #else
     setlocale(LC_ALL, "");
-    codec = nl_langinfo(CODESET);
+    codec = std::string(nl_langinfo(CODESET));
 #endif
-    return fromCodec(codec, text, length);
+    return fromCodec(codec.c_str(), text, length);
 }
 
 /*!
