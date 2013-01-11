@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2013 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,6 +19,10 @@
 #include "libRanger.h"
 #include <zlib.h>
 #include <cstdlib>
+
+namespace {
+    const uint32_t DEFAULT_ZLIB_CHUNK_SIZE = 256 * 1024;
+}
 
 using namespace Rangers;
 
@@ -122,30 +126,44 @@ unsigned char *Rangers::unpackZL02(const unsigned char * src, size_t srclen, siz
  * \param srclen input data size
  * \return RPKG file item
  */
-RPKGItem Rangers::packZLIB(const char * src, size_t srclen)
+bool Rangers::packRSZL(const char * src, size_t srclen, RPKGItem &item)
 {
-    unsigned long dest_size = compressBound(srclen);
-    unsigned char *data = new unsigned char[dest_size];
+    uint32_t outBufSize = (compressBound(DEFAULT_ZLIB_CHUNK_SIZE) + 8) * (srclen / DEFAULT_ZLIB_CHUNK_SIZE + 1);
+    char* outdata = (char*)malloc(outBufSize);
+    uint32_t pos = 0;
+    int32_t chunkSize;
 
-    if (compress2(data, &dest_size, (const Bytef *)src, srclen, 9))
+    item.packType = *((const uint32_t*)"RSZL");
+    item.size = srclen;
+    item.chunkSize = DEFAULT_ZLIB_CHUNK_SIZE;
+
+    for(int i = 0; i < ((srclen - 1) / DEFAULT_ZLIB_CHUNK_SIZE + 1); i++)
     {
-        RPKGItem result;
-        result.data = 0;
-        result.packSize = 0;
-        result.packType = 0x42494c5a;
-        result.size = 0;
-        delete data;
-        return result;
+        chunkSize = (srclen - i * DEFAULT_ZLIB_CHUNK_SIZE) >= DEFAULT_ZLIB_CHUNK_SIZE ? DEFAULT_ZLIB_CHUNK_SIZE : (srclen - i * DEFAULT_ZLIB_CHUNK_SIZE);
+
+        long unsigned int destSize = outBufSize - pos - 8;
+
+        z_stream zlibStream;
+        zlibStream.next_in = (unsigned char *)(src + i * DEFAULT_ZLIB_CHUNK_SIZE);
+        zlibStream.avail_in = chunkSize;
+        zlibStream.next_out = (unsigned char*)(outdata + pos + 8);
+        zlibStream.avail_out = destSize;
+        zlibStream.zalloc = 0;
+        zlibStream.zfree = 0;
+
+        deflateInit(&zlibStream, Z_DEFAULT_COMPRESSION);
+        deflate(&zlibStream, Z_FINISH);
+        deflateEnd(&zlibStream);
+
+        *((uint32_t*)(outdata + pos)) = *((const uint32_t*)"SZLC");
+        *((uint32_t*)(outdata + pos + 4)) = zlibStream.total_out;
+        pos += zlibStream.total_out + 8;
     }
 
-    data = (unsigned char *)realloc(data, dest_size);
-
-    RPKGItem result;
-    result.data = data;
-    result.packSize = dest_size;
-    result.packType = 0x42494c5a;
-    result.size = srclen;
-    return result;
+    item.packSize = pos;
+    outdata = (char*)realloc(outdata, pos);
+    item.data = (unsigned char*)outdata;
+    return true;
 }
 
 /*!

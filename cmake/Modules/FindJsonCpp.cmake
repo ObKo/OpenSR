@@ -1,10 +1,14 @@
-# - Try to find squish
+# - Try to find jsoncpp
 # Once done this will define 
 # 
-#  JSONCPP_FOUND - system has squish
-#  JSONCPP_INCLUDE_DIR - the squish include directory 
-#  JSONCPP_LIBRARIES - Link these to use squish
+#  JSONCPP_FOUND - system has jsoncpp
+#  JSONCPP_INCLUDE_DIR - the jsoncpp include directory 
+#  JSONCPP_LIBRARIES - link these to use jsoncpp
 # 
+
+IF(JSONCPP_LIBRARIES AND JSONCPP_INCLUDE_DIR)
+  SET(JSONCPP_FIND_QUIETLY TRUE)
+ENDIF(JSONCPP_LIBRARIES AND JSONCPP_INCLUDE_DIR)
 
 FIND_PATH(JSONCPP_INCLUDE_DIR json/json.h
   PATH_SUFFIXES jsoncpp

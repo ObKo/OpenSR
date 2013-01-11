@@ -20,10 +20,11 @@
 #define PKG2RPKG_H
 
 #include <string>
+#include <libRanger.h>
 
 namespace Rangers
 {
-int pkg2rpkg(const std::string& inputFile, const std::string& outputFile);
+int pkg2rpkg(const std::string& inputFile, const std::string& outputFile, Rangers::RPKGCompression compression);
 }
 
 #endif

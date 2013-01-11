@@ -166,13 +166,15 @@ struct HAIAnimation
     unsigned char *frames; //!< Frames data
 };
 
-//! File in RPKG archive
+enum RPKGCompression {RPKG_SEEKABLE_ZLIB, RPKG_SEEKABLE_LZMA, RPKG_NONE};
 
+//! File in RPKG archive
 struct RPKGItem
 {
     uint32_t packType;  //!< Compression type
     uint32_t packSize;  //!< Compressed data size
     uint32_t size;  //!< Uncompressed data size
+    uint32_t chunkSize;
     unsigned char *data; //!< Data
 };
 
@@ -313,8 +315,11 @@ LIBRANGER_API PKGItem *loadPKG(std::istream& stream);
 //! Extract file from PKG archive
 LIBRANGER_API unsigned char *extractFile(PKGItem item, std::istream& pkgfile);
 
-//! Compress data to ZLIB format
-LIBRANGER_API RPKGItem packZLIB(const char * src, size_t srclen);
+
+LIBRANGER_API bool packRSXZ(const char * src, size_t srclen, RPKGItem &item);
+
+//! Compress data to RSZL format
+LIBRANGER_API bool packRSZL(const char * src, size_t srclen, RPKGItem &item);
 //! Uncompress data in ZLIB format
 LIBRANGER_API char *unpackZLIB(RPKGItem item);
 
@@ -326,7 +331,7 @@ LIBRANGER_API char *extractFile(const RPKGEntry& e, std::istream& stream, size_t
 //! Calculate size of RPKG archive header
 LIBRANGER_API uint32_t calculateRPKGHeaderSize(const std::vector<RPKGEntry>& entryList);
 //! Add data to RPKG archive
-LIBRANGER_API void appendRPKGFile(std::ofstream& out, RPKGEntry& e, const char *data, uint32_t size);
+LIBRANGER_API void appendRPKGFile(std::ofstream& out, RPKGEntry& e, const char *data, uint32_t size, RPKGCompression compression);
 //! Write RPKG archive header
 LIBRANGER_API void writeRPKGHeader(std::ofstream& out, const std::vector<RPKGEntry>& entryList);
 

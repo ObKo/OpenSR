@@ -17,6 +17,7 @@
 */
 
 #include "libRanger.h"
+#include <cstdlib>
 
 using namespace Rangers;
 //TODO: Normal error handling
@@ -98,16 +99,30 @@ uint32_t Rangers::calculateRPKGHeaderSize(const std::vector<RPKGEntry>& entryLis
  * \param data input data
  * \param size size of data
  */
-void Rangers::appendRPKGFile(std::ofstream& out, RPKGEntry& e, const char *data, uint32_t size)
+void Rangers::appendRPKGFile(std::ofstream& out, RPKGEntry& e, const char *data, uint32_t size, RPKGCompression compression)
 {
     //out.seekp(0, std::ios::end);
     e.offset = out.tellp();
-    RPKGItem i = packZLIB(data, size);
+    RPKGItem i;
+    if(compression == RPKG_SEEKABLE_ZLIB)
+        packRSZL(data, size, i);
+    else if(compression == RPKG_SEEKABLE_LZMA)
+        packRSXZ(data, size, i);
+    else if(compression == RPKG_NONE)
+    {
+        i.chunkSize = 0;
+	i.packSize = size;
+	i.packType = *((uint32_t*)"NONE");
+	i.size = size;
+	i.data = (unsigned char*)data;
+    }
     out.write((const char *)&i.packType, 4);
-    out.write((const char *)&i.packSize, 4);
     out.write((const char *)&i.size, 4);
+    out.write((const char *)&i.packSize, 4);
+    out.write((const char *)&i.chunkSize, 4);
     out.write((const char *)i.data, i.packSize);
-    delete i.data;
+    if(compression != RPKG_NONE)
+        free(i.data);
 }
 
 /*!

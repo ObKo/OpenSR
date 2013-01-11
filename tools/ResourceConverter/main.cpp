@@ -30,7 +30,8 @@ void showHelp()
 {
     std::cout << "Usage: rangersresconv command [arguments]" << std::endl;
     std::cout << "Commands: " << std::endl;
-    std::cout << "\tpkg2rpkg pkg_file rpkg_file - convert pkg file from original game to rpkg format." << std::endl;
+    std::cout << "\tpkg2rpkg compression pkg_file rpkg_file - convert pkg file from original game to rpkg format." << std::endl;
+    std::cout << "\t\tSupported compressions: NONE ZLIB LZMA" << std::endl;
     std::cout << "\tany2dds type image_file dds_file - create dds texture from image." << std::endl;
     std::cout << "\t\tSupported types: RGB16, RGB24, RGBA, DXT1, DXT3, DXT5" << std::endl;
     std::cout << "\tgai2png gai_file png_file_name - extract gai animation frames to png files." << std::endl;
@@ -52,12 +53,23 @@ int main(int argc, char **argv)
     iluInit();
     if (std::string(argv[1]) == "pkg2rpkg")
     {
-        if (argc < 4)
+        if (argc < 5)
         {
             showHelp();
             return 0;
         }
-        Rangers::pkg2rpkg(argv[2], argv[3]);
+        Rangers::RPKGCompression compression;
+	std::string compStr = argv[2];
+	std::transform(compStr.begin(), compStr.end(), compStr.begin(), toupper);
+	
+	if(compStr == "NONE")
+	    compression = Rangers::RPKG_NONE;
+	else if(compStr == "LZMA")
+	    compression = Rangers::RPKG_SEEKABLE_LZMA;
+	else if(compStr == "ZLIB")
+	    compression = Rangers::RPKG_SEEKABLE_ZLIB;
+        
+        Rangers::pkg2rpkg(argv[3], argv[4], compression);
     }
     else if (std::string(argv[1]) == "any2dds")
     {

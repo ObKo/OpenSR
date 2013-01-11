@@ -54,7 +54,7 @@ void cleanup(PKGItem *root)
     delete[] root->childs;
 }
 
-int pkg2rpkg(const std::string& inputFile, const std::string& outputFile)
+int pkg2rpkg(const std::string& inputFile, const std::string& outputFile, Rangers::RPKGCompression compression)
 {
     ifstream pkgfile(inputFile.c_str(), ios::binary | ios::in);
     std::map<RPKGEntry*, PKGItem*> itemMap;
@@ -87,7 +87,7 @@ int pkg2rpkg(const std::string& inputFile, const std::string& outputFile)
     {
         wcout << files[i].name << endl;
         unsigned char *data = extractFile(pkgfiles[i], pkgfile);
-        appendRPKGFile(outfile, files[i], (const char*)data, pkgfiles[i].size);
+        appendRPKGFile(outfile, files[i], (const char*)data, pkgfiles[i].size, compression);
         delete data;
     }
     outfile.seekp(0, ios_base::beg);
