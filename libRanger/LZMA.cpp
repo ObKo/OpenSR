@@ -20,8 +20,9 @@
 #include <lzma.h>
 #include <cstdlib>
 
-namespace {
-    const uint32_t DEFAULT_LZMA_CHUNK_SIZE = 256 * 1024;
+namespace
+{
+const uint32_t DEFAULT_LZMA_CHUNK_SIZE = 256 * 1024;
 }
 
 //TODO: Normal error handling
@@ -39,7 +40,7 @@ bool packRSXZ(const char * src, size_t srclen, RPKGItem &item)
     item.size = srclen;
     item.chunkSize = DEFAULT_LZMA_CHUNK_SIZE;
 
-    for(int i = 0; i < ((srclen - 1) / DEFAULT_LZMA_CHUNK_SIZE + 1); i++)
+    for (int i = 0; i < ((srclen - 1) / DEFAULT_LZMA_CHUNK_SIZE + 1); i++)
     {
         chunkSize = (srclen - i * DEFAULT_LZMA_CHUNK_SIZE) >= DEFAULT_LZMA_CHUNK_SIZE ? DEFAULT_LZMA_CHUNK_SIZE : (srclen - i * DEFAULT_LZMA_CHUNK_SIZE);
 
@@ -55,7 +56,7 @@ bool packRSXZ(const char * src, size_t srclen, RPKGItem &item)
         lzma_code(&lzmaStream, LZMA_FINISH);
         lzma_end(&lzmaStream);
 
-        *((uint32_t*)(outdata + pos)) = *((const uint32_t*)"SZLC");
+        *((uint32_t*)(outdata + pos)) = *((const uint32_t*)"SXZC");
         *((uint32_t*)(outdata + pos + 4)) = lzmaStream.total_out;
         pos += lzmaStream.total_out + 8;
     }

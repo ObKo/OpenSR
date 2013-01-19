@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2013 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
 #include <list>
 #include <vector>
 #include <fstream>
+#include <boost/shared_ptr.hpp>
 
 #ifdef LIBRANGER_LIBRARY
 #ifdef WIN32
@@ -184,6 +185,7 @@ struct RPKGEntry
 {
     std::wstring name;  //!< File name
     uint32_t offset;  //!< File offset in archive
+    uint32_t size; //!< File size in archive
 };
 
 //! PKG archive item
@@ -302,6 +304,9 @@ LIBRANGER_API GAIAnimation loadGAIAnimation(const char *data, GIFrame *backgroun
 LIBRANGER_API GAIHeader loadGAIHeader(std::istream& stream, size_t &offset);
 //! Load GAI header from memory
 LIBRANGER_API GAIHeader loadGAIHeader(const char *data);
+
+//! Get std::istream of file in package
+LIBRANGER_API boost::shared_ptr<std::istream> getRPKGFileStream(const RPKGEntry& e, boost::shared_ptr<std::istream> stream);
 
 //! Unpack ZL01 - compressed file
 LIBRANGER_API unsigned char *unpackZL01(const unsigned char * src, size_t srclen, size_t& destlen);

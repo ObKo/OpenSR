@@ -45,6 +45,7 @@ std::list<RPKGEntry> Rangers::loadRPKG(std::istream& stream)
         e.name = fromASCII(asciiFileName, fileNameLength);
         delete asciiFileName;
         stream.read((char *)&e.offset, 4);
+        stream.read((char *)&e.size, 4);
         r.push_back(e);
     }
     return r;
@@ -89,7 +90,7 @@ uint32_t Rangers::calculateRPKGHeaderSize(const std::vector<RPKGEntry>& entryLis
 {
     uint32_t result = 0;
     for (std::vector<RPKGEntry>::const_iterator i = entryList.begin(); i != entryList.end(); i++)
-        result += (*i).name.length() + 9;
+        result += (*i).name.length() + 13;
     return result;
 }
 
@@ -104,25 +105,26 @@ void Rangers::appendRPKGFile(std::ofstream& out, RPKGEntry& e, const char *data,
     //out.seekp(0, std::ios::end);
     e.offset = out.tellp();
     RPKGItem i;
-    if(compression == RPKG_SEEKABLE_ZLIB)
+    if (compression == RPKG_SEEKABLE_ZLIB)
         packRSZL(data, size, i);
-    else if(compression == RPKG_SEEKABLE_LZMA)
+    else if (compression == RPKG_SEEKABLE_LZMA)
         packRSXZ(data, size, i);
-    else if(compression == RPKG_NONE)
+    else if (compression == RPKG_NONE)
     {
         i.chunkSize = 0;
-	i.packSize = size;
-	i.packType = *((uint32_t*)"NONE");
-	i.size = size;
-	i.data = (unsigned char*)data;
+        i.packSize = size;
+        i.packType = *((uint32_t*)"NONE");
+        i.size = size;
+        i.data = (unsigned char*)data;
     }
     out.write((const char *)&i.packType, 4);
     out.write((const char *)&i.size, 4);
     out.write((const char *)&i.packSize, 4);
     out.write((const char *)&i.chunkSize, 4);
     out.write((const char *)i.data, i.packSize);
-    if(compression != RPKG_NONE)
+    if (compression != RPKG_NONE)
         free(i.data);
+    e.size = i.packSize;
 }
 
 /*!
@@ -143,5 +145,7 @@ void Rangers::writeRPKGHeader(std::ofstream& out, const std::vector<RPKGEntry>& 
         out.write(ascii.c_str(), l);
         uint32_t offset = (*i).offset;
         out.write((const char *)&offset, 4);
+        uint32_t size = (*i).size;
+        out.write((const char *)&size, 4);
     }
 }

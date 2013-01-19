@@ -119,7 +119,7 @@ Engine::Engine(int argc, char **argv): m_d(new EnginePrivate())
         }
         else
         {
-            d->configPath = fromLocal((std::string(path) + "/.OpenSR/OpenSR.conf").c_str());
+            d->configPath = fromLocal((std::string(path) + "/.config/OpenSR/OpenSR.conf").c_str());
         }
     }
     else
@@ -445,7 +445,7 @@ void Engine::init(int w, int h, bool fullscreen)
     d->fpsLabel->setPosition(5, 5);
 
     d->consoleWidget = new ConsoleWidget(d->width, 168);
-    //d->consoleWidget->setPosition(0, -d->consoleWidget->height());
+    d->consoleWidget->setVisible(false);
     d->luaConsoleState = initLuaState();
     addWidget(d->consoleWidget);
 }
