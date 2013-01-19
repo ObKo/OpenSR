@@ -20,12 +20,13 @@
 #include <zlib.h>
 #include <cstdlib>
 
-namespace {
-    const uint32_t DEFAULT_ZLIB_CHUNK_SIZE = 256 * 1024;
+namespace
+{
+const uint32_t DEFAULT_ZLIB_CHUNK_SIZE = 256 * 1024;
 }
 
-using namespace Rangers;
-
+namespace Rangers
+{
 //TODO: Normal error handling
 
 /*!
@@ -34,7 +35,7 @@ using namespace Rangers;
  * \param destlen output data size
  * \return unpacked data
  */
-unsigned char *Rangers::unpackZL01(const unsigned char * src, size_t srclen, size_t& destlen)
+unsigned char *unpackZL01(const unsigned char * src, size_t srclen, size_t& destlen)
 {
     uint32_t sig = ((uint32_t *)src)[0];
 
@@ -67,7 +68,7 @@ unsigned char *Rangers::unpackZL01(const unsigned char * src, size_t srclen, siz
  * \param srclen input data size
  * \param destlen output data size
  */
-void Rangers::unpackZL02(unsigned char * dst, const unsigned char * src, size_t srclen, size_t& destlen)
+void unpackZL02(unsigned char * dst, const unsigned char * src, size_t srclen, size_t& destlen)
 {
     uint32_t sig = ((uint32_t *)src)[0];
 
@@ -94,7 +95,7 @@ void Rangers::unpackZL02(unsigned char * dst, const unsigned char * src, size_t 
  * \param destlen output data size
  * \return unpacked data
  */
-unsigned char *Rangers::unpackZL02(const unsigned char * src, size_t srclen, size_t& destlen)
+unsigned char *unpackZL02(const unsigned char * src, size_t srclen, size_t& destlen)
 {
     uint32_t sig = ((uint32_t *)src)[0];
 
@@ -126,7 +127,7 @@ unsigned char *Rangers::unpackZL02(const unsigned char * src, size_t srclen, siz
  * \param srclen input data size
  * \return RPKG file item
  */
-bool Rangers::packRSZL(const char * src, size_t srclen, RPKGItem &item)
+bool packRSZL(const char * src, size_t srclen, RPKGItem &item)
 {
     uint32_t outBufSize = (compressBound(DEFAULT_ZLIB_CHUNK_SIZE) + 8) * (srclen / DEFAULT_ZLIB_CHUNK_SIZE + 1);
     char* outdata = (char*)malloc(outBufSize);
@@ -137,7 +138,7 @@ bool Rangers::packRSZL(const char * src, size_t srclen, RPKGItem &item)
     item.size = srclen;
     item.chunkSize = DEFAULT_ZLIB_CHUNK_SIZE;
 
-    for(int i = 0; i < ((srclen - 1) / DEFAULT_ZLIB_CHUNK_SIZE + 1); i++)
+    for (int i = 0; i < ((srclen - 1) / DEFAULT_ZLIB_CHUNK_SIZE + 1); i++)
     {
         chunkSize = (srclen - i * DEFAULT_ZLIB_CHUNK_SIZE) >= DEFAULT_ZLIB_CHUNK_SIZE ? DEFAULT_ZLIB_CHUNK_SIZE : (srclen - i * DEFAULT_ZLIB_CHUNK_SIZE);
 
@@ -170,20 +171,48 @@ bool Rangers::packRSZL(const char * src, size_t srclen, RPKGItem &item)
  * \param item input data
  * \return unpacked data
  */
-char *Rangers::unpackZLIB(RPKGItem item)
+char *unpackRSZL(RPKGItem item)
 {
-    if (item.packType != 0x42494c5a)
+    if (item.packType != *((uint32_t*)"RSZL"))
         return 0;
 
     char *data = new char[item.size];
 
-    unsigned long dest_size = item.size;
+    uint32_t extracted = 0;
+    uint32_t pos = 0;
 
-    if (uncompress((Bytef *)data, &dest_size, (const Bytef *)item.data, item.packSize))
+    while (extracted < item.size)
     {
-        delete data;
-        return 0;
+        unsigned char *p = item.data + pos;
+        uint32_t chunkSig = *((uint32_t*)p);
+        if (chunkSig != *((uint32_t*)"SZLC"))
+        {
+            delete[] data;
+            return 0;
+        }
+        uint32_t chunkSize = *((uint32_t*)(p + 4));
+        z_stream zlibStream;
+        zlibStream.next_in = p + 8;
+        zlibStream.avail_in = chunkSize;
+        zlibStream.next_out = (unsigned char*)(data + extracted);
+        zlibStream.avail_out = item.size - extracted;
+        zlibStream.zalloc = 0;
+        zlibStream.zfree = 0;
+
+        inflateInit(&zlibStream);
+        inflate(&zlibStream, Z_FINISH);
+
+        if (zlibStream.avail_in != 0)
+        {
+            delete[] data;
+            return 0;
+        }
+
+        inflateEnd(&zlibStream);
+        extracted = item.size - zlibStream.avail_out;
+        pos += chunkSize + 8;
     }
 
     return data;
+}
 }

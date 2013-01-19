@@ -462,6 +462,7 @@ lua_State *initLuaState()
 
         luabind::class_<ResourceManager>("ResourceManager")
         .def("addDir", &ResourceManager::addDir)
+        .def("addRPKG", &ResourceManager::addRPKG)
         .def("addMapping", &ResourceManager::addMapping)
         .def("loadTexture", &ResourceManager::loadTexture)
         .def("loadAnimation", (boost::shared_ptr<Rangers::AnimatedTexture> (ResourceManager::*)(const std::wstring&, bool))&ResourceManager::loadAnimation)

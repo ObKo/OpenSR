@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 - 2012 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2013 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 #include "config.h"
 #include <list>
 #include <string>
+#include <boost/shared_ptr.hpp>
 
 namespace Rangers
 {
@@ -32,6 +33,7 @@ public:
 
     virtual std::list<std::wstring> getFiles() const = 0;
     virtual char *loadData(const std::wstring& name, size_t& size) = 0;
+    virtual boost::shared_ptr<std::istream> getStream(const std::wstring& name) = 0;
 };
 }
 

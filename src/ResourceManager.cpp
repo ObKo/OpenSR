@@ -437,6 +437,23 @@ char* ResourceManager::loadData(const std::wstring& name, size_t &size)
     return fileIt->second->loadData(realName, size);
 }
 
+
+boost::shared_ptr<std::istream> ResourceManager::getFileStream(const std::wstring& name)
+{
+    wstring realName = name;
+    map<wstring, wstring>::iterator mapIt = m_fileMapping.find(name);
+    if (mapIt != m_fileMapping.end())
+        realName = mapIt->second;
+
+    std::map<std::wstring, boost::shared_ptr<ResourceAdapter> >::iterator fileIt = m_files.find(realName);
+    if (fileIt == m_files.end())
+    {
+        Log::error() << "No such file: " << realName;
+        return boost::shared_ptr<std::istream>();
+    }
+    return fileIt->second->getStream(name);
+}
+
 void ResourceManager::processGAIQueue()
 {
     std::list<boost::shared_ptr<AnimatedTexture> > animationsToRemove;

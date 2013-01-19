@@ -18,6 +18,7 @@
 
 #include "libRanger.h"
 #include <cstdlib>
+#include <cstring>
 
 using namespace Rangers;
 //TODO: Normal error handling
@@ -62,24 +63,31 @@ char *Rangers::extractFile(const RPKGEntry& e, std::istream& stream, size_t &siz
     stream.seekg(e.offset, std::ios_base::beg);
     RPKGItem item;
     stream.read((char *)&item.packType, 4);
-    if (item.packType != 0x42494c5a)
-        return 0;
-    stream.read((char *)&item.packSize, 4);
     stream.read((char *)&item.size, 4);
+    stream.read((char *)&item.packSize, 4);
+    stream.read((char *)&item.chunkSize, 4);
     item.data = new unsigned char[item.packSize];
     stream.read((char *)item.data, item.packSize);
-    switch (item.packType)
+
+    char *d = 0;
+
+    if (item.packType == *((uint32_t*)"RSZL"))
+        d = unpackRSZL(item);
+    else if (item.packType == *((uint32_t*)"RSXZ"))
+        d = unpackRSXZ(item);
+    else if (item.packType == *((uint32_t*)"NONE"))
     {
-    case 0x42494c5a:
-        char *d = unpackZLIB(item);
-        if (d != 0)
-            size = item.size;
-        else
-            size = 0;
-        delete item.data;
-        return d;
-        break;
+        d = new char[item.size];
+        memcpy(d, item.data, item.size);
     }
+
+    if (d != 0)
+        size = item.size;
+    else
+        size = 0;
+    delete item.data;
+
+    return d;
 }
 
 /*!

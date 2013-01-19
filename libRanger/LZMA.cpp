@@ -67,4 +67,47 @@ bool packRSXZ(const char * src, size_t srclen, RPKGItem &item)
     return true;
 }
 
+char *unpackRSXZ(RPKGItem item)
+{
+    if (item.packType != *((uint32_t*)"RSXZ"))
+        return 0;
+
+    char *data = new char[item.size];
+
+    uint32_t extracted = 0;
+    uint32_t pos = 0;
+
+    while (extracted < item.size)
+    {
+        unsigned char *p = item.data + pos;
+        uint32_t chunkSig = *((uint32_t*)p);
+        if (chunkSig != *((uint32_t*)"SXZC"))
+        {
+            delete[] data;
+            return 0;
+        }
+        uint32_t chunkSize = *((uint32_t*)(p + 4));
+        lzma_stream lzmaStream = LZMA_STREAM_INIT;
+        lzmaStream.next_in = p + 8;
+        lzmaStream.avail_in = chunkSize;
+        lzmaStream.next_out = (unsigned char*)(data + extracted);
+        lzmaStream.avail_out = item.size - extracted;
+
+        lzma_auto_decoder(&lzmaStream, 1 << 24, LZMA_CHECK_CRC32);
+        lzma_code(&lzmaStream, LZMA_FINISH);
+
+        if (lzmaStream.avail_in != 0)
+        {
+            delete[] data;
+            return 0;
+        }
+        lzma_end(&lzmaStream);
+
+        extracted = item.size - lzmaStream.avail_out;
+        pos += chunkSize + 8;
+    }
+
+    return data;
+}
+
 }

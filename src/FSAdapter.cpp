@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2013 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -126,12 +126,13 @@ void FSAdapter::scan(const string& path)
 }
 #endif
 
+//FIXME: std::wstring to std::ifstream constructor
 char* FSAdapter::loadData(const std::wstring& name, size_t& size)
 {
     ifstream s(toLocal(m_dirPath + name).c_str(), ios::in | ios::binary);
     if (!s.is_open())
     {
-        Log::error() << "Cannot load file from FS: " << fromLocal(strerror(errno));
+        Log::error() << "Cannot load " << name << " file from FS: " << fromLocal(strerror(errno));
         size = 0;
         return 0;
     }
@@ -142,6 +143,18 @@ char* FSAdapter::loadData(const std::wstring& name, size_t& size)
     s.read(data, size);
     s.close();
     return data;
+}
+
+boost::shared_ptr<std::istream> FSAdapter::getStream(const std::wstring& name)
+{
+    ifstream *s = new ifstream(toLocal(m_dirPath + name).c_str(), ios::in | ios::binary);
+    if (!s->is_open())
+    {
+        Log::error() << "Cannot open file " << name << " from FS: " << fromLocal(strerror(errno));
+        delete s;
+        return boost::shared_ptr<std::istream>();
+    }
+    return boost::shared_ptr<std::istream>(s);
 }
 
 FSAdapter::~FSAdapter()

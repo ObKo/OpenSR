@@ -322,11 +322,12 @@ LIBRANGER_API unsigned char *extractFile(PKGItem item, std::istream& pkgfile);
 
 
 LIBRANGER_API bool packRSXZ(const char * src, size_t srclen, RPKGItem &item);
+LIBRANGER_API char *unpackRSXZ(RPKGItem item);
 
 //! Compress data to RSZL format
 LIBRANGER_API bool packRSZL(const char * src, size_t srclen, RPKGItem &item);
 //! Uncompress data in ZLIB format
-LIBRANGER_API char *unpackZLIB(RPKGItem item);
+LIBRANGER_API char *unpackRSZL(RPKGItem item);
 
 //! Load file descriptions from RPKG archive
 LIBRANGER_API std::list<RPKGEntry> loadRPKG(std::istream& stream);

@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2013 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -27,12 +27,13 @@ using namespace std;
 
 namespace Rangers
 {
+//FIXME: Pass std::wstring to std::ifstream constructor
 void RPKGAdapter::load(const wstring& fileName)
 {
     rpkgArchive.open(toLocal(fileName).c_str(), ios::binary | ios::in);
     if (!rpkgArchive.is_open())
     {
-        Log::error() << "Cannot RPKG archive " << fileName << ": " << fromLocal(strerror(errno));
+        Log::error() << "Cannot load RPKG archive " << fileName << ": " << fromLocal(strerror(errno));
         return;
     }
     std::list<RPKGEntry> l = loadRPKG(rpkgArchive);
@@ -40,7 +41,8 @@ void RPKGAdapter::load(const wstring& fileName)
     for (std::list<RPKGEntry>::const_iterator i = l.begin(); i != l.end(); i++)
         files[i->name] = *i;
 
-    Log::error() << "Loaded " << files.size() << " files from RPKG archive " << fileName;
+    Log::info() << "Loaded " << files.size() << " files from RPKG archive " << fileName;
+    m_fileName = fileName;
 }
 
 RPKGAdapter::~RPKGAdapter()
@@ -62,9 +64,23 @@ char* RPKGAdapter::loadData(const wstring& name, size_t& size)
 {
     if (files.find(name) == files.end())
     {
-        Log::error() << "No such file " << name;
+        Log::error() << "No such file in RPKG archive: " << name;
         return 0;
     }
-    return extractFile(files[name], rpkgArchive, size);
+    char *data = extractFile(files[name], rpkgArchive, size);
+    if (!data)
+        Log::error() << "Cannot extract file " << name << " from RPKG archive " << m_fileName;
+    return data;
+}
+
+boost::shared_ptr<std::istream> RPKGAdapter::getStream(const std::wstring& name)
+{
+    if (files.find(name) == files.end())
+    {
+        Log::error() << "No such file in RPKG archive: " << name;
+        return boost::shared_ptr<std::istream>();
+    }
+    RPKGEntry e = files[name];
+    return boost::shared_ptr<std::istream>(getRPKGFileStream(e, boost::shared_ptr<std::istream>(new std::ifstream(toLocal(m_fileName).c_str(), ios::binary | ios::in))));
 }
 }
