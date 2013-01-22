@@ -35,6 +35,8 @@ SET(SOURCES
     SoundManager.cpp
     Sound.cpp
     Plugin.cpp
+    Shader.cpp
+    ShaderProgram.cpp
 )
 
 SET(HEADERS

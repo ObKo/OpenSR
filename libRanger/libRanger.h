@@ -389,6 +389,8 @@ LIBRANGER_API std::string directory(const std::string& s);
 LIBRANGER_API bool createDirPath(const std::wstring& path);
 //! Check directory writable
 LIBRANGER_API bool checkDirWritable(const std::wstring& path);
+//! Check file/directory exists
+LIBRANGER_API bool fileExists(const std::wstring& path);
 
 LIBRANGER_API PNGFrame loadPNG(const char *buffer, size_t bufferSize);
 LIBRANGER_API PNGFrame loadPNG(std::istream &stream);

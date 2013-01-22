@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 - 2012 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2013 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -703,22 +703,51 @@ Node* Engine::rootNode()
     return d->mainNode;
 }
 
-void Engine::loadPlugin(const std::wstring& path)
+void Engine::loadPlugin(const std::wstring& pluginName)
 {
     RANGERS_D(Engine);
 
-    std::wstring realPath = path;
+    std::wstring name = basename(pluginName);
 
-    if (suffix(realPath).empty())
+    std::wstring pluginPath = fromUTF8(d->properties->get<std::string>("data.pluginPath", "").c_str());
+    std::vector<std::wstring> searchPaths = split(pluginPath, L':');
+    std::wstring searchSuffix;
+
 #ifdef WIN32
-        realPath += L".dll";
+    searchSuffix += L".dll";
 #elif __APPLE__
-        realPath += L".dylib";
+    searchSuffix += L".dylib";
 #else
-        realPath += L".so";
+    searchSuffix += L".so";
 #endif
 
-    Plugin *p = new Plugin(realPath);
+    std::vector<std::wstring> searchNames;
+    searchNames.push_back(name + searchSuffix);
+    searchNames.push_back(L"lib" + name + searchSuffix);
+
+    std::vector<std::wstring>::const_iterator end = searchPaths.end();
+    for (std::vector<std::wstring>::const_iterator i = searchPaths.begin(); i != end; ++i)
+    {
+        searchNames.push_back((*i) + L"/" + name + searchSuffix);
+        searchNames.push_back((*i) + L"/" + L"lib" + name + searchSuffix);
+    }
+
+    Log::debug() << "Plugin \"" << pluginName << "\" search names:";
+    end = searchNames.end();
+    for (std::vector<std::wstring>::const_iterator i = searchNames.begin(); i != end; ++i)
+        Log::debug() << "\t" << (*i);
+
+    std::wstring realName;
+    end = searchNames.end();
+    for (std::vector<std::wstring>::const_iterator i = searchNames.begin(); i != end; ++i)
+    {
+        if (fileExists(*i))
+        {
+            realName = *i;
+            break;
+        }
+    }
+    Plugin *p = new Plugin(realName);
     if (p->load())
     {
         delete p;

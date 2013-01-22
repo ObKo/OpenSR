@@ -82,4 +82,22 @@ bool checkDirWritable(const std::wstring& path)
     return true;
 }
 
+bool fileExists(const std::wstring& path)
+{
+#ifdef WIN32
+    DWORD fileAttr;
+    fileAttr = GetFileAttributes(path.c_str());
+    if (fileAttr == INVALID_FILE_ATTRIBUTES && (GetLastError() == ERROR_FILE_NOT_FOUND || GetLastError() == ERROR_PATH_NOT_FOUND))
+        return false;
+    else
+        return true;
+#else
+    struct stat fileStat;
+    int result = stat(toLocal(path).c_str(), &fileStat);
+    if (result && errno == ENOENT)
+        return false;
+    else
+        return true;
+#endif
+}
 }
