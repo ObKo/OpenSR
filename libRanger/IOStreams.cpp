@@ -217,6 +217,7 @@ public:
             }
             seekDelta = m_pos + seekDelta;
             m_pos = 0;
+            seekFromChunkStart = true;
         }
         else if (seekDelta < 0)
         {

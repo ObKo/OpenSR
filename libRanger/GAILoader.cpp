@@ -42,12 +42,11 @@ void copyImageData(unsigned char *bufdes, int destwidth, int x, int y, int w, in
  * \param offset offset in file
  * \return GAI animation
  */
-GAIAnimation Rangers::loadGAIAnimation(std::istream& stream, size_t &offset, GIFrame *background)
+GAIAnimation Rangers::loadGAIAnimation(std::istream& stream, GIFrame *background)
 {
     GAIHeader header;
 
-    stream.seekg(offset, ios_base::beg);
-    stream.read((char *)&header, 48);
+    stream.read((char *)&header, sizeof(GAIHeader) - sizeof(char*));
 
     int width = header.finishX - header.startX;
     int height = header.finishY - header.startY;
@@ -58,14 +57,16 @@ GAIAnimation Rangers::loadGAIAnimation(std::istream& stream, size_t &offset, GIF
 
     for (int i = 0; i < header.frameCount; i++)
     {
+        if (i == 6)
+            i = 6;
         uint32_t giSeek , giSize;
-        stream.seekg(offset + sizeof(GAIHeader) - sizeof(GIFrame *) + i * 2 * sizeof(uint32_t), ios_base::beg);
+        stream.seekg(sizeof(GAIHeader) - sizeof(GIFrame *) + i * 2 * sizeof(uint32_t), ios_base::beg);
         stream.read((char*)&giSeek, sizeof(uint32_t));
         stream.read((char*)&giSize, sizeof(uint32_t));
 
         if (giSeek && giSize)
         {
-            size_t giOffset = offset + giSeek;
+            size_t giOffset = giSeek;
             uint32_t signature;
             stream.seekg(giOffset, ios_base::beg);
             stream.read((char*)&signature, sizeof(uint32_t));
@@ -106,8 +107,6 @@ GAIAnimation Rangers::loadGAIAnimation(std::istream& stream, size_t &offset, GIF
 
         delta += giSize + 2 * sizeof(uint32_t);
     }
-
-    offset += delta;
 
     GAIAnimation result;
     result.frameCount = header.frameCount;
@@ -205,10 +204,9 @@ GAIHeader Rangers::loadGAIHeader(const char *data)
     return *((GAIHeader *)data);
 }
 
-GAIHeader Rangers::loadGAIHeader(std::istream& stream, size_t &offset)
+GAIHeader Rangers::loadGAIHeader(std::istream& stream)
 {
     GAIHeader header;
-    stream.seekg(offset, ios_base::beg);
     stream.read((char *)&header, 48);
     return header;
 }

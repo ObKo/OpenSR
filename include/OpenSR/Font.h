@@ -30,7 +30,6 @@ class Texture;
 class RANGERS_ENGINE_API Font
 {
 public:
-    Font(const std::wstring& path, int size, bool antialiased = true);
     Font(const char *data, size_t dataSize, int size, bool antialiased = true);
     ~Font();
 

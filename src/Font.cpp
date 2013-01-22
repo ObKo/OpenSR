@@ -30,13 +30,6 @@ namespace Rangers
 {
 extern FT_Library trueTypeLibrary;
 
-Font::Font(const std::wstring& path, int size, bool antialiased):
-    m_antialiased(antialiased), m_fontSize(size), m_fontData(0)
-{
-    FT_New_Face(trueTypeLibrary, toLocal(path).c_str(), 0, &m_fontFace);
-    FT_Set_Pixel_Sizes(m_fontFace, 0, size);
-}
-
 Font::Font(const char* data, size_t dataSize, int size, bool antialiased):
     m_antialiased(antialiased), m_fontSize(size), m_fontData(0)
 {

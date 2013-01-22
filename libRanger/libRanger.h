@@ -297,11 +297,11 @@ LIBRANGER_API GIFrame loadGIFile(std::istream& stream);
 LIBRANGER_API GIFrame loadGIFile(const char *data);
 
 //! Load GAI animation file
-LIBRANGER_API GAIAnimation loadGAIAnimation(std::istream& stream, size_t &offset, GIFrame *background = 0);
+LIBRANGER_API GAIAnimation loadGAIAnimation(std::istream& stream, GIFrame *background = 0);
 //! Load GAI animation from memory
 LIBRANGER_API GAIAnimation loadGAIAnimation(const char *data, GIFrame *background = 0);
 //! Load GAI header from file
-LIBRANGER_API GAIHeader loadGAIHeader(std::istream& stream, size_t &offset);
+LIBRANGER_API GAIHeader loadGAIHeader(std::istream& stream);
 //! Load GAI header from memory
 LIBRANGER_API GAIHeader loadGAIHeader(const char *data);
 
@@ -391,6 +391,7 @@ LIBRANGER_API bool createDirPath(const std::wstring& path);
 LIBRANGER_API bool checkDirWritable(const std::wstring& path);
 
 LIBRANGER_API PNGFrame loadPNG(const char *buffer, size_t bufferSize);
+LIBRANGER_API PNGFrame loadPNG(std::istream &stream);
 }
 
 #endif

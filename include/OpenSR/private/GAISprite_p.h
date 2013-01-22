@@ -44,7 +44,7 @@ public:
 
     void drawFrame(int i);
     void loadGIFrame5(const char *data, unsigned char *background, int startX, int startY, int finishX, int finishY);
-    void loadGAI(const char *data, int size, const GIFrame& baseFrame);
+    void loadGAI(boost::shared_ptr<std::istream> stream, const GIFrame& frame);
 };
 }
 

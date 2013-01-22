@@ -159,6 +159,31 @@ NinePatchDescriptor JSONHelper::parseNinePatch(const std::string& json, bool &er
     return parseNinePatch(*root.get("NinePatch", 0).begin(), error);
 }
 
+NinePatchDescriptor JSONHelper::parseNinePatch(std::istream& json, bool &error)
+{
+    error = false;
+    NinePatchDescriptor result;
+    result.rows = 0;
+    result.columns = 0;
+    Json::Reader reader;
+    Json::Value root;
+    if (!reader.parse(json, root))
+    {
+        Log::error() << "Error parsing JSON: " << reader.getFormatedErrorMessages();
+        error = true;
+        return result;
+    }
+    Json::Value::Members members = root.getMemberNames();
+    if (std::find(members.begin(), members.end(), "NinePatch") == members.end())
+    {
+        Log::error() << "Invalid NinePatch JSON";
+        error = true;
+        return result;
+    }
+
+    return parseNinePatch(*root.get("NinePatch", 0).begin(), error);
+}
+
 std::map<std::wstring, ResourceDescriptor> JSONHelper::parseResources(const Json::Value& object, bool &error)
 {
     std::map<std::wstring, ResourceDescriptor> result;
@@ -263,18 +288,10 @@ std::map<std::wstring, ResourceDescriptor> JSONHelper::parseResources(const Json
     return result;
 }
 
-Skin JSONHelper::parseSkin(const std::string& json, bool &error)
+
+Skin JSONHelper::parseSkin(const Json::Value& root, bool &error)
 {
-    error = false;
     Skin skin;
-    Json::Reader reader;
-    Json::Value root;
-    if (!reader.parse(json, root))
-    {
-        Log::error() << "Error parsing JSON: " << reader.getFormatedErrorMessages();
-        error = true;
-        return Skin();
-    }
     std::map<std::wstring, ResourceDescriptor> resources = parseResources(root, error);
     Json::Value::Members members = root.getMemberNames();
     if (std::find(members.begin(), members.end(), "ScrollBarStyle") != members.end())
@@ -311,6 +328,40 @@ Skin JSONHelper::parseSkin(const std::string& json, bool &error)
         skin.checkBoxStyle = parseCheckBoxStyle(style, resources, error);
     }
     return skin;
+}
+
+Skin JSONHelper::parseSkin(const std::string& json, bool &error)
+{
+    error = false;
+    Json::Reader reader;
+    Json::Value root;
+    if (!reader.parse(json, root))
+    {
+        Log::error() << "Error parsing JSON: " << reader.getFormatedErrorMessages();
+        error = true;
+        return Skin();
+    }
+    Skin s = parseSkin(root, error);
+    if (error)
+        return Skin();
+    return s;
+}
+
+Skin JSONHelper::parseSkin(std::istream& json, bool &error)
+{
+    error = false;
+    Json::Reader reader;
+    Json::Value root;
+    if (!reader.parse(json, root))
+    {
+        Log::error() << "Error parsing JSON: " << reader.getFormatedErrorMessages();
+        error = true;
+        return Skin();
+    }
+    Skin s = parseSkin(root, error);
+    if (error)
+        return Skin();
+    return s;
 }
 
 ButtonStyle JSONHelper::parseButtonStyle(const Json::Value& object, const std::map< std::wstring, ResourceDescriptor >& resources, bool& error)

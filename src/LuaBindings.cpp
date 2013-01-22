@@ -192,8 +192,6 @@ lua_State *initLuaState()
         .def_readwrite("width", &Rect::width),
 
         luabind::class_<Font>("Font")
-        .def(luabind::constructor<const std::wstring&, int>())
-        .def(luabind::constructor<const std::wstring&, int, bool>())
         .def("renderText", (boost::shared_ptr<Texture> (Font::*)(const std::wstring&, int) const)&Font::renderText)
         .def("renderColoredText", (boost::shared_ptr<Texture> (Font::* const)(const std::wstring&, int, int) const)&Font::renderColoredText)
         .def("size", &Font::size)

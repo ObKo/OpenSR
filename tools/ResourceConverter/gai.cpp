@@ -29,9 +29,7 @@ namespace Rangers
 int extractGAI2PNG(const std::string& gaiFile, const std::string& outName)
 {
     std::ifstream gaiStream(gaiFile.c_str(), std::ios_base::in | std::ios_base::binary);
-    size_t offset = 0;
-    GAIHeader header = loadGAIHeader(gaiStream, offset);
-    offset = 0;
+    GAIHeader header = loadGAIHeader(gaiStream);
     GIFrame *bg = 0;
     if (header.haveBackground)
     {
@@ -40,7 +38,7 @@ int extractGAI2PNG(const std::string& gaiFile, const std::string& outName)
         *bg = loadGIFile(bgStream);
         bgStream.close();
     }
-    GAIAnimation gai = loadGAIAnimation(gaiStream, offset, bg);
+    GAIAnimation gai = loadGAIAnimation(gaiStream,  bg);
     gaiStream.close();
 
     ILuint *frames = new ILuint[gai.frameCount];
@@ -64,9 +62,7 @@ int extractGAI2PNG(const std::string& gaiFile, const std::string& outName)
 int gai2dds(const std::string& gaiFile, const std::string& ddsFile, DDSType compression)
 {
     std::ifstream gaiStream(gaiFile.c_str(), std::ios_base::in | std::ios_base::binary);
-    size_t offset = 0;
-    GAIHeader header = loadGAIHeader(gaiStream, offset);
-    offset = 0;
+    GAIHeader header = loadGAIHeader(gaiStream);
     GIFrame *bg = 0;
     if (header.haveBackground)
     {
@@ -75,7 +71,7 @@ int gai2dds(const std::string& gaiFile, const std::string& ddsFile, DDSType comp
         *bg = loadGIFile(bgStream);
         bgStream.close();
     }
-    GAIAnimation gai = loadGAIAnimation(gaiStream, offset, bg);
+    GAIAnimation gai = loadGAIAnimation(gaiStream, bg);
     gaiStream.close();
 
     DDSHeader ddsHeader;

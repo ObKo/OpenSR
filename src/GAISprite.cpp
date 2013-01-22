@@ -40,13 +40,6 @@ GAISprite::GAISprite(Object *parent): AnimatedSprite(*(new GAISpritePrivate()), 
 {
 }
 
-GAISprite::GAISprite(const char *data, int size, const GIFrame& baseFrame, Object *parent): AnimatedSprite(*(new GAISpritePrivate()), parent)
-{
-    RANGERS_D(GAISprite);
-    d->loadGAI(data, size, baseFrame);
-    markToUpdate();
-}
-
 GAISprite::GAISprite(const std::wstring& name, Object *parent): AnimatedSprite(*(new GAISpritePrivate()), parent)
 {
     RANGERS_D(GAISprite);
@@ -56,12 +49,12 @@ GAISprite::GAISprite(const std::wstring& name, Object *parent): AnimatedSprite(*
     if (sfx == L"gai")
     {
         size_t s;
-        char *data = ResourceManager::instance()->loadData(name, s);
-        char *bgFrameData = 0;
+        boost::shared_ptr<std::istream> stream = ResourceManager::instance()->getFileStream(name);
 
-        if (data)
+        if (stream)
         {
-            GAIHeader header = loadGAIHeader(data);
+            GAIHeader header = loadGAIHeader(*stream);
+            (*stream).seekg(0, std::ios_base::beg);
 
             if (!header.haveBackground)
             {
@@ -70,16 +63,14 @@ GAISprite::GAISprite(const std::wstring& name, Object *parent): AnimatedSprite(*
             else
             {
                 size_t size;
-                bgFrameData = ResourceManager::instance()->loadData(directory(name) + basename(name) + L".gi", size);
-                if (bgFrameData)
+                boost::shared_ptr<std::istream> bgFrameStream = ResourceManager::instance()->getFileStream(directory(name) + basename(name) + L".gi");
+                if (bgFrameStream)
                 {
-                    GIFrame bgFrame = loadGIFile(bgFrameData);
-                    delete[] bgFrameData;
-                    d->loadGAI(data, s, bgFrame);
+                    GIFrame bgFrame = loadGIFile(*bgFrameStream);
+                    d->loadGAI(stream, bgFrame);
                     delete[] bgFrame.data;
                 }
             }
-            delete[] data;
         }
     }
     else
@@ -234,10 +225,10 @@ void GAISprite::setFrame(int f)
     Log::warning() << "Cannot set frame on GAISprite";
 }
 
-void GAISpritePrivate::loadGAI(const char * data, int size, const GIFrame& frame)
+void GAISpritePrivate::loadGAI(boost::shared_ptr<std::istream> stream, const GIFrame& frame)
 {
     RANGERS_Q(GAISprite);
-    gaiHeader = loadGAIHeader(data);
+    gaiHeader = loadGAIHeader(*stream);
 
     unsigned char *baseFrameData = new unsigned char[frame.width * frame.height * 4];
     memcpy(baseFrameData, frame.data, frame.width * frame.height * 4);
@@ -259,27 +250,27 @@ void GAISpritePrivate::loadGAI(const char * data, int size, const GIFrame& frame
         for (int i = 0; i < gaiHeader.frameCount; i++)
         {
             uint32_t giSeek , giSize;
-            const char *p = data + sizeof(GAIHeader) - sizeof(GIFrame *) + i * 2 * sizeof(uint32_t);
-            giSeek = *((uint32_t *)p);
-            p += sizeof(uint32_t);
-            giSize = *((uint32_t *)p);
-            p += sizeof(uint32_t);
+            (*stream).seekg(sizeof(GAIHeader) - sizeof(GIFrame *) + i * 2 * sizeof(uint32_t), std::ios_base::beg);
+            (*stream).read((char *)&giSeek, 4);
+            (*stream).read((char *)&giSize, 4);
 
             if (giSeek && giSize)
             {
                 uint32_t signature;
-                p = data + giSeek;
-                signature = *((uint32_t *)p);
+                char *data = new char[giSize];
+
+                (*stream).seekg(giSeek, std::ios_base::beg);
+                (*stream).read(data, giSize);
+                signature = *((uint32_t*)data);
 
                 if (signature == 0x31304c5a)
                 {
                     size_t outsize;
-                    gaiFrames.push_back(boost::shared_array<char>((char*)unpackZL01((const unsigned char*)p, giSize, outsize)));
+                    gaiFrames.push_back(boost::shared_array<char>((char*)unpackZL01((const unsigned char*)data, giSize, outsize)));
+                    delete[] data;
                 }
                 else
                 {
-                    char *data = new char[giSize];
-                    memcpy(data, p, giSize);
                     gaiFrames.push_back(boost::shared_array<char>(data));
                 }
             }

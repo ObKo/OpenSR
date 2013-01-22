@@ -31,19 +31,23 @@ class RANGERS_ENGINE_API JSONHelper
 public:
     static TextureRegion parseTextureRegion(const Json::Value& object, bool &error);
     static NinePatchDescriptor parseNinePatch(const Json::Value& object, bool &error);
-    static NinePatchDescriptor parseNinePatch(const std::string& json, bool &error);
     static FontDescriptor parseFont(const Json::Value& object, bool &error);
     static std::map<std::wstring, ResourceDescriptor> parseResources(const Json::Value& object, bool &error);
     static ButtonStyle parseButtonStyle(const Json::Value& object, const std::map<std::wstring, ResourceDescriptor>& resources, bool &error);
     static LineEditStyle parseLineEditStyle(const Json::Value& object, const std::map< std::wstring, ResourceDescriptor >& resources, bool& error);
     static CheckBoxStyle parseCheckBoxStyle(const Json::Value& object, const std::map< std::wstring, ResourceDescriptor >& resources, bool& error);
     static std::wstring parseSound(const Json::Value& object, bool &error);
+
+    static NinePatchDescriptor parseNinePatch(const std::string& json, bool &error);
+    static NinePatchDescriptor parseNinePatch(std::istream& json, bool &error);
     static Skin parseSkin(const std::string& json, bool &error);
+    static Skin parseSkin(std::istream& json, bool &error);
 
 private:
     static ResourceDescriptor getResource(const std::string& name, const std::map<std::wstring, ResourceDescriptor>& resources, bool &error);
     static int parseColor(const std::string& string, bool &error);
     static Rect parseRect(const Json::Value& object, bool &error);
+    static Skin parseSkin(const Json::Value& root, bool &error);
 };
 }
 

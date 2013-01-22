@@ -59,11 +59,11 @@ NinePatch::NinePatch(const std::wstring& name, Object *parent): Sprite(*(new Nin
     if (s == L"9.json")
     {
         size_t dataSize;
-        char *jsonData = ResourceManager::instance()->loadData(name, dataSize);
-        if (jsonData)
+        boost::shared_ptr<std::istream> json = ResourceManager::instance()->getFileStream(name);
+        if (json)
         {
             bool parseError = false;
-            d->descriptor = JSONHelper::parseNinePatch(std::string(jsonData, dataSize), parseError);
+            d->descriptor = JSONHelper::parseNinePatch(*json, parseError);
             for (int i = 0; i < d->descriptor.columns; i++)
                 d->width += d->descriptor.regions[i].texture->width() * (d->descriptor.regions[i].u2 - d->descriptor.regions[i].u1);
             for (int i = 0; i < d->descriptor.rows; i++)

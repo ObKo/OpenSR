@@ -627,12 +627,11 @@ void Engine::setDefaultSkin(const Skin& skin)
 void Engine::setDefaultSkin(const std::wstring& skinPath)
 {
     RANGERS_D(Engine);
-    size_t size;
-    char *json = ResourceManager::instance()->loadData(skinPath, size);
+    boost::shared_ptr<std::istream> json = ResourceManager::instance()->getFileStream(skinPath);
     if (!json)
         return;
     bool error;
-    d->skin = JSONHelper::parseSkin(std::string(json, size), error);
+    d->skin = JSONHelper::parseSkin(*json, error);
 }
 
 void Engine::EnginePrivate::processEvents()

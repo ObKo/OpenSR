@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2013 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ ResourceManager *manager = 0;
 class ResourceManager::GAIWorker
 {
 public:
-    GAIWorker(char *gaiData, char *bgData);
+    GAIWorker(boost::shared_ptr<std::istream> gai, boost::shared_ptr<std::istream> bg);
     ~GAIWorker();
     void run();
 
@@ -53,8 +53,8 @@ public:
     static void loadAnimation(GAIWorker *worker);
 
 private:
-    char *m_gaiData;
-    char *m_bgFrameData;
+    boost::shared_ptr<std::istream> m_gai;
+    boost::shared_ptr<std::istream> m_bgFrame;
     GAIAnimation m_animation;
     boost::thread *m_thread;
     bool m_loaded;
@@ -80,12 +80,11 @@ void ResourceManager::addRPKG(const std::wstring& path)
 void ResourceManager::addMapping(const std::wstring& fileName)
 {
     size_t fileSize;
-    char *data = loadData(fileName, fileSize);
-    if (!fileSize || !data)
+    boost::shared_ptr<std::istream> s = getFileStream(fileName);
+    if (!s)
         return;
-    string stringData = string(data, fileSize);
-    istringstream iss(stringData, istringstream::in);
-    delete[] data;
+
+    istream& iss = *s;
     char lineBuffer[1024];
     int i = 1;
     while (!iss.fail() && !iss.bad() && !iss.eof())
@@ -135,12 +134,10 @@ boost::shared_ptr<Texture> ResourceManager::loadTexture(const std::wstring& name
     transform(sfx.begin(), sfx.end(), sfx.begin(), towlower);
     if (sfx == L"gi")
     {
-        size_t s;
-        char *data = loadData(name, s);
-        if (!data)
+        boost::shared_ptr<std::istream> s = getFileStream(name);
+        if (!s)
             return boost::shared_ptr<Texture>();
-        GIFrame frame = loadGIFile(data);
-        delete[] data;
+        GIFrame frame = loadGIFile(*s);
         Texture *t = new Texture(frame.width, frame.height, Rangers::TEXTURE_B8G8R8A8, frame.data);
         delete[] frame.data;
         m_textures[name] = boost::shared_ptr<Texture>(t);
@@ -148,12 +145,10 @@ boost::shared_ptr<Texture> ResourceManager::loadTexture(const std::wstring& name
     }
     else if (sfx == L"png")
     {
-        size_t s;
-        char *data = loadData(name, s);
-        if (!data)
+        boost::shared_ptr<std::istream> stream = getFileStream(name);
+        if (!stream)
             return boost::shared_ptr<Texture>();
-        PNGFrame frame = loadPNG(data, s);
-        delete[] data;
+        PNGFrame frame = loadPNG(*stream);
         if (frame.type == PNG_INVALID)
         {
             Log::warning() << "Invalid/unsupported PNG file";
@@ -178,26 +173,32 @@ boost::shared_ptr<Texture> ResourceManager::loadTexture(const std::wstring& name
         m_textures[name] = boost::shared_ptr<Texture>(t);
         return m_textures[name];
     }
-    else if (sfx == L"dds")
+    /*else if (sfx == L"dds")
     {
-        size_t size;
-        char *data = loadData(name, size);
-        if (!data)
+        //size_t size;
+        //char *data = loadData(name, size);
+        //if (!data)
+        //    return boost::shared_ptr<Texture>();
+        boost::shared_ptr<std::istream> stream = getFileStream(name);
+    if (!stream)
             return boost::shared_ptr<Texture>();
-        if (*(uint32_t*)(data) != 0x20534444)
+
+        uint32_t signature;
+    (*stream).read((char*)&signature, 4);
+
+        if (signature != 0x20534444)
         {
-            Log::error() << "Invalid dds file.";
-            delete[] data;
+            Log::error() << "Invalid dds file";
             return boost::shared_ptr<Texture>();
         }
-        DDSHeader header = *((DDSHeader*)(data + 4));
-        int imageSize = size - sizeof(DDSHeader) - 4;
-        char *image = data + sizeof(DDSHeader) + 4;
+        DDSHeader header;
+        (*stream).read((char*)&header, sizeof(DDSHeader));
+        //int imageSize = size - sizeof(DDSHeader) - 4;
+        //char *image = data + sizeof(DDSHeader) + 4;
 
         if (!((header.flags & DDSD_CAPS) && (header.caps & DDSCAPS_TEXTURE)))
         {
             Log::warning() << "Unsupported DDS file";
-            delete[] data;
             return boost::shared_ptr<Texture>();
         }
 
@@ -262,7 +263,7 @@ boost::shared_ptr<Texture> ResourceManager::loadTexture(const std::wstring& name
             m_textures[name] = boost::shared_ptr<Texture>(t);;
             return m_textures[name];
         }
-    }
+    }*/
     else
         Log::error() << "Unknown texture format: " << sfx;
 
@@ -279,19 +280,19 @@ boost::shared_ptr<AnimatedTexture> ResourceManager::loadAnimation(const std::wst
     transform(sfx.begin(), sfx.end(), sfx.begin(), towlower);
     if (sfx == L"gai")
     {
-        size_t s;
-        char *data = loadData(name, s);
-        if (!data)
+        boost::shared_ptr<std::istream> s = getFileStream(name);
+        if (!s)
             return boost::shared_ptr<AnimatedTexture>();
 
-        char *bgFrameData = 0;
-        GAIHeader header = loadGAIHeader(data);
+        boost::shared_ptr<std::istream> bgFrameStream;
+        GAIHeader header = loadGAIHeader(*s);
+
+        s->seekg(0, ios_base::beg);
 
         if (header.haveBackground)
         {
-            size_t size;
-            bgFrameData = loadData(directory(name) + basename(name) + L".gi", size);
-            if (!bgFrameData)
+            bgFrameStream = getFileStream(directory(name) + basename(name) + L".gi");
+            if (!bgFrameStream)
                 return boost::shared_ptr<AnimatedTexture>();
         }
 
@@ -303,19 +304,19 @@ boost::shared_ptr<AnimatedTexture> ResourceManager::loadAnimation(const std::wst
                     header.frameCount);
 
             m_animations[name] = boost::shared_ptr<AnimatedTexture>(t);
-            GAIWorker *worker = new GAIWorker(data, bgFrameData);
+            GAIWorker *worker = new GAIWorker(s, bgFrameStream);
             m_gaiQueue[m_animations[name]] = worker;
             worker->run();
         }
         else
         {
-            GAIWorker worker(data, bgFrameData);
+            GAIWorker worker(s, bgFrameStream);
             worker.loadAnimation(&worker);
             m_animations[name] = boost::shared_ptr<AnimatedTexture>(new AnimatedTexture(worker.animation()));
         }
         return m_animations[name];
     }
-    else if (sfx == L"dds")
+    /*else if (sfx == L"dds")
     {
         size_t s;
         char *data = loadData(name, s);
@@ -376,7 +377,7 @@ boost::shared_ptr<AnimatedTexture> ResourceManager::loadAnimation(const std::wst
         }
         return boost::shared_ptr<AnimatedTexture>(t);
         delete data;
-    }
+    }*/
     else
         Log::error() << "Unknown animation format: " << sfx;
 
@@ -399,10 +400,16 @@ boost::shared_ptr< Font > ResourceManager::loadFont(const std::wstring& name, in
 
     if (sfx == L"ttf")
     {
-        size_t dataSize;
-        char *data = loadData(name, dataSize);
-        if (!data)
+        boost::shared_ptr<std::istream> s = getFileStream(name);
+        if (!s)
             return boost::shared_ptr<Font>();
+
+        s->seekg(0, std::ios_base::end);
+        uint32_t dataSize = s->tellg();
+        s->seekg(0, std::ios_base::beg);
+
+        char *data = new char[dataSize];
+        s->read(data, dataSize);
 
         Font *f = new Font(data, dataSize, size, antialiased);
         delete[] data;
@@ -423,18 +430,20 @@ void ResourceManager::processMain()
 
 char* ResourceManager::loadData(const std::wstring& name, size_t &size)
 {
-    wstring realName = name;
-    map<wstring, wstring>::iterator mapIt = m_fileMapping.find(name);
-    if (mapIt != m_fileMapping.end())
-        realName = mapIt->second;
-
-    std::map<std::wstring, boost::shared_ptr<ResourceAdapter> >::iterator fileIt = m_files.find(realName);
-    if (fileIt == m_files.end())
-    {
-        Log::error() << "No such file: " << realName;
+    boost::shared_ptr<std::istream> s = ResourceManager::instance()->getFileStream(name);
+    if (!s)
         return 0;
-    }
-    return fileIt->second->loadData(realName, size);
+
+    s->seekg(0, std::ios_base::end);
+    size = s->tellg();
+    if (!size)
+        return 0;
+
+    char *data = new char[size];
+    s->seekg(0, std::ios_base::beg);
+    s->read(data, size);
+
+    return data;
 }
 
 
@@ -451,7 +460,7 @@ boost::shared_ptr<std::istream> ResourceManager::getFileStream(const std::wstrin
         Log::error() << "No such file: " << realName;
         return boost::shared_ptr<std::istream>();
     }
-    return fileIt->second->getStream(name);
+    return fileIt->second->getStream(realName);
 }
 
 void ResourceManager::processGAIQueue()
@@ -526,10 +535,10 @@ void ResourceManager::cleanupUnused()
     }
 }
 
-ResourceManager::GAIWorker::GAIWorker(char* gaiData, char* bgData)
+ResourceManager::GAIWorker::GAIWorker(boost::shared_ptr<std::istream> gai, boost::shared_ptr<std::istream> bg)
 {
-    m_bgFrameData = bgData;
-    m_gaiData = gaiData;
+    m_bgFrame = bg;
+    m_gai = gai;
     m_loaded = false;
     m_thread = 0;
 }
@@ -542,16 +551,13 @@ void ResourceManager::GAIWorker::run()
 void ResourceManager::GAIWorker::loadAnimation(GAIWorker *w)
 {
     GIFrame *bg = 0;
-    if (w->m_bgFrameData)
+    if (w->m_bgFrame)
     {
         bg = new GIFrame();
-        (*bg) = loadGIFile(w->m_bgFrameData);
-        delete w->m_bgFrameData;
+        (*bg) = loadGIFile(*(w->m_bgFrame));
     }
 
-    w->m_animation = loadGAIAnimation(w->m_gaiData, bg);
-    delete[] w->m_gaiData;
-
+    w->m_animation = loadGAIAnimation(*(w->m_gai), bg);
     w->m_loaded = true;
 }
 

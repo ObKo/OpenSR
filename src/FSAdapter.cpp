@@ -127,24 +127,6 @@ void FSAdapter::scan(const string& path)
 #endif
 
 //FIXME: std::wstring to std::ifstream constructor
-char* FSAdapter::loadData(const std::wstring& name, size_t& size)
-{
-    ifstream s(toLocal(m_dirPath + name).c_str(), ios::in | ios::binary);
-    if (!s.is_open())
-    {
-        Log::error() << "Cannot load " << name << " file from FS: " << fromLocal(strerror(errno));
-        size = 0;
-        return 0;
-    }
-    s.seekg(0, ios_base::end);
-    size = s.tellg();
-    s.seekg(0, ios_base::beg);
-    char *data = new char[size];
-    s.read(data, size);
-    s.close();
-    return data;
-}
-
 boost::shared_ptr<std::istream> FSAdapter::getStream(const std::wstring& name)
 {
     ifstream *s = new ifstream(toLocal(m_dirPath + name).c_str(), ios::in | ios::binary);

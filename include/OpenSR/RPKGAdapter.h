@@ -34,7 +34,6 @@ public:
     ~RPKGAdapter();
 
     std::list<std::wstring> getFiles() const;
-    char* loadData(const std::wstring& name, size_t& size);
     boost::shared_ptr<std::istream> getStream(const std::wstring& name);
 
 private:

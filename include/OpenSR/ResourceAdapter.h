@@ -32,7 +32,6 @@ public:
     virtual ~ResourceAdapter();
 
     virtual std::list<std::wstring> getFiles() const = 0;
-    virtual char *loadData(const std::wstring& name, size_t& size) = 0;
     virtual boost::shared_ptr<std::istream> getStream(const std::wstring& name) = 0;
 };
 }

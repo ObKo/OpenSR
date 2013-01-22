@@ -60,19 +60,6 @@ list<wstring> RPKGAdapter::getFiles() const
     return result;
 }
 
-char* RPKGAdapter::loadData(const wstring& name, size_t& size)
-{
-    if (files.find(name) == files.end())
-    {
-        Log::error() << "No such file in RPKG archive: " << name;
-        return 0;
-    }
-    char *data = extractFile(files[name], rpkgArchive, size);
-    if (!data)
-        Log::error() << "Cannot extract file " << name << " from RPKG archive " << m_fileName;
-    return data;
-}
-
 boost::shared_ptr<std::istream> RPKGAdapter::getStream(const std::wstring& name)
 {
     if (files.find(name) == files.end())
