@@ -57,9 +57,7 @@ GAIAnimation Rangers::loadGAIAnimation(std::istream& stream, GIFrame *background
 
     for (int i = 0; i < header.frameCount; i++)
     {
-        if (i == 6)
-            i = 6;
-        uint32_t giSeek , giSize;
+        uint32_t giSeek, giSize;
         stream.seekg(sizeof(GAIHeader) - sizeof(GIFrame *) + i * 2 * sizeof(uint32_t), ios_base::beg);
         stream.read((char*)&giSeek, sizeof(uint32_t));
         stream.read((char*)&giSize, sizeof(uint32_t));

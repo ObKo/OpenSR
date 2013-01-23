@@ -22,33 +22,65 @@
 
 namespace Rangers
 {
-Shader::Shader(ShaderType type, const std::string& shaderSource): m_handle(0), m_compiled(false), m_type(type)
+Shader::Shader(ShaderType type): m_handle(0), m_compiled(false), m_type(type), m_invalid(true)
 {
-    switch (type)
-    {
-    case VERTEX_SHADER:
-        m_handle = glCreateShader(GL_VERTEX_SHADER);
-        break;
+}
 
-    case FRAGMENT_SHADER:
-        m_handle = glCreateShader(GL_FRAGMENT_SHADER);
-        break;
-    }
-    setSource(shaderSource);
+Shader::Shader(ShaderType type, const std::string& shaderSource): m_handle(0), m_compiled(false),
+    m_type(type), m_invalid(false), m_source(shaderSource)
+{
+}
+
+Shader::~Shader()
+{
+    if (m_handle != 0)
+        glDeleteShader(m_handle);
 }
 
 bool Shader::compile()
 {
+    if (m_invalid)
+        return false;
     if (m_compiled)
         return true;
+
+    if (m_handle == 0)
+    {
+        switch (m_type)
+        {
+        case VERTEX_SHADER:
+            m_handle = glCreateShader(GL_VERTEX_SHADER);
+            break;
+
+        case FRAGMENT_SHADER:
+            m_handle = glCreateShader(GL_FRAGMENT_SHADER);
+            break;
+        }
+        if (m_handle == 0)
+        {
+            Log::error() << "Cannot create OpenGL shader";
+            m_invalid = true;
+            return false;
+        }
+    }
+    const char *str = m_source.c_str();
+    glShaderSource(m_handle, 1, &str, 0);
 
     glCompileShader(m_handle);
     GLint compiled;
     glGetShaderiv(m_handle, GL_COMPILE_STATUS, &compiled);
     //TODO: Error log
-    if (!compiled)
+    if (compiled == GL_FALSE)
     {
-        Log::debug() << "Cannot compile shader";
+        int logLength;
+        char *log;
+        glGetShaderiv(m_handle, GL_INFO_LOG_LENGTH, &logLength);
+        log = new char[logLength];
+        glGetShaderInfoLog(m_handle, logLength, 0, log);
+        Log::error() << "Cannot compile shader:\n" << log;
+        delete[] log;
+
+        m_invalid = true;
         return false;
     }
 
@@ -61,11 +93,17 @@ void Shader::setSource(const std::string& shaderSource)
     const char *str = shaderSource.c_str();
     glShaderSource(m_handle, 1, &str, 0);
     m_compiled = false;
+    m_invalid = false;
 }
 
 bool Shader::isCompiled() const
 {
     return m_compiled;
+}
+
+bool Shader::isInvalid() const
+{
+    return m_invalid;
 }
 
 Shader::ShaderType Shader::type() const

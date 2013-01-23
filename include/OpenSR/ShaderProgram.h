@@ -20,6 +20,7 @@
 #define RANGERS_SHADERPROGRAM_H
 
 #include "Types.h"
+#include <map>
 
 namespace Rangers
 {
@@ -28,19 +29,24 @@ class ShaderProgram
 {
 public:
     ShaderProgram();
+    virtual ~ShaderProgram();
 
     //! Add shader to shader program
     void addShader(Shader& shader);
     //! Link shader program
     bool link();
 
+    GLint getUniformLocation(const std::string &name) const;
+
     bool isLinked() const;
+    bool isInvalid() const;
 
     //! OpenGL shader program handle
     GLuint handle() const;
 
 private:
     bool m_linked;
+    bool m_invalid;
     GLuint m_handle;
 };
 }

@@ -20,11 +20,13 @@
 #define WORLD_SYSTEMWIDGET_H
 
 #include <OpenSR/Widget.h>
+
 namespace Rangers
 {
 class Sprite;
 namespace World
 {
+class SystemPlanetWidget;
 class SolarSystem;
 class SystemWidget: public Widget
 {
@@ -47,6 +49,7 @@ private:
     enum MoveDirection {NONE, LEFT, RIGHT, TOP, BOTTOM, TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT};
 
     boost::shared_ptr<SolarSystem> m_system;
+    std::list<SystemPlanetWidget*> m_planetWidgets;
 
     Sprite *m_bgSprite;
     Sprite *m_starSprite;

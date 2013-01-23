@@ -23,6 +23,7 @@ SET(WORLD_SOURCES
     SpaceBase.cpp
     SpaceObject.cpp
     SystemObject.cpp
+    SystemPlanetWidget.cpp
     Tank.cpp
     Types.cpp
     Weapon.cpp

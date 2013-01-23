@@ -17,6 +17,7 @@
 */
 
 #include "SystemWidget.h"
+#include "SystemPlanetWidget.h"
 #include <OpenSR/AnimatedSprite.h>
 #include <OpenSR/Sprite.h>
 #include <OpenSR/Engine.h>
@@ -46,6 +47,11 @@ void SystemWidget::processLogic(int dt)
 {
     Widget::processLogic(dt);
     m_starSprite->processLogic(dt);
+
+    std::list<SystemPlanetWidget*>::const_iterator end = m_planetWidgets.end();
+    for (std::list<SystemPlanetWidget*>::const_iterator i = m_planetWidgets.begin(); i != end; ++i)
+        (*i)->processLogic(dt);
+
     switch (m_moveDirection)
     {
     case TOP:
@@ -95,6 +101,13 @@ void SystemWidget::setSystem(boost::shared_ptr< SolarSystem > system)
 
     if (!m_system)
         return;
+
+    for (int i = 0; i < 100; i++)
+    {
+        SystemPlanetWidget *w = new SystemPlanetWidget(boost::shared_ptr<Planet>(), this);
+        w->setPosition((i / 10) * 200, (i % 10) * 200);
+        m_planetWidgets.push_back(w);
+    }
 
     m_starSprite = new AnimatedSprite(L"DATA/Star/Star00.gai");
     m_starSprite->setPosition(-m_starSprite->width() / 2, -m_starSprite->height() / 2);
@@ -157,6 +170,10 @@ void SystemWidget::draw() const
     glTranslatef(width() / 2.0f + m_xOffset, height() / 2.0f + m_yOffset, 0);
 
     m_starSprite->draw();
+
+    std::list<SystemPlanetWidget*>::const_iterator end = m_planetWidgets.end();
+    for (std::list<SystemPlanetWidget*>::const_iterator i = m_planetWidgets.begin(); i != end; ++i)
+        (*i)->draw();
 
     glPopMatrix();
 

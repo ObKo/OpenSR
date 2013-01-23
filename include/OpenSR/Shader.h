@@ -28,8 +28,10 @@ class Shader
 public:
     enum ShaderType {VERTEX_SHADER, FRAGMENT_SHADER};
 
+    Shader(ShaderType type);
     //! Create shader from source
     Shader(ShaderType type, const std::string& shaderSource);
+    virtual ~Shader();
 
     //! Set shader source code
     void setSource(const std::string& shaderSource);
@@ -38,6 +40,8 @@ public:
 
     //! Returns true if shader was compiled.
     bool isCompiled() const;
+    //! Returns true if shader cannot be compiled.
+    bool isInvalid() const;
     //! Shader type
     ShaderType type() const;
     //! OpenGL shader handle
@@ -45,6 +49,8 @@ public:
 
 private:
     GLuint m_handle;
+    std::string m_source;
+    bool m_invalid;
     bool m_compiled;
     ShaderType m_type;
 };
