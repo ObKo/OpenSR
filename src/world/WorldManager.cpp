@@ -61,6 +61,7 @@ void WorldManager::generateWorld()
 {
     boost::shared_ptr<SolarSystem> system = boost::static_pointer_cast<SolarSystem>(addObject(new SolarSystem()));
     boost::shared_ptr<DesertPlanet> planet = boost::static_pointer_cast<DesertPlanet>(addObject(new DesertPlanet()));
+    boost::shared_ptr<DesertPlanet> sPlanet = boost::static_pointer_cast<DesertPlanet>(addObject(new DesertPlanet()));
     boost::shared_ptr<HabitablePlanet> hPlanet = boost::static_pointer_cast<HabitablePlanet>(addObject(new HabitablePlanet()));
 
     system->setName("Test system");
@@ -81,11 +82,18 @@ void WorldManager::generateWorld()
     hPlanet->setPopulation(1000000);
     hPlanet->setStyle(textHash32(L"earth"));
 
+    sPlanet->setOrbit(800.0f);
+    sPlanet->setRadius(100.0f);
+    sPlanet->setName("Saturn");
+    sPlanet->setPosition(Point(0.0f, 800.0f));
+    sPlanet->setStyle(textHash32(L"saturn"));
+
     m_currentSystem = system;
     m_solarSystems.push_back(system);
 
     system->addObject(planet);
     system->addObject(hPlanet);
+    system->addObject(sPlanet);
 }
 
 std::list<boost::shared_ptr<SolarSystem> > WorldManager::solarSystems() const

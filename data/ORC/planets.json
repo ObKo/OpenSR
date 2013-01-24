@@ -57,8 +57,8 @@
       "hasRingBackground" : true,
       "ring" : "DATA/PlanetRing/2r21_0_1.gi",
       "ringBackground" : "DATA/PlanetRing/2r21_0_2.gi",
-      "ringBgOffsetX" : 9.0,
-      "ringBgOffsetY" : -116.0,
+      "ringBgOffsetX" : 10.0,
+      "ringBgOffsetY" : -115.5,
       "size" : 214,
       "speed" : 20.0,
       "texture" : "ORC/Planet2/Solar/Saturn.png"

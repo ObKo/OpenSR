@@ -46,6 +46,8 @@ private:
 
     boost::shared_ptr<Texture> m_texture;
     boost::shared_ptr<Texture> m_cloud;
+    boost::shared_ptr<Texture> m_ring;
+    boost::shared_ptr<Texture> m_ringBackground;
     uint32_t m_ambientColor;
     float m_speed;
     float m_cloudSpeed;
@@ -55,8 +57,15 @@ private:
     float m_solarAngle;
     bool m_hasCloud;
     bool m_useShader;
+    bool m_hasRing;
+    bool m_hasRingBackground;
 
     GLuint m_vertexBuffer;
+    GLuint m_ringVertexBuffer;
+    GLuint m_ringBgVertexBuffer;
+
+    Vector m_ringOffset;
+    Vector m_ringBgOffset;
 
     static Shader m_vertexShader;
     static Shader m_fragmentShader;

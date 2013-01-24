@@ -20,6 +20,7 @@
 #include "SystemPlanetWidget.h"
 #include "SolarSystem.h"
 #include "Planet.h"
+#include <cmath>
 #include <OpenSR/AnimatedSprite.h>
 #include <OpenSR/Sprite.h>
 #include <OpenSR/Engine.h>
@@ -176,7 +177,7 @@ void SystemWidget::draw() const
     m_bgSprite->draw();
 
     glPushMatrix();
-    glTranslatef(width() / 2.0f + m_xOffset, height() / 2.0f + m_yOffset, 0);
+    glTranslatef(floor(width() / 2.0f + m_xOffset), floor(height() / 2.0f + m_yOffset), 0);
 
     m_starSprite->draw();
 
