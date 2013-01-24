@@ -33,5 +33,18 @@ Point::Point()
     x = 0.0f;
     y = 0.0f;
 }
+
+PlanetStyle::PlanetStyle()
+{
+    hasCloud = false;
+    speed = 0.0f;
+    cloudSpeed = 0.0f;
+    hasRing = false;
+    hasRingBackground = false;
+    ringOffsetX = 0.0f;
+    ringOffsetY = 0.0f;
+    ringBgOffsetX = 0.0f;
+    ringBgOffsetY = 0.0f;
+}
 }
 }

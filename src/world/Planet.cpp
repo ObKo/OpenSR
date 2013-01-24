@@ -34,6 +34,7 @@ bool Planet::deserialize(std::istream& stream)
 
     stream.read((char *)&m_radius, sizeof(float));
     stream.read((char *)&m_orbit, sizeof(float));
+    stream.read((char *)&m_style, sizeof(uint32_t));
 
     return true;
 }
@@ -55,6 +56,7 @@ bool Planet::serialize(std::ostream& stream) const
 
     stream.write((const char *)&m_radius, sizeof(float));
     stream.write((const char *)&m_orbit, sizeof(float));
+    stream.write((const char *)&m_style, sizeof(uint32_t));
 
     return true;
 }
@@ -72,6 +74,16 @@ void Planet::setRadius(float radius)
 void Planet::setOrbit(float orbit)
 {
     m_orbit = orbit;
+}
+
+void Planet::setStyle(uint32_t style)
+{
+    m_style = style;
+}
+
+uint32_t Planet::style() const
+{
+    return m_style;
 }
 }
 }

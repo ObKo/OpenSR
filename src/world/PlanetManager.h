@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2012 - 2013 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2013 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,42 +16,34 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WORLD_TYPES_H
-#define WORLD_TYPES_H
 
-#include <string>
+#ifndef WORLD_PLANETMANAGER_H
+#define WORLD_PLANETMANAGER_H
+
+#include <map>
+#include <boost/shared_ptr.hpp>
+#include <stdint.h>
 
 namespace Rangers
 {
 namespace World
 {
-struct Point
+struct PlanetStyle;
+class PlanetManager
 {
-    Point(float _x, float _y);
-    Point();
+public:
+    static PlanetManager& instance();
 
-    float x;
-    float y;
-};
-struct PlanetStyle
-{
-    PlanetStyle();
+    boost::shared_ptr<PlanetStyle> style(const std::wstring& name);
+    boost::shared_ptr<PlanetStyle> style(uint32_t id);
 
-    std::wstring id;
-    std::wstring texture;
-    std::wstring cloud;
-    bool hasCloud;
-    float speed;
-    float cloudSpeed;
-    std::wstring ring;
-    std::wstring ringBackground;
-    bool hasRing;
-    bool hasRingBackground;
-    int ambientColor;
-    float ringOffsetX, ringOffsetY;
-    float ringBgOffsetX, ringBgOffsetY;
+    void loadStyles(const std::wstring& styleFile);
+
+private:
+    PlanetManager();
+    std::map<uint32_t, boost::shared_ptr<PlanetStyle> > m_styles;
 };
 }
 }
 
-#endif
+#endif // WORLD_PLANETMANAGER_H

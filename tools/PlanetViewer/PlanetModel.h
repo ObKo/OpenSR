@@ -26,6 +26,8 @@
 
 struct Planet
 {
+    Planet();
+
     QString id;
     QString texture;
     QString cloud;
@@ -38,6 +40,8 @@ struct Planet
     bool hasRing;
     bool hasRingBackground;
     QColor ambientColor;
+    float ringOffsetX, ringOffsetY;
+    float ringBgOffsetX, ringBgOffsetY;
 };
 
 class PlanetModel: public QAbstractListModel

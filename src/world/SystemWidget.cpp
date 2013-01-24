@@ -18,6 +18,8 @@
 
 #include "SystemWidget.h"
 #include "SystemPlanetWidget.h"
+#include "SolarSystem.h"
+#include "Planet.h"
 #include <OpenSR/AnimatedSprite.h>
 #include <OpenSR/Sprite.h>
 #include <OpenSR/Engine.h>
@@ -102,11 +104,18 @@ void SystemWidget::setSystem(boost::shared_ptr< SolarSystem > system)
     if (!m_system)
         return;
 
-    for (int i = 0; i < 100; i++)
+    std::list<boost::shared_ptr<SystemObject> > objects = system->systemObjects();
+
+    std::list<boost::shared_ptr<SystemObject> >::const_iterator end = objects.end();
+    for (std::list<boost::shared_ptr<SystemObject> >::const_iterator i = objects.begin(); i != end; ++i)
     {
-        SystemPlanetWidget *w = new SystemPlanetWidget(boost::shared_ptr<Planet>(), this);
-        w->setPosition((i / 10) * 200, (i % 10) * 200);
-        m_planetWidgets.push_back(w);
+        boost::shared_ptr<Planet> planet = boost::dynamic_pointer_cast<Planet>(*i);
+        if (planet)
+        {
+            SystemPlanetWidget *w = new SystemPlanetWidget(planet, this);
+            w->setPosition(planet->position().x, planet->position().y);
+            m_planetWidgets.push_back(w);
+        }
     }
 
     m_starSprite = new AnimatedSprite(L"DATA/Star/Star00.gai");

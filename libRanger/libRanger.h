@@ -385,6 +385,11 @@ LIBRANGER_API std::string basename(const std::string& s);
 //! Get file dir
 LIBRANGER_API std::string directory(const std::string& s);
 
+//! Calculate 32-bit FNV-1a hash of string
+LIBRANGER_API uint32_t textHash32(const std::string& s);
+//! Calculate 32-bit FNV-1a hash of string
+LIBRANGER_API uint32_t textHash32(const std::wstring& s);
+
 //! Create directory path
 LIBRANGER_API bool createDirPath(const std::wstring& path);
 //! Check directory writable

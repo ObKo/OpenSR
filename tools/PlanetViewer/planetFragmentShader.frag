@@ -62,6 +62,8 @@ void main()
 
         if (tr >= 0.23)
             gl_FragColor.a = (0.25f - tr) * 50.0f;
+        else
+            gl_FragColor.a = 1.0f;
     }
     else
     {

@@ -27,7 +27,7 @@
 #ifdef Q_OS_WIN32
 #include <GL/glew.h>
 #else
-#include <GL/glut.h>
+#include <GL/gl.h>
 #include <GL/glext.h>
 #endif
 #include <QGLWidget>
@@ -61,6 +61,8 @@ public:
     void setRingTexture(const QString& ring);
     void setAmbientColor(const QColor& color);
     void setRingBackground(const QString& ring);
+    void setRingOffset(float x, float y);
+    void setRingBackgroundOffset(float x, float y);
 
     static void generatePlanetImage(QImage &image, const QImage &texture, int size);
 
@@ -93,6 +95,9 @@ private:
 
     int m_planetSize;
     int m_ambientColor;
+
+    float m_ringOffsetX, m_ringOffsetY;
+    float m_ringBackgroundOffsetX, m_ringBackgroundOffsetY;
 
     GLuint m_buffer;
     GLuint m_ringBuffer;

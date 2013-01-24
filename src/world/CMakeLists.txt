@@ -1,4 +1,4 @@
-SET(WORLD_SOURCES
+SET(WORLD_SOURCES 
     Artifact.cpp
     CargoHook.cpp
     DefenceGenerator.cpp
@@ -15,6 +15,7 @@ SET(WORLD_SOURCES
     Meteor.cpp
     Micromodulus.cpp
     Planet.cpp
+    PlanetManager.cpp
     Radar.cpp
     Scanner.cpp
     Ship.cpp

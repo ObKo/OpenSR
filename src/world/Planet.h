@@ -32,9 +32,11 @@ public:
 
     float radius() const;
     float orbit() const;
+    uint32_t style() const;
 
     void setRadius(float radius);
     void setOrbit(float orbit);
+    void setStyle(uint32_t style);
 
     virtual uint32_t type() const;
     virtual bool serialize(std::ostream &stream) const;
@@ -42,6 +44,7 @@ public:
 protected:
     float m_radius;
     float m_orbit;
+    uint32_t m_style;
 };
 }
 }

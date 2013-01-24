@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 - 2012 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2013 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -34,6 +34,8 @@
 
 //TODO: Fix resulting length
 
+namespace Rangers
+{
 /*!
  * \param to input encoding
  * \param from output encoding
@@ -42,7 +44,7 @@
  * \param destLength output string size
  * \return converted string
  */
-char *Rangers::convertText(const char *to, const char *from, const char *what, int srcLength, int &destLength)
+char *convertText(const char *to, const char *from, const char *what, int srcLength, int &destLength)
 {
     if (!strcmp(to, from))
     {
@@ -85,7 +87,7 @@ char *Rangers::convertText(const char *to, const char *from, const char *what, i
  * \param length input string size
  * \return converted string
  */
-std::wstring Rangers::fromCodec(const char *codec, const char *text, int length)
+std::wstring fromCodec(const char *codec, const char *text, int length)
 {
     if (length == 0)
         return std::wstring();
@@ -110,12 +112,12 @@ std::wstring Rangers::fromCodec(const char *codec, const char *text, int length)
     return result;
 }
 
-std::wstring Rangers::fromUTF8(const char *text, int length)
+std::wstring fromUTF8(const char *text, int length)
 {
     return fromCodec("UTF-8", text, length);
 }
 
-std::wstring Rangers::fromASCII(const char *text, int length)
+std::wstring fromASCII(const char *text, int length)
 {
     return fromCodec("ASCII", text, length);
 }
@@ -125,7 +127,7 @@ std::wstring Rangers::fromASCII(const char *text, int length)
  * \param text input string
  * \return converted string
  */
-std::string Rangers::toCodec(const char *codec, const std::wstring& text)
+std::string toCodec(const char *codec, const std::wstring& text)
 {
     int resultLength;
 //FIXME: Workaround about not working WCHAR_T on Windows XP
@@ -147,7 +149,7 @@ std::string Rangers::toCodec(const char *codec, const std::wstring& text)
  * \param text input string
  * \return converted string
  */
-/*char* Rangers::toCodec(const char *codec, const std::wstring& text, int& resultLength)
+/*char* toCodec(const char *codec, const std::wstring& text, int& resultLength)
 {
 //FIXME: Workaround about not working WCHAR_T on Windows XP
 #ifdef _WIN32
@@ -162,7 +164,7 @@ std::string Rangers::toCodec(const char *codec, const std::wstring& text)
  * \param text input string
  * \return converted string
  */
-std::string Rangers::toASCII(const std::wstring& text)
+std::string toASCII(const std::wstring& text)
 {
     return toCodec("ASCII", text);
 }
@@ -171,7 +173,7 @@ std::string Rangers::toASCII(const std::wstring& text)
  * \param text input string
  * \return converted string
  */
-std::string Rangers::toUTF8(const std::wstring& text)
+std::string toUTF8(const std::wstring& text)
 {
     return toCodec("UTF-8", text);
 }
@@ -180,7 +182,7 @@ std::string Rangers::toUTF8(const std::wstring& text)
  * \param text input string
  * \return converted string
  */
-std::string Rangers::toLocal(const std::wstring& text)
+std::string toLocal(const std::wstring& text)
 {
     std::string codec;
 #ifdef _WIN32
@@ -195,7 +197,7 @@ std::string Rangers::toLocal(const std::wstring& text)
     return toCodec(codec.c_str(), text);
 }
 
-std::wstring Rangers::fromLocal(const char *text, int length)
+std::wstring fromLocal(const char *text, int length)
 {
     std::string codec;
 #ifdef _WIN32
@@ -215,7 +217,7 @@ std::wstring Rangers::fromLocal(const char *text, int length)
  * \param c separator
  * \return array of strings
  */
-std::vector<std::wstring> Rangers::split(const std::wstring& s, wchar_t c)
+std::vector<std::wstring> split(const std::wstring& s, wchar_t c)
 {
     std::vector<std::wstring> array;
     std::wstring::const_iterator begin = s.begin();
@@ -236,7 +238,7 @@ std::vector<std::wstring> Rangers::split(const std::wstring& s, wchar_t c)
  * \param s file path
  * \return file extension
  */
-std::wstring Rangers::suffix(const std::wstring& s)
+std::wstring suffix(const std::wstring& s)
 {
     int pos;
     int lastPos, dotPos = std::wstring::npos;
@@ -266,7 +268,7 @@ std::wstring Rangers::suffix(const std::wstring& s)
  * \param s file path
  * \return file basename
  */
-std::wstring Rangers::basename(const std::wstring& s)
+std::wstring basename(const std::wstring& s)
 {
     std::wstring suf = suffix(s);
 
@@ -299,7 +301,7 @@ std::wstring Rangers::basename(const std::wstring& s)
  * \param s file path
  * \return file directory
  */
-std::wstring Rangers::directory(const std::wstring& s)
+std::wstring directory(const std::wstring& s)
 {
     int pos;
     if ((pos = s.rfind(L'/')) == std::wstring::npos)
@@ -315,7 +317,7 @@ std::wstring Rangers::directory(const std::wstring& s)
  * \param c separator
  * \return array of strings
  */
-std::vector<std::string> Rangers::split(const std::string& s, char c)
+std::vector<std::string> split(const std::string& s, char c)
 {
     std::vector<std::string> array;
     std::string::const_iterator begin = s.begin();
@@ -336,7 +338,7 @@ std::vector<std::string> Rangers::split(const std::string& s, char c)
  * \param s file path
  * \return file extension
  */
-std::string Rangers::suffix(const std::string& s)
+std::string suffix(const std::string& s)
 {
     int pos;
     int lastPos, dotPos = std::string::npos;
@@ -366,7 +368,7 @@ std::string Rangers::suffix(const std::string& s)
  * \param s file path
  * \return file basename
  */
-std::string Rangers::basename(const std::string& s)
+std::string basename(const std::string& s)
 {
     std::string suf = suffix(s);
 
@@ -399,7 +401,7 @@ std::string Rangers::basename(const std::string& s)
  * \param s file path
  * \return file directory
  */
-std::string Rangers::directory(const std::string& s)
+std::string directory(const std::string& s)
 {
     int pos;
     if ((pos = s.rfind('/')) == std::string::npos)
@@ -414,7 +416,7 @@ std::string Rangers::directory(const std::string& s)
  * \param s input string
  * \return trimmed string
  */
-std::wstring Rangers::trim(const std::wstring& s)
+std::wstring trim(const std::wstring& s)
 {
     std::wstring result = s;
     std::wstring::iterator end = result.end();
@@ -433,7 +435,7 @@ std::wstring Rangers::trim(const std::wstring& s)
  * \param s input string
  * \return trimmed string
  */
-std::string Rangers::trim(const std::string& s)
+std::string trim(const std::string& s)
 {
     std::string result = s;
     std::string::iterator end = result.end();
@@ -446,4 +448,42 @@ std::string Rangers::trim(const std::string& s)
     if (spaceEnd != result.end())
         result.erase(spaceEnd, result.end());
     return result;
+}
+
+uint32_t textHash32(const std::string& s)
+{
+    uint32_t hash = 2166136261;
+    std::string::const_iterator end = s.end();
+    for (std::string::const_iterator i = s.begin(); i != end; i++)
+    {
+        hash = hash ^(*i);
+        hash = hash * 16777619;
+    }
+    return hash;
+}
+
+uint32_t textHash32(const std::wstring& s)
+{
+    uint32_t hash = 2166136261;
+    std::wstring::const_iterator end = s.end();
+    for (std::wstring::const_iterator i = s.begin(); i != end; i++)
+    {
+#ifdef WIN32
+        hash = hash ^(((*i) >> 8) & 0xff);
+        hash = hash * 16777619;
+        hash = hash ^(*i) & 0xff;
+        hash = hash * 16777619;
+#else
+        hash = hash ^(((*i) >> 24) & 0xff);
+        hash = hash * 16777619;
+        hash = hash ^(((*i) >> 16) & 0xff);
+        hash = hash * 16777619;
+        hash = hash ^(((*i) >> 8) & 0xff);
+        hash = hash * 16777619;
+        hash = hash ^(*i) & 0xff;
+        hash = hash * 16777619;
+#endif
+    }
+    return hash;
+}
 }

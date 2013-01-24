@@ -17,6 +17,8 @@
 */
 
 #include "SystemPlanetWidget.h"
+#include "PlanetManager.h"
+#include "Planet.h"
 #include <OpenSR/ResourceManager.h>
 #include <OpenSR/Texture.h>
 #include <cmath>
@@ -89,8 +91,6 @@ void main() \
 \
         if (tr >= 0.23 && gl_FragColor.a > 0.0f) \
             gl_FragColor.a = (0.25f - tr) * 50.0f; \
-        else \
-            gl_FragColor.a = 1.0f; \
     } \
     float x = sqrt(0.5f * 0.5f - (tex_coord.x - 0.5f) * (tex_coord.x - 0.5f) - (tex_coord.y - 0.5f) * (tex_coord.y - 0.5f)); \
     vec3 normal = normalize(vec3(x, tex_coord.x - 0.5f, tex_coord.y - 0.5f)); \
@@ -126,13 +126,20 @@ GLint SystemPlanetWidget::m_cloudLocation;
 SystemPlanetWidget::SystemPlanetWidget(boost::shared_ptr<Planet> planet, Widget* parent): Widget(parent), m_planet(planet), m_useShader(true), m_vertexBuffer(0),
     m_phase(0.0f), m_cloudPhase(0.0f), m_solarAngle(0.0f)
 {
-    m_texture = ResourceManager::instance()->loadTexture(L"ORC/Planet2/Solar/Earth.png");
-    m_cloud = ResourceManager::instance()->loadTexture(L"ORC/Planet2/Solar/cloud/c07.png");;
-    m_ambientColor = 0x00ff80;
-    m_speed = -15.0f;
-    m_cloudSpeed = -10.0f;
-    m_size = 128;
-    m_hasCloud = true;
+    if (planet)
+    {
+        boost::shared_ptr<PlanetStyle> style = PlanetManager::instance().style(planet->style());
+        if (style)
+        {
+            m_texture = ResourceManager::instance()->loadTexture(style->texture);
+            m_cloud = ResourceManager::instance()->loadTexture(style->cloud);
+            m_ambientColor = style->ambientColor;
+            m_speed = style->speed;
+            m_cloudSpeed = style->cloudSpeed;
+            m_size = planet->radius() *  2.0f;
+            m_hasCloud = style->hasCloud;
+        }
+    }
     markToUpdate();
 }
 

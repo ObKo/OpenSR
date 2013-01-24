@@ -64,25 +64,28 @@ void WorldManager::generateWorld()
     boost::shared_ptr<HabitablePlanet> hPlanet = boost::static_pointer_cast<HabitablePlanet>(addObject(new HabitablePlanet()));
 
     system->setName("Test system");
-    system->setSize(1000.0f);
+    system->setSize(2000.0f);
     system->setPosition(Point(0.0f, 0.0f));
 
-    planet->setOrbit(200.0f);
-    planet->setRadius(20.0f);
+    planet->setOrbit(600.0f);
+    planet->setRadius(50.0f);
     planet->setName("Planet");
-    planet->setPosition(Point(200.0f, 0.0f));
+    planet->setPosition(Point(600.0f, 0.0f));
+    planet->setStyle(textHash32(L"mercur"));
 
-    hPlanet->setOrbit(150.0f);
-    hPlanet->setRadius(30.0f);
-    hPlanet->setName("Malok's planet");
-    hPlanet->setPosition(Point(-150.0f, 0.0f));
+    hPlanet->setOrbit(450.0f);
+    hPlanet->setRadius(75.0f);
+    hPlanet->setName("Earth");
+    hPlanet->setPosition(Point(-450.0f, 0.0f));
     hPlanet->setInvader(0);
     hPlanet->setPopulation(1000000);
+    hPlanet->setStyle(textHash32(L"earth"));
 
     m_currentSystem = system;
     m_solarSystems.push_back(system);
 
     system->addObject(planet);
+    system->addObject(hPlanet);
 }
 
 std::list<boost::shared_ptr<SolarSystem> > WorldManager::solarSystems() const

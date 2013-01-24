@@ -1,0 +1,77 @@
+{
+   "earth" : {
+      "ambientColor" : "#C0C0FF",
+      "cloud" : "ORC/Planet2/Solar/cloud/c07.png",
+      "cloudSpeed" : -10.0,
+      "hasCloud" : true,
+      "hasRing" : false,
+      "hasRingBackground" : false,
+      "size" : 150,
+      "speed" : -15.0,
+      "texture" : "ORC/Planet2/Solar/Earth.png"
+   },
+   "jupiter" : {
+      "ambientColor" : "#FFFF80",
+      "hasCloud" : false,
+      "hasRing" : false,
+      "hasRingBackground" : false,
+      "size" : 200,
+      "speed" : -20.0,
+      "texture" : "ORC/Planet2/Solar/Jupiter.png"
+   },
+   "mars" : {
+      "ambientColor" : "#FFC080",
+      "hasCloud" : false,
+      "hasRing" : false,
+      "hasRingBackground" : false,
+      "size" : 145,
+      "speed" : 15.0,
+      "texture" : "ORC/Planet2/Solar/Mars.png"
+   },
+   "mercur" : {
+      "ambientColor" : "#FFFFC0",
+      "hasCloud" : false,
+      "hasRing" : false,
+      "hasRingBackground" : false,
+      "size" : 120,
+      "speed" : -20.0,
+      "texture" : "ORC/Planet2/Solar/Mercur.png"
+   },
+   "neptune" : {
+      "ambientColor" : "#80FF80",
+      "cloud" : "ORC/Planet2/Solar/cloud/c10.png",
+      "cloudSpeed" : 10.0,
+      "hasCloud" : true,
+      "hasRing" : false,
+      "hasRingBackground" : false,
+      "size" : 140,
+      "speed" : 20.0,
+      "texture" : "ORC/Planet2/Solar/Neptune.png"
+   },
+   "saturn" : {
+      "ambientColor" : "#C0C0FF",
+      "cloud" : "ORC/Planet2/Solar/cloud/c05.png",
+      "cloudSpeed" : 10.0,
+      "hasCloud" : true,
+      "hasRing" : true,
+      "hasRingBackground" : true,
+      "ring" : "DATA/PlanetRing/2r21_0_1.gi",
+      "ringBackground" : "DATA/PlanetRing/2r21_0_2.gi",
+      "ringBgOffsetX" : 9.0,
+      "ringBgOffsetY" : -116.0,
+      "size" : 214,
+      "speed" : 20.0,
+      "texture" : "ORC/Planet2/Solar/Saturn.png"
+   },
+   "venus" : {
+      "ambientColor" : "#80FFFF",
+      "cloud" : "ORC/Planet2/Solar/cloud/c04.png",
+      "cloudSpeed" : -10.0,
+      "hasCloud" : true,
+      "hasRing" : false,
+      "hasRingBackground" : false,
+      "size" : 150,
+      "speed" : -15.0,
+      "texture" : "ORC/Planet2/Solar/Venus.png"
+   }
+}

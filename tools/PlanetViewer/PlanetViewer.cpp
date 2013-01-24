@@ -66,6 +66,10 @@ PlanetViewer::PlanetViewer(QWidget *parent) :
     m_ringTextureID = 0;
     m_ringBackgroundBuffer = 0;
     m_ringBackgroundTextureID = 0;
+    m_ringBackgroundOffsetX = 0.0f;
+    m_ringBackgroundOffsetY = 0.0f;
+    m_ringOffsetX = 0.0f;
+    m_ringOffsetY = 0.0f;
 
     m_timer.setInterval(30);
     m_timer.setSingleShot(false);
@@ -99,6 +103,18 @@ void PlanetViewer::setRingTexture(const QString& ring)
 bool PlanetViewer::ringBackgroundEnabled() const
 {
     return m_ringBackgroundEnabled;
+}
+
+void PlanetViewer::setRingOffset(float x, float y)
+{
+    m_ringOffsetX = x;
+    m_ringOffsetY = y;
+}
+
+void PlanetViewer::setRingBackgroundOffset(float x, float y)
+{
+    m_ringBackgroundOffsetX = x;
+    m_ringBackgroundOffsetY = y;
 }
 
 void PlanetViewer::setRingBackground(const QString& ring)
@@ -334,6 +350,8 @@ void PlanetViewer::paintGL()
 
     if (m_ringBackgroundEnabled)
     {
+        glPushMatrix();
+        glTranslatef(m_ringBackgroundOffsetX, m_ringBackgroundOffsetY, 0.0f);
         glUseProgram(0);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, m_ringBackgroundTextureID);
@@ -352,6 +370,7 @@ void PlanetViewer::paintGL()
         glDisableClientState(GL_ARRAY_BUFFER);
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
         glDisableClientState(GL_VERTEX_ARRAY);
+        glPopMatrix();
     }
 
     glUseProgram(m_shaderProgram);
@@ -389,6 +408,8 @@ void PlanetViewer::paintGL()
 
     if (m_ringEnabled)
     {
+        glPushMatrix();
+        glTranslatef(m_ringOffsetX, m_ringOffsetY, 0.0f);
         glUseProgram(0);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, m_ringTextureID);
@@ -407,6 +428,7 @@ void PlanetViewer::paintGL()
         glDisableClientState(GL_ARRAY_BUFFER);
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
         glDisableClientState(GL_VERTEX_ARRAY);
+        glPopMatrix();
     }
 }
 

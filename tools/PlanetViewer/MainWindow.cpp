@@ -62,6 +62,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->ringBg, SIGNAL(toggled(bool)), this, SLOT(updateParams()));
     connect(ui->colorCorrection, SIGNAL(toggled(bool)), this, SLOT(updateParams()));
     connect(ui->solarAngle, SIGNAL(valueChanged(int)), this, SLOT(updateParams()));
+    connect(ui->ringOffsetX, SIGNAL(valueChanged(double)), this, SLOT(updateParams()));
+    connect(ui->ringOffsetY, SIGNAL(valueChanged(double)), this, SLOT(updateParams()));
+    connect(ui->ringBgOffsetX, SIGNAL(valueChanged(double)), this, SLOT(updateParams()));
+    connect(ui->ringBgOffsetY, SIGNAL(valueChanged(double)), this, SLOT(updateParams()));
 
     connect(ui->ringBgBrowse, SIGNAL(clicked()), this, SLOT(openRingBackgroundTexture()));
     connect(ui->ringBrowse, SIGNAL(clicked()), this, SLOT(openRingTexture()));
@@ -151,6 +155,10 @@ void MainWindow::loadPlanet(const QModelIndex& index)
     ui->ringTexture->setText(p.ring);
     ui->ringBg->setChecked(p.hasRingBackground);
     ui->ringBgTexture->setText(p.ringBackground);
+    ui->ringOffsetX->setValue(p.ringOffsetX);
+    ui->ringOffsetY->setValue(p.ringOffsetY);
+    ui->ringBgOffsetX->setValue(p.ringBgOffsetX);
+    ui->ringBgOffsetY->setValue(p.ringBgOffsetY);
 
     ui->planetWidget->setAmbientColor(p.ambientColor);
     ui->planetWidget->setPlanetSpeed(p.speed);
@@ -163,6 +171,8 @@ void MainWindow::loadPlanet(const QModelIndex& index)
     ui->planetWidget->setCloudTexture(QDir(m_settings.value("data/dataDir", "").toString()).absoluteFilePath(p.cloud));
     ui->planetWidget->setRingTexture(QDir(m_settings.value("data/dataDir", "").toString()).absoluteFilePath(p.ring));
     ui->planetWidget->setRingBackground(QDir(m_settings.value("data/dataDir", "").toString()).absoluteFilePath(p.ringBackground));
+    ui->planetWidget->setRingOffset(p.ringOffsetX, p.ringOffsetY);
+    ui->planetWidget->setRingBackgroundOffset(p.ringBgOffsetX, p.ringBgOffsetY);
 }
 
 void MainWindow::save()
@@ -209,6 +219,10 @@ void MainWindow::addPlanet()
     p.hasRing = ui->ring->isChecked();
     p.hasRingBackground = ui->ringBg->isChecked();
     p.ringBackground = ui->ringBgTexture->text();
+    p.ringOffsetX = ui->ringOffsetX->value();
+    p.ringOffsetY = ui->ringOffsetY->value();
+    p.ringBgOffsetX = ui->ringBgOffsetX->value();
+    p.ringBgOffsetY = ui->ringBgOffsetY->value();
     m_model.addPlanet(p);
 }
 
@@ -240,6 +254,8 @@ void MainWindow::updateParams()
     ui->planetWidget->setSolarAngle((ui->solarAngle->value() + 90) / 180.0 * M_PI);
     ui->planetWidget->setRingEnabled(ui->ring->isChecked());
     ui->planetWidget->setRingBackgroundEnabled(ui->ringBg->isChecked());
+    ui->planetWidget->setRingOffset(ui->ringOffsetX->value(), ui->ringOffsetY->value());
+    ui->planetWidget->setRingBackgroundOffset(ui->ringBgOffsetX->value(), ui->ringBgOffsetY->value());
 }
 
 void MainWindow::closeEvent(QCloseEvent* event)

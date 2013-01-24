@@ -23,6 +23,20 @@
 #include <json/writer.h>
 #include <locale.h>
 
+Planet::Planet()
+{
+    hasCloud = false;
+    speed = 0.0f;
+    cloudSpeed = 0.0f;
+    size = 0;
+    hasRing = false;
+    hasRingBackground = false;
+    ringOffsetX = 0.0f;
+    ringOffsetY = 0.0f;
+    ringBgOffsetX = 0.0f;
+    ringBgOffsetY = 0.0f;
+}
+
 void PlanetModel::addPlanet(const Planet& planet)
 {
     QImage icon(32, 32, QImage::Format_ARGB32);
@@ -89,11 +103,19 @@ void PlanetModel::saveJSON(const QString& file) const
         if (p.hasRing)
         {
             planet["ring"] = p.ring.toUtf8().data();
+            if (p.ringOffsetX != 0.0f)
+                planet["ringOffsetX"] = p.ringOffsetX;
+            if (p.ringOffsetY != 0.0f)
+                planet["ringOffsetY"] = p.ringOffsetX;
         }
 
         if (p.hasRingBackground)
         {
             planet["ringBackground"] = p.ringBackground.toUtf8().data();
+            if (p.ringBgOffsetX != 0.0f)
+                planet["ringBgOffsetX"] = p.ringBgOffsetX;
+            if (p.ringBgOffsetY != 0.0f)
+                planet["ringBgOffsetY"] = p.ringBgOffsetY;
         }
 
         root[p.id.toLatin1().data()] = planet;
@@ -153,10 +175,14 @@ void PlanetModel::loadJSON(const QString& file)
         if (p.hasRing)
         {
             p.ring = QString::fromUtf8((*i).get("ring", "").asCString());
+            p.ringOffsetX = (*i).get("ringOffsetX", 0.0f).asFloat();
+            p.ringOffsetY = (*i).get("ringOffsetY", 0.0f).asFloat();
         }
         if (p.hasRingBackground)
         {
             p.ringBackground = QString::fromUtf8((*i).get("ringBackground", "").asCString());
+            p.ringBgOffsetX = (*i).get("ringBgOffsetX", 0.0f).asFloat();
+            p.ringBgOffsetY = (*i).get("ringBgOffsetY", 0.0f).asFloat();
         }
         planets.append(p);
     }
