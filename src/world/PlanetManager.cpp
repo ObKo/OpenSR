@@ -100,14 +100,14 @@ void PlanetManager::loadStyles(const std::wstring& styleFile)
         if (style->hasRing)
         {
             style->ring = fromUTF8(jsonStyle.get("ring", "").asCString());
-            style->ringOffsetX = jsonStyle.get("ringOffsetX", 0.0f).asFloat();
-            style->ringOffsetY = jsonStyle.get("ringOffsetY", 0.0f).asFloat();
+            style->ringOffsetX = jsonStyle.get("ringOffsetX", 0.0f).asDouble();
+            style->ringOffsetY = jsonStyle.get("ringOffsetY", 0.0f).asDouble();
         }
         if (style->hasRingBackground)
         {
             style->ringBackground = fromUTF8(jsonStyle.get("ringBackground", "").asCString());
-            style->ringBgOffsetX = jsonStyle.get("ringBgOffsetX", 0.0f).asFloat();
-            style->ringBgOffsetY = jsonStyle.get("ringBgOffsetY", 0.0f).asFloat();
+            style->ringBgOffsetX = jsonStyle.get("ringBgOffsetX", 0.0f).asDouble();
+            style->ringBgOffsetY = jsonStyle.get("ringBgOffsetY", 0.0f).asDouble();
         }
         m_styles[textHash32(style->id)] = boost::shared_ptr<PlanetStyle>(style);
     }

@@ -175,14 +175,14 @@ void PlanetModel::loadJSON(const QString& file)
         if (p.hasRing)
         {
             p.ring = QString::fromUtf8((*i).get("ring", "").asCString());
-            p.ringOffsetX = (*i).get("ringOffsetX", 0.0f).asFloat();
-            p.ringOffsetY = (*i).get("ringOffsetY", 0.0f).asFloat();
+            p.ringOffsetX = (*i).get("ringOffsetX", 0.0f).asDouble();
+            p.ringOffsetY = (*i).get("ringOffsetY", 0.0f).asDouble();
         }
         if (p.hasRingBackground)
         {
             p.ringBackground = QString::fromUtf8((*i).get("ringBackground", "").asCString());
-            p.ringBgOffsetX = (*i).get("ringBgOffsetX", 0.0f).asFloat();
-            p.ringBgOffsetY = (*i).get("ringBgOffsetY", 0.0f).asFloat();
+            p.ringBgOffsetX = (*i).get("ringBgOffsetX", 0.0f).asDouble();
+            p.ringBgOffsetY = (*i).get("ringBgOffsetY", 0.0f).asDouble();
         }
         planets.append(p);
     }

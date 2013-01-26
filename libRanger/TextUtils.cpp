@@ -209,7 +209,8 @@ std::wstring fromLocal(const char *text, int length)
     setlocale(LC_ALL, "");
     codec = std::string(nl_langinfo(CODESET));
 #endif
-    return fromCodec(codec.c_str(), text, length);
+    std::wstring result = fromCodec(codec.c_str(), text, length);
+    return result;
 }
 
 /*!

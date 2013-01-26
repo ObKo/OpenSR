@@ -944,7 +944,7 @@ GIFrame Rangers::loadGIFile(std::istream& stream)
 
     for (int i = 0; i < image.layerCount; i++)
     {
-        delete image.layers[i].data;
+        delete[] image.layers[i].data;
     }
 
     delete[] image.layers;
