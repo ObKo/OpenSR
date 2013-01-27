@@ -29,13 +29,15 @@ class Sound;
 class RANGERS_ENGINE_API SoundManager
 {
 public:
-    SoundManager();
-    virtual ~SoundManager();
-    static SoundManager* instance();
+    static SoundManager& instance();
 
     boost::shared_ptr<Sound> loadSound(const std::wstring& path);
 
 private:
+    SoundManager();
+    SoundManager(const SoundManager& other);
+    virtual ~SoundManager();
+
     static SoundManager *m_soundInstance;
     std::map<std::wstring, boost::shared_ptr<Sound> > m_soundCache;
 };

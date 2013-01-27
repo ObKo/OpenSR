@@ -34,14 +34,21 @@ SystemWidget::SystemWidget(boost::shared_ptr<SolarSystem> system, Widget* parent
 {
     setSystem(system);
 
-    setWidth(Engine::instance()->screenWidth());
-    setHeight(Engine::instance()->screenHeight());
+    setWidth(Engine::instance().screenWidth());
+    setHeight(Engine::instance().screenHeight());
 
     setPosition(0, 0);
 }
 
 SystemWidget::~SystemWidget()
 {
+    std::list<SystemPlanetWidget*>::const_iterator end = m_planetWidgets.end();
+    for (std::list<SystemPlanetWidget*>::const_iterator i = m_planetWidgets.begin(); i != end; ++i)
+    {
+        delete *i;
+    }
+    m_planetWidgets.clear();
+
     delete m_starSprite;
     delete m_bgSprite;
 }
@@ -101,6 +108,13 @@ void SystemWidget::setSystem(boost::shared_ptr< SolarSystem > system)
         m_bgSprite = 0;
     }
     m_system = system;
+
+    std::list<SystemPlanetWidget*>::const_iterator wend = m_planetWidgets.end();
+    for (std::list<SystemPlanetWidget*>::const_iterator i = m_planetWidgets.begin(); i != wend; ++i)
+    {
+        delete *i;
+    }
+    m_planetWidgets.clear();
 
     if (!m_system)
         return;

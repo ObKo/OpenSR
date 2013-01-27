@@ -140,7 +140,7 @@ PNGFrame loadPNG(const char *buffer, size_t bufferSize)
         frame.data = 0;
         return frame;
     }
-
+    png_destroy_read_struct(&png_ptr, &info_ptr, 0);
     return frame;
 }
 
@@ -183,7 +183,7 @@ PNGFrame loadPNG(std::istream &stream)
         frame.data = 0;
         return frame;
     }
-
+    png_destroy_read_struct(&png_ptr, &info_ptr, 0);
     return frame;
 }
 }

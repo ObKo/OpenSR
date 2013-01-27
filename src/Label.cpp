@@ -41,7 +41,7 @@ Label::Label(const std::string& text, Object *parent, boost::shared_ptr<Font> fo
 {
     RANGERS_D(Label);
     if (!font)
-        d->font = Engine::instance()->coreFont();
+        d->font = Engine::instance().coreFont();
     else
         d->font = font;
 
@@ -54,7 +54,7 @@ Label::Label(const std::wstring& text, Object *parent, boost::shared_ptr<Font> f
 {
     RANGERS_D(Label);
     if (!font)
-        d->font = Engine::instance()->coreFont();
+        d->font = Engine::instance().coreFont();
     else
         d->font = font;
 

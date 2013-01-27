@@ -43,7 +43,7 @@ Font::~Font()
 {
     FT_Done_Face(m_fontFace);
     if (m_fontData)
-        delete m_fontData;
+        delete[] m_fontData;
 }
 
 void Font::drawGlyph(unsigned char *dest, int destwidth, int destheight, int x, int y, int w, int h, int pitch, unsigned char *data, bool antialiased)

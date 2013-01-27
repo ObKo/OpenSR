@@ -214,7 +214,7 @@ Rect ScrollArea::getBoundingRect() const
     {
         //FIXME: dirty hack
         Vector topLeft = mapFromScreen(Vector(0, 0));
-        Vector bottomRight = mapFromScreen(Vector(Engine::instance()->screenWidth(), Engine::instance()->screenHeight()));
+        Vector bottomRight = mapFromScreen(Vector(Engine::instance().screenWidth(), Engine::instance().screenHeight()));
         return Rect(std::min(topLeft.x, bottomRight.x), std::min(topLeft.y, bottomRight.y), std::max(topLeft.x, bottomRight.x), std::max(topLeft.y, bottomRight.y));
     }
 }

@@ -89,7 +89,7 @@ LuaWidget::LuaWidget(const char *data, size_t size, const std::string& name, Wid
     if (luaL_loadbuffer(d->luaState.get(), data, size, name.c_str()) || lua_pcall(d->luaState.get(), 0, LUA_MULTRET, 0))
     {
         Log::error() << "[LuaWidget] " << lua_tostring(d->luaState.get(), -1);
-        Engine::instance()->markWidgetDeleting(this);
+        Engine::instance().markWidgetDeleting(this);
     }
 }
 
@@ -98,13 +98,13 @@ LuaWidget::LuaWidget(const std::wstring& name, Widget *parent): Widget(*(new Lua
     RANGERS_D(LuaWidget);
     d->initLuaState();
     size_t size;
-    char *luaData = ResourceManager::instance()->loadData(name, size);
+    char *luaData = ResourceManager::instance().loadData(name, size);
     if (luaData)
     {
         if (luaL_loadbuffer(d->luaState.get(), luaData, size, toLocal(name.c_str()).c_str()) || lua_pcall(d->luaState.get(), 0, LUA_MULTRET, 0))
         {
             Log::error() << "[LuaWidget] " << lua_tostring(d->luaState.get(), -1);
-            Engine::instance()->markWidgetDeleting(this);
+            Engine::instance().markWidgetDeleting(this);
         }
         delete[] luaData;
     }
@@ -331,7 +331,7 @@ void LuaWidgetPrivate::initLuaState()
 
 void LuaWidget::dispose()
 {
-    Engine::instance()->markWidgetDeleting(this);
+    Engine::instance().markWidgetDeleting(this);
 }
 
 int LuaWidgetPrivate::luaErrorHandler(lua_State* state)
@@ -340,7 +340,7 @@ int LuaWidgetPrivate::luaErrorHandler(lua_State* state)
     LuaWidget *widget = luabind::object_cast<LuaWidget*>(luabind::globals(state)["this"]);
     assert(widget != 0);
     Log::error() << "[LuaWidget] " << error;
-    Engine::instance()->markWidgetDeleting(widget);
+    Engine::instance().markWidgetDeleting(widget);
     return 0;
 }
 }

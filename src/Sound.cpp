@@ -26,7 +26,7 @@ namespace Rangers
 Sound::Sound(const std::wstring& path): m_chunk(0)
 {
     size_t s;
-    char *wav = ResourceManager::instance()->loadData(path, s);
+    char *wav = ResourceManager::instance().loadData(path, s);
     if (wav)
     {
         m_chunk = Mix_LoadWAV_RW(SDL_RWFromMem(wav, s), 1);

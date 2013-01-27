@@ -38,7 +38,7 @@ PlanetManager& PlanetManager::instance()
 
 PlanetManager::PlanetManager()
 {
-    std::wstring stylesPath = fromUTF8(Engine::instance()->properties()->get<std::string>("world.planetStyles", "ORC/planets.json").c_str());
+    std::wstring stylesPath = fromUTF8(Engine::instance().properties()->get<std::string>("world.planetStyles", "ORC/planets.json").c_str());
     if (!stylesPath.empty())
         loadStyles(stylesPath);
 }
@@ -56,7 +56,7 @@ boost::shared_ptr<PlanetStyle> PlanetManager::style(uint32_t id)
 
 void PlanetManager::loadStyles(const std::wstring& styleFile)
 {
-    boost::shared_ptr<std::istream> json = ResourceManager::instance()->getFileStream(styleFile);
+    boost::shared_ptr<std::istream> json = ResourceManager::instance().getFileStream(styleFile);
     if (!json)
         return;
     Json::Reader reader;

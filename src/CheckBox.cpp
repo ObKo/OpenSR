@@ -64,7 +64,7 @@ CheckBox::CheckBox(const CheckBoxStyle& style, const std::wstring &text, Widget 
 
     if ((d->style.font.path != L"") && (d->style.font.size > 0))
     {
-        d->label = new Label(text, this, ResourceManager::instance()->loadFont(d->style.font.path, d->style.font.size));
+        d->label = new Label(text, this, ResourceManager::instance().loadFont(d->style.font.path, d->style.font.size));
     }
     else
     {

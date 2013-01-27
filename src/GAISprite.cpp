@@ -49,7 +49,7 @@ GAISprite::GAISprite(const std::wstring& name, Object *parent): AnimatedSprite(*
     if (sfx == L"gai")
     {
         size_t s;
-        boost::shared_ptr<std::istream> stream = ResourceManager::instance()->getFileStream(name);
+        boost::shared_ptr<std::istream> stream = ResourceManager::instance().getFileStream(name);
 
         if (stream)
         {
@@ -63,7 +63,7 @@ GAISprite::GAISprite(const std::wstring& name, Object *parent): AnimatedSprite(*
             else
             {
                 size_t size;
-                boost::shared_ptr<std::istream> bgFrameStream = ResourceManager::instance()->getFileStream(directory(name) + basename(name) + L".gi");
+                boost::shared_ptr<std::istream> bgFrameStream = ResourceManager::instance().getFileStream(directory(name) + basename(name) + L".gi");
                 if (bgFrameStream)
                 {
                     GIFrame bgFrame = loadGIFile(*bgFrameStream);

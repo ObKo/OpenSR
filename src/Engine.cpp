@@ -48,7 +48,6 @@ using namespace std;
 
 namespace Rangers
 {
-static Engine *engineInstance = 0;
 FT_Library trueTypeLibrary;
 
 #ifdef WIN32
@@ -64,8 +63,7 @@ long long Engine::getTicks()
 {
     struct timeval tv;
     struct timezone tz;
-    if (gettimeofday(&tv, &tz))
-        engineInstance->quit(0);
+    gettimeofday(&tv, &tz);
     return tv.tv_sec * 1000 + tv.tv_usec / 1000;
 }
 #endif
@@ -78,86 +76,14 @@ Engine::EnginePrivate::~EnginePrivate()
 {
 }
 
-Engine::Engine(int argc, char **argv): m_d(new EnginePrivate())
+Engine::Engine(): m_d(new EnginePrivate())
 {
     RANGERS_D(Engine);
 
-    d->argc = argc;
-    d->argv = argv;
     d->focusedWidget = 0;
     d->luaConsoleState = 0;
-
-    if (engineInstance)
-    {
-        delete engineInstance;
-        engineInstance = 0;
-    }
-
-    textdomain("OpenSR");
-
-    std::ifstream configFile;
-    d->properties = boost::shared_ptr<boost::property_tree::ptree>(new boost::property_tree::ptree());
-
-#ifdef WIN32
-    wchar_t *path = new wchar_t[1024];
-    GetModuleFileName(0, path, 1024);
-    d->configPath = (directory(std::wstring(path)) + L"\\OpenSR.ini");
-    delete[] path;
-#ifdef _MSC_VER
-    configFile.open(d->configPath, ios_base::in);
-#else
-    configFile.open(toLocal(d->configPath).c_str(), ios_base::in);
-#endif
-
-#else
-    char *path;
-    if ((path = getenv("XDG_CONFIG_HOME")) == NULL)
-    {
-        if ((path = getenv("HOME")) == NULL)
-        {
-            d->configPath = fromLocal((directory(std::string(argv[0])) + "/OpenSR.conf").c_str());
-        }
-        else
-        {
-            d->configPath = fromLocal((std::string(path) + "/.config/OpenSR/OpenSR.conf").c_str());
-        }
-    }
-    else
-        d->configPath = fromLocal((std::string(path) + "/OpenSR/OpenSR.conf").c_str());
-    configFile.open(toLocal(d->configPath).c_str(), ios_base::in);
-#endif
-
-    if (configFile.is_open())
-    {
-        try
-        {
-            boost::property_tree::read_ini(configFile, *d->properties);
-        }
-        catch (boost::property_tree::ini_parser_error &error)
-        {
-            Log::error() << "Error parsing ini file " << d->configPath << ":" << error.line() << ": " << error.message();
-        }
-    }
-
-    configFile.close();
-
-#ifdef WIN32
-    Log::instance()->setColorOutput(d->properties->get<bool>("log.color", false));
-#else
-    bool colorTerminal = false;
-    const char *term = getenv("TERM");
-    if (term)
-    {
-        std::string terminal(term);
-        //FIXME: looks quite ugly
-        if ((terminal.find("xterm") != string::npos)
-                || (terminal.find("color") != string::npos))
-            colorTerminal = true;
-    }
-    Log::instance()->setColorOutput(d->properties->get<bool>("log.color", colorTerminal));
-#endif
-
-    engineInstance = this;
+    d->argc = 0;
+    d->argv = 0;
     d->currentWidget = 0;
     d->focusedWidget = 0;
     d->consoleOpenned = false;
@@ -167,12 +93,16 @@ Engine::Engine(int argc, char **argv): m_d(new EnginePrivate())
     d->mainNode = 0;
     d->consoleWidget = 0;
     d->fpsLabel = 0;
+
+    textdomain("OpenSR");
+}
+
+Engine::Engine(const Engine& other)
+{
 }
 
 Engine::~Engine()
 {
-    engineInstance = 0;
-
     RANGERS_D(Engine);
     removeWidget(d->consoleWidget);
     if (!createDirPath(d->configPath))
@@ -240,9 +170,6 @@ void Engine::removeWidget(Widget *w)
 
 void Engine::widgetHide(Widget *w)
 {
-    if (!engineInstance)
-        return;
-
     if (!w)
         return;
 
@@ -292,10 +219,33 @@ void Engine::widgetHide(Widget *w)
     }
 }
 
+
+void Engine::widgetDestroyed(Widget *w)
+{
+    if (!w)
+        return;
+
+    RANGERS_D(Engine);
+
+    std::list<Widget*> children = w->childWidgets();
+
+    if (d->currentWidget)
+    {
+        if (w == d->currentWidget)
+            d->currentWidget = 0;
+    }
+    if (d->focusedWidget)
+    {
+        if (w == d->focusedWidget)
+            d->focusedWidget = 0;
+    }
+}
+
 int Engine::logic()
 {
     long t = getTicks();
-    while (engineInstance->m_d->gameRunning)
+    Engine &engine = Engine::instance();
+    while (engine.m_d->gameRunning)
     {
         int dt = getTicks() - t;
         while (!dt)
@@ -304,17 +254,83 @@ int Engine::logic()
             SDL_Delay(1);
             dt = getTicks() - t;
         }
-        engineInstance->m_d->mainNode->processLogic(dt);
-        if (engineInstance->m_d->consoleOpenned)
-            engineInstance->m_d->consoleWidget->processLogic(dt);
+        engine.m_d->mainNode->processLogic(dt);
+        if (engine.m_d->consoleOpenned)
+            engine.m_d->consoleWidget->processLogic(dt);
         t = getTicks();
     }
     return 0;
 }
 
-void Engine::init(int w, int h, bool fullscreen)
+void Engine::init(int argc, char **argv, int w, int h, bool fullscreen)
 {
     RANGERS_D(Engine);
+
+    d->argc = argc;
+    d->argv = argv;
+
+    std::ifstream configFile;
+    d->properties = boost::shared_ptr<boost::property_tree::ptree>(new boost::property_tree::ptree());
+
+#ifdef WIN32
+    wchar_t *path = new wchar_t[1024];
+    GetModuleFileName(0, path, 1024);
+    d->configPath = (directory(std::wstring(path)) + L"\\OpenSR.ini");
+    delete[] path;
+#ifdef _MSC_VER
+    configFile.open(d->configPath, ios_base::in);
+#else
+    configFile.open(toLocal(d->configPath).c_str(), ios_base::in);
+#endif
+
+#else
+    char *path;
+    if ((path = getenv("XDG_CONFIG_HOME")) == NULL)
+    {
+        if ((path = getenv("HOME")) == NULL)
+        {
+            d->configPath = fromLocal((directory(std::string(argv[0])) + "/OpenSR.conf").c_str());
+        }
+        else
+        {
+            d->configPath = fromLocal((std::string(path) + "/.config/OpenSR/OpenSR.conf").c_str());
+        }
+    }
+    else
+        d->configPath = fromLocal((std::string(path) + "/OpenSR/OpenSR.conf").c_str());
+    configFile.open(toLocal(d->configPath).c_str(), ios_base::in);
+#endif
+
+    if (configFile.is_open())
+    {
+        try
+        {
+            boost::property_tree::read_ini(configFile, *d->properties);
+        }
+        catch (boost::property_tree::ini_parser_error &error)
+        {
+            Log::error() << "Error parsing ini file " << d->configPath << ":" << error.line() << ": " << error.message();
+        }
+    }
+
+    configFile.close();
+
+#ifdef WIN32
+    Log::instance()->setColorOutput(d->properties->get<bool>("log.color", false));
+#else
+    bool colorTerminal = false;
+    const char *term = getenv("TERM");
+    if (term)
+    {
+        std::string terminal(term);
+        //FIXME: looks quite ugly
+        if ((terminal.find("xterm") != string::npos)
+                || (terminal.find("color") != string::npos))
+            colorTerminal = true;
+    }
+    Log::instance()->setColorOutput(d->properties->get<bool>("log.color", colorTerminal));
+#endif
+
     if (SDL_Init(SDL_INIT_VIDEO) != 0)
         throw std::runtime_error("Unable to init SDL");
 
@@ -368,19 +384,19 @@ void Engine::init(int w, int h, bool fullscreen)
         throw std::runtime_error("No writable data dir available.");
 
     Log::debug() << "Using data dir: " << d->mainDataDir;
-    ResourceManager::instance()->addDir(d->mainDataDir);
+    ResourceManager::instance().addDir(d->mainDataDir);
 #ifdef __linux
     char *pathes;
     if ((pathes = getenv("XDG_DATA_DIRS")) != NULL)
     {
         std::vector<std::wstring> list = split(fromLocal(pathes), L':');
         for (std::vector<std::wstring>::const_iterator i = list.begin(); i != list.end(); i++)
-            ResourceManager::instance()->addDir((*i) + L"/OpenSR/");
+            ResourceManager::instance().addDir((*i) + L"/OpenSR/");
     }
     else
     {
         //FIXME: use install prefix.
-        ResourceManager::instance()->addDir(L"/usr/share/OpenSR/");
+        ResourceManager::instance().addDir(L"/usr/share/OpenSR/");
     }
 #endif
 
@@ -423,7 +439,7 @@ void Engine::init(int w, int h, bool fullscreen)
         coreFontSize = atoi(coreFontStrings.at(1).c_str());
     if (coreFontStrings.size() > 2 && coreFontStrings.at(2) == "false")
         coreFontAA = false;
-    d->coreFont = ResourceManager::instance()->loadFont(fromLocal(coreFontStrings.at(0).c_str()), coreFontSize, coreFontAA);
+    d->coreFont = ResourceManager::instance().loadFont(fromLocal(coreFontStrings.at(0).c_str()), coreFontSize, coreFontAA);
 
     std::vector<std::string> monoFontStrings = split(d->properties->get<std::string>("graphics.monofont", "DroidSansMono.ttf:13"), ':');
     int monoFontSize = 13;
@@ -432,7 +448,7 @@ void Engine::init(int w, int h, bool fullscreen)
         monoFontSize = atoi(monoFontStrings.at(1).c_str());
     if (monoFontStrings.size() > 2 && monoFontStrings.at(2) == "false")
         monoFontAA = false;
-    d->monospaceFont = ResourceManager::instance()->loadFont(fromLocal(monoFontStrings.at(0).c_str()), monoFontSize, monoFontAA);
+    d->monospaceFont = ResourceManager::instance().loadFont(fromLocal(monoFontStrings.at(0).c_str()), monoFontSize, monoFontAA);
 
     setDefaultSkin(fromLocal(d->properties->get<std::string>("graphics.defaultSkin", "").c_str()));
 
@@ -529,7 +545,7 @@ int Engine::run()
                 (*i)->processMain();
 
 
-        ResourceManager::instance()->processMain();
+        ResourceManager::instance().processMain();
 
         d->processEvents();
         paint();
@@ -580,9 +596,10 @@ boost::shared_ptr<boost::property_tree::ptree> Engine::properties() const
     return d->properties;
 }
 
-Engine *Engine::instance()
+Engine& Engine::instance()
 {
-    return engineInstance;
+    static Engine engine;
+    return engine;
 }
 
 void Engine::focusWidget(Widget* w)
@@ -627,7 +644,7 @@ void Engine::setDefaultSkin(const Skin& skin)
 void Engine::setDefaultSkin(const std::wstring& skinPath)
 {
     RANGERS_D(Engine);
-    boost::shared_ptr<std::istream> json = ResourceManager::instance()->getFileStream(skinPath);
+    boost::shared_ptr<std::istream> json = ResourceManager::instance().getFileStream(skinPath);
     if (!json)
         return;
     bool error;

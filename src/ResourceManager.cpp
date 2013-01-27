@@ -37,7 +37,13 @@ using namespace std;
 
 namespace Rangers
 {
-ResourceManager *manager = 0;
+ResourceManager::ResourceManager()
+{
+}
+
+ResourceManager::ResourceManager(const ResourceManager& other)
+{
+}
 
 class ResourceManager::GAIWorker
 {
@@ -60,10 +66,9 @@ private:
     bool m_loaded;
 };
 
-ResourceManager* ResourceManager::instance()
+ResourceManager& ResourceManager::instance()
 {
-    if (!manager)
-        manager = new ResourceManager();
+    static ResourceManager manager;
     return manager;
 }
 
@@ -430,7 +435,7 @@ void ResourceManager::processMain()
 
 char* ResourceManager::loadData(const std::wstring& name, size_t &size)
 {
-    boost::shared_ptr<std::istream> s = ResourceManager::instance()->getFileStream(name);
+    boost::shared_ptr<std::istream> s = ResourceManager::instance().getFileStream(name);
     if (!s)
         return 0;
 

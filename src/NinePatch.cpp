@@ -59,7 +59,7 @@ NinePatch::NinePatch(const std::wstring& name, Object *parent): Sprite(*(new Nin
     if (s == L"9.json")
     {
         size_t dataSize;
-        boost::shared_ptr<std::istream> json = ResourceManager::instance()->getFileStream(name);
+        boost::shared_ptr<std::istream> json = ResourceManager::instance().getFileStream(name);
         if (json)
         {
             bool parseError = false;
@@ -72,7 +72,7 @@ NinePatch::NinePatch(const std::wstring& name, Object *parent): Sprite(*(new Nin
     }
     else
     {
-        d->region = TextureRegion(ResourceManager::instance()->loadTexture(name));
+        d->region = TextureRegion(ResourceManager::instance().loadTexture(name));
         if (d->region.texture)
         {
             int width = d->region.texture->width();

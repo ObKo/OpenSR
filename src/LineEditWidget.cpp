@@ -89,7 +89,7 @@ LineEditWidget::LineEditWidget(float w, float h, boost::shared_ptr< Font > font,
 {
     RANGERS_D(LineEditWidget);
     if (!font)
-        font = Engine::instance()->coreFont();
+        font = Engine::instance().coreFont();
     d->label = new Label(L"", this, font, POSITION_X_LEFT, POSITION_Y_TOP);
     d->height = h > font->size() + 4 ? h : font->size() + 4;
     d->width = w;
@@ -125,7 +125,7 @@ void LineEditWidgetPrivate::init()
     }
     if ((style.font.path != L"") && (style.font.size > 0))
     {
-        label = new Label(text, q, ResourceManager::instance()->loadFont(style.font.path, style.font.size));
+        label = new Label(text, q, ResourceManager::instance().loadFont(style.font.path, style.font.size));
         label->setColor(((style.color >> 24) & 0xff) / 255.0f, ((style.color >> 16) & 0xff) / 255.0f, ((style.color >> 8) & 0xff) / 255.0f, ((style.color) & 0xff) / 255.0f);
     }
     else
@@ -200,7 +200,7 @@ void LineEditWidget::mouseClick(const Vector& p)
 {
     lock();
     RANGERS_D(LineEditWidget);
-    Engine::instance()->focusWidget(this);
+    Engine::instance().focusWidget(this);
     unlock();
     Widget::mouseClick(p);
 }

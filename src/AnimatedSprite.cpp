@@ -64,7 +64,7 @@ AnimatedSprite::AnimatedSprite(boost::shared_ptr<AnimatedTexture> texture, Objec
 AnimatedSprite::AnimatedSprite(const std::wstring& animation, Object *parent): Sprite(*(new AnimatedSpritePrivate()), parent)
 {
     RANGERS_D(AnimatedSprite);
-    boost::shared_ptr<AnimatedTexture> animTexture = ResourceManager::instance()->loadAnimation(animation);
+    boost::shared_ptr<AnimatedTexture> animTexture = ResourceManager::instance().loadAnimation(animation);
     d->region = TextureRegion(animTexture);
     if (animTexture)
     {

@@ -65,7 +65,7 @@ bool operator==(Object const& lhs, Object const& rhs)
 int execLuaScript(const std::wstring& name)
 {
     size_t size;
-    char *luaData = ResourceManager::instance()->loadData(name, size);
+    char *luaData = ResourceManager::instance().loadData(name, size);
     if (!luaData)
         return -1;
     int state = execLuaScript(luaData, size, toLocal(name));
@@ -85,42 +85,42 @@ int execLuaScript(const char *data, size_t size, const std::string& name)
 
 int propertiesGetInt(const std::string& name, int defaultValue)
 {
-    return Engine::instance()->properties()->get<int>(name, defaultValue);
+    return Engine::instance().properties()->get<int>(name, defaultValue);
 }
 
 float propertiesGetFloat(const std::string& name, float defaultValue)
 {
-    return Engine::instance()->properties()->get<float>(name, defaultValue);
+    return Engine::instance().properties()->get<float>(name, defaultValue);
 }
 
 std::string propertiesGetString(const std::string& name, const std::string& defaultValue)
 {
-    return Engine::instance()->properties()->get<std::string>(name, defaultValue);
+    return Engine::instance().properties()->get<std::string>(name, defaultValue);
 }
 
 bool propertiesGetBool(const std::string& name, bool defaultValue)
 {
-    return Engine::instance()->properties()->get<bool>(name, defaultValue);
+    return Engine::instance().properties()->get<bool>(name, defaultValue);
 }
 
 void propertiesSetInt(const std::string& name, int value)
 {
-    Engine::instance()->properties()->put(name, value);
+    Engine::instance().properties()->put(name, value);
 }
 
 void propertiesSetFloat(const std::string& name, float value)
 {
-    Engine::instance()->properties()->put(name, value);
+    Engine::instance().properties()->put(name, value);
 }
 
 void propertiesSetString(const std::string& name, const std::string& value)
 {
-    Engine::instance()->properties()->put(name, value);
+    Engine::instance().properties()->put(name, value);
 }
 
 void propertiesSetBool(const std::string& name, bool value)
 {
-    Engine::instance()->properties()->put(name, value);
+    Engine::instance().properties()->put(name, value);
 }
 
 std::wstring wgettext(const std::string& id)
@@ -476,11 +476,14 @@ lua_State *initLuaState()
         .def("loadSound", &SoundManager::loadSound)
     ];
 
-    luabind::globals(luaState)["engine"] = Engine::instance();
-    luabind::globals(luaState)["resources"] = ResourceManager::instance();
-    luabind::globals(luaState)["sound"] = SoundManager::instance();
+    ResourceManager& resources = ResourceManager::instance();
+    SoundManager& sound = SoundManager::instance();
+    Engine& engine = Engine::instance();
+    luabind::globals(luaState)["engine"] = &engine;
+    luabind::globals(luaState)["resources"] = &resources;
+    luabind::globals(luaState)["sound"] = &sound;
 
-    Engine::instance()->initPluginLua(luaState);
+    Engine::instance().initPluginLua(luaState);
     return luaState;
 }
 

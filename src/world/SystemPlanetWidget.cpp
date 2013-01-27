@@ -131,21 +131,21 @@ SystemPlanetWidget::SystemPlanetWidget(boost::shared_ptr<Planet> planet, Widget*
         boost::shared_ptr<PlanetStyle> style = PlanetManager::instance().style(planet->style());
         if (style)
         {
-            m_texture = ResourceManager::instance()->loadTexture(style->texture);
+            m_texture = ResourceManager::instance().loadTexture(style->texture);
             m_hasCloud = style->hasCloud;
             if (m_hasCloud)
-                m_cloud = ResourceManager::instance()->loadTexture(style->cloud);
+                m_cloud = ResourceManager::instance().loadTexture(style->cloud);
             m_hasRing = style->hasRing;
             if (m_hasRing)
             {
-                m_ring = ResourceManager::instance()->loadTexture(style->ring);
+                m_ring = ResourceManager::instance().loadTexture(style->ring);
                 m_ringOffset.x = style->ringOffsetX;
                 m_ringOffset.y = style->ringOffsetY;
             }
             m_hasRingBackground = style->hasRingBackground;
             if (m_hasRingBackground)
             {
-                m_ringBackground = ResourceManager::instance()->loadTexture(style->ringBackground);
+                m_ringBackground = ResourceManager::instance().loadTexture(style->ringBackground);
                 m_ringBgOffset.x = style->ringBgOffsetX;
                 m_ringBgOffset.y = style->ringBgOffsetY;
             }

@@ -84,8 +84,8 @@ Object::~Object()
     if (d->parent)
         d->parent->removeChild(this);
 
-    if (Engine::instance())
-        Engine::instance()->unmarkToUpdate(this);
+    Engine::instance().unmarkToUpdate(this);
+
     delete d;
 }
 
@@ -397,7 +397,7 @@ void Object::markToUpdate()
     if (!d->needUpdate)
     {
         d->needUpdate = true;
-        Engine::instance()->markToUpdate(this);
+        Engine::instance().markToUpdate(this);
     }
 }
 

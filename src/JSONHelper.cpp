@@ -40,7 +40,7 @@ TextureRegion JSONHelper::parseTextureRegion(const Json::Value& object, bool &er
     boost::shared_ptr<Texture> texture;
 
     if (!textureName.empty())
-        texture = ResourceManager::instance()->loadTexture(textureName);
+        texture = ResourceManager::instance().loadTexture(textureName);
 
     if (!texture)
         return TextureRegion(boost::shared_ptr<Texture>(), 0, 0, 0, 0);

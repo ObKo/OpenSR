@@ -60,7 +60,7 @@ Sprite::Sprite(const std::wstring& texture,  Object *parent, TextureScaling  ts,
 {
     RANGERS_D(Sprite);
     d->scaling = ts;
-    d->region = TextureRegion(ResourceManager::instance()->loadTexture(texture));
+    d->region = TextureRegion(ResourceManager::instance().loadTexture(texture));
     if (d->region.texture)
     {
         d->width = d->region.texture->width();

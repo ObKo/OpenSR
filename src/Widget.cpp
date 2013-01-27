@@ -71,7 +71,7 @@ Widget::~Widget()
     if ((wparent = dynamic_cast<Widget*>(d->parent)) != 0)
         wparent->removeWidget(this);
 
-    Engine::instance()->widgetHide(this);
+    Engine::instance().widgetDestroyed(this);
 }
 
 void Widget::mouseMove(const Vector& p)
@@ -364,7 +364,7 @@ void Widget::setVisible(bool visible)
     RANGERS_D(Widget);
     d->visible = visible;
     if (!visible)
-        Engine::instance()->widgetHide(this);
+        Engine::instance().widgetHide(this);
 }
 
 bool Widget::prepareDraw() const

@@ -42,7 +42,7 @@ void ConsoleWidgetPrivate::ConsoleLineEditListener::actionPerformed(const Action
                 {
                     w->d_func()->commandHistory.push_back(w->d_func()->lineEdit->text());
                     w->d_func()->historyPosition = -1;
-                    Engine::instance()->execCommand(w->d_func()->lineEdit->text());
+                    Engine::instance().execCommand(w->d_func()->lineEdit->text());
                     w->d_func()->lineEdit->setText(L"");
                 }
             }
@@ -100,13 +100,13 @@ ConsoleWidget::ConsoleWidget(float w, float h, Widget* parent): Widget(*(new Con
     RANGERS_D(ConsoleWidget);
     d->width = w;
     d->height = h;
-    int editSize = Engine::instance()->serviceFont()->size() + 2;
-    d->lineEdit = new LineEditWidget(w - 8, Engine::instance()->serviceFont()->size(), Engine::instance()->serviceFont(), this);
-    d->logLabel = new ColorLabel("", this, Engine::instance()->serviceFont(), POSITION_X_LEFT, POSITION_Y_TOP);
+    int editSize = Engine::instance().serviceFont()->size() + 2;
+    d->lineEdit = new LineEditWidget(w - 8, Engine::instance().serviceFont()->size(), Engine::instance().serviceFont(), this);
+    d->logLabel = new ColorLabel("", this, Engine::instance().serviceFont(), POSITION_X_LEFT, POSITION_Y_TOP);
     d->logLabel->setPosition(4, 4);
     d->logLabel->setFixedSize(w - 8, h - editSize - 8);
     d->lineEdit->setPosition(4, h - editSize);
-    d->consoleLines = (h - editSize - 8) / Engine::instance()->serviceFont()->size();
+    d->consoleLines = (h - editSize - 8) / Engine::instance().serviceFont()->size();
     d->lineEdit->addListener(&d->listener);
     markToUpdate();
 }

@@ -50,11 +50,14 @@ public:
     boost::shared_ptr<AnimatedTexture> loadAnimation(const std::wstring& name, bool backgroundLoading = false);
     boost::shared_ptr<Font> loadFont(const std::wstring& name, int size, bool antialiased = true);
 
-    static ResourceManager *instance();
+    static ResourceManager& instance();
 
     void processMain();
 
 private:
+    ResourceManager();
+    ResourceManager(const ResourceManager& other);
+
     class GAIWorker;
     void processGAIQueue();
     void cleanupUnused();

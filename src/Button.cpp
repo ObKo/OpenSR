@@ -120,7 +120,7 @@ Button::Button(const std::wstring& texture, Widget *parent):
 {
     RANGERS_D(Button);
 
-    boost::shared_ptr<Texture> main = ResourceManager::instance()->loadTexture(texture);
+    boost::shared_ptr<Texture> main = ResourceManager::instance().loadTexture(texture);
     if (main)
     {
         d->style.normal.resource = ResourceDescriptor::Resource(TextureRegion(main));
@@ -139,8 +139,8 @@ Button::Button(const std::wstring& texture, const std::wstring& hoverTexture, Wi
 {
     RANGERS_D(Button);
 
-    boost::shared_ptr<Texture> main = ResourceManager::instance()->loadTexture(texture);
-    boost::shared_ptr<Texture> hover = ResourceManager::instance()->loadTexture(hoverTexture);
+    boost::shared_ptr<Texture> main = ResourceManager::instance().loadTexture(texture);
+    boost::shared_ptr<Texture> hover = ResourceManager::instance().loadTexture(hoverTexture);
     if (main)
     {
         d->style.normal.resource = ResourceDescriptor::Resource(TextureRegion(main));
@@ -164,9 +164,9 @@ Button::Button(const std::wstring& texture, const std::wstring& hoverTexture, co
 {
     RANGERS_D(Button);
 
-    boost::shared_ptr<Texture> main = ResourceManager::instance()->loadTexture(texture);
-    boost::shared_ptr<Texture> hover = ResourceManager::instance()->loadTexture(hoverTexture);
-    boost::shared_ptr<Texture> pressed = ResourceManager::instance()->loadTexture(pressTexture);
+    boost::shared_ptr<Texture> main = ResourceManager::instance().loadTexture(texture);
+    boost::shared_ptr<Texture> hover = ResourceManager::instance().loadTexture(hoverTexture);
+    boost::shared_ptr<Texture> pressed = ResourceManager::instance().loadTexture(pressTexture);
     if (main)
     {
         d->style.normal.resource = ResourceDescriptor::Resource(TextureRegion(main));
@@ -368,7 +368,7 @@ void Button::init()
     }
     if ((d->style.font.path != L"") && (d->style.font.size > 0))
     {
-        d->label = new Label(d->text, this, ResourceManager::instance()->loadFont(d->style.font.path, d->style.font.size));
+        d->label = new Label(d->text, this, ResourceManager::instance().loadFont(d->style.font.path, d->style.font.size));
     }
     else
     {
@@ -379,11 +379,11 @@ void Button::init()
     d->sprite = d->normalSprite;
 
     if (d->style.enterSound != L"")
-        d->enterSound = SoundManager::instance()->loadSound(d->style.enterSound);
+        d->enterSound = SoundManager::instance().loadSound(d->style.enterSound);
     if (d->style.leaveSound != L"")
-        d->leaveSound = SoundManager::instance()->loadSound(d->style.leaveSound);
+        d->leaveSound = SoundManager::instance().loadSound(d->style.leaveSound);
     if (d->style.clickSound != L"")
-        d->clickSound = SoundManager::instance()->loadSound(d->style.clickSound);
+        d->clickSound = SoundManager::instance().loadSound(d->style.clickSound);
 
     markToUpdate();
 }
@@ -425,9 +425,9 @@ void Button::setSounds(const std::wstring& clickSound, const std::wstring& leave
 {
     lock();
     RANGERS_D(Button);
-    d->clickSound = SoundManager::instance()->loadSound(clickSound);
-    d->enterSound = SoundManager::instance()->loadSound(enterSound);
-    d->leaveSound = SoundManager::instance()->loadSound(leaveSound);
+    d->clickSound = SoundManager::instance().loadSound(clickSound);
+    d->enterSound = SoundManager::instance().loadSound(enterSound);
+    d->leaveSound = SoundManager::instance().loadSound(leaveSound);
     unlock();
 }
 

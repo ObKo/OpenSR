@@ -51,7 +51,7 @@ ColorLabel::ColorLabel(const std::string& text, Object* parent, boost::shared_pt
 {
     RANGERS_D(ColorLabel);
     if (!font)
-        d->font = Engine::instance()->coreFont();
+        d->font = Engine::instance().coreFont();
     else
         d->font = font;
 
@@ -74,7 +74,7 @@ ColorLabel::ColorLabel(const std::wstring& text, Object* parent, boost::shared_p
 {
     RANGERS_D(ColorLabel);
     if (!font)
-        d->font = Engine::instance()->coreFont();
+        d->font = Engine::instance().coreFont();
     else
         d->font = font;
 

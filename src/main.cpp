@@ -24,8 +24,8 @@ using namespace std;
 
 int main(int argc, char **argv)
 {
-    Engine engine(argc, argv);
-    engine.init(1024, 768, false);
+    Engine &engine = Engine::instance();
+    engine.init(argc, argv, 1024, 768, false);
     return engine.run();
 }
 

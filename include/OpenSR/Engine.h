@@ -42,12 +42,8 @@ class RANGERS_ENGINE_API Engine
     RANGERS_DECLARE_PRIVATE(Engine)
 
 public:
-    //! Construct engine from main's args
-    Engine(int argc, char **argv);
-    ~Engine();
-
     //! Init engine
-    void init(int width, int height, bool fullscreen = false);
+    void init(int argc, char **argv, int width, int height, bool fullscreen = false);
     //! Main paint function
     void paint();
     //! End loop
@@ -73,6 +69,8 @@ public:
     void markWidgetDeleting(Widget *w);
     //! Widget will be hidden now.
     void widgetHide(Widget *w);
+    //! Widget will be destroyed now.
+    void widgetDestroyed(Widget *w);
 
     //! Current screen height
     int screenHeight() const;
@@ -85,7 +83,7 @@ public:
     boost::shared_ptr<Font> serviceFont() const;
 
     //! Engine instance
-    static Engine *instance();
+    static Engine& instance();
 
     //! Current ticks
     static long long getTicks();
@@ -106,6 +104,10 @@ public:
     void initPluginLua(lua_State *state);
 
 private:
+    Engine();
+    Engine(const Engine& other);
+    ~Engine();
+
     EnginePrivate *m_d;
 };
 }

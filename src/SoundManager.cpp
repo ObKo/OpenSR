@@ -23,14 +23,14 @@
 
 namespace Rangers
 {
-SoundManager* SoundManager::m_soundInstance = 0;
-
 SoundManager::SoundManager()
 {
-    if (m_soundInstance)
-        delete m_soundInstance;
-
     Mix_OpenAudio(44100, AUDIO_S16SYS, 2, 1024);
+}
+
+
+SoundManager::SoundManager(const SoundManager& other)
+{
 }
 
 SoundManager::~SoundManager()
@@ -38,12 +38,10 @@ SoundManager::~SoundManager()
     Mix_CloseAudio();
 }
 
-SoundManager* SoundManager::instance()
+SoundManager& SoundManager::instance()
 {
-    if (!m_soundInstance)
-        m_soundInstance = new SoundManager();
-
-    return m_soundInstance;
+    static SoundManager manager;
+    return manager;
 }
 
 boost::shared_ptr<Sound> SoundManager::loadSound(const std::wstring& path)
