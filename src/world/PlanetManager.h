@@ -26,6 +26,7 @@
 
 namespace Rangers
 {
+class Texture;
 namespace World
 {
 struct PlanetStyle;
@@ -38,6 +39,9 @@ public:
     boost::shared_ptr<PlanetStyle> style(uint32_t id);
 
     void loadStyles(const std::wstring& styleFile);
+
+    //! Get static planet image from planet style
+    boost::shared_ptr<Texture> getPlanetImage(boost::shared_ptr<PlanetStyle> style, int size);
 
 private:
     PlanetManager();

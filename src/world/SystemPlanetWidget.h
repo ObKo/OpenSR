@@ -25,6 +25,7 @@
 
 namespace Rangers
 {
+class Sprite;
 namespace World
 {
 class Planet;
@@ -42,12 +43,15 @@ public:
     boost::shared_ptr<Planet> planet() const;
 
 private:
+    Sprite *m_staticSprite;
+    Sprite *m_ringBgSprite;
+    Sprite *m_ringSprite;
+
     boost::shared_ptr<Planet> m_planet;
 
     boost::shared_ptr<Texture> m_texture;
     boost::shared_ptr<Texture> m_cloud;
-    boost::shared_ptr<Texture> m_ring;
-    boost::shared_ptr<Texture> m_ringBackground;
+
     uint32_t m_ambientColor;
     float m_speed;
     float m_cloudSpeed;
@@ -61,11 +65,6 @@ private:
     bool m_hasRingBackground;
 
     GLuint m_vertexBuffer;
-    GLuint m_ringVertexBuffer;
-    GLuint m_ringBgVertexBuffer;
-
-    Vector m_ringOffset;
-    Vector m_ringBgOffset;
 
     static Shader m_vertexShader;
     static Shader m_fragmentShader;

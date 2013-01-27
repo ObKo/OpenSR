@@ -21,6 +21,8 @@
 #include "Planet.h"
 #include <OpenSR/ResourceManager.h>
 #include <OpenSR/Texture.h>
+#include <OpenSR/Sprite.h>
+#include <OpenSR/Engine.h>
 #include <cmath>
 
 namespace
@@ -127,8 +129,9 @@ GLint SystemPlanetWidget::m_textureLocation;
 GLint SystemPlanetWidget::m_cloudLocation;
 
 SystemPlanetWidget::SystemPlanetWidget(boost::shared_ptr<Planet> planet, Widget* parent): Widget(parent), m_planet(planet), m_useShader(true), m_vertexBuffer(0),
-    m_phase(0.0f), m_cloudPhase(0.0f), m_solarAngle(0.0f), m_ringVertexBuffer(0), m_ringBgVertexBuffer(0)
+    m_phase(0.0f), m_cloudPhase(0.0f), m_solarAngle(0.0f), m_ringSprite(0), m_ringBgSprite(0), m_staticSprite(0)
 {
+    m_useShader = Rangers::Engine::instance().properties()->get<bool>("graphics.useShaders", true);
     if (planet)
     {
         boost::shared_ptr<PlanetStyle> style = PlanetManager::instance().style(planet->style());
@@ -141,16 +144,16 @@ SystemPlanetWidget::SystemPlanetWidget(boost::shared_ptr<Planet> planet, Widget*
             m_hasRing = style->hasRing;
             if (m_hasRing)
             {
-                m_ring = ResourceManager::instance().loadTexture(style->ring);
-                m_ringOffset.x = style->ringOffsetX;
-                m_ringOffset.y = style->ringOffsetY;
+                m_ringSprite = new Sprite(style->ring, this);
+                m_ringSprite->setOrigin(POSITION_X_CENTER, POSITION_Y_CENTER);
+                m_ringSprite->setPosition(style->ringOffsetX, style->ringOffsetY);
             }
             m_hasRingBackground = style->hasRingBackground;
             if (m_hasRingBackground)
             {
-                m_ringBackground = ResourceManager::instance().loadTexture(style->ringBackground);
-                m_ringBgOffset.x = style->ringBgOffsetX;
-                m_ringBgOffset.y = style->ringBgOffsetY;
+                m_ringBgSprite = new Sprite(style->ringBackground, this);
+                m_ringBgSprite->setOrigin(POSITION_X_CENTER, POSITION_Y_CENTER);
+                m_ringBgSprite->setPosition(style->ringBgOffsetX, style->ringBgOffsetY);
             }
             m_ambientColor = style->ambientColor;
             m_speed = style->speed;
@@ -164,6 +167,12 @@ SystemPlanetWidget::SystemPlanetWidget(boost::shared_ptr<Planet> planet, Widget*
 SystemPlanetWidget::~SystemPlanetWidget()
 {
     glDeleteBuffers(1, &m_vertexBuffer);
+    if (m_ringBgSprite)
+        delete m_ringBgSprite;
+    if (m_ringSprite)
+        delete m_ringSprite;
+    if (m_staticSprite)
+        delete m_staticSprite;
 }
 
 void SystemPlanetWidget::draw() const
@@ -173,67 +182,59 @@ void SystemPlanetWidget::draw() const
     if (!prepareDraw())
         return;
 
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-    glEnableClientState(GL_ARRAY_BUFFER);
+    if (m_hasRingBackground && m_ringBgSprite)
+        m_ringBgSprite->draw();
 
-    if (m_hasRingBackground && m_ringBackground)
+
+    if (m_useShader)
     {
-        glBindTexture(GL_TEXTURE_2D, m_ringBackground->openGLTexture());
-        glBindBuffer(GL_ARRAY_BUFFER, m_ringBgVertexBuffer);
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        glEnableClientState(GL_ARRAY_BUFFER);
+
+        if (m_texture)
+        {
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, m_texture->openGLTexture());
+        }
+
+        if (m_cloud)
+        {
+            glActiveTexture(GL_TEXTURE1);
+            glBindTexture(GL_TEXTURE_2D, m_cloud->openGLTexture());
+        }
+        glUseProgram(m_shader.handle());
+        glUniform1i(m_textureLocation, 0);
+        glUniform1i(m_cloudLocation, 1);
+        glUniform1f(m_phaseLocation, m_phase);
+        glUniform1f(m_cloudPhaseLocation, m_cloudPhase);
+        glUniform1f(m_solarAngleLocation, m_solarAngle);
+        glUniform3f(m_ambientColorLocation, ((m_ambientColor >> 16) & 0xFF) / 255.0f, ((m_ambientColor >> 8) & 0xFF) / 255.0f, ((m_ambientColor) & 0xFF) / 255.0f);
+        glUniform1i(m_cloudEnabledLocation, m_hasCloud);
+
+        glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer);
 
         glVertexPointer(2, GL_FLOAT, sizeof(Vertex), 0);
         glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), OPENGL_BUFFER_OFFSET(sizeof(float) * 2));
 
         glDrawArrays(GL_QUADS, 0, 4);
-    }
 
-    if (m_texture)
-    {
+        glUseProgram(0);
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, m_texture->openGLTexture());
-    }
 
-    if (m_cloud)
+
+        glDisableClientState(GL_ARRAY_BUFFER);
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+        glDisableClientState(GL_VERTEX_ARRAY);
+    }
+    else
     {
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, m_cloud->openGLTexture());
+        if (m_staticSprite)
+            m_staticSprite->draw();
     }
 
-    glUseProgram(m_shader.handle());
-
-    glUniform1i(m_textureLocation, 0);
-    glUniform1i(m_cloudLocation, 1);
-    glUniform1f(m_phaseLocation, m_phase);
-    glUniform1f(m_cloudPhaseLocation, m_cloudPhase);
-    glUniform1f(m_solarAngleLocation, m_solarAngle);
-    glUniform3f(m_ambientColorLocation, ((m_ambientColor >> 16) & 0xFF) / 255.0f, ((m_ambientColor >> 8) & 0xFF) / 255.0f, ((m_ambientColor) & 0xFF) / 255.0f);
-    glUniform1i(m_cloudEnabledLocation, m_hasCloud);
-
-    glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer);
-
-    glVertexPointer(2, GL_FLOAT, sizeof(Vertex), 0);
-    glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), OPENGL_BUFFER_OFFSET(sizeof(float) * 2));
-
-    glDrawArrays(GL_QUADS, 0, 4);
-
-    glUseProgram(0);
-    glActiveTexture(GL_TEXTURE0);
-
-    if (m_hasRing && m_ring)
-    {
-        glBindTexture(GL_TEXTURE_2D, m_ring->openGLTexture());
-        glBindBuffer(GL_ARRAY_BUFFER, m_ringVertexBuffer);
-
-        glVertexPointer(2, GL_FLOAT, sizeof(Vertex), 0);
-        glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), OPENGL_BUFFER_OFFSET(sizeof(float) * 2));
-
-        glDrawArrays(GL_QUADS, 0, 4);
-    }
-
-    glDisableClientState(GL_ARRAY_BUFFER);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    glDisableClientState(GL_VERTEX_ARRAY);
+    if (m_hasRing && m_ringSprite)
+        m_ringSprite->draw();
 
     endDraw();
 }
@@ -246,13 +247,25 @@ void SystemPlanetWidget::processMain()
         m_shader.addShader(m_fragmentShader);
         m_shader.link();
 
-        m_phaseLocation = m_shader.getUniformLocation("phase");
-        m_cloudPhaseLocation = m_shader.getUniformLocation("cloudPhase");
-        m_cloudEnabledLocation = m_shader.getUniformLocation("cloudEnabled");
-        m_solarAngleLocation = m_shader.getUniformLocation("solarAngle");
-        m_ambientColorLocation = m_shader.getUniformLocation("ambientColor");
-        m_textureLocation = m_shader.getUniformLocation("texture");
-        m_cloudLocation = m_shader.getUniformLocation("cloud");
+        if (m_shader.isInvalid())
+        {
+            m_useShader = false;
+        }
+        else
+        {
+            m_phaseLocation = m_shader.getUniformLocation("phase");
+            m_cloudPhaseLocation = m_shader.getUniformLocation("cloudPhase");
+            m_cloudEnabledLocation = m_shader.getUniformLocation("cloudEnabled");
+            m_solarAngleLocation = m_shader.getUniformLocation("solarAngle");
+            m_ambientColorLocation = m_shader.getUniformLocation("ambientColor");
+            m_textureLocation = m_shader.getUniformLocation("texture");
+            m_cloudLocation = m_shader.getUniformLocation("cloud");
+        }
+    }
+    if (!m_useShader && !m_staticSprite)
+    {
+        m_staticSprite = new Sprite(PlanetManager::instance().getPlanetImage(PlanetManager::instance().style(m_planet->style()), (int)m_size), this);
+        m_staticSprite->setOrigin(POSITION_X_CENTER, POSITION_Y_CENTER);
     }
     Vertex *vertices;
     if (!m_vertexBuffer)
@@ -260,22 +273,6 @@ void SystemPlanetWidget::processMain()
         vertices = new Vertex[4];
         glGenBuffers(1, &m_vertexBuffer);
         glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * 4, vertices, GL_DYNAMIC_DRAW);
-        delete[] vertices;
-    }
-    if (m_hasRing && !m_ringVertexBuffer)
-    {
-        vertices = new Vertex[4];
-        glGenBuffers(1, &m_ringVertexBuffer);
-        glBindBuffer(GL_ARRAY_BUFFER, m_ringVertexBuffer);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * 4, vertices, GL_DYNAMIC_DRAW);
-        delete[] vertices;
-    }
-    if (m_hasRingBackground && !m_ringBgVertexBuffer)
-    {
-        vertices = new Vertex[4];
-        glGenBuffers(1, &m_ringBgVertexBuffer);
-        glBindBuffer(GL_ARRAY_BUFFER, m_ringBgVertexBuffer);
         glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * 4, vertices, GL_DYNAMIC_DRAW);
         delete[] vertices;
     }
@@ -298,71 +295,14 @@ void SystemPlanetWidget::processMain()
     vertices[3].x = - m_size / 2.0f;
     vertices[3].y = m_size / 2.0f;
     glUnmapBuffer(GL_ARRAY_BUFFER);
-
-    if (m_hasRing)
-    {
-        int width = 0;
-        int height = 0;
-        if (m_ring)
-        {
-            width = m_ring->width();
-            height = m_ring->height();
-        }
-        glBindBuffer(GL_ARRAY_BUFFER, m_ringVertexBuffer);
-        vertices = (Vertex *)glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
-        vertices[0].u = 0.0f;
-        vertices[0].v = 0.0f;
-        vertices[0].x = - width / 2.0f + m_ringOffset.x + 0.5f;
-        vertices[0].y = - height / 2.0f + m_ringOffset.y + 0.5f;
-        vertices[1].u = 1.0f;
-        vertices[1].v = 0.0f;
-        vertices[1].x = width / 2.0f + m_ringOffset.x + 0.5f;
-        vertices[1].y = - height / 2.0f + m_ringOffset.y + 0.5f;
-        vertices[2].u = 1.0f;
-        vertices[2].v = 1.0f;
-        vertices[2].x = width / 2.0f + m_ringOffset.x + 0.5f;
-        vertices[2].y = height / 2.0f + m_ringOffset.y + 0.5f;
-        vertices[3].u = 0.0f;
-        vertices[3].v = 1.0f;
-        vertices[3].x = - width / 2.0f + m_ringOffset.x + 0.5f;
-        vertices[3].y = height / 2.0f + m_ringOffset.y + 0.5f;
-        glUnmapBuffer(GL_ARRAY_BUFFER);
-    }
-
-    //FIXME: Dirty hack with half-pixel offset
-    if (m_hasRingBackground)
-    {
-        int width = 0;
-        int height = 0;
-        if (m_ringBackground)
-        {
-            width = m_ringBackground->width();
-            height = m_ringBackground->height();
-        }
-        glBindBuffer(GL_ARRAY_BUFFER, m_ringBgVertexBuffer);
-        vertices = (Vertex *)glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
-        vertices[0].u = 0.0f;
-        vertices[0].v = 0.0f;
-        vertices[0].x = - width / 2.0f + m_ringBgOffset.x;
-        vertices[0].y = - height / 2.0f + m_ringBgOffset.y;
-        vertices[1].u = 1.0f;
-        vertices[1].v = 0.0f;
-        vertices[1].x = width / 2.0f + m_ringBgOffset.x;
-        vertices[1].y = - height / 2.0f + m_ringBgOffset.y;
-        vertices[2].u = 1.0f;
-        vertices[2].v = 1.0f;
-        vertices[2].x = width / 2.0f + m_ringBgOffset.x;
-        vertices[2].y = height / 2.0f + m_ringBgOffset.y;
-        vertices[3].u = 0.0f;
-        vertices[3].v = 1.0f;
-        vertices[3].x = - width / 2.0f + m_ringBgOffset.x;
-        vertices[3].y = height / 2.0f + m_ringBgOffset.y;
-        glUnmapBuffer(GL_ARRAY_BUFFER);
-    }
 }
 
 void SystemPlanetWidget::processLogic(int dt)
 {
+    Vector pos = position();
+    float l = sqrt(pos.x * pos.x + pos.y * pos.y);
+    m_solarAngle = M_PI + acos(pos.x / l);
+
     m_phase += m_speed / 180000.0f * dt * M_PI;
     while (m_phase > M_PI)
         m_phase -= 2 * M_PI;
