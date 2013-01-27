@@ -255,7 +255,15 @@ void PlanetViewer::initializeGL()
         qCritical() << "Error compiling vertex shader";
     glGetObjectParameterivARB(fShader, GL_COMPILE_STATUS, &compiled);
     if (!compiled)
-        qCritical() << "Error compiling fragment shader";
+    {
+        int logLength;
+        char *log;
+        glGetShaderiv(fShader, GL_INFO_LOG_LENGTH, &logLength);
+        log = new char[logLength];
+        glGetShaderInfoLog(fShader, logLength, 0, log);
+        qCritical() << "Error compiling fragment shader:" << log;
+        delete[] log;
+    }
 
     glLinkProgram(m_shaderProgram);
 

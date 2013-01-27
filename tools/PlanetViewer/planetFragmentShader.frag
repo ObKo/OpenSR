@@ -21,20 +21,12 @@ void getColor(in sampler2D tex, in float phase, in float radius, in bool cloud, 
     result.x = 0.5f + (1.0f / (2.0f * PI) * lambda);
     result.y = 0.5f - cos(theta) / 2.0f;
 
-    if ((r > radius - 0.00001f) && (r <= radius + 0.00001f))
+    if (tr <= radius * radius)
     {
         color = texture2D(tex, result);
 
         if (!cloud && colorCorrection)
         {
-            /*float Pr = 0.299;
-            float Pg = 0.587;
-            float Pb = 0.114;
-            float P = sqrt(color.r * color.r * Pr + color.g * color.g * Pg + color.b * color.b * Pb);
-            color.r = P + (color.r - P) * (color.a * 1.5f + 0.3f);
-            color.g = P + (color.g - P) * (color.a * 1.5f + 0.3f);
-            color.b = P + (color.b - P) * (color.a * 1.5f + 0.3f);
-            color.a = 1.0f;*/
             float y = 0.299 * color.r + 0.587 * color.g + 0.114 * color.b;
             float u = -0.14713 * color.r - 0.28886 * color.g + 0.436 * color.b;
             float v = 0.615 * color.r - 0.51499 * color.g - 0.10001 * color.b;
@@ -70,11 +62,11 @@ void main()
         getColor(texture, phase, 0.5f, false, t0);
         gl_FragColor = t0;
 
-        if (tr >= 0.23 && gl_FragColor.a > 0.0f)
+        if (tr >= 0.23)
             gl_FragColor.a = (0.25f - tr) * 50.0f;
     }
     float x = sqrt(0.5f * 0.5f - (tex_coord.x - 0.5f) * (tex_coord.x - 0.5f) - (tex_coord.y - 0.5f) * (tex_coord.y - 0.5f));
     vec3 normal = normalize(vec3(x, tex_coord.x - 0.5f, tex_coord.y - 0.5f));
     float diffuse = max(dot(normal, vec3(0.5f, cos(solarAngle), sin(solarAngle))), 0.0);
     gl_FragColor.rgb = gl_FragColor.rgb * 0.3 * ambientColor + gl_FragColor.rgb * diffuse * vec3(1.0, 1.0f, 1.0f);
-};
+}

@@ -48,7 +48,7 @@ void getColor(in sampler2D tex, in float phase, in float radius, in bool cloud, 
     result.x = 0.5f + (1.0f / (2.0f * PI) * lambda); \
     result.y = 0.5f - cos(theta) / 2.0f; \
 \
-    if ((r > radius - 0.00001f) && (r <= radius + 0.00001f)) \
+    if(tr <= radius * radius) \
     { \
         color = texture2D(tex, result); \
 \
@@ -61,6 +61,7 @@ void getColor(in sampler2D tex, in float phase, in float radius, in bool cloud, 
             color.r = y + 1.13983 * v; \
             color.g = y - 0.39465 * u - 0.58060 * v; \
             color.b = y + 2.03211 * u; \
+            color.a = 1.0f; \
         } \
 \
         if (!cloud) \
@@ -75,7 +76,7 @@ void main() \
     vec4 t0, t1; \
     if (cloudEnabled) \
     { \
-        getColor(texture, phase, 0.49f, false, t0); \
+        getColor(texture, phase, 0.5f, false, t0); \
         getColor(cloud, cloudPhase, 0.5f, true, t1); \
         gl_FragColor = mix(t0, t1, t1.a); \
 \
@@ -89,8 +90,10 @@ void main() \
         getColor(texture, phase, 0.5f, false, t0); \
         gl_FragColor = t0; \
 \
-        if (tr >= 0.23 && gl_FragColor.a > 0.0f) \
+        if (tr >= 0.23) \
             gl_FragColor.a = (0.25f - tr) * 50.0f; \
+        else \
+            gl_FragColor.a = 1.0f; \
     } \
     float x = sqrt(0.5f * 0.5f - (tex_coord.x - 0.5f) * (tex_coord.x - 0.5f) - (tex_coord.y - 0.5f) * (tex_coord.y - 0.5f)); \
     vec3 normal = normalize(vec3(x, tex_coord.x - 0.5f, tex_coord.y - 0.5f)); \
