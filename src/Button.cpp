@@ -33,6 +33,7 @@ namespace Rangers
 {
 void ButtonPrivate::actionPerformed(const Action &action)
 {
+    RANGERS_Q(Button);
     switch (action.type())
     {
     case Action::MOUSE_ENTER:
@@ -47,6 +48,30 @@ void ButtonPrivate::actionPerformed(const Action &action)
             sprite = normalSprite;
         if (leaveSound)
             leaveSound->play();
+        break;
+
+    case Action::MOUSE_UP:
+        if (!leftMouseButtonPressed)
+        {
+            if (hoverSprite)
+                sprite = hoverSprite;
+            else if (normalSprite)
+                sprite = normalSprite;
+        }
+        break;
+
+    case Action::MOUSE_DOWN:
+        if (leftMouseButtonPressed)
+        {
+            if (pressedSprite)
+                sprite = pressedSprite;
+        }
+        break;
+
+    case Action::MOUSE_CLICK:
+        if (clickSound)
+            clickSound->play();
+        q->action(Action(q, Action::BUTTON_CLICKED));
         break;
     }
 }
@@ -484,42 +509,6 @@ void Button::processMain()
     }
     unlock();
     Widget::processMain();
-}
-
-void Button::mouseDown(uint8_t key, const Vector &p)
-{
-    lock();
-    RANGERS_D(Button);
-    Widget::mouseDown(key, p);
-    if (d->leftMouseButtonPressed)
-    {
-        if (d->pressedSprite)
-            d->sprite = d->pressedSprite;
-    }
-    unlock();
-}
-
-void Button::mouseUp(uint8_t key, const Vector &p)
-{
-    lock();
-    RANGERS_D(Button);
-    if (d->leftMouseButtonPressed)
-    {
-        if (d->hoverSprite)
-            d->sprite = d->hoverSprite;
-        else if (d->normalSprite)
-            d->sprite = d->normalSprite;
-    }
-    Widget::mouseUp(key, p);
-    unlock();
-}
-
-void Button::mouseClick(const Vector &p)
-{
-    RANGERS_D(Button);
-    if (d->clickSound)
-        d->clickSound->play();
-    action(Action(this, Action::BUTTON_CLICKED, Action::Argument()));
 }
 
 }

@@ -675,11 +675,11 @@ void Engine::EnginePrivate::processEvents()
             break;
         case SDL_MOUSEBUTTONDOWN:
             if (currentWidget)
-                currentWidget->mouseDown(event.button.button, event.button.x, event.button.y);
+                currentWidget->action(Action(currentWidget, Action::MOUSE_DOWN, event.button.button));
             break;
         case SDL_MOUSEBUTTONUP:
             if (currentWidget)
-                currentWidget->mouseUp(event.button.button, event.button.x, event.button.y);
+                currentWidget->action(Action(currentWidget, Action::MOUSE_UP, event.button.button));
             break;
         case SDL_QUIT:
             q->quit();

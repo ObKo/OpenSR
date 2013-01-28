@@ -49,10 +49,6 @@ public:
     virtual void draw() const;
     virtual void processMain();
 
-    virtual void mouseDown(uint8_t key, const Vector &p);
-    virtual void mouseUp(uint8_t key, const Vector &p);
-    virtual void mouseClick(const Vector &p);
-
     virtual int minWidth() const;
     virtual int minHeight() const;
     virtual int preferredWidth() const;

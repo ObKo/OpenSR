@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2012 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2012 - 2013 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -27,17 +27,13 @@
 
 namespace Rangers
 {
-class LineEditWidgetPrivate: public WidgetPrivate
+class LineEditWidgetPrivate: public WidgetPrivate, ActionListener
 {
     RANGERS_DECLARE_PUBLIC(LineEditWidget)
 public:
-
-    class LineEditWidgetListener: public ActionListener
-    {
-        void actionPerformed(const Action &action);
-    };
-
     LineEditWidgetPrivate();
+
+    virtual void actionPerformed(const Action &action);
 
     Label *label;
     std::wstring text;
@@ -50,8 +46,6 @@ public:
 
     Sprite *background;
     LineEditStyle style;
-
-    LineEditWidgetListener listener;
 
     void init();
     void updateText();

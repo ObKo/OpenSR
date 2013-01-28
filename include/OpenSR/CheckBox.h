@@ -43,8 +43,6 @@ public:
     virtual void draw() const;
     virtual void processMain();
 
-    virtual void mouseClick(const Vector &p);
-
 protected:
     CheckBox(CheckBoxPrivate &p, Widget *parent = 0);
 

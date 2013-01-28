@@ -45,9 +45,6 @@ public:
 
     virtual void mouseMove(const Vector &p);
 
-    virtual void mouseDown(uint8_t key, const Vector &p);
-    virtual void mouseUp(uint8_t key, const Vector &p);
-
     virtual void actionPerformed(const Action &action);
 
     virtual void processLogic(int dt);

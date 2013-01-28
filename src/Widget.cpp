@@ -127,54 +127,6 @@ void Widget::mouseMove(float x, float y)
     mouseMove(Vector(x, y));
 }
 
-void Widget::mouseDown(uint8_t key, float x, float y)
-{
-    mouseDown(key, Vector(x, y));
-}
-
-void Widget::mouseUp(uint8_t key, float x, float y)
-{
-    mouseUp(key, Vector(x, y));
-}
-
-void Widget::mouseClick(float x, float y)
-{
-    mouseClick(Vector(x, y));
-}
-
-void Widget::mouseDown(uint8_t key, const Vector& p)
-{
-    RANGERS_D(Widget);
-    lock();
-    if (d->currentChild)
-    {
-        d->currentChild->mouseDown(key, d->currentChild->mapFromParent(p));
-    }
-    if (key == SDL_BUTTON_LEFT)
-        d->leftMouseButtonPressed = true;
-    unlock();
-}
-
-void Widget::mouseUp(uint8_t key, const Vector& p)
-{
-    RANGERS_D(Widget);
-    lock();
-    if (d->currentChild)
-    {
-        d->currentChild->mouseUp(key, d->currentChild->mapFromParent(p));
-    }
-    if (d->leftMouseButtonPressed && (key == SDL_BUTTON_LEFT))
-    {
-        d->leftMouseButtonPressed = false;
-        mouseClick(p);
-    }
-    unlock();
-}
-
-void Widget::mouseClick(const Vector &p)
-{
-}
-
 void Widget::addWidget(Widget* w)
 {
     RANGERS_D(Widget);
@@ -289,6 +241,23 @@ void Widget::action(const Action& action)
             d->currentChild->action(Action(d->currentChild, Action::MOUSE_LEAVE));
         d->currentChild = 0;
         d->leftMouseButtonPressed = false;
+        break;
+
+    case Action::MOUSE_DOWN:
+        if (boost::get<uint8_t>(action.argument()) == SDL_BUTTON_LEFT)
+            d->leftMouseButtonPressed = true;
+        if (d->currentChild)
+            d->currentChild->action(Action(d->currentChild, Action::MOUSE_DOWN, action.argument()));
+        break;
+
+    case Action::MOUSE_UP:
+        if (d->leftMouseButtonPressed && (boost::get<uint8_t>(action.argument()) == SDL_BUTTON_LEFT))
+        {
+            d->leftMouseButtonPressed = false;
+            this->action(Action(this, Action::MOUSE_CLICK, action.argument()));
+        }
+        if (d->currentChild)
+            d->currentChild->action(Action(d->currentChild, Action::MOUSE_UP, action.argument()));
         break;
     }
     if (!d->listeners.size())

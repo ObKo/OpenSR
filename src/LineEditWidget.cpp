@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 - 2012 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2013 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -31,12 +31,17 @@
 namespace Rangers
 {
 
-void LineEditWidgetPrivate::LineEditWidgetListener::actionPerformed(const Action &action)
+void LineEditWidgetPrivate::actionPerformed(const Action &action)
 {
-    if (LineEditWidget *w = dynamic_cast<LineEditWidget *>(action.source()))
+    RANGERS_Q(LineEditWidget);
+    switch (action.type())
     {
-        if (action.type() == Action::KEY_PRESSED)
-            w->d_func()->keyPressed(boost::get<SDL_keysym>(action.argument()));
+    case Action::MOUSE_CLICK:
+        Engine::instance().focusWidget(q);
+        break;
+    case Action::KEY_PRESSED:
+        keyPressed(boost::get<SDL_keysym>(action.argument()));
+        break;
     }
 }
 
@@ -155,8 +160,7 @@ void LineEditWidgetPrivate::init()
     cursorBuffer = 0;
     cursorVertices = 0;
     stringOffset = 0;
-    listeners.clear();
-    listeners.push_back(&listener);
+    q->addListener(this);
     q->markToUpdate();
 }
 
@@ -194,15 +198,6 @@ LineEditWidget::~LineEditWidget()
 
     if (d->label)
         delete d->label;
-}
-
-void LineEditWidget::mouseClick(const Vector& p)
-{
-    lock();
-    RANGERS_D(LineEditWidget);
-    Engine::instance().focusWidget(this);
-    unlock();
-    Widget::mouseClick(p);
 }
 
 void LineEditWidget::processMain()

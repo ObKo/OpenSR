@@ -33,9 +33,9 @@ class RANGERS_ENGINE_API Action
 {
 public:
     //! Type of action
-    enum Type {BUTTON_CLICKED, KEY_PRESSED, CHECKBOX_TOGGLED, MOUSE_ENTER, MOUSE_LEAVE};
+    enum Type {BUTTON_CLICKED, KEY_PRESSED, CHECKBOX_TOGGLED, MOUSE_ENTER, MOUSE_LEAVE, MOUSE_DOWN, MOUSE_UP, MOUSE_CLICK};
     //! Argument of action
-    typedef boost::variant<std::wstring, Rect, SDL_keysym, bool> Argument;
+    typedef boost::variant<std::wstring, Rect, SDL_keysym, bool, uint8_t> Argument;
 
     //! Constructs new action
     Action(Widget *source, Type type, const Argument& argument = Argument());

@@ -40,6 +40,7 @@ CheckBoxPrivate::CheckBoxPrivate()
 
 void CheckBoxPrivate::actionPerformed(const Action& action)
 {
+    RANGERS_Q(CheckBox);
     switch (action.type())
     {
     case Action::MOUSE_ENTER:
@@ -57,6 +58,11 @@ void CheckBoxPrivate::actionPerformed(const Action& action)
             sprite = checkedNormal;
         else
             sprite = normal;
+        break;
+
+    case Action::MOUSE_CLICK:
+        q->setChecked(!checked);
+        q->action(Action(q, Action::CHECKBOX_TOGGLED, Action::Argument(checked)));
         break;
     }
 }
@@ -201,15 +207,6 @@ void CheckBox::processMain()
     d->label->setPosition(d->sprite->width() + 5, int(d->sprite->height() - d->label->height()) / 2);
     unlock();
     Widget::processMain();
-}
-
-void CheckBox::mouseClick(const Vector &p)
-{
-    lock();
-    RANGERS_D(CheckBox);
-    setChecked(!d->checked);
-    action(Action(this, Action::CHECKBOX_TOGGLED, Action::Argument(d->checked)));
-    unlock();
 }
 }
 

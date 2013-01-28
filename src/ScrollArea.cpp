@@ -43,11 +43,99 @@ ScrollAreaPrivate::ScrollAreaPrivate()
 
 void ScrollAreaPrivate::actionPerformed(const Action &action)
 {
-    switch (action.type())
+    RANGERS_Q(ScrollArea);
+
+    if (action.source() == q)
     {
-    case Action::MOUSE_LEAVE:
-        scrollDrag = ScrollAreaPrivate::NONE;
+        switch (action.type())
+        {
+        case Action::MOUSE_LEAVE:
+            scrollDrag = ScrollAreaPrivate::NONE;
+            break;
+        case Action::MOUSE_DOWN:
+        {
+            uint8_t key = boost::get<uint8_t>(action.argument());
+            if (key == SDL_BUTTON_WHEELUP)
+            {
+                if (vSize > 1.0f)
+                {
+                    vPosition += 0.1f;
+                    updateScrollPosition();
+                }
+            }
+            else if (key == SDL_BUTTON_WHEELDOWN)
+            {
+                if (vSize > 1.0f)
+                {
+                    vPosition -= 0.1f;
+                    updateScrollPosition();
+                }
+            }
+            else if (leftMouseButtonPressed)
+            {
+                if (node)
+                    node->action(Action(node, Action::MOUSE_DOWN, action.argument()));
+            }
+        }
         break;
+        case Action::MOUSE_UP:
+        {
+            uint8_t key = boost::get<uint8_t>(action.argument());
+            if (leftMouseButtonPressed)
+            {
+                //if (!q->getBoundingRect().contains(p))
+                //    q->action(Action(this, Action::MOUSE_LEAVE));
+
+                if (node)
+                    node->action(Action(node, Action::MOUSE_UP, action.argument()));
+            }
+        }
+        break;
+        }
+    }
+    else if (vScroll == action.source() || hScroll == action.source())
+    {
+        switch (action.type())
+        {
+        case Action::MOUSE_DOWN:
+        {
+            if (leftMouseButtonPressed)
+            {
+                if (vScroll == action.source())
+                {
+                    scrollDrag = ScrollAreaPrivate::VERTICAL;
+                    //scrollStart = p.y;
+                }
+                else if (hScroll == action.source())
+                {
+                    scrollDrag = ScrollAreaPrivate::HORIZONTAL;
+                    //scrollStart = p.x;
+                }
+            }
+        }
+        break;
+        case Action::MOUSE_UP:
+        {
+            if (leftMouseButtonPressed)
+            {
+                if (scrollDrag != ScrollAreaPrivate::NONE)
+                {
+                    Button *scroll = 0;
+                    if (scrollDrag == ScrollAreaPrivate::VERTICAL)
+                        scroll = vScroll;
+                    if (scrollDrag == ScrollAreaPrivate::HORIZONTAL)
+                        scroll = hScroll;
+                    if (scroll && (scroll != action.source()))
+                    {
+                        scroll->action(Action(scroll, Action::MOUSE_LEAVE));
+                        currentChild = 0;
+                    }
+                    scrollDrag = ScrollAreaPrivate::NONE;
+                }
+            }
+        }
+        break;
+        }
     }
 }
 
@@ -312,81 +400,6 @@ void ScrollArea::processLogic(int dt)
     RANGERS_D(ScrollArea);
     if (d->node)
         d->node->processLogic(dt);
-}
-
-void ScrollArea::mouseDown(uint8_t key, const Vector &p)
-{
-    Widget::mouseDown(key, p);
-    lock();
-    RANGERS_D(ScrollArea);
-    if (key == SDL_BUTTON_WHEELUP)
-    {
-        if (d->vSize > 1.0f)
-        {
-            d->vPosition += 0.1f;
-            d->updateScrollPosition();
-        }
-    }
-    else if (key == SDL_BUTTON_WHEELDOWN)
-    {
-        if (d->vSize > 1.0f)
-        {
-            d->vPosition -= 0.1f;
-            d->updateScrollPosition();
-        }
-    }
-    else if (d->leftMouseButtonPressed)
-    {
-        if (d->vScroll->mapToParent(d->vScroll->getBoundingRect()).contains(p))
-        {
-            d->scrollDrag = ScrollAreaPrivate::VERTICAL;
-            d->scrollStart = p.y;
-        }
-        else if (d->hScroll->mapToParent(d->hScroll->getBoundingRect()).contains(p))
-        {
-            d->scrollDrag = ScrollAreaPrivate::HORIZONTAL;
-            d->scrollStart = p.x;
-        }
-        else
-        {
-            if (d->node)
-                d->node->mouseDown(key, d->node->mapFromParent(p));
-        }
-    }
-    unlock();
-}
-
-void ScrollArea::mouseUp(uint8_t key, const Vector &p)
-{
-    lock();
-    RANGERS_D(ScrollArea);
-    if (d->leftMouseButtonPressed)
-    {
-        if (d->scrollDrag != ScrollAreaPrivate::NONE)
-        {
-            if (!getBoundingRect().contains(p))
-                action(Action(this, Action::MOUSE_LEAVE));
-            Button *scroll = 0;
-            if (d->scrollDrag == ScrollAreaPrivate::VERTICAL)
-                scroll = d->vScroll;
-            if (d->scrollDrag == ScrollAreaPrivate::HORIZONTAL)
-                scroll = d->hScroll;
-            if ((scroll) && (!scroll->mapToParent(scroll->getBoundingRect()).contains(p)))
-            {
-                scroll->action(Action(scroll, Action::MOUSE_LEAVE));
-                d->currentChild = 0;
-            }
-            d->scrollDrag = ScrollAreaPrivate::NONE;
-        }
-        else
-        {
-            if (d->node)
-                d->node->mouseUp(key, d->node->mapFromParent(p));
-        }
-    }
-    else
-        Widget::mouseUp(key, p);
-    unlock();
 }
 
 void ScrollAreaPrivate::updateScrollPosition()
