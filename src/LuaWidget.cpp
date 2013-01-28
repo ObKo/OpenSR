@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 - 2012 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2013 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -47,6 +47,7 @@ LuaWidget::LuaActionListener::LuaActionListener(LuaWidget *widget): m_widget(wid
 {
 
 }
+
 void LuaWidget::LuaActionListener::actionPerformed(const Action &action)
 {
     m_widget->lock();
@@ -91,6 +92,7 @@ LuaWidget::LuaWidget(const char *data, size_t size, const std::string& name, Wid
         Log::error() << "[LuaWidget] " << lua_tostring(d->luaState.get(), -1);
         Engine::instance().markWidgetDeleting(this);
     }
+    addListener(d->actionListener);
 }
 
 LuaWidget::LuaWidget(const std::wstring& name, Widget *parent): Widget(*(new LuaWidgetPrivate()), parent)
@@ -108,6 +110,7 @@ LuaWidget::LuaWidget(const std::wstring& name, Widget *parent): Widget(*(new Lua
         }
         delete[] luaData;
     }
+    addListener(d->actionListener);
 }
 
 LuaWidget::LuaWidget(Rangers::Widget* parent): Widget(*(new LuaWidgetPrivate()), parent)
@@ -158,50 +161,6 @@ Rect LuaWidget::getBoundingRect() const
     }
     unlock();
     return bb + Widget::getBoundingRect();
-}
-
-void LuaWidget::mouseEnter()
-{
-    lock();
-    RANGERS_D(LuaWidget);
-    if (luabind::type(luabind::globals(d->luaState.get())["mouseEnter"]) != LUA_TFUNCTION)
-    {
-        unlock();
-        Widget::mouseEnter();
-        return;
-    }
-    try
-    {
-        luabind::call_function<void>(d->luaState.get(), "mouseEnter");
-    }
-    catch (luabind::error e)
-    {
-        LuaWidgetPrivate::luaErrorHandler(d->luaState.get());
-    }
-    unlock();
-    Widget::mouseEnter();
-}
-
-void LuaWidget::mouseLeave()
-{
-    lock();
-    RANGERS_D(LuaWidget);
-    if (luabind::type(luabind::globals(d->luaState.get())["mouseLeave"]) != LUA_TFUNCTION)
-    {
-        unlock();
-        Widget::mouseLeave();
-        return;
-    }
-    try
-    {
-        luabind::call_function<void>(d->luaState.get(), "mouseLeave");
-    }
-    catch (luabind::error e)
-    {
-        LuaWidgetPrivate::luaErrorHandler(d->luaState.get());
-    }
-    unlock();
-    Widget::mouseLeave();
 }
 
 void LuaWidget::mouseMove(const Vector &p)

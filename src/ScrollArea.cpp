@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 - 2012 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2013 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -41,6 +41,16 @@ ScrollAreaPrivate::ScrollAreaPrivate()
     hScroll = 0;
 }
 
+void ScrollAreaPrivate::actionPerformed(const Action &action)
+{
+    switch (action.type())
+    {
+    case Action::MOUSE_LEAVE:
+        scrollDrag = ScrollAreaPrivate::NONE;
+        break;
+    }
+}
+
 ScrollArea::ScrollArea(const ScrollBarStyle& style, WidgetNode *node, Widget *parent):
     Widget(*(new ScrollAreaPrivate()), parent)
 {
@@ -62,6 +72,8 @@ ScrollArea::ScrollArea(const ScrollBarStyle& style, WidgetNode *node, Widget *pa
     d->vScroll = new Button(style.scroll, this);
     d->hScroll = new Button(style.scroll, this);
     d->hScroll->setRotation(90);
+
+    addListener(d);
 
     setNode(node);
 }
@@ -231,7 +243,7 @@ void ScrollArea::mouseMove(const Vector &p)
         if ((p.x < d->width - d->top->width()) && (p.y < d->height - d->left->width()))
         {
             if (d->currentChild)
-                d->currentChild->mouseLeave();
+                d->currentChild->action(Action(d->currentChild, Action::MOUSE_LEAVE));
             d->node->mouseMove(d->node->mapFromParent(p));
         }
         else
@@ -246,9 +258,9 @@ void ScrollArea::mouseMove(const Vector &p)
                     if ((*i) != d->currentChild)
                     {
                         if (d->currentChild)
-                            d->currentChild->mouseLeave();
+                            d->currentChild->action(Action(d->currentChild, Action::MOUSE_LEAVE));
                         d->currentChild = *i;
-                        d->currentChild->mouseEnter();
+                        d->currentChild->action(Action(d->currentChild, Action::MOUSE_ENTER));
                     }
                     (*i)->mouseMove((*i)->mapFromParent(p));
                     unlock();
@@ -256,7 +268,7 @@ void ScrollArea::mouseMove(const Vector &p)
                 }
             }
             if (d->currentChild)
-                d->currentChild->mouseLeave();
+                d->currentChild->action(Action(d->currentChild, Action::MOUSE_LEAVE));
             d->currentChild = 0;
         }
     }
@@ -300,18 +312,6 @@ void ScrollArea::processLogic(int dt)
     RANGERS_D(ScrollArea);
     if (d->node)
         d->node->processLogic(dt);
-}
-
-void ScrollArea::mouseEnter()
-{
-    Widget::mouseEnter();
-}
-
-void ScrollArea::mouseLeave()
-{
-    RANGERS_D(ScrollArea);
-    d->scrollDrag = ScrollAreaPrivate::NONE;
-    Widget::mouseLeave();
 }
 
 void ScrollArea::mouseDown(uint8_t key, const Vector &p)
@@ -365,7 +365,7 @@ void ScrollArea::mouseUp(uint8_t key, const Vector &p)
         if (d->scrollDrag != ScrollAreaPrivate::NONE)
         {
             if (!getBoundingRect().contains(p))
-                mouseLeave();
+                action(Action(this, Action::MOUSE_LEAVE));
             Button *scroll = 0;
             if (d->scrollDrag == ScrollAreaPrivate::VERTICAL)
                 scroll = d->vScroll;
@@ -373,7 +373,7 @@ void ScrollArea::mouseUp(uint8_t key, const Vector &p)
                 scroll = d->hScroll;
             if ((scroll) && (!scroll->mapToParent(scroll->getBoundingRect()).contains(p)))
             {
-                scroll->mouseLeave();
+                scroll->action(Action(scroll, Action::MOUSE_LEAVE));
                 d->currentChild = 0;
             }
             d->scrollDrag = ScrollAreaPrivate::NONE;

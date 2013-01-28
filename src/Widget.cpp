@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 - 2012 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2013 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -86,9 +86,9 @@ void Widget::mouseMove(const Vector& p)
             if ((*i) != d->currentChild)
             {
                 if (d->currentChild)
-                    d->currentChild->mouseLeave();
+                    d->currentChild->action(Action(d->currentChild, Action::MOUSE_LEAVE));
                 d->currentChild = *i;
-                d->currentChild->mouseEnter();
+                d->currentChild->action(Action(d->currentChild, Action::MOUSE_ENTER));
             }
             (*i)->mouseMove((*i)->mapFromParent(p));
             unlock();
@@ -96,7 +96,7 @@ void Widget::mouseMove(const Vector& p)
         }
     }
     if (d->currentChild)
-        d->currentChild->mouseLeave();
+        d->currentChild->action(Action(d->currentChild, Action::MOUSE_LEAVE));
     d->currentChild = 0;
     unlock();
 }
@@ -140,25 +140,6 @@ void Widget::mouseUp(uint8_t key, float x, float y)
 void Widget::mouseClick(float x, float y)
 {
     mouseClick(Vector(x, y));
-}
-
-void Widget::mouseEnter()
-{
-    RANGERS_D(Widget);
-    lock();
-    d->leftMouseButtonPressed = false;
-    unlock();
-}
-
-void Widget::mouseLeave()
-{
-    RANGERS_D(Widget);
-    lock();
-    if (d->currentChild)
-        d->currentChild->mouseLeave();
-    d->currentChild = 0;
-    d->leftMouseButtonPressed = false;
-    unlock();
 }
 
 void Widget::mouseDown(uint8_t key, const Vector& p)
@@ -292,6 +273,24 @@ void Widget::action(const Action& action)
 {
     RANGERS_D(Widget);
     lock();
+    if (action.source() != this)
+    {
+        unlock();
+        return;
+    }
+    switch (action.type())
+    {
+    case Action::MOUSE_ENTER:
+        d->leftMouseButtonPressed = false;
+        break;
+
+    case Action::MOUSE_LEAVE:
+        if (d->currentChild)
+            d->currentChild->action(Action(d->currentChild, Action::MOUSE_LEAVE));
+        d->currentChild = 0;
+        d->leftMouseButtonPressed = false;
+        break;
+    }
     if (!d->listeners.size())
     {
         unlock();

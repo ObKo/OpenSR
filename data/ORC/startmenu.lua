@@ -59,6 +59,9 @@ bgspeed = 20/1000
 bgforward = true
 
 function actionPerformed(action)
+    if action:type() ~= Action.BUTTON_CLICKED then
+        return
+    end
     if action:source() == buttons["exit"] then
         engine:quit(0)
     end

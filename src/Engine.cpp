@@ -182,7 +182,7 @@ void Engine::widgetHide(Widget *w)
         if (w == d->currentWidget)
         {
             d->currentWidget = 0;
-            w->mouseLeave();
+            w->action(Action(w, Action::MOUSE_LEAVE));
         }
         else
         {
@@ -192,7 +192,7 @@ void Engine::widgetHide(Widget *w)
                 if ((*i) == d->currentWidget)
                 {
                     d->currentWidget = 0;
-                    (*i)->mouseLeave();
+                    (*i)->action(Action((*i), Action::MOUSE_LEAVE));
                 }
             }
         }
@@ -700,9 +700,9 @@ void Engine::EnginePrivate::processMouseMove(const SDL_MouseMotionEvent &e)
             if ((*i) != currentWidget)
             {
                 if (currentWidget)
-                    currentWidget->mouseLeave();
+                    currentWidget->action(Action(currentWidget, Action::MOUSE_LEAVE));
                 currentWidget = *i;
-                currentWidget->mouseEnter();
+                currentWidget->action(Action(currentWidget, Action::MOUSE_ENTER));
             }
             Vector mouse = (*i)->mapFromParent(globalMouse);
             (*i)->mouseMove(mouse.x, mouse.y);
@@ -710,7 +710,7 @@ void Engine::EnginePrivate::processMouseMove(const SDL_MouseMotionEvent &e)
         }
     }
     if (currentWidget)
-        currentWidget->mouseLeave();
+        currentWidget->action(Action(currentWidget, Action::MOUSE_LEAVE));
     currentWidget = 0;
 }
 

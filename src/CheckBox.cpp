@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 - 2012 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2013 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -38,6 +38,29 @@ CheckBoxPrivate::CheckBoxPrivate()
     label = 0;
 }
 
+void CheckBoxPrivate::actionPerformed(const Action& action)
+{
+    switch (action.type())
+    {
+    case Action::MOUSE_ENTER:
+        if (hovered && checkedHovered)
+        {
+            if (checked)
+                sprite = checkedHovered;
+            else
+                sprite = hovered;
+        }
+        break;
+
+    case Action::MOUSE_LEAVE:
+        if (checked)
+            sprite = checkedNormal;
+        else
+            sprite = normal;
+        break;
+    }
+}
+
 CheckBox::CheckBox(const CheckBoxStyle& style, const std::wstring &text, Widget *parent): Widget(*(new CheckBoxPrivate()), parent)
 {
     RANGERS_D(CheckBox);
@@ -73,6 +96,8 @@ CheckBox::CheckBox(const CheckBoxStyle& style, const std::wstring &text, Widget 
     d->label->setOrigin(POSITION_X_LEFT, POSITION_Y_TOP);
     setColor(d->style.color);
     d->sprite = d->normal;
+
+    addListener(d);
     markToUpdate();
 }
 
@@ -176,33 +201,6 @@ void CheckBox::processMain()
     d->label->setPosition(d->sprite->width() + 5, int(d->sprite->height() - d->label->height()) / 2);
     unlock();
     Widget::processMain();
-}
-
-void CheckBox::mouseEnter()
-{
-    lock();
-    RANGERS_D(CheckBox);
-    if (d->hovered && d->checkedHovered)
-    {
-        if (d->checked)
-            d->sprite = d->checkedHovered;
-        else
-            d->sprite = d->hovered;
-    }
-    unlock();
-    Widget::mouseEnter();
-}
-
-void CheckBox::mouseLeave()
-{
-    lock();
-    RANGERS_D(CheckBox);
-    if (d->checked)
-        d->sprite = d->checkedNormal;
-    else
-        d->sprite = d->normal;
-    unlock();
-    Widget::mouseLeave();
 }
 
 void CheckBox::mouseClick(const Vector &p)

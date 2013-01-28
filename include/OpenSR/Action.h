@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2013 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -33,12 +33,12 @@ class RANGERS_ENGINE_API Action
 {
 public:
     //! Type of action
-    enum Type {BUTTON_CLICKED, KEY_PRESSED, CHECKBOX_TOGGLED};
+    enum Type {BUTTON_CLICKED, KEY_PRESSED, CHECKBOX_TOGGLED, MOUSE_ENTER, MOUSE_LEAVE};
     //! Argument of action
     typedef boost::variant<std::wstring, Rect, SDL_keysym, bool> Argument;
 
     //! Constructs new action
-    Action(Widget *source, Type type, const Argument& argument);
+    Action(Widget *source, Type type, const Argument& argument = Argument());
 
     //! Source of action
     Widget* source() const;

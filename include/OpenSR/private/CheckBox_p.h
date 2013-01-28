@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2012 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2012 -2013 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -21,16 +21,19 @@
 
 #include "Widget_p.h"
 
+#include "ActionListener.h"
 #include "Label.h"
 #include "Styles.h"
 
 namespace Rangers
 {
-class CheckBoxPrivate: public WidgetPrivate
+class CheckBoxPrivate: public WidgetPrivate, ActionListener
 {
     RANGERS_DECLARE_PUBLIC(CheckBox)
 public:
     CheckBoxPrivate();
+
+    virtual void actionPerformed(const Action& action);
 
     bool checked;
     Sprite *normal;

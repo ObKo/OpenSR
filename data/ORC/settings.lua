@@ -99,6 +99,9 @@ function dispose()
 end
 
 function actionPerformed(action)
+    if action:type() ~= Action.BUTTON_CLICKED then
+        return
+    end
     if action:source() == okButton then
         saveSettings()
         dispose()

@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 - 2012 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2013 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -301,7 +301,9 @@ lua_State *initLuaState()
         [
             value("BUTTON_CLICKED", 0),
             value("KEY_PRESSED", 1),
-            value("CHECKBOX_TOGGLED", 2)
+            value("CHECKBOX_TOGGLED", 2),
+            value("MOUSE_ENTER", 3),
+            value("MOUSE_LEAVE", 4)
         ]
         .def("source", &Action::source)
         .def("type", &Action::type)
@@ -316,8 +318,6 @@ lua_State *initLuaState()
 
         luabind::class_<Widget, Object>("Widget")
         .def("getBoundingRect", &Widget::getBoundingRect)
-        .def("mouseEnter", &Widget::mouseEnter)
-        .def("mouseLeave", &Widget::mouseLeave)
         .def("mouseMove", (void (Widget::*)(float, float))&Widget::mouseMove)
         .def("mouseDown", (void (Widget::*)(uint8_t key, float, float))&Widget::mouseDown)
         .def("mouseUp", (void (Widget::*)(uint8_t key, float, float))&Widget::mouseUp)

@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 - 2012 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2013 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -31,6 +31,26 @@
 
 namespace Rangers
 {
+void ButtonPrivate::actionPerformed(const Action &action)
+{
+    switch (action.type())
+    {
+    case Action::MOUSE_ENTER:
+        if (hoverSprite)
+            sprite = hoverSprite;
+        if (enterSound)
+            enterSound->play();
+        break;
+
+    case Action::MOUSE_LEAVE:
+        if (normalSprite)
+            sprite = normalSprite;
+        if (leaveSound)
+            leaveSound->play();
+        break;
+    }
+}
+
 ButtonPrivate::ButtonPrivate(): WidgetPrivate()
 {
     hoverSprite = 0;
@@ -385,6 +405,8 @@ void Button::init()
     if (d->style.clickSound != L"")
         d->clickSound = SoundManager::instance().loadSound(d->style.clickSound);
 
+    addListener(d);
+
     markToUpdate();
 }
 
@@ -462,30 +484,6 @@ void Button::processMain()
     }
     unlock();
     Widget::processMain();
-}
-
-void Button::mouseEnter()
-{
-    lock();
-    RANGERS_D(Button);
-    if (d->hoverSprite)
-        d->sprite = d->hoverSprite;
-    if (d->enterSound)
-        d->enterSound->play();
-    unlock();
-    Widget::mouseEnter();
-}
-
-void Button::mouseLeave()
-{
-    lock();
-    RANGERS_D(Button);
-    if (d->normalSprite)
-        d->sprite = d->normalSprite;
-    if (d->leaveSound)
-        d->leaveSound->play();
-    unlock();
-    Widget::mouseLeave();
 }
 
 void Button::mouseDown(uint8_t key, const Vector &p)

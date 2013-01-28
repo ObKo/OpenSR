@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 - 2012 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2013 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -44,8 +44,6 @@ public:
     void setNode(WidgetNode *node);
 
     virtual void mouseMove(const Vector &p);
-    virtual void mouseEnter();
-    virtual void mouseLeave();
 
     virtual void mouseDown(uint8_t key, const Vector &p);
     virtual void mouseUp(uint8_t key, const Vector &p);
