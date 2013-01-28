@@ -42,10 +42,18 @@ public:
 
     //! Get static planet image from planet style
     boost::shared_ptr<Texture> getPlanetImage(boost::shared_ptr<PlanetStyle> style, int size);
+    //! Get static planet image from planet style id
+    boost::shared_ptr<Texture> getPlanetImage(uint32_t style, int size);
+
+    //! Drop planet image cache
+    void dropImageCache();
 
 private:
     PlanetManager();
+    PlanetManager(const PlanetManager& other);
+
     std::map<uint32_t, boost::shared_ptr<PlanetStyle> > m_styles;
+    std::map<uint64_t, boost::shared_ptr<Texture> > m_imageCache;
 };
 }
 }

@@ -44,12 +44,34 @@ PlanetManager::PlanetManager()
         loadStyles(stylesPath);
 }
 
+PlanetManager::PlanetManager(const PlanetManager& other)
+{
+
+}
+
+void PlanetManager::dropImageCache()
+{
+    m_imageCache.clear();
+}
+
+boost::shared_ptr< Texture > PlanetManager::getPlanetImage(uint32_t style, int size)
+{
+    boost::shared_ptr<PlanetStyle> s = m_styles.at(style);
+    return getPlanetImage(s, size);
+}
+
 //TODO: Planet rings
 /*! This function must be run in OpenGL thread (main thread) !*/
 boost::shared_ptr<Texture> PlanetManager::getPlanetImage(boost::shared_ptr<PlanetStyle> style, int size)
 {
     if (!style)
         return boost::shared_ptr<Texture>();
+
+    uint64_t cacheID = (textHash32(style->id) << 32) | (size & 0xffffffff);
+
+    std::map<uint64_t, boost::shared_ptr<Texture> >::const_iterator cache = m_imageCache.find(cacheID);
+    if (cache != m_imageCache.end())
+        return cache->second;
 
     boost::shared_ptr<Texture> texture;
     boost::shared_ptr<Texture> cloud;
@@ -63,7 +85,7 @@ boost::shared_ptr<Texture> PlanetManager::getPlanetImage(boost::shared_ptr<Plane
         cloud = ResourceManager::instance().loadTexture(style->cloud);
 
     unsigned char *tex = new unsigned char[texture->width() * texture->height() * 4];
-    unsigned char *cld;
+    unsigned char *cld = 0;
     unsigned char *img = new unsigned char[size * size * 4];
 
     if (style->hasCloud && cloud)
@@ -147,10 +169,15 @@ boost::shared_ptr<Texture> PlanetManager::getPlanetImage(boost::shared_ptr<Plane
                 ((uint32_t*)img)[i * size + j] = 0;
         }
     }
-    Texture *result = new Texture(size, size, TEXTURE_R8G8B8A8, img);
+    boost::shared_ptr<Texture> result = boost::shared_ptr<Texture>(new Texture(size, size, TEXTURE_R8G8B8A8, img));
     delete[] img;
     delete[] tex;
-    return boost::shared_ptr<Texture>(result);
+    if (cld)
+        delete[] cld;
+
+    m_imageCache[cacheID] = result;
+
+    return result;
 }
 
 boost::shared_ptr<PlanetStyle> PlanetManager::style(const std::wstring& name)
