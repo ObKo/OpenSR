@@ -526,23 +526,23 @@ int Engine::run()
             d->fpsTime = getTicks();
         }
         d->updateMutex.lock();
-        std::list<Widget*> widgetsToDelete = d->widgetsToDelete;
-        d->widgetsToDelete.clear();
-        std::list<Object *> updateList = d->updateList;
-        d->updateList.clear();
-        d->updateMutex.unlock();
 
-        std::list<Widget*>::const_iterator widgetEnd = widgetsToDelete.end();
-        for (std::list<Widget*>::const_iterator i = widgetsToDelete.begin(); i != widgetEnd; ++i)
+        std::list<Widget*>::const_iterator widgetEnd = d->widgetsToDelete.end();
+        for (std::list<Widget*>::const_iterator i = d->widgetsToDelete.begin(); i != widgetEnd; ++i)
         {
             removeWidget(*i);
             delete(*i);
         }
 
-        std::list<Object *>::const_iterator end = updateList.end();
-        for (std::list<Object *>::const_iterator i = updateList.begin(); i != end; ++i)
+        std::list<Object *>::const_iterator end = d->updateList.end();
+        for (std::list<Object *>::const_iterator i = d->updateList.begin(); i != end; ++i)
             if ((*i)->needUpdate())
                 (*i)->processMain();
+
+        d->widgetsToDelete.clear();
+        d->updateList.clear();
+
+        d->updateMutex.unlock();
 
 
         ResourceManager::instance().processMain();
