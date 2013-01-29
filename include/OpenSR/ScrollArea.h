@@ -20,14 +20,13 @@
 #define RANGERS_SCROLLAREA_H
 
 #include "Widget.h"
-#include "ActionListener.h"
 
 namespace Rangers
 {
 class WidgetNode;
 class ScrollAreaPrivate;
 struct ScrollBarStyle;
-class RANGERS_ENGINE_API ScrollArea: public Widget, ActionListener
+class RANGERS_ENGINE_API ScrollArea: public Widget
 {
     RANGERS_DECLARE_PRIVATE(ScrollArea)
 public:
@@ -44,8 +43,6 @@ public:
     void setNode(WidgetNode *node);
 
     virtual void mouseMove(const Vector &p);
-
-    virtual void actionPerformed(const Action &action);
 
     virtual void processLogic(int dt);
 

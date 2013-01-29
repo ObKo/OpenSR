@@ -239,7 +239,7 @@ Button::Button(const ButtonStyle& style, Widget* parent):
     Widget(*(new ButtonPrivate()), parent)
 {
     RANGERS_D(Button);
-
+    d->style = style;
     init();
     if (d->sprite)
     {

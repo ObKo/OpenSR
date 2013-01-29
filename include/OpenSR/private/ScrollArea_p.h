@@ -41,6 +41,7 @@ public:
     float hSize, hPosition;
     WidgetNode *node;
     float scrollStart;
+    Vector lastMousePosition;
     enum {NONE, VERTICAL, HORIZONTAL} scrollDrag;
     void updateScrollPosition();
 };

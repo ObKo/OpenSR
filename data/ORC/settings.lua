@@ -64,6 +64,7 @@ heightLabel = Label(_("Height:"), paramNode)
 heightEdit = LineEditWidget(engine:defaultSkin().lineEditStyle, paramNode)
 
 fullscreen = CheckBox(engine:defaultSkin().checkBoxStyle, _("Fullscreen mode"), paramNode)
+test = Button(L"DATA/PlanetBG/2/100.gi", paramNode)
 
 widthEdit:setWidth(50)
 widthEdit:setPosition(100, 5)

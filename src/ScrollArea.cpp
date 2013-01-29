@@ -71,24 +71,6 @@ void ScrollAreaPrivate::actionPerformed(const Action &action)
                     updateScrollPosition();
                 }
             }
-            else if (leftMouseButtonPressed)
-            {
-                if (node)
-                    node->action(Action(node, Action::MOUSE_DOWN, action.argument()));
-            }
-        }
-        break;
-        case Action::MOUSE_UP:
-        {
-            uint8_t key = boost::get<uint8_t>(action.argument());
-            if (leftMouseButtonPressed)
-            {
-                //if (!q->getBoundingRect().contains(p))
-                //    q->action(Action(this, Action::MOUSE_LEAVE));
-
-                if (node)
-                    node->action(Action(node, Action::MOUSE_UP, action.argument()));
-            }
         }
         break;
         }
@@ -104,19 +86,19 @@ void ScrollAreaPrivate::actionPerformed(const Action &action)
                 if (vScroll == action.source())
                 {
                     scrollDrag = ScrollAreaPrivate::VERTICAL;
-                    //scrollStart = p.y;
+                    scrollStart = lastMousePosition.y;
                 }
                 else if (hScroll == action.source())
                 {
                     scrollDrag = ScrollAreaPrivate::HORIZONTAL;
-                    //scrollStart = p.x;
+                    scrollStart = lastMousePosition.x;
                 }
             }
         }
         break;
         case Action::MOUSE_UP:
         {
-            if (leftMouseButtonPressed)
+            if (!leftMouseButtonPressed)
             {
                 if (scrollDrag != ScrollAreaPrivate::NONE)
                 {
@@ -125,7 +107,7 @@ void ScrollAreaPrivate::actionPerformed(const Action &action)
                         scroll = vScroll;
                     if (scrollDrag == ScrollAreaPrivate::HORIZONTAL)
                         scroll = hScroll;
-                    if (scroll && (scroll != action.source()))
+                    if (scroll && (!scroll->mapToParent(scroll->getBoundingRect()).contains(lastMousePosition)))
                     {
                         scroll->action(Action(scroll, Action::MOUSE_LEAVE));
                         currentChild = 0;
@@ -134,8 +116,23 @@ void ScrollAreaPrivate::actionPerformed(const Action &action)
                 }
             }
         }
-        break;
+        case Action::MOUSE_LEAVE:
+            scrollDrag = ScrollAreaPrivate::NONE;
+            break;
+            break;
         }
+    }
+    else if (action.type() == Action::BUTTON_CLICKED)
+    {
+        if (action.source() == left)
+            hPosition += 0.1f;
+        else if (action.source() == right)
+            hPosition -= 0.1f;
+        else if (action.source() == top)
+            vPosition += 0.1f;
+        else if (action.source() == bottom)
+            vPosition -= 0.1f;
+        updateScrollPosition();
     }
 }
 
@@ -146,22 +143,24 @@ ScrollArea::ScrollArea(const ScrollBarStyle& style, WidgetNode *node, Widget *pa
 
     d->scrollDrag = ScrollAreaPrivate::NONE;
     d->top = new Button(style.upButton, this);
-    d->top->addListener(this);
+    d->top->addListener(d);
     d->bottom = new Button(style.downButton, this);
-    d->bottom->addListener(this);
+    d->bottom->addListener(d);
 
     d->left = new Button(style.upButton, this);
     d->left->setRotation(90);
-    d->left->addListener(this);
+    d->left->addListener(d);
     d->right = new Button(style.downButton, this);
     d->right->setRotation(90);
-    d->right->addListener(this);
+    d->right->addListener(d);
 
     d->vScroll = new Button(style.scroll, this);
     d->hScroll = new Button(style.scroll, this);
     d->hScroll->setRotation(90);
 
     addListener(d);
+    d->vScroll->addListener(d);
+    d->hScroll->addListener(d);
 
     setNode(node);
 }
@@ -326,12 +325,20 @@ void ScrollArea::mouseMove(const Vector &p)
     if (!d->node)
         return;
 
+    d->lastMousePosition = p;
+
     if (d->scrollDrag == ScrollAreaPrivate::NONE)
     {
         if ((p.x < d->width - d->top->width()) && (p.y < d->height - d->left->width()))
         {
-            if (d->currentChild)
-                d->currentChild->action(Action(d->currentChild, Action::MOUSE_LEAVE));
+            if (d->currentChild != d->node)
+            {
+                if (d->currentChild)
+                    d->currentChild->action(Action(d->currentChild, Action::MOUSE_LEAVE));
+
+                d->currentChild = d->node;
+                d->node->action(Action(d->node, Action::MOUSE_ENTER));
+            }
             d->node->mouseMove(d->node->mapFromParent(p));
         }
         else
@@ -445,28 +452,5 @@ void ScrollAreaPrivate::updateScrollPosition()
 
     node->setPosition((int)(hPosition * width), (int)(vPosition * height));
     q->unlock();
-}
-
-void ScrollArea::actionPerformed(const Action& action)
-{
-    RANGERS_D(ScrollArea);
-    if (action.type() != Rangers::Action::BUTTON_CLICKED)
-        return;
-
-    if (!d->node)
-        return;
-
-    lock();
-    if (action.source() == d->left)
-        d->hPosition += 0.1f;
-    else if (action.source() == d->right)
-        d->hPosition -= 0.1f;
-    else if (action.source() == d->top)
-        d->vPosition += 0.1f;
-    else if (action.source() == d->bottom)
-        d->vPosition -= 0.1f;
-
-    d->updateScrollPosition();
-    unlock();
 }
 }
