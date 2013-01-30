@@ -1,55 +1,43 @@
 Done:
   - Basic graphics engine
   - Resource manager
-    - RPKG format archive loading
+    - RPKG format archive loading (supported compression: NONE, LZMA, ZLib)
     - FS Directory loading
   - Animation:
     - GAI animation from original game
-    - DDS compressed animation - using volume dds texture
+    - DDS compressed animation - using volume dds texture - !!!BROKEN!!!
     - HAI animation (ships)
   - Texture:
     - GI images from original game
-    - DDS compressed textures
+    - PNG images
   - Engine console
   - Font loading
   - Unicode support
   - Startup scripts
   - Engine logger
-  - Resource converter:
-    - pkg archive to rpkg archive
-    - png, bmp, jpeg, etc. to compressed dds
-    - gai animation extracting
-    - gi image to png
-    - gi image to compressed dds
-    - gai animation to volume dds
-  - Resource viewer:
-    - Loading data from PKG archive
-    - Loading data from files
-    - DDS and volume DDS support
-    - GAI and HAI animation support
-    - GI images support. 
+  - Resource converter
+  - Resource viewer
   - Mac OS X support (gcc, x86_64 tested)
   - Windows support (msvc, x86 and x86_64 tested)
   - Linux support (gcc, x86 and x86_64 tested)
   - Configuration files
+  - Lua scripting
+    - Lua widgets
+  - gettext
   
 Partially done:
   - Resource manager 
     - Cache
+  - Sound
+    - Music
+    
+WIP:
+  - Main Game
  
 Not done:
-  - Lua scripting - WIP
-    - Lua widgets
+  - Lua scripting
     - Lua game scripting
-  - Resource manager
-    - 7z archive loading
   - Original quest loading - seems not possible
-  - l10n using gettext
   - Original script loading - seems not possible
-  - Sound
-  - Main Game
   - Quest Game
   - Black Hole Game
-  
-Global FIXME:
-  - Fix object hierachy (child adding/removing, parent set, etc.)
