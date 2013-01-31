@@ -117,7 +117,7 @@ TextureRegion::TextureRegion(const TextureRegionDescriptor& desc)
 {
     texture = ResourceManager::instance().loadTexture(desc.texture);
     int width = desc.width;
-    int height = desc.width;
+    int height = desc.height;
     if (texture)
     {
         if (width < 0)
@@ -125,9 +125,9 @@ TextureRegion::TextureRegion(const TextureRegionDescriptor& desc)
         if (height < 0)
             height = texture->height();
         this->u1 = float(desc.x) / texture->width();
-        this->u2 = float(desc.x + desc.width) / texture->width();
+        this->u2 = float(desc.x + width) / texture->width();
         this->v1 = float(desc.y) / texture->height();
-        this->v2 = float(desc.y + desc.height) / texture->height();
+        this->v2 = float(desc.y + height) / texture->height();
     }
     else
     {

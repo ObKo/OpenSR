@@ -86,7 +86,7 @@ Sprite::Sprite(const TextureRegion& region, Object *parent): Object(*(new Sprite
     markToUpdate();
 }
 
-Sprite::Sprite(const TextureRegionDescriptor& region, Object *parent)
+Sprite::Sprite(const TextureRegionDescriptor& region, Object *parent): Object(*(new SpritePrivate), parent)
 {
     RANGERS_D(Sprite);
     d->xOrigin = POSITION_X_LEFT;
