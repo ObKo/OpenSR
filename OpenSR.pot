@@ -10,3 +10,5 @@ msgstr ""
 msgid "Graphics"
 msgstr ""
 
+msgid "Use shaders"
+msgstr ""

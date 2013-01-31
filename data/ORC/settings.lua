@@ -64,7 +64,7 @@ heightLabel = Label(_("Height:"), paramNode)
 heightEdit = LineEditWidget(engine:defaultSkin().lineEditStyle, paramNode)
 
 fullscreen = CheckBox(engine:defaultSkin().checkBoxStyle, _("Fullscreen mode"), paramNode)
-test = Button(L"DATA/PlanetBG/2/100.gi", paramNode)
+useShaders = CheckBox(engine:defaultSkin().checkBoxStyle, _("Use shaders"), paramNode)
 
 widthEdit:setWidth(50)
 widthEdit:setPosition(100, 5)
@@ -73,6 +73,7 @@ heightEdit:setWidth(50)
 heightEdit:setPosition(270, 5)
 heightLabel:setPosition(170, 5 + (widthEdit:height() - widthLabel:font():size()) / 2)
 fullscreen:setPosition(5, widthEdit:height() + 15)
+useShaders:setPosition(5, fullscreen:position().y + fullscreen:height() + 25)
 
 scroll = ScrollArea(engine:defaultSkin().scrollStyle, paramNode, this)
 scroll:setPosition(formBg:position().x + 257, formBg:position().y + 149)
@@ -82,15 +83,18 @@ function loadSettings()
   widthEdit:setText(L(tostring(propertiesGetInt("graphics.width", 1024))))
   heightEdit:setText(L(tostring(propertiesGetInt("graphics.height", 768))))
   fullscreen:setChecked(propertiesGetBool("graphics.fullscreen", false))
+  useShaders:setChecked(propertiesGetBool("graphics.useShaders", true))
 end
 
 function saveSettings()
   width = tonumber(toString(widthEdit:text()))
   height = tonumber(toString(heightEdit:text()))
   fs = fullscreen:checked()
+  shader = useShaders:checked()
   propertiesSetInt("graphics.width", width)
   propertiesSetInt("graphics.height", height)
   propertiesSetBool("graphics.fullscreen", fs)
+  propertiesSetBool("graphics.useShaders", shader)
 end
 
 function dispose()
