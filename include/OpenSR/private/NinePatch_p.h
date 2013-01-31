@@ -26,8 +26,12 @@ namespace Rangers
 class NinePatchPrivate: public SpritePrivate
 {
     RANGERS_DECLARE_PUBLIC(NinePatch)
-public:    
-    NinePatchDescriptor descriptor;
+public:
+    int rows;
+    int columns;
+    std::vector<TextureRegion> regions;
+    std::vector<int> sizeableRows;
+    std::vector<int> sizeableColumns;
 };
 }
 

@@ -69,10 +69,6 @@ public:
 protected:
     Button(ButtonPrivate &p, Widget *parent = 0);
 
-private:
-    void calcAutoRresize();
-    void init();
-
     RANGERS_DISABLE_COPY(Button)
 };
 }

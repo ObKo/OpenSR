@@ -33,6 +33,9 @@ public:
 
     ButtonPrivate();
 
+    void calcAutoRresize();
+    void initFromStyle();
+
     ButtonStyle style;
     Label *label;
     std::wstring text;

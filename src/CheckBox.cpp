@@ -74,22 +74,22 @@ CheckBox::CheckBox(const CheckBoxStyle& style, const std::wstring &text, Widget 
     if (d->style.normal.type == ResourceDescriptor::NINEPATCH)
         d->normal = new NinePatch(boost::get<NinePatchDescriptor>(d->style.normal.resource), this);
     else if (d->style.normal.type == ResourceDescriptor::SPRITE)
-        d->normal = new Sprite(boost::get<TextureRegion>(d->style.normal.resource), this);
+        d->normal = new Sprite(boost::get<TextureRegionDescriptor>(d->style.normal.resource), this);
 
     if (d->style.checkedNormal.type == ResourceDescriptor::NINEPATCH)
         d->checkedNormal = new NinePatch(boost::get<NinePatchDescriptor>(d->style.checkedNormal.resource), this);
     else if (d->style.normal.type == ResourceDescriptor::SPRITE)
-        d->checkedNormal = new Sprite(boost::get<TextureRegion>(d->style.checkedNormal.resource), this);
+        d->checkedNormal = new Sprite(boost::get<TextureRegionDescriptor>(d->style.checkedNormal.resource), this);
 
     if (d->style.hovered.type == ResourceDescriptor::NINEPATCH)
         d->hovered = new NinePatch(boost::get<NinePatchDescriptor>(d->style.hovered.resource), this);
     else if (d->style.normal.type == ResourceDescriptor::SPRITE)
-        d->hovered = new Sprite(boost::get<TextureRegion>(d->style.hovered.resource), this);
+        d->hovered = new Sprite(boost::get<TextureRegionDescriptor>(d->style.hovered.resource), this);
 
     if (d->style.checkedHovered.type == ResourceDescriptor::NINEPATCH)
         d->checkedHovered = new NinePatch(boost::get<NinePatchDescriptor>(d->style.checkedHovered.resource), this);
     else if (d->style.normal.type == ResourceDescriptor::SPRITE)
-        d->checkedHovered = new Sprite(boost::get<TextureRegion>(d->style.checkedHovered.resource), this);
+        d->checkedHovered = new Sprite(boost::get<TextureRegionDescriptor>(d->style.checkedHovered.resource), this);
 
     if ((d->style.font.path != L"") && (d->style.font.size > 0))
     {

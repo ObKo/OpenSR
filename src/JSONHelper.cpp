@@ -27,32 +27,30 @@
 //TODO: Need error handling.
 namespace Rangers
 {
-TextureRegion JSONHelper::parseTextureRegion(const Json::Value& object, bool &error)
+TextureRegionDescriptor JSONHelper::parseTextureRegion(const Json::Value& object, bool &error)
 {
+    TextureRegionDescriptor result;
+    result.x = 0;
+    result.y = 0;
+    result.height = 0;
+    result.width = 0;
     error = false;
     if (!object.isObject())
     {
         Log::warning() << "Invalid JSON object.";
         error = true;
-        return TextureRegion(boost::shared_ptr<Texture>(), 0, 0, 0, 0);
+        return result;
     }
-    std::wstring textureName = fromUTF8(object.get("texture", "").asString().c_str());
-    boost::shared_ptr<Texture> texture;
-
-    if (!textureName.empty())
-        texture = ResourceManager::instance().loadTexture(textureName);
-
-    if (!texture)
-        return TextureRegion(boost::shared_ptr<Texture>(), 0, 0, 0, 0);
+    result.texture = fromUTF8(object.get("texture", "").asString().c_str());
 
     int x, y, width, height;
 
-    x = object.get("x", 0).asInt();
-    y = object.get("y", 0).asInt();
-    width = object.get("width", texture->width()).asInt();
-    height = object.get("height", texture->height()).asInt();
+    result.x = object.get("x", 0).asInt();
+    result.y = object.get("y", 0).asInt();
+    result.width = object.get("width", -1).asInt();
+    result.height = object.get("height", -1).asInt();
 
-    return TextureRegion(texture, x, y, width, height);
+    return result;
 }
 
 FontDescriptor JSONHelper::parseFont(const Json::Value& object, bool &error)
@@ -226,7 +224,7 @@ std::map<std::wstring, ResourceDescriptor> JSONHelper::parseResources(const Json
                 return std::map<std::wstring, ResourceDescriptor>();
             }
 
-            TextureRegion sprite = parseTextureRegion(*it, error);
+            TextureRegionDescriptor sprite = parseTextureRegion(*it, error);
             if (error)
             {
                 return std::map<std::wstring, ResourceDescriptor>();

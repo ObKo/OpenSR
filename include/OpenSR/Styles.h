@@ -29,18 +29,13 @@ class Texture;
 struct ButtonStyle;
 struct ScrollBarStyle;
 struct FontDescriptor;
-
-struct FontDescriptor
-{
-    std::wstring path;
-    int size;
-};
+struct TextureRegionDescriptor;
 
 struct ResourceDescriptor
 {
     ResourceDescriptor();
     enum {NONE, NINEPATCH, SPRITE, FONT, SOUND} type;
-    typedef boost::variant<TextureRegion, NinePatchDescriptor, FontDescriptor, std::wstring> Resource;
+    typedef boost::variant<TextureRegionDescriptor, NinePatchDescriptor, FontDescriptor, std::wstring> Resource;
     Resource resource;
 };
 

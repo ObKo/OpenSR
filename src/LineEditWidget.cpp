@@ -126,7 +126,7 @@ void LineEditWidgetPrivate::init()
     }
     else if (style.background.type == ResourceDescriptor::SPRITE)
     {
-        background = new Sprite(boost::get<TextureRegion>(style.background.resource), q);
+        background = new Sprite(boost::get<TextureRegionDescriptor>(style.background.resource), q);
     }
     if ((style.font.path != L"") && (style.font.size > 0))
     {

@@ -18,6 +18,7 @@
 
 #include "Types.h"
 #include "Texture.h"
+#include "ResourceManager.h"
 
 namespace Rangers
 {
@@ -89,15 +90,44 @@ bool Rect::valid() const
     return (width >= 0) && (height >= 0);
 }
 
-TextureRegion::TextureRegion(boost::shared_ptr<Texture> texture, float x, float y, float width, float height)
+TextureRegion::TextureRegion(boost::shared_ptr<Texture> texture, int x, int y, int width, int height)
 {
     this->texture = texture;
     if (texture)
     {
+        if (width < 0)
+            width = texture->width();
+        if (height < 0)
+            height = texture->height();
         this->u1 = float(x) / texture->width();
         this->u2 = float(x + width) / texture->width();
         this->v1 = float(y) / texture->height();
         this->v2 = float(y + height) / texture->height();
+    }
+    else
+    {
+        this->u1 = 0;
+        this->u2 = 0;
+        this->v1 = 0;
+        this->v2 = 0;
+    }
+}
+
+TextureRegion::TextureRegion(const TextureRegionDescriptor& desc)
+{
+    texture = ResourceManager::instance().loadTexture(desc.texture);
+    int width = desc.width;
+    int height = desc.width;
+    if (texture)
+    {
+        if (width < 0)
+            width = texture->width();
+        if (height < 0)
+            height = texture->height();
+        this->u1 = float(desc.x) / texture->width();
+        this->u2 = float(desc.x + desc.width) / texture->width();
+        this->v1 = float(desc.y) / texture->height();
+        this->v2 = float(desc.y + desc.height) / texture->height();
     }
     else
     {

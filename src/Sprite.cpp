@@ -86,6 +86,20 @@ Sprite::Sprite(const TextureRegion& region, Object *parent): Object(*(new Sprite
     markToUpdate();
 }
 
+Sprite::Sprite(const TextureRegionDescriptor& region, Object *parent)
+{
+    RANGERS_D(Sprite);
+    d->xOrigin = POSITION_X_LEFT;
+    d->yOrigin = POSITION_Y_TOP;
+    d->scaling = TEXTURE_NORMAL;
+    d->region = TextureRegion(region);
+    if (d->region.texture)
+    {
+        d->width = d->region.texture->width() * (d->region.u2 - d->region.u1);
+        d->height = d->region.texture->height() * (d->region.v2 - d->region.v1);
+    }
+    markToUpdate();
+}
 
 Sprite::Sprite(SpritePrivate &p, Object *parent): Object(p, parent)
 {

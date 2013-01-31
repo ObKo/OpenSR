@@ -40,6 +40,7 @@ public:
     Sprite(boost::shared_ptr<Texture> texture, Object *parent = 0, TextureScaling  ts = TEXTURE_NORMAL, SpriteXOrigin xpos = POSITION_X_LEFT, SpriteYOrigin ypos = POSITION_Y_TOP);
     Sprite(const std::wstring& texture, Object *parent = 0, TextureScaling  ts = TEXTURE_NORMAL, SpriteXOrigin xpos = POSITION_X_LEFT, SpriteYOrigin ypos = POSITION_Y_TOP);
     Sprite(const TextureRegion& region, Object *parent = 0);
+    Sprite(const TextureRegionDescriptor& region, Object *parent = 0);
 
     virtual ~Sprite();
 

@@ -29,7 +29,7 @@ namespace Rangers
 class RANGERS_ENGINE_API JSONHelper
 {
 public:
-    static TextureRegion parseTextureRegion(const Json::Value& object, bool &error);
+    static TextureRegionDescriptor parseTextureRegion(const Json::Value& object, bool &error);
     static NinePatchDescriptor parseNinePatch(const Json::Value& object, bool &error);
     static FontDescriptor parseFont(const Json::Value& object, bool &error);
     static std::map<std::wstring, ResourceDescriptor> parseResources(const Json::Value& object, bool &error);
