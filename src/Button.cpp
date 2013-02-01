@@ -28,7 +28,6 @@
 #include "SoundManager.h"
 
 #include "private/Button_p.h"
-#include <boost/concept_check.hpp>
 
 namespace Rangers
 {

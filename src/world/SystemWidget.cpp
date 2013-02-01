@@ -30,6 +30,10 @@
 #include <OpenSR/ActionListener.h>
 #include <OpenSR/Action.h>
 #include <OpenSR/Log.h>
+#include <OpenSR/WidgetNode.h>
+#include <OpenSR/Button.h>
+#include <OpenSR/AnimatedTexture.h>
+#include <OpenSR/ResourceManager.h>
 
 namespace Rangers
 {
@@ -44,15 +48,18 @@ public:
 
     virtual void actionPerformed(const Action &action)
     {
-        Log::debug() << "KOKOKO";
         if (action.type() == Action::MOUSE_LEAVE)
+        {
             m_parent->m_infoWidget->clear();
+            m_parent->m_infoWidget->setVisible(false);
+        }
         if (action.type() == Action::MOUSE_ENTER)
         {
             SystemPlanetWidget *w = dynamic_cast<SystemPlanetWidget*>(action.source());
             if (w)
             {
                 m_parent->m_infoWidget->showPlanet(w->planet());
+                m_parent->m_infoWidget->setVisible(true);
             }
         }
     }
@@ -62,19 +69,23 @@ private:
 };
 
 SystemWidget::SystemWidget(boost::shared_ptr<SolarSystem> system, Widget* parent): Widget(parent),
-    m_xOffset(0), m_yOffset(0), m_bgSprite(0), m_starSprite(0), m_infoWidget(0), m_moveDirection(NONE)
+    m_xOffset(0), m_yOffset(0), m_bgSprite(0), m_starSprite(0), m_infoWidget(0), m_node(0), m_moveDirection(NONE)
 {
-    setSystem(system);
-
     setWidth(Engine::instance().screenWidth());
     setHeight(Engine::instance().screenHeight());
+    setPosition(0, 0);
 
     m_actionListener = new SystemWidgetListener(this);
-    setPosition(0, 0);
+
+    m_node = new WidgetNode(this);
+
     m_infoWidget = new SpaceInfoWidget(WorldManager::instance().styleManager().infoWidgetStyle(), this);
     m_infoWidget->setPosition(10, 10);
     m_infoWidget->setWidth(200);
     m_infoWidget->setHeight(150);
+    m_infoWidget->setVisible(false);
+
+    setSystem(system);
 }
 
 SystemWidget::~SystemWidget()
@@ -90,16 +101,14 @@ SystemWidget::~SystemWidget()
     delete m_bgSprite;
     delete m_infoWidget;
     delete m_actionListener;
+    delete m_node;
 }
 
 void SystemWidget::processLogic(int dt)
 {
     Widget::processLogic(dt);
-    m_starSprite->processLogic(dt);
 
-    std::list<SystemPlanetWidget*>::const_iterator end = m_planetWidgets.end();
-    for (std::list<SystemPlanetWidget*>::const_iterator i = m_planetWidgets.begin(); i != end; ++i)
-        (*i)->processLogic(dt);
+    m_node->processLogic(dt);
 
     switch (m_moveDirection)
     {
@@ -135,6 +144,7 @@ void SystemWidget::processLogic(int dt)
         break;
     }
     m_bgSprite->setPosition(m_xOffset / 10 - (m_bgSprite->width() - width()) / 2, m_yOffset / 10 - (m_bgSprite->height() - height()) / 2);
+    m_node->setPosition(m_xOffset + width() / 2, m_yOffset + height() / 2);
 }
 
 void SystemWidget::setSystem(boost::shared_ptr< SolarSystem > system)
@@ -166,16 +176,15 @@ void SystemWidget::setSystem(boost::shared_ptr< SolarSystem > system)
         boost::shared_ptr<Planet> planet = boost::dynamic_pointer_cast<Planet>(*i);
         if (planet)
         {
-            SystemPlanetWidget *w = new SystemPlanetWidget(planet, this);
-            w->setPosition(planet->position().x, planet->position().y);
+            SystemPlanetWidget *w = new SystemPlanetWidget(planet, m_node);
             w->addListener(m_actionListener);
             m_planetWidgets.push_back(w);
         }
     }
 
-    m_starSprite = new AnimatedSprite(L"DATA/Star/Star00.gai");
+    m_starSprite = new AnimatedSprite(L"DATA/Star/Star00.gai", m_node);
     m_starSprite->setPosition(-m_starSprite->width() / 2, -m_starSprite->height() / 2);
-    m_bgSprite = new AnimatedSprite(L"DATA/BGObj/bg00.gai");
+    m_bgSprite = new AnimatedSprite(L"DATA/BGObj/bg00.gai", this);
     m_bgSprite->setPosition(m_xOffset / 10 - (m_bgSprite->width() - width()) / 2, m_yOffset / 10 - (m_bgSprite->height() - height()) / 2);
 }
 
@@ -221,6 +230,7 @@ void SystemWidget::mouseMove(const Vector &p)
         else
             m_moveDirection = NONE;
     }
+    Widget::mouseMove(p);
 }
 
 void SystemWidget::draw() const
@@ -229,18 +239,7 @@ void SystemWidget::draw() const
         return;
 
     m_bgSprite->draw();
-
-    glPushMatrix();
-    glTranslatef(floor(width() / 2.0f + m_xOffset), floor(height() / 2.0f + m_yOffset), 0);
-
-    m_starSprite->draw();
-
-    std::list<SystemPlanetWidget*>::const_iterator end = m_planetWidgets.end();
-    for (std::list<SystemPlanetWidget*>::const_iterator i = m_planetWidgets.begin(); i != end; ++i)
-        (*i)->draw();
-
-    glPopMatrix();
-
+    m_node->draw();
     m_infoWidget->draw();
 
     endDraw();

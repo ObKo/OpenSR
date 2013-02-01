@@ -29,6 +29,8 @@ namespace World
 struct InfoWidgetStyle
 {
     ResourceDescriptor background;
+    ResourceDescriptor font;
+    ResourceDescriptor captionFont;
     Rect contentRect;
 };
 

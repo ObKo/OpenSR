@@ -24,6 +24,7 @@
 namespace Rangers
 {
 class Sprite;
+class WidgetNode;
 namespace World
 {
 class SpaceInfoWidget;
@@ -62,6 +63,7 @@ private:
 
     SpaceInfoWidget *m_infoWidget;
     SystemWidgetListener *m_actionListener;
+    WidgetNode *m_node;
 };
 }
 }

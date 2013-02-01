@@ -60,6 +60,10 @@ void WorldStyleManager::loadStyles()
             m_infoWidgetStyle.background = JSONHelper::getResource(style.get("background", "").asString(), resources, error);
         if (std::find(styleMembers.begin(), styleMembers.end(), "content-rect") != styleMembers.end())
             m_infoWidgetStyle.contentRect = JSONHelper::parseRect(style.get("content-rect", ""), error);
+        if (std::find(styleMembers.begin(), styleMembers.end(), "font") != styleMembers.end())
+            m_infoWidgetStyle.font = JSONHelper::getResource(style.get("font", "").asString(), resources, error);
+        if (std::find(styleMembers.begin(), styleMembers.end(), "caption-font") != styleMembers.end())
+            m_infoWidgetStyle.captionFont = JSONHelper::getResource(style.get("caption-font", "").asString(), resources, error);
         if (error)
         {
             m_infoWidgetStyle = InfoWidgetStyle();

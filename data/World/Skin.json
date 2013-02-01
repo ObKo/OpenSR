@@ -21,9 +21,14 @@
             ] 
         }
     },
+    "Font":
+    {
+        "bold-font": {"file": "DroidSans-Bold.ttf", "size": 14}
+    },
     "InfoWidgetStyle":
     {
         "background": "info-widget",
-        "content-rect": {"x": 2, "y": 2, "width": 1, "height": 1} 
+        "content-rect": {"x": 2, "y": 2, "width": 1, "height": 1},
+        "caption-font": "bold-font"
     }
 }

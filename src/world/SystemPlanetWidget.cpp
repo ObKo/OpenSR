@@ -139,6 +139,10 @@ SystemPlanetWidget::SystemPlanetWidget(boost::shared_ptr<Planet> planet, Widget*
         {
             m_texture = ResourceManager::instance().loadTexture(style->texture);
             m_hasCloud = style->hasCloud;
+            m_ambientColor = style->ambientColor;
+            m_speed = style->speed;
+            m_cloudSpeed = style->cloudSpeed;
+            m_size = planet->radius() *  2.0f;
             if (m_hasCloud)
                 m_cloud = ResourceManager::instance().loadTexture(style->cloud);
             m_hasRing = style->hasRing;
@@ -146,21 +150,20 @@ SystemPlanetWidget::SystemPlanetWidget(boost::shared_ptr<Planet> planet, Widget*
             {
                 m_ringSprite = new Sprite(style->ring, this);
                 m_ringSprite->setOrigin(POSITION_X_CENTER, POSITION_Y_CENTER);
-                m_ringSprite->setPosition(style->ringOffsetX, style->ringOffsetY);
+                m_ringSprite->setPosition(style->ringOffsetX + m_size / 2.0f, style->ringOffsetY + m_size / 2.0f);
             }
             m_hasRingBackground = style->hasRingBackground;
             if (m_hasRingBackground)
             {
                 m_ringBgSprite = new Sprite(style->ringBackground, this);
                 m_ringBgSprite->setOrigin(POSITION_X_CENTER, POSITION_Y_CENTER);
-                m_ringBgSprite->setPosition(style->ringBgOffsetX, style->ringBgOffsetY);
+                m_ringBgSprite->setPosition(style->ringBgOffsetX + m_size / 2.0f, style->ringBgOffsetY + m_size / 2.0f);
             }
-            m_ambientColor = style->ambientColor;
-            m_speed = style->speed;
-            m_cloudSpeed = style->cloudSpeed;
-            m_size = planet->radius() *  2.0f;
         }
+        setPosition(planet->position().x - m_size / 2.0f, planet->position().y - m_size / 2.0f);
     }
+    setWidth(m_size);
+    setHeight(m_size);
     markToUpdate();
 }
 
@@ -280,28 +283,28 @@ void SystemPlanetWidget::processMain()
     vertices = (Vertex *)glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
     vertices[0].u = 0.0f;
     vertices[0].v = 0.0f;
-    vertices[0].x = - m_size / 2.0f;
-    vertices[0].y = - m_size / 2.0f;
+    vertices[0].x = 0.0f;
+    vertices[0].y = 0.0f;
     vertices[1].u = 1.0f;
     vertices[1].v = 0.0f;
-    vertices[1].x = m_size / 2.0f;
-    vertices[1].y = - m_size / 2.0f;
+    vertices[1].x = m_size;
+    vertices[1].y = 0.0f;
     vertices[2].u = 1.0f;
     vertices[2].v = 1.0f;
-    vertices[2].x = m_size / 2.0f;
-    vertices[2].y = m_size / 2.0f;
+    vertices[2].x = m_size;
+    vertices[2].y = m_size;
     vertices[3].u = 0.0f;
     vertices[3].v = 1.0f;
-    vertices[3].x = - m_size / 2.0f;
-    vertices[3].y = m_size / 2.0f;
+    vertices[3].x = 0.0f;
+    vertices[3].y = m_size;
     glUnmapBuffer(GL_ARRAY_BUFFER);
 }
 
 void SystemPlanetWidget::processLogic(int dt)
 {
     Vector pos = position();
-    float l = sqrt(pos.x * pos.x + pos.y * pos.y);
-    m_solarAngle = M_PI + acos(pos.x / l);
+    float l = sqrt((pos.x + m_size / 2.0f) * (pos.x + m_size / 2.0f) + (pos.y + m_size / 2.0f) * (pos.y + m_size / 2.0f));
+    m_solarAngle = M_PI + acos((pos.x + m_size / 2.0f) / l);
 
     m_phase += m_speed / 180000.0f * dt * M_PI;
     while (m_phase > M_PI)
@@ -318,6 +321,7 @@ void SystemPlanetWidget::processLogic(int dt)
 
 boost::shared_ptr<Planet> SystemPlanetWidget::planet() const
 {
+    return m_planet;
 }
 }
 }

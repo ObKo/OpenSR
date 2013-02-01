@@ -20,6 +20,13 @@
 
 #include <OpenSR/Sprite.h>
 #include <OpenSR/NinePatch.h>
+#include <OpenSR/Label.h>
+#include <OpenSR/Font.h>
+#include <OpenSR/ResourceManager.h>
+#include <OpenSR/Engine.h>
+#include <OpenSR/Log.h>
+#include <libintl.h>
+#include <libRanger.h>
 
 #include "WorldStyleManager.h"
 #include "Planet.h"
@@ -34,6 +41,25 @@ SpaceInfoWidget::SpaceInfoWidget(const InfoWidgetStyle& style, Widget* parent): 
         m_bgSprite = new Sprite(boost::get<TextureRegionDescriptor>(style.background.resource), this);
     else if (style.background.type == ResourceDescriptor::NINEPATCH)
         m_bgSprite = new NinePatch(boost::get<NinePatchDescriptor>(style.background.resource), this);
+
+    if (style.font.type == ResourceDescriptor::FONT)
+    {
+        FontDescriptor d = boost::get<FontDescriptor>(style.font.resource);
+        m_font = ResourceManager::instance().loadFont(d.path, d.size);
+    }
+    if (!m_font)
+        m_font = Engine::instance().coreFont();
+
+    if (style.captionFont.type == ResourceDescriptor::FONT)
+    {
+        FontDescriptor d = boost::get<FontDescriptor>(style.captionFont.resource);
+        m_captionFont = ResourceManager::instance().loadFont(d.path, d.size);
+    }
+    if (!m_captionFont)
+        m_captionFont = Engine::instance().coreFont();
+
+    m_caption = new Label(L"", this, m_captionFont);
+    m_caption->setOrigin(POSITION_X_CENTER, POSITION_Y_TOP);
 
     m_contentRect = style.contentRect;
 
@@ -52,11 +78,21 @@ SpaceInfoWidget::~SpaceInfoWidget()
 
 void SpaceInfoWidget::processMain()
 {
+    Widget::processMain();
+
     if (m_bgSprite)
     {
         m_bgSprite->setWidth(width());
         m_bgSprite->setHeight(height());
     }
+    int xOffset;
+    int yOffset;
+    if (m_contentRect.valid() && m_bgSprite)
+    {
+        xOffset = (m_bgSprite->width() - m_bgSprite->normalWidth() + m_contentRect.width) / 2 + m_contentRect.x;
+        yOffset = m_contentRect.y;
+    }
+    m_caption->setPosition((int(m_caption->width()) % 2) / 2.0f + xOffset, yOffset + 5);
 }
 
 void SpaceInfoWidget::draw() const
@@ -67,17 +103,21 @@ void SpaceInfoWidget::draw() const
     if (m_bgSprite)
         m_bgSprite->draw();
 
+    m_caption->draw();
+
     endDraw();
 }
 
 void SpaceInfoWidget::clear()
 {
-    setColor(0xffffffff);
+    m_caption->setText(L"");
+    markToUpdate();
 }
 
 void SpaceInfoWidget::showPlanet(boost::shared_ptr<Planet> planet)
 {
-    setColor(0xff0000ff);
+    m_caption->setText(fromLocal((dgettext("OpenSR-World", "Planet") + std::string(" ") + dgettext("OpenSR-World", planet->name().c_str())).c_str()));
+    markToUpdate();
 }
 
 }

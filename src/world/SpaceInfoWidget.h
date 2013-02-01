@@ -25,6 +25,8 @@
 namespace Rangers
 {
 class Sprite;
+class Label;
+class Font;
 namespace World
 {
 struct InfoWidgetStyle;
@@ -43,8 +45,12 @@ public:
     virtual void draw() const;
 
 private:
+    boost::shared_ptr<Font> m_font;
+    boost::shared_ptr<Font> m_captionFont;
+    Label *m_caption;
     Rect m_contentRect;
     Sprite *m_bgSprite;
+    std::list<Label*> m_labels;
 };
 }
 }

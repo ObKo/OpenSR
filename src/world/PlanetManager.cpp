@@ -39,7 +39,7 @@ PlanetManager& PlanetManager::instance()
 
 PlanetManager::PlanetManager()
 {
-    std::wstring stylesPath = fromUTF8(Engine::instance().properties()->get<std::string>("world.planetStyles", "ORC/planets.json").c_str());
+    std::wstring stylesPath = fromUTF8(Engine::instance().properties()->get<std::string>("world.planetStyles", "World/Planets.json").c_str());
     if (!stylesPath.empty())
         loadStyles(stylesPath);
 }
