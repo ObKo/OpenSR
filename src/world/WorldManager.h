@@ -25,6 +25,8 @@
 #include <stdint.h>
 #include <boost/shared_ptr.hpp>
 
+#include "WorldStyleManager.h"
+
 namespace Rangers
 {
 namespace World
@@ -34,6 +36,8 @@ class SolarSystem;
 class WorldManager
 {
 public:
+    WorldManager();
+
     static WorldManager& instance();
 
     boost::shared_ptr<WorldObject> addObject(WorldObject *object);
@@ -48,6 +52,8 @@ public:
     std::list<boost::shared_ptr<SolarSystem> > solarSystems() const;
     boost::shared_ptr<SolarSystem> currentSolarSystem() const;
 
+    WorldStyleManager& styleManager();
+
     static uint64_t getNextId();
 
 private:
@@ -56,6 +62,7 @@ private:
     std::map<uint64_t, boost::shared_ptr<WorldObject> > m_objects;
     std::list<boost::shared_ptr<SolarSystem> > m_solarSystems;
     boost::shared_ptr<SolarSystem> m_currentSystem;
+    WorldStyleManager m_styleManager;
 
     static uint64_t m_idCounter;
 };

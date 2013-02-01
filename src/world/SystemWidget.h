@@ -26,6 +26,7 @@ namespace Rangers
 class Sprite;
 namespace World
 {
+class SpaceInfoWidget;
 class SystemPlanetWidget;
 class SolarSystem;
 class SystemWidget: public Widget
@@ -48,6 +49,8 @@ public:
 private:
     enum MoveDirection {NONE, LEFT, RIGHT, TOP, BOTTOM, TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT};
 
+    class SystemWidgetListener;
+
     boost::shared_ptr<SolarSystem> m_system;
     std::list<SystemPlanetWidget*> m_planetWidgets;
 
@@ -56,6 +59,9 @@ private:
     float m_xOffset;
     float m_yOffset;
     MoveDirection m_moveDirection;
+
+    SpaceInfoWidget *m_infoWidget;
+    SystemWidgetListener *m_actionListener;
 };
 }
 }

@@ -32,6 +32,11 @@ namespace World
 {
 uint64_t WorldManager::m_idCounter = 0;
 
+WorldManager::WorldManager()
+{
+    m_styleManager.loadStyles();
+}
+
 WorldManager& WorldManager::instance()
 {
     static WorldManager manager;
@@ -55,6 +60,12 @@ void WorldManager::removeObject(uint64_t id)
     std::map<uint64_t, boost::shared_ptr<WorldObject> >::iterator i = m_objects.find(id);
     if (i != m_objects.end())
         m_objects.erase(i);
+}
+
+
+WorldStyleManager& WorldManager::styleManager()
+{
+    return m_styleManager;
 }
 
 void WorldManager::generateWorld()

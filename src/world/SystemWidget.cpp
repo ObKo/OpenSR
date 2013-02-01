@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2012 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2012 - 2013 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,24 +20,61 @@
 #include "SystemPlanetWidget.h"
 #include "SolarSystem.h"
 #include "Planet.h"
+#include "WorldManager.h"
+#include "SpaceInfoWidget.h"
+
 #include <cmath>
 #include <OpenSR/AnimatedSprite.h>
 #include <OpenSR/Sprite.h>
 #include <OpenSR/Engine.h>
+#include <OpenSR/ActionListener.h>
+#include <OpenSR/Action.h>
+#include <OpenSR/Log.h>
 
 namespace Rangers
 {
 namespace World
 {
+class SystemWidget::SystemWidgetListener: public ActionListener
+{
+public:
+    SystemWidgetListener(SystemWidget *parent): m_parent(parent)
+    {
+    }
+
+    virtual void actionPerformed(const Action &action)
+    {
+        Log::debug() << "KOKOKO";
+        if (action.type() == Action::MOUSE_LEAVE)
+            m_parent->m_infoWidget->clear();
+        if (action.type() == Action::MOUSE_ENTER)
+        {
+            SystemPlanetWidget *w = dynamic_cast<SystemPlanetWidget*>(action.source());
+            if (w)
+            {
+                m_parent->m_infoWidget->showPlanet(w->planet());
+            }
+        }
+    }
+
+private:
+    SystemWidget *m_parent;
+};
+
 SystemWidget::SystemWidget(boost::shared_ptr<SolarSystem> system, Widget* parent): Widget(parent),
-    m_xOffset(0), m_yOffset(0), m_bgSprite(0), m_starSprite(0), m_moveDirection(NONE)
+    m_xOffset(0), m_yOffset(0), m_bgSprite(0), m_starSprite(0), m_infoWidget(0), m_moveDirection(NONE)
 {
     setSystem(system);
 
     setWidth(Engine::instance().screenWidth());
     setHeight(Engine::instance().screenHeight());
 
+    m_actionListener = new SystemWidgetListener(this);
     setPosition(0, 0);
+    m_infoWidget = new SpaceInfoWidget(WorldManager::instance().styleManager().infoWidgetStyle(), this);
+    m_infoWidget->setPosition(10, 10);
+    m_infoWidget->setWidth(200);
+    m_infoWidget->setHeight(150);
 }
 
 SystemWidget::~SystemWidget()
@@ -51,6 +88,8 @@ SystemWidget::~SystemWidget()
 
     delete m_starSprite;
     delete m_bgSprite;
+    delete m_infoWidget;
+    delete m_actionListener;
 }
 
 void SystemWidget::processLogic(int dt)
@@ -129,6 +168,7 @@ void SystemWidget::setSystem(boost::shared_ptr< SolarSystem > system)
         {
             SystemPlanetWidget *w = new SystemPlanetWidget(planet, this);
             w->setPosition(planet->position().x, planet->position().y);
+            w->addListener(m_actionListener);
             m_planetWidgets.push_back(w);
         }
     }
@@ -200,6 +240,8 @@ void SystemWidget::draw() const
         (*i)->draw();
 
     glPopMatrix();
+
+    m_infoWidget->draw();
 
     endDraw();
 }

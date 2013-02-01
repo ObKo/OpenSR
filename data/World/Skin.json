@@ -1,0 +1,29 @@
+{
+    "NinePatch":
+    {
+        "info-widget":
+        {
+            "rows": 3,
+            "columns": 3,
+            "sizeableRows": [1],
+            "sizeableColumns": [1],
+            "regions":
+            [
+                {"texture": "ORC/info_widget.png", "x": 0, "y": 0, "width": 2, "height": 2},
+                {"texture": "ORC/info_widget.png", "x": 2, "y": 0, "width": 1, "height": 2},
+                {"texture": "ORC/info_widget.png", "x": 3, "y": 0, "width": 2, "height": 2},
+                {"texture": "ORC/info_widget.png", "x": 0, "y": 2, "width": 2, "height": 1},
+                {"texture": "ORC/info_widget.png", "x": 2, "y": 2, "width": 1, "height": 1},
+                {"texture": "ORC/info_widget.png", "x": 3, "y": 2, "width": 2, "height": 1},
+                {"texture": "ORC/info_widget.png", "x": 0, "y": 3, "width": 2, "height": 2},
+                {"texture": "ORC/info_widget.png", "x": 2, "y": 3, "width": 1, "height": 2},
+                {"texture": "ORC/info_widget.png", "x": 3, "y": 3, "width": 2, "height": 2}
+            ] 
+        }
+    },
+    "InfoWidgetStyle":
+    {
+        "background": "info-widget",
+        "content-rect": {"x": 2, "y": 2, "width": 1, "height": 1} 
+    }
+}

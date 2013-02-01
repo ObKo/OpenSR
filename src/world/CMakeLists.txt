@@ -1,4 +1,4 @@
-SET(WORLD_SOURCES 
+SET(WORLD_SOURCES
     Artifact.cpp
     CargoHook.cpp
     DefenceGenerator.cpp
@@ -22,6 +22,7 @@ SET(WORLD_SOURCES
     ShipContext.cpp
     SolarSystem.cpp
     SpaceBase.cpp
+    SpaceInfoWidget.cpp
     SpaceObject.cpp
     SystemObject.cpp
     SystemPlanetWidget.cpp
@@ -33,6 +34,7 @@ SET(WORLD_SOURCES
     GameInterface.cpp
     WorldManager.cpp
     SystemWidget.cpp
+    WorldStyleManager.cpp
 )
 
 INCLUDE_DIRECTORIES(

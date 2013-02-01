@@ -145,7 +145,7 @@
         "background": "line-edit",
         "font": "default-font", 
         "color": "#000000FF",
-        "content-rect": {"x": 5, "y": 3, "width": 1, "height": 13} 
+        "content-rect": {"x": 5, "y": 4, "width": 1, "height": 13} 
     },
     "ButtonStyle":
     {
