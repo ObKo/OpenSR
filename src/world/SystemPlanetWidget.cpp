@@ -268,7 +268,6 @@ void SystemPlanetWidget::processMain()
     if (!m_useShader && !m_staticSprite)
     {
         m_staticSprite = new Sprite(PlanetManager::instance().getPlanetImage(PlanetManager::instance().style(m_planet->style()), (int)m_size), this);
-        m_staticSprite->setOrigin(POSITION_X_CENTER, POSITION_Y_CENTER);
     }
     Vertex *vertices;
     if (!m_vertexBuffer)
