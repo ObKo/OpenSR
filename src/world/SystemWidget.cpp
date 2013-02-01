@@ -34,6 +34,7 @@
 #include <OpenSR/Button.h>
 #include <OpenSR/AnimatedTexture.h>
 #include <OpenSR/ResourceManager.h>
+#include <OpenSR/SpriteWidget.h>
 
 namespace Rangers
 {
@@ -61,6 +62,11 @@ public:
                 m_parent->m_infoWidget->showPlanet(w->planet());
                 m_parent->m_infoWidget->setVisible(true);
             }
+            else if (action.source() == m_parent->m_starWidget)
+            {
+                m_parent->m_infoWidget->showSystem(m_parent->m_system);
+                m_parent->m_infoWidget->setVisible(true);
+            }
         }
     }
 
@@ -69,7 +75,7 @@ private:
 };
 
 SystemWidget::SystemWidget(boost::shared_ptr<SolarSystem> system, Widget* parent): Widget(parent),
-    m_xOffset(0), m_yOffset(0), m_bgSprite(0), m_starSprite(0), m_infoWidget(0), m_node(0), m_moveDirection(NONE)
+    m_xOffset(0), m_yOffset(0), m_bgSprite(0), m_starWidget(0), m_infoWidget(0), m_node(0), m_moveDirection(NONE)
 {
     setWidth(Engine::instance().screenWidth());
     setHeight(Engine::instance().screenHeight());
@@ -97,7 +103,7 @@ SystemWidget::~SystemWidget()
     }
     m_planetWidgets.clear();
 
-    delete m_starSprite;
+    delete m_starWidget;
     delete m_bgSprite;
     delete m_infoWidget;
     delete m_actionListener;
@@ -152,8 +158,8 @@ void SystemWidget::setSystem(boost::shared_ptr< SolarSystem > system)
     if (!system || system != m_system)
     {
         delete m_bgSprite;
-        delete m_starSprite;
-        m_starSprite = 0;
+        delete m_starWidget;
+        m_starWidget = 0;
         m_bgSprite = 0;
     }
     m_system = system;
@@ -182,8 +188,10 @@ void SystemWidget::setSystem(boost::shared_ptr< SolarSystem > system)
         }
     }
 
-    m_starSprite = new AnimatedSprite(L"DATA/Star/Star00.gai", m_node);
-    m_starSprite->setPosition(-m_starSprite->width() / 2, -m_starSprite->height() / 2);
+    m_starWidget = new SpriteWidget(new AnimatedSprite(L"DATA/Star/Star00.gai"), m_node);
+    m_starWidget->setPosition(-m_starWidget->width() / 2, -m_starWidget->height() / 2);
+    m_starWidget->addListener(m_actionListener);
+
     m_bgSprite = new AnimatedSprite(L"DATA/BGObj/bg00.gai", this);
     m_bgSprite->setPosition(m_xOffset / 10 - (m_bgSprite->width() - width()) / 2, m_yOffset / 10 - (m_bgSprite->height() - height()) / 2);
 }
@@ -197,8 +205,6 @@ boost::shared_ptr< SolarSystem > SystemWidget::system() const
 void SystemWidget::processMain()
 {
     Widget::processMain();
-    m_starSprite->processMain();
-    m_bgSprite->processMain();
 }
 
 void SystemWidget::mouseMove(const Vector &p)

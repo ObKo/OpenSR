@@ -16,45 +16,32 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WORLD_SPACEINFOWIDGET_H
-#define WORLD_SPACEINFOWIDGET_H
+#ifndef RANGERS_SPRITEWIDGET_H
+#define RANGERS_SPRITEWIDGET_H
 
-#include <OpenSR/Widget.h>
-#include <OpenSR/Types.h>
+#include "Widget.h"
 
 namespace Rangers
 {
 class Sprite;
-class Label;
-class Font;
-namespace World
+class SpriteWidgetPrivate;
+class RANGERS_ENGINE_API SpriteWidget: public Widget
 {
-struct InfoWidgetStyle;
-class Planet;
-class SolarSystem;
-class SpaceInfoWidget: public Widget
-{
+    RANGERS_DECLARE_PRIVATE(SpriteWidget)
 public:
-    SpaceInfoWidget(const InfoWidgetStyle& style, Widget* parent = 0);
-    virtual ~SpaceInfoWidget();
+    SpriteWidget(Sprite *sprite, Widget *parent = 0);
+    virtual ~SpriteWidget();
 
-    void clear();
-
-    void showPlanet(boost::shared_ptr<Planet> planet);
-    void showSystem(boost::shared_ptr<SolarSystem> system);
-
-    virtual void processMain();
     virtual void draw() const;
+    virtual void processMain();
+    virtual void processLogic(int dt);
 
-private:
-    boost::shared_ptr<Font> m_font;
-    boost::shared_ptr<Font> m_captionFont;
-    Label *m_caption;
-    Rect m_contentRect;
-    Sprite *m_bgSprite;
-    std::list<Label*> m_labels;
+protected:
+    SpriteWidget(SpriteWidgetPrivate &p, Widget *parent = 0);
+
+    RANGERS_DISABLE_COPY(SpriteWidget)
 };
 }
-}
 
-#endif // WORLD_SPACEINFOWIDGET_H
+
+#endif // RANGERS_SPRITEWIDGET_H

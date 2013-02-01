@@ -37,6 +37,7 @@ SET(SOURCES
     Plugin.cpp
     Shader.cpp
     ShaderProgram.cpp
+    SpriteWidget.cpp
 )
 
 SET(HEADERS

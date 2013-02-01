@@ -25,11 +25,14 @@ namespace Rangers
 {
 class Sprite;
 class WidgetNode;
+class SpriteWidget;
+
 namespace World
 {
 class SpaceInfoWidget;
 class SystemPlanetWidget;
 class SolarSystem;
+
 class SystemWidget: public Widget
 {
 public:
@@ -56,7 +59,7 @@ private:
     std::list<SystemPlanetWidget*> m_planetWidgets;
 
     Sprite *m_bgSprite;
-    Sprite *m_starSprite;
+    SpriteWidget *m_starWidget;
     float m_xOffset;
     float m_yOffset;
     MoveDirection m_moveDirection;

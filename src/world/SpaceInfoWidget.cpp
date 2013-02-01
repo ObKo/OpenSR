@@ -30,6 +30,7 @@
 
 #include "WorldStyleManager.h"
 #include "Planet.h"
+#include "SolarSystem.h"
 
 namespace Rangers
 {
@@ -120,5 +121,10 @@ void SpaceInfoWidget::showPlanet(boost::shared_ptr<Planet> planet)
     markToUpdate();
 }
 
+void SpaceInfoWidget::showSystem(boost::shared_ptr<SolarSystem> system)
+{
+    m_caption->setText(fromLocal((dgettext("OpenSR-World", "System") + std::string(" ") + dgettext("OpenSR-World", system->name().c_str())).c_str()));
+    markToUpdate();
+}
 }
 }

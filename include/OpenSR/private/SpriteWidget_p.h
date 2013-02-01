@@ -16,45 +16,20 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WORLD_SPACEINFOWIDGET_H
-#define WORLD_SPACEINFOWIDGET_H
+#ifndef RANGERS_SPRITEWIDGET_P_H
+#define RANGERS_SPRITEWIDGET_P_H
 
-#include <OpenSR/Widget.h>
-#include <OpenSR/Types.h>
+#include "Widget_p.h"
 
 namespace Rangers
 {
-class Sprite;
-class Label;
-class Font;
-namespace World
+class SpriteWidgetPrivate: public WidgetPrivate
 {
-struct InfoWidgetStyle;
-class Planet;
-class SolarSystem;
-class SpaceInfoWidget: public Widget
-{
+    RANGERS_DECLARE_PUBLIC(SpriteWidget)
 public:
-    SpaceInfoWidget(const InfoWidgetStyle& style, Widget* parent = 0);
-    virtual ~SpaceInfoWidget();
-
-    void clear();
-
-    void showPlanet(boost::shared_ptr<Planet> planet);
-    void showSystem(boost::shared_ptr<SolarSystem> system);
-
-    virtual void processMain();
-    virtual void draw() const;
-
-private:
-    boost::shared_ptr<Font> m_font;
-    boost::shared_ptr<Font> m_captionFont;
-    Label *m_caption;
-    Rect m_contentRect;
-    Sprite *m_bgSprite;
-    std::list<Label*> m_labels;
+    SpriteWidgetPrivate();
+    Sprite *sprite;
 };
 }
-}
 
-#endif // WORLD_SPACEINFOWIDGET_H
+#endif
