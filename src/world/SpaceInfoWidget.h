@@ -46,12 +46,16 @@ public:
     virtual void processMain();
     virtual void draw() const;
 
+    virtual Rect getBoundingRect() const;
+
 private:
     boost::shared_ptr<Font> m_font;
     boost::shared_ptr<Font> m_captionFont;
     Label *m_caption;
     Rect m_contentRect;
     Sprite *m_bgSprite;
+    Sprite *m_iconSprite;
+    int m_captionColor;
     std::list<Label*> m_labels;
 };
 }

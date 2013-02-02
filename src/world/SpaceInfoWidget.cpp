@@ -25,18 +25,20 @@
 #include <OpenSR/ResourceManager.h>
 #include <OpenSR/Engine.h>
 #include <OpenSR/Log.h>
+#include <OpenSR/Utils.h>
 #include <libintl.h>
 #include <libRanger.h>
 
 #include "WorldStyleManager.h"
 #include "Planet.h"
 #include "SolarSystem.h"
+#include "PlanetManager.h"
 
 namespace Rangers
 {
 namespace World
 {
-SpaceInfoWidget::SpaceInfoWidget(const InfoWidgetStyle& style, Widget* parent): Widget(parent), m_bgSprite(0)
+SpaceInfoWidget::SpaceInfoWidget(const InfoWidgetStyle& style, Widget* parent): Widget(parent), m_bgSprite(0), m_iconSprite(0)
 {
     if (style.background.type == ResourceDescriptor::SPRITE)
         m_bgSprite = new Sprite(boost::get<TextureRegionDescriptor>(style.background.resource), this);
@@ -59,8 +61,11 @@ SpaceInfoWidget::SpaceInfoWidget(const InfoWidgetStyle& style, Widget* parent): 
     if (!m_captionFont)
         m_captionFont = Engine::instance().coreFont();
 
+    m_captionColor = style.captionColor;
+
     m_caption = new Label(L"", this, m_captionFont);
     m_caption->setOrigin(POSITION_X_CENTER, POSITION_Y_TOP);
+    m_caption->setColor(m_captionColor);
 
     m_contentRect = style.contentRect;
 
@@ -86,14 +91,37 @@ void SpaceInfoWidget::processMain()
         m_bgSprite->setWidth(width());
         m_bgSprite->setHeight(height());
     }
-    int xOffset;
-    int yOffset;
+    Rect realContentRect;
     if (m_contentRect.valid() && m_bgSprite)
     {
-        xOffset = (m_bgSprite->width() - m_bgSprite->normalWidth() + m_contentRect.width) / 2 + m_contentRect.x;
-        yOffset = m_contentRect.y;
+        realContentRect.x = m_contentRect.x;
+        realContentRect.y = m_contentRect.y;
+        realContentRect.width = (m_bgSprite->width() - m_bgSprite->normalWidth() + m_contentRect.width);
+        realContentRect.height = (m_bgSprite->height() - m_bgSprite->normalHeight() + m_contentRect.height);
     }
-    m_caption->setPosition((int(m_caption->width()) % 2) / 2.0f + xOffset, yOffset + 5);
+    else
+    {
+        realContentRect.x = 0;
+        realContentRect.y = 0;
+        realContentRect.width = width();
+        realContentRect.height = height();
+    }
+    if (m_iconSprite)
+    {
+        m_iconSprite->setPosition(realContentRect.x, realContentRect.y);
+        m_caption->setPosition((int(m_caption->width()) % 2) / 2.0f + int(realContentRect.width) / 2 + realContentRect.x + int(m_iconSprite->width()) / 2,
+                               realContentRect.y + int(m_iconSprite->height()) / 2 - int(m_caption->height()) / 2);
+    }
+    else
+    {
+        m_caption->setPosition((int(m_caption->width()) % 2) / 2.0f + int(realContentRect.width) / 2 + realContentRect.x,
+                               realContentRect.y);
+    }
+}
+
+Rect SpaceInfoWidget::getBoundingRect() const
+{
+    return Rect();
 }
 
 void SpaceInfoWidget::draw() const
@@ -106,24 +134,33 @@ void SpaceInfoWidget::draw() const
 
     m_caption->draw();
 
+    if (m_iconSprite)
+        m_iconSprite->draw();
+
     endDraw();
 }
 
 void SpaceInfoWidget::clear()
 {
     m_caption->setText(L"");
+    if (m_iconSprite)
+    {
+        delete m_iconSprite;
+        m_iconSprite = 0;
+    }
     markToUpdate();
 }
 
 void SpaceInfoWidget::showPlanet(boost::shared_ptr<Planet> planet)
 {
-    m_caption->setText(fromLocal((dgettext("OpenSR-World", "Planet") + std::string(" ") + dgettext("OpenSR-World", planet->name().c_str())).c_str()));
+    m_caption->setText(_("Planet", "OpenSR-World") + L" " + _(planet->name(), "OpenSR-World"));
+    m_iconSprite = new Sprite(PlanetManager::instance().getPlanetImage(planet->style(), 48));
     markToUpdate();
 }
 
 void SpaceInfoWidget::showSystem(boost::shared_ptr<SolarSystem> system)
 {
-    m_caption->setText(fromLocal((dgettext("OpenSR-World", "System") + std::string(" ") + dgettext("OpenSR-World", system->name().c_str())).c_str()));
+    m_caption->setText(_("System", "OpenSR-World") + L" " + _(system->name(), "OpenSR-World"));
     markToUpdate();
 }
 }

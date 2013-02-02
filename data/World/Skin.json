@@ -29,6 +29,7 @@
     {
         "background": "info-widget",
         "content-rect": {"x": 2, "y": 2, "width": 1, "height": 1},
-        "caption-font": "bold-font"
+        "caption-font": "bold-font",
+        "caption-color": "#31EFFFFF"
     }
 }

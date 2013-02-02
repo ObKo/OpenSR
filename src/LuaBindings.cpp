@@ -29,6 +29,7 @@
 #include <luabind/operator.hpp>
 #include <libintl.h>
 #include <SDL.h>
+#include <Utils.h>
 
 #include "GAISprite.h"
 #include "Engine.h"
@@ -123,11 +124,6 @@ void propertiesSetBool(const std::string& name, bool value)
     Engine::instance().properties()->put(name, value);
 }
 
-std::wstring wgettext(const std::string& id)
-{
-    return fromLocal(gettext(id.c_str()));
-}
-
 std::wstring wgettext(const std::string& domain, const std::string& id)
 {
     return fromLocal(dgettext(domain.c_str(), id.c_str()));
@@ -161,8 +157,8 @@ lua_State *initLuaState()
         ],
 
         def("L", &fromLua),
-        def("_", (std::wstring(*)(const std::string&))&wgettext),
-        def("_", (std::wstring(*)(const std::string&, const std::string&))&wgettext),
+        def("_", (std::wstring(*)(const std::string&))&_),
+        def("_", (std::wstring(*)(const std::string&, const std::string&))&_),
         def("toString", &toUTF8),
         def("luaDebug", &luaDebug),
         def("luaWarning", &luaWarning),

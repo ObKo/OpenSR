@@ -64,6 +64,10 @@ void WorldStyleManager::loadStyles()
             m_infoWidgetStyle.font = JSONHelper::getResource(style.get("font", "").asString(), resources, error);
         if (std::find(styleMembers.begin(), styleMembers.end(), "caption-font") != styleMembers.end())
             m_infoWidgetStyle.captionFont = JSONHelper::getResource(style.get("caption-font", "").asString(), resources, error);
+        if (std::find(styleMembers.begin(), styleMembers.end(), "caption-color") != styleMembers.end())
+            m_infoWidgetStyle.captionColor = JSONHelper::parseColor(style.get("caption-color", "#FFFFFFFF").asString(), error);
+        else
+            m_infoWidgetStyle.captionColor = 0xffffffff;
         if (error)
         {
             m_infoWidgetStyle = InfoWidgetStyle();
