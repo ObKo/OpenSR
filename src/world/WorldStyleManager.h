@@ -31,7 +31,9 @@ struct InfoWidgetStyle
     ResourceDescriptor background;
     ResourceDescriptor font;
     ResourceDescriptor captionFont;
+    int color;
     int captionColor;
+    int labelColor;
     Rect contentRect;
 };
 

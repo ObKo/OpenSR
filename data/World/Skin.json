@@ -23,13 +23,17 @@
     },
     "Font":
     {
+        "default-font": {"file": "DroidSans.ttf", "size": 14},
         "bold-font": {"file": "DroidSans-Bold.ttf", "size": 14}
     },
     "InfoWidgetStyle":
     {
         "background": "info-widget",
         "content-rect": {"x": 2, "y": 2, "width": 1, "height": 1},
+        "font": "default-font",
         "caption-font": "bold-font",
-        "caption-color": "#31EFFFFF"
+        "color": "#FFFFFFFF",
+        "caption-color": "#31EFFFFF",
+        "label-color": "#8C8A8CFF"
     }
 }

@@ -38,7 +38,7 @@ namespace Rangers
 {
 namespace World
 {
-SpaceInfoWidget::SpaceInfoWidget(const InfoWidgetStyle& style, Widget* parent): Widget(parent), m_bgSprite(0), m_iconSprite(0)
+SpaceInfoWidget::SpaceInfoWidget(const InfoWidgetStyle& style, Widget* parent): Widget(parent), m_bgSprite(0), m_iconSprite(0), m_type(INFO_NONE)
 {
     if (style.background.type == ResourceDescriptor::SPRITE)
         m_bgSprite = new Sprite(boost::get<TextureRegionDescriptor>(style.background.resource), this);
@@ -62,6 +62,8 @@ SpaceInfoWidget::SpaceInfoWidget(const InfoWidgetStyle& style, Widget* parent): 
         m_captionFont = Engine::instance().coreFont();
 
     m_captionColor = style.captionColor;
+    m_labelColor = style.labelColor;
+    m_color = style.color;
 
     m_caption = new Label(L"", this, m_captionFont);
     m_caption->setOrigin(POSITION_X_CENTER, POSITION_Y_TOP);
@@ -106,16 +108,35 @@ void SpaceInfoWidget::processMain()
         realContentRect.width = width();
         realContentRect.height = height();
     }
+    int captionOffset = m_caption->height() + 5;
     if (m_iconSprite)
     {
         m_iconSprite->setPosition(realContentRect.x, realContentRect.y);
         m_caption->setPosition((int(m_caption->width()) % 2) / 2.0f + int(realContentRect.width) / 2 + realContentRect.x + int(m_iconSprite->width()) / 2,
                                realContentRect.y + int(m_iconSprite->height()) / 2 - int(m_caption->height()) / 2);
+        captionOffset = m_iconSprite->height() + 5;
     }
     else
     {
         m_caption->setPosition((int(m_caption->width()) % 2) / 2.0f + int(realContentRect.width) / 2 + realContentRect.x,
                                realContentRect.y);
+    }
+
+    if (m_type == INFO_PLANET)
+    {
+
+        for (int i = 0; i < m_infoWidget.size(); i++)
+        {
+            Label *l = dynamic_cast<Label*>(m_infoWidget.at(i));
+            if ((i % 2) == 0)
+            {
+                l->setPosition(realContentRect.x + int(realContentRect.width) / 2 - l->width(), (m_font->size() + 5) * (i / 2) + captionOffset);
+            }
+            else
+            {
+                l->setPosition(realContentRect.x + int(realContentRect.width) / 2, (m_font->size() + 5) * (i / 2) + captionOffset);
+            }
+        }
     }
 }
 
@@ -137,6 +158,10 @@ void SpaceInfoWidget::draw() const
     if (m_iconSprite)
         m_iconSprite->draw();
 
+    std::vector<Object*>::const_iterator end = m_infoWidget.end();
+    for (std::vector<Object*>::const_iterator i = m_infoWidget.begin(); i != end; ++i)
+        (*i)->draw();
+
     endDraw();
 }
 
@@ -148,6 +173,11 @@ void SpaceInfoWidget::clear()
         delete m_iconSprite;
         m_iconSprite = 0;
     }
+    std::vector<Object*>::iterator end = m_infoWidget.end();
+    for (std::vector<Object*>::iterator i = m_infoWidget.begin(); i != end; ++i)
+        delete(*i);
+    m_infoWidget.clear();
+    m_type = INFO_NONE;
     markToUpdate();
 }
 
@@ -155,12 +185,25 @@ void SpaceInfoWidget::showPlanet(boost::shared_ptr<Planet> planet)
 {
     m_caption->setText(_("Planet", "OpenSR-World") + L" " + _(planet->name(), "OpenSR-World"));
     m_iconSprite = new Sprite(PlanetManager::instance().getPlanetImage(planet->style(), 48));
+
+    Label *l = new Label(_("Planet radius:", "OpenSR-World") + L" ", this);
+    l->setColor(m_labelColor);
+    m_infoWidget.push_back(l);
+
+    std::wostringstream str;
+    str << planet->radius();
+    l = new Label(str.str(), this);
+    l->setColor(m_color);
+    m_infoWidget.push_back(l);
+
+    m_type = INFO_PLANET;
     markToUpdate();
 }
 
 void SpaceInfoWidget::showSystem(boost::shared_ptr<SolarSystem> system)
 {
     m_caption->setText(_("System", "OpenSR-World") + L" " + _(system->name(), "OpenSR-World"));
+    m_type = INFO_SYSTEM;
     markToUpdate();
 }
 }

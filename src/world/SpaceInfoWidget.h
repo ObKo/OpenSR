@@ -49,14 +49,19 @@ public:
     virtual Rect getBoundingRect() const;
 
 private:
+    enum InfoType {INFO_NONE, INFO_SYSTEM, INFO_PLANET};
+
     boost::shared_ptr<Font> m_font;
     boost::shared_ptr<Font> m_captionFont;
     Label *m_caption;
     Rect m_contentRect;
     Sprite *m_bgSprite;
     Sprite *m_iconSprite;
+    int m_color;
     int m_captionColor;
-    std::list<Label*> m_labels;
+    int m_labelColor;
+    std::vector<Object*> m_infoWidget;
+    InfoType m_type;
 };
 }
 }
