@@ -37,6 +37,9 @@ void LineEditWidgetPrivate::actionPerformed(const Action &action)
     switch (action.type())
     {
     case Action::MOUSE_CLICK:
+        position = label->font()->maxChars(text.begin() + stringOffset, text.end(), mousePosition.x/* - style.contentRect.x*/);
+        updateText();
+        q->markToUpdate();
         Engine::instance().focusWidget(q);
         break;
     case Action::KEY_PRESSED:
@@ -164,12 +167,35 @@ void LineEditWidgetPrivate::init()
     q->markToUpdate();
 }
 
+void LineEditWidget::mouseMove(const Vector &p)
+{
+    RANGERS_D(LineEditWidget);
+    d->mousePosition = p;
+}
+
 void LineEditWidgetPrivate::updateText()
 {
     RANGERS_Q(LineEditWidget);
     if (!label->font())
         return;
     q->lock();
+
+    Rect realContentRect;
+    if (style.contentRect.valid() && background)
+    {
+        realContentRect.x = style.contentRect.x;
+        realContentRect.y = style.contentRect.y;
+        realContentRect.width = (width - background->normalWidth() + style.contentRect.width);
+        realContentRect.height = (height - background->normalHeight() + style.contentRect.height);
+    }
+    else
+    {
+        realContentRect.x = 0;
+        realContentRect.y = 0;
+        realContentRect.width = width;
+        realContentRect.height = height;
+    }
+
     int maxChars;
     if (position <= stringOffset)
     {
@@ -181,11 +207,11 @@ void LineEditWidgetPrivate::updateText()
         std::wstring::iterator end = text.begin() + position;
         while ((maxChars = label->font()->maxChars(start, end, width)) < end - start)
         {
-            stringOffset = (end - maxChars) - text.begin() - 1;
+            stringOffset = (end - maxChars) - text.begin();
             start = text.begin() + stringOffset;
         }
     }
-    maxChars = label->font()->maxChars(text.begin() + stringOffset, text.end(), width);
+    maxChars = label->font()->maxChars(text.begin() + stringOffset, text.end(), realContentRect.width);
     label->setText(text.substr(stringOffset, maxChars));
     q->unlock();
 }

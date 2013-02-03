@@ -40,7 +40,6 @@ private:
     SoundManager(const SoundManager& other);
     virtual ~SoundManager();
 
-    static SoundManager *m_soundInstance;
     std::map<std::wstring, boost::shared_ptr<Sound> > m_soundCache;
     Mix_Music *m_currentMusic;
 };

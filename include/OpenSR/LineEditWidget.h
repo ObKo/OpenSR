@@ -43,6 +43,8 @@ public:
     virtual void processMain();
     virtual void processLogic(int dt);
 
+    virtual void mouseMove(const Vector &p);
+
     virtual int minWidth() const;
     virtual int minHeight() const;
     virtual int preferredHeight() const;

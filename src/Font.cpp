@@ -155,7 +155,7 @@ int Font::maxChars(const std::wstring::const_iterator& first, const std::wstring
 
         x += m_fontFace->glyph->advance.x >> 6;
         if (x > width)
-            return i - first - 1;
+            return i - first;
     }
     return last - first;
 }

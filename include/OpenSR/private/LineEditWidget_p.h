@@ -47,6 +47,8 @@ public:
     Sprite *background;
     LineEditStyle style;
 
+    Vector mousePosition;
+
     void init();
     void updateText();
     void keyPressed(const SDL_keysym& key);
