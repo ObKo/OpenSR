@@ -127,16 +127,16 @@ void FSAdapter::scan(const string& path)
 #endif
 
 //FIXME: std::wstring to std::ifstream constructor
-boost::shared_ptr<std::istream> FSAdapter::getStream(const std::wstring& name)
+std::istream* FSAdapter::getStream(const std::wstring& name)
 {
     ifstream *s = new ifstream(toLocal(m_dirPath + name).c_str(), ios::in | ios::binary);
     if (!s->is_open())
     {
         Log::error() << "Cannot open file " << name << " from FS: " << fromLocal(strerror(errno));
         delete s;
-        return boost::shared_ptr<std::istream>();
+        return 0;
     }
-    return boost::shared_ptr<std::istream>(s);
+    return s;
 }
 
 FSAdapter::~FSAdapter()

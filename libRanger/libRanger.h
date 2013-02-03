@@ -306,7 +306,7 @@ LIBRANGER_API GAIHeader loadGAIHeader(std::istream& stream);
 LIBRANGER_API GAIHeader loadGAIHeader(const char *data);
 
 //! Get std::istream of file in package
-LIBRANGER_API boost::shared_ptr<std::istream> getRPKGFileStream(const RPKGEntry& e, boost::shared_ptr<std::istream> stream);
+LIBRANGER_API std::istream* getRPKGFileStream(const RPKGEntry& e, boost::shared_ptr<std::istream> stream);
 
 //! Unpack ZL01 - compressed file
 LIBRANGER_API unsigned char *unpackZL01(const unsigned char * src, size_t srclen, size_t& destlen);

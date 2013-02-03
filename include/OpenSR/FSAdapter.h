@@ -30,7 +30,7 @@ public:
     virtual ~FSAdapter();
 
     std::list<std::wstring> getFiles() const;
-    boost::shared_ptr<std::istream> getStream(const std::wstring& name);
+    std::istream* getStream(const std::wstring& name);
 
 private:
 

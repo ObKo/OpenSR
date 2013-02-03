@@ -32,8 +32,59 @@
 #include <string>
 #include <iostream>
 #include <sstream>
+#include <SDL_rwops.h>
 
 using namespace std;
+
+namespace
+{
+int istreamSeek(struct SDL_RWops *context, int offset, int whence)
+{
+    std::istream* stream = (std::istream*)context->hidden.unknown.data1;
+
+    if (!stream)
+        return -1;
+
+    if (whence == SEEK_SET)
+        stream->seekg(offset, std::ios::beg);
+    else if (whence == SEEK_CUR)
+        stream->seekg(offset, std::ios::cur);
+    else if (whence == SEEK_END)
+        stream->seekg(offset, std::ios::end);
+
+    return stream->fail() ? -1 : int(stream->tellg());
+}
+
+
+int istreamRead(SDL_RWops *context, void *ptr, int size, int maxnum)
+{
+    if (size == 0) return -1;
+    std::istream* stream = (std::istream*) context->hidden.unknown.data1;
+
+    if (!stream)
+        return -1;
+
+    stream->read((char*)ptr, size * maxnum);
+
+    return stream->bad() ? -1 : stream->gcount() / size;
+}
+
+int istreamClose(SDL_RWops *context)
+{
+    if (context)
+    {
+        std::istream* stream = (std::istream*) context->hidden.unknown.data1;
+
+        if (stream)
+        {
+            delete stream;
+            context->hidden.unknown.data1 = 0;
+        }
+        SDL_FreeRW(context);
+    }
+    return 0;
+}
+}
 
 namespace Rangers
 {
@@ -70,6 +121,36 @@ ResourceManager& ResourceManager::instance()
 {
     static ResourceManager manager;
     return manager;
+}
+
+SDL_RWops *ResourceManager::getSDLRW(const std::wstring& name)
+{
+    wstring realName = name;
+    map<wstring, wstring>::iterator mapIt = m_fileMapping.find(name);
+    if (mapIt != m_fileMapping.end())
+        realName = mapIt->second;
+
+    std::map<std::wstring, boost::shared_ptr<ResourceAdapter> >::iterator fileIt = m_files.find(realName);
+    if (fileIt == m_files.end())
+    {
+        Log::error() << "No such file: " << realName;
+        return 0;
+    }
+
+    std::istream *s = fileIt->second->getStream(realName);
+
+    SDL_RWops *rwops;
+    rwops = SDL_AllocRW();
+
+    if (rwops != NULL)
+    {
+        rwops->seek = istreamSeek;
+        rwops->read = istreamRead;
+        rwops->write = 0;
+        rwops->close = istreamClose;
+        rwops->hidden.unknown.data1 = s;
+    }
+    return rwops;
 }
 
 void ResourceManager::addRPKG(const std::wstring& path)
@@ -465,7 +546,7 @@ boost::shared_ptr<std::istream> ResourceManager::getFileStream(const std::wstrin
         Log::error() << "No such file: " << realName;
         return boost::shared_ptr<std::istream>();
     }
-    return fileIt->second->getStream(realName);
+    return boost::shared_ptr<std::istream>(fileIt->second->getStream(realName));
 }
 
 void ResourceManager::processGAIQueue()

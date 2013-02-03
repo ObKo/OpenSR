@@ -22,6 +22,7 @@
 #include "config.h"
 #include <boost/shared_ptr.hpp>
 #include <map>
+#include <SDL_mixer.h>
 
 namespace Rangers
 {
@@ -32,6 +33,7 @@ public:
     static SoundManager& instance();
 
     boost::shared_ptr<Sound> loadSound(const std::wstring& path);
+    void playMusic(const std::wstring& path, bool loop);
 
 private:
     SoundManager();
@@ -40,6 +42,7 @@ private:
 
     static SoundManager *m_soundInstance;
     std::map<std::wstring, boost::shared_ptr<Sound> > m_soundCache;
+    Mix_Music *m_currentMusic;
 };
 }
 

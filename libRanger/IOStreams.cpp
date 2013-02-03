@@ -580,12 +580,12 @@ private:
     }
 };
 
-boost::shared_ptr<std::istream> getRPKGFileStream(const RPKGEntry& e, boost::shared_ptr<std::istream> stream)
+std::istream* getRPKGFileStream(const RPKGEntry& e, boost::shared_ptr<std::istream> stream)
 {
     boost::iostreams::filtering_istream *in = new boost::iostreams::filtering_istream();
     in->push(RPKGFilter());
     in->push(PartialFileSource(stream, e.offset, e.size + 16));
-    return boost::shared_ptr<std::istream>(in);
+    return in;
 }
 
 }

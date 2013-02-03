@@ -1,3 +1,5 @@
+sound:playMusic(L"music/SPECIAL/SpaceIsCalling.dat", false)
+
 background = Sprite(L"DATA/FormMain3/2bg.gi", this)
 background:setWidth(background:width()/(engine:screenHeight()/background:height()))
 background:setHeight(engine:screenHeight())

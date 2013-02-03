@@ -469,6 +469,7 @@ lua_State *initLuaState()
 
         luabind::class_<SoundManager>("SoundManager")
         .def("loadSound", &SoundManager::loadSound)
+        .def("playMusic", &SoundManager::playMusic)
     ];
 
     ResourceManager& resources = ResourceManager::instance();

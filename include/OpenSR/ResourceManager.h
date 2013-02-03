@@ -24,6 +24,7 @@
 #include <list>
 #include <boost/shared_ptr.hpp>
 
+struct SDL_RWops;
 namespace Rangers
 {
 class Texture;
@@ -45,6 +46,7 @@ public:
 
     char* loadData(const std::wstring& name, size_t &size);
     boost::shared_ptr<std::istream> getFileStream(const std::wstring& name);
+    SDL_RWops* getSDLRW(const std::wstring& name);
 
     boost::shared_ptr<Texture> loadTexture(const std::wstring& name);
     boost::shared_ptr<AnimatedTexture> loadAnimation(const std::wstring& name, bool backgroundLoading = false);

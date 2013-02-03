@@ -18,12 +18,14 @@
 
 #include "SoundManager.h"
 #include "Sound.h"
+#include <ResourceManager.h>
+#include <Log.h>
 #include <SDL_mixer.h>
 
 
 namespace Rangers
 {
-SoundManager::SoundManager()
+SoundManager::SoundManager(): m_currentMusic(0)
 {
     Mix_OpenAudio(44100, AUDIO_S16SYS, 2, 1024);
 }
@@ -55,4 +57,21 @@ boost::shared_ptr<Sound> SoundManager::loadSound(const std::wstring& path)
     return sound;
 }
 
+void SoundManager::playMusic(const std::wstring& path, bool loop)
+{
+    if (m_currentMusic)
+        Mix_FreeMusic(m_currentMusic);
+
+    SDL_RWops *m = ResourceManager::instance().getSDLRW(path);
+    if (!m)
+        return;
+
+    m_currentMusic = Mix_LoadMUS_RW(m);
+    if (!m_currentMusic)
+    {
+        Log::error() << "Cannot play music: " << Mix_GetError();
+        return;
+    }
+    Mix_PlayMusic(m_currentMusic, -1);
+}
 }

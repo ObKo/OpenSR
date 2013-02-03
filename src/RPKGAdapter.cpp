@@ -60,14 +60,14 @@ list<wstring> RPKGAdapter::getFiles() const
     return result;
 }
 
-boost::shared_ptr<std::istream> RPKGAdapter::getStream(const std::wstring& name)
+std::istream* RPKGAdapter::getStream(const std::wstring& name)
 {
     if (files.find(name) == files.end())
     {
         Log::error() << "No such file in RPKG archive: " << name;
-        return boost::shared_ptr<std::istream>();
+        return 0;
     }
     RPKGEntry e = files[name];
-    return boost::shared_ptr<std::istream>(getRPKGFileStream(e, boost::shared_ptr<std::istream>(new std::ifstream(toLocal(m_fileName).c_str(), ios::binary | ios::in))));
+    return getRPKGFileStream(e, boost::shared_ptr<std::istream>(new std::ifstream(toLocal(m_fileName).c_str(), ios::binary | ios::in)));
 }
 }
