@@ -21,8 +21,6 @@ SET(SOURCES
     RPKGAdapter.cpp
     ResourceManager.cpp 
     FSAdapter.cpp
-    LuaBindings.cpp
-    LuaWidget.cpp
     GAISprite.cpp
     Button.cpp
     Action.cpp
@@ -38,6 +36,8 @@ SET(SOURCES
     Shader.cpp
     ShaderProgram.cpp
     SpriteWidget.cpp
+    PythonBindings.cpp
+    ScriptWidget.cpp
 )
 
 SET(HEADERS
@@ -55,7 +55,6 @@ SET(HEADERS
     ${CMAKE_SOURCE_DIR}/include/OpenSR/CheckBox.h
     ${CMAKE_SOURCE_DIR}/include/OpenSR/Font.h
     ${CMAKE_SOURCE_DIR}/include/OpenSR/JSONHelper.h
-    ${CMAKE_SOURCE_DIR}/include/OpenSR/LuaBindings.h
     ${CMAKE_SOURCE_DIR}/include/OpenSR/Object.h
     ${CMAKE_SOURCE_DIR}/include/OpenSR/ResourceManager.h
     ${CMAKE_SOURCE_DIR}/include/OpenSR/SoundManager.h
@@ -64,7 +63,6 @@ SET(HEADERS
     ${CMAKE_SOURCE_DIR}/include/OpenSR/ColorLabel.h
     ${CMAKE_SOURCE_DIR}/include/OpenSR/FSAdapter.h
     ${CMAKE_SOURCE_DIR}/include/OpenSR/Label.h
-    ${CMAKE_SOURCE_DIR}/include/OpenSR/LuaWidget.h
     ${CMAKE_SOURCE_DIR}/include/OpenSR/Plugin.h
     ${CMAKE_SOURCE_DIR}/include/OpenSR/RPKGAdapter.h
     ${CMAKE_SOURCE_DIR}/include/OpenSR/Sprite.h
@@ -77,7 +75,9 @@ SET(HEADERS
     ${CMAKE_SOURCE_DIR}/include/OpenSR/PluginInterface.h
     ${CMAKE_SOURCE_DIR}/include/OpenSR/ScrollArea.h
     ${CMAKE_SOURCE_DIR}/include/OpenSR/Styles.h
+    ${CMAKE_SOURCE_DIR}/include/OpenSR/PythonBindings.h
     ${CMAKE_SOURCE_DIR}/include/OpenSR/Widget.h
+    ${CMAKE_SOURCE_DIR}/include/OpenSR/ScriptWidget.h
     ${CMAKE_BINARY_DIR}/include/OpenSR/version.h
     ${CMAKE_BINARY_DIR}/include/OpenSR/config.h
 )
@@ -96,9 +96,9 @@ SET(PRIVATE_HEADERS
     ${CMAKE_SOURCE_DIR}/include/OpenSR/private/ColorLabel_p.h
     ${CMAKE_SOURCE_DIR}/include/OpenSR/private/Engine_p.h
     ${CMAKE_SOURCE_DIR}/include/OpenSR/private/Label_p.h
-    ${CMAKE_SOURCE_DIR}/include/OpenSR/private/LuaWidget_p.h
     ${CMAKE_SOURCE_DIR}/include/OpenSR/private/Node_p.h
     ${CMAKE_SOURCE_DIR}/include/OpenSR/private/ScrollArea_p.h
+    ${CMAKE_SOURCE_DIR}/include/OpenSR/private/ScriptWidget_p.h
     ${CMAKE_SOURCE_DIR}/include/OpenSR/private/WidgetNode_p.h
 )
 
@@ -108,13 +108,12 @@ INCLUDE_DIRECTORIES(
     ${Boost_INCLUDE_DIRS}
     ${FREETYPE_INCLUDE_DIRS}
     ${ICONV_INCLUDE_DIR}
-    ${LUA_INCLUDE_DIR}
     ${JSONCPP_INCLUDE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_BINARY_DIR}
-    ${LUABIND_INCLUDE_DIR}
     ${SDLMIXER_INCLUDE_DIR}
     ${LIBINTL_INCLUDE_DIR}
+    ${PYTHON_INCLUDE_DIRS}
     ${CMAKE_SOURCE_DIR}/include/OpenSR
     ${CMAKE_BINARY_DIR}/include/OpenSR
     ${CMAKE_SOURCE_DIR}/libRanger
@@ -138,26 +137,28 @@ IF(WIN32)
 TARGET_LINK_LIBRARIES(engine 
     ${SDL_LIBRARY} 
     ${OPENGL_LIBRARIES} 
-    ${FREETYPE_LIBRARIES} 
-    ${LUA_LIBRARIES}
-    ${Boost_LIBRARIES} 
+    ${FREETYPE_LIBRARIES}
+    ${Boost_THREAD_LIBRARY} 
+    ${Boost_SYSTEM_LIBRARY}
+    boost_python3
     ${GLEW_LIBRARIES}
     ${JSONCPP_LIBRARIES}
-    ${LUABIND_LIBRARY}
     ${SDLMIXER_LIBRARY}
     ${LIBINTL_LIBRARIES}
+    ${PYTHON_LIBRARIES}
 )
 ELSE(WIN32)
 TARGET_LINK_LIBRARIES(engine
     ${SDL_LIBRARY} 
     ${OPENGL_LIBRARIES} 
-    ${FREETYPE_LIBRARIES} 
-    ${LUA_LIBRARIES}
-    ${Boost_LIBRARIES}
+    ${FREETYPE_LIBRARIES}
+    ${Boost_THREAD_LIBRARY} 
+    ${Boost_SYSTEM_LIBRARY} 
+    boost_python3
     ${JSONCPP_LIBRARIES}
-    ${LUABIND_LIBRARY}
     ${SDLMIXER_LIBRARY}
     ${LIBINTL_LIBRARIES}
+    ${PYTHON_LIBRARIES}
     dl
 )
 ENDIF(WIN32)

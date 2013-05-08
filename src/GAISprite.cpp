@@ -245,7 +245,7 @@ void GAISpritePrivate::loadGAI(boost::shared_ptr<std::istream> stream, const GIF
         int height = gaiHeader.finishY - gaiHeader.startY;
 
         //Background as frame #0
-        gaiFrames.push_back(boost::shared_array<char>(0));
+        gaiFrames.push_back(boost::shared_array<char>());
 
         for (int i = 0; i < gaiHeader.frameCount; i++)
         {

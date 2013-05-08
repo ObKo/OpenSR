@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2012 - 2013 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2013 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,22 +16,27 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef GAMEINTERFACE_H
-#define GAMEINTERFACE_H
+#include <boost/python.hpp>
+#include <OpenSR/ScriptWidget.h>
+#include "Wrappers.h"
 
-#ifdef WIN32
-#define RANGERS_PLUGIN_API __declspec(dllexport)
-#else
-#define RANGERS_PLUGIN_API
-#endif
-
-#include "Engine.h"
-
-extern "C"
+namespace Rangers
 {
-    RANGERS_PLUGIN_API int rangersPluginInit();
-    RANGERS_PLUGIN_API int rangersAPIVersion();
-    RANGERS_PLUGIN_API void rangersPluginDeinit();
-}
+namespace Python
+{
+struct ScriptWidgetWrap : WidgetWrap_<ScriptWidget>
+{
+    ScriptWidgetWrap(Widget *parent = 0): WidgetWrap_<ScriptWidget>(parent)
+    {
+    }
+};
 
-#endif // GAMEINTERFACE_H
+void exportScriptWidget()
+{
+    using namespace boost::python;
+    class_<ScriptWidgetWrap, bases<Widget>, boost::noncopyable> c("ScriptWidget", init<Widget*>());
+    c.def(init<>());
+    ScriptWidgetWrap::defWrapped(c);
+}
+}
+}

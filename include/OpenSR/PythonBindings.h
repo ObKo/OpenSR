@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2012 - 2013 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2013 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,22 +16,19 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef GAMEINTERFACE_H
-#define GAMEINTERFACE_H
+#ifndef RANGERS_PYTHON_BINDINGS_H
+#define RANGERS_PYTHON_BINDINGS_H
 
-#ifdef WIN32
-#define RANGERS_PLUGIN_API __declspec(dllexport)
-#else
-#define RANGERS_PLUGIN_API
-#endif
+#include "config.h"
 
-#include "Engine.h"
-
-extern "C"
+namespace Rangers
 {
-    RANGERS_PLUGIN_API int rangersPluginInit();
-    RANGERS_PLUGIN_API int rangersAPIVersion();
-    RANGERS_PLUGIN_API void rangersPluginDeinit();
+RANGERS_ENGINE_API void execPythonScript(const char *data, size_t size, const std::wstring& name);
+RANGERS_ENGINE_API void execPythonScript(const std::wstring& fileName);
+RANGERS_ENGINE_API void execPythonLine(const std::wstring& line, const std::wstring& name);
+RANGERS_ENGINE_API void handlePythonError();
+RANGERS_ENGINE_API void initPython();
+RANGERS_ENGINE_API void deinitPython();
 }
 
-#endif // GAMEINTERFACE_H
+#endif

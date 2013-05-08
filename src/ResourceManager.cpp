@@ -27,7 +27,6 @@
 #include "AnimatedSprite.h"
 #include "Object.h"
 #include "GAISprite.h"
-#include "LuaWidget.h"
 #include <boost/thread.hpp>
 #include <string>
 #include <iostream>

@@ -109,7 +109,7 @@ void ColorLabel::processMain()
     Sprite::processMain();
 }
 
-void ColorLabel::setColor(int color)
+void ColorLabel::setColor(uint32_t color)
 {
     markToUpdate();
     Object::setColor(color);

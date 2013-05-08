@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 - 2012 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2013 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,29 +16,25 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef RANGERS_LUABINDINGS_H
-#define RANGERS_LUABINDINGS_H
+#ifndef RANGERS_SCRIPT_WIDGET_H
+#define RANGERS_SCRIPT_WIDGET_H
 
-#include "config.h"
-#include <boost/shared_ptr.hpp>
-
-extern "C"
-{
-#include <lua.h>
-#include <lualib.h>
-#include <lauxlib.h>
-}
+#include "Widget.h"
 
 namespace Rangers
 {
-RANGERS_ENGINE_API int execLuaScript(const std::wstring& fileName);
-RANGERS_ENGINE_API int execLuaScript(const char *data, size_t size, const std::string& name);
-RANGERS_ENGINE_API lua_State *initLuaState();
-RANGERS_ENGINE_API std::wstring fromLua(const char *s);
+class ScriptWidgetPrivate;
+class RANGERS_ENGINE_API ScriptWidget: public Widget
+{
+    RANGERS_DECLARE_PRIVATE(ScriptWidget)
+public:
+    ScriptWidget(Widget *parent = 0);
+    virtual ~ScriptWidget();
 
-RANGERS_ENGINE_API void luaDebug(std::wstring s);
-RANGERS_ENGINE_API void luaWarning(std::wstring s);
-RANGERS_ENGINE_API void luaError(std::wstring s);
+    virtual void draw() const;
+
+    RANGERS_DISABLE_COPY(ScriptWidget)
+};
 }
 
-#endif
+#endif // RANGERS_SCRIPT_WIDGET_H

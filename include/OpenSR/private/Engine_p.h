@@ -30,8 +30,6 @@
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/property_tree/ptree.hpp>
 
-struct lua_State;
-
 namespace Rangers
 {
 class Engine;
@@ -80,13 +78,13 @@ public:
     boost::shared_ptr<Font> coreFont;
     boost::shared_ptr<Font> monospaceFont;
 
-    lua_State *luaConsoleState;
     Skin skin;
 
     Engine *m_q;
 
     void processEvents();
     void processMouseMove(const SDL_MouseMotionEvent& e);
+    void processLogic();
 };
 }
 

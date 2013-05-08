@@ -31,7 +31,7 @@ namespace Rangers
 Plugin::Plugin(const std::wstring& path):
     m_path(path), m_loaded(false), m_handle(0),
     m_rangersPluginInit(0), m_rangersAPIVersion(0),
-    m_rangersPluginInitLua(0), m_rangersPluginDeinit(0)
+    m_rangersPluginDeinit(0)
 {
 }
 
@@ -60,10 +60,9 @@ int Plugin::load()
     }
     m_rangersPluginInit = (int (*)())GetProcAddress(m_handle, "rangersPluginInit");
     m_rangersAPIVersion = (int (*)())GetProcAddress(m_handle, "rangersAPIVersion");
-    m_rangersPluginInitLua = (void (*)(lua_State*))GetProcAddress(m_handle, "rangersPluginInitLua");
     m_rangersPluginDeinit = (void (*)())GetProcAddress(m_handle, "rangersPluginDeinit");
 
-    if (!m_rangersPluginInit && !m_rangersAPIVersion && !m_rangersPluginInitLua && !m_rangersPluginDeinit)
+    if (!m_rangersPluginInit && !m_rangersAPIVersion && !m_rangersPluginDeinit)
     {
         Log::error() << "Cannot load some plugin symbols";
         FreeLibrary(m_handle);
@@ -93,10 +92,9 @@ int Plugin::load()
     }
     m_rangersPluginInit = (int (*)())dlsym(m_handle, "rangersPluginInit");
     m_rangersAPIVersion = (int (*)())dlsym(m_handle, "rangersAPIVersion");
-    m_rangersPluginInitLua = (void (*)(lua_State*))dlsym(m_handle, "rangersPluginInitLua");
     m_rangersPluginDeinit = (void (*)())dlsym(m_handle, "rangersPluginDeinit");
 
-    if (!m_rangersPluginInit && !m_rangersAPIVersion && !m_rangersPluginInitLua && !m_rangersPluginDeinit)
+    if (!m_rangersPluginInit && !m_rangersAPIVersion && !m_rangersPluginDeinit)
     {
         Log::error() << "Cannot load some plugin symbols";
         dlclose(m_handle);
@@ -126,10 +124,5 @@ int Plugin::load()
 bool Plugin::isLoaded() const
 {
     return m_loaded;
-}
-
-void Plugin::initLua(lua_State *lua)
-{
-    m_rangersPluginInitLua(lua);
 }
 }

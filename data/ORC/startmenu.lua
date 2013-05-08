@@ -4,7 +4,7 @@ background = Sprite(L"DATA/FormMain3/2bg.gi", this)
 background:setWidth(background:width()/(engine:screenHeight()/background:height()))
 background:setHeight(engine:screenHeight())
 background:setLayer(-3)
- 
+  
 bgPlanet = Sprite(L"DATA/FormMain3/2Planet.gi", this)
 bgPlanet:setOrigin(Sprite.POSITION_X_LEFT, Sprite.POSITION_Y_BOTTOM)
 bgPlanet:setPosition(0, engine:screenHeight())

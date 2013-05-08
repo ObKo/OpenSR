@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2012 - 2013 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2013 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,22 +16,19 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef GAMEINTERFACE_H
-#define GAMEINTERFACE_H
+#ifndef RANGERS_SCRIPT_WIDGET_P_H
+#define RANGERS_SCRIPT_WIDGET_P_H
 
-#ifdef WIN32
-#define RANGERS_PLUGIN_API __declspec(dllexport)
-#else
-#define RANGERS_PLUGIN_API
-#endif
+#include "Widget_p.h"
 
-#include "Engine.h"
-
-extern "C"
+namespace Rangers
 {
-    RANGERS_PLUGIN_API int rangersPluginInit();
-    RANGERS_PLUGIN_API int rangersAPIVersion();
-    RANGERS_PLUGIN_API void rangersPluginDeinit();
+class ScriptWidget;
+class ScriptWidgetPrivate: public WidgetPrivate
+{
+    RANGERS_DECLARE_PUBLIC(ScriptWidget)
+public:
+};
 }
 
-#endif // GAMEINTERFACE_H
+#endif

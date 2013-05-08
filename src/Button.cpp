@@ -264,7 +264,7 @@ void Button::setText(const std::wstring& text)
     unlock();
 }
 
-void Button::setColor(int color)
+void Button::setColor(uint32_t color)
 {
     lock();
     RANGERS_D(Button);
@@ -282,7 +282,7 @@ void Button::setFont(boost::shared_ptr<Font> font)
     unlock();
 }
 
-int Button::color() const
+uint32_t Button::color() const
 {
     RANGERS_D(const Button);
     return d->label->color();

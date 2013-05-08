@@ -33,10 +33,11 @@
 #include <libRanger.h>
 #include <libintl.h>
 #include <sstream>
+#include <boost/python.hpp>
 
+#include "PythonBindings.h"
 #include "Log.h"
 #include "ResourceManager.h"
-#include "LuaBindings.h"
 #include "Action.h"
 #include "JSONHelper.h"
 #include "Plugin.h"
@@ -81,7 +82,6 @@ Engine::Engine(): m_d(new EnginePrivate())
     RANGERS_D(Engine);
 
     d->focusedWidget = 0;
-    d->luaConsoleState = 0;
     d->argc = 0;
     d->argv = 0;
     d->currentWidget = 0;
@@ -118,13 +118,13 @@ Engine::~Engine()
         boost::property_tree::write_ini(configFile, *d->properties);
     configFile.close();
 
-    lua_close(d->luaConsoleState);
+    deinitPython();
 
-    std::list<Widget *>::iterator wend = d->widgets.end();
-    for (std::list<Widget *>::iterator it = d->widgets.begin(); it != wend; ++it)
-    {
-        delete *it;
-    }
+    //std::list<Widget *>::iterator wend = d->widgets.end();
+    //for (std::list<Widget *>::iterator it = d->widgets.begin(); it != wend; ++it)
+    //{
+    //    delete *it;
+    //}
     std::list<Plugin*>::const_iterator pend = d->plugins.end();
     for (std::list<Plugin*>::const_iterator i = d->plugins.begin(); i != pend; ++i)
     {
@@ -240,6 +240,15 @@ void Engine::widgetDestroyed(Widget *w)
             d->focusedWidget = 0;
     }
 }
+
+/*void Engine::processLogic(int dt)
+{
+    RANGERS_D(Engine);
+    engine.m_d->mainNode->processLogic(dt);
+    if (engine.m_d->consoleOpenned)
+        engine.m_d->consoleWidget->processLogic(dt);
+    t = getTicks();
+}*/
 
 int Engine::logic()
 {
@@ -462,7 +471,25 @@ void Engine::init(int argc, char **argv, int w, int h, bool fullscreen)
 
     d->consoleWidget = new ConsoleWidget(d->width, 168);
     d->consoleWidget->setVisible(false);
-    d->luaConsoleState = initLuaState();
+
+    char *envPython = getenv("PYTHONPATH");
+    std::string pythonPath = envPython ? envPython : "";
+    std::string additionalPath = d->properties->get<std::string>("engine.pythonPath", "");
+
+    if (!additionalPath.empty())
+    {
+        if (pythonPath.empty())
+            pythonPath = additionalPath;
+        else
+            pythonPath = additionalPath + ":" + pythonPath;
+        setenv("PYTHONPATH", pythonPath.c_str(), 1);
+    }
+    Log::debug() << "Python path: " << pythonPath;
+
+    initPython();
+    //boost::python::object main_module = boost::python::import("__main__");
+    //boost::python::object main_namespace = main_module.attr("__dict__");
+
     addWidget(d->consoleWidget);
 }
 
@@ -502,8 +529,10 @@ int Engine::run()
     RANGERS_D(Engine);
     d->gameRunning = true;
     d->logicThread = new boost::thread(&Engine::logic);
-    std::wstring startupScript = fromLocal(d->properties->get<std::string>("engine.startupScript", "startup.lua").c_str());
-    execLuaScript(startupScript);
+
+    std::wstring startupScript = fromLocal(d->properties->get<std::string>("engine.startupScript", "startup.py").c_str());
+
+    execPythonScript(startupScript);
     d->fpsTime = getTicks();
     while (d->gameRunning)
     {
@@ -770,18 +799,7 @@ void Engine::loadPlugin(const std::wstring& pluginName)
         delete p;
         return;
     }
-    p->initLua(d->luaConsoleState);
     d->plugins.push_back(p);
-}
-
-void Engine::initPluginLua(lua_State *state)
-{
-    RANGERS_D(Engine);
-    std::list<Plugin*>::const_iterator end = d->plugins.end();
-    for (std::list<Plugin*>::const_iterator i = d->plugins.begin(); i != end; ++i)
-    {
-        (*i)->initLua(state);
-    }
 }
 
 void Engine::execCommand(const std::wstring& what)
@@ -790,9 +808,6 @@ void Engine::execCommand(const std::wstring& what)
     if (what.empty())
         return;
 
-    int state;
-    std::string line = toUTF8(what);
-    if (state = (luaL_loadbuffer(d->luaConsoleState, line.c_str(), line.length(), "") || lua_pcall(d->luaConsoleState, 0, LUA_MULTRET, 0)))
-        Log::error() << "Cannot exec command: " << lua_tostring(d->luaConsoleState, -1);
+    execPythonLine(what, L"<engine>");
 }
 }

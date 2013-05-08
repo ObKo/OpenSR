@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2012 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2013 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,27 +16,30 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef RANGERS_LUA_WIDGET_P_H
-#define RANGERS_LUA_WIDGET_P_H
+#include <OpenSR/Node.h>
+#include <boost/python.hpp>
+#include "Wrappers.h"
 
-#include "Widget_p.h"
-
-struct lua_State;
 namespace Rangers
 {
-class LuaWidget::LuaActionListener;
-class LuaWidgetPrivate: public WidgetPrivate
+namespace Python
 {
-    RANGERS_DECLARE_PUBLIC(LuaWidget)
-public:
-    LuaWidgetPrivate();
-
-    boost::shared_ptr<lua_State> luaState;
-    LuaWidget::LuaActionListener *actionListener;
-
-    void initLuaState();
-    static int luaErrorHandler(lua_State* state);
+struct NodeWrap: ObjectWrap_<Node>
+{
+    NodeWrap(Object *parent = 0): ObjectWrap_<Node>(parent)
+    {
+    }
 };
-}
 
-#endif
+void exportNode()
+{
+    using namespace boost::python;
+    class_<NodeWrap, bases<Object>, boost::noncopyable> c("Node", init<Object*>());
+    c
+    .def(init<>());
+    NodeWrap::defWrapped(c);
+    //.def("processLogic", &Node::processLogic, &Python::NodeWrap::processLogic_)
+    //.def("draw", &Node::draw, &Python::NodeWrap::draw_);
+}
+}
+}

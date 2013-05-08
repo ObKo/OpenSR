@@ -55,14 +55,14 @@ public:
     virtual int preferredHeight() const;
 
     void setText(const std::wstring& text);
-    virtual void setColor(int color);
+    virtual void setColor(uint32_t color);
     void setFont(boost::shared_ptr<Font> font);
     void setAutoResize(bool autoResize);
     void setSounds(boost::shared_ptr<Sound> clickSound, boost::shared_ptr<Sound> leaveSound, boost::shared_ptr<Sound> enterSound);
     void setSounds(const std::wstring& clickSound, const std::wstring& leaveSound, const std::wstring& enterSound);
 
     std::wstring text() const;
-    virtual int color() const;
+    virtual uint32_t color() const;
     boost::shared_ptr<Font> font() const;
     bool autoResize() const;
 

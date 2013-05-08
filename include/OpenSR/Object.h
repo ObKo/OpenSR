@@ -34,7 +34,7 @@ public:
 
     virtual ~Object();
 
-    virtual void draw() const = 0;
+    virtual void draw() const;
 
     //Function to process all needed OpenGL functions
     virtual void processMain();
@@ -46,18 +46,18 @@ public:
     void setRotation(float angle);
     void setColor(float r, float g, float b, float a = 1.0f);
 
-    virtual void setColor(int color);
+    virtual void setColor(uint32_t color);
 
     void addChild(Object *object);
     void removeChild(Object *object);
     void setParent(Object *parent);
 
-    const Vector& position() const;
+    Vector position() const;
     float rotation() const;
     int layer() const;
     Object* parent() const;
     bool needUpdate() const;
-    virtual int color() const;
+    virtual uint32_t color() const;
 
     void setLayer(int layer);
 

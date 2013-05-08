@@ -25,7 +25,6 @@
 #include "global.h"
 #include "Styles.h"
 
-struct lua_State;
 struct SDL_MouseMotionEvent;
 
 namespace Rangers
@@ -101,7 +100,6 @@ public:
     void setDefaultSkin(const std::wstring& skinPath);
 
     void loadPlugin(const std::wstring &path);
-    void initPluginLua(lua_State *state);
 
 private:
     Engine();

@@ -32,11 +32,11 @@ public:
     CheckBox(const CheckBoxStyle& style, const std::wstring &text, Widget *parent = 0);
     virtual ~CheckBox();
 
-    virtual void setColor(int color);
+    virtual void setColor(uint32_t color);
     void setChecked(bool checked);
     void setText(const std::wstring& text);
 
-    virtual int color() const;
+    virtual uint32_t color() const;
     bool checked() const;
     std::wstring text() const;
 

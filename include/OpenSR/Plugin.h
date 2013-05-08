@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2012 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2012 - 2013 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -38,8 +38,6 @@ public:
     int load();
     bool isLoaded() const;
 
-    void initLua(lua_State *lua);
-
     ~Plugin();
 
 private:
@@ -47,10 +45,9 @@ private:
     std::wstring m_path;
     int (*m_rangersPluginInit)();
     int (*m_rangersAPIVersion)();
-    void (*m_rangersPluginInitLua)(lua_State *state);
     void (*m_rangersPluginDeinit)();
 #ifdef _WIN32
-	HMODULE m_handle;
+    HMODULE m_handle;
 #else
     void *m_handle;
 #endif

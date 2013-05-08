@@ -121,7 +121,7 @@ CheckBox::~CheckBox()
     delete d->label;
 }
 
-void CheckBox::setColor(int color)
+void CheckBox::setColor(uint32_t color)
 {
     lock();
     RANGERS_D(CheckBox);
@@ -129,7 +129,7 @@ void CheckBox::setColor(int color)
     unlock();
 }
 
-int CheckBox::color() const
+uint32_t CheckBox::color() const
 {
     RANGERS_D(const CheckBox);
     return d->label->color();

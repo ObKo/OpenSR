@@ -108,6 +108,10 @@ void Object::processMain()
     unlock();
 }
 
+void Object::draw() const
+{
+}
+
 Vector Object::mapFromParent(const Vector& v) const
 {
     RANGERS_D(const Object);
@@ -264,7 +268,7 @@ void Object::endDraw() const
 void Object::setColor(float r, float g, float b, float a)
 {
     lock();
-    int color = 0;
+    uint32_t color = 0;
     color |= (int(r * 255.0) & 0xff) << 24;
     color |= (int(g * 255.0) & 0xff) << 16;
     color |= (int(b * 255.0) & 0xff) << 8;
@@ -273,7 +277,7 @@ void Object::setColor(float r, float g, float b, float a)
     unlock();
 }
 
-void Object::setColor(int color)
+void Object::setColor(uint32_t color)
 {
     lock();
     RANGERS_D(Object);
@@ -306,7 +310,7 @@ void Object::setRotation(float angle)
     unlock();
 }
 
-const Vector& Object::position() const
+Vector Object::position() const
 {
     RANGERS_D(const Object);
     return d->position;
@@ -336,7 +340,7 @@ bool Object::needUpdate() const
     return d->needUpdate;
 }
 
-int Object::color() const
+uint32_t Object::color() const
 {
     RANGERS_D(const Object);
     return d->color;
