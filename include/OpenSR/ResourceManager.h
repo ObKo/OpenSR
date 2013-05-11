@@ -23,6 +23,7 @@
 #include <map>
 #include <list>
 #include <boost/shared_ptr.hpp>
+#include <boost/shared_array.hpp>
 
 struct SDL_RWops;
 namespace Rangers
@@ -44,7 +45,7 @@ public:
     void addDir(const std::wstring& path);
     void addMapping(const std::wstring& fileName);
 
-    char* loadData(const std::wstring& name, size_t &size);
+    boost::shared_array<char> loadData(const std::wstring& name, size_t &size);
     boost::shared_ptr<std::istream> getFileStream(const std::wstring& name);
     SDL_RWops* getSDLRW(const std::wstring& name);
 

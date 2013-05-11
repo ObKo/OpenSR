@@ -22,6 +22,10 @@
 
 namespace Rangers
 {
+Shader::Shader(): m_handle(0), m_compiled(false), m_type(NONE), m_invalid(true)
+{
+}
+
 Shader::Shader(ShaderType type): m_handle(0), m_compiled(false), m_type(type), m_invalid(true)
 {
 }
@@ -39,6 +43,8 @@ Shader::~Shader()
 
 bool Shader::compile()
 {
+    if (m_type == NONE)
+        return false;
     if (m_invalid)
         return false;
     if (m_compiled)
@@ -90,6 +96,8 @@ bool Shader::compile()
 
 void Shader::setSource(const std::string& shaderSource)
 {
+    if (m_type == NONE)
+        return;
     const char *str = shaderSource.c_str();
     glShaderSource(m_handle, 1, &str, 0);
     m_compiled = false;

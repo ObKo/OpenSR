@@ -17,6 +17,16 @@ SET(SOURCES
     WidgetNode.cpp
     GAISprite.cpp
     ColorLabel.cpp
+    Action.cpp
+    ActionListener.cpp
+    Font.cpp
+    ResourceManager.cpp
+    Shader.cpp
+    ShaderProgram.cpp
+    Sound.cpp
+    SoundManager.cpp
+    Styles.cpp
+    Texture.cpp
 )
 
 INCLUDE_DIRECTORIES(

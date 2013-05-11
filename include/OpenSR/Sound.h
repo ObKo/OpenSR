@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 - 2012 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2013 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 #define RANGERS_SOUND_H
 
 #include <string>
+#include <boost/shared_ptr.hpp>
 #include "config.h"
 
 struct Mix_Chunk;
@@ -28,13 +29,13 @@ namespace Rangers
 class RANGERS_ENGINE_API Sound
 {
 public:
+    Sound();
     Sound(const std::wstring& path);
-    virtual ~Sound();
 
     void play();
 
 private:
-    Mix_Chunk *m_chunk;
+    boost::shared_ptr<Mix_Chunk> m_chunk;
 };
 }
 

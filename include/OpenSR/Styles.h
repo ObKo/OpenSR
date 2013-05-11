@@ -34,9 +34,21 @@ struct TextureRegionDescriptor;
 struct ResourceDescriptor
 {
     ResourceDescriptor();
-    enum {NONE, NINEPATCH, SPRITE, FONT, SOUND} type;
+    ResourceDescriptor(const NinePatchDescriptor& ninePatch);
+    ResourceDescriptor(const FontDescriptor& font);
+    ResourceDescriptor(const TextureRegionDescriptor& texture);
+    ResourceDescriptor(const std::wstring& sound);
+
+    enum Type {NONE, NINEPATCH, SPRITE, FONT, SOUND};
     typedef boost::variant<TextureRegionDescriptor, NinePatchDescriptor, FontDescriptor, std::wstring> Resource;
+
+    Type type;
     Resource resource;
+
+    TextureRegionDescriptor texture() const;
+    NinePatchDescriptor ninePatch() const;
+    FontDescriptor font() const;
+    std::wstring sound() const;
 };
 
 struct ButtonStyle

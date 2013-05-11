@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef RANGERS_PYTHON_WRAPPERS_H 
+#ifndef RANGERS_PYTHON_WRAPPERS_H
 #define RANGERS_PYTHON_WRAPPERS_H
 
 #include <boost/python.hpp>
@@ -34,8 +34,8 @@
                 handlePythonError(); \
             } \
         } \
-        }
-        
+    }
+
 #define PYTHON_OVERRIDE_WRAP_VOID(func, ...) { \
         GILGuard g; \
         if (boost::python::override f = this->get_override(func)) \
@@ -50,7 +50,7 @@
                 handlePythonError(); \
             } \
         } \
-        }
+    }
 
 namespace Rangers
 {
@@ -58,7 +58,6 @@ void handlePythonError();
 class Object;
 namespace Python
 {
-  
 class GILGuard
 {
 public:
@@ -76,7 +75,7 @@ private:
 
 template<class D>
 struct ObjectWrap_: D, boost::python::wrapper<D>
-{   
+{
     template<class T1>
     ObjectWrap_(T1 t1): D(t1)
     {
@@ -97,7 +96,7 @@ struct ObjectWrap_: D, boost::python::wrapper<D>
     ObjectWrap_(T1 t1, T2 t2, T3 t3, T4 t4, T5 t5): D(t1, t2, t3, t4, t5)
     {
     }
-           
+
     void draw() const
     {
         PYTHON_OVERRIDE_WRAP_VOID("draw");
@@ -143,15 +142,15 @@ struct ObjectWrap_: D, boost::python::wrapper<D>
     {
         return D::color();
     }
-    
+
     template <class T1>
     static T1& defWrapped(T1& c)
     {
         return c
-            .def("draw", &D::draw, &ObjectWrap_<D>::draw_)
-            .def("processMain", &D::processMain, &ObjectWrap_<D>::processMain_)
-            .def("processLogic", &D::processLogic, &ObjectWrap_<D>::processLogic_)
-            .def("setColor", (void (D::*)(uint32_t))&D::setColor, &ObjectWrap_<D>::setColor_);
+               .def("draw", &D::draw, &ObjectWrap_<D>::draw_)
+               .def("processMain", &D::processMain, &ObjectWrap_<D>::processMain_)
+               .def("processLogic", &D::processLogic, &ObjectWrap_<D>::processLogic_)
+               .def("setColor", (void (D::*)(uint32_t))&D::setColor, &ObjectWrap_<D>::setColor_);
     }
 };
 
@@ -178,7 +177,7 @@ struct SpriteWrap_: ObjectWrap_<D>
     SpriteWrap_(T1 t1, T2 t2, T3 t3, T4 t4, T5 t5): ObjectWrap_<D>(t1, t2, t3, t4, t5)
     {
     }
-    
+
     float normalHeight() const
     {
         PYTHON_OVERRIDE_WRAP("normalHeight");
@@ -197,13 +196,13 @@ struct SpriteWrap_: ObjectWrap_<D>
     {
         return D::normalWidth();
     }
-    
+
     template <class T1>
     static T1& defWrapped(T1& c)
     {
         return ObjectWrap_<D>::defWrapped(c)
-            .def("normalHeight", &D::normalHeight, &SpriteWrap_<D>::normalHeight_)
-            .def("normalWidth", &D::normalWidth, &SpriteWrap_<D>::normalWidth_);
+               .def("normalHeight", &D::normalHeight, &SpriteWrap_<D>::normalHeight_)
+               .def("normalWidth", &D::normalWidth, &SpriteWrap_<D>::normalWidth_);
     }
 };
 
@@ -230,7 +229,7 @@ struct WidgetWrap_: ObjectWrap_<D>
     WidgetWrap_(T1 t1, T2 t2, T3 t3, T4 t4, T5 t5): ObjectWrap_<D>(t1, t2, t3, t4, t5)
     {
     }
-    
+
     int minWidth() const
     {
         PYTHON_OVERRIDE_WRAP("minWidth");
@@ -294,12 +293,12 @@ struct WidgetWrap_: ObjectWrap_<D>
     {
         return D::getBoundingRect();
     }
-    void mouseMove(const Vector &p) 
+    void mouseMove(const Vector &p)
     {
         PYTHON_OVERRIDE_WRAP_VOID("mouseMove", p);
         D::mouseMove(p);
     }
-    void mouseMove_(const Vector &p) 
+    void mouseMove_(const Vector &p)
     {
         D::mouseMove(p);
     }
@@ -321,21 +320,21 @@ struct WidgetWrap_: ObjectWrap_<D>
     {
         D::unFocus();
     }
-        
+
     template <class T1>
     static T1& defWrapped(T1& c)
     {
         return ObjectWrap_<D>::defWrapped(c)
-            .def("minHeight", &D::minHeight, &WidgetWrap_<D>::minHeight_)
-            .def("minWidth", &D::minWidth, &WidgetWrap_<D>::minWidth_)
-            .def("maxHeight", &D::maxHeight, &WidgetWrap_<D>::maxHeight_)
-            .def("maxWidth", &D::maxWidth, &WidgetWrap_<D>::maxWidth_)
-            .def("preferredHeight", &D::preferredHeight, &WidgetWrap_<D>::preferredHeight_)
-            .def("preferredWidth", &D::preferredWidth, &WidgetWrap_<D>::preferredWidth_)
-            .def("focus", &D::focus, &WidgetWrap_<D>::focus_)
-            .def("unFocus", &D::unFocus, &WidgetWrap_<D>::unFocus_)
-            .def("getBoundingRect", &D::getBoundingRect, &WidgetWrap_<D>::getBoundingRect_)
-            .def("mouseMove", (void (D::*)(const Vector&))&D::mouseMove, &WidgetWrap_<D>::mouseMove_);
+               .def("minHeight", &D::minHeight, &WidgetWrap_<D>::minHeight_)
+               .def("minWidth", &D::minWidth, &WidgetWrap_<D>::minWidth_)
+               .def("maxHeight", &D::maxHeight, &WidgetWrap_<D>::maxHeight_)
+               .def("maxWidth", &D::maxWidth, &WidgetWrap_<D>::maxWidth_)
+               .def("preferredHeight", &D::preferredHeight, &WidgetWrap_<D>::preferredHeight_)
+               .def("preferredWidth", &D::preferredWidth, &WidgetWrap_<D>::preferredWidth_)
+               .def("focus", &D::focus, &WidgetWrap_<D>::focus_)
+               .def("unFocus", &D::unFocus, &WidgetWrap_<D>::unFocus_)
+               .def("getBoundingRect", &D::getBoundingRect, &WidgetWrap_<D>::getBoundingRect_)
+               .def("mouseMove", (void (D::*)(const Vector&))&D::mouseMove, &WidgetWrap_<D>::mouseMove_);
     }
 };
 

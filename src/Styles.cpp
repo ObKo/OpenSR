@@ -20,8 +20,47 @@
 
 namespace Rangers
 {
-ResourceDescriptor::ResourceDescriptor()
+ResourceDescriptor::ResourceDescriptor(): type(NONE)
 {
-    type = NONE;
+}
+
+ResourceDescriptor::ResourceDescriptor(const NinePatchDescriptor& ninePatch):
+    type(NINEPATCH), resource(ninePatch)
+{
+}
+
+ResourceDescriptor::ResourceDescriptor(const FontDescriptor& font):
+    type(FONT), resource(font)
+{
+}
+
+ResourceDescriptor::ResourceDescriptor(const TextureRegionDescriptor& texture):
+    type(SPRITE), resource(texture)
+{
+}
+
+ResourceDescriptor::ResourceDescriptor(const std::wstring& sound):
+    type(SOUND), resource(sound)
+{
+}
+
+TextureRegionDescriptor ResourceDescriptor::texture() const
+{
+    return boost::get<TextureRegionDescriptor>(resource);
+}
+
+NinePatchDescriptor ResourceDescriptor::ninePatch() const
+{
+    return boost::get<NinePatchDescriptor>(resource);
+}
+
+FontDescriptor ResourceDescriptor::font() const
+{
+    return boost::get<FontDescriptor>(resource);
+}
+
+std::wstring ResourceDescriptor::sound() const
+{
+    return boost::get<std::wstring>(resource);
 }
 }

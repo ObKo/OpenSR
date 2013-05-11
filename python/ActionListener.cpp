@@ -16,42 +16,41 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <OpenSR/ActionListener.h>
+#include <OpenSR/Action.h>
 #include <boost/python.hpp>
-#include <OpenSR/Label.h>
-#include <OpenSR/Font.h>
 #include "Wrappers.h"
 
 namespace Rangers
 {
+void handlePythonError();
 namespace Python
 {
-struct LabelWrap : SpriteWrap_<Label>
+struct ActionListenerWrap: ActionListener, boost::python::wrapper<ActionListener>
 {
-    LabelWrap(Object *parent = 0)
-        : SpriteWrap_<Label>(parent)
+    ActionListenerWrap()
     {
     }
-    LabelWrap(const std::wstring& text, Object *parent = 0, boost::shared_ptr<Font> font = boost::shared_ptr<Font>(), SpriteXOrigin xpos = POSITION_X_LEFT, SpriteYOrigin ypos = POSITION_Y_TOP)
-        : SpriteWrap_<Label>(text, parent, font, xpos, ypos)
+
+    void actionPerformed(const Action &action)
     {
+        GILGuard g;
+        try
+        {
+            get_override("actionPerformed")(action);
+        }
+        catch (const boost::python::error_already_set& e)
+        {
+            handlePythonError();
+        }
     }
 };
 
-void exportLabel()
+void exportActionListener()
 {
     using namespace boost::python;
-
-    class_<LabelWrap, bases<Sprite>, boost::noncopyable> c("Label", init<const std::wstring&, Object*>());
-    c.def(init<const std::wstring&>())
-    .def(init<Object*>())
-    .def(init<>())
-    .def("setText", (void (Label::*)(const std::wstring&))&Label::setText)
-    .def("setFont", &Label::setFont)
-    .def("font", &Label::font)
-    .def("text", &Label::text)
-    .def("setWordWrap", &Label::setWordWrap)
-    .def("setFixedSize", &Label::setFixedSize);
-    LabelWrap::defWrapped(c);
+    class_<ActionListenerWrap, boost::noncopyable>("ActionListener", init<>())
+    .def("actionPerformed", pure_virtual(&ActionListener::actionPerformed));
 }
 }
 }

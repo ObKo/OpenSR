@@ -41,6 +41,16 @@ void exportScrollArea();
 void exportWidgetNode();
 void exportGAISprite();
 void exportColorLabel();
+void exportAction();
+void exportActionListener();
+void exportFont();
+void exportResourceManager();
+void exportShader();
+void exportShaderProgram();
+void exportSound();
+void exportSoundManager();
+void exportStyles();
+void exportTexture();
 
 void pythonError(const std::wstring& text)
 {
@@ -92,6 +102,16 @@ BOOST_PYTHON_MODULE(_Engine)
     Rangers::Python::exportWidgetNode();
     Rangers::Python::exportGAISprite();
     Rangers::Python::exportColorLabel();
+    Rangers::Python::exportAction();
+    Rangers::Python::exportActionListener();
+    Rangers::Python::exportFont();
+    Rangers::Python::exportResourceManager();
+    Rangers::Python::exportShader();
+    Rangers::Python::exportShaderProgram();
+    Rangers::Python::exportSound();
+    Rangers::Python::exportSoundManager();
+    Rangers::Python::exportStyles();
+    Rangers::Python::exportTexture();
     boost::python::def("pythonError", &Rangers::Python::pythonError);
     boost::python::def("pythonOut", &Rangers::Python::pythonOut);
 }

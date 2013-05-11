@@ -26,8 +26,9 @@ namespace Rangers
 class Shader
 {
 public:
-    enum ShaderType {VERTEX_SHADER, FRAGMENT_SHADER};
+    enum ShaderType {NONE, VERTEX_SHADER, FRAGMENT_SHADER};
 
+    Shader();
     Shader(ShaderType type);
     //! Create shader from source
     Shader(ShaderType type, const std::string& shaderSource);

@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 - 2013 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2013 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,28 +16,24 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef RANGERS_ACTIONLISTENER_H
-#define RANGERS_ACTIONLISTENER_H
-
-#include "config.h"
+#include <OpenSR/ShaderProgram.h>
+#include <OpenSR/Shader.h>
+#include <boost/python.hpp>
 
 namespace Rangers
 {
-class Action;
-
-//! Action listener interface
-/*!
- * This class represents Action handler interface.
- */
-class RANGERS_ENGINE_API ActionListener
+namespace Python
 {
-public:
-    //! Action handler function
-    /*!
-     * \param action emitted action
-     */
-    virtual void actionPerformed(const Action &action) = 0;
-};
+void exportShaderProgram()
+{
+    using namespace boost::python;
+    class_<Shader>("ShaderProgram", init<>())
+    .def("addShader", &ShaderProgram::addShader)
+    .def("link", &ShaderProgram::link)
+    .def("getUniformLocation", &ShaderProgram::getUniformLocation)
+    .def("isLinked", &ShaderProgram::isLinked)
+    .def("isInvalid", &ShaderProgram::isInvalid)
+    .def("handle", &ShaderProgram::handle);
 }
-
-#endif
+}
+}

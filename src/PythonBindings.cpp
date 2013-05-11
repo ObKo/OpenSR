@@ -108,10 +108,10 @@ void execPythonLine(const std::wstring& line, const std::wstring& name)
 void execPythonScript(const std::wstring& fileName)
 {
     size_t scriptSize;
-    char *script = ResourceManager::instance().loadData(fileName, scriptSize);
+    boost::shared_array<char> script = ResourceManager::instance().loadData(fileName, scriptSize);
     if (!script)
         return;
-    execPythonScript(script, scriptSize, fileName);
+    execPythonScript(script.get(), scriptSize, fileName);
 }
 
 void initPython()

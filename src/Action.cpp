@@ -31,6 +31,10 @@
 
 namespace Rangers
 {
+Action::Action(): m_source(0), m_type(NONE)
+{
+}
+
 /*!
  * \param source action source widget
  * \param type action type
@@ -65,39 +69,48 @@ Action::Argument Action::argument() const
 }
 
 /*!
- * This is support function for lua.
+ * This is support function for scripting.
  * \returns argument as \ref std::wstring
  */
-std::wstring Action::getStringArgument(const Action &a)
+std::wstring Action::stringArgument() const
 {
-    return boost::get<std::wstring>(a.argument());
+    return boost::get<std::wstring>(m_argument);
 }
 
 /*!
- * This is support function for lua.
+ * This is support function for scripting.
  * \returns argument as string \ref Rect
  */
-Rect Action::getRectArgument(const Action &a)
+Rect Action::rectArgument() const
 {
 
-    return boost::get<Rect>(a.argument());
+    return boost::get<Rect>(m_argument);
 }
 
 /*!
- * This is support function for lua.
+ * This is support function for scripting.
  * \returns argument as \ref SDL_keysym
  */
-SDL_keysym Action::getKeyArgument(const Action &a)
+SDL_keysym Action::keyArgument() const
 {
-    return boost::get<SDL_keysym>(a.argument());
+    return boost::get<SDL_keysym>(m_argument);
 }
 
 /*!
- * This is support function for lua.
+ * This is support function for scripting.
  * \returns argument as boolean
  */
-bool Action::getBoolArgument(const Action &a)
+bool Action::boolArgument() const
 {
-    return boost::get<bool>(a.argument());
+    return boost::get<bool>(m_argument);
+}
+
+/*!
+ * This is support function for scripting.
+ * \returns argument as uint8_t
+ */
+uint8_t Action::byteArgument() const
+{
+    return boost::get<uint8_t>(m_argument);
 }
 }

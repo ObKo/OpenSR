@@ -33,10 +33,12 @@ class RANGERS_ENGINE_API Action
 {
 public:
     //! Type of action
-    enum Type {BUTTON_CLICKED, KEY_PRESSED, CHECKBOX_TOGGLED, MOUSE_ENTER, MOUSE_LEAVE, MOUSE_DOWN, MOUSE_UP, MOUSE_CLICK};
+    enum Type {NONE, BUTTON_CLICKED, KEY_PRESSED, CHECKBOX_TOGGLED, MOUSE_ENTER, MOUSE_LEAVE, MOUSE_DOWN, MOUSE_UP, MOUSE_CLICK};
     //! Argument of action
     typedef boost::variant<std::wstring, Rect, SDL_keysym, bool, uint8_t> Argument;
 
+    //! Constructs empty action
+    Action();
     //! Constructs new action
     Action(Widget *source, Type type, const Argument& argument = Argument());
 
@@ -48,13 +50,15 @@ public:
     Argument argument() const;
 
     //! Get argument as string
-    static std::wstring getStringArgument(const Action &a);
+    std::wstring stringArgument() const;
     //! Get argument as Rect
-    static Rect getRectArgument(const Action &a);
+    Rect rectArgument() const;
     //! Get argument as keysym
-    static SDL_keysym getKeyArgument(const Action &a);
+    SDL_keysym keyArgument() const;
     //! Get argument as bool
-    static bool getBoolArgument(const Action &a);
+    bool boolArgument() const;
+    //! Get argument as 8-bit unsigned integer
+    uint8_t byteArgument() const;
 
 private:
     Widget *m_source;

@@ -513,22 +513,22 @@ void ResourceManager::processMain()
     processGAIQueue();
 }
 
-char* ResourceManager::loadData(const std::wstring& name, size_t &size)
+boost::shared_array<char> ResourceManager::loadData(const std::wstring& name, size_t &size)
 {
     boost::shared_ptr<std::istream> s = ResourceManager::instance().getFileStream(name);
     if (!s)
-        return 0;
+        return boost::shared_array<char>();
 
     s->seekg(0, std::ios_base::end);
     size = s->tellg();
     if (!size)
-        return 0;
+        return boost::shared_array<char>();
 
     char *data = new char[size];
     s->seekg(0, std::ios_base::beg);
     s->read(data, size);
 
-    return data;
+    return boost::shared_array<char>(data);
 }
 
 
