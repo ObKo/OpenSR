@@ -531,6 +531,20 @@ boost::shared_array<char> ResourceManager::loadData(const std::wstring& name, si
     return boost::shared_array<char>(data);
 }
 
+bool ResourceManager::resourceExists(const std::wstring& path)
+{
+    wstring realName = path;
+    map<wstring, wstring>::iterator mapIt = m_fileMapping.find(path);
+    if (mapIt != m_fileMapping.end())
+        realName = mapIt->second;
+
+    std::map<std::wstring, boost::shared_ptr<ResourceAdapter> >::iterator fileIt = m_files.find(realName);
+    if (fileIt == m_files.end())
+        return false;
+    else
+        return true;
+}
+
 
 boost::shared_ptr<std::istream> ResourceManager::getFileStream(const std::wstring& name)
 {

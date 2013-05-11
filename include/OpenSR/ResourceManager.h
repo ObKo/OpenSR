@@ -53,6 +53,8 @@ public:
     boost::shared_ptr<AnimatedTexture> loadAnimation(const std::wstring& name, bool backgroundLoading = false);
     boost::shared_ptr<Font> loadFont(const std::wstring& name, int size, bool antialiased = true);
 
+    bool resourceExists(const std::wstring& path);
+
     static ResourceManager& instance();
 
     void processMain();

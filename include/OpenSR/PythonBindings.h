@@ -20,12 +20,14 @@
 #define RANGERS_PYTHON_BINDINGS_H
 
 #include "config.h"
+#include <boost/python.hpp>
 
 namespace Rangers
 {
-RANGERS_ENGINE_API void execPythonScript(const char *data, size_t size, const std::wstring& name);
-RANGERS_ENGINE_API void execPythonScript(const std::wstring& fileName);
-RANGERS_ENGINE_API void execPythonLine(const std::wstring& line, const std::wstring& name);
+RANGERS_ENGINE_API void execPythonScript(const char *data, size_t size, const std::wstring& name, const boost::python::object& dict = boost::python::object());
+RANGERS_ENGINE_API void execPythonScript(const std::wstring& fileName, const boost::python::object& dict = boost::python::object());
+RANGERS_ENGINE_API void execPythonLine(const std::wstring& line, const std::wstring& name, const boost::python::object& dict = boost::python::object());
+RANGERS_ENGINE_API void execPythonModule(const std::wstring& fileName, boost::python::object& moduleObject);
 RANGERS_ENGINE_API void handlePythonError();
 RANGERS_ENGINE_API void initPython();
 RANGERS_ENGINE_API void deinitPython();

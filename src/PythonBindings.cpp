@@ -51,14 +51,20 @@ void handlePythonError()
     long lineno = 0;
     if (ptraceback)
     {
-        boost::python::handle<> hTraceback(ptraceback);
-        boost::python::object traceback(hTraceback);
-        lineno =  boost::python::extract<long> (traceback.attr("tb_lineno"));
-        boost::python::object tb(boost::python::import("traceback"));
-        boost::python::object fmt_tb(tb.attr("format_tb"));
-        boost::python::object tb_list(fmt_tb(hTraceback));
-        boost::python::object tb_str(boost::python::str("\n").join(tb_list));
-        tracebackString = boost::python::extract<std::wstring>(tb_str);
+        try
+        {
+            boost::python::handle<> hTraceback(ptraceback);
+            boost::python::object traceback(hTraceback);
+            lineno =  boost::python::extract<long> (traceback.attr("tb_lineno"));
+            boost::python::object tb(boost::python::import("traceback"));
+            boost::python::object fmt_tb(tb.attr("format_tb"));
+            boost::python::object tb_list(fmt_tb(hTraceback));
+            boost::python::object tb_str(boost::python::str("\n").join(tb_list));
+            tracebackString = boost::python::extract<std::wstring>(tb_str);
+        }
+        catch (const boost::python::error_already_set& e)
+        {
+        }
     }
 
     std::wstring strErrorMessage = boost::python::extract<std::wstring>(errorTextObject);
@@ -78,14 +84,20 @@ void handlePythonError()
     }
 }
 
-void execPythonScript(const char *data, size_t size, const std::wstring& name)
+void execPythonScript(const char *data, size_t size, const std::wstring& name, const boost::python::object& dict)
 {
     if (!data || !size)
         return;
 
+    boost::python::object execNamespace;
+    if (dict.is_none())
+        execNamespace = main_namespace;
+    else
+        execNamespace = dict;
+
     try
     {
-        boost::python::exec(boost::python::str(data, size), main_namespace);
+        boost::python::exec(boost::python::str(data, size), execNamespace);
     }
     catch (const boost::python::error_already_set& e)
     {
@@ -93,11 +105,17 @@ void execPythonScript(const char *data, size_t size, const std::wstring& name)
     }
 }
 
-void execPythonLine(const std::wstring& line, const std::wstring& name)
+void execPythonLine(const std::wstring& line, const std::wstring& name, const boost::python::object& dict)
 {
+    boost::python::object execNamespace;
+    if (dict.is_none())
+        execNamespace = main_namespace;
+    else
+        execNamespace = dict;
+
     try
     {
-        boost::python::exec(toUTF8(line).c_str(), main_namespace);
+        boost::python::exec(toUTF8(line).c_str(), execNamespace);
     }
     catch (const boost::python::error_already_set& e)
     {
@@ -105,13 +123,25 @@ void execPythonLine(const std::wstring& line, const std::wstring& name)
     }
 }
 
-void execPythonScript(const std::wstring& fileName)
+void execPythonScript(const std::wstring& fileName, const boost::python::object& dict)
 {
     size_t scriptSize;
     boost::shared_array<char> script = ResourceManager::instance().loadData(fileName, scriptSize);
     if (!script)
         return;
-    execPythonScript(script.get(), scriptSize, fileName);
+    execPythonScript(script.get(), scriptSize, fileName, dict);
+}
+
+void execPythonModule(const std::wstring& fileName, boost::python::object& moduleObject)
+{
+    size_t scriptSize;
+    boost::shared_array<char> script = ResourceManager::instance().loadData(fileName, scriptSize);
+    if (!script)
+        return;
+
+
+    moduleObject.attr("__dict__")["__builtins__"] = main_namespace["__builtins__"];
+    execPythonScript(script.get(), scriptSize, fileName, moduleObject.attr("__dict__"));
 }
 
 void initPython()

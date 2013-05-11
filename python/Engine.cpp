@@ -60,7 +60,9 @@ void exportEngine()
     .def("defaultSkin", &Engine::defaultSkin)
     .def("setDefaultSkin", (void (Engine::*)(const std::wstring&))&Engine::setDefaultSkin)
     .def("setDefaultSkin", (void (Engine::*)(const Skin&))&Engine::setDefaultSkin)
-    .def("loadPlugin", &Engine::loadPlugin);
+    .def("loadPlugin", &Engine::loadPlugin)
+    .def("screenWidth", &Engine::screenWidth)
+    .def("screenHeight", &Engine::screenHeight);
 }
 }
 }

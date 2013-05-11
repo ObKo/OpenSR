@@ -18,6 +18,7 @@
 
 #include <boost/python.hpp>
 #include <OpenSR/Log.h>
+#include <OpenSR/PythonBindings.h>
 #include <libRanger.h>
 
 namespace Rangers
@@ -114,4 +115,7 @@ BOOST_PYTHON_MODULE(_Engine)
     Rangers::Python::exportTexture();
     boost::python::def("pythonError", &Rangers::Python::pythonError);
     boost::python::def("pythonOut", &Rangers::Python::pythonOut);
+    boost::python::def("execPythonScript", (void (*)(const std::wstring&, const boost::python::object&))&Rangers::execPythonScript);
+    boost::python::def("execPythonLine", &Rangers::execPythonLine);
+    boost::python::def("execPythonModule", &Rangers::execPythonModule);
 }
