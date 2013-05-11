@@ -43,6 +43,7 @@ class OpenSRErr:
         self.data = ''
         
 class OpenSRImporter:
+    # TODO: Use path
     def find_module(self, fullname, path=None):
         splited =  fullname.split('.')
         if len(splited) < 2:
@@ -50,9 +51,10 @@ class OpenSRImporter:
         if splited[0] != 'OpenSR':
             return None
 
-        path = "%s.py" % fullname.replace('OpenSR.', '').replace('.', '/')
+        path_module = "%s.py" % fullname.replace('OpenSR.', '').replace('.', '/')
+        path_package = "%s/__init__.py" % fullname.replace('OpenSR.', '').replace('.', '/')
         
-        if ResourceManager.instance().resourceExists(path):
+        if ResourceManager.instance().resourceExists(path_module) or ResourceManager.instance().resourceExists(path_package):
             return self
         else:
             return None
@@ -60,16 +62,28 @@ class OpenSRImporter:
     def load_module(self, fullname):
         if fullname in sys.modules:
             return sys.modules[fullname]
-        mod = imp.new_module(fullname)
+  
+        is_package = False
         
         path = "%s.py" % fullname.replace('OpenSR.', '').replace('.', '/')
-        
-        mod.__loader__ = self
-        mod.__file__ = "%s.py" % fullname.rsplit('.')[0]
+        if not ResourceManager.instance().resourceExists(path):
+            is_package = True
+            path = fullname.replace('OpenSR.', '').replace('.', '/')
 
-        execPythonModule(path, mod)
+        mod = imp.new_module(fullname)
+                
+        mod.__loader__ = self
         
-        sys.modules[fullname] = mod
+        if not is_package:
+            mod.__file__ = path
+            sys.modules[fullname] = mod
+            execPythonModule(mod.__file__, mod)
+        else:
+            mod.__file__ = "%s/__init__.py" % path
+            mod.__path__ = [path]
+            sys.modules[fullname] = mod
+            execPythonModule(mod.__file__, mod)
+
         return mod
         
         
