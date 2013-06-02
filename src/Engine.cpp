@@ -87,7 +87,6 @@ Engine::Engine(): m_d(new EnginePrivate())
     d->argc = 0;
     d->argv = 0;
     //d->currentWidget = 0;
-    d->focusedWidget = 0;
     d->consoleOpenned = false;
     d->showFPS = true;
     d->frames = 0;
@@ -185,7 +184,7 @@ void Engine::widgetHide(Widget *w)
         if (w == currentWidget.get())
         {
             d->currentWidget = boost::weak_ptr<Widget>();
-            //w->action(Action(w, Action::MOUSE_LEAVE));
+            currentWidget->action(Action(currentWidget, Action::MOUSE_LEAVE));
         }
         else
         {
@@ -195,26 +194,27 @@ void Engine::widgetHide(Widget *w)
                 if ((*i) == currentWidget)
                 {
                     d->currentWidget = boost::weak_ptr<Widget>();
-                    //(*i)->action(Action((*i), Action::MOUSE_LEAVE));
+                    (*i)->action(Action((*i), Action::MOUSE_LEAVE));
                 }
             }
         }
     }
-    if (d->focusedWidget)
+    boost::shared_ptr<Widget> focusedWidget = d->focusedWidget.lock();
+    if (focusedWidget)
     {
-        if (w == d->focusedWidget)
+        if (w == focusedWidget.get())
         {
-            d->focusedWidget = 0;
-            w->unFocus();
+            d->focusedWidget = boost::weak_ptr<Widget>();
+            focusedWidget->unFocus();
         }
         else
         {
             std::list<boost::shared_ptr<Widget> >::const_iterator end = children.end();
             for (std::list<boost::shared_ptr<Widget> >::const_iterator i = children.begin(); i != end; ++i)
             {
-                if ((*i).get() == d->focusedWidget)
+                if ((*i) == focusedWidget)
                 {
-                    d->focusedWidget = 0;
+                    d->currentWidget = boost::weak_ptr<Widget>();
                     (*i)->unFocus();
                 }
             }
@@ -235,10 +235,10 @@ void Engine::widgetDestroyed(Widget *w)
         if (w == currentW.get())
             d->currentWidget = boost::weak_ptr<Widget>();
     }
-    if (d->focusedWidget)
+    if (boost::shared_ptr<Widget> focusW = d->focusedWidget.lock())
     {
-        if (w == d->focusedWidget)
-            d->focusedWidget = 0;
+        if (w == focusW.get())
+            d->focusedWidget = boost::weak_ptr<Widget>();
     }
 }
 
@@ -558,21 +558,14 @@ int Engine::run()
             d->frames = 0;
             d->fpsTime = getTicks();
         }
-        d->updateMutex.lock();
 
-        /*std::list<Widget*>::const_iterator widgetEnd = d->widgetsToDelete.end();
-        for (std::list<Widget*>::const_iterator i = d->widgetsToDelete.begin(); i != widgetEnd; ++i)
-        {
-            removeWidget(*i);
-            delete(*i);
-        }*/
+        d->updateMutex.lock();
 
         std::list<Object *>::const_iterator end = d->updateList.end();
         for (std::list<Object *>::const_iterator i = d->updateList.begin(); i != end; ++i)
             if ((*i)->needUpdate())
                 (*i)->processMain();
 
-        d->widgetsToDelete.clear();
         d->updateList.clear();
 
         d->updateMutex.unlock();
@@ -644,31 +637,45 @@ Engine& Engine::instance()
     return engine;
 }
 
-void Engine::focusWidget(Widget* w)
+void Engine::focusWidget(boost::weak_ptr<Widget> w)
 {
     RANGERS_D(Engine);
-    if (d->focusedWidget)
-        d->focusedWidget->unFocus();
+    if (boost::shared_ptr<Widget> pw = d->focusedWidget.lock())
+        pw->unFocus();
     d->focusedWidget = w;
-    w->focus();
+    if (boost::shared_ptr<Widget> pw = d->focusedWidget.lock())
+        pw->focus();
 }
 
-void Engine::unfocusWidget(Widget* w)
+void Engine::unfocusWidget(boost::weak_ptr<Widget> w)
 {
     RANGERS_D(Engine);
-    if (d->focusedWidget != w)
-        return;
-    d->focusedWidget->unFocus();
-    d->focusedWidget = 0;
+
+    if (boost::shared_ptr<Widget> pw = d->focusedWidget.lock())
+    {
+        if (pw != d->focusedWidget.lock())
+            return;
+        pw->unFocus();
+    }
+    d->focusedWidget = boost::weak_ptr<Widget>();
 }
 
-void Engine::markWidgetDeleting(Widget *w)
+boost::shared_ptr<Object> Engine::getObjectPointer(Object *object) const
 {
-    RANGERS_D(Engine);
-    d->updateMutex.lock();
-    //removeWidget(w);
-    d->widgetsToDelete.push_back(w);
-    d->updateMutex.unlock();
+    RANGERS_D(const Engine);
+    if (object->parent())
+    {
+        return object->parent()->getChild(object);
+    }
+    else
+    {
+        std::list<boost::shared_ptr<Widget> >::const_iterator end = d->widgets.end();
+        for (std::list<boost::shared_ptr<Widget> >::const_iterator i = d->widgets.begin(); i != end; ++i)
+        {
+            if ((*i).get() == object)
+                return *i;
+        }
+    }
 }
 
 Skin Engine::defaultSkin() const
@@ -709,34 +716,9 @@ void Engine::EnginePrivate::processEvents()
                 consoleWidget->setVisible(consoleOpenned);
                 continue;
             }
-            if (focusedWidget)
+            if (boost::shared_ptr<Widget> fw = focusedWidget.lock())
             {
-                //FIXME: Quite ugly
-                boost::shared_ptr<Widget> w;
-                if (focusedWidget->parent() == 0)
-                {
-                    std::list<boost::shared_ptr<Widget> >::const_iterator end = widgets.end();
-                    for (std::list<boost::shared_ptr<Widget> >::const_iterator i = widgets.begin(); i != end; ++i)
-                    {
-                        if ((*i).get() == focusedWidget)
-                        {
-                            w = *i;
-                            break;
-                        }
-                    }
-                }
-                else
-                {
-                    w = boost::dynamic_pointer_cast<Widget>(focusedWidget->parent()->getChild(focusedWidget));
-                }
-                if (w)
-                {
-                    w->action(Action(w, Rangers::Action::KEY_PRESSED, event.key.keysym));
-                }
-                else
-                {
-                    Log::debug() << "Engine::processEvents(): Unknown focused widget";
-                }
+                fw->action(Action(fw, Rangers::Action::KEY_PRESSED, event.key.keysym));
             }
             break;
         case SDL_MOUSEMOTION:

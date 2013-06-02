@@ -38,7 +38,6 @@ public:
     };
 
     ConsoleWidgetPrivate();
-    virtual ~ConsoleWidgetPrivate();
 
     boost::shared_ptr<LineEditWidget> lineEdit;
     boost::shared_ptr<ColorLabel> logLabel;

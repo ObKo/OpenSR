@@ -51,7 +51,7 @@ public:
     int fpsTime;
 
     boost::recursive_mutex updateMutex;
-    boost::thread *logicThread;
+    //boost::thread *logicThread;
 
     boost::shared_ptr<boost::property_tree::ptree> properties;
     std::wstring configPath;
@@ -66,9 +66,8 @@ public:
     std::list<Object *> updateList;
 
     std::list<boost::shared_ptr<Widget> > widgets;
-    std::list<Widget *> widgetsToDelete;
     boost::weak_ptr<Widget> currentWidget;
-    Widget *focusedWidget;
+    boost::weak_ptr<Widget> focusedWidget;
 
     std::list<Plugin *> plugins;
 

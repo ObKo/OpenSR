@@ -43,7 +43,7 @@ void LineEditWidgetPrivate::LineEditWidgetListener::actionPerformed(const Action
                       d->mousePosition.x/* - style.contentRect.x*/);
         d->updateText();
         q->markToUpdate();
-        Engine::instance().focusWidget(q.get());
+        Engine::instance().focusWidget(q);
         break;
     case Action::KEY_PRESSED:
         d->keyPressed(boost::get<SDL_keysym>(action.argument()));

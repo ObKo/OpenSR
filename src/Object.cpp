@@ -41,6 +41,7 @@ ObjectPrivate::ObjectPrivate()
     position.x = 0.0f;
     position.y = 0.0f;
     layer = 0;
+    parent = 0;
 }
 
 Object::Object(Object *parent): m_d(new ObjectPrivate())
@@ -71,7 +72,8 @@ Object::~Object()
 
     for (std::list<boost::shared_ptr<Object> >::iterator i = d->children.begin(); i != d->children.end(); i++)
     {
-        (*i)->setParent(0);
+        if ((*i)->parent() == this)
+            (*i)->setParent(0);
     }
 
     delete d;

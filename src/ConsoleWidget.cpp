@@ -94,11 +94,6 @@ ConsoleWidgetPrivate::ConsoleWidgetPrivate()
     listener = boost::shared_ptr<ConsoleLineEditListener>(new ConsoleLineEditListener());
 }
 
-ConsoleWidgetPrivate::~ConsoleWidgetPrivate()
-{
-    Log::debug() << "C++ destroyed";
-}
-
 ConsoleWidget::ConsoleWidget(float w, float h, Widget* parent): Widget(*(new ConsoleWidgetPrivate()), parent)
 {
     RANGERS_D(ConsoleWidget);

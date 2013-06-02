@@ -61,15 +61,15 @@ public:
     //! Remove widget from top widgets
     void removeWidget(boost::shared_ptr<Widget> w);
     //! Focus widget for key input handling
-    void focusWidget(Widget *w);
+    void focusWidget(boost::weak_ptr<Widget> w);
     //! Unfocus widget for key input handling
-    void unfocusWidget(Widget *w);
-    //! Mark widget to be deleted in main loop.
-    void markWidgetDeleting(Widget *w);
+    void unfocusWidget(boost::weak_ptr<Widget> w);
     //! Widget will be hidden now.
     void widgetHide(Widget *w);
     //! Widget will be destroyed now.
     void widgetDestroyed(Widget *w);
+    //! Try to get smart pointer of object
+    boost::shared_ptr<Object> getObjectPointer(Object *object) const;
 
     //! Current screen height
     int screenHeight() const;

@@ -49,8 +49,8 @@ void exportWidget()
     .def("addWidget", &Widget::addWidget)
     .def("removeWidget", &Widget::removeWidget)
     .def("childWidgets", &Widget::childWidgets)
-    .def("addListener", &Widget::addListener, add_reference_policy<1>())
-    .def("removeListener", &Widget::removeListener, remove_reference_policy<1>())
+    .def("addListener", &Widget::addListener)
+    .def("removeListener", &Widget::removeListener)
     .def("action", &Widget::action);
     WidgetWrap::defWrapped(c);
 }
