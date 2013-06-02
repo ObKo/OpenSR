@@ -31,7 +31,7 @@ class RANGERS_ENGINE_API ScrollArea: public Widget
     RANGERS_DECLARE_PRIVATE(ScrollArea)
 public:
     ScrollArea(Widget* parent = 0);
-    ScrollArea(const ScrollBarStyle& style, WidgetNode *node = 0, Widget *parent = 0);
+    ScrollArea(const ScrollBarStyle& style, boost::shared_ptr<WidgetNode> node = boost::shared_ptr<WidgetNode>(), Widget *parent = 0);
 
     virtual void draw() const;
     virtual void processMain();
@@ -40,7 +40,7 @@ public:
     void setWidth(float width);
     void setHeight(float height);
 
-    void setNode(WidgetNode *node);
+    void setNode(boost::shared_ptr<WidgetNode> node);
 
     virtual void mouseMove(const Vector &p);
 

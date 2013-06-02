@@ -31,46 +31,47 @@
 
 namespace Rangers
 {
-void ButtonPrivate::actionPerformed(const Action &action)
+void ButtonPrivate::ButtonListener::actionPerformed(const Action &action)
 {
-    RANGERS_Q(Button);
+    boost::shared_ptr<Button> q = boost::static_pointer_cast<Button>(action.source());
+    ButtonPrivate *d = q->d_func();
     switch (action.type())
     {
     case Action::MOUSE_ENTER:
-        if (hoverSprite)
-            sprite = hoverSprite;
-        if (enterSound)
-            enterSound->play();
+        if (d->hoverSprite)
+            d->sprite = d->hoverSprite;
+        if (d->enterSound)
+            d->enterSound->play();
         break;
 
     case Action::MOUSE_LEAVE:
-        if (normalSprite)
-            sprite = normalSprite;
-        if (leaveSound)
-            leaveSound->play();
+        if (d->normalSprite)
+            d->sprite = d->normalSprite;
+        if (d->leaveSound)
+            d->leaveSound->play();
         break;
 
     case Action::MOUSE_UP:
-        if (!leftMouseButtonPressed)
+        if (!d->leftMouseButtonPressed)
         {
-            if (hoverSprite)
-                sprite = hoverSprite;
-            else if (normalSprite)
-                sprite = normalSprite;
+            if (d->hoverSprite)
+                d->sprite = d->hoverSprite;
+            else if (d->normalSprite)
+                d->sprite = d->normalSprite;
         }
         break;
 
     case Action::MOUSE_DOWN:
-        if (leftMouseButtonPressed)
+        if (d->leftMouseButtonPressed)
         {
-            if (pressedSprite)
-                sprite = pressedSprite;
+            if (d->pressedSprite)
+                d->sprite = d->pressedSprite;
         }
         break;
 
     case Action::MOUSE_CLICK:
-        if (clickSound)
-            clickSound->play();
+        if (d->clickSound)
+            d->clickSound->play();
         q->action(Action(q, Action::BUTTON_CLICKED));
         break;
     }
@@ -78,12 +79,8 @@ void ButtonPrivate::actionPerformed(const Action &action)
 
 ButtonPrivate::ButtonPrivate(): WidgetPrivate()
 {
-    hoverSprite = 0;
     autoResize = false;
-    pressedSprite = 0;
-    sprite = 0;
-    normalSprite = 0;
-    label = 0;
+    buttonListener = boost::shared_ptr<ButtonListener>(new ButtonListener());
 }
 
 Button::Button(Widget *parent):
@@ -98,7 +95,10 @@ Button::Button(boost::shared_ptr<Texture> texture, Widget *parent):
     d->initFromStyle();
 
     if (texture)
-        d->normalSprite = new Sprite(texture, this);
+    {
+        d->normalSprite = boost::shared_ptr<Sprite>(new Sprite(texture));
+        addChild(d->normalSprite);
+    }
 
     d->sprite = d->normalSprite;
 
@@ -116,9 +116,15 @@ Button::Button(boost::shared_ptr<Texture> texture, boost::shared_ptr<Texture> ho
     d->initFromStyle();
 
     if (texture)
-        d->normalSprite = new Sprite(texture, this);
+    {
+        d->normalSprite = boost::shared_ptr<Sprite>(new Sprite(texture));
+        addChild(d->normalSprite);
+    }
     if (hoverTexture)
-        d->hoverSprite = new Sprite(hoverTexture, this);
+    {
+        d->hoverSprite = boost::shared_ptr<Sprite>(new Sprite(hoverTexture));
+        addChild(d->hoverSprite);
+    }
 
     d->sprite = d->normalSprite;
 
@@ -136,11 +142,20 @@ Button::Button(boost::shared_ptr<Texture> texture, boost::shared_ptr<Texture> ho
     d->initFromStyle();
 
     if (texture)
-        d->normalSprite = new Sprite(texture, this);
+    {
+        d->normalSprite = boost::shared_ptr<Sprite>(new Sprite(texture));
+        addChild(d->normalSprite);
+    }
     if (hoverTexture)
-        d->hoverSprite = new Sprite(hoverTexture, this);
+    {
+        d->hoverSprite = boost::shared_ptr<Sprite>(new Sprite(hoverTexture));
+        addChild(d->hoverSprite);
+    }
     if (pressTexture)
-        d->pressedSprite = new Sprite(pressTexture, this);
+    {
+        d->pressedSprite = boost::shared_ptr<Sprite>(new Sprite(pressTexture));
+        addChild(d->pressedSprite);
+    }
 
     d->sprite = d->normalSprite;
 
@@ -160,7 +175,10 @@ Button::Button(const std::wstring& texture, Widget *parent):
     boost::shared_ptr<Texture> main = ResourceManager::instance().loadTexture(texture);
 
     if (main)
-        d->normalSprite = new Sprite(main, this);
+    {
+        d->normalSprite = boost::shared_ptr<Sprite>(new Sprite(main));
+        addChild(d->normalSprite);
+    }
 
     d->sprite = d->normalSprite;
 
@@ -181,9 +199,15 @@ Button::Button(const std::wstring& texture, const std::wstring& hoverTexture, Wi
     boost::shared_ptr<Texture> hover = ResourceManager::instance().loadTexture(hoverTexture);
 
     if (main)
-        d->normalSprite = new Sprite(main, this);
+    {
+        d->normalSprite = boost::shared_ptr<Sprite>(new Sprite(main));
+        addChild(d->normalSprite);
+    }
     if (hover)
-        d->hoverSprite = new Sprite(hover, this);
+    {
+        d->hoverSprite = boost::shared_ptr<Sprite>(new Sprite(hover));
+        addChild(d->hoverSprite);
+    }
 
     d->sprite = d->normalSprite;
 
@@ -205,11 +229,21 @@ Button::Button(const std::wstring& texture, const std::wstring& hoverTexture, co
     boost::shared_ptr<Texture> pressed = ResourceManager::instance().loadTexture(pressTexture);
 
     if (main)
-        d->normalSprite = new Sprite(main, this);
+    {
+        d->normalSprite = boost::shared_ptr<Sprite>(new Sprite(main));
+        addChild(d->normalSprite);
+    }
     if (hover)
-        d->hoverSprite = new Sprite(hover, this);
+    {
+        d->hoverSprite = boost::shared_ptr<Sprite>(new Sprite(hover));
+        addChild(d->hoverSprite);
+    }
+
     if (pressed)
-        d->pressedSprite = new Sprite(pressed, this);
+    {
+        d->pressedSprite = boost::shared_ptr<Sprite>(new Sprite(pressed));
+        addChild(d->pressedSprite);
+    }
 
     d->sprite = d->normalSprite;
 
@@ -220,7 +254,7 @@ Button::Button(const std::wstring& texture, const std::wstring& hoverTexture, co
     }
 }
 
-Button::Button(const ButtonStyle& style, Widget* parent):
+Button::Button(const ButtonStyle& style, Widget *parent):
     Widget(*(new ButtonPrivate()), parent)
 {
     RANGERS_D(Button);
@@ -374,37 +408,44 @@ void ButtonPrivate::initFromStyle()
     RANGERS_Q(Button);
     if (style.normal.type == ResourceDescriptor::NINEPATCH)
     {
-        normalSprite = new NinePatch(boost::get<NinePatchDescriptor>(style.normal.resource), q);
+        normalSprite = boost::shared_ptr<Sprite>(new NinePatch(boost::get<NinePatchDescriptor>(style.normal.resource)));
+        q->addChild(normalSprite);
     }
     else if (style.normal.type == ResourceDescriptor::SPRITE)
     {
-        normalSprite = new Sprite(boost::get<TextureRegionDescriptor>(style.normal.resource), q);
+        normalSprite = boost::shared_ptr<Sprite>(new Sprite(boost::get<TextureRegionDescriptor>(style.normal.resource)));
+        q->addChild(normalSprite);
     }
     if (style.hovered.type == ResourceDescriptor::NINEPATCH)
     {
-        hoverSprite = new NinePatch(boost::get<NinePatchDescriptor>(style.hovered.resource), q);
+        hoverSprite = boost::shared_ptr<Sprite>(new NinePatch(boost::get<NinePatchDescriptor>(style.hovered.resource)));
+        q->addChild(hoverSprite);
     }
     else if (style.hovered.type == ResourceDescriptor::SPRITE)
     {
-        hoverSprite = new Sprite(boost::get<TextureRegionDescriptor>(style.hovered.resource), q);
+        hoverSprite = boost::shared_ptr<Sprite>(new Sprite(boost::get<TextureRegionDescriptor>(style.hovered.resource)));
+        q->addChild(hoverSprite);
     }
     if (style.pressed.type == ResourceDescriptor::NINEPATCH)
     {
-        pressedSprite = new NinePatch(boost::get<NinePatchDescriptor>(style.pressed.resource), q);
+        pressedSprite = boost::shared_ptr<Sprite>(new NinePatch(boost::get<NinePatchDescriptor>(style.pressed.resource)));
+        q->addChild(pressedSprite);
     }
     else if (style.pressed.type == ResourceDescriptor::SPRITE)
     {
-        pressedSprite = new Sprite(boost::get<TextureRegionDescriptor>(style.pressed.resource), q);
+        pressedSprite = boost::shared_ptr<Sprite>(new Sprite(boost::get<TextureRegionDescriptor>(style.pressed.resource)));
+        q->addChild(pressedSprite);
     }
     if ((style.font.path != L"") && (style.font.size > 0))
     {
-        label = new Label(text, q, ResourceManager::instance().loadFont(style.font.path, style.font.size));
+        label = boost::shared_ptr<Label>(new Label(text, 0, ResourceManager::instance().loadFont(style.font.path, style.font.size)));
     }
     else
     {
-        label = new Label(q);
+        label = boost::shared_ptr<Label>(new Label());
     }
     label->setOrigin(POSITION_X_LEFT, POSITION_Y_TOP);
+    q->addChild(label);
     q->setColor(style.color);
     sprite = normalSprite;
 
@@ -415,20 +456,20 @@ void ButtonPrivate::initFromStyle()
     if (style.clickSound != L"")
         clickSound = SoundManager::instance().loadSound(style.clickSound);
 
-    q->addListener(this);
+    q->addListener(buttonListener);
     q->markToUpdate();
 }
 
 Button::~Button()
 {
     RANGERS_D(const Button);
-    if (d->normalSprite)
+    /*if (d->normalSprite)
         delete d->normalSprite;
     if (d->hoverSprite)
         delete d->hoverSprite;
     if (d->pressedSprite)
         delete d->pressedSprite;
-    delete d->label;
+    delete d->label;*/
 }
 
 void Button::draw() const

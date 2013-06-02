@@ -95,6 +95,7 @@ void execPythonScript(const char *data, size_t size, const std::wstring& name, c
     else
         execNamespace = dict;
 
+    PyGILState_STATE s = PyGILState_Ensure();
     try
     {
         boost::python::exec(boost::python::str(data, size), execNamespace);
@@ -103,6 +104,7 @@ void execPythonScript(const char *data, size_t size, const std::wstring& name, c
     {
         handlePythonError();
     }
+    PyGILState_Release(s);
 }
 
 void execPythonLine(const std::wstring& line, const std::wstring& name, const boost::python::object& dict)
@@ -113,6 +115,7 @@ void execPythonLine(const std::wstring& line, const std::wstring& name, const bo
     else
         execNamespace = dict;
 
+    PyGILState_STATE s = PyGILState_Ensure();
     try
     {
         boost::python::exec(toUTF8(line).c_str(), execNamespace);
@@ -121,6 +124,7 @@ void execPythonLine(const std::wstring& line, const std::wstring& name, const bo
     {
         handlePythonError();
     }
+    PyGILState_Release(s);
 }
 
 void execPythonScript(const std::wstring& fileName, const boost::python::object& dict)

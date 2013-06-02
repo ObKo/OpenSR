@@ -25,11 +25,15 @@
 
 namespace Rangers
 {
-class ButtonPrivate: public WidgetPrivate, ActionListener
+class ButtonPrivate: public WidgetPrivate
 {
     RANGERS_DECLARE_PUBLIC(Button)
 public:
-    virtual void actionPerformed(const Action &action);
+    class ButtonListener: public ActionListener
+    {
+    public:
+        void actionPerformed(const Action &action);
+    };
 
     ButtonPrivate();
 
@@ -37,17 +41,19 @@ public:
     void initFromStyle();
 
     ButtonStyle style;
-    Label *label;
+    boost::shared_ptr<Label> label;
     std::wstring text;
-    Sprite *normalSprite;
-    Sprite *hoverSprite;
-    Sprite *pressedSprite;
-    Sprite *sprite;
+    boost::shared_ptr<Sprite> normalSprite;
+    boost::shared_ptr<Sprite> hoverSprite;
+    boost::shared_ptr<Sprite> pressedSprite;
+    boost::shared_ptr<Sprite> sprite;
     bool autoResize;
 
     boost::shared_ptr<Sound> enterSound;
     boost::shared_ptr<Sound> leaveSound;
     boost::shared_ptr<Sound> clickSound;
+
+    boost::shared_ptr<ButtonListener> buttonListener;
 };
 }
 

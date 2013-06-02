@@ -22,7 +22,7 @@
 
 namespace Rangers
 {
-  
+
 ScriptWidget::ScriptWidget(Rangers::Widget* parent): Widget(parent)
 {
 }
@@ -37,9 +37,9 @@ void ScriptWidget::draw() const
     if (!prepareDraw())
         return;
 
-    std::list<Object*> children = d->children;
+    std::list<boost::shared_ptr<Object> > children = d->children;
 
-    for (std::list<Object*>::const_iterator i = children.begin(); i != children.end(); i++)
+    for (std::list<boost::shared_ptr<Object> >::const_iterator i = children.begin(); i != children.end(); i++)
         (*i)->draw();
 
     endDraw();

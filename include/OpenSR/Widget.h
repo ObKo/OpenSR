@@ -62,12 +62,12 @@ public:
     void setGeometry(int width, int height);
     void setVisible(bool visible);
 
-    void addWidget(Widget *w);
-    void removeWidget(Widget *w);
-    std::list<Widget *> childWidgets() const;
+    void addWidget(boost::shared_ptr<Widget> w);
+    void removeWidget(boost::shared_ptr<Widget> w);
+    std::list<boost::shared_ptr<Widget> > childWidgets() const;
 
-    void addListener(ActionListener* listener);
-    void removeListener(ActionListener* listener);
+    void addListener(boost::shared_ptr<ActionListener> listener);
+    void removeListener(boost::shared_ptr<ActionListener> listener);
 
     void action(const Action& action);
 

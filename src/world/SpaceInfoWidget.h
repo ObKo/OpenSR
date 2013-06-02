@@ -53,14 +53,14 @@ private:
 
     boost::shared_ptr<Font> m_font;
     boost::shared_ptr<Font> m_captionFont;
-    Label *m_caption;
+    boost::shared_ptr<Label> m_caption;
     Rect m_contentRect;
-    Sprite *m_bgSprite;
-    Sprite *m_iconSprite;
+    boost::shared_ptr<Sprite> m_bgSprite;
+    boost::shared_ptr<Sprite> m_iconSprite;
     int m_color;
     int m_captionColor;
     int m_labelColor;
-    std::vector<Object*> m_infoWidget;
+    std::vector<boost::shared_ptr<Object> > m_infoWidget;
     InfoType m_type;
 };
 }

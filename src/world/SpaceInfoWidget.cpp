@@ -38,12 +38,18 @@ namespace Rangers
 {
 namespace World
 {
-SpaceInfoWidget::SpaceInfoWidget(const InfoWidgetStyle& style, Widget* parent): Widget(parent), m_bgSprite(0), m_iconSprite(0), m_type(INFO_NONE)
+SpaceInfoWidget::SpaceInfoWidget(const InfoWidgetStyle& style, Widget* parent): Widget(parent), m_type(INFO_NONE)
 {
     if (style.background.type == ResourceDescriptor::SPRITE)
-        m_bgSprite = new Sprite(boost::get<TextureRegionDescriptor>(style.background.resource), this);
+    {
+        m_bgSprite = boost::shared_ptr<Sprite>(new Sprite(boost::get<TextureRegionDescriptor>(style.background.resource)));
+        addChild(m_bgSprite);
+    }
     else if (style.background.type == ResourceDescriptor::NINEPATCH)
-        m_bgSprite = new NinePatch(boost::get<NinePatchDescriptor>(style.background.resource), this);
+    {
+        m_bgSprite = boost::shared_ptr<Sprite>(new NinePatch(boost::get<NinePatchDescriptor>(style.background.resource)));
+        addChild(m_bgSprite);
+    }
 
     if (style.font.type == ResourceDescriptor::FONT)
     {
@@ -65,7 +71,7 @@ SpaceInfoWidget::SpaceInfoWidget(const InfoWidgetStyle& style, Widget* parent): 
     m_labelColor = style.labelColor;
     m_color = style.color;
 
-    m_caption = new Label(L"", this, m_captionFont);
+    m_caption = boost::shared_ptr<Label>(new Label(L"", 0, m_captionFont));
     m_caption->setOrigin(POSITION_X_CENTER, POSITION_Y_TOP);
     m_caption->setColor(m_captionColor);
 
@@ -80,8 +86,6 @@ SpaceInfoWidget::SpaceInfoWidget(const InfoWidgetStyle& style, Widget* parent): 
 
 SpaceInfoWidget::~SpaceInfoWidget()
 {
-    if (m_bgSprite)
-        delete m_bgSprite;
 }
 
 void SpaceInfoWidget::processMain()
@@ -127,7 +131,7 @@ void SpaceInfoWidget::processMain()
 
         for (int i = 0; i < m_infoWidget.size(); i++)
         {
-            Label *l = dynamic_cast<Label*>(m_infoWidget.at(i));
+            boost::shared_ptr<Label> l = boost::dynamic_pointer_cast<Label>(m_infoWidget.at(i));
             if ((i % 2) == 0)
             {
                 l->setPosition(realContentRect.x + int(realContentRect.width) / 2 - l->width(), (m_font->size() + 5) * (i / 2) + captionOffset);
@@ -158,8 +162,8 @@ void SpaceInfoWidget::draw() const
     if (m_iconSprite)
         m_iconSprite->draw();
 
-    std::vector<Object*>::const_iterator end = m_infoWidget.end();
-    for (std::vector<Object*>::const_iterator i = m_infoWidget.begin(); i != end; ++i)
+    std::vector<boost::shared_ptr<Object> >::const_iterator end = m_infoWidget.end();
+    for (std::vector<boost::shared_ptr<Object> >::const_iterator i = m_infoWidget.begin(); i != end; ++i)
         (*i)->draw();
 
     endDraw();
@@ -170,12 +174,14 @@ void SpaceInfoWidget::clear()
     m_caption->setText(L"");
     if (m_iconSprite)
     {
-        delete m_iconSprite;
-        m_iconSprite = 0;
+        removeChild(m_iconSprite);
+        m_iconSprite = boost::shared_ptr<Sprite>();
     }
-    std::vector<Object*>::iterator end = m_infoWidget.end();
-    for (std::vector<Object*>::iterator i = m_infoWidget.begin(); i != end; ++i)
-        delete(*i);
+    std::vector<boost::shared_ptr<Object> >::iterator end = m_infoWidget.end();
+    for (std::vector<boost::shared_ptr<Object> >::iterator i = m_infoWidget.begin(); i != end; ++i)
+    {
+        removeChild(*i);
+    }
     m_infoWidget.clear();
     m_type = INFO_NONE;
     markToUpdate();
@@ -184,17 +190,22 @@ void SpaceInfoWidget::clear()
 void SpaceInfoWidget::showPlanet(boost::shared_ptr<Planet> planet)
 {
     m_caption->setText(_("Planet", "OpenSR-World") + L" " + _(planet->name(), "OpenSR-World"));
-    m_iconSprite = new Sprite(PlanetManager::instance().getPlanetImage(planet->style(), 48));
+    m_iconSprite = boost::shared_ptr<Sprite>(new Sprite(PlanetManager::instance().getPlanetImage(planet->style(), 48)));
+    addChild(m_iconSprite);
 
-    Label *l = new Label(_("Planet radius:", "OpenSR-World") + L" ", this);
+    boost::shared_ptr<Label> l = boost::shared_ptr<Label>(new Label(_("Planet radius:", "OpenSR-World") + L" "));
     l->setColor(m_labelColor);
+
     m_infoWidget.push_back(l);
+    addChild(l);
 
     std::wostringstream str;
     str << planet->radius();
-    l = new Label(str.str(), this);
+    l = boost::shared_ptr<Label>(new Label(str.str()));
     l->setColor(m_color);
+
     m_infoWidget.push_back(l);
+    addChild(l);
 
     m_type = INFO_PLANET;
     markToUpdate();

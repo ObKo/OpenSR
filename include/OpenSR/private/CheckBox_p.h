@@ -27,22 +27,28 @@
 
 namespace Rangers
 {
-class CheckBoxPrivate: public WidgetPrivate, ActionListener
+class CheckBoxPrivate: public WidgetPrivate
 {
     RANGERS_DECLARE_PUBLIC(CheckBox)
 public:
+    class CheckBoxListener: public ActionListener
+    {
+    public:
+        virtual void actionPerformed(const Action& action);
+    };
+
     CheckBoxPrivate();
 
-    virtual void actionPerformed(const Action& action);
-
     bool checked;
-    Sprite *normal;
-    Sprite *checkedNormal;
-    Sprite *hovered;
-    Sprite *checkedHovered;
-    Sprite *sprite;
-    Label *label;
+    boost::shared_ptr<Sprite> normal;
+    boost::shared_ptr<Sprite> checkedNormal;
+    boost::shared_ptr<Sprite> hovered;
+    boost::shared_ptr<Sprite> checkedHovered;
+    boost::shared_ptr<Sprite> sprite;
+    boost::shared_ptr<Label> label;
     CheckBoxStyle style;
+
+    boost::shared_ptr<CheckBoxListener> checkBoxListener;
 };
 }
 

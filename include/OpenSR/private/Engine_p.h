@@ -65,16 +65,16 @@ public:
 
     std::list<Object *> updateList;
 
-    std::list<Widget *> widgets;
+    std::list<boost::shared_ptr<Widget> > widgets;
     std::list<Widget *> widgetsToDelete;
-    Widget *currentWidget;
+    boost::weak_ptr<Widget> currentWidget;
     Widget *focusedWidget;
 
     std::list<Plugin *> plugins;
 
     Node *mainNode;
     Label *fpsLabel;
-    ConsoleWidget *consoleWidget;
+    boost::shared_ptr<Widget> consoleWidget;
     boost::shared_ptr<Font> coreFont;
     boost::shared_ptr<Font> monospaceFont;
 

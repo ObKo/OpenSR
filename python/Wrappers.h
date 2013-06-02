@@ -58,6 +58,28 @@ void handlePythonError();
 class Object;
 namespace Python
 {
+template <int N>
+struct add_reference_policy : boost::python::default_call_policies
+{
+    static PyObject *postcall(PyObject *args, PyObject *result)
+    {
+        PyObject *arg = PyTuple_GET_ITEM(args, N);
+        Py_INCREF(arg);
+        return result;
+    }
+};
+
+template <int N>
+struct remove_reference_policy : boost::python::default_call_policies
+{
+    static PyObject *postcall(PyObject *args, PyObject *result)
+    {
+        PyObject *arg = PyTuple_GET_ITEM(args, N);
+        Py_DecRef(arg);
+        return result;
+    }
+};
+
 class GILGuard
 {
 public:

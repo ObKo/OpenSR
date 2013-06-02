@@ -31,9 +31,9 @@ class WidgetPrivate: public ObjectPrivate
 public:
     WidgetPrivate();
 
-    std::list<Widget *> childWidgets;
-    std::list<ActionListener*> listeners;
-    Widget *currentChild;
+    std::list<boost::shared_ptr<Widget> > childWidgets;
+    std::list<boost::shared_ptr<ActionListener> > listeners;
+    boost::weak_ptr<Widget> currentChild;
     int width, height;
     bool leftMouseButtonPressed;
     bool focused;

@@ -38,8 +38,8 @@ void Node::draw() const
     if (!prepareDraw())
         return;
 
-    std::list<Object*> children = d->children;
-    for (std::list<Object*>::const_iterator i = children.begin(); i != children.end(); i++)
+    std::list<boost::shared_ptr<Object> > children = d->children;
+    for (std::list<boost::shared_ptr<Object> >::const_iterator i = children.begin(); i != children.end(); i++)
         (*i)->draw();
 
     endDraw();
@@ -49,9 +49,9 @@ void Node::processLogic(int dt)
 {
     RANGERS_D(Node);
     lock();
-    std::list<Object*> children = d->children;
+    std::list<boost::shared_ptr<Object> > children = d->children;
     unlock();
-    for (std::list<Object*>::const_iterator i = children.begin(); i != children.end(); i++)
+    for (std::list<boost::shared_ptr<Object> >::const_iterator i = children.begin(); i != children.end(); i++)
         (*i)->processLogic(dt);
 }
 }

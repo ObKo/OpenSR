@@ -30,7 +30,7 @@ namespace Python
   ScrollArea(const ScrollBarStyle& style, WidgetNode *node = 0, Widget *parent = 0); */
 struct ScrollAreaWrap : WidgetWrap_<ScrollArea>
 {
-    ScrollAreaWrap(const ScrollBarStyle& style, WidgetNode *node = 0, Widget *parent = 0)
+    ScrollAreaWrap(const ScrollBarStyle& style, boost::shared_ptr<WidgetNode> node = boost::shared_ptr<WidgetNode>(), Widget *parent = 0)
         : WidgetWrap_<ScrollArea>(style, node, parent)
     {
     }
@@ -45,8 +45,8 @@ void exportScrollArea()
 {
     using namespace boost::python;
 
-    class_<ScrollArea, bases<Widget>, boost::noncopyable> c("ScrollArea", init<const ScrollBarStyle&, WidgetNode*, Widget*>());
-    c.def(init<const ScrollBarStyle&, WidgetNode*>())
+    class_<ScrollArea, bases<Widget>, boost::noncopyable> c("ScrollArea", init<const ScrollBarStyle&, boost::shared_ptr<WidgetNode>, Widget*>());
+    c.def(init<const ScrollBarStyle&, boost::shared_ptr<WidgetNode> >())
     .def(init<const ScrollBarStyle&>())
     .def(init<Widget*>())
     .def(init<>())

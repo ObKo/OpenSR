@@ -40,10 +40,10 @@ public:
     //! Constructs empty action
     Action();
     //! Constructs new action
-    Action(Widget *source, Type type, const Argument& argument = Argument());
+    Action(boost::shared_ptr<Widget> source, Type type, const Argument& argument = Argument());
 
     //! Source of action
-    Widget* source() const;
+    boost::shared_ptr<Widget> source() const;
     //! Type of action
     Type type() const;
     //! Argument of action
@@ -61,7 +61,7 @@ public:
     uint8_t byteArgument() const;
 
 private:
-    Widget *m_source;
+    boost::shared_ptr<Widget> m_source;
     Type m_type;
     Argument m_argument;
 };

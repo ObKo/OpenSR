@@ -24,6 +24,7 @@
 
 #include <boost/python.hpp>
 #include <boost/shared_ptr.hpp>
+#include "Wrappers.h"
 
 namespace Rangers
 {
@@ -49,8 +50,8 @@ void exportEngine()
     .staticmethod("instance")
     .def("markToUpdate", &Engine::markToUpdate)
     .def("unmarkToUpdate", &Engine::unmarkToUpdate)
-    .def("addWidget", &Engine::addWidget, with_custodian_and_ward<1, 2>())
-    .def("removeWidget", &Engine::removeWidget)
+    .def("addWidget", &Engine::addWidget/*, add_reference_policy<1>()*/)
+    .def("removeWidget", &Engine::removeWidget/*, remove_reference_policy<1>()*/)
     .def("markWidgetDeleting", &Engine::markWidgetDeleting)
     .def("coreFont", &Engine::coreFont)
     .def("serviceFont", &Engine::serviceFont)

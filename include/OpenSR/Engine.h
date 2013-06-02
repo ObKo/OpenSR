@@ -57,9 +57,9 @@ public:
     //! Disable object been updated in main (OpenGL) thread
     void unmarkToUpdate(Object* object);
     //! Add widget to top widgets
-    void addWidget(Widget *w);
+    void addWidget(boost::shared_ptr<Widget> w);
     //! Remove widget from top widgets
-    void removeWidget(Widget *w);
+    void removeWidget(boost::shared_ptr<Widget> w);
     //! Focus widget for key input handling
     void focusWidget(Widget *w);
     //! Unfocus widget for key input handling

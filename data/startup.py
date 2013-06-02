@@ -7,10 +7,9 @@ import gettext
 _ = gettext.gettext
 gettext.textdomain('OpenSR')
 
-gc.set_debug(gc.DEBUG_COLLECTABLE)
+#gc.set_debug(gc.DEBUG_COLLECTABLE)
 
 engine = OpenSR.Engine.Engine.instance()
 resources = OpenSR.Engine.ResourceManager.instance()
 
-w = OpenSR.ORC.StartMenu.StartMenuWidget(None)
-engine.addWidget(w)
+engine.addWidget(OpenSR.ORC.StartMenu.StartMenuWidget(None))

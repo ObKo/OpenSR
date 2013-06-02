@@ -44,6 +44,9 @@
 
 #include "private/Engine_p.h"
 
+//TODO: Move logic back to separate thred. For now this is impossible
+//      due to boost::python and random boost::shared_ptr destruction
+
 
 using namespace std;
 
@@ -81,17 +84,16 @@ Engine::Engine(): m_d(new EnginePrivate())
 {
     RANGERS_D(Engine);
 
-    d->focusedWidget = 0;
     d->argc = 0;
     d->argv = 0;
-    d->currentWidget = 0;
+    //d->currentWidget = 0;
     d->focusedWidget = 0;
     d->consoleOpenned = false;
     d->showFPS = true;
     d->frames = 0;
     d->m_q = this;
     d->mainNode = 0;
-    d->consoleWidget = 0;
+    //d->consoleWidget = 0;
     d->fpsLabel = 0;
 
     textdomain("OpenSR");
@@ -130,13 +132,13 @@ Engine::~Engine()
     {
         delete *i;
     }
-    delete d->consoleWidget;
+    //delete d->consoleWidget;
     delete d->fpsLabel;
     delete d->mainNode;
     delete m_d;
 }
 
-void Engine::addWidget(Widget *w)
+void Engine::addWidget(boost::shared_ptr<Widget> w)
 {
     RANGERS_D(Engine);
     if (!w)
@@ -144,8 +146,8 @@ void Engine::addWidget(Widget *w)
 
     d->mainNode->addChild(w);
 
-    std::list<Widget*>::iterator end = d->widgets.end();
-    for (std::list<Widget*>::iterator i = d->widgets.begin(); i != end; ++i)
+    std::list<boost::shared_ptr<Widget> >::iterator end = d->widgets.end();
+    for (std::list<boost::shared_ptr<Widget> >::iterator i = d->widgets.begin(); i != end; ++i)
     {
         if ((*i)->layer() < w->layer())
         {
@@ -156,10 +158,10 @@ void Engine::addWidget(Widget *w)
     d->widgets.push_back(w);
 }
 
-void Engine::removeWidget(Widget *w)
+void Engine::removeWidget(boost::shared_ptr<Widget> w)
 {
     RANGERS_D(Engine);
-    widgetHide(w);
+    widgetHide(w.get());
     d->widgets.remove(w);
     d->mainNode->removeChild(w);
 }
@@ -175,24 +177,25 @@ void Engine::widgetHide(Widget *w)
 
     RANGERS_D(Engine);
 
-    std::list<Widget*> children = w->childWidgets();
+    std::list<boost::shared_ptr<Widget> > children = w->childWidgets();
+    boost::shared_ptr<Widget> currentWidget = d->currentWidget.lock();
 
-    if (d->currentWidget)
+    if (currentWidget)
     {
-        if (w == d->currentWidget)
+        if (w == currentWidget.get())
         {
-            d->currentWidget = 0;
-            w->action(Action(w, Action::MOUSE_LEAVE));
+            d->currentWidget = boost::weak_ptr<Widget>();
+            //w->action(Action(w, Action::MOUSE_LEAVE));
         }
         else
         {
-            std::list<Widget*>::const_iterator end = children.end();
-            for (std::list<Widget*>::const_iterator i = children.begin(); i != end; ++i)
+            std::list<boost::shared_ptr<Widget> >::const_iterator end = children.end();
+            for (std::list<boost::shared_ptr<Widget> >::const_iterator i = children.begin(); i != end; ++i)
             {
-                if ((*i) == d->currentWidget)
+                if ((*i) == currentWidget)
                 {
-                    d->currentWidget = 0;
-                    (*i)->action(Action((*i), Action::MOUSE_LEAVE));
+                    d->currentWidget = boost::weak_ptr<Widget>();
+                    //(*i)->action(Action((*i), Action::MOUSE_LEAVE));
                 }
             }
         }
@@ -206,10 +209,10 @@ void Engine::widgetHide(Widget *w)
         }
         else
         {
-            std::list<Widget*>::const_iterator end = children.end();
-            for (std::list<Widget*>::const_iterator i = children.begin(); i != end; ++i)
+            std::list<boost::shared_ptr<Widget> >::const_iterator end = children.end();
+            for (std::list<boost::shared_ptr<Widget> >::const_iterator i = children.begin(); i != end; ++i)
             {
-                if ((*i) == d->focusedWidget)
+                if ((*i).get() == d->focusedWidget)
                 {
                     d->focusedWidget = 0;
                     (*i)->unFocus();
@@ -227,12 +230,10 @@ void Engine::widgetDestroyed(Widget *w)
 
     RANGERS_D(Engine);
 
-    std::list<Widget*> children = w->childWidgets();
-
-    if (d->currentWidget)
+    if (boost::shared_ptr<Widget> currentW = d->currentWidget.lock())
     {
-        if (w == d->currentWidget)
-            d->currentWidget = 0;
+        if (w == currentW.get())
+            d->currentWidget = boost::weak_ptr<Widget>();
     }
     if (d->focusedWidget)
     {
@@ -250,7 +251,7 @@ void Engine::widgetDestroyed(Widget *w)
     t = getTicks();
 }*/
 
-int Engine::logic()
+/*int Engine::logic()
 {
     long t = getTicks();
     Engine &engine = Engine::instance();
@@ -269,7 +270,7 @@ int Engine::logic()
         t = getTicks();
     }
     return 0;
-}
+}*/
 
 void Engine::init(int argc, char **argv, int w, int h, bool fullscreen)
 {
@@ -469,7 +470,7 @@ void Engine::init(int argc, char **argv, int w, int h, bool fullscreen)
     d->fpsLabel = new Label("0", 0, d->monospaceFont, POSITION_X_LEFT, POSITION_Y_TOP);
     d->fpsLabel->setPosition(5, 5);
 
-    d->consoleWidget = new ConsoleWidget(d->width, 168);
+    d->consoleWidget = boost::shared_ptr<Widget>(new ConsoleWidget(d->width, 168));
     d->consoleWidget->setVisible(false);
 
     char *envPython = getenv("PYTHONPATH");
@@ -528,12 +529,15 @@ int Engine::run()
 {
     RANGERS_D(Engine);
     d->gameRunning = true;
-    d->logicThread = new boost::thread(&Engine::logic);
+    //d->logicThread = new boost::thread(&Engine::logic);
 
     std::wstring startupScript = fromLocal(d->properties->get<std::string>("engine.startupScript", "startup.py").c_str());
 
     execPythonScript(startupScript);
+
     d->fpsTime = getTicks();
+    uint64_t logicTicks = getTicks();
+
     while (d->gameRunning)
     {
         int fpsdt;
@@ -556,12 +560,12 @@ int Engine::run()
         }
         d->updateMutex.lock();
 
-        std::list<Widget*>::const_iterator widgetEnd = d->widgetsToDelete.end();
+        /*std::list<Widget*>::const_iterator widgetEnd = d->widgetsToDelete.end();
         for (std::list<Widget*>::const_iterator i = d->widgetsToDelete.begin(); i != widgetEnd; ++i)
         {
             removeWidget(*i);
             delete(*i);
-        }
+        }*/
 
         std::list<Object *>::const_iterator end = d->updateList.end();
         for (std::list<Object *>::const_iterator i = d->updateList.begin(); i != end; ++i)
@@ -578,8 +582,17 @@ int Engine::run()
 
         d->processEvents();
         paint();
+
+        int dt = getTicks() - logicTicks;
+        if (dt)
+        {
+            d->mainNode->processLogic(dt);
+            if (d->consoleOpenned)
+                d->consoleWidget->processLogic(dt);
+            logicTicks = getTicks();
+        }
     }
-    d->logicThread->join();
+    //d->logicThread->join();
     SDL_Quit();
     return d->exitCode;
 }
@@ -653,7 +666,7 @@ void Engine::markWidgetDeleting(Widget *w)
 {
     RANGERS_D(Engine);
     d->updateMutex.lock();
-    removeWidget(w);
+    //removeWidget(w);
     d->widgetsToDelete.push_back(w);
     d->updateMutex.unlock();
 }
@@ -697,18 +710,45 @@ void Engine::EnginePrivate::processEvents()
                 continue;
             }
             if (focusedWidget)
-                focusedWidget->action(Action(focusedWidget, Rangers::Action::KEY_PRESSED, event.key.keysym));
+            {
+                //FIXME: Quite ugly
+                boost::shared_ptr<Widget> w;
+                if (focusedWidget->parent() == 0)
+                {
+                    std::list<boost::shared_ptr<Widget> >::const_iterator end = widgets.end();
+                    for (std::list<boost::shared_ptr<Widget> >::const_iterator i = widgets.begin(); i != end; ++i)
+                    {
+                        if ((*i).get() == focusedWidget)
+                        {
+                            w = *i;
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    w = boost::dynamic_pointer_cast<Widget>(focusedWidget->parent()->getChild(focusedWidget));
+                }
+                if (w)
+                {
+                    w->action(Action(w, Rangers::Action::KEY_PRESSED, event.key.keysym));
+                }
+                else
+                {
+                    Log::debug() << "Engine::processEvents(): Unknown focused widget";
+                }
+            }
             break;
         case SDL_MOUSEMOTION:
             processMouseMove(event.motion);
             break;
         case SDL_MOUSEBUTTONDOWN:
-            if (currentWidget)
-                currentWidget->action(Action(currentWidget, Action::MOUSE_DOWN, event.button.button));
+            if (boost::shared_ptr<Widget> currentW = currentWidget.lock())
+                currentW->action(Action(currentW, Action::MOUSE_DOWN, event.button.button));
             break;
         case SDL_MOUSEBUTTONUP:
-            if (currentWidget)
-                currentWidget->action(Action(currentWidget, Action::MOUSE_UP, event.button.button));
+            if (boost::shared_ptr<Widget> currentW = currentWidget.lock())
+                currentW->action(Action(currentW, Action::MOUSE_UP, event.button.button));
             break;
         case SDL_QUIT:
             q->quit();
@@ -720,27 +760,28 @@ void Engine::EnginePrivate::processEvents()
 void Engine::EnginePrivate::processMouseMove(const SDL_MouseMotionEvent &e)
 {
     RANGERS_Q(Engine);
-    for (std::list<Widget*>::iterator i = widgets.begin(); i != widgets.end(); i++)
+    for (std::list<boost::shared_ptr<Widget> >::iterator i = widgets.begin(); i != widgets.end(); i++)
     {
         Rect bb = (*i)->mapToGlobal((*i)->getBoundingRect());
         Vector globalMouse = mainNode->mapFromScreen(Vector(e.x, e.y));
+        boost::shared_ptr<Widget> currentW = currentWidget.lock();
         if ((*i)->isVisible() && bb.contains(globalMouse))
         {
-            if ((*i) != currentWidget)
+            if ((*i) != currentW)
             {
-                if (currentWidget)
-                    currentWidget->action(Action(currentWidget, Action::MOUSE_LEAVE));
-                currentWidget = *i;
-                currentWidget->action(Action(currentWidget, Action::MOUSE_ENTER));
+                if (currentW)
+                    currentW->action(Action(currentW, Action::MOUSE_LEAVE));
+                currentWidget = boost::weak_ptr<Widget>(*i);
+                (*i)->action(Action(currentW, Action::MOUSE_ENTER));
             }
             Vector mouse = (*i)->mapFromParent(globalMouse);
             (*i)->mouseMove(mouse.x, mouse.y);
             return;
         }
     }
-    if (currentWidget)
-        currentWidget->action(Action(currentWidget, Action::MOUSE_LEAVE));
-    currentWidget = 0;
+    if (boost::shared_ptr<Widget> currentW = currentWidget.lock())
+        currentW->action(Action(currentW, Action::MOUSE_LEAVE));
+    currentWidget = boost::weak_ptr<Widget>();
 }
 
 Node* Engine::rootNode()

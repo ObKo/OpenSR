@@ -27,15 +27,19 @@
 
 namespace Rangers
 {
-class LineEditWidgetPrivate: public WidgetPrivate, ActionListener
+class LineEditWidgetPrivate: public WidgetPrivate
 {
     RANGERS_DECLARE_PUBLIC(LineEditWidget)
 public:
     LineEditWidgetPrivate();
 
-    virtual void actionPerformed(const Action &action);
+    class LineEditWidgetListener: public ActionListener
+    {
+    public:
+        virtual void actionPerformed(const Action &action);
+    };
 
-    Label *label;
+    boost::shared_ptr<Label> label;
     std::wstring text;
     Vertex *cursorVertices;
     GLuint cursorBuffer;
@@ -44,7 +48,7 @@ public:
     int cursorTime;
     int stringOffset;
 
-    Sprite *background;
+    boost::shared_ptr<Sprite> background;
     LineEditStyle style;
 
     Vector mousePosition;
@@ -52,6 +56,8 @@ public:
     void init();
     void updateText();
     void keyPressed(const SDL_keysym& key);
+
+    boost::shared_ptr<LineEditWidgetListener> lineEditListener;
 };
 }
 

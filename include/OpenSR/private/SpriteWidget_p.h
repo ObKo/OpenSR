@@ -28,7 +28,7 @@ class SpriteWidgetPrivate: public WidgetPrivate
     RANGERS_DECLARE_PUBLIC(SpriteWidget)
 public:
     SpriteWidgetPrivate();
-    Sprite *sprite;
+    boost::shared_ptr<Sprite> sprite;
 };
 }
 

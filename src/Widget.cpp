@@ -28,7 +28,6 @@ namespace Rangers
 {
 WidgetPrivate::WidgetPrivate(): ObjectPrivate()
 {
-    currentChild = 0;
     width = 0;
     height = 0;
     leftMouseButtonPressed = false;
@@ -40,8 +39,8 @@ Widget::Widget(Widget *parent): Object(*(new WidgetPrivate()), parent)
 {
     RANGERS_D(Widget);
 
-    if (parent)
-        parent->addWidget(this);
+    //if (parent)
+    //    parent->addWidget(this);
 }
 
 Widget::Widget(float w, float h, Widget *parent): Object(*(new WidgetPrivate()), parent)
@@ -51,25 +50,25 @@ Widget::Widget(float w, float h, Widget *parent): Object(*(new WidgetPrivate()),
     d->width = w;
     d->height = h;
 
-    if (parent)
-        parent->addWidget(this);
+    //if (parent)
+    //    parent->addWidget(this);
 }
 
 Widget::Widget(WidgetPrivate &p, Widget *parent): Object(p, parent)
 {
     RANGERS_D(Widget);
 
-    if (parent)
-        parent->addWidget(this);
+    //if (parent)
+    //    parent->addWidget(this);
 }
 
 Widget::~Widget()
 {
     RANGERS_D(Widget);
     //FIXME: Ugly downcasting
-    Widget* wparent;
-    if ((wparent = dynamic_cast<Widget*>(d->parent)) != 0)
-        wparent->removeWidget(this);
+    //Widget* wparent;
+    //if ((wparent = dynamic_cast<Widget*>(d->parent)) != 0)
+    //    wparent->removeWidget(this);
 
     Engine::instance().widgetDestroyed(this);
 }
@@ -78,26 +77,27 @@ void Widget::mouseMove(const Vector& p)
 {
     RANGERS_D(Widget);
     lock();
-    for (std::list<Widget*>::reverse_iterator i = d->childWidgets.rbegin(); i != d->childWidgets.rend(); ++i)
+    for (std::list<boost::shared_ptr<Widget> >::reverse_iterator i = d->childWidgets.rbegin(); i != d->childWidgets.rend(); ++i)
     {
         Rect bb = (*i)->mapToParent((*i)->getBoundingRect());
         if ((*i)->isVisible() && bb.contains(p))
         {
-            if ((*i) != d->currentChild)
+            boost::shared_ptr<Widget> child = d->currentChild.lock();
+            if ((*i) != child)
             {
-                if (d->currentChild)
-                    d->currentChild->action(Action(d->currentChild, Action::MOUSE_LEAVE));
+                if (child)
+                    child->action(Action(child, Action::MOUSE_LEAVE));
                 d->currentChild = *i;
-                d->currentChild->action(Action(d->currentChild, Action::MOUSE_ENTER));
+                (*i)->action(Action((*i), Action::MOUSE_ENTER));
             }
             (*i)->mouseMove((*i)->mapFromParent(p));
             unlock();
             return;
         }
     }
-    if (d->currentChild)
-        d->currentChild->action(Action(d->currentChild, Action::MOUSE_LEAVE));
-    d->currentChild = 0;
+    if (boost::shared_ptr<Widget> child = d->currentChild.lock())
+        child->action(Action(child, Action::MOUSE_LEAVE));
+    d->currentChild = boost::weak_ptr<Widget>();
     unlock();
 }
 
@@ -110,7 +110,7 @@ Rect Widget::getBoundingRect() const
     r.y = 0;
     r.width = d->width;
     r.height = d->height;
-    for (std::list<Widget*>::const_reverse_iterator i = d->childWidgets.rbegin(); i != d->childWidgets.rend(); i++)
+    for (std::list<boost::shared_ptr<Widget> >::const_reverse_iterator i = d->childWidgets.rbegin(); i != d->childWidgets.rend(); i++)
     {
         Rect childRect = (*i)->getBoundingRect();
         Vector position = (*i)->position();
@@ -127,13 +127,14 @@ void Widget::mouseMove(float x, float y)
     mouseMove(Vector(x, y));
 }
 
-void Widget::addWidget(Widget* w)
+void Widget::addWidget(boost::shared_ptr<Widget> w)
 {
     RANGERS_D(Widget);
     lock();
-    if (w->parent() != this)
-        addChild(w);
-    for (std::list<Widget*>::iterator i = d->childWidgets.begin(); i != d->childWidgets.end(); i++)
+
+    addChild(w);
+
+    for (std::list<boost::shared_ptr<Widget> >::iterator i = d->childWidgets.begin(); i != d->childWidgets.end(); i++)
     {
         if ((*i)->layer() > w->layer())
         {
@@ -146,18 +147,18 @@ void Widget::addWidget(Widget* w)
     unlock();
 }
 
-void Widget::removeWidget(Widget* w)
+void Widget::removeWidget(boost::shared_ptr<Widget> w)
 {
     RANGERS_D(Widget);
     lock();
     d->childWidgets.remove(w);
     removeChild(w);
-    if (d->currentChild == w)
-        d->currentChild = 0;
+    if (d->currentChild.lock() == w)
+        d->currentChild = boost::weak_ptr<Widget>();
     unlock();
 }
 
-std::list<Widget *> Widget::childWidgets() const
+std::list<boost::shared_ptr<Widget> > Widget::childWidgets() const
 {
     RANGERS_D(const Widget);
     return d->childWidgets;
@@ -205,7 +206,7 @@ int Widget::maxHeight() const
     return -1;
 }
 
-void Widget::addListener(ActionListener* listener)
+void Widget::addListener(boost::shared_ptr<ActionListener> listener)
 {
     RANGERS_D(Widget);
     lock();
@@ -213,7 +214,7 @@ void Widget::addListener(ActionListener* listener)
     unlock();
 }
 
-void Widget::removeListener(ActionListener* listener)
+void Widget::removeListener(boost::shared_ptr<ActionListener> listener)
 {
     RANGERS_D(Widget);
     lock();
@@ -221,43 +222,45 @@ void Widget::removeListener(ActionListener* listener)
     unlock();
 }
 
-void Widget::action(const Action& action)
+void Widget::action(const Action& a)
 {
     RANGERS_D(Widget);
     lock();
-    if (action.source() != this)
+    if (a.source().get() != this)
     {
         unlock();
         return;
     }
-    switch (action.type())
+    boost::shared_ptr<Widget> currentChild = d->currentChild.lock();
+    switch (a.type())
     {
     case Action::MOUSE_ENTER:
         d->leftMouseButtonPressed = false;
         break;
 
     case Action::MOUSE_LEAVE:
-        if (d->currentChild)
-            d->currentChild->action(Action(d->currentChild, Action::MOUSE_LEAVE));
-        d->currentChild = 0;
+        if (currentChild)
+            currentChild->action(Action(currentChild, Action::MOUSE_LEAVE));
+
+        d->currentChild = boost::weak_ptr<Widget>();
         d->leftMouseButtonPressed = false;
         break;
 
     case Action::MOUSE_DOWN:
-        if (boost::get<uint8_t>(action.argument()) == SDL_BUTTON_LEFT)
+        if (boost::get<uint8_t>(a.argument()) == SDL_BUTTON_LEFT)
             d->leftMouseButtonPressed = true;
-        if (d->currentChild)
-            d->currentChild->action(Action(d->currentChild, Action::MOUSE_DOWN, action.argument()));
+        if (currentChild)
+            currentChild->action(Action(currentChild, Action::MOUSE_DOWN, a.argument()));
         break;
 
     case Action::MOUSE_UP:
-        if (d->leftMouseButtonPressed && (boost::get<uint8_t>(action.argument()) == SDL_BUTTON_LEFT))
+        if (d->leftMouseButtonPressed && (boost::get<uint8_t>(a.argument()) == SDL_BUTTON_LEFT))
         {
             d->leftMouseButtonPressed = false;
-            this->action(Action(this, Action::MOUSE_CLICK, action.argument()));
+            action(Action(a.source(), Action::MOUSE_CLICK, a.argument()));
         }
-        if (d->currentChild)
-            d->currentChild->action(Action(d->currentChild, Action::MOUSE_UP, action.argument()));
+        if (currentChild)
+            currentChild->action(Action(currentChild, Action::MOUSE_UP, a.argument()));
         break;
     }
     if (!d->listeners.size())
@@ -265,9 +268,13 @@ void Widget::action(const Action& action)
         unlock();
         return;
     }
-    std::list<ActionListener*>::iterator end = d->listeners.end();
-    for (std::list<ActionListener*>::iterator i = d->listeners.begin(); i != end; ++i)
-        (*i)->actionPerformed(action);
+    std::list<boost::shared_ptr<ActionListener> > listeners = d->listeners;
+    std::list<boost::shared_ptr<ActionListener> >::iterator end = listeners.end();
+    for (std::list<boost::shared_ptr<ActionListener> >::iterator i = listeners.begin(); i != end; ++i)
+    {
+        boost::shared_ptr<ActionListener> l = *i;
+        l->actionPerformed(a);
+    }
     unlock();
 }
 

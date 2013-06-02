@@ -22,11 +22,11 @@
 
 namespace Rangers
 {
-SpriteWidgetPrivate::SpriteWidgetPrivate(): WidgetPrivate(), sprite(0)
+SpriteWidgetPrivate::SpriteWidgetPrivate(): WidgetPrivate()
 {
 }
 
-SpriteWidget::SpriteWidget(Sprite *sprite, Widget* parent): Widget(*(new SpriteWidgetPrivate()), parent)
+SpriteWidget::SpriteWidget(boost::shared_ptr<Sprite> sprite, Widget* parent): Widget(*(new SpriteWidgetPrivate()), parent)
 {
     RANGERS_D(SpriteWidget);
     d->sprite = sprite;
@@ -42,7 +42,6 @@ SpriteWidget::SpriteWidget(SpriteWidgetPrivate &p, Widget *parent): Widget(p, pa
 SpriteWidget::~SpriteWidget()
 {
     RANGERS_D(SpriteWidget);
-    delete d->sprite;
 }
 
 void SpriteWidget::draw() const

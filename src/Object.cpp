@@ -38,7 +38,6 @@ ObjectPrivate::ObjectPrivate()
     rotation = 0;
     color = 0xffffffff;
     needUpdate = false;
-    parent = 0;
     position.x = 0.0f;
     position.y = 0.0f;
     layer = 0;
@@ -48,43 +47,32 @@ Object::Object(Object *parent): m_d(new ObjectPrivate())
 {
     RANGERS_D(Object);
 
-    if (parent)
-        parent->addChild(this);
+    //if (parent)
+    //    parent->addChild(this);
     d->m_q = this;
+    d->parent = parent;
 }
 
-Object::Object(const Vector& pos, float rot, int layer, Object *parent): m_d(new ObjectPrivate())
-{
-    RANGERS_D(Object);
-    d->layer = layer;
-    d->position = pos;
-    d->rotation = rot;
-
-    if (parent)
-        parent->addChild(this);
-    d->m_q = this;
-}
-
-Object::Object(ObjectPrivate &dd, Object* parent): m_d(&dd)
+Object::Object(ObjectPrivate &dd, Object *parent): m_d(&dd)
 {
     RANGERS_D(Object);
 
-    if (parent)
-        parent->addChild(this);
+    //if (parent)
+    //    parent->addChild(this);
     d->m_q = this;
+    d->parent = parent;
 }
 
 Object::~Object()
 {
     RANGERS_D(Object);
-    for (std::list<Object*>::iterator i = d->children.begin(); i != d->children.end(); i++)
-        if ((*i)->parent() == this)
-            (*i)->setParent(0);
-
-    if (d->parent)
-        d->parent->removeChild(this);
 
     Engine::instance().unmarkToUpdate(this);
+
+    for (std::list<boost::shared_ptr<Object> >::iterator i = d->children.begin(); i != d->children.end(); i++)
+    {
+        (*i)->setParent(0);
+    }
 
     delete d;
 }
@@ -138,20 +126,20 @@ Vector Object::mapToParent(const Vector& v) const
 Vector Object::mapFromGlobal(const Vector& v) const
 {
     RANGERS_D(const Object);
-    std::stack<const Object*> objects;
-    objects.push(this);
+    std::stack<Object *> objects;
+    //objects.push(this);
     Object *currentParent = d->parent;
-    while (currentParent != 0)
+    while (currentParent)
     {
         objects.push(currentParent);
         currentParent = currentParent->parent();
     }
-    int size = objects.size();
     Vector result = v;
     for (; !objects.empty(); objects.pop())
     {
         result = objects.top()->mapFromParent(result);
     }
+    result = mapFromParent(result);
     return result;
 }
 
@@ -176,7 +164,7 @@ Vector Object::mapToGlobal(const Vector& v) const
     RANGERS_D(const Object);
     Vector result = mapToParent(v);
     Object *currentParent = d->parent;
-    while (currentParent != 0)
+    while (currentParent)
     {
         result = currentParent->mapToParent(result);
         currentParent = currentParent->parent();
@@ -346,12 +334,25 @@ uint32_t Object::color() const
     return d->color;
 }
 
-void Object::addChild(Object* object)
+void Object::addChild(boost::shared_ptr<Object> object)
 {
     lock();
     RANGERS_D(Object);
+
+    if (!object)
+        return;
+
+    //FIXME: Debug
+    if (object->parent() && object->parent() != this)
+    {
+        Log::debug() << "Object::addChild(): object already has a parent!";
+        return;
+    }
+
+    //TODO: Check dublicates
+
     object->setParent(this);
-    for (std::list<Object*>::iterator i = d->children.begin(); i != d->children.end(); i++)
+    for (std::list<boost::shared_ptr<Object> >::iterator i = d->children.begin(); i != d->children.end(); i++)
     {
         if ((*i)->layer() > object->layer())
         {
@@ -372,10 +373,21 @@ void Object::setParent(Object *parent)
     unlock();
 }
 
-void Object::removeChild(Object* object)
+void Object::removeChild(boost::shared_ptr<Object> object)
 {
     lock();
     RANGERS_D(Object);
+
+    if (!object)
+        return;
+
+    //FIXME: Debug
+    if (object->parent() != this)
+    {
+        Log::debug() << "Object::removeChild(): parent mismatch!";
+        return;
+    }
+
     object->setParent(0);
     d->children.remove(object);
     unlock();
@@ -386,14 +398,40 @@ void Object::setLayer(int layer)
     lock();
     RANGERS_D(Object);
     d->layer = layer;
-    if (Object *parent = d->parent)
+    if (d->parent)
     {
-        parent->removeChild(this);
-        parent->addChild(this);
+        boost::shared_ptr<Object> self = d->parent->getChild(this);
+        if (!self)
+        {
+            Log::debug() << "Object::setLayer(): Invalid parent!";
+            unlock();
+            return;
+        }
+        d->parent->removeChild(self);
+        d->parent->addChild(self);
     }
     unlock();
 }
 
+boost::shared_ptr<Object> Object::getChild(Object *ptr) const
+{
+    RANGERS_D(const Object);
+
+    if (!ptr)
+        return boost::shared_ptr<Object>();
+
+    lock();
+    for (std::list<boost::shared_ptr<Object> >::const_iterator i = d->children.begin(); i != d->children.end(); i++)
+    {
+        if ((*i).get() == ptr)
+        {
+            return *i;
+            unlock();
+        }
+    }
+    unlock();
+    return boost::shared_ptr<Object>();
+}
 
 void Object::markToUpdate()
 {

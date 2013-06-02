@@ -39,7 +39,7 @@ public:
     int color;
     bool needUpdate;
     Object *parent;
-    std::list<Object*> children;
+    std::list<boost::shared_ptr<Object> > children;
     Vector position;
     float rotation;
 

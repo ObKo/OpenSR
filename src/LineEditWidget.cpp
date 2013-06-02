@@ -31,33 +31,35 @@
 namespace Rangers
 {
 
-void LineEditWidgetPrivate::actionPerformed(const Action &action)
+void LineEditWidgetPrivate::LineEditWidgetListener::actionPerformed(const Action &action)
 {
-    RANGERS_Q(LineEditWidget);
+    boost::shared_ptr<LineEditWidget> q = boost::static_pointer_cast<LineEditWidget>(action.source());
+    LineEditWidgetPrivate *d = q->d_func();
+
     switch (action.type())
     {
     case Action::MOUSE_CLICK:
-        position = label->font()->maxChars(text.begin() + stringOffset, text.end(), mousePosition.x/* - style.contentRect.x*/);
-        updateText();
+        d->position = d->label->font()->maxChars(d->text.begin() + d->stringOffset, d->text.end(),
+                      d->mousePosition.x/* - style.contentRect.x*/);
+        d->updateText();
         q->markToUpdate();
-        Engine::instance().focusWidget(q);
+        Engine::instance().focusWidget(q.get());
         break;
     case Action::KEY_PRESSED:
-        keyPressed(boost::get<SDL_keysym>(action.argument()));
+        d->keyPressed(boost::get<SDL_keysym>(action.argument()));
         break;
     }
 }
 
 LineEditWidgetPrivate::LineEditWidgetPrivate()
 {
-    background = 0;
     cursorVertices = 0;
     cursorBuffer = 0;
     position = 0;
     cursorVisible = false;
     cursorTime = 0;
     stringOffset = 0;
-    label = 0;
+    lineEditListener = boost::shared_ptr<LineEditWidgetListener>(new LineEditWidgetListener());
 }
 
 void LineEditWidget::draw() const
@@ -98,7 +100,10 @@ LineEditWidget::LineEditWidget(float w, float h, boost::shared_ptr< Font > font,
     RANGERS_D(LineEditWidget);
     if (!font)
         font = Engine::instance().coreFont();
-    d->label = new Label(L"", this, font, POSITION_X_LEFT, POSITION_Y_TOP);
+
+    d->label = boost::shared_ptr<Label>(new Label(L"", 0, font, POSITION_X_LEFT, POSITION_Y_TOP));
+    addChild(d->label);
+
     d->height = h > font->size() + 4 ? h : font->size() + 4;
     d->width = w;
     d->style.color = 0xffffffff;
@@ -125,21 +130,27 @@ void LineEditWidgetPrivate::init()
     RANGERS_Q(LineEditWidget);
     if (style.background.type == ResourceDescriptor::NINEPATCH)
     {
-        background = new NinePatch(boost::get<NinePatchDescriptor>(style.background.resource), q);
+        background = boost::shared_ptr<Sprite>(new NinePatch(boost::get<NinePatchDescriptor>(style.background.resource)));
+        q->addChild(background);
     }
     else if (style.background.type == ResourceDescriptor::SPRITE)
     {
-        background = new Sprite(boost::get<TextureRegionDescriptor>(style.background.resource), q);
+        background = boost::shared_ptr<Sprite>(new Sprite(boost::get<TextureRegionDescriptor>(style.background.resource)));
+        q->addChild(background);
     }
     if ((style.font.path != L"") && (style.font.size > 0))
     {
-        label = new Label(text, q, ResourceManager::instance().loadFont(style.font.path, style.font.size));
+        label = boost::shared_ptr<Label>(new Label(text, 0, ResourceManager::instance().loadFont(style.font.path, style.font.size)));
         label->setColor(((style.color >> 24) & 0xff) / 255.0f, ((style.color >> 16) & 0xff) / 255.0f, ((style.color >> 8) & 0xff) / 255.0f, ((style.color) & 0xff) / 255.0f);
+        q->addChild(label);
     }
     else
     {
         if (!label)
-            label = new Label(q);
+        {
+            label = boost::shared_ptr<Label>(new Label());
+            q->addChild(label);
+        }
     }
     if (style.contentRect.valid() && label->font() && background)
     {
@@ -163,7 +174,7 @@ void LineEditWidgetPrivate::init()
     cursorBuffer = 0;
     cursorVertices = 0;
     stringOffset = 0;
-    q->addListener(this);
+    q->addListener(lineEditListener);
     q->markToUpdate();
 }
 
@@ -219,11 +230,11 @@ void LineEditWidgetPrivate::updateText()
 LineEditWidget::~LineEditWidget()
 {
     RANGERS_D(LineEditWidget);
-    if (d->background)
+    /*if (d->background)
         delete d->background;
 
     if (d->label)
-        delete d->label;
+        delete d->label;*/
 }
 
 void LineEditWidget::processMain()

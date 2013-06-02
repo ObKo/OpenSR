@@ -27,21 +27,30 @@
 namespace Rangers
 {
 class WidgetNode;
-class ScrollAreaPrivate: public WidgetPrivate, ActionListener
+class ScrollAreaPrivate: public WidgetPrivate
 {
     RANGERS_DECLARE_PUBLIC(ScrollArea)
 public:
     ScrollAreaPrivate();
 
-    virtual void actionPerformed(const Action &action);
+    class ScrollAreaListener: public ActionListener
+    {
+    public:
+        ScrollAreaListener(ScrollArea *owner);
+        virtual void actionPerformed(const Action &action);
+    private:
+        ScrollArea *scrollArea;
+    };
 
-    Button *top, *bottom, *left, *right;
-    Button *vScroll, *hScroll;
+    boost::shared_ptr<Button> top, bottom, left, right;
+    boost::shared_ptr<Button> vScroll, hScroll;
     float vSize, vPosition;
     float hSize, hPosition;
-    WidgetNode *node;
+    boost::shared_ptr<WidgetNode> node;
     float scrollStart;
     Vector lastMousePosition;
+    boost::shared_ptr<ScrollAreaListener> scrollAreaListener;
+
     enum {NONE, VERTICAL, HORIZONTAL} scrollDrag;
     void updateScrollPosition();
 };

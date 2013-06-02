@@ -17,6 +17,7 @@
 */
 
 #include "libRanger.h"
+#include <cstring>
 #include <png.h>
 
 namespace Rangers

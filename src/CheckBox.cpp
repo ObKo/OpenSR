@@ -30,39 +30,35 @@ namespace Rangers
 CheckBoxPrivate::CheckBoxPrivate()
 {
     checked = false;
-    normal = 0;
-    checkedNormal = 0;
-    hovered = 0;
-    checkedHovered = 0;
-    sprite = 0;
-    label = 0;
+    checkBoxListener = boost::shared_ptr<CheckBoxListener>(new CheckBoxListener());
 }
 
-void CheckBoxPrivate::actionPerformed(const Action& action)
+void CheckBoxPrivate::CheckBoxListener::actionPerformed(const Action& action)
 {
-    RANGERS_Q(CheckBox);
+    boost::shared_ptr<CheckBox> q = boost::static_pointer_cast<CheckBox>(action.source());
+    CheckBoxPrivate *d = q->d_func();
     switch (action.type())
     {
     case Action::MOUSE_ENTER:
-        if (hovered && checkedHovered)
+        if (d->hovered && d->checkedHovered)
         {
-            if (checked)
-                sprite = checkedHovered;
+            if (d->checked)
+                d->sprite = d->checkedHovered;
             else
-                sprite = hovered;
+                d->sprite = d->hovered;
         }
         break;
 
     case Action::MOUSE_LEAVE:
-        if (checked)
-            sprite = checkedNormal;
+        if (d->checked)
+            d->sprite = d->checkedNormal;
         else
-            sprite = normal;
+            d->sprite = d->normal;
         break;
 
     case Action::MOUSE_CLICK:
-        q->setChecked(!checked);
-        q->action(Action(q, Action::CHECKBOX_TOGGLED, Action::Argument(checked)));
+        q->setChecked(!d->checked);
+        q->action(Action(q, Action::CHECKBOX_TOGGLED, Action::Argument(d->checked)));
         break;
     }
 }
@@ -72,45 +68,70 @@ CheckBox::CheckBox(const CheckBoxStyle& style, const std::wstring &text, Widget 
     RANGERS_D(CheckBox);
     d->style = style;
     if (d->style.normal.type == ResourceDescriptor::NINEPATCH)
-        d->normal = new NinePatch(boost::get<NinePatchDescriptor>(d->style.normal.resource), this);
+    {
+        d->normal = boost::shared_ptr<Sprite>(new NinePatch(boost::get<NinePatchDescriptor>(d->style.normal.resource)));
+        addChild(d->normal);
+    }
     else if (d->style.normal.type == ResourceDescriptor::SPRITE)
-        d->normal = new Sprite(boost::get<TextureRegionDescriptor>(d->style.normal.resource), this);
+    {
+        d->normal = boost::shared_ptr<Sprite>(new Sprite(boost::get<TextureRegionDescriptor>(d->style.normal.resource)));
+        addChild(d->normal);
+    }
 
     if (d->style.checkedNormal.type == ResourceDescriptor::NINEPATCH)
-        d->checkedNormal = new NinePatch(boost::get<NinePatchDescriptor>(d->style.checkedNormal.resource), this);
-    else if (d->style.normal.type == ResourceDescriptor::SPRITE)
-        d->checkedNormal = new Sprite(boost::get<TextureRegionDescriptor>(d->style.checkedNormal.resource), this);
+    {
+        d->checkedNormal = boost::shared_ptr<Sprite>(new NinePatch(boost::get<NinePatchDescriptor>(d->style.checkedNormal.resource)));
+        addChild(d->checkedNormal);
+    }
+    else if (d->style.checkedNormal.type == ResourceDescriptor::SPRITE)
+    {
+        d->checkedNormal = boost::shared_ptr<Sprite>(new Sprite(boost::get<TextureRegionDescriptor>(d->style.checkedNormal.resource)));
+        addChild(d->checkedNormal);
+    }
 
     if (d->style.hovered.type == ResourceDescriptor::NINEPATCH)
-        d->hovered = new NinePatch(boost::get<NinePatchDescriptor>(d->style.hovered.resource), this);
-    else if (d->style.normal.type == ResourceDescriptor::SPRITE)
-        d->hovered = new Sprite(boost::get<TextureRegionDescriptor>(d->style.hovered.resource), this);
+    {
+        d->hovered = boost::shared_ptr<Sprite>(new NinePatch(boost::get<NinePatchDescriptor>(d->style.hovered.resource)));
+        addChild(d->hovered);
+    }
+    else if (d->style.hovered.type == ResourceDescriptor::SPRITE)
+    {
+        d->hovered = boost::shared_ptr<Sprite>(new Sprite(boost::get<TextureRegionDescriptor>(d->style.hovered.resource)));
+        addChild(d->hovered);
+    }
 
     if (d->style.checkedHovered.type == ResourceDescriptor::NINEPATCH)
-        d->checkedHovered = new NinePatch(boost::get<NinePatchDescriptor>(d->style.checkedHovered.resource), this);
-    else if (d->style.normal.type == ResourceDescriptor::SPRITE)
-        d->checkedHovered = new Sprite(boost::get<TextureRegionDescriptor>(d->style.checkedHovered.resource), this);
+    {
+        d->checkedHovered = boost::shared_ptr<Sprite>(new NinePatch(boost::get<NinePatchDescriptor>(d->style.checkedHovered.resource)));
+        addChild(d->checkedHovered);
+    }
+    else if (d->style.checkedHovered.type == ResourceDescriptor::SPRITE)
+    {
+        d->checkedHovered = boost::shared_ptr<Sprite>(new Sprite(boost::get<TextureRegionDescriptor>(d->style.checkedHovered.resource)));
+        addChild(d->checkedHovered);
+    }
 
     if ((d->style.font.path != L"") && (d->style.font.size > 0))
     {
-        d->label = new Label(text, this, ResourceManager::instance().loadFont(d->style.font.path, d->style.font.size));
+        d->label = boost::shared_ptr<Label>(new Label(text, 0, ResourceManager::instance().loadFont(d->style.font.path, d->style.font.size)));
     }
     else
     {
-        d->label = new Label(this);
+        d->label = boost::shared_ptr<Label>(new Label());
     }
     d->label->setOrigin(POSITION_X_LEFT, POSITION_Y_TOP);
+    addChild(d->label);
     setColor(d->style.color);
     d->sprite = d->normal;
 
-    addListener(d);
+    addListener(d->checkBoxListener);
     markToUpdate();
 }
 
 CheckBox::~CheckBox()
 {
     RANGERS_D(CheckBox);
-    if (d->normal)
+    /*if (d->normal)
         delete d->normal;
     if (d->checkedNormal)
         delete d->checkedNormal;
@@ -118,7 +139,7 @@ CheckBox::~CheckBox()
         delete d->hovered;
     if (d->checkedHovered)
         delete d->checkedHovered;
-    delete d->label;
+    delete d->label;*/
 }
 
 void CheckBox::setColor(uint32_t color)

@@ -40,7 +40,7 @@ Sprite::Sprite(Object *parent): Object(*(new SpritePrivate), parent)
 {
 }
 
-Sprite::Sprite(boost::shared_ptr<Texture> texture,  Object *parent, TextureScaling  ts, SpriteXOrigin xpos, SpriteYOrigin ypos): Object(*(new SpritePrivate), parent)
+Sprite::Sprite(boost::shared_ptr<Texture> texture, Object *parent, TextureScaling  ts, SpriteXOrigin xpos, SpriteYOrigin ypos): Object(*(new SpritePrivate), parent)
 {
     RANGERS_D(Sprite);
 
@@ -56,7 +56,7 @@ Sprite::Sprite(boost::shared_ptr<Texture> texture,  Object *parent, TextureScali
     markToUpdate();
 }
 
-Sprite::Sprite(const std::wstring& texture,  Object *parent, TextureScaling  ts, SpriteXOrigin xpos, SpriteYOrigin ypos): Object(*(new SpritePrivate), parent)
+Sprite::Sprite(const std::wstring& texture, Object *parent, TextureScaling  ts, SpriteXOrigin xpos, SpriteYOrigin ypos): Object(*(new SpritePrivate), parent)
 {
     RANGERS_D(Sprite);
     d->scaling = ts;

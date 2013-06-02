@@ -91,8 +91,12 @@ ConsoleWidgetPrivate::ConsoleWidgetPrivate()
     texture = 0;
     consoleLines = 0;
     historyPosition = -1;
-    lineEdit = 0;
-    logLabel = 0;
+    listener = boost::shared_ptr<ConsoleLineEditListener>(new ConsoleLineEditListener());
+}
+
+ConsoleWidgetPrivate::~ConsoleWidgetPrivate()
+{
+    Log::debug() << "C++ destroyed";
 }
 
 ConsoleWidget::ConsoleWidget(float w, float h, Widget* parent): Widget(*(new ConsoleWidgetPrivate()), parent)
@@ -101,13 +105,17 @@ ConsoleWidget::ConsoleWidget(float w, float h, Widget* parent): Widget(*(new Con
     d->width = w;
     d->height = h;
     int editSize = Engine::instance().serviceFont()->size() + 2;
-    d->lineEdit = new LineEditWidget(w - 8, Engine::instance().serviceFont()->size(), Engine::instance().serviceFont(), this);
-    d->logLabel = new ColorLabel("", this, Engine::instance().serviceFont(), POSITION_X_LEFT, POSITION_Y_TOP);
+    d->lineEdit = boost::shared_ptr<LineEditWidget>(new LineEditWidget(w - 8, Engine::instance().serviceFont()->size(), Engine::instance().serviceFont()));
+    d->logLabel = boost::shared_ptr<ColorLabel>(new ColorLabel("", 0, Engine::instance().serviceFont(), POSITION_X_LEFT, POSITION_Y_TOP));
     d->logLabel->setPosition(4, 4);
     d->logLabel->setFixedSize(w - 8, h - editSize - 8);
     d->lineEdit->setPosition(4, h - editSize);
     d->consoleLines = (h - editSize - 8) / Engine::instance().serviceFont()->size();
-    d->lineEdit->addListener(&d->listener);
+    d->lineEdit->addListener(d->listener);
+
+    addWidget(d->lineEdit);
+    addChild(d->logLabel);
+
     markToUpdate();
 }
 
@@ -123,8 +131,8 @@ ConsoleWidget::~ConsoleWidget()
 {
     RANGERS_D(ConsoleWidget);
 
-    delete d->lineEdit;
-    delete d->logLabel;
+    //delete d->lineEdit;
+    //delete d->logLabel;
 }
 
 void ConsoleWidget::draw() const

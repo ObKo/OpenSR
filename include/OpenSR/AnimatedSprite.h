@@ -39,9 +39,9 @@ class RANGERS_ENGINE_API AnimatedSprite: public Sprite
 public:
     AnimatedSprite(Object *parent = 0);
     //! Create sprite from animated texture
-    AnimatedSprite(boost::shared_ptr<AnimatedTexture> texture,  Object *parent = 0);
+    AnimatedSprite(boost::shared_ptr<AnimatedTexture> texture, Object *parent = 0);
     //! Create sprite from resource name
-    AnimatedSprite(const std::wstring& animation,  Object *parent = 0);
+    AnimatedSprite(const std::wstring& animation, Object *parent = 0);
 
     virtual void processLogic(int dt);
     virtual void draw() const;

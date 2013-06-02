@@ -30,7 +30,6 @@ class RANGERS_ENGINE_API Object
     RANGERS_DECLARE_PRIVATE(Object)
 public:
     Object(Object *parent = 0);
-    Object(const Vector& pos, float rot, int layer = 0, Object *parent = 0);
 
     virtual ~Object();
 
@@ -48,8 +47,9 @@ public:
 
     virtual void setColor(uint32_t color);
 
-    void addChild(Object *object);
-    void removeChild(Object *object);
+    void addChild(boost::shared_ptr<Object> object);
+    void removeChild(boost::shared_ptr<Object> object);
+
     void setParent(Object *parent);
 
     Vector position() const;
@@ -72,6 +72,8 @@ public:
     Rect mapToParent(const Rect& r) const;
     Rect mapToGlobal(const Rect& r) const;
     Rect mapToScreen(const Rect& r) const;
+
+    boost::shared_ptr<Object> getChild(Object *ptr) const;
 
 protected:
     Object(ObjectPrivate &p, Object *parent = 0);

@@ -47,9 +47,9 @@ void exportAction()
     .def(init<uint8_t>());
 
     class_<Action>("Action", init<>())
-    .def(init<Widget*, Action::Type, const Action::Argument&>()[with_custodian_and_ward<1, 2>()])
-    .def(init<Widget*, Action::Type>()[with_custodian_and_ward<1, 2>()])
-    .def("source", &Action::source, return_internal_reference<>())
+    .def(init<boost::shared_ptr<Widget>, Action::Type, const Action::Argument&>()[with_custodian_and_ward<1, 2>()])
+    .def(init<boost::shared_ptr<Widget>, Action::Type>()[with_custodian_and_ward<1, 2>()])
+    .def("source", &Action::source)
     .def("type", &Action::type)
     .def("argument", &Action::argument)
     .def("stringArgument", &Action::stringArgument)

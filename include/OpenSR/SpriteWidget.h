@@ -29,7 +29,7 @@ class RANGERS_ENGINE_API SpriteWidget: public Widget
 {
     RANGERS_DECLARE_PRIVATE(SpriteWidget)
 public:
-    SpriteWidget(Sprite *sprite, Widget *parent = 0);
+    SpriteWidget(boost::shared_ptr<Sprite> sprite, Widget *parent = 0);
     virtual ~SpriteWidget();
 
     virtual void draw() const;

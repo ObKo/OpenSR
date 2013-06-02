@@ -31,7 +31,7 @@
 
 namespace Rangers
 {
-Action::Action(): m_source(0), m_type(NONE)
+Action::Action(): m_type(NONE)
 {
 }
 
@@ -40,14 +40,14 @@ Action::Action(): m_source(0), m_type(NONE)
  * \param type action type
  * \param arg action argument
  */
-Action::Action(Widget *source, Action::Type type, const Action::Argument& arg): m_source(source), m_type(type), m_argument(arg)
+Action::Action(boost::shared_ptr<Widget> source, Action::Type type, const Action::Argument& arg): m_source(source), m_type(type), m_argument(arg)
 {
 }
 
 /*!
  * \returns source widget
  */
-Widget* Action::source() const
+boost::shared_ptr<Widget> Action::source() const
 {
     return m_source;
 }

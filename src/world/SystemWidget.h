@@ -56,17 +56,17 @@ private:
     class SystemWidgetListener;
 
     boost::shared_ptr<SolarSystem> m_system;
-    std::list<SystemPlanetWidget*> m_planetWidgets;
+    std::list<boost::shared_ptr<SystemPlanetWidget> > m_planetWidgets;
 
-    Sprite *m_bgSprite;
-    SpriteWidget *m_starWidget;
+    boost::shared_ptr<Sprite> m_bgSprite;
+    boost::shared_ptr<SpriteWidget> m_starWidget;
     float m_xOffset;
     float m_yOffset;
     MoveDirection m_moveDirection;
 
-    SpaceInfoWidget *m_infoWidget;
-    SystemWidgetListener *m_actionListener;
-    WidgetNode *m_node;
+    boost::shared_ptr<SpaceInfoWidget> m_infoWidget;
+    boost::shared_ptr<SystemWidgetListener> m_actionListener;
+    boost::shared_ptr<WidgetNode> m_node;
 };
 }
 }

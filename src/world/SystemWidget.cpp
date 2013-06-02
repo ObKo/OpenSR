@@ -56,7 +56,7 @@ public:
         }
         if (action.type() == Action::MOUSE_ENTER)
         {
-            SystemPlanetWidget *w = dynamic_cast<SystemPlanetWidget*>(action.source());
+            boost::shared_ptr<SystemPlanetWidget> w = boost::dynamic_pointer_cast<SystemPlanetWidget>(action.source());
             if (w)
             {
                 m_parent->m_infoWidget->showPlanet(w->planet());
@@ -75,39 +75,35 @@ private:
 };
 
 SystemWidget::SystemWidget(boost::shared_ptr<SolarSystem> system, Widget* parent): Widget(parent),
-    m_xOffset(0), m_yOffset(0), m_bgSprite(0), m_starWidget(0), m_infoWidget(0), m_node(0), m_moveDirection(NONE)
+    m_xOffset(0), m_yOffset(0), m_moveDirection(NONE)
 {
     setWidth(Engine::instance().screenWidth());
     setHeight(Engine::instance().screenHeight());
     setPosition(0, 0);
 
-    m_actionListener = new SystemWidgetListener(this);
+    m_actionListener = boost::shared_ptr<SystemWidgetListener>(new SystemWidgetListener(this));
 
-    m_node = new WidgetNode(this);
+    m_node = boost::shared_ptr<WidgetNode>(new WidgetNode());
+    addWidget(m_node);
 
-    m_infoWidget = new SpaceInfoWidget(WorldManager::instance().styleManager().infoWidgetStyle(), this);
+    m_infoWidget = boost::shared_ptr<SpaceInfoWidget>(new SpaceInfoWidget(WorldManager::instance().styleManager().infoWidgetStyle()));
     m_infoWidget->setPosition(10, 10);
     m_infoWidget->setWidth(250);
     m_infoWidget->setHeight(200);
     m_infoWidget->setVisible(false);
+    addWidget(m_infoWidget);
 
     setSystem(system);
 }
 
 SystemWidget::~SystemWidget()
 {
-    std::list<SystemPlanetWidget*>::const_iterator end = m_planetWidgets.end();
-    for (std::list<SystemPlanetWidget*>::const_iterator i = m_planetWidgets.begin(); i != end; ++i)
+    std::list<boost::shared_ptr<SystemPlanetWidget> >::const_iterator end = m_planetWidgets.end();
+    for (std::list<boost::shared_ptr<SystemPlanetWidget> >::const_iterator i = m_planetWidgets.begin(); i != end; ++i)
     {
-        delete *i;
+        removeWidget(*i);
     }
     m_planetWidgets.clear();
-
-    delete m_starWidget;
-    delete m_bgSprite;
-    delete m_infoWidget;
-    delete m_actionListener;
-    delete m_node;
 }
 
 void SystemWidget::processLogic(int dt)
@@ -157,17 +153,17 @@ void SystemWidget::setSystem(boost::shared_ptr< SolarSystem > system)
 {
     if (!system || system != m_system)
     {
-        delete m_bgSprite;
-        delete m_starWidget;
-        m_starWidget = 0;
-        m_bgSprite = 0;
+        removeWidget(m_starWidget);
+        removeChild(m_bgSprite);
+        m_starWidget = boost::shared_ptr<SpriteWidget>();
+        m_bgSprite = boost::shared_ptr<Sprite>();
     }
     m_system = system;
 
-    std::list<SystemPlanetWidget*>::const_iterator wend = m_planetWidgets.end();
-    for (std::list<SystemPlanetWidget*>::const_iterator i = m_planetWidgets.begin(); i != wend; ++i)
+    std::list<boost::shared_ptr<SystemPlanetWidget> >::const_iterator wend = m_planetWidgets.end();
+    for (std::list<boost::shared_ptr<SystemPlanetWidget> >::const_iterator i = m_planetWidgets.begin(); i != wend; ++i)
     {
-        delete *i;
+        removeWidget(*i);
     }
     m_planetWidgets.clear();
 
@@ -182,18 +178,22 @@ void SystemWidget::setSystem(boost::shared_ptr< SolarSystem > system)
         boost::shared_ptr<Planet> planet = boost::dynamic_pointer_cast<Planet>(*i);
         if (planet)
         {
-            SystemPlanetWidget *w = new SystemPlanetWidget(planet, m_node);
+            boost::shared_ptr<SystemPlanetWidget> w = boost::shared_ptr<SystemPlanetWidget>(new SystemPlanetWidget(planet));
             w->addListener(m_actionListener);
+
             m_planetWidgets.push_back(w);
+            m_node->addWidget(w);
         }
     }
 
-    m_starWidget = new SpriteWidget(new AnimatedSprite(L"DATA/Star/Star00.gai"), m_node);
+    m_starWidget = boost::shared_ptr<SpriteWidget>(new SpriteWidget(boost::shared_ptr<Sprite>(new AnimatedSprite(L"DATA/Star/Star00.gai"))));
     m_starWidget->setPosition(-m_starWidget->width() / 2, -m_starWidget->height() / 2);
     m_starWidget->addListener(m_actionListener);
+    m_node->addWidget(m_starWidget);
 
-    m_bgSprite = new AnimatedSprite(L"DATA/BGObj/bg00.gai", this);
+    m_bgSprite = boost::shared_ptr<Sprite>(new AnimatedSprite(L"DATA/BGObj/bg00.gai"));
     m_bgSprite->setPosition(m_xOffset / 10 - (m_bgSprite->width() - width()) / 2, m_yOffset / 10 - (m_bgSprite->height() - height()) / 2);
+    addChild(m_bgSprite);
 }
 
 boost::shared_ptr< SolarSystem > SystemWidget::system() const

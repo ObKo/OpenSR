@@ -38,9 +38,10 @@ public:
     };
 
     ConsoleWidgetPrivate();
+    virtual ~ConsoleWidgetPrivate();
 
-    LineEditWidget *lineEdit;
-    ColorLabel *logLabel;
+    boost::shared_ptr<LineEditWidget> lineEdit;
+    boost::shared_ptr<ColorLabel> logLabel;
     Vertex *borderVertices;
     GLuint borderBuffer;
     GLuint texture;
@@ -49,7 +50,7 @@ public:
     int historyPosition;
     std::vector<std::wstring> commandHistory;
 
-    ConsoleLineEditListener listener;
+    boost::shared_ptr<ConsoleLineEditListener> listener;
 };
 }
 
