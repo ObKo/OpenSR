@@ -16,16 +16,18 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "Object.h"
-#include "Engine.h"
+#include "OpenSR/Object.h"
+#include "OpenSR/private/Object_p.h"
+
 #include <GL/glu.h>
 #include <stack>
 #include <algorithm>
 #include <boost/math/constants/constants.hpp>
-#define DEG2RAD(x) (x * boost::math::constants::pi<double>() / 180.0)
 
-#include "private/Object_p.h"
-#include <Log.h>
+#include "OpenSR/Log.h"
+#include "OpenSR/Engine.h"
+
+#define DEG2RAD(x) (x * boost::math::constants::pi<double>() / 180.0)
 
 namespace Rangers
 {

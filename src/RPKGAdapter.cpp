@@ -16,12 +16,14 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "RPKGAdapter.h"
-#include "libRanger.h"
-#include "Log.h"
+#include "OpenSR/RPKGAdapter.h"
+
 #include <sstream>
 #include <cerrno>
 #include <cstring>
+#include <libRanger.h>
+
+#include "OpenSR/Log.h"
 
 using namespace std;
 

@@ -16,11 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "Sprite.h"
-#include "ResourceManager.h"
-#include "Texture.h"
+#include "OpenSR/Sprite.h"
+#include "OpenSR/private/Sprite_p.h"
 
-#include "private/Sprite_p.h"
+#include "OpenSR/ResourceManager.h"
+#include "OpenSR/Texture.h"
+
 
 namespace Rangers
 {

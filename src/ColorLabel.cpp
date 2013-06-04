@@ -16,12 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ColorLabel.h"
-#include "Font.h"
-#include "Texture.h"
-#include "Engine.h"
+#include "OpenSR/ColorLabel.h"
+#include "OpenSR/Font.h"
+#include "OpenSR/Texture.h"
+#include "OpenSR/Engine.h"
 
-#include "private/ColorLabel_p.h"
+#include "OpenSR/private/ColorLabel_p.h"
 
 using namespace std;
 namespace Rangers

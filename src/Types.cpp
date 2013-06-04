@@ -16,9 +16,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "Types.h"
-#include "Texture.h"
-#include "ResourceManager.h"
+#include "OpenSR/Types.h"
+
+#include "OpenSR/Texture.h"
+#include "OpenSR/ResourceManager.h"
 
 namespace Rangers
 {

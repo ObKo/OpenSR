@@ -16,11 +16,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "JSONHelper.h"
-#include "Log.h"
-#include "Texture.h"
+#include "OpenSR/JSONHelper.h"
+#include "OpenSR/Log.h"
+#include "OpenSR/Texture.h"
 #include <boost/shared_ptr.hpp>
-#include "ResourceManager.h"
+#include "OpenSR/ResourceManager.h"
 #include <libRanger.h>
 #include <vector>
 

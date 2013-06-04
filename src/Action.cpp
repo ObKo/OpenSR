@@ -16,8 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "Action.h"
-#include "Widget.h"
+#include "OpenSR/Action.h"
+#include "OpenSR/Widget.h"
 #include <boost/variant.hpp>
 
 /*!
@@ -91,9 +91,9 @@ Rect Action::rectArgument() const
  * This is support function for scripting.
  * \returns argument as \ref SDL_keysym
  */
-SDL_keysym Action::keyArgument() const
+SDL_Keysym Action::keyArgument() const
 {
-    return boost::get<SDL_keysym>(m_argument);
+    return boost::get<SDL_Keysym>(m_argument);
 }
 
 /*!

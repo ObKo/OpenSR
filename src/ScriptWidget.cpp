@@ -16,9 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ScriptWidget.h"
-
-#include "private/ScriptWidget_p.h"
+#include "OpenSR/ScriptWidget.h"
+#include "OpenSR/private/ScriptWidget_p.h"
 
 namespace Rangers
 {

@@ -16,10 +16,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "AnimatedTexture.h"
+#include "OpenSR/AnimatedTexture.h"
 #include <libRanger.h>
-#include "Engine.h"
-#include "Log.h"
+#include "OpenSR/Engine.h"
+#include "OpenSR/Log.h"
 
 namespace Rangers
 {

@@ -16,16 +16,18 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "NinePatch.h"
-#include "Texture.h"
+#include "OpenSR/NinePatch.h"
+#include "OpenSR/private/NinePatch_p.h"
+
 #include <vector>
 #include <cfloat>
 #include <algorithm>
 #include <libRanger.h>
-#include "JSONHelper.h"
-#include "ResourceManager.h"
 
-#include "private/NinePatch_p.h"
+#include "OpenSR/Texture.h"
+#include "OpenSR/JSONHelper.h"
+#include "OpenSR/ResourceManager.h"
+
 
 
 namespace Rangers

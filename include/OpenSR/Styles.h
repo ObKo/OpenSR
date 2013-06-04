@@ -31,7 +31,7 @@ struct ScrollBarStyle;
 struct FontDescriptor;
 struct TextureRegionDescriptor;
 
-struct ResourceDescriptor
+struct RANGERS_ENGINE_API ResourceDescriptor
 {
     ResourceDescriptor();
     ResourceDescriptor(const NinePatchDescriptor& ninePatch);
@@ -51,7 +51,7 @@ struct ResourceDescriptor
     std::wstring sound() const;
 };
 
-struct ButtonStyle
+struct RANGERS_ENGINE_API ButtonStyle
 {
     ResourceDescriptor normal;
     ResourceDescriptor hovered;
@@ -64,7 +64,7 @@ struct ButtonStyle
     std::wstring enterSound;
 };
 
-struct CheckBoxStyle
+struct RANGERS_ENGINE_API CheckBoxStyle
 {
     ResourceDescriptor normal;
     ResourceDescriptor hovered;
@@ -74,7 +74,7 @@ struct CheckBoxStyle
     FontDescriptor font;
 };
 
-struct RadioButtonStyle
+struct RANGERS_ENGINE_API RadioButtonStyle
 {
     ResourceDescriptor normal;
     ResourceDescriptor hovered;
@@ -84,7 +84,7 @@ struct RadioButtonStyle
     FontDescriptor font;
 };
 
-struct LineEditStyle
+struct RANGERS_ENGINE_API LineEditStyle
 {
     ResourceDescriptor background;
     int color;
@@ -92,14 +92,14 @@ struct LineEditStyle
     Rect contentRect;
 };
 
-struct ScrollBarStyle
+struct RANGERS_ENGINE_API ScrollBarStyle
 {
     ButtonStyle upButton;
     ButtonStyle scroll;
     ButtonStyle downButton;
 };
 
-struct Skin
+struct RANGERS_ENGINE_API Skin
 {
     ButtonStyle buttonStyle;
     ScrollBarStyle scrollStyle;

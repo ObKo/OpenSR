@@ -16,12 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "Label.h"
-#include "Engine.h"
-#include "Font.h"
-#include "Texture.h"
+#include "OpenSR/Label.h"
+#include "OpenSR/Engine.h"
+#include "OpenSR/Font.h"
+#include "OpenSR/Texture.h"
 
-#include "private/Label_p.h"
+#include "OpenSR/private/Label_p.h"
 
 namespace Rangers
 {

@@ -281,6 +281,9 @@ LIBRANGER_API GIFrame loadFrameType5(const GIFrameHeader& image, GIFrame *backgr
 //! Load GI frame
 LIBRANGER_API GIFrame loadGIImageData(const GIFrameHeader& image, GIFrame *background = 0);
 
+//FIXME: Export other GI functons?
+LIBRANGER_API void drawF5ToBGRA(unsigned char * bufdes, int bufdesll, const unsigned char * graphbuf);
+
 //! Load GI frame from file
 LIBRANGER_API GIFrame loadGIFrame(std::istream& stream, size_t &offset, GIFrame *background = 0, int startX = 0, int startY = 0, int finishX = 0, int finishY = 0);
 //! Load GI frame from memory

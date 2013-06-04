@@ -20,8 +20,9 @@
 #define RANGERS_BUTTON_P_H
 
 #include "Widget_p.h"
-#include "Styles.h"
-#include "ActionListener.h"
+
+#include "OpenSR/Styles.h"
+#include "OpenSR/ActionListener.h"
 
 namespace Rangers
 {

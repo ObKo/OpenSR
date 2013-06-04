@@ -35,7 +35,7 @@ public:
     //! Type of action
     enum Type {NONE, BUTTON_CLICKED, KEY_PRESSED, CHECKBOX_TOGGLED, MOUSE_ENTER, MOUSE_LEAVE, MOUSE_DOWN, MOUSE_UP, MOUSE_CLICK};
     //! Argument of action
-    typedef boost::variant<std::wstring, Rect, SDL_keysym, bool, uint8_t> Argument;
+    typedef boost::variant<std::wstring, Rect, SDL_Keysym, bool, uint8_t> Argument;
 
     //! Constructs empty action
     Action();
@@ -54,7 +54,7 @@ public:
     //! Get argument as Rect
     Rect rectArgument() const;
     //! Get argument as keysym
-    SDL_keysym keyArgument() const;
+    SDL_Keysym keyArgument() const;
     //! Get argument as bool
     bool boolArgument() const;
     //! Get argument as 8-bit unsigned integer

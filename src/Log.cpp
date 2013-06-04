@@ -16,11 +16,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "Log.h"
+#include "OpenSR/Log.h"
+
 #include <ctime>
 #include <iostream>
 #include <libRanger.h>
-#include <Types.h>
+
+#include "OpenSR/Types.h"
 
 using namespace std;
 

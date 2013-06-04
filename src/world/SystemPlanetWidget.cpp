@@ -23,6 +23,7 @@
 #include <OpenSR/Texture.h>
 #include <OpenSR/Sprite.h>
 #include <OpenSR/Engine.h>
+#define _USE_MATH_DEFINES
 #include <cmath>
 
 namespace

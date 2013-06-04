@@ -25,7 +25,7 @@
 namespace Rangers
 {
 class Shader;
-class ShaderProgram
+class RANGERS_ENGINE_API ShaderProgram
 {
 public:
     ShaderProgram();

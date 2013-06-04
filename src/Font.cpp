@@ -16,13 +16,15 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "Font.h"
+#include "OpenSR/Font.h"
+
 #include <algorithm>
 #include <iostream>
 #include <sstream>
 #include <map>
 #include <libRanger.h>
-#include "Texture.h"
+
+#include "OpenSR/Texture.h"
 
 //TODO: Move this
 

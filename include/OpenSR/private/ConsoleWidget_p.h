@@ -21,9 +21,9 @@
 
 #include "Widget_p.h"
 
-#include "LineEditWidget.h"
-#include "ColorLabel.h"
-#include "ActionListener.h"
+#include "OpenSR/LineEditWidget.h"
+#include "OpenSR/ColorLabel.h"
+#include "OpenSR/ActionListener.h"
 
 namespace Rangers
 {

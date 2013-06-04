@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "Utils.h"
+#include "OpenSR/Utils.h"
 
 #include <libRanger.h>
 #include <libintl.h>

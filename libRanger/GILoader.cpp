@@ -278,7 +278,7 @@ void drawRGBIToBGRA(unsigned char * bufdes, int bufdesll, unsigned char * graphb
     }
 }
 
-void drawF5ToBGRA(unsigned char * bufdes, int bufdesll, const unsigned char * graphbuf)
+void Rangers::drawF5ToBGRA(unsigned char * bufdes, int bufdesll, const unsigned char * graphbuf)
 {
     int i, cnt, cnt2, shlc;
     int shlca[4];

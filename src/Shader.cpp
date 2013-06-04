@@ -16,9 +16,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "Shader.h"
-#include "Log.h"
+#include "OpenSR/Shader.h"
+
 #include <string>
+
+#include "OpenSR/Log.h"
 
 namespace Rangers
 {

@@ -16,8 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <SDL/SDL.h>
-#include "Engine.h"
+//#include <SDL.h>
+#include "OpenSR/Engine.h"
 
 using namespace Rangers;
 using namespace std;

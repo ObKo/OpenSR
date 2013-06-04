@@ -16,9 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "WidgetNode.h"
-
-#include "private/WidgetNode_p.h"
+#include "OpenSR/WidgetNode.h"
+#include "OpenSR/private/WidgetNode_p.h"
 
 namespace Rangers
 {

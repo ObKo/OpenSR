@@ -21,8 +21,8 @@
 
 #include "Widget_p.h"
 
-#include "Button.h"
-#include "ActionListener.h"
+#include "OpenSR/Button.h"
+#include "OpenSR/ActionListener.h"
 
 namespace Rangers
 {

@@ -19,16 +19,17 @@
 #ifndef RANGERS_ENGINE_P_H
 #define RANGERS_ENGINE_P_H
 
-#include "global.h"
-#include "ConsoleWidget.h"
-#include "Node.h"
-#include "Label.h"
-#include "Styles.h"
 #include <list>
 #include <map>
 #include <boost/thread.hpp>
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/property_tree/ptree.hpp>
+
+#include "OpenSR/global.h"
+#include "OpenSR/ConsoleWidget.h"
+#include "OpenSR/Node.h"
+#include "OpenSR/Label.h"
+#include "OpenSR/Styles.h"
 
 namespace Rangers
 {
@@ -78,6 +79,8 @@ public:
     boost::shared_ptr<Font> monospaceFont;
 
     Skin skin;
+
+	SDL_Window *window;
 
     Engine *m_q;
 

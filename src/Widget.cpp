@@ -16,13 +16,14 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "Widget.h"
-#include <SDL.h>
-#include "Action.h"
-#include "ActionListener.h"
+#include "OpenSR/Widget.h"
+#include "OpenSR/private/Widget_p.h"
 
-#include "private/Widget_p.h"
-#include <Engine.h>
+#include <SDL.h>
+
+#include "OpenSR/Action.h"
+#include "OpenSR/ActionListener.h"
+#include "OpenSR/Engine.h"
 
 namespace Rangers
 {

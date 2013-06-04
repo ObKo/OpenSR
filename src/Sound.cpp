@@ -16,10 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "Sound.h"
-#include "ResourceManager.h"
+#include "OpenSR/Sound.h"
+
 #include <SDL_rwops.h>
 #include <SDL_mixer.h>
+
+#include "OpenSR/ResourceManager.h"
 
 namespace
 {

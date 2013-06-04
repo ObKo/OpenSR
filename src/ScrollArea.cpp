@@ -16,12 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ScrollArea.h"
-#include "WidgetNode.h"
-#include "Action.h"
-#include "Engine.h"
+#include "OpenSR/ScrollArea.h"
+#include "OpenSR/private/ScrollArea_p.h"
 
-#include "private/ScrollArea_p.h"
+#include "OpenSR/WidgetNode.h"
+#include "OpenSR/Action.h"
+#include "OpenSR/Engine.h"
 
 namespace Rangers
 {
@@ -51,7 +51,8 @@ void ScrollAreaPrivate::ScrollAreaListener::actionPerformed(const Action &action
         case Action::MOUSE_DOWN:
         {
             uint8_t key = boost::get<uint8_t>(action.argument());
-            if (key == SDL_BUTTON_WHEELUP)
+            //TODO: Port wheel to SDL 2.0
+			/*if (key == SDL_BUTTON_WHEELUP)
             {
                 if (d->vSize > 1.0f)
                 {
@@ -66,7 +67,7 @@ void ScrollAreaPrivate::ScrollAreaListener::actionPerformed(const Action &action
                     d->vPosition -= 0.1f;
                     d->updateScrollPosition();
                 }
-            }
+            }*/
         }
         break;
         }

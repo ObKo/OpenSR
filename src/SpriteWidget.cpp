@@ -16,9 +16,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "SpriteWidget.h"
-#include "private/SpriteWidget_p.h"
-#include "Sprite.h"
+#include "OpenSR/SpriteWidget.h"
+#include "OpenSR/private/SpriteWidget_p.h"
+
+#include "OpenSR/Sprite.h"
 
 namespace Rangers
 {

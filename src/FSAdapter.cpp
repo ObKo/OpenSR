@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "FSAdapter.h"
+#include "OpenSR/FSAdapter.h"
 #ifdef WIN32
 #include <windows.h>
 #include <wchar.h>
@@ -27,9 +27,10 @@
 #endif
 #include <cerrno>
 #include <libRanger.h>
-#include "Log.h"
 #include <algorithm>
 #include <cstring>
+
+#include "OpenSR/Log.h"
 
 using namespace std;
 

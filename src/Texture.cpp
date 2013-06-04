@@ -16,8 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "Texture.h"
-#include "Engine.h"
+#include "OpenSR/Texture.h"
+
+#include "OpenSR/Engine.h"
 
 namespace Rangers
 {

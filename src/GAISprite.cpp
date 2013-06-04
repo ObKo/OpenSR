@@ -16,13 +16,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "GAISprite.h"
-#include "Log.h"
-#include "Texture.h"
+#include "OpenSR/GAISprite.h"
+#include "OpenSR/Log.h"
+#include "OpenSR/Texture.h"
 #include <cstdlib>
-#include "ResourceManager.h"
+#include "OpenSR/ResourceManager.h"
 
-#include "private/GAISprite_p.h"
+#include "OpenSR/private/GAISprite_p.h"
 
 extern void drawF5ToBGRA(unsigned char * bufdes, int bufdesll, const unsigned char * graphbuf);
 

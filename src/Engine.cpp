@@ -16,9 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "Engine.h"
+#include "OpenSR/Engine.h"
+#include "OpenSR/config.h"
 
-#include "config.h"
 #include <cstdlib>
 #include <stdexcept>
 #include <SDL.h>
@@ -35,14 +35,15 @@
 #include <sstream>
 #include <boost/python.hpp>
 
-#include "PythonBindings.h"
-#include "Log.h"
-#include "ResourceManager.h"
-#include "Action.h"
-#include "JSONHelper.h"
-#include "Plugin.h"
+#include "OpenSR/PythonBindings.h"
+#include "OpenSR/Log.h"
+#include "OpenSR/ResourceManager.h"
+#include "OpenSR/Action.h"
+#include "OpenSR/JSONHelper.h"
+#include "OpenSR/Plugin.h"
+#include "OpenSR/Node.h"
 
-#include "private/Engine_p.h"
+#include "OpenSR/private/Engine_p.h"
 
 //TODO: Move logic back to separate thred. For now this is impossible
 //      due to boost::python and random boost::shared_ptr destruction
@@ -86,14 +87,13 @@ Engine::Engine(): m_d(new EnginePrivate())
 
     d->argc = 0;
     d->argv = 0;
-    //d->currentWidget = 0;
     d->consoleOpenned = false;
     d->showFPS = true;
     d->frames = 0;
     d->m_q = this;
     d->mainNode = 0;
-    //d->consoleWidget = 0;
     d->fpsLabel = 0;
+	d->window = 0;
 
     textdomain("OpenSR");
 }
@@ -414,14 +414,21 @@ void Engine::init(int argc, char **argv, int w, int h, bool fullscreen)
     h = d->properties->get<int>("graphics.height", h);
     fullscreen = d->properties->get<bool>("graphics.fullscreen", fullscreen);
 
-    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-    SDL_Surface* screen = SDL_SetVideoMode(w, h, 32, SDL_OPENGL | (fullscreen ? SDL_FULLSCREEN : 0));
+	d->window = SDL_CreateWindow("OpenSR", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, w, h, 
+		                         SDL_WINDOW_OPENGL | (fullscreen ? SDL_WINDOW_FULLSCREEN : 0));
+
+	SDL_GL_CreateContext(d->window);
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+
+	SDL_GetWindowSize(d->window, &d->width, &d->height);
+
+    /*SDL_Surface* screen = SDL_SetVideoMode(w, h, 32, SDL_OPENGL | (fullscreen ? SDL_FULLSCREEN : 0));
 
     SDL_EnableKeyRepeat(660, 40);
     SDL_EnableUNICODE(1);
 
-    d->width = screen->w;
-    d->height = screen->h;
+    d->width = window->;
+    d->height = screen->h;*/
 
 #ifdef _WIN32
     glewInit();
@@ -483,7 +490,11 @@ void Engine::init(int argc, char **argv, int w, int h, bool fullscreen)
             pythonPath = additionalPath;
         else
             pythonPath = additionalPath + ":" + pythonPath;
+#ifdef WIN32
+		SetEnvironmentVariable(L"PYTHONPATH", fromUTF8(pythonPath.c_str(), pythonPath.length()).c_str());
+#else
         setenv("PYTHONPATH", pythonPath.c_str(), 1);
+#endif
     }
     Log::debug() << "Python path: " << pythonPath;
 
@@ -522,7 +533,7 @@ void Engine::paint()
         d->fpsLabel->draw();
     d->frames++;
 
-    SDL_GL_SwapBuffers();
+	SDL_GL_SwapWindow(d->window);
 }
 
 int Engine::run()

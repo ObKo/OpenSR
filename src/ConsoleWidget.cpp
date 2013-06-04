@@ -16,16 +16,16 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ConsoleWidget.h"
+#include "OpenSR/ConsoleWidget.h"
 #include <SDL.h>
-#include "Engine.h"
-#include "Log.h"
-#include "Font.h"
-#include "Action.h"
-#include "ActionListener.h"
+#include "OpenSR/Engine.h"
+#include "OpenSR/Log.h"
+#include "OpenSR/Font.h"
+#include "OpenSR/Action.h"
+#include "OpenSR/ActionListener.h"
 #include <boost/variant/get.hpp>
 
-#include "private/ConsoleWidget_p.h"
+#include "OpenSR/private/ConsoleWidget_p.h"
 
 namespace Rangers
 {
@@ -35,7 +35,7 @@ void ConsoleWidgetPrivate::ConsoleLineEditListener::actionPerformed(const Action
     {
         if (action.type() == Action::KEY_PRESSED)
         {
-            SDL_keysym key = boost::get<SDL_keysym>(action.argument());
+            SDL_Keysym key = boost::get<SDL_Keysym>(action.argument());
             if (key.sym == SDLK_RETURN)
             {
                 if (w->d_func()->lineEdit->text() != L"")

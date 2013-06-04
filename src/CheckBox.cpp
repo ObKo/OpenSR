@@ -16,14 +16,14 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "CheckBox.h"
-#include "Sprite.h"
-#include "Action.h"
-#include "ResourceManager.h"
-#include "Texture.h"
-#include "NinePatch.h"
+#include "OpenSR/CheckBox.h"
+#include "OpenSR/Sprite.h"
+#include "OpenSR/Action.h"
+#include "OpenSR/ResourceManager.h"
+#include "OpenSR/Texture.h"
+#include "OpenSR/NinePatch.h"
 
-#include "private/CheckBox_p.h"
+#include "OpenSR/private/CheckBox_p.h"
 
 namespace Rangers
 {

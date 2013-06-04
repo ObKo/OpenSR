@@ -42,7 +42,7 @@ void exportAction()
     .def(init<>())
     .def(init<const std::wstring&>())
     .def(init<const Rect&>())
-    .def(init<const SDL_keysym&>())
+    .def(init<const SDL_Keysym&>())
     .def(init<bool>())
     .def(init<uint8_t>());
 

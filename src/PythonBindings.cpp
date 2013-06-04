@@ -16,11 +16,14 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "Python.h"
+#include "OpenSR/PythonBindings.h"
+
+#include <Python.h>
 #include <boost/python.hpp>
-#include "ResourceManager.h"
-#include "Log.h"
 #include <libRanger.h>
+
+#include "OpenSR/ResourceManager.h"
+#include "OpenSR/Log.h"
 
 namespace
 {

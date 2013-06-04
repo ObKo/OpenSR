@@ -23,7 +23,7 @@
 
 namespace Rangers
 {
-class Shader
+class RANGERS_ENGINE_API Shader
 {
 public:
     enum ShaderType {NONE, VERTEX_SHADER, FRAGMENT_SHADER};

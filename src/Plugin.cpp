@@ -16,15 +16,17 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "Plugin.h"
+#include "OpenSR/Plugin.h"
+
 #ifdef _WIN32
 #include <windows.h>
 #else
 #include <dlfcn.h>
 #endif
-#include "Log.h"
-#include "libRanger.h"
-#include "version.h"
+#include <libRanger.h>
+
+#include "OpenSR/Log.h"
+#include "OpenSR/version.h"
 
 namespace Rangers
 {

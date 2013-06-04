@@ -29,9 +29,9 @@
 namespace Rangers
 {
 class Texture;
-class TextureRegionDescriptor;
+struct TextureRegionDescriptor;
 
-struct Vector
+struct RANGERS_ENGINE_API Vector
 {
     Vector();
     Vector(float x, float y);
@@ -39,13 +39,13 @@ struct Vector
     float x, y;
 };
 
-struct Vertex
+struct RANGERS_ENGINE_API Vertex
 {
     float x, y;
     float u, v;
 };
 
-struct Rect
+struct RANGERS_ENGINE_API Rect
 {
     Rect();
     Rect(float x1, float y1, float x2, float y2);
@@ -57,7 +57,7 @@ struct Rect
 };
 
 //! Struct that handles region of texture.
-struct TextureRegion
+struct RANGERS_ENGINE_API TextureRegion
 {
     //! Constructs texture region.
     TextureRegion(boost::shared_ptr<Texture> texture, int x, int y, int width, int height);
@@ -68,7 +68,7 @@ struct TextureRegion
     float u1, v1, u2, v2;
 };
 
-struct NinePatchDescriptor
+struct RANGERS_ENGINE_API NinePatchDescriptor
 {
     int rows;
     int columns;
@@ -77,19 +77,19 @@ struct NinePatchDescriptor
     std::vector<int> sizeableColumns;
 };
 
-struct FontDescriptor
+struct RANGERS_ENGINE_API FontDescriptor
 {
     std::wstring path;
     int size;
 };
 
-struct TextureRegionDescriptor
+struct RANGERS_ENGINE_API TextureRegionDescriptor
 {
     std::wstring texture;
     int x, y, width, height;
 };
 
-Rect operator+(const Rect& r1, const Rect& r2);
+RANGERS_ENGINE_API Rect operator+(const Rect& r1, const Rect& r2);
 }
 
 #endif

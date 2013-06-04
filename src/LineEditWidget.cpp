@@ -16,17 +16,18 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "LineEditWidget.h"
+#include "OpenSR/LineEditWidget.h"
 #include <SDL.h>
-#include "Engine.h"
-#include "Font.h"
-#include "ActionListener.h"
-#include "Action.h"
 #include <boost/variant/get.hpp>
-#include "ResourceManager.h"
-#include "NinePatch.h"
 
-#include "private/LineEditWidget_p.h"
+#include "OpenSR/Engine.h"
+#include "OpenSR/Font.h"
+#include "OpenSR/ActionListener.h"
+#include "OpenSR/Action.h"
+#include "OpenSR/ResourceManager.h"
+#include "OpenSR/NinePatch.h"
+
+#include "OpenSR/private/LineEditWidget_p.h"
 
 namespace Rangers
 {
@@ -42,11 +43,10 @@ void LineEditWidgetPrivate::LineEditWidgetListener::actionPerformed(const Action
         d->position = d->label->font()->maxChars(d->text.begin() + d->stringOffset, d->text.end(),
                       d->mousePosition.x/* - style.contentRect.x*/);
         d->updateText();
-        q->markToUpdate();
         Engine::instance().focusWidget(q);
         break;
     case Action::KEY_PRESSED:
-        d->keyPressed(boost::get<SDL_keysym>(action.argument()));
+        d->keyPressed(boost::get<SDL_Keysym>(action.argument()));
         break;
     }
 }
@@ -224,6 +224,7 @@ void LineEditWidgetPrivate::updateText()
     }
     maxChars = label->font()->maxChars(text.begin() + stringOffset, text.end(), realContentRect.width);
     label->setText(text.substr(stringOffset, maxChars));
+	q->markToUpdate();
     q->unlock();
 }
 
@@ -301,7 +302,7 @@ void LineEditWidget::processLogic(int dt)
 }
 
 
-void LineEditWidgetPrivate::keyPressed(const SDL_keysym& key)
+void LineEditWidgetPrivate::keyPressed(const SDL_Keysym& key)
 {
     RANGERS_Q(LineEditWidget);
     q->lock();
@@ -326,7 +327,7 @@ void LineEditWidgetPrivate::keyPressed(const SDL_keysym& key)
             if (position < text.length())
                 text.erase(position, 1);
     }
-    else if (key.unicode && !(key.mod & (KMOD_ALT | KMOD_META | KMOD_CTRL)))
+    else if (key.unicode && !(key.mod & (KMOD_ALT | KMOD_GUI | KMOD_CTRL)))
     {
         if (key.unicode == '\t')
             text.insert(position, 1, ' ');

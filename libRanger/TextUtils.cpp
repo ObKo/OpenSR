@@ -68,11 +68,12 @@ char *convertText(const char *to, const char *from, const char *what, int srcLen
     size_t outbuflength = 4 * srcLength;
     char *pointer = result;
     char **inp = (char **)&what;
-#ifdef ICONV_SECOND_ARGUMENT_IS_CONST
+	iconv(codec, inp, &inbuflength, &pointer, &outbuflength);
+/*#ifdef ICONV_SECOND_ARGUMENT_IS_CONST
     iconv(codec, (const char **)inp, &inbuflength, &pointer, &outbuflength);
 #else
     iconv(codec, inp, &inbuflength, &pointer, &outbuflength);
-#endif
+#endif*/
     size_t l = 4 * srcLength - outbuflength;
 
     result = (char *)realloc(result, l);

@@ -16,18 +16,18 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "Button.h"
-#include "Sprite.h"
-#include "Action.h"
-#include "ResourceManager.h"
-#include "Texture.h"
-#include "NinePatch.h"
-#include "Label.h"
-#include "Font.h"
-#include "Sound.h"
-#include "SoundManager.h"
+#include "OpenSR/Button.h"
+#include "OpenSR/Sprite.h"
+#include "OpenSR/Action.h"
+#include "OpenSR/ResourceManager.h"
+#include "OpenSR/Texture.h"
+#include "OpenSR/NinePatch.h"
+#include "OpenSR/Label.h"
+#include "OpenSR/Font.h"
+#include "OpenSR/Sound.h"
+#include "OpenSR/SoundManager.h"
 
-#include "private/Button_p.h"
+#include "OpenSR/private/Button_p.h"
 
 namespace Rangers
 {

@@ -21,7 +21,6 @@
 
 #include "Widget.h"
 
-struct SDL_keysym;
 namespace Rangers
 {
 class Sprite;

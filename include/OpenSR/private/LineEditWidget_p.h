@@ -21,9 +21,9 @@
 
 #include "Widget_p.h"
 
-#include "Label.h"
-#include "Styles.h"
-#include "ActionListener.h"
+#include "OpenSR/Label.h"
+#include "OpenSR/Styles.h"
+#include "OpenSR/ActionListener.h"
 
 namespace Rangers
 {
@@ -55,7 +55,7 @@ public:
 
     void init();
     void updateText();
-    void keyPressed(const SDL_keysym& key);
+    void keyPressed(const SDL_Keysym& key);
 
     boost::shared_ptr<LineEditWidgetListener> lineEditListener;
 };

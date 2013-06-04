@@ -16,11 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "SoundManager.h"
-#include "Sound.h"
-#include <ResourceManager.h>
-#include <Log.h>
+#include "OpenSR/SoundManager.h"
 #include <SDL_mixer.h>
+
+#include "OpenSR/Log.h"
+#include "OpenSR/ResourceManager.h"
+#include "OpenSR/Sound.h"
 
 
 namespace Rangers
@@ -66,7 +67,7 @@ void SoundManager::playMusic(const std::wstring& path, bool loop)
     if (!m)
         return;
 
-    m_currentMusic = Mix_LoadMUS_RW(m);
+    m_currentMusic = Mix_LoadMUS_RW(m, 0);
     if (!m_currentMusic)
     {
         Log::error() << "Cannot play music: " << Mix_GetError();

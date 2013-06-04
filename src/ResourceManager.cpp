@@ -16,28 +16,30 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ResourceManager.h"
-#include "RPKGAdapter.h"
-#include "FSAdapter.h"
-#include "Texture.h"
-#include "AnimatedTexture.h"
-#include "Log.h"
-#include "Font.h"
+#include "OpenSR/ResourceManager.h"
+
 #include <algorithm>
-#include "AnimatedSprite.h"
-#include "Object.h"
-#include "GAISprite.h"
 #include <boost/thread.hpp>
 #include <string>
 #include <iostream>
 #include <sstream>
 #include <SDL_rwops.h>
 
+#include "OpenSR/RPKGAdapter.h"
+#include "OpenSR/FSAdapter.h"
+#include "OpenSR/Texture.h"
+#include "OpenSR/AnimatedTexture.h"
+#include "OpenSR/Log.h"
+#include "OpenSR/Font.h"
+#include "OpenSR/AnimatedSprite.h"
+#include "OpenSR/Object.h"
+#include "OpenSR/GAISprite.h"
+
 using namespace std;
 
 namespace
 {
-int istreamSeek(struct SDL_RWops *context, int offset, int whence)
+int64_t istreamSeek(struct SDL_RWops *context, int64_t offset, int whence)
 {
     std::istream* stream = (std::istream*)context->hidden.unknown.data1;
 
@@ -55,7 +57,7 @@ int istreamSeek(struct SDL_RWops *context, int offset, int whence)
 }
 
 
-int istreamRead(SDL_RWops *context, void *ptr, int size, int maxnum)
+size_t istreamRead(SDL_RWops *context, void *ptr, size_t size, size_t maxnum)
 {
     if (size == 0) return -1;
     std::istream* stream = (std::istream*) context->hidden.unknown.data1;

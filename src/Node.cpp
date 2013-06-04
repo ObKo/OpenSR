@@ -16,9 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "Node.h"
-
-#include "private/Node_p.h"
+#include "OpenSR/Node.h"
+#include "OpenSR/private/Node_p.h"
 
 using namespace boost;
 

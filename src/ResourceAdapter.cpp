@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ResourceAdapter.h"
+#include "OpenSR/ResourceAdapter.h"
 
 namespace Rangers
 {

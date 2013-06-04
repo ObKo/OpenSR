@@ -17,11 +17,11 @@
 */
 
 
-#include "AnimatedSprite.h"
-#include "ResourceManager.h"
-#include "AnimatedTexture.h"
+#include "OpenSR/AnimatedSprite.h"
+#include "OpenSR/ResourceManager.h"
+#include "OpenSR/AnimatedTexture.h"
 
-#include "private/AnimatedSprite_p.h"
+#include "OpenSR/private/AnimatedSprite_p.h"
 
 namespace Rangers
 {

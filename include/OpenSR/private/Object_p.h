@@ -19,10 +19,11 @@
 #ifndef RANGERS_OBJECT_P_H
 #define RANGERS_OBJECT_P_H
 
-#include "global.h"
-#include "Types.h"
 #include <list>
 #include <boost/thread/recursive_mutex.hpp>
+
+#include "OpenSR/global.h"
+#include "OpenSR/Types.h"
 
 namespace Rangers
 {
