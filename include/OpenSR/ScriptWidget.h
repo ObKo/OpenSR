@@ -19,7 +19,7 @@
 #ifndef RANGERS_SCRIPT_WIDGET_H
 #define RANGERS_SCRIPT_WIDGET_H
 
-#include "Widget.h"
+#include "OpenSR/Widget.h"
 
 namespace Rangers
 {

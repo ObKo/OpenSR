@@ -56,6 +56,7 @@ public:
     void init();
     void updateText();
     void keyPressed(const SDL_Keysym& key);
+    void textAdded(const std::wstring& str);
 
     boost::shared_ptr<LineEditWidgetListener> lineEditListener;
 };

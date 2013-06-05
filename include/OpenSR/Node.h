@@ -19,7 +19,7 @@
 #ifndef RANGERS_NODE_H
 #define RANGERS_NODE_H
 
-#include "Object.h"
+#include "OpenSR/Object.h"
 
 namespace Rangers
 {

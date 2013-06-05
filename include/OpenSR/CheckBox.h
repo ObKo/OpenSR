@@ -19,7 +19,7 @@
 #ifndef RANGERS_CHECKBOX_H
 #define RANGERS_CHECKBOX_H
 
-#include "Widget.h"
+#include "OpenSR/Widget.h"
 
 namespace Rangers
 {

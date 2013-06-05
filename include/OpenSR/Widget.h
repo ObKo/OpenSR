@@ -19,7 +19,8 @@
 #ifndef RANGERS_WIDGET_H
 #define RANGERS_WIDGET_H
 
-#include "Object.h"
+#include "OpenSR/Object.h"
+
 #include <list>
 
 namespace Rangers

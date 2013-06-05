@@ -19,7 +19,7 @@
 #ifndef RANGERS_SHADER_H
 #define RANGERS_SHADER_H
 
-#include "Types.h"
+#include "OpenSR/Types.h"
 
 namespace Rangers
 {

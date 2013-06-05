@@ -19,9 +19,9 @@
 #ifndef RANGERS_PLUGIN_H
 #define RANGERS_PLUGIN_H
 
-#include "config.h"
-#include <string>
+#include "OpenSR/config.h"
 
+#include <string>
 #ifdef _WIN32
 #include <windows.h>
 #endif

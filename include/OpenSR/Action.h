@@ -19,9 +19,10 @@
 #ifndef RANGERS_ACTION_H
 #define RANGERS_ACTION_H
 
+#include "OpenSR/Types.h"
+
 #include <boost/variant.hpp>
-#include "Types.h"
-#include <SDL.h>
+#include <SDL_keyboard.h>
 
 namespace Rangers
 {
@@ -33,7 +34,7 @@ class RANGERS_ENGINE_API Action
 {
 public:
     //! Type of action
-    enum Type {NONE, BUTTON_CLICKED, KEY_PRESSED, CHECKBOX_TOGGLED, MOUSE_ENTER, MOUSE_LEAVE, MOUSE_DOWN, MOUSE_UP, MOUSE_CLICK};
+    enum Type {NONE, BUTTON_CLICKED, KEY_PRESSED, CHECKBOX_TOGGLED, MOUSE_ENTER, MOUSE_LEAVE, MOUSE_DOWN, MOUSE_UP, MOUSE_CLICK, TEXT_INPUT};
     //! Argument of action
     typedef boost::variant<std::wstring, Rect, SDL_Keysym, bool, uint8_t> Argument;
 

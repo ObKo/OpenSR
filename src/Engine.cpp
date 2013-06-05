@@ -93,7 +93,7 @@ Engine::Engine(): m_d(new EnginePrivate())
     d->m_q = this;
     d->mainNode = 0;
     d->fpsLabel = 0;
-	d->window = 0;
+    d->window = 0;
 
     textdomain("OpenSR");
 }
@@ -135,6 +135,8 @@ Engine::~Engine()
     delete d->fpsLabel;
     delete d->mainNode;
     delete m_d;
+
+    SDL_Quit();
 }
 
 void Engine::addWidget(boost::shared_ptr<Widget> w)
@@ -414,13 +416,13 @@ void Engine::init(int argc, char **argv, int w, int h, bool fullscreen)
     h = d->properties->get<int>("graphics.height", h);
     fullscreen = d->properties->get<bool>("graphics.fullscreen", fullscreen);
 
-	d->window = SDL_CreateWindow("OpenSR", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, w, h, 
-		                         SDL_WINDOW_OPENGL | (fullscreen ? SDL_WINDOW_FULLSCREEN : 0));
+    d->window = SDL_CreateWindow("OpenSR", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, w, h,
+                                 SDL_WINDOW_OPENGL | (fullscreen ? SDL_WINDOW_FULLSCREEN : 0));
 
-	SDL_GL_CreateContext(d->window);
-	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+    SDL_GL_CreateContext(d->window);
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-	SDL_GetWindowSize(d->window, &d->width, &d->height);
+    SDL_GetWindowSize(d->window, &d->width, &d->height);
 
     /*SDL_Surface* screen = SDL_SetVideoMode(w, h, 32, SDL_OPENGL | (fullscreen ? SDL_FULLSCREEN : 0));
 
@@ -491,7 +493,7 @@ void Engine::init(int argc, char **argv, int w, int h, bool fullscreen)
         else
             pythonPath = additionalPath + ":" + pythonPath;
 #ifdef WIN32
-		SetEnvironmentVariable(L"PYTHONPATH", fromUTF8(pythonPath.c_str(), pythonPath.length()).c_str());
+        SetEnvironmentVariable(L"PYTHONPATH", fromUTF8(pythonPath.c_str(), pythonPath.length()).c_str());
 #else
         setenv("PYTHONPATH", pythonPath.c_str(), 1);
 #endif
@@ -533,7 +535,7 @@ void Engine::paint()
         d->fpsLabel->draw();
     d->frames++;
 
-	SDL_GL_SwapWindow(d->window);
+    SDL_GL_SwapWindow(d->window);
 }
 
 int Engine::run()
@@ -596,8 +598,10 @@ int Engine::run()
             logicTicks = getTicks();
         }
     }
+
+    SDL_DestroyWindow(d->window);
+
     //d->logicThread->join();
-    SDL_Quit();
     return d->exitCode;
 }
 
@@ -652,10 +656,16 @@ void Engine::focusWidget(boost::weak_ptr<Widget> w)
 {
     RANGERS_D(Engine);
     if (boost::shared_ptr<Widget> pw = d->focusedWidget.lock())
+    {
+        SDL_StopTextInput();
         pw->unFocus();
+    }
     d->focusedWidget = w;
     if (boost::shared_ptr<Widget> pw = d->focusedWidget.lock())
+    {
         pw->focus();
+        SDL_StartTextInput();
+    }
 }
 
 void Engine::unfocusWidget(boost::weak_ptr<Widget> w)
@@ -669,6 +679,7 @@ void Engine::unfocusWidget(boost::weak_ptr<Widget> w)
         pw->unFocus();
     }
     d->focusedWidget = boost::weak_ptr<Widget>();
+    SDL_StopTextInput();
 }
 
 boost::shared_ptr<Object> Engine::getObjectPointer(Object *object) const
@@ -742,6 +753,13 @@ void Engine::EnginePrivate::processEvents()
         case SDL_MOUSEBUTTONUP:
             if (boost::shared_ptr<Widget> currentW = currentWidget.lock())
                 currentW->action(Action(currentW, Action::MOUSE_UP, event.button.button));
+            break;
+        case SDL_TEXTINPUT:
+            if (boost::shared_ptr<Widget> fw = focusedWidget.lock())
+            {
+                std::wstring text = fromLocal(event.edit.text, event.edit.length);
+                fw->action(Action(fw, Rangers::Action::TEXT_INPUT, text));
+            }
             break;
         case SDL_QUIT:
             q->quit();

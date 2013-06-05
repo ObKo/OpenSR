@@ -19,7 +19,7 @@
 #ifndef RANGERS_ANIMATEDSPRITE_H
 #define RANGERS_ANIMATEDSPRITE_H
 
-#include "Sprite.h"
+#include "OpenSR/Sprite.h"
 
 namespace Rangers
 {

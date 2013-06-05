@@ -19,7 +19,8 @@
 #ifndef RANGERS_RESOURCEADAPTER_H
 #define RANGERS_RESOURCEADAPTER_H
 
-#include "config.h"
+#include "OpenSR/config.h"
+
 #include <list>
 #include <string>
 #include <boost/shared_ptr.hpp>

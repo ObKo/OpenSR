@@ -19,7 +19,7 @@
 #ifndef RANGERS_ACTIONLISTENER_H
 #define RANGERS_ACTIONLISTENER_H
 
-#include "config.h"
+#include "OpenSR/config.h"
 
 namespace Rangers
 {

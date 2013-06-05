@@ -19,7 +19,7 @@
 #ifndef RANGERS_SCROLLAREA_H
 #define RANGERS_SCROLLAREA_H
 
-#include "Widget.h"
+#include "OpenSR/Widget.h"
 
 namespace Rangers
 {

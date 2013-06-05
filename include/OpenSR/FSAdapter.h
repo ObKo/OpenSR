@@ -19,7 +19,7 @@
 #ifndef RANGERS_FSADAPTER_H
 #define RANGERS_FSADAPTER_H
 
-#include "ResourceAdapter.h"
+#include "OpenSR/ResourceAdapter.h"
 
 namespace Rangers
 {

@@ -19,7 +19,7 @@
 #ifndef RANGERS_SPRITEWIDGET_H
 #define RANGERS_SPRITEWIDGET_H
 
-#include "Widget.h"
+#include "OpenSR/Widget.h"
 
 namespace Rangers
 {

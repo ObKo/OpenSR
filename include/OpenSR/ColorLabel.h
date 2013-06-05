@@ -19,7 +19,7 @@
 #ifndef RANGERS_COLORLABEL_H
 #define RANGERS_COLORLABEL_H
 
-#include "Label.h"
+#include "OpenSR/Label.h"
 
 namespace Rangers
 {

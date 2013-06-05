@@ -48,6 +48,9 @@ void LineEditWidgetPrivate::LineEditWidgetListener::actionPerformed(const Action
     case Action::KEY_PRESSED:
         d->keyPressed(boost::get<SDL_Keysym>(action.argument()));
         break;
+    case Action::TEXT_INPUT:
+        d->textAdded(boost::get<std::wstring>(action.argument()));
+        break;
     }
 }
 
@@ -224,7 +227,7 @@ void LineEditWidgetPrivate::updateText()
     }
     maxChars = label->font()->maxChars(text.begin() + stringOffset, text.end(), realContentRect.width);
     label->setText(text.substr(stringOffset, maxChars));
-	q->markToUpdate();
+    q->markToUpdate();
     q->unlock();
 }
 
@@ -327,14 +330,6 @@ void LineEditWidgetPrivate::keyPressed(const SDL_Keysym& key)
             if (position < text.length())
                 text.erase(position, 1);
     }
-    else if (key.unicode && !(key.mod & (KMOD_ALT | KMOD_GUI | KMOD_CTRL)))
-    {
-        if (key.unicode == '\t')
-            text.insert(position, 1, ' ');
-        else
-            text.insert(position, 1, key.unicode);
-        position++;
-    }
     if (position < 0)
         position = 0;
     if (position > text.length())
@@ -343,6 +338,26 @@ void LineEditWidgetPrivate::keyPressed(const SDL_Keysym& key)
     updateText();
     q->markToUpdate();
 
+    q->unlock();
+}
+
+void LineEditWidgetPrivate::textAdded(const std::wstring& str)
+{
+    RANGERS_Q(LineEditWidget);
+    q->lock();
+
+    //FIXME: Handle "bad" chars ('\n', '\t', '\r', etc.)
+
+    text.insert(position, str);
+    position += str.length();
+
+    if (position < 0)
+        position = 0;
+    if (position > text.length())
+        position = text.length();
+    updateText();
+
+    q->markToUpdate();
     q->unlock();
 }
 

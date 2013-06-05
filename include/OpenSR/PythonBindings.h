@@ -19,7 +19,8 @@
 #ifndef RANGERS_PYTHON_BINDINGS_H
 #define RANGERS_PYTHON_BINDINGS_H
 
-#include "config.h"
+#include "OpenSR/config.h"
+
 #include <boost/python.hpp>
 
 namespace Rangers

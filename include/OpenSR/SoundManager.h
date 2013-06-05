@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 - 2012 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2013 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,7 +19,8 @@
 #ifndef RANGERS_SOUNDMANAGER_H
 #define RANGERS_SOUNDMANAGER_H
 
-#include "config.h"
+#include "OpenSR/config.h"
+
 #include <boost/shared_ptr.hpp>
 #include <map>
 #include <SDL_mixer.h>

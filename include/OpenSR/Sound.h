@@ -19,9 +19,10 @@
 #ifndef RANGERS_SOUND_H
 #define RANGERS_SOUND_H
 
+#include "OpenSR/config.h"
+
 #include <string>
 #include <boost/shared_ptr.hpp>
-#include "config.h"
 
 struct Mix_Chunk;
 namespace Rangers
