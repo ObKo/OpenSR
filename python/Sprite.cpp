@@ -70,8 +70,8 @@ void exportSprite()
     .value("POSITION_X_CENTER", POSITION_X_CENTER);
 
     enum_<SpriteYOrigin>("SpriteYOrigin")
-    .value("POSITION_Y_LEFT", POSITION_Y_TOP)
-    .value("POSITION_Y_RIGHT", POSITION_Y_BOTTOM)
+    .value("POSITION_Y_TOP", POSITION_Y_TOP)
+    .value("POSITION_Y_BOTTOM", POSITION_Y_BOTTOM)
     .value("POSITION_Y_CENTER", POSITION_Y_CENTER);
 
     class_<SpriteWrap, bases<Object>, boost::noncopyable> c("Sprite", init<const std::wstring&, Object*>());
