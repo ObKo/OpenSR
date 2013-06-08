@@ -38,6 +38,12 @@ ENDIF(ICONV_SECOND_ARGUMENT_IS_CONST)
 CONFIGURE_FILE(include/OpenSR/version.h.in include/OpenSR/version.h @ONLY)
 CONFIGURE_FILE(include/OpenSR/config.h.in include/OpenSR/config.h @ONLY)
 
+OPTION(BUILD_RESOURCE_VIEWER "Build Resource Viewer tool" NO)
+OPTION(BUILD_RESOURCE_CONVERTER "Build Resource Converter tool" NO)
+OPTION(BUILD_NINEPATCH_EDITOR "Build Ninepatch Editor tool" NO)
+OPTION(BUILD_WORD_UTILS "Build World Utils tool" NO)
+OPTION(BUILD_PLANET_VIEWER "Build Planet Viewer tool" NO)
+
 ADD_SUBDIRECTORY(libRanger)
 ADD_SUBDIRECTORY(src)
 ADD_SUBDIRECTORY(tools)

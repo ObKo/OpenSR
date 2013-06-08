@@ -75,10 +75,6 @@ class StartMenuWidget(OpenSR.Engine.ScriptWidget, OpenSR.Engine.ActionListener):
     def processLogic(self, dt):
         super(StartMenuWidget, self).processLogic(dt)
         
-        #self.ship.processLogic(dt)
-        #self.bgAnimLine.processLogic(dt)
-        #self.bgAnim.processLogic(dt)
-        
         if math.fabs(self.t * self.BG_SPEED) >= self.background.width() - engine.screenWidth():
             self.t = 0
             self.bgforward = not self.bgforward

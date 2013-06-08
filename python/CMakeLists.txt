@@ -45,7 +45,6 @@ INCLUDE_DIRECTORIES(
     ${PYTHON_INCLUDE_DIRS}
     ${CMAKE_SOURCE_DIR}/include
     ${CMAKE_BINARY_DIR}/include
-    ${CMAKE_BINARY_DIR}/include/OpenSR
     ${CMAKE_SOURCE_DIR}/libRanger
 )
 

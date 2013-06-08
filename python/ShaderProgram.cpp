@@ -27,7 +27,7 @@ namespace Python
 void exportShaderProgram()
 {
     using namespace boost::python;
-    class_<Shader>("ShaderProgram", init<>())
+    class_<ShaderProgram>("ShaderProgram", init<>())
     .def("addShader", &ShaderProgram::addShader)
     .def("link", &ShaderProgram::link)
     .def("getUniformLocation", &ShaderProgram::getUniformLocation)
