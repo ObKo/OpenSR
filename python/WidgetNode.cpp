@@ -18,18 +18,21 @@
 
 #include <boost/python.hpp>
 #include <OpenSR/WidgetNode.h>
-#include "Wrappers.h"
+
+#include "WidgetWrap.h"
 
 namespace Rangers
 {
 namespace Python
 {
-struct WidgetNodeWrap : WidgetWrap_<WidgetNode>
+struct WidgetNodeWrap : WidgetNode, boost::python::wrapper<WidgetNode>
 {
     WidgetNodeWrap(Widget *parent = 0)
-        : WidgetWrap_<WidgetNode>(parent)
+        : WidgetNode(parent)
     {
     }
+
+    RANGERS_PYTHON_WRAP_WIDGET(WidgetNode)
 };
 
 void exportWidgetNode()
@@ -38,7 +41,7 @@ void exportWidgetNode()
 
     class_<WidgetNodeWrap, bases<Widget>, boost::noncopyable> c("WidgetNode", init<Widget*>());
     c.def(init<>());
-    WidgetNodeWrap::defWrapped(c);
+    RANGERS_PYTHON_WRAP_WIDGET_DEF(WidgetNode, WidgetNodeWrap, c);
 }
 }
 }

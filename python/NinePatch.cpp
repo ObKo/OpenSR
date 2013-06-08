@@ -18,26 +18,28 @@
 
 #include <boost/python.hpp>
 #include <OpenSR/NinePatch.h>
-#include "Wrappers.h"
+
+#include "SpriteWrap.h"
 
 namespace Rangers
 {
 namespace Python
 {
-struct NinePatchWrap : SpriteWrap_<NinePatch>
+struct NinePatchWrap : NinePatch, boost::python::wrapper<NinePatch>
 {
     NinePatchWrap(Object *parent = 0)
-        : SpriteWrap_<NinePatch>(parent)
+        : NinePatch(parent)
     {
     }
     NinePatchWrap(const NinePatchDescriptor &desc, Object *parent = 0)
-        : SpriteWrap_<NinePatch>(desc, parent)
+        : NinePatch(desc, parent)
     {
     }
     NinePatchWrap(const std::wstring& name, Object *parent = 0)
-        : SpriteWrap_<NinePatch>(name, parent)
+        : NinePatch(name, parent)
     {
     }
+    RANGERS_PYTHON_WRAP_SPRITE(NinePatch)
 };
 
 void exportNinePatch()
@@ -50,7 +52,7 @@ void exportNinePatch()
     .def(init<const std::wstring&>())
     .def(init<Object*>())
     .def(init<>());
-    NinePatchWrap::defWrapped(c);
+    RANGERS_PYTHON_WRAP_SPRITE_DEF(NinePatch, NinePatchWrap, c);
 }
 }
 }

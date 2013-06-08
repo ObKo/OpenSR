@@ -19,42 +19,44 @@
 #include <boost/python.hpp>
 #include <OpenSR/Button.h>
 #include <OpenSR/Font.h>
-#include "Wrappers.h"
+
+#include "WidgetWrap.h"
 
 namespace Rangers
 {
 namespace Python
 {
-struct ButtonWrap : WidgetWrap_<Button>
+struct ButtonWrap : Button, boost::python::wrapper<Button>
 {
     ButtonWrap(Widget *parent = 0)
-        : WidgetWrap_<Button>(parent)
+        : Button(parent)
     {
     }
     ButtonWrap(boost::shared_ptr<Texture> texture, Widget *parent = 0)
-        : WidgetWrap_<Button>(texture, parent)
+        : Button(texture, parent)
     {
     }
     ButtonWrap(boost::shared_ptr<Texture> texture, boost::shared_ptr<Texture> hoverTexture, Widget *parent = 0)
-        : WidgetWrap_<Button>(texture, hoverTexture, parent)
+        : Button(texture, hoverTexture, parent)
     {
     }
     ButtonWrap(boost::shared_ptr<Texture> texture, boost::shared_ptr<Texture> hoverTexture, boost::shared_ptr<Texture> pressTexture, Widget *parent = 0)
-        : WidgetWrap_<Button>(texture, hoverTexture, pressTexture, parent)
+        : Button(texture, hoverTexture, pressTexture, parent)
     {
     }
     ButtonWrap(const std::wstring& texture, Widget *parent = 0)
-        : WidgetWrap_<Button>(texture, parent)
+        : Button(texture, parent)
     {
     }
     ButtonWrap(const std::wstring& texture, const std::wstring& hoverTexture, Widget *parent = 0)
-        : WidgetWrap_<Button>(texture, hoverTexture, parent)
+        : Button(texture, hoverTexture, parent)
     {
     }
     ButtonWrap(const std::wstring& texture, const std::wstring& hoverTexture, const std::wstring& pressTexture, Widget *parent = 0)
-        : WidgetWrap_<Button>(texture, hoverTexture, pressTexture, parent)
+        : Button(texture, hoverTexture, pressTexture, parent)
     {
     }
+    RANGERS_PYTHON_WRAP_WIDGET(Button)
 };
 
 void exportButton()
@@ -83,7 +85,7 @@ void exportButton()
     .def("autoResize", &Button::autoResize)
     .def("setSounds", (void (Button::*)(boost::shared_ptr<Sound>, boost::shared_ptr<Sound>, boost::shared_ptr<Sound>))&Button::setSounds)
     .def("setSounds", (void (Button::*)(const std::wstring&, const std::wstring&, const std::wstring&))&Button::setSounds);
-    ButtonWrap::defWrapped(c);
+    RANGERS_PYTHON_WRAP_WIDGET_DEF(Button, ButtonWrap, c);
 }
 }
 }

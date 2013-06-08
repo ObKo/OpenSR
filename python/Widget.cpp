@@ -20,17 +20,20 @@
 #include <OpenSR/Widget.h>
 #include <OpenSR/Action.h>
 #include <OpenSR/ActionListener.h>
-#include "Wrappers.h"
+
+#include "WidgetWrap.h"
 
 namespace Rangers
 {
 namespace Python
 {
-struct WidgetWrap : WidgetWrap_<Widget>
+struct WidgetWrap : Widget, boost::python::wrapper<Widget>
 {
-    WidgetWrap(Widget *parent = 0): WidgetWrap_<Widget>(parent)
+    WidgetWrap(Widget *parent = 0): Widget(parent)
     {
     }
+
+    RANGERS_PYTHON_WRAP_WIDGET(Widget)
 };
 
 void exportWidget()
@@ -52,7 +55,7 @@ void exportWidget()
     .def("addListener", &Widget::addListener)
     .def("removeListener", &Widget::removeListener)
     .def("action", &Widget::action);
-    WidgetWrap::defWrapped(c);
+    RANGERS_PYTHON_WRAP_OBJECT_DEF(Widget, WidgetWrap, c);
 }
 }
 }

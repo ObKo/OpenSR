@@ -20,25 +20,26 @@
 #include <OpenSR/WidgetNode.h>
 #include <OpenSR/ScrollArea.h>
 #include <OpenSR/Styles.h>
-#include "Wrappers.h"
+
+#include "WidgetWrap.h"
 
 namespace Rangers
 {
 namespace Python
 {
-/* ScrollArea(Widget* parent = 0);
-  ScrollArea(const ScrollBarStyle& style, WidgetNode *node = 0, Widget *parent = 0); */
-struct ScrollAreaWrap : WidgetWrap_<ScrollArea>
+struct ScrollAreaWrap : ScrollArea, boost::python::wrapper<ScrollArea>
 {
     ScrollAreaWrap(const ScrollBarStyle& style, boost::shared_ptr<WidgetNode> node = boost::shared_ptr<WidgetNode>(), Widget *parent = 0)
-        : WidgetWrap_<ScrollArea>(style, node, parent)
+        : ScrollArea(style, node, parent)
     {
     }
 
     ScrollAreaWrap(Widget *parent = 0)
-        : WidgetWrap_<ScrollArea>(parent)
+        : ScrollArea(parent)
     {
     }
+
+    RANGERS_PYTHON_WRAP_WIDGET(ScrollArea)
 };
 
 void exportScrollArea()
@@ -53,7 +54,7 @@ void exportScrollArea()
     .def("setWidth", &ScrollArea::setWidth)
     .def("setHeight", &ScrollArea::setHeight)
     .def("setNode", &ScrollArea::setNode);
-    ScrollAreaWrap::defWrapped(c);
+    RANGERS_PYTHON_WRAP_WIDGET_DEF(ScrollArea, ScrollAreaWrap, c)
 }
 }
 }

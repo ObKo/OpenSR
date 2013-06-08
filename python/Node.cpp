@@ -18,17 +18,18 @@
 
 #include <OpenSR/Node.h>
 #include <boost/python.hpp>
-#include "Wrappers.h"
+#include "ObjectWrap.h"
 
 namespace Rangers
 {
 namespace Python
 {
-struct NodeWrap: ObjectWrap_<Node>
+struct NodeWrap: Node, boost::python::wrapper<Node>
 {
-    NodeWrap(Object *parent = 0): ObjectWrap_<Node>(parent)
+    NodeWrap(Object *parent = 0): Node(parent)
     {
     }
+    RANGERS_PYTHON_WRAP_OBJECT(Node)
 };
 
 void exportNode()
@@ -37,9 +38,7 @@ void exportNode()
     class_<NodeWrap, bases<Object>, boost::noncopyable> c("Node", init<Object*>());
     c
     .def(init<>());
-    NodeWrap::defWrapped(c);
-    //.def("processLogic", &Node::processLogic, &Python::NodeWrap::processLogic_)
-    //.def("draw", &Node::draw, &Python::NodeWrap::draw_);
+    RANGERS_PYTHON_WRAP_OBJECT_DEF(Node, NodeWrap, c);
 }
 }
 }

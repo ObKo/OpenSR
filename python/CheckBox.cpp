@@ -19,18 +19,21 @@
 #include <boost/python.hpp>
 #include <OpenSR/CheckBox.h>
 #include <OpenSR/Styles.h>
-#include "Wrappers.h"
+
+#include "WidgetWrap.h"
 
 namespace Rangers
 {
 namespace Python
 {
-struct CheckBoxWrap : WidgetWrap_<CheckBox>
+struct CheckBoxWrap : CheckBox, boost::python::wrapper<CheckBox>
 {
     CheckBoxWrap(const CheckBoxStyle& style, const std::wstring &text, Widget *parent = 0)
-        : WidgetWrap_<CheckBox>(style, text, parent)
+        : CheckBox(style, text, parent)
     {
     }
+
+    RANGERS_PYTHON_WRAP_WIDGET(CheckBox)
 };
 
 void exportCheckBox()
@@ -43,7 +46,7 @@ void exportCheckBox()
     .def("text", &CheckBox::text)
     .def("setChecked", &CheckBox::setChecked)
     .def("checked", &CheckBox::checked);
-    CheckBoxWrap::defWrapped(c);
+    RANGERS_PYTHON_WRAP_WIDGET_DEF(CheckBox, CheckBoxWrap, c)
 }
 }
 }

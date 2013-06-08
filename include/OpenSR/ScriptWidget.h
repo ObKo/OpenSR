@@ -32,6 +32,7 @@ public:
     virtual ~ScriptWidget();
 
     virtual void draw() const;
+    virtual void processLogic(int dt);
 
     RANGERS_DISABLE_COPY(ScriptWidget)
 };

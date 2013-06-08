@@ -18,17 +18,18 @@
 
 #include <OpenSR/Object.h>
 #include <boost/python.hpp>
-#include "Wrappers.h"
+#include "ObjectWrap.h"
 
 namespace Rangers
 {
 namespace Python
 {
-struct ObjectWrap: ObjectWrap_<Object>
+struct ObjectWrap: Object, boost::python::wrapper<Object>
 {
-    ObjectWrap(Object *parent = 0): ObjectWrap_<Object>(parent)
+    ObjectWrap(Object *parent = 0): Object(parent)
     {
     }
+    RANGERS_PYTHON_WRAP_OBJECT(Object)
 };
 
 void exportObject()
@@ -60,7 +61,7 @@ void exportObject()
     .def("mapToGlobal", (Rect(Object::*)(const Rect&) const)&Object::mapToGlobal)
     .def("mapToParent", (Rect(Object::*)(const Rect&) const)&Object::mapToParent)
     .def("mapToSceen", (Rect(Object::*)(const Rect&) const)&Object::mapToScreen);
-    ObjectWrap::defWrapped(c);
+    RANGERS_PYTHON_WRAP_OBJECT_DEF(Object, ObjectWrap, c);
 }
 }
 }

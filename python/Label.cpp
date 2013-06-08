@@ -19,22 +19,24 @@
 #include <boost/python.hpp>
 #include <OpenSR/Label.h>
 #include <OpenSR/Font.h>
-#include "Wrappers.h"
+
+#include "SpriteWrap.h"
 
 namespace Rangers
 {
 namespace Python
 {
-struct LabelWrap : SpriteWrap_<Label>
+struct LabelWrap : Label, boost::python::wrapper<Label>
 {
     LabelWrap(Object *parent = 0)
-        : SpriteWrap_<Label>(parent)
+        : Label(parent)
     {
     }
     LabelWrap(const std::wstring& text, Object *parent = 0, boost::shared_ptr<Font> font = boost::shared_ptr<Font>(), SpriteXOrigin xpos = POSITION_X_LEFT, SpriteYOrigin ypos = POSITION_Y_TOP)
-        : SpriteWrap_<Label>(text, parent, font, xpos, ypos)
+        : Label(text, parent, font, xpos, ypos)
     {
     }
+    RANGERS_PYTHON_WRAP_SPRITE(Label)
 };
 
 void exportLabel()
@@ -51,7 +53,7 @@ void exportLabel()
     .def("text", &Label::text)
     .def("setWordWrap", &Label::setWordWrap)
     .def("setFixedSize", &Label::setFixedSize);
-    LabelWrap::defWrapped(c);
+    RANGERS_PYTHON_WRAP_SPRITE_DEF(Label, LabelWrap, c);
 }
 }
 }

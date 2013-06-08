@@ -18,22 +18,25 @@
 
 #include <boost/python.hpp>
 #include <OpenSR/GAISprite.h>
-#include "Wrappers.h"
+
+#include "SpriteWrap.h"
 
 namespace Rangers
 {
 namespace Python
 {
-struct GAISpriteWrap : SpriteWrap_<GAISprite>
+struct GAISpriteWrap : GAISprite, boost::python::wrapper<GAISprite>
 {
-    GAISpriteWrap(Object *parent = 0): SpriteWrap_<GAISprite>(parent)
+    GAISpriteWrap(Object *parent = 0): GAISprite(parent)
     {
     }
 
     GAISpriteWrap(const std::wstring& name, Object *parent = 0)
-        : SpriteWrap_<GAISprite>(name, parent)
+        : GAISprite(name, parent)
     {
     }
+
+    RANGERS_PYTHON_WRAP_SPRITE(GAISprite)
 };
 
 void exportGAISprite()
@@ -46,7 +49,7 @@ void exportGAISprite()
     .def(init<>())
     .def("reset", &AnimatedSprite::reset)
     .def("setFrame", &AnimatedSprite::setFrame);
-    GAISpriteWrap::defWrapped(c);
+    RANGERS_PYTHON_WRAP_SPRITE_DEF(GAISprite, GAISpriteWrap, c);
 }
 }
 }

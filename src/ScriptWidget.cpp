@@ -43,4 +43,14 @@ void ScriptWidget::draw() const
 
     endDraw();
 }
+
+void ScriptWidget::processLogic(int dt)
+{
+    RANGERS_D(const ScriptWidget);
+
+    std::list<boost::shared_ptr<Object> > children = d->children;
+
+    for (std::list<boost::shared_ptr<Object> >::const_iterator i = children.begin(); i != children.end(); i++)
+        (*i)->processLogic(dt);
+}
 }

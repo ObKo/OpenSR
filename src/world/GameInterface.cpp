@@ -18,7 +18,7 @@
 
 #include <OpenSR/PluginInterface.h>
 #include <OpenSR/ResourceManager.h>
-#include <version.h>
+#include <OpenSR/version.h>
 
 /*
 #include "WorldObject.h"

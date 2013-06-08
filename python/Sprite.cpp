@@ -18,38 +18,40 @@
 
 #include <boost/python.hpp>
 #include <OpenSR/Sprite.h>
-#include "Wrappers.h"
+
+#include "SpriteWrap.h"
 
 namespace Rangers
 {
 namespace Python
 {
-struct SpriteWrap : SpriteWrap_<Sprite>
+struct SpriteWrap : Sprite, boost::python::wrapper<Sprite>
 {
-    SpriteWrap(Object *parent = 0): SpriteWrap_<Sprite>(parent)
+    SpriteWrap(Object *parent = 0): Sprite(parent)
     {
     }
 
     SpriteWrap(boost::shared_ptr<Texture> texture, Object *parent = 0, TextureScaling  ts = TEXTURE_NORMAL,
                SpriteXOrigin xpos = POSITION_X_LEFT, SpriteYOrigin ypos = POSITION_Y_TOP)
-        : SpriteWrap_<Sprite>(texture, parent, ts, xpos, ypos)
+        : Sprite(texture, parent, ts, xpos, ypos)
     {
     }
     SpriteWrap(const std::wstring& texture, Object *parent = 0, TextureScaling  ts = TEXTURE_NORMAL,
                SpriteXOrigin xpos = POSITION_X_LEFT, SpriteYOrigin ypos = POSITION_Y_TOP)
-        : SpriteWrap_<Sprite>(texture, parent, ts, xpos, ypos)
+        : Sprite(texture, parent, ts, xpos, ypos)
     {
     }
 
     SpriteWrap(const TextureRegion& region, Object *parent = 0)
-        : SpriteWrap_<Sprite>(region, parent)
+        : Sprite(region, parent)
     {
     }
 
     SpriteWrap(const TextureRegionDescriptor& region, Object *parent = 0)
-        : SpriteWrap_<Sprite>(region, parent)
+        : Sprite(region, parent)
     {
     }
+    RANGERS_PYTHON_WRAP_SPRITE(Sprite)
 };
 
 void exportSprite()
@@ -91,7 +93,7 @@ void exportSprite()
     .def("setTexture", &Sprite::setTexture)
     .def("width", &Sprite::width)
     .def("height", &Sprite::height);
-    SpriteWrap::defWrapped(c);
+    RANGERS_PYTHON_WRAP_SPRITE_DEF(Sprite, SpriteWrap, c);
 }
 }
 }

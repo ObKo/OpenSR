@@ -19,28 +19,31 @@
 #include <boost/python.hpp>
 #include <OpenSR/LineEditWidget.h>
 #include <OpenSR/Styles.h>
-#include "Wrappers.h"
+
+#include "WidgetWrap.h"
 
 namespace Rangers
 {
 namespace Python
 {
-struct LineEditWidgetWrap : WidgetWrap_<LineEditWidget>
+struct LineEditWidgetWrap : LineEditWidget, boost::python::wrapper<LineEditWidgetWrap>
 {
     LineEditWidgetWrap(float w, float h = 0, boost::shared_ptr<Font> font = boost::shared_ptr<Font>(), Widget* parent = 0)
-        : WidgetWrap_<LineEditWidget>(w, h, font, parent)
+        : LineEditWidget(w, h, font, parent)
     {
     }
 
     LineEditWidgetWrap(Widget* parent = 0)
-        : WidgetWrap_<LineEditWidget>(parent)
+        : LineEditWidget(parent)
     {
     }
 
     LineEditWidgetWrap(const LineEditStyle& style, Widget* parent = 0)
-        : WidgetWrap_<LineEditWidget>(style, parent)
+        : LineEditWidget(style, parent)
     {
     }
+
+    RANGERS_PYTHON_WRAP_WIDGET(LineEditWidget)
 };
 
 void exportLineEditWidget()
@@ -57,7 +60,7 @@ void exportLineEditWidget()
     .def(init<>())
     .def("setText", &LineEditWidget::setText)
     .def("text", &LineEditWidget::text);
-    LineEditWidgetWrap::defWrapped(c);
+    RANGERS_PYTHON_WRAP_WIDGET_DEF(LineEditWidget, LineEditWidgetWrap, c);
 }
 }
 }

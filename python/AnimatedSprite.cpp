@@ -18,26 +18,28 @@
 
 #include <boost/python.hpp>
 #include <OpenSR/AnimatedSprite.h>
-#include "Wrappers.h"
+
+#include "SpriteWrap.h"
 
 namespace Rangers
 {
 namespace Python
 {
-struct AnimatedSpriteWrap : SpriteWrap_<AnimatedSprite>
+struct AnimatedSpriteWrap : AnimatedSprite, boost::python::wrapper<AnimatedSprite>
 {
-    AnimatedSpriteWrap(Object *parent = 0): SpriteWrap_<AnimatedSprite>(parent)
+    AnimatedSpriteWrap(Object *parent = 0): AnimatedSprite(parent)
     {
     }
 
     AnimatedSpriteWrap(boost::shared_ptr<AnimatedTexture> texture, Object *parent = 0)
-        : SpriteWrap_<AnimatedSprite>(texture, parent)
+        : AnimatedSprite(texture, parent)
     {
     }
     AnimatedSpriteWrap(const std::wstring& animation, Object *parent = 0)
-        : SpriteWrap_<AnimatedSprite>(animation, parent)
+        : AnimatedSprite(animation, parent)
     {
     }
+    RANGERS_PYTHON_WRAP_SPRITE(AnimatedSprite)
 };
 
 void exportAnimatedSprite()
@@ -62,7 +64,7 @@ void exportAnimatedSprite()
     .def("frameRate", &AnimatedSprite::frameRate)
     .def("setFrame", &AnimatedSprite::setFrame)
     .def("setFrameRate", &AnimatedSprite::setFrameRate);
-    AnimatedSpriteWrap::defWrapped(c);
+    RANGERS_PYTHON_WRAP_SPRITE_DEF(AnimatedSprite, AnimatedSpriteWrap, c);
 }
 }
 }

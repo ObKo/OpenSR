@@ -18,17 +18,19 @@
 
 #include <boost/python.hpp>
 #include <OpenSR/ScriptWidget.h>
-#include "Wrappers.h"
+
+#include "WidgetWrap.h"
 
 namespace Rangers
 {
 namespace Python
 {
-struct ScriptWidgetWrap : WidgetWrap_<ScriptWidget>
+struct ScriptWidgetWrap : ScriptWidget, boost::python::wrapper<ScriptWidget>
 {
-    ScriptWidgetWrap(Widget *parent = 0): WidgetWrap_<ScriptWidget>(parent)
+    ScriptWidgetWrap(Widget *parent = 0): ScriptWidget(parent)
     {
     }
+    RANGERS_PYTHON_WRAP_WIDGET(ScriptWidget)
 };
 
 void exportScriptWidget()
@@ -36,7 +38,7 @@ void exportScriptWidget()
     using namespace boost::python;
     class_<ScriptWidgetWrap, bases<Widget>, boost::noncopyable> c("ScriptWidget", init<Widget*>());
     c.def(init<>());
-    ScriptWidgetWrap::defWrapped(c);
+    RANGERS_PYTHON_WRAP_WIDGET_DEF(ScriptWidget, ScriptWidgetWrap, c);
 }
 }
 }
