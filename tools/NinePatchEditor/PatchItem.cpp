@@ -9,9 +9,9 @@
 namespace
 {
 const QBrush PATCH_VERTHORIZ_BRUSH = QBrush(QColor(0, 192, 0, 64));
-const QPen PATCH_VERTHORIZ_PEN = QPen(QColor(0, 96, 0));
+const QPen PATCH_VERTHORIZ_PEN = QPen(QColor(0, 96, 0), 0);
 const QBrush PATCH_BRUSH = QBrush(QColor(192, 0, 192, 64));
-const QPen PATCH_PEN = QPen(Qt::transparent);
+const QPen PATCH_PEN = QPen(Qt::transparent, 0);
 struct Delta
 {
     Delta(qreal d1_, qreal d2_)

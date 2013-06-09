@@ -36,7 +36,7 @@ qreal EditorView::zoom() const
 
 void EditorView::contextMenuEvent(QContextMenuEvent * event)
 {
-    QGraphicsItem *i = scene()->itemAt(mapToScene(event->pos()));
+    QGraphicsItem *i = scene()->itemAt(mapToScene(event->pos()), QTransform());
     PatchItem *item = dynamic_cast<PatchItem*>(i);
 
     if (!item)
