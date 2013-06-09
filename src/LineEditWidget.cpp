@@ -255,7 +255,10 @@ void LineEditWidget::processMain()
         d->background->setGeometry(d->width, d->height);
     }
 
-    int cursorPosition = d->label->font()->calculateStringWidth(d->text.begin() + d->stringOffset, d->text.begin() + d->position);
+    int cursorPosition = 0;
+    if (d->label->font())
+        cursorPosition = d->label->font()->calculateStringWidth(d->text.begin() + d->stringOffset, d->text.begin() + d->position);
+
     if (!d->cursorBuffer)
     {
         d->cursorVertices = new Vertex[2];

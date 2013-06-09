@@ -22,8 +22,8 @@
 #include "OpenSR/config.h"
 
 #include <string>
+#include <boost/shared_array.hpp>
 #include <ft2build.h>
-#include <boost/shared_ptr.hpp>
 #include FT_FREETYPE_H
 
 namespace Rangers
@@ -33,6 +33,7 @@ class RANGERS_ENGINE_API Font
 {
 public:
     Font(const char *data, size_t dataSize, int size, bool antialiased = true);
+    Font(const std::wstring& file, int size, bool antialiased = true);
     ~Font();
 
     boost::shared_ptr<Texture> renderText(const std::string& text, int width = 0) const;
@@ -52,7 +53,7 @@ private:
                           int x, int y, int w, int h, int pitch, unsigned char *data, unsigned int color, bool antialiased);
     FT_Face m_fontFace;
     int m_fontSize;
-    char *m_fontData;
+    boost::shared_array<char> m_fontData;
     bool m_antialiased;
 };
 }

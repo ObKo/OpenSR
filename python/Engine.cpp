@@ -30,13 +30,29 @@ namespace Rangers
 {
 namespace Python
 {
-struct NullDeleter
+int propertiesGetInt(Engine &self, const std::string& key, int defaultValue)
 {
-    void operator()(const void*) {}
-};
-boost::shared_ptr<Engine> getEngineInstance()
+    return self.properties()->get<int>(key, defaultValue);
+}
+std::string propertiesGetString(Engine &self, const std::string& key, const std::string& defaultValue)
 {
-    return boost::shared_ptr<Engine>(&Engine::instance(), NullDeleter());
+    return self.properties()->get<std::string>(key, defaultValue);
+}
+bool propertiesGetBool(Engine &self, const std::string& key, bool defaultValue)
+{
+    return self.properties()->get<bool>(key, defaultValue);
+}
+void propertiesSetInt(Engine &self, const std::string& key, int value)
+{
+    self.properties()->put(key, value);
+}
+void propertiesSetString(Engine &self, const std::string& key, const std::string& value)
+{
+    self.properties()->put(key, value);
+}
+void propertiesSetBool(Engine &self, const std::string& key, bool value)
+{
+    self.properties()->put(key, value);
 }
 
 void exportEngine()
@@ -62,7 +78,13 @@ void exportEngine()
     .def("setDefaultSkin", (void (Engine::*)(const Skin&))&Engine::setDefaultSkin)
     .def("loadPlugin", &Engine::loadPlugin)
     .def("screenWidth", &Engine::screenWidth)
-    .def("screenHeight", &Engine::screenHeight);
+    .def("screenHeight", &Engine::screenHeight)
+    .def("propertiesGetInt", &propertiesGetInt)
+    .def("propertiesGetBool", &propertiesGetBool)
+    .def("propertiesGetString", &propertiesGetString)
+    .def("propertiesSetInt", &propertiesSetInt)
+    .def("propertiesSetBool", &propertiesSetBool)
+    .def("propertiesSetString", &propertiesSetString);
 }
 }
 }

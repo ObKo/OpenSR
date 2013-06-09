@@ -1,10 +1,11 @@
 import OpenSR.Engine
+import OpenSR.ORC.Settings
 import sys
 import math
 
 engine = OpenSR.Engine.Engine.instance()
 resources = OpenSR.Engine.ResourceManager.instance()
-
+sound = OpenSR.Engine.SoundManager.instance()
 
 class StartMenuWidget(OpenSR.Engine.ScriptWidget, OpenSR.Engine.ActionListener):
     BG_SPEED = 20.0 / 1000.0
@@ -61,6 +62,8 @@ class StartMenuWidget(OpenSR.Engine.ScriptWidget, OpenSR.Engine.ActionListener):
         self.menuNode.setPosition(engine.screenWidth() - 400, 300)
         self.addWidget(self.menuNode)
         
+        sound.playMusic("music/SPECIAL/SpaceIsCalling.dat", False)
+        
         self.buttons = {}
         
         y = 0
@@ -98,6 +101,7 @@ class StartMenuWidget(OpenSR.Engine.ScriptWidget, OpenSR.Engine.ActionListener):
         if action.source() == self.buttons['exit']:
             self.dispose()                
             engine.quit(0)
-        elif action.source() == self.buttons['newGame']:
+        elif action.source() == self.buttons['settings']:
             self.dispose()
+            engine.addWidget(OpenSR.ORC.Settings.SettingsWidget(None))
             

@@ -24,6 +24,7 @@
 #include <map>
 #include <libRanger.h>
 
+#include "OpenSR/ResourceManager.h"
 #include "OpenSR/Texture.h"
 
 //TODO: Move this
@@ -33,19 +34,26 @@ namespace Rangers
 extern FT_Library trueTypeLibrary;
 
 Font::Font(const char* data, size_t dataSize, int size, bool antialiased):
-    m_antialiased(antialiased), m_fontSize(size), m_fontData(0)
+    m_antialiased(antialiased), m_fontSize(size)
 {
-    m_fontData = new char[dataSize];
-    memcpy(m_fontData, data, dataSize);
-    int error = FT_New_Memory_Face(trueTypeLibrary, (FT_Byte *)m_fontData, dataSize, 0, &m_fontFace);
+    m_fontData = boost::shared_array<char>(new char[dataSize]);
+    memcpy(m_fontData.get(), data, dataSize);
+    int error = FT_New_Memory_Face(trueTypeLibrary, (FT_Byte *)m_fontData.get(), dataSize, 0, &m_fontFace);
+    FT_Set_Pixel_Sizes(m_fontFace, 0, size);
+}
+
+Font::Font(const std::wstring& file, int size, bool antialiased):
+    m_antialiased(antialiased), m_fontSize(size)
+{
+    size_t s;
+    m_fontData = ResourceManager::instance().loadData(file, s);
+    int error = FT_New_Memory_Face(trueTypeLibrary, (FT_Byte *)m_fontData.get(), s, 0, &m_fontFace);
     FT_Set_Pixel_Sizes(m_fontFace, 0, size);
 }
 
 Font::~Font()
 {
     FT_Done_Face(m_fontFace);
-    if (m_fontData)
-        delete[] m_fontData;
 }
 
 void Font::drawGlyph(unsigned char *dest, int destwidth, int destheight, int x, int y, int w, int h, int pitch, unsigned char *data, bool antialiased)

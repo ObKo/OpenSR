@@ -27,7 +27,8 @@ namespace Python
 void exportFont()
 {
     using namespace boost::python;
-    class_<Font>("Font", no_init)
+    class_<Font, boost::shared_ptr<Font> >("Font", init<const std::wstring&, int, bool>())
+    .def(init<const std::wstring&, int>())
     .def("renderText", (boost::shared_ptr<Texture> (Font::*)(const std::wstring&, int) const)&Font::renderText)
     //.def("renderText", (boost::shared_ptr<Texture> (Font::*)(const std::wstring&) const)&Font::renderText)
     .def("renderColoredText", (boost::shared_ptr<Texture> (Font::*)(const std::wstring&, int, int) const)&Font::renderColoredText)
