@@ -37,7 +37,7 @@ void exportLabel();
 void exportNinePatch();
 void exportButton();
 void exportCheckBox();
-void exportLineEditWidget();
+void exportLineEdit();
 void exportScrollArea();
 void exportWidgetNode();
 void exportGAISprite();
@@ -98,7 +98,7 @@ BOOST_PYTHON_MODULE(_Engine)
     Rangers::Python::exportNinePatch();
     Rangers::Python::exportButton();
     Rangers::Python::exportCheckBox();
-    Rangers::Python::exportLineEditWidget();
+    Rangers::Python::exportLineEdit();
     Rangers::Python::exportScrollArea();
     Rangers::Python::exportWidgetNode();
     Rangers::Python::exportGAISprite();

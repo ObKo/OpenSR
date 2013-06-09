@@ -12,7 +12,7 @@ SET(SOURCES
     NinePatch.cpp
     Button.cpp
     CheckBox.cpp
-    LineEditWidget.cpp
+    LineEdit.cpp
     ScrollArea.cpp
     WidgetNode.cpp
     GAISprite.cpp

@@ -21,7 +21,7 @@
 #include <OpenSR/ScrollArea.h>
 #include <OpenSR/Styles.h>
 
-#include "WidgetWrap.h"
+#include "OpenSR/python/WidgetWrap.h"
 
 namespace Rangers
 {

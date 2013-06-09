@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "OpenSR/LineEditWidget.h"
+#include "OpenSR/LineEdit.h"
 #include <SDL.h>
 #include <boost/variant/get.hpp>
 
@@ -27,15 +27,15 @@
 #include "OpenSR/ResourceManager.h"
 #include "OpenSR/NinePatch.h"
 
-#include "OpenSR/private/LineEditWidget_p.h"
+#include "OpenSR/private/LineEdit_p.h"
 
 namespace Rangers
 {
 
-void LineEditWidgetPrivate::LineEditWidgetListener::actionPerformed(const Action &action)
+void LineEditPrivate::LineEditListener::actionPerformed(const Action &action)
 {
-    boost::shared_ptr<LineEditWidget> q = boost::static_pointer_cast<LineEditWidget>(action.source());
-    LineEditWidgetPrivate *d = q->d_func();
+    boost::shared_ptr<LineEdit> q = boost::static_pointer_cast<LineEdit>(action.source());
+    LineEditPrivate *d = q->d_func();
 
     switch (action.type())
     {
@@ -54,7 +54,7 @@ void LineEditWidgetPrivate::LineEditWidgetListener::actionPerformed(const Action
     }
 }
 
-LineEditWidgetPrivate::LineEditWidgetPrivate()
+LineEditPrivate::LineEditPrivate()
 {
     cursorVertices = 0;
     cursorBuffer = 0;
@@ -62,12 +62,12 @@ LineEditWidgetPrivate::LineEditWidgetPrivate()
     cursorVisible = false;
     cursorTime = 0;
     stringOffset = 0;
-    lineEditListener = boost::shared_ptr<LineEditWidgetListener>(new LineEditWidgetListener());
+    lineEditListener = boost::shared_ptr<LineEditListener>(new LineEditListener());
 }
 
-void LineEditWidget::draw() const
+void LineEdit::draw() const
 {
-    RANGERS_D(const LineEditWidget);
+    RANGERS_D(const LineEdit);
     if (!prepareDraw())
         return;
 
@@ -97,10 +97,10 @@ void LineEditWidget::draw() const
     endDraw();
 }
 
-LineEditWidget::LineEditWidget(float w, float h, boost::shared_ptr< Font > font, Widget* parent):
-    Widget(*(new LineEditWidgetPrivate()), parent)
+LineEdit::LineEdit(float w, float h, boost::shared_ptr< Font > font, Widget* parent):
+    Widget(*(new LineEditPrivate()), parent)
 {
-    RANGERS_D(LineEditWidget);
+    RANGERS_D(LineEdit);
     if (!font)
         font = Engine::instance().coreFont();
 
@@ -113,24 +113,24 @@ LineEditWidget::LineEditWidget(float w, float h, boost::shared_ptr< Font > font,
     d->init();
 }
 
-LineEditWidget::LineEditWidget(Widget* parent): Widget(*(new LineEditWidgetPrivate()), parent)
+LineEdit::LineEdit(Widget* parent): Widget(*(new LineEditPrivate()), parent)
 {
 }
 
-LineEditWidget::LineEditWidget(const LineEditStyle& style, Widget* parent): Widget(*(new LineEditWidgetPrivate()), parent)
+LineEdit::LineEdit(const LineEditStyle& style, Widget* parent): Widget(*(new LineEditPrivate()), parent)
 {
-    RANGERS_D(LineEditWidget);
+    RANGERS_D(LineEdit);
     d->style = style;
     d->init();
 }
 
-LineEditWidget::LineEditWidget(LineEditWidgetPrivate &p, Widget *parent): Widget(p, parent)
+LineEdit::LineEdit(LineEditPrivate &p, Widget *parent): Widget(p, parent)
 {
 }
 
-void LineEditWidgetPrivate::init()
+void LineEditPrivate::init()
 {
-    RANGERS_Q(LineEditWidget);
+    RANGERS_Q(LineEdit);
     if (style.background.type == ResourceDescriptor::NINEPATCH)
     {
         background = boost::shared_ptr<Sprite>(new NinePatch(boost::get<NinePatchDescriptor>(style.background.resource)));
@@ -181,15 +181,15 @@ void LineEditWidgetPrivate::init()
     q->markToUpdate();
 }
 
-void LineEditWidget::mouseMove(const Vector &p)
+void LineEdit::mouseMove(const Vector &p)
 {
-    RANGERS_D(LineEditWidget);
+    RANGERS_D(LineEdit);
     d->mousePosition = p;
 }
 
-void LineEditWidgetPrivate::updateText()
+void LineEditPrivate::updateText()
 {
-    RANGERS_Q(LineEditWidget);
+    RANGERS_Q(LineEdit);
     if (!label->font())
         return;
     q->lock();
@@ -231,9 +231,9 @@ void LineEditWidgetPrivate::updateText()
     q->unlock();
 }
 
-LineEditWidget::~LineEditWidget()
+LineEdit::~LineEdit()
 {
-    RANGERS_D(LineEditWidget);
+    RANGERS_D(LineEdit);
     /*if (d->background)
         delete d->background;
 
@@ -241,9 +241,9 @@ LineEditWidget::~LineEditWidget()
         delete d->label;*/
 }
 
-void LineEditWidget::processMain()
+void LineEdit::processMain()
 {
-    RANGERS_D(LineEditWidget);
+    RANGERS_D(LineEdit);
 
     if (d->label->needUpdate())
         d->label->processMain();
@@ -294,10 +294,10 @@ void LineEditWidget::processMain()
     Widget::processMain();
 }
 
-void LineEditWidget::processLogic(int dt)
+void LineEdit::processLogic(int dt)
 {
     lock();
-    RANGERS_D(LineEditWidget);
+    RANGERS_D(LineEdit);
     d->cursorTime += dt;
     if (d->cursorTime > 500)
     {
@@ -308,9 +308,9 @@ void LineEditWidget::processLogic(int dt)
 }
 
 
-void LineEditWidgetPrivate::keyPressed(const SDL_Keysym& key)
+void LineEditPrivate::keyPressed(const SDL_Keysym& key)
 {
-    RANGERS_Q(LineEditWidget);
+    RANGERS_Q(LineEdit);
     q->lock();
 
     if (key.sym == SDLK_RETURN);
@@ -344,9 +344,9 @@ void LineEditWidgetPrivate::keyPressed(const SDL_Keysym& key)
     q->unlock();
 }
 
-void LineEditWidgetPrivate::textAdded(const std::wstring& str)
+void LineEditPrivate::textAdded(const std::wstring& str)
 {
-    RANGERS_Q(LineEditWidget);
+    RANGERS_Q(LineEdit);
     q->lock();
 
     //FIXME: Handle "bad" chars ('\n', '\t', '\r', etc.)
@@ -364,10 +364,10 @@ void LineEditWidgetPrivate::textAdded(const std::wstring& str)
     q->unlock();
 }
 
-void LineEditWidget::setText(const std::wstring& s)
+void LineEdit::setText(const std::wstring& s)
 {
     lock();
-    RANGERS_D(LineEditWidget);
+    RANGERS_D(LineEdit);
     d->text = s;
     d->position = 0;
     d->stringOffset = 0;
@@ -376,15 +376,15 @@ void LineEditWidget::setText(const std::wstring& s)
     unlock();
 }
 
-std::wstring LineEditWidget::text() const
+std::wstring LineEdit::text() const
 {
-    RANGERS_D(const LineEditWidget);
+    RANGERS_D(const LineEdit);
     return d->text;
 }
 
-int LineEditWidget::minHeight() const
+int LineEdit::minHeight() const
 {
-    RANGERS_D(const LineEditWidget);
+    RANGERS_D(const LineEdit);
     if (d->background && d->label->font())
         return std::max(d->label->font()->size(), (int)d->background->normalHeight());
 
@@ -394,9 +394,9 @@ int LineEditWidget::minHeight() const
     return Widget::minHeight();
 }
 
-int LineEditWidget::minWidth() const
+int LineEdit::minWidth() const
 {
-    RANGERS_D(const LineEditWidget);
+    RANGERS_D(const LineEdit);
     std::wstring w = L"W";
     if (d->background && d->label->font())
         return std::max(d->label->font()->calculateStringWidth(w.begin(), w.end()), (int)d->background->normalHeight());
@@ -407,16 +407,16 @@ int LineEditWidget::minWidth() const
     return Widget::minHeight();
 }
 
-int LineEditWidget::preferredHeight() const
+int LineEdit::preferredHeight() const
 {
-    RANGERS_D(const LineEditWidget);
+    RANGERS_D(const LineEdit);
     if (d->background && d->label->font() && d->style.contentRect.valid())
         return d->background->normalHeight() + d->label->font()->size() - d->style.contentRect.height;
 
     return minHeight();
 }
 
-int LineEditWidget::maxHeight() const
+int LineEdit::maxHeight() const
 {
     return preferredHeight();
 }

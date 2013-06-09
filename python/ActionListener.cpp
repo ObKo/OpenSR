@@ -20,7 +20,8 @@
 #include <OpenSR/Action.h>
 #include <OpenSR/Log.h>
 #include <boost/python.hpp>
-#include "Wrappers.h"
+
+#include "OpenSR/python/Wrappers.h"
 
 namespace Rangers
 {

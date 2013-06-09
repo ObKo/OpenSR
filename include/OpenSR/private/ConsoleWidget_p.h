@@ -21,7 +21,7 @@
 
 #include "Widget_p.h"
 
-#include "OpenSR/LineEditWidget.h"
+#include "OpenSR/LineEdit.h"
 #include "OpenSR/ColorLabel.h"
 #include "OpenSR/ActionListener.h"
 
@@ -39,7 +39,7 @@ public:
 
     ConsoleWidgetPrivate();
 
-    boost::shared_ptr<LineEditWidget> lineEdit;
+    boost::shared_ptr<LineEdit> lineEdit;
     boost::shared_ptr<ColorLabel> logLabel;
     Vertex *borderVertices;
     GLuint borderBuffer;

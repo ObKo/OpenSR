@@ -24,7 +24,8 @@
 
 #include <boost/python.hpp>
 #include <boost/shared_ptr.hpp>
-#include "Wrappers.h"
+
+#include "OpenSR/python/Wrappers.h"
 
 namespace Rangers
 {

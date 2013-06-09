@@ -100,7 +100,7 @@ ConsoleWidget::ConsoleWidget(float w, float h, Widget* parent): Widget(*(new Con
     d->width = w;
     d->height = h;
     int editSize = Engine::instance().serviceFont()->size() + 2;
-    d->lineEdit = boost::shared_ptr<LineEditWidget>(new LineEditWidget(w - 8, Engine::instance().serviceFont()->size(), Engine::instance().serviceFont()));
+    d->lineEdit = boost::shared_ptr<LineEdit>(new LineEdit(w - 8, Engine::instance().serviceFont()->size(), Engine::instance().serviceFont()));
     d->logLabel = boost::shared_ptr<ColorLabel>(new ColorLabel("", 0, Engine::instance().serviceFont(), POSITION_X_LEFT, POSITION_Y_TOP));
     d->logLabel->setPosition(4, 4);
     d->logLabel->setFixedSize(w - 8, h - editSize - 8);

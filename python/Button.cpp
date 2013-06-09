@@ -20,7 +20,7 @@
 #include <OpenSR/Button.h>
 #include <OpenSR/Font.h>
 
-#include "WidgetWrap.h"
+#include "OpenSR/python/WidgetWrap.h"
 
 namespace Rangers
 {

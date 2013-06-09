@@ -27,13 +27,13 @@
 
 namespace Rangers
 {
-class LineEditWidgetPrivate: public WidgetPrivate
+class LineEditPrivate: public WidgetPrivate
 {
-    RANGERS_DECLARE_PUBLIC(LineEditWidget)
+    RANGERS_DECLARE_PUBLIC(LineEdit)
 public:
-    LineEditWidgetPrivate();
+    LineEditPrivate();
 
-    class LineEditWidgetListener: public ActionListener
+    class LineEditListener: public ActionListener
     {
     public:
         virtual void actionPerformed(const Action &action);
@@ -58,7 +58,7 @@ public:
     void keyPressed(const SDL_Keysym& key);
     void textAdded(const std::wstring& str);
 
-    boost::shared_ptr<LineEditWidgetListener> lineEditListener;
+    boost::shared_ptr<LineEditListener> lineEditListener;
 };
 }
 

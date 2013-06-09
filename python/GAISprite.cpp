@@ -19,7 +19,7 @@
 #include <boost/python.hpp>
 #include <OpenSR/GAISprite.h>
 
-#include "SpriteWrap.h"
+#include "OpenSR/python/SpriteWrap.h"
 
 namespace Rangers
 {

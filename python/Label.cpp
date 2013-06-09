@@ -20,7 +20,7 @@
 #include <OpenSR/Label.h>
 #include <OpenSR/Font.h>
 
-#include "SpriteWrap.h"
+#include "OpenSR/python/SpriteWrap.h"
 
 namespace Rangers
 {

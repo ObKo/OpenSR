@@ -16,8 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef RANGERS_LINEEDITWIDGET_H
-#define RANGERS_LINEEDITWIDGET_H
+#ifndef RANGERS_LINEEDIT_H
+#define RANGERS_LINEEDIT_H
 
 #include "OpenSR/Widget.h"
 
@@ -26,17 +26,17 @@ namespace Rangers
 class Sprite;
 class Font;
 struct LineEditStyle;
-class LineEditWidgetPrivate;
+class LineEditPrivate;
 
-class RANGERS_ENGINE_API LineEditWidget: public Widget
+class RANGERS_ENGINE_API LineEdit: public Widget
 {
-    RANGERS_DECLARE_PRIVATE(LineEditWidget)
+    RANGERS_DECLARE_PRIVATE(LineEdit)
 public:
-    LineEditWidget(float w, float h = 0, boost::shared_ptr<Font> font = boost::shared_ptr<Font>(), Widget* parent = 0);
-    LineEditWidget(Widget* parent = 0);
-    LineEditWidget(const LineEditStyle& style, Widget* parent = 0);
+    LineEdit(float w, float h = 0, boost::shared_ptr<Font> font = boost::shared_ptr<Font>(), Widget* parent = 0);
+    LineEdit(Widget* parent = 0);
+    LineEdit(const LineEditStyle& style, Widget* parent = 0);
 
-    virtual ~LineEditWidget();
+    virtual ~LineEdit();
 
     virtual void draw() const;
     virtual void processMain();
@@ -53,9 +53,9 @@ public:
     void setText(const std::wstring &s);
 
 protected:
-    LineEditWidget(LineEditWidgetPrivate &p, Widget *parent = 0);
+    LineEdit(LineEditPrivate &p, Widget *parent = 0);
 
-    RANGERS_DISABLE_COPY(LineEditWidget)
+    RANGERS_DISABLE_COPY(LineEdit)
 };
 }
 

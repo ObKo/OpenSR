@@ -10,27 +10,6 @@ engine = OpenSR.Engine.Engine.instance()
 resources = OpenSR.Engine.ResourceManager.instance()
 sound = OpenSR.Engine.SoundManager.instance()
 
-#function dispose()
-    #this:dispose();
-    #widget = LuaWidget(L"ORC/startmenu.lua")
-    #engine:addWidget(widget)
-#end
-
-#function actionPerformed(action)
-    #if action:type() ~= Action.BUTTON_CLICKED then
-        #return
-    #end
-    #if action:source() == okButton then
-        #saveSettings()
-        #dispose()
-    #end
-    #if action:source() == cancelButton then
-        #dispose()
-    #end
-#end
-
-#loadSettings()
-
 class SettingsWidget(OpenSR.Engine.ScriptWidget, OpenSR.Engine.ActionListener):
    
     def __init__(self, parent):
@@ -113,11 +92,11 @@ class SettingsWidget(OpenSR.Engine.ScriptWidget, OpenSR.Engine.ActionListener):
 
         self.widthLabel = OpenSR.Engine.Label(_("Width:"))
         self.paramNode.addChild(self.widthLabel)
-        self.widthEdit = OpenSR.Engine.LineEditWidget(engine.defaultSkin().lineEditStyle)
+        self.widthEdit = OpenSR.Engine.LineEdit(engine.defaultSkin().lineEditStyle)
         self.paramNode.addWidget(self.widthEdit)
         self.heightLabel = OpenSR.Engine.Label(_("Height:"))
         self.paramNode.addChild(self.heightLabel)
-        self.heightEdit = OpenSR.Engine.LineEditWidget(engine.defaultSkin().lineEditStyle)
+        self.heightEdit = OpenSR.Engine.LineEdit(engine.defaultSkin().lineEditStyle)
         self.paramNode.addWidget(self.heightEdit)
 
         self.fullscreen = OpenSR.Engine.CheckBox(engine.defaultSkin().checkBoxStyle, _("Fullscreen mode"))

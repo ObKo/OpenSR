@@ -19,7 +19,7 @@
 #include <boost/python.hpp>
 #include <OpenSR/ScriptWidget.h>
 
-#include "WidgetWrap.h"
+#include "OpenSR/python/WidgetWrap.h"
 
 namespace Rangers
 {

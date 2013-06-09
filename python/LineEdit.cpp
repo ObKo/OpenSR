@@ -17,40 +17,40 @@
 */
 
 #include <boost/python.hpp>
-#include <OpenSR/LineEditWidget.h>
+#include <OpenSR/LineEdit.h>
 #include <OpenSR/Styles.h>
 
-#include "WidgetWrap.h"
+#include "OpenSR/python/WidgetWrap.h"
 
 namespace Rangers
 {
 namespace Python
 {
-struct LineEditWidgetWrap : LineEditWidget, boost::python::wrapper<LineEditWidgetWrap>
+struct LineEditWrap : LineEdit, boost::python::wrapper<LineEdit>
 {
-    LineEditWidgetWrap(float w, float h = 0, boost::shared_ptr<Font> font = boost::shared_ptr<Font>(), Widget* parent = 0)
-        : LineEditWidget(w, h, font, parent)
+    LineEditWrap(float w, float h = 0, boost::shared_ptr<Font> font = boost::shared_ptr<Font>(), Widget* parent = 0)
+        : LineEdit(w, h, font, parent)
     {
     }
 
-    LineEditWidgetWrap(Widget* parent = 0)
-        : LineEditWidget(parent)
+    LineEditWrap(Widget* parent = 0)
+        : LineEdit(parent)
     {
     }
 
-    LineEditWidgetWrap(const LineEditStyle& style, Widget* parent = 0)
-        : LineEditWidget(style, parent)
+    LineEditWrap(const LineEditStyle& style, Widget* parent = 0)
+        : LineEdit(style, parent)
     {
     }
 
-    RANGERS_PYTHON_WRAP_WIDGET(LineEditWidget)
+    RANGERS_PYTHON_WRAP_WIDGET(LineEdit)
 };
 
-void exportLineEditWidget()
+void exportLineEdit()
 {
     using namespace boost::python;
 
-    class_<LineEditWidgetWrap, bases<Widget>, boost::noncopyable> c("LineEditWidget", init<float, float, boost::shared_ptr<Font>, Widget*>());
+    class_<LineEditWrap, bases<Widget>, boost::noncopyable> c("LineEdit", init<float, float, boost::shared_ptr<Font>, Widget*>());
     c.def(init<float, float, boost::shared_ptr<Font> >())
     .def(init<float, float>())
     .def(init<float>())
@@ -58,9 +58,9 @@ void exportLineEditWidget()
     .def(init<const LineEditStyle&>())
     .def(init<Widget*>())
     .def(init<>())
-    .def("setText", &LineEditWidget::setText)
-    .def("text", &LineEditWidget::text);
-    RANGERS_PYTHON_WRAP_WIDGET_DEF(LineEditWidget, LineEditWidgetWrap, c);
+    .def("setText", &LineEdit::setText)
+    .def("text", &LineEdit::text);
+    RANGERS_PYTHON_WRAP_WIDGET_DEF(LineEdit, LineEditWrap, c);
 }
 }
 }

@@ -14,7 +14,7 @@ SET(SOURCES
     Widget.cpp
     Utils.cpp
     ConsoleWidget.cpp
-    LineEditWidget.cpp
+    LineEdit.cpp
     Log.cpp
     ColorLabel.cpp
     ResourceAdapter.cpp
@@ -70,7 +70,7 @@ SET(HEADERS
     ${CMAKE_SOURCE_DIR}/include/OpenSR/AnimatedTexture.h
     ${CMAKE_SOURCE_DIR}/include/OpenSR/ConsoleWidget.h
     ${CMAKE_SOURCE_DIR}/include/OpenSR/GAISprite.h
-    ${CMAKE_SOURCE_DIR}/include/OpenSR/LineEditWidget.h
+    ${CMAKE_SOURCE_DIR}/include/OpenSR/LineEdit.h
     ${CMAKE_SOURCE_DIR}/include/OpenSR/NinePatch.h
     ${CMAKE_SOURCE_DIR}/include/OpenSR/PluginInterface.h
     ${CMAKE_SOURCE_DIR}/include/OpenSR/ScrollArea.h
@@ -87,7 +87,7 @@ SET(PRIVATE_HEADERS
     ${CMAKE_SOURCE_DIR}/include/OpenSR/private/CheckBox_p.h
     ${CMAKE_SOURCE_DIR}/include/OpenSR/private/ConsoleWidget_p.h
     ${CMAKE_SOURCE_DIR}/include/OpenSR/private/GAISprite_p.h
-    ${CMAKE_SOURCE_DIR}/include/OpenSR/private/LineEditWidget_p.h
+    ${CMAKE_SOURCE_DIR}/include/OpenSR/private/LineEdit_p.h
     ${CMAKE_SOURCE_DIR}/include/OpenSR/private/NinePatch_p.h
     ${CMAKE_SOURCE_DIR}/include/OpenSR/private/Object_p.h
     ${CMAKE_SOURCE_DIR}/include/OpenSR/private/Sprite_p.h

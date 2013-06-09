@@ -18,7 +18,8 @@
 
 #include <OpenSR/Object.h>
 #include <boost/python.hpp>
-#include "ObjectWrap.h"
+
+#include "OpenSR/python/ObjectWrap.h"
 
 namespace Rangers
 {
