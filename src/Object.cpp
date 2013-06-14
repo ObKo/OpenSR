@@ -19,7 +19,6 @@
 #include "OpenSR/Object.h"
 #include "OpenSR/private/Object_p.h"
 
-#include <GL/glu.h>
 #include <stack>
 #include <algorithm>
 #include <boost/math/constants/constants.hpp>

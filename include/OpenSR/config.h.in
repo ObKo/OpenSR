@@ -38,12 +38,15 @@
 #include <windows.h>
 #include <GL/glew.h>
 #include <GL/gl.h>
+#include <GL/glu.h>
 #elif __APPLE__
 #include <OpenGL/gl.h>
 #include <OpenGL/glext.h>
+#include <OpenGL/glu.h>
 #else
 #include <GL/gl.h>
 #include <GL/glext.h>
+#include <GL/glu.h>
 #endif
 #define OPENGL_BUFFER_OFFSET(i) ((char*)0 + (i))
 

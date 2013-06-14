@@ -52,12 +52,12 @@ public:
         if (m_stream->fail())
             return -1;
 
-        if (m_pos >= (m_offset + m_size))
+        if (m_pos >= (m_offset + (std::streamoff)m_size))
             return -1;
 
         std::streamsize blockSize = n;
 
-        if ((m_pos + blockSize) > m_size)
+        if ((m_pos + (std::streamoff)blockSize) > m_size)
             blockSize = m_size - m_pos;
 
         m_pos += blockSize;
@@ -75,11 +75,11 @@ public:
         }
         else if (way == std::ios_base::cur)
         {
-            newpos = m_pos + off;
+            newpos = m_pos + (std::streamoff)off;
         }
         else if (way == std::ios_base::end)
         {
-            newpos = m_size - off;
+            newpos = m_size - (std::streamoff)off;
         }
 
         if (newpos > m_size)
