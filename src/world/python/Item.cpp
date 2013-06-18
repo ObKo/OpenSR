@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2012 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2013 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,31 +16,40 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WORLD_INTERACTION_CONTEXT_H
-#define WORLD_INTERACTION_CONTEXT_H
+#include <boost/python.hpp>
+#include "Item.h"
 
-#include <iostream>
-#include <stdint.h>
+#include "WorldObjectWrap.h"
 
 namespace Rangers
 {
 namespace World
 {
-class InteractionContext
+namespace Python
 {
-public:
-    InteractionContext();
+struct ItemWrap: Item, boost::python::wrapper<Item>
+{
+    ItemWrap(uint64_t id = 0): Item(id)
+    {
+    }
 
-    float relation();
-    uint32_t race();
-
-    virtual bool serialize(std::ostream &stream) const;
-    virtual bool deserialize(std::istream &stream);
-protected:
-    float m_relation;
-    uint32_t m_race;
+    WORLD_PYTHON_WRAP_WORLD_OBJECT(Item)
 };
-}
-}
 
-#endif
+void exportItem()
+{
+    using namespace boost::python;
+
+    class_<ItemWrap, bases<WorldObject>, boost::noncopyable> c("Item", init<uint64_t>());
+    c.def(init<>())
+    .def("name", &Item::name)
+    .def("size", &Item::size)
+    .def("cost", &Item::cost)
+    .def("setName", &Item::setName)
+    .def("setSize", &Item::setSize)
+    .def("setCost", &Item::setCost);
+    WORLD_PYTHON_WRAP_WORLD_OBJECT_DEF(Item, ItemWrap, c);
+}
+}
+}
+}

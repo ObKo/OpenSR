@@ -22,7 +22,7 @@
 #include <boost/python.hpp>
 
 #define RANGERS_PYTHON_WRAP_FUNC(class, func, ...) { \
-        GILGuard g; \
+        Rangers::Python::GILGuard g; \
         if (boost::python::override f = this->get_override(#func)) \
         { \
             try \
@@ -38,7 +38,7 @@
     }
 
 #define RANGERS_PYTHON_WRAP_FUNC_VOID(class, func, ...) { \
-        GILGuard g; \
+        Rangers::Python::GILGuard g; \
         if (boost::python::override f = this->get_override(#func)) \
         { \
             try \
@@ -56,9 +56,7 @@
 
 namespace Rangers
 {
-
 void handlePythonError();
-
 namespace Python
 {
 class GILGuard

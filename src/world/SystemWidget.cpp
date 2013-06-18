@@ -98,12 +98,12 @@ SystemWidget::SystemWidget(boost::shared_ptr<SolarSystem> system, Widget* parent
 
 SystemWidget::~SystemWidget()
 {
-    std::list<boost::shared_ptr<SystemPlanetWidget> >::const_iterator end = m_planetWidgets.end();
+    /*std::list<boost::shared_ptr<SystemPlanetWidget> >::const_iterator end = m_planetWidgets.end();
     for (std::list<boost::shared_ptr<SystemPlanetWidget> >::const_iterator i = m_planetWidgets.begin(); i != end; ++i)
     {
-        removeWidget(*i);
+        m_node->removeWidget(*i);
     }
-    m_planetWidgets.clear();
+    m_planetWidgets.clear();*/
 }
 
 void SystemWidget::processLogic(int dt)

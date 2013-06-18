@@ -22,6 +22,10 @@ namespace Rangers
 {
 namespace World
 {
+LandContext::LandContext(): InteractionContext()
+{
+}
+
 bool LandContext::deserialize(std::istream& stream)
 {
     return InteractionContext::deserialize(stream);

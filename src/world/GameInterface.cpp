@@ -20,37 +20,6 @@
 #include <OpenSR/ResourceManager.h>
 #include <OpenSR/version.h>
 
-/*
-#include "WorldObject.h"
-#include "SolarSystem.h"
-#include "Item.h"
-#include "SpaceObject.h"
-#include "Artifact.h"
-#include "Equipment.h"
-#include "Goods.h"
-#include "Micromodulus.h"
-#include "Ship.h"
-#include "SystemObject.h"
-#include "CargoHook.h"
-#include "DefenceGenerator.h"
-#include "Droid.h"
-#include "Engine.h"
-#include "Hull.h"
-#include "Radar.h"
-#include "Scanner.h"
-#include "Tank.h"
-#include "Weapon.h"
-#include "Meteor.h"
-#include "Planet.h"
-#include "SpaceBase.h"
-#include "DesertPlanet.h"
-#include "HabitablePlanet.h"
-#include "InteractionContext.h"
-#include "LandContext.h"
-#include "ShipContext.h"
-#include "WorldHelper.h"
-#include "WorldManager.h"
-#include "SystemWidget.h"*/
 #include "Types.h"
 
 using namespace Rangers::World;

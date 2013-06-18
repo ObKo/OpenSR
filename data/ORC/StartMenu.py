@@ -1,3 +1,4 @@
+import OpenSR.World
 import OpenSR.Engine
 import OpenSR.ORC.Settings
 import sys
@@ -104,4 +105,13 @@ class StartMenuWidget(OpenSR.Engine.ScriptWidget, OpenSR.Engine.ActionListener):
         elif action.source() == self.buttons['settings']:
             self.dispose()
             engine.addWidget(OpenSR.ORC.Settings.SettingsWidget(None))
+        elif action.source() == self.buttons['newGame']:
+            world = OpenSR.World.WorldManager.instance()
+            world.generateWorld()
+            world.saveWorld("test.rws")
+            
+            widget = OpenSR.World.SystemWidget(world.currentSolarSystem())
+            
+            engine.addWidget(widget)
+            self.dispose();
             

@@ -28,6 +28,8 @@ namespace World
 class LandContext: public InteractionContext
 {
 public:
+    LandContext();
+
     virtual bool serialize(std::ostream &stream) const;
     virtual bool deserialize(std::istream &stream);
 protected:

@@ -22,6 +22,10 @@ namespace Rangers
 {
 namespace World
 {
+InteractionContext::InteractionContext(): m_race(0), m_relation(1.0f)
+{
+}
+
 bool InteractionContext::deserialize(std::istream& stream)
 {
     return true;

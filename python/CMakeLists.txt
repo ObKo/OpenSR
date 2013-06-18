@@ -1,4 +1,4 @@
-SET(SOURCES
+SET(PYTHON_SOURCES
     PythonBindings.cpp
     Engine.cpp
     Object.cpp
@@ -29,6 +29,13 @@ SET(SOURCES
     Texture.cpp
 )
 
+SET(PYTHON_HEADERS 
+    ${CMAKE_SOURCE_DIR}/include/OpenSR/python/ObjectWrap.h
+    ${CMAKE_SOURCE_DIR}/include/OpenSR/python/SpriteWrap.h
+    ${CMAKE_SOURCE_DIR}/include/OpenSR/python/WidgetWrap.h
+    ${CMAKE_SOURCE_DIR}/include/OpenSR/python/Wrappers.h
+)
+
 INCLUDE_DIRECTORIES(
     ${SDL2_INCLUDE_DIR}
     ${OPENGL_INCLUDE_DIR}
@@ -48,10 +55,7 @@ INCLUDE_DIRECTORIES(
     ${CMAKE_SOURCE_DIR}/libRanger
 )
 
-ADD_LIBRARY(_Engine SHARED ${SOURCES})
-TARGET_LINK_LIBRARIES(_Engine engine
-    ${Boost_PYTHON3_LIBRARY}
-    ${PYTHON_LIBRARIES}
-)
+ADD_LIBRARY(_Engine SHARED ${PYTHON_SOURCES})
+TARGET_LINK_LIBRARIES(_Engine engine ${Boost_PYTHON3_LIBRARY} ${PYTHON_LIBRARIES})
 
 SET_TARGET_PROPERTIES(_Engine PROPERTIES PREFIX "")

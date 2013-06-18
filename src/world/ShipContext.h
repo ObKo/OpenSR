@@ -31,6 +31,8 @@ namespace World
 class ShipContext: public InteractionContext
 {
 public:
+    ShipContext();
+
     std::list< boost::shared_ptr<Item> > cargo() const;
 
     virtual bool serialize(std::ostream &stream) const;

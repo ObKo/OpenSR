@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2012 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2013 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,31 +16,22 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WORLD_INTERACTION_CONTEXT_H
-#define WORLD_INTERACTION_CONTEXT_H
-
-#include <iostream>
-#include <stdint.h>
+#include <boost/python.hpp>
+#include "ShipContext.h"
 
 namespace Rangers
 {
 namespace World
 {
-class InteractionContext
+namespace Python
 {
-public:
-    InteractionContext();
+void exportShipContext()
+{
+    using namespace boost::python;
 
-    float relation();
-    uint32_t race();
-
-    virtual bool serialize(std::ostream &stream) const;
-    virtual bool deserialize(std::istream &stream);
-protected:
-    float m_relation;
-    uint32_t m_race;
-};
+    class_<ShipContext, bases<InteractionContext>, boost::noncopyable> c("ShipContext", init<>());
+    c.def("cargo", &ShipContext::cargo);
 }
 }
-
-#endif
+}
+}
