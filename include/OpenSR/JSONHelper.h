@@ -47,6 +47,7 @@ public:
 
     static ResourceDescriptor getResource(const std::string& name, const std::map<std::wstring, ResourceDescriptor>& resources, bool &error);
     static Rect parseRect(const Json::Value& object, bool &error);
+    static Vector parseVector(const Json::Value& object, bool &error);
     static Skin parseSkin(const Json::Value& root, bool &error);
 };
 }

@@ -33,7 +33,10 @@
     "InfoWidgetStyle":
     {
         "background": "info-widget",
-        "content-rect": {"x": 13, "y": 11, "width": 40, "height": 40},
+        "icon-position": {"x": 13, "y": 11},
+        "icon-size": 40,
+        "caption-content-rect": {"x": 58, "y": 10, "width": 150, "height": 42},
+        "content-rect": {"x": 13, "y": 65, "width": 195, "height": 0},
         "font": "default-font",
         "caption-font": "bold-font",
         "color": "#FFFFFFFF",

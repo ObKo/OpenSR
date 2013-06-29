@@ -34,7 +34,10 @@ struct InfoWidgetStyle
     int color;
     int captionColor;
     int labelColor;
+    Vector iconPosition;
+    int iconSize;
     Rect contentRect;
+    Rect captionContentRect;
 };
 
 class WorldStyleManager

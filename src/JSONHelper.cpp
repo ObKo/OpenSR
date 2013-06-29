@@ -545,11 +545,23 @@ Rect JSONHelper::parseRect(const Json::Value& object, bool &error)
         return Rect();
 
     Rect rect;
-    rect.x = object.get("x", 0).asInt();
-    rect.y = object.get("y", 0).asInt();
-    rect.width = object.get("width", -1).asInt();
-    rect.height = object.get("height", -1).asInt();
+    rect.x = object.get("x", 0).asDouble();
+    rect.y = object.get("y", 0).asDouble();
+    rect.width = object.get("width", -1).asDouble();
+    rect.height = object.get("height", -1).asDouble();
     return rect;
 }
 
+Vector JSONHelper::parseVector(const Json::Value& object, bool &error)
+{
+    if (error)
+        return Vector();
+
+    Vector v;
+    v.x = object.get("x", 0).asDouble();
+    v.y = object.get("y", 0).asDouble();
+    return v;
 }
+
+}
+

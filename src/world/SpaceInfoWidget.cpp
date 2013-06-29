@@ -72,10 +72,13 @@ SpaceInfoWidget::SpaceInfoWidget(const InfoWidgetStyle& style, Widget* parent): 
     m_color = style.color;
 
     m_caption = boost::shared_ptr<Label>(new Label(L"", 0, m_captionFont));
-    m_caption->setOrigin(POSITION_X_CENTER, POSITION_Y_TOP);
+    m_caption->setOrigin(POSITION_X_CENTER, POSITION_Y_CENTER);
     m_caption->setColor(m_captionColor);
 
     m_contentRect = style.contentRect;
+    m_captionContentRect = style.captionContentRect;
+    m_iconPosition = style.iconPosition;
+    m_iconSize = style.iconSize;
 
     if (m_bgSprite)
     {
@@ -112,33 +115,41 @@ void SpaceInfoWidget::processMain()
         realContentRect.width = width();
         realContentRect.height = height();
     }
-    int captionOffset = m_caption->height() + 5;
-    if (m_iconSprite)
+    Rect realCaptionContentRect;
+    if (m_captionContentRect.valid() && m_bgSprite)
     {
-        m_iconSprite->setPosition(realContentRect.x, realContentRect.y);
-        m_caption->setPosition((int(m_caption->width()) % 2) / 2.0f + int(realContentRect.width) / 2 + realContentRect.x + int(m_iconSprite->width()) / 2,
-                               realContentRect.y + int(m_iconSprite->height()) / 2 - int(m_caption->height()) / 2);
-        captionOffset = m_iconSprite->height() + 5;
+        realCaptionContentRect.x = m_captionContentRect.x;
+        realCaptionContentRect.y = m_captionContentRect.y;
+        realCaptionContentRect.width = (m_bgSprite->width() - m_bgSprite->normalWidth() + m_captionContentRect.width);
+        realCaptionContentRect.height = m_captionContentRect.height;
     }
     else
     {
-        m_caption->setPosition((int(m_caption->width()) % 2) / 2.0f + int(realContentRect.width) / 2 + realContentRect.x,
-                               realContentRect.y);
+        realCaptionContentRect.x = 0;
+        realCaptionContentRect.y = 0;
+        realCaptionContentRect.width = width();
+        realCaptionContentRect.height = height();
+    }
+    m_caption->setPosition((int(m_caption->width()) % 2) / 2.0f + int(realCaptionContentRect.width) / 2 + realCaptionContentRect.x,
+                           (int(m_caption->height()) % 2) / 2.0f + int(realCaptionContentRect.height) / 2 + realCaptionContentRect.y);
+    if (m_iconSprite)
+    {
+        m_iconSprite->setPosition(m_iconPosition.x, m_iconPosition.y);
+        m_iconSprite->setGeometry(m_iconSize, m_iconSize);
     }
 
     if (m_type == INFO_PLANET)
     {
-
         for (int i = 0; i < m_infoWidget.size(); i++)
         {
             boost::shared_ptr<Label> l = boost::dynamic_pointer_cast<Label>(m_infoWidget.at(i));
             if ((i % 2) == 0)
             {
-                l->setPosition(realContentRect.x + int(realContentRect.width) / 2 - l->width(), (m_font->size() + 5) * (i / 2) + captionOffset);
+                l->setPosition(realContentRect.x + int(realContentRect.width) / 2 - l->width(), realContentRect.y + (m_font->size() + 5) * (i / 2));
             }
             else
             {
-                l->setPosition(realContentRect.x + int(realContentRect.width) / 2, (m_font->size() + 5) * (i / 2) + captionOffset);
+                l->setPosition(realContentRect.x + int(realContentRect.width) / 2, realContentRect.y + (m_font->size() + 5) * (i / 2));
             }
         }
     }
@@ -184,13 +195,14 @@ void SpaceInfoWidget::clear()
     }
     m_infoWidget.clear();
     m_type = INFO_NONE;
+    setHeight(m_bgSprite->normalHeight());
     markToUpdate();
 }
 
 void SpaceInfoWidget::showPlanet(boost::shared_ptr<Planet> planet)
 {
     m_caption->setText(_("Planet", "OpenSR-World") + L" " + _(planet->name(), "OpenSR-World"));
-    m_iconSprite = boost::shared_ptr<Sprite>(new Sprite(PlanetManager::instance().getPlanetImage(planet->style(), 40)));
+    m_iconSprite = boost::shared_ptr<Sprite>(new Sprite(PlanetManager::instance().getPlanetImage(planet->style(), m_iconSize)));
     addChild(m_iconSprite);
 
     boost::shared_ptr<Label> l = boost::shared_ptr<Label>(new Label(_("Planet radius:", "OpenSR-World") + L" "));
@@ -206,6 +218,9 @@ void SpaceInfoWidget::showPlanet(boost::shared_ptr<Planet> planet)
 
     m_infoWidget.push_back(l);
     addChild(l);
+
+    int requiredHeight = (m_font->size() + 5) * 1;
+    setHeight(requiredHeight - m_contentRect.height + m_bgSprite->normalHeight());
 
     m_type = INFO_PLANET;
     markToUpdate();

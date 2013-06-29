@@ -56,10 +56,17 @@ void WorldStyleManager::loadStyles()
         Json::Value style = root.get("InfoWidgetStyle", Json::Value());
         Json::Value::Members styleMembers = style.getMemberNames();
 
+        if (std::find(styleMembers.begin(), styleMembers.end(), "icon-position") != styleMembers.end())
+            m_infoWidgetStyle.iconPosition = JSONHelper::parseVector(style.get("icon-position", ""), error);
+        if (std::find(styleMembers.begin(), styleMembers.end(), "icon-size") != styleMembers.end())
+            m_infoWidgetStyle.iconSize = style.get("icon-size", 0).asInt();
+
         if (std::find(styleMembers.begin(), styleMembers.end(), "background") != styleMembers.end())
             m_infoWidgetStyle.background = JSONHelper::getResource(style.get("background", "").asString(), resources, error);
         if (std::find(styleMembers.begin(), styleMembers.end(), "content-rect") != styleMembers.end())
             m_infoWidgetStyle.contentRect = JSONHelper::parseRect(style.get("content-rect", ""), error);
+        if (std::find(styleMembers.begin(), styleMembers.end(), "caption-content-rect") != styleMembers.end())
+            m_infoWidgetStyle.captionContentRect = JSONHelper::parseRect(style.get("caption-content-rect", ""), error);
         if (std::find(styleMembers.begin(), styleMembers.end(), "font") != styleMembers.end())
             m_infoWidgetStyle.font = JSONHelper::getResource(style.get("font", "").asString(), resources, error);
         if (std::find(styleMembers.begin(), styleMembers.end(), "caption-font") != styleMembers.end())
