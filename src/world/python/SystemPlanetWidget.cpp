@@ -42,11 +42,12 @@ void exportSystemPlanetWidget()
 {
     using namespace boost::python;
 
-    class_<SystemPlanetWidgetWrap, bases<Widget>, boost::noncopyable> c("SystemPlanetWidget", init<boost::shared_ptr<Planet>, Widget*>());
+    class_<SystemPlanetWidgetWrap, bases<Widget>, boost::shared_ptr<SystemPlanetWidgetWrap>, boost::noncopyable> c("SystemPlanetWidget", init<boost::shared_ptr<Planet>, Widget*>());
     c.def(init<boost::shared_ptr<Planet> >())
     .def(init<>())
     .def("planet", &SystemPlanetWidget::planet);
     RANGERS_PYTHON_WRAP_WIDGET_DEF(SystemPlanetWidget, SystemPlanetWidgetWrap, c);
+    register_ptr_to_python<boost::shared_ptr<SystemPlanetWidget> >();
 }
 }
 }

@@ -40,7 +40,7 @@ void exportSolarSystem()
 {
     using namespace boost::python;
 
-    class_<SolarSystemWrap, bases<WorldObject>, boost::shared_ptr<SolarSystem>, boost::noncopyable> c("SolarSystem", init<uint64_t>());
+    class_<SolarSystemWrap, bases<WorldObject>, boost::shared_ptr<SolarSystemWrap>, boost::noncopyable> c("SolarSystem", init<uint64_t>());
     c.def(init<>())
     .def("name", &SolarSystem::name)
     .def("position", &SolarSystem::position)
@@ -52,6 +52,7 @@ void exportSolarSystem()
     .def("setPosition", &SolarSystem::setPosition)
     .def("setSize", &SolarSystem::setSize);
     WORLD_PYTHON_WRAP_WORLD_OBJECT_DEF(SolarSystem, SolarSystemWrap, c);
+    register_ptr_to_python<boost::shared_ptr<SolarSystem> >();
 }
 }
 }

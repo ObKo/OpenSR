@@ -43,11 +43,12 @@ void exportColorLabel()
 {
     using namespace boost::python;
 
-    class_<ColorLabelWrap, bases<Label>, boost::noncopyable> c("ColorLabel", init<const std::wstring&, Object*>());
+    class_<ColorLabelWrap, bases<Label>, boost::shared_ptr<ColorLabelWrap>, boost::noncopyable> c("ColorLabel", init<const std::wstring&, Object*>());
     c.def(init<const std::wstring&>())
     .def(init<Object*>())
     .def(init<>());
     RANGERS_PYTHON_WRAP_SPRITE_DEF(ColorLabel, ColorLabelWrap, c);
+    register_ptr_to_python<boost::shared_ptr<ColorLabel> >();
 }
 }
 }

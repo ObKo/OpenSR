@@ -39,9 +39,10 @@ void exportWidgetNode()
 {
     using namespace boost::python;
 
-    class_<WidgetNodeWrap, bases<Widget>, boost::noncopyable> c("WidgetNode", init<Widget*>());
+    class_<WidgetNodeWrap, bases<Widget>, boost::shared_ptr<WidgetNodeWrap>, boost::noncopyable> c("WidgetNode", init<Widget*>());
     c.def(init<>());
     RANGERS_PYTHON_WRAP_WIDGET_DEF(WidgetNode, WidgetNodeWrap, c);
+    register_ptr_to_python<boost::shared_ptr<WidgetNode> >();
 }
 }
 }

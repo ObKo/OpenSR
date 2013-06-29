@@ -40,13 +40,14 @@ void exportGoods()
 {
     using namespace boost::python;
 
-    class_<GoodsWrap, bases<Item>, boost::noncopyable> c("Goods", init<uint64_t>());
+    class_<GoodsWrap, bases<Item>, boost::shared_ptr<GoodsWrap>, boost::noncopyable> c("Goods", init<uint64_t>());
     c.def(init<>())
     .def("price", &Goods::price)
     .def("setPrice", &Goods::setPrice)
     .def("quantity", &Goods::quantity)
     .def("setQuantity", &Goods::setQuantity);
     WORLD_PYTHON_WRAP_WORLD_OBJECT_DEF(Goods, GoodsWrap, c);
+    register_ptr_to_python<boost::shared_ptr<Goods> >();
 }
 }
 }

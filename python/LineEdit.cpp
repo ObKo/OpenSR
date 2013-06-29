@@ -50,7 +50,7 @@ void exportLineEdit()
 {
     using namespace boost::python;
 
-    class_<LineEditWrap, bases<Widget>, boost::noncopyable> c("LineEdit", init<float, float, boost::shared_ptr<Font>, Widget*>());
+    class_<LineEditWrap, bases<Widget>, boost::shared_ptr<LineEditWrap>, boost::noncopyable> c("LineEdit", init<float, float, boost::shared_ptr<Font>, Widget*>());
     c.def(init<float, float, boost::shared_ptr<Font> >())
     .def(init<float, float>())
     .def(init<float>())
@@ -61,6 +61,7 @@ void exportLineEdit()
     .def("setText", &LineEdit::setText)
     .def("text", &LineEdit::text);
     RANGERS_PYTHON_WRAP_WIDGET_DEF(LineEdit, LineEditWrap, c);
+    register_ptr_to_python<boost::shared_ptr<LineEdit> >();
 }
 }
 }

@@ -36,10 +36,11 @@ struct NodeWrap: Node, boost::python::wrapper<Node>
 void exportNode()
 {
     using namespace boost::python;
-    class_<NodeWrap, bases<Object>, boost::noncopyable> c("Node", init<Object*>());
+    class_<NodeWrap, bases<Object>, boost::shared_ptr<NodeWrap>, boost::noncopyable> c("Node", init<Object*>());
     c
     .def(init<>());
     RANGERS_PYTHON_WRAP_OBJECT_DEF(Node, NodeWrap, c);
+    register_ptr_to_python<boost::shared_ptr<Node> >();
 }
 }
 }

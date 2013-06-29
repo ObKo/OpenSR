@@ -46,7 +46,7 @@ void exportAnimatedSprite()
 {
     using namespace boost::python;
 
-    class_<AnimatedSpriteWrap, bases<Sprite>, boost::noncopyable> c("AnimatedSprite", init<const std::wstring&, Object*>());
+    class_<AnimatedSpriteWrap, bases<Sprite>, boost::shared_ptr<AnimatedSpriteWrap>, boost::noncopyable> c("AnimatedSprite", init<const std::wstring&, Object*>());
     c.def(init<const std::wstring&>())
     .def(init<boost::shared_ptr<AnimatedTexture>, Object*>())
     .def(init<boost::shared_ptr<AnimatedTexture> >())
@@ -65,6 +65,7 @@ void exportAnimatedSprite()
     .def("setFrame", &AnimatedSprite::setFrame)
     .def("setFrameRate", &AnimatedSprite::setFrameRate);
     RANGERS_PYTHON_WRAP_SPRITE_DEF(AnimatedSprite, AnimatedSpriteWrap, c);
+    register_ptr_to_python<boost::shared_ptr<AnimatedSprite> >();
 }
 }
 }

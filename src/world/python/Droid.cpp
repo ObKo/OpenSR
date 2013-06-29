@@ -40,9 +40,10 @@ void exportDroid()
 {
     using namespace boost::python;
 
-    class_<DroidWrap, bases<Equipment>, boost::noncopyable> c("Droid", init<uint64_t>());
+    class_<DroidWrap, bases<Equipment>, boost::shared_ptr<DroidWrap>, boost::noncopyable> c("Droid", init<uint64_t>());
     c.def(init<>());
     WORLD_PYTHON_WRAP_WORLD_OBJECT_DEF(Droid, DroidWrap, c);
+    register_ptr_to_python<boost::shared_ptr<Droid> >();
 }
 }
 }

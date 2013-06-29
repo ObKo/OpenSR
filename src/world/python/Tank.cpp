@@ -40,9 +40,10 @@ void exportTank()
 {
     using namespace boost::python;
 
-    class_<TankWrap, bases<Equipment>, boost::noncopyable> c("Tank", init<uint64_t>());
+    class_<TankWrap, bases<Equipment>, boost::shared_ptr<TankWrap>, boost::noncopyable> c("Tank", init<uint64_t>());
     c.def(init<>());
     WORLD_PYTHON_WRAP_WORLD_OBJECT_DEF(Tank, TankWrap, c);
+    register_ptr_to_python<boost::shared_ptr<Tank> >();
 }
 }
 }

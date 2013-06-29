@@ -22,7 +22,7 @@
 #include "Wrappers.h"
 
 #define RANGERS_PYTHON_WRAP_OBJECT(class) \
-    void draw() const \
+    virtual void draw() const \
     { \
         RANGERS_PYTHON_WRAP_FUNC_VOID(class, draw); \
     } \
@@ -30,7 +30,7 @@
     { \
         class::draw(); \
     } \
-    void processMain() \
+    virtual void processMain() \
     { \
         RANGERS_PYTHON_WRAP_FUNC_VOID(class, processMain); \
     } \
@@ -38,7 +38,7 @@
     { \
         class::processMain(); \
     } \
-    void processLogic(int dt) \
+    virtual void processLogic(int dt) \
     { \
         RANGERS_PYTHON_WRAP_FUNC_VOID(class, processLogic, dt); \
     } \
@@ -46,7 +46,7 @@
     { \
         class::processLogic(dt); \
     } \
-    void setColor(uint32_t color) \
+    virtual void setColor(uint32_t color) \
     { \
         RANGERS_PYTHON_WRAP_FUNC_VOID(class, setColor, color); \
     } \
@@ -54,7 +54,7 @@
     { \
         class::setColor(color); \
     } \
-    uint32_t color() const \
+    virtual uint32_t color() const \
     { \
         RANGERS_PYTHON_WRAP_FUNC(class, color); \
     } \

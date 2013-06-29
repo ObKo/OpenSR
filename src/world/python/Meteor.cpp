@@ -40,7 +40,7 @@ void exportMeteor()
 {
     using namespace boost::python;
 
-    class_<MeteorWrap, bases<SystemObject>, boost::noncopyable> c("Meteor", init<uint64_t>());
+    class_<MeteorWrap, bases<SystemObject>, boost::shared_ptr<MeteorWrap>, boost::noncopyable> c("Meteor", init<uint64_t>());
     c.def(init<>())
     .def("focus", &Meteor::focus)
     .def("setFocus", &Meteor::setFocus)
@@ -49,6 +49,7 @@ void exportMeteor()
     .def("mineral", &Meteor::mineral)
     .def("setMineral", &Meteor::setMineral);
     WORLD_PYTHON_WRAP_WORLD_OBJECT_DEF(Meteor, MeteorWrap, c);
+    register_ptr_to_python<boost::shared_ptr<Meteor> >();
 }
 }
 }

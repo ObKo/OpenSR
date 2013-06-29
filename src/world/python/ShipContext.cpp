@@ -29,7 +29,7 @@ void exportShipContext()
 {
     using namespace boost::python;
 
-    class_<ShipContext, bases<InteractionContext>, boost::noncopyable> c("ShipContext", init<>());
+    class_<ShipContext, bases<InteractionContext>, boost::shared_ptr<ShipContext>, boost::noncopyable> c("ShipContext", init<>());
     c.def("cargo", &ShipContext::cargo);
 }
 }

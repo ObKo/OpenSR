@@ -46,13 +46,14 @@ void exportNinePatch()
 {
     using namespace boost::python;
 
-    class_<NinePatchWrap, bases<Sprite>, boost::noncopyable> c("NinePatch", init<const NinePatchDescriptor&, Object*>());
+    class_<NinePatchWrap, bases<Sprite>, boost::shared_ptr<NinePatchWrap>, boost::noncopyable> c("NinePatch", init<const NinePatchDescriptor&, Object*>());
     c.def(init<const NinePatchDescriptor&>())
     .def(init<const std::wstring&, Object*>())
     .def(init<const std::wstring&>())
     .def(init<Object*>())
     .def(init<>());
     RANGERS_PYTHON_WRAP_SPRITE_DEF(NinePatch, NinePatchWrap, c);
+    register_ptr_to_python<boost::shared_ptr<NinePatch> >();
 }
 }
 }

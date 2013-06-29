@@ -42,12 +42,13 @@ void exportSpaceInfoWidget()
 {
     using namespace boost::python;
 
-    class_<SpaceInfoWidgetWrap, bases<Widget>, boost::noncopyable> c("SpaceInfoWidget", init<const InfoWidgetStyle&, Widget*>());
+    class_<SpaceInfoWidgetWrap, bases<Widget>, boost::shared_ptr<SpaceInfoWidgetWrap>, boost::noncopyable> c("SpaceInfoWidget", init<const InfoWidgetStyle&, Widget*>());
     c.def(init<const InfoWidgetStyle&>())
     .def("clear", &SpaceInfoWidget::clear)
     .def("showPlanet", &SpaceInfoWidget::showPlanet)
     .def("showSystem", &SpaceInfoWidget::showSystem);
     RANGERS_PYTHON_WRAP_WIDGET_DEF(SpaceInfoWidget, SpaceInfoWidgetWrap, c);
+    register_ptr_to_python<boost::shared_ptr<SpaceInfoWidget> >();
 }
 }
 }

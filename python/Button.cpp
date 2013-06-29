@@ -63,7 +63,7 @@ void exportButton()
 {
     using namespace boost::python;
 
-    class_<ButtonWrap, bases<Widget>, boost::noncopyable> c("Button", init<boost::shared_ptr<Texture>, boost::shared_ptr<Texture>, boost::shared_ptr<Texture>, Widget*>());
+    class_<ButtonWrap, bases<Widget>, boost::shared_ptr<ButtonWrap>, boost::noncopyable> c("Button", init<boost::shared_ptr<Texture>, boost::shared_ptr<Texture>, boost::shared_ptr<Texture>, Widget*>());
     c.def(init<boost::shared_ptr<Texture>, boost::shared_ptr<Texture>, boost::shared_ptr<Texture> >())
     .def(init<boost::shared_ptr<Texture>, boost::shared_ptr<Texture>, Widget*>())
     .def(init<boost::shared_ptr<Texture>, boost::shared_ptr<Texture> >())
@@ -86,6 +86,7 @@ void exportButton()
     .def("setSounds", (void (Button::*)(boost::shared_ptr<Sound>, boost::shared_ptr<Sound>, boost::shared_ptr<Sound>))&Button::setSounds)
     .def("setSounds", (void (Button::*)(const std::wstring&, const std::wstring&, const std::wstring&))&Button::setSounds);
     RANGERS_PYTHON_WRAP_WIDGET_DEF(Button, ButtonWrap, c);
+    register_ptr_to_python<boost::shared_ptr<Button> >();
 }
 }
 }

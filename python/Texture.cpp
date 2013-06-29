@@ -36,7 +36,7 @@ void exportTexture()
     .value("TEXTURE_R5G6B5", TEXTURE_R5G6B5)
     .value("TEXTURE_R8G8B8", TEXTURE_R8G8B8);
 
-    class_<Texture, boost::noncopyable>("Texture", init<>())
+    class_<Texture, boost::shared_ptr<Texture>, boost::noncopyable>("Texture", init<>())
     .def(init<int, int>())
     .def(init<int, int, TextureType, unsigned char*, int>())
     .def(init<int, int, TextureType, unsigned char*>())

@@ -40,9 +40,10 @@ void exportRadar()
 {
     using namespace boost::python;
 
-    class_<RadarWrap, bases<Equipment>, boost::noncopyable> c("Radar", init<uint64_t>());
+    class_<RadarWrap, bases<Equipment>, boost::shared_ptr<RadarWrap>, boost::noncopyable> c("Radar", init<uint64_t>());
     c.def(init<>());
     WORLD_PYTHON_WRAP_WORLD_OBJECT_DEF(Radar, RadarWrap, c);
+    register_ptr_to_python<boost::shared_ptr<Radar> >();
 }
 }
 }

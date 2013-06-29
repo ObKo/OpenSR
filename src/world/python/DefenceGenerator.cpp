@@ -40,9 +40,10 @@ void exportDefenceGenerator()
 {
     using namespace boost::python;
 
-    class_<DefenceGeneratorWrap, bases<Equipment>, boost::noncopyable> c("DefenceGenerator", init<uint64_t>());
+    class_<DefenceGeneratorWrap, bases<Equipment>, boost::shared_ptr<DefenceGeneratorWrap>, boost::noncopyable> c("DefenceGenerator", init<uint64_t>());
     c.def(init<>());
     WORLD_PYTHON_WRAP_WORLD_OBJECT_DEF(DefenceGenerator, DefenceGeneratorWrap, c);
+    register_ptr_to_python<boost::shared_ptr<DefenceGenerator> >();
 }
 }
 }

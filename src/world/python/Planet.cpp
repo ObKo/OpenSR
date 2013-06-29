@@ -40,7 +40,7 @@ void exportPlanet()
 {
     using namespace boost::python;
 
-    class_<PlanetWrap, bases<SystemObject>, boost::noncopyable> c("Planet", init<uint64_t>());
+    class_<PlanetWrap, bases<SystemObject>, boost::shared_ptr<PlanetWrap>, boost::noncopyable> c("Planet", init<uint64_t>());
     c.def(init<>())
     .def("radius", &Planet::radius)
     .def("setRadius", &Planet::setRadius)
@@ -49,6 +49,7 @@ void exportPlanet()
     .def("style", &Planet::style)
     .def("setStyle", &Planet::setStyle);
     WORLD_PYTHON_WRAP_WORLD_OBJECT_DEF(Planet, PlanetWrap, c);
+    register_ptr_to_python<boost::shared_ptr<Planet> >();
 }
 }
 }

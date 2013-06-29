@@ -39,7 +39,7 @@ struct WidgetWrap : Widget, boost::python::wrapper<Widget>
 void exportWidget()
 {
     using namespace boost::python;
-    class_<WidgetWrap, bases<Object>, boost::noncopyable> c("Widget", init<Widget*>());
+    class_<WidgetWrap, bases<Object>, boost::shared_ptr<WidgetWrap>, boost::noncopyable> c("Widget", init<Widget*>());
     c.def(init<>())
     .def("width", &Widget::width)
     .def("height", &Widget::height)
@@ -56,6 +56,7 @@ void exportWidget()
     .def("removeListener", &Widget::removeListener)
     .def("action", &Widget::action);
     RANGERS_PYTHON_WRAP_OBJECT_DEF(Widget, WidgetWrap, c);
+    register_ptr_to_python<boost::shared_ptr<Widget> >();
 }
 }
 }

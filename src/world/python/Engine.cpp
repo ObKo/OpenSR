@@ -40,9 +40,10 @@ void exportEngine()
 {
     using namespace boost::python;
 
-    class_<EngineWrap, bases<Equipment>, boost::noncopyable> c("Engine", init<uint64_t>());
+    class_<EngineWrap, bases<Equipment>, boost::shared_ptr<EngineWrap>, boost::noncopyable> c("Engine", init<uint64_t>());
     c.def(init<>());
     WORLD_PYTHON_WRAP_WORLD_OBJECT_DEF(Engine, EngineWrap, c);
+    register_ptr_to_python<boost::shared_ptr<Engine> >();
 }
 }
 }

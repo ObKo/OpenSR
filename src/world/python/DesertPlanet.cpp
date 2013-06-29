@@ -40,9 +40,10 @@ void exportDesertPlanet()
 {
     using namespace boost::python;
 
-    class_<DesertPlanetWrap, bases<Planet>, boost::noncopyable> c("DesertPlanet", init<uint64_t>());
+    class_<DesertPlanetWrap, bases<Planet>, boost::shared_ptr<DesertPlanetWrap>, boost::noncopyable> c("DesertPlanet", init<uint64_t>());
     c.def(init<>());
     WORLD_PYTHON_WRAP_WORLD_OBJECT_DEF(DesertPlanet, DesertPlanetWrap, c);
+    register_ptr_to_python<boost::shared_ptr<DesertPlanet> >();
 }
 }
 }

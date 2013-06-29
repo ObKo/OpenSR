@@ -36,7 +36,7 @@ struct ObjectWrap: Object, boost::python::wrapper<Object>
 void exportObject()
 {
     using namespace boost::python;
-    class_<Python::ObjectWrap, boost::noncopyable> c("Object", init<Object*>());
+    class_<Python::ObjectWrap, boost::shared_ptr<ObjectWrap>, boost::noncopyable> c("Object", init<Object*>());
     c
     .def(init<>())
     .def("setPosition", (void (Object::*)(float, float))&Object::setPosition)
@@ -63,6 +63,7 @@ void exportObject()
     .def("mapToParent", (Rect(Object::*)(const Rect&) const)&Object::mapToParent)
     .def("mapToSceen", (Rect(Object::*)(const Rect&) const)&Object::mapToScreen);
     RANGERS_PYTHON_WRAP_OBJECT_DEF(Object, ObjectWrap, c);
+    register_ptr_to_python<boost::shared_ptr<Object> >();
 }
 }
 }

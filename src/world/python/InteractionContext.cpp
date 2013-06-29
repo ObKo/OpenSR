@@ -29,7 +29,7 @@ void exportInteractionContext()
 {
     using namespace boost::python;
 
-    class_<InteractionContext, boost::noncopyable> c("InteractionContext", init<>());
+    class_<InteractionContext, boost::shared_ptr<InteractionContext>, boost::noncopyable> c("InteractionContext", init<>());
     c.def("relation", &InteractionContext::relation)
     .def("race", &InteractionContext::race);
 }

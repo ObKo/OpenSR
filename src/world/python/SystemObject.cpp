@@ -40,11 +40,12 @@ void exportSystemObject()
 {
     using namespace boost::python;
 
-    class_<SystemObjectWrap, bases<SpaceObject>, boost::noncopyable> c("SystemObject", init<uint64_t>());
+    class_<SystemObjectWrap, bases<SpaceObject>, boost::shared_ptr<SystemObjectWrap>, boost::noncopyable> c("SystemObject", init<uint64_t>());
     c.def(init<>())
     .def("name", &SystemObject::name)
     .def("setName", &SystemObject::setName);
     WORLD_PYTHON_WRAP_WORLD_OBJECT_DEF(SystemObject, SystemObjectWrap, c);
+    register_ptr_to_python<boost::shared_ptr<SystemObject> >();
 }
 }
 }

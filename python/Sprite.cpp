@@ -76,7 +76,7 @@ void exportSprite()
     .value("POSITION_Y_BOTTOM", POSITION_Y_BOTTOM)
     .value("POSITION_Y_CENTER", POSITION_Y_CENTER);
 
-    class_<SpriteWrap, bases<Object>, boost::noncopyable> c("Sprite", init<const std::wstring&, Object*>());
+    class_<SpriteWrap, bases<Object>, boost::shared_ptr<SpriteWrap>, boost::noncopyable> c("Sprite", init<const std::wstring&, Object*>());
     c.def(init<const std::wstring&>())
     .def(init<const TextureRegion&, Object*>())
     .def(init<const TextureRegion&>())
@@ -94,53 +94,7 @@ void exportSprite()
     .def("width", &Sprite::width)
     .def("height", &Sprite::height);
     RANGERS_PYTHON_WRAP_SPRITE_DEF(Sprite, SpriteWrap, c);
+    register_ptr_to_python<boost::shared_ptr<Sprite> >();
 }
 }
 }
-/*
-#include "Object.h"
-
-namespace Rangers
-{
-
-class Texture;
-
-class SpritePrivate;
-class RANGERS_ENGINE_API Sprite: public Object
-{
-    RANGERS_DECLARE_PRIVATE(Sprite)
-public:
-    Sprite(Object *parent = 0);
-    Sprite(boost::shared_ptr<Texture> texture, Object *parent = 0, TextureScaling  ts = TEXTURE_NORMAL, SpriteXOrigin xpos = POSITION_X_LEFT, SpriteYOrigin ypos = POSITION_Y_TOP);
-    Sprite(const std::wstring& texture, Object *parent = 0, TextureScaling  ts = TEXTURE_NORMAL, SpriteXOrigin xpos = POSITION_X_LEFT, SpriteYOrigin ypos = POSITION_Y_TOP);
-    Sprite(const TextureRegion& region, Object *parent = 0);
-    Sprite(const TextureRegionDescriptor& region, Object *parent = 0);
-
-    virtual ~Sprite();
-
-    virtual void draw() const;
-    virtual void processMain();
-
-    void setOrigin(SpriteXOrigin xpos, SpriteYOrigin ypos);
-    void setGeometry(float width, float height);
-    void setWidth(float width);
-    void setHeight(float height);
-    void setTextureScaling(TextureScaling  ts);
-    void setTexture(boost::shared_ptr<Texture> texture);
-
-    float width() const;
-    float height() const;
-
-    virtual float normalWidth() const;
-    virtual float normalHeight() const;
-
-    TextureRegion region() const;
-
-protected:
-    Sprite(SpritePrivate &p, Object *parent = 0);
-
-    RANGERS_DISABLE_COPY(Sprite)
-};
-}
-
-#endif*/

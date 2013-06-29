@@ -29,7 +29,7 @@ void exportLandContext()
 {
     using namespace boost::python;
 
-    class_<LandContext, bases<InteractionContext>, boost::noncopyable> c("LandContext", init<>());
+    class_<LandContext, bases<InteractionContext>, boost::shared_ptr<LandContext>, boost::noncopyable> c("LandContext", init<>());
 }
 }
 }

@@ -40,9 +40,10 @@ void exportScanner()
 {
     using namespace boost::python;
 
-    class_<ScannerWrap, bases<Equipment>, boost::noncopyable> c("Scanner", init<uint64_t>());
+    class_<ScannerWrap, bases<Equipment>, boost::shared_ptr<ScannerWrap>, boost::noncopyable> c("Scanner", init<uint64_t>());
     c.def(init<>());
     WORLD_PYTHON_WRAP_WORLD_OBJECT_DEF(Scanner, ScannerWrap, c);
+    register_ptr_to_python<boost::shared_ptr<Scanner> >();
 }
 }
 }

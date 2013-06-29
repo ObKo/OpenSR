@@ -40,13 +40,14 @@ void exportSpaceBase()
 {
     using namespace boost::python;
 
-    class_<SpaceBaseWrap, bases<SystemObject>, boost::noncopyable> c("SpaceBase", init<uint64_t>());
+    class_<SpaceBaseWrap, bases<SystemObject>, boost::shared_ptr<SpaceBaseWrap>, boost::noncopyable> c("SpaceBase", init<uint64_t>());
     c.def(init<>())
     .def("landContext", &SpaceBase::landContext)
     .def("setLandContext", &SpaceBase::setLandContext)
     .def("shipContext", &SpaceBase::shipContext)
     .def("setShipContext", &SpaceBase::setShipContext);
     WORLD_PYTHON_WRAP_WORLD_OBJECT_DEF(SpaceBase, SpaceBaseWrap, c);
+    register_ptr_to_python<boost::shared_ptr<SpaceBase> >();
 }
 }
 }

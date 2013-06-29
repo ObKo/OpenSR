@@ -40,13 +40,14 @@ void exportCheckBox()
 {
     using namespace boost::python;
 
-    class_<CheckBoxWrap, bases<Widget>, boost::noncopyable> c("CheckBox", init<const CheckBoxStyle&, const std::wstring&, Widget*>());
+    class_<CheckBoxWrap, bases<Widget>, boost::shared_ptr<CheckBoxWrap>, boost::noncopyable> c("CheckBox", init<const CheckBoxStyle&, const std::wstring&, Widget*>());
     c.def(init<const CheckBoxStyle&, const std::wstring&>())
     .def("setText", &CheckBox::setText)
     .def("text", &CheckBox::text)
     .def("setChecked", &CheckBox::setChecked)
     .def("checked", &CheckBox::checked);
-    RANGERS_PYTHON_WRAP_WIDGET_DEF(CheckBox, CheckBoxWrap, c)
+    RANGERS_PYTHON_WRAP_WIDGET_DEF(CheckBox, CheckBoxWrap, c);
+    register_ptr_to_python<boost::shared_ptr<CheckBox> >();
 }
 }
 }

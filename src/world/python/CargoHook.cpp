@@ -40,9 +40,10 @@ void exportCargoHook()
 {
     using namespace boost::python;
 
-    class_<CargoHookWrap, bases<Equipment>, boost::noncopyable> c("CargoHook", init<uint64_t>());
+    class_<CargoHookWrap, bases<Equipment>, boost::shared_ptr<CargoHookWrap>, boost::noncopyable> c("CargoHook", init<uint64_t>());
     c.def(init<>());
     WORLD_PYTHON_WRAP_WORLD_OBJECT_DEF(CargoHook, CargoHookWrap, c);
+    register_ptr_to_python<boost::shared_ptr<CargoHook> >();
 }
 }
 }

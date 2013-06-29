@@ -77,7 +77,7 @@ class StartMenuWidget(OpenSR.Engine.ScriptWidget, OpenSR.Engine.ActionListener):
             y = y + self.BUTTON_SPARSE
 
     def processLogic(self, dt):
-        super(StartMenuWidget, self).processLogic(dt)
+        OpenSR.Engine.ScriptWidget.processLogic(self, dt)
         
         if math.fabs(self.t * self.BG_SPEED) >= self.background.width() - engine.screenWidth():
             self.t = 0

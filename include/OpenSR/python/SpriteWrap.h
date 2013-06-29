@@ -23,7 +23,7 @@
 
 #define RANGERS_PYTHON_WRAP_SPRITE(class) \
     RANGERS_PYTHON_WRAP_OBJECT(class) \
-    float normalHeight() const \
+    virtual float normalHeight() const \
     { \
         RANGERS_PYTHON_WRAP_FUNC(class, normalHeight); \
     } \
@@ -31,7 +31,7 @@
     { \
         return class::normalHeight(); \
     } \
-    float normalWidth() const \
+    virtual float normalWidth() const \
     { \
         RANGERS_PYTHON_WRAP_FUNC(class, normalWidth); \
     } \

@@ -43,13 +43,14 @@ void exportGAISprite()
 {
     using namespace boost::python;
 
-    class_<GAISpriteWrap, bases<AnimatedSprite>, boost::noncopyable> c("GAISprite", init<const std::wstring&, Object*>());
+    class_<GAISpriteWrap, bases<AnimatedSprite>, boost::shared_ptr<GAISpriteWrap>, boost::noncopyable> c("GAISprite", init<const std::wstring&, Object*>());
     c.def(init<const std::wstring&>())
     .def(init<Object*>())
     .def(init<>())
     .def("reset", &AnimatedSprite::reset)
     .def("setFrame", &AnimatedSprite::setFrame);
     RANGERS_PYTHON_WRAP_SPRITE_DEF(GAISprite, GAISpriteWrap, c);
+    register_ptr_to_python<boost::shared_ptr<GAISprite> >();
 }
 }
 }

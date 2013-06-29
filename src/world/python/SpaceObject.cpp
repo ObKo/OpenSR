@@ -40,11 +40,12 @@ void exportSpaceObject()
 {
     using namespace boost::python;
 
-    class_<SpaceObjectWrap, bases<WorldObject>, boost::noncopyable> c("SpaceObject", init<uint64_t>());
+    class_<SpaceObjectWrap, bases<WorldObject>, boost::shared_ptr<SpaceObjectWrap>, boost::noncopyable> c("SpaceObject", init<uint64_t>());
     c.def(init<>())
     .def("position", &SpaceObject::position)
     .def("setPosition", &SpaceObject::setPosition);
     WORLD_PYTHON_WRAP_WORLD_OBJECT_DEF(SpaceObject, SpaceObjectWrap, c);
+    register_ptr_to_python<boost::shared_ptr<SpaceObject> >();
 }
 }
 }

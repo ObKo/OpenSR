@@ -40,9 +40,10 @@ void exportMicromodulus()
 {
     using namespace boost::python;
 
-    class_<MicromodulusWrap, bases<Item>, boost::noncopyable> c("Micromodulus", init<uint64_t>());
+    class_<MicromodulusWrap, bases<Item>, boost::shared_ptr<MicromodulusWrap>, boost::noncopyable> c("Micromodulus", init<uint64_t>());
     c.def(init<>());
     WORLD_PYTHON_WRAP_WORLD_OBJECT_DEF(Micromodulus, MicromodulusWrap, c);
+    register_ptr_to_python<boost::shared_ptr<Micromodulus> >();
 }
 }
 }

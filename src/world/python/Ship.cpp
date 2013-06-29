@@ -40,13 +40,14 @@ void exportShip()
 {
     using namespace boost::python;
 
-    class_<ShipWrap, bases<SpaceObject>, boost::noncopyable> c("Ship", init<uint64_t>());
+    class_<ShipWrap, bases<SpaceObject>, boost::shared_ptr<ShipWrap>, boost::noncopyable> c("Ship", init<uint64_t>());
     c.def(init<>())
     .def("name", &Ship::name)
     .def("setName", &Ship::setName)
     .def("context", &Ship::context)
     .def("setContext", &Ship::setContext);
     WORLD_PYTHON_WRAP_WORLD_OBJECT_DEF(Ship, ShipWrap, c);
+    register_ptr_to_python<boost::shared_ptr<Ship> >();
 }
 }
 }

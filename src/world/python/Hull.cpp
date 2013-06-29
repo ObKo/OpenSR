@@ -40,9 +40,10 @@ void exportHull()
 {
     using namespace boost::python;
 
-    class_<HullWrap, bases<Equipment>, boost::noncopyable> c("Hull", init<uint64_t>());
+    class_<HullWrap, bases<Equipment>, boost::shared_ptr<HullWrap>, boost::noncopyable> c("Hull", init<uint64_t>());
     c.def(init<>());
     WORLD_PYTHON_WRAP_WORLD_OBJECT_DEF(Hull, HullWrap, c);
+    register_ptr_to_python<boost::shared_ptr<Hull> >();
 }
 }
 }

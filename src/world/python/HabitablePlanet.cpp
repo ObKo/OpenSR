@@ -40,9 +40,10 @@ void exportHabitablePlanet()
 {
     using namespace boost::python;
 
-    class_<HabitablePlanetWrap, bases<Planet>, boost::noncopyable> c("HabitablePlanet", init<uint64_t>());
+    class_<HabitablePlanetWrap, bases<Planet>, boost::shared_ptr<HabitablePlanetWrap>, boost::noncopyable> c("HabitablePlanet", init<uint64_t>());
     c.def(init<>());
     WORLD_PYTHON_WRAP_WORLD_OBJECT_DEF(HabitablePlanet, HabitablePlanetWrap, c);
+    register_ptr_to_python<boost::shared_ptr<HabitablePlanet> >();
 }
 }
 }

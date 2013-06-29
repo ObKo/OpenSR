@@ -40,10 +40,11 @@ void exportWorldObject()
 {
     using namespace boost::python;
 
-    class_<WorldObjectWrap, boost::noncopyable> c("WorldObject", init<uint64_t>());
+    class_<WorldObjectWrap, boost::shared_ptr<WorldObjectWrap>, boost::noncopyable> c("WorldObject", init<uint64_t>());
     c.def(init<>())
     .def("id", &WorldObject::id);
     WORLD_PYTHON_WRAP_WORLD_OBJECT_DEF(WorldObject, WorldObjectWrap, c);
+    register_ptr_to_python<boost::shared_ptr<WorldObject> >();
 }
 }
 }

@@ -40,9 +40,10 @@ void exportArtifact()
 {
     using namespace boost::python;
 
-    class_<ArtifactWrap, bases<Item>, boost::noncopyable> c("Artifact", init<uint64_t>());
+    class_<ArtifactWrap, bases<Item>, boost::shared_ptr<ArtifactWrap>, boost::noncopyable> c("Artifact", init<uint64_t>());
     c.def(init<>());
     WORLD_PYTHON_WRAP_WORLD_OBJECT_DEF(Artifact, ArtifactWrap, c);
+    register_ptr_to_python<boost::shared_ptr<Artifact> >();
 }
 }
 }

@@ -53,8 +53,9 @@ struct ActionListenerWrap: ActionListener, boost::python::wrapper<ActionListener
 void exportActionListener()
 {
     using namespace boost::python;
-    class_<ActionListenerWrap, boost::noncopyable>("ActionListener", init<>())
+    class_<ActionListenerWrap, boost::shared_ptr<ActionListenerWrap>, boost::noncopyable>("ActionListener", init<>())
     .def("actionPerformed", pure_virtual(&ActionListener::actionPerformed));
+    register_ptr_to_python<boost::shared_ptr<ActionListener> >();
 }
 }
 }

@@ -23,7 +23,7 @@
 
 #define RANGERS_PYTHON_WRAP_WIDGET(class) \
     RANGERS_PYTHON_WRAP_OBJECT(class) \
-    int minWidth() const \
+    virtual int minWidth() const \
     { \
         RANGERS_PYTHON_WRAP_FUNC(class, minWidth); \
     } \
@@ -31,7 +31,7 @@
     { \
         return class::minWidth(); \
     } \
-    int minHeight() const \
+    virtual int minHeight() const \
     { \
         RANGERS_PYTHON_WRAP_FUNC(class, minHeight); \
     } \
@@ -39,7 +39,7 @@
     { \
         return class::minHeight(); \
     } \
-    int maxWidth() const \
+    virtual int maxWidth() const \
     { \
         RANGERS_PYTHON_WRAP_FUNC(class, maxWidth); \
     } \
@@ -47,7 +47,7 @@
     { \
         return class::maxWidth(); \
     } \
-    int maxHeight() const \
+    virtual int maxHeight() const \
     { \
         RANGERS_PYTHON_WRAP_FUNC(class, maxHeight); \
     } \
@@ -55,7 +55,7 @@
     { \
         return class::maxHeight(); \
     } \
-    int preferredWidth() const \
+    virtual int preferredWidth() const \
     { \
         RANGERS_PYTHON_WRAP_FUNC(class, preferredWidth); \
     } \
@@ -63,7 +63,7 @@
     { \
         return class::preferredWidth(); \
     } \
-    int preferredHeight() const \
+    virtual int preferredHeight() const \
     { \
         RANGERS_PYTHON_WRAP_FUNC(class, preferredHeight); \
     } \
@@ -71,7 +71,7 @@
     { \
         return class::preferredHeight(); \
     } \
-    Rect getBoundingRect() const \
+    virtual Rect getBoundingRect() const \
     { \
         RANGERS_PYTHON_WRAP_FUNC(class, getBoundingRect); \
     } \
@@ -79,7 +79,7 @@
     { \
         return class::getBoundingRect(); \
     } \
-    void mouseMove(const Vector &p) \
+    virtual void mouseMove(const Vector &p) \
     { \
         RANGERS_PYTHON_WRAP_FUNC_VOID(class, mouseMove, p); \
     } \
@@ -87,7 +87,7 @@
     { \
         class::mouseMove(p); \
     } \
-    void focus() \
+    virtual void focus() \
     { \
         RANGERS_PYTHON_WRAP_FUNC_VOID(class, focus); \
     } \
@@ -95,7 +95,7 @@
     { \
         class::focus(); \
     } \
-    void unFocus() \
+    virtual void unFocus() \
     { \
         RANGERS_PYTHON_WRAP_FUNC_VOID(class, unFocus); \
     } \

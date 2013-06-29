@@ -42,12 +42,13 @@ void exportSystemWidget()
 {
     using namespace boost::python;
 
-    class_<SystemWidgetWrap, bases<Widget>, boost::noncopyable> c("SystemWidget", init<boost::shared_ptr<SolarSystem>, Widget*>());
+    class_<SystemWidgetWrap, bases<Widget>, boost::shared_ptr<SystemWidgetWrap>, boost::noncopyable> c("SystemWidget", init<boost::shared_ptr<SolarSystem>, Widget*>());
     c.def(init<boost::shared_ptr<SolarSystem> >())
     .def(init<>())
     .def("system", &SystemWidget::system)
     .def("setSystem", &SystemWidget::setSystem);
     RANGERS_PYTHON_WRAP_WIDGET_DEF(SystemWidget, SystemWidgetWrap, c);
+    register_ptr_to_python<boost::shared_ptr<SystemWidget> >();
 }
 }
 }

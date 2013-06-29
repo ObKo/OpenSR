@@ -40,9 +40,10 @@ void exportWeapon()
 {
     using namespace boost::python;
 
-    class_<WeaponWrap, bases<Equipment>, boost::noncopyable> c("Weapon", init<uint64_t>());
+    class_<WeaponWrap, bases<Equipment>, boost::shared_ptr<WeaponWrap>, boost::noncopyable> c("Weapon", init<uint64_t>());
     c.def(init<>());
     WORLD_PYTHON_WRAP_WORLD_OBJECT_DEF(Weapon, WeaponWrap, c);
+    register_ptr_to_python<boost::shared_ptr<Weapon> >();
 }
 }
 }
