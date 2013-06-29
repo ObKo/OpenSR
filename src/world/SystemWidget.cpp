@@ -88,8 +88,8 @@ SystemWidget::SystemWidget(boost::shared_ptr<SolarSystem> system, Widget* parent
 
     m_infoWidget = boost::shared_ptr<SpaceInfoWidget>(new SpaceInfoWidget(WorldManager::instance().styleManager().infoWidgetStyle()));
     m_infoWidget->setPosition(10, 10);
-    m_infoWidget->setWidth(250);
-    m_infoWidget->setHeight(200);
+    //m_infoWidget->setWidth(549);
+    //m_infoWidget->setHeight(500);
     m_infoWidget->setVisible(false);
     addWidget(m_infoWidget);
 

@@ -129,6 +129,12 @@ NinePatchDescriptor JSONHelper::parseNinePatch(const Json::Value& object, bool &
     {
         result.regions.push_back(parseTextureRegion(*i, error));
     }
+    array = object.get("tiled", Json::Value(Json::arrayValue));
+    end = array.end();
+    for (Json::Value::iterator i = array.begin(); i != end; ++i)
+    {
+        result.tiledRegions.push_back((*i).asInt());
+    }
     return result;
 }
 

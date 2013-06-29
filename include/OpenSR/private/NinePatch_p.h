@@ -32,6 +32,7 @@ public:
     std::vector<TextureRegion> regions;
     std::vector<int> sizeableRows;
     std::vector<int> sizeableColumns;
+    std::vector<int> tiledRegions;
 };
 }
 

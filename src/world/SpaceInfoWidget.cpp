@@ -190,7 +190,7 @@ void SpaceInfoWidget::clear()
 void SpaceInfoWidget::showPlanet(boost::shared_ptr<Planet> planet)
 {
     m_caption->setText(_("Planet", "OpenSR-World") + L" " + _(planet->name(), "OpenSR-World"));
-    m_iconSprite = boost::shared_ptr<Sprite>(new Sprite(PlanetManager::instance().getPlanetImage(planet->style(), 48)));
+    m_iconSprite = boost::shared_ptr<Sprite>(new Sprite(PlanetManager::instance().getPlanetImage(planet->style(), 40)));
     addChild(m_iconSprite);
 
     boost::shared_ptr<Label> l = boost::shared_ptr<Label>(new Label(_("Planet radius:", "OpenSR-World") + L" "));

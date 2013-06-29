@@ -75,6 +75,7 @@ struct RANGERS_ENGINE_API NinePatchDescriptor
     std::vector<TextureRegionDescriptor> regions;
     std::vector<int> sizeableRows;
     std::vector<int> sizeableColumns;
+    std::vector<int> tiledRegions;
 };
 
 struct RANGERS_ENGINE_API FontDescriptor

@@ -47,6 +47,7 @@ NinePatch::NinePatch(const NinePatchDescriptor &desc, Object *parent):
     d->columns = desc.columns;
     d->sizeableColumns = desc.sizeableColumns;
     d->sizeableRows = desc.sizeableRows;
+    d->tiledRegions = desc.tiledRegions;
 
     for (int i = 0; i < d->rows; i++)
     {
@@ -82,6 +83,7 @@ NinePatch::NinePatch(const std::wstring& name, Object *parent): Sprite(*(new Nin
             d->columns = desc.columns;
             d->sizeableColumns = desc.sizeableColumns;
             d->sizeableRows = desc.sizeableRows;
+            d->tiledRegions = desc.tiledRegions;
 
             for (int i = 0; i < d->rows; i++)
             {
@@ -382,6 +384,20 @@ void NinePatch::processMain()
         y += heights[i];
     }
 
+    std::vector<int>::const_iterator end = d->tiledRegions.end();
+    for (std::vector<int>::const_iterator i = d->tiledRegions.begin(); i != end; ++i)
+    {
+        //FIXME: Tiling works only on full texture.
+        d->vertices[(*i) * 4].u = 0.0f;
+        d->vertices[(*i) * 4].v = 0.0f;
+        d->vertices[(*i) * 4 + 1].u = float(widths[(*i) % d->columns]) / d->regions.at(*i).texture->width();
+        d->vertices[(*i) * 4 + 1].v = 0.0f;
+        d->vertices[(*i) * 4 + 2].u = float(widths[(*i) % d->columns]) / d->regions.at(*i).texture->width();
+        d->vertices[(*i) * 4 + 2].v = float(heights[(*i) / d->rows]) / d->regions.at(*i).texture->height();
+        d->vertices[(*i) * 4 + 3].u = 0.0f;
+        d->vertices[(*i) * 4 + 3].v = float(heights[(*i) / d->rows]) / d->regions.at(*i).texture->height();
+    }
+
     glBindBuffer(GL_ARRAY_BUFFER, d->buffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * d->vertexCount, d->vertices, GL_DYNAMIC_DRAW);
 
@@ -399,9 +415,6 @@ void NinePatch::draw() const
     if (!prepareDraw())
         return;
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glEnableClientState(GL_ARRAY_BUFFER);
@@ -410,6 +423,15 @@ void NinePatch::draw() const
 
     glVertexPointer(2, GL_FLOAT, sizeof(Vertex), 0);
     glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), OPENGL_BUFFER_OFFSET(sizeof(float) * 2));
+
+    //TODO: Move tiling to fragment shader?
+    std::vector<int>::const_iterator tend = d->tiledRegions.end();
+    for (std::vector<int>::const_iterator ti = d->tiledRegions.begin(); ti != tend; ++ti)
+    {
+        glBindTexture(GL_TEXTURE_2D, d->regions[*ti].texture->openGLTexture());
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    }
 
     int vertexIndex = 0;
     std::vector<TextureRegion>::const_iterator end = d->regions.end();
