@@ -151,7 +151,7 @@ void SystemWidget::processLogic(int dt)
 
 void SystemWidget::setSystem(boost::shared_ptr< SolarSystem > system)
 {
-    if (!system || system != m_system)
+    if (m_system && (!system || system != m_system))
     {
         removeWidget(m_starWidget);
         removeChild(m_bgSprite);
