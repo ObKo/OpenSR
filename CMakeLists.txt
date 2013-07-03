@@ -41,7 +41,7 @@ CONFIGURE_FILE(include/OpenSR/config.h.in include/OpenSR/config.h @ONLY)
 OPTION(BUILD_RESOURCE_VIEWER "Build Resource Viewer tool" NO)
 OPTION(BUILD_RESOURCE_CONVERTER "Build Resource Converter tool" NO)
 OPTION(BUILD_NINEPATCH_EDITOR "Build Ninepatch Editor tool" NO)
-OPTION(BUILD_WORD_UTILS "Build World Utils tool" NO)
+OPTION(BUILD_WORLD_UTILS "Build World Utils tool" NO)
 OPTION(BUILD_PLANET_VIEWER "Build Planet Viewer tool" NO)
 
 ADD_SUBDIRECTORY(libRanger)
