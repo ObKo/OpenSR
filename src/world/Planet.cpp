@@ -17,13 +17,17 @@
 */
 
 #include "Planet.h"
+
 #include "WorldHelper.h"
+
+#include <cmath>
 
 namespace Rangers
 {
 namespace World
 {
-Planet::Planet(uint64_t id): SystemObject(id)
+Planet::Planet(uint64_t id): SystemObject(id), m_radius(0.0f),
+    m_orbit(0.0f), m_angle(0.0f), m_angleSpeed(0.0f), m_style(0), m_startAngle(0.0f)
 {
 }
 
@@ -35,6 +39,8 @@ bool Planet::deserialize(std::istream& stream)
     stream.read((char *)&m_radius, sizeof(float));
     stream.read((char *)&m_orbit, sizeof(float));
     stream.read((char *)&m_style, sizeof(uint32_t));
+    stream.read((char *)&m_angle, sizeof(float));
+    stream.read((char *)&m_angleSpeed, sizeof(float));
 
     return true;
 }
@@ -49,6 +55,16 @@ float Planet::radius() const
     return m_radius;
 }
 
+float Planet::angle() const
+{
+    return m_angle;
+}
+
+float Planet::angleSpeed() const
+{
+    return m_angleSpeed;
+}
+
 bool Planet::serialize(std::ostream& stream) const
 {
     if (!SystemObject::serialize(stream))
@@ -57,6 +73,8 @@ bool Planet::serialize(std::ostream& stream) const
     stream.write((const char *)&m_radius, sizeof(float));
     stream.write((const char *)&m_orbit, sizeof(float));
     stream.write((const char *)&m_style, sizeof(uint32_t));
+    stream.write((const char *)&m_angle, sizeof(float));
+    stream.write((const char *)&m_angleSpeed, sizeof(float));
 
     return true;
 }
@@ -74,6 +92,7 @@ void Planet::setRadius(float radius)
 void Planet::setOrbit(float orbit)
 {
     m_orbit = orbit;
+    updatePosition();
 }
 
 void Planet::setStyle(uint32_t style)
@@ -81,9 +100,43 @@ void Planet::setStyle(uint32_t style)
     m_style = style;
 }
 
+void Planet::setAngle(float angle)
+{
+    m_angle = angle;
+    updatePosition();
+}
+
+void Planet::updatePosition()
+{
+    m_position.x = m_orbit * cos(m_angle);
+    m_position.y = m_orbit * sin(m_angle);
+}
+
+void Planet::setAngleSpeed(float speed)
+{
+    m_angleSpeed = speed;
+}
+
 uint32_t Planet::style() const
 {
     return m_style;
+}
+
+void Planet::calcTurn()
+{
+    m_startAngle = m_angle;
+}
+
+void Planet::finishTurn()
+{
+    m_angle = m_startAngle + m_angleSpeed;
+    updatePosition();
+}
+
+void Planet::turn(float progress)
+{
+    m_angle = m_startAngle + m_angleSpeed * progress;
+    updatePosition();
 }
 }
 }

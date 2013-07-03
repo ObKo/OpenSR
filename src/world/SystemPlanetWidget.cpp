@@ -161,11 +161,19 @@ SystemPlanetWidget::SystemPlanetWidget(boost::shared_ptr<Planet> planet, Widget*
                 m_ringBgSprite->setPosition(style->ringBgOffsetX + m_size / 2.0f, style->ringBgOffsetY + m_size / 2.0f);
             }
         }
-        setPosition(planet->position().x - m_size / 2.0f, planet->position().y - m_size / 2.0f);
+        updatePosition();
     }
     setWidth(m_size);
     setHeight(m_size);
     markToUpdate();
+}
+
+void SystemPlanetWidget::updatePosition()
+{
+    if (!m_planet)
+        return;
+
+    setPosition(m_planet->position().x - m_size / 2.0f, m_planet->position().y - m_size / 2.0f);
 }
 
 SystemPlanetWidget::~SystemPlanetWidget()
@@ -302,9 +310,9 @@ void SystemPlanetWidget::processMain()
 
 void SystemPlanetWidget::processLogic(int dt)
 {
-    Vector pos = position();
-    float l = sqrt((pos.x + m_size / 2.0f) * (pos.x + m_size / 2.0f) + (pos.y + m_size / 2.0f) * (pos.y + m_size / 2.0f));
-    m_solarAngle = M_PI + acos((pos.x + m_size / 2.0f) / l);
+    updatePosition();
+    if (m_planet)
+        m_solarAngle = m_planet->angle() + M_PI;
 
     m_phase += m_speed / 180000.0f * dt * M_PI;
     while (m_phase > M_PI)

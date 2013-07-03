@@ -47,6 +47,9 @@ public:
     void generateWorld();
     bool saveWorld(const std::wstring& file) const;
 
+    void calcTurn();
+    void finishTurn();
+
     boost::shared_ptr<WorldObject> getObject(uint64_t id);
 
     std::list<boost::shared_ptr<SolarSystem> > solarSystems() const;

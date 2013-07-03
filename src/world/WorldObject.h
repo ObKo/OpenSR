@@ -39,6 +39,10 @@ public:
     virtual bool deserialize(std::istream &stream);
     virtual std::list<uint64_t> dependencies();
 
+    virtual void calcTurn();
+    virtual void turn(float progress);
+    virtual void finishTurn();
+
 protected:
     uint64_t m_objectID;
 };

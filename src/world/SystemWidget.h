@@ -26,6 +26,7 @@ namespace Rangers
 class Sprite;
 class WidgetNode;
 class SpriteWidget;
+class Button;
 
 namespace World
 {
@@ -67,6 +68,12 @@ private:
     boost::shared_ptr<SpaceInfoWidget> m_infoWidget;
     boost::shared_ptr<SystemWidgetListener> m_actionListener;
     boost::shared_ptr<WidgetNode> m_node;
+
+    bool m_turn;
+    int m_turnTime;
+
+    //FIXME: Temp
+    boost::shared_ptr<Button> m_turnButton;
 };
 }
 }

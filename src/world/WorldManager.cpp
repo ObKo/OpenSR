@@ -82,13 +82,15 @@ void WorldManager::generateWorld()
     planet->setOrbit(600.0f);
     planet->setRadius(50.0f);
     planet->setName("Planet");
-    planet->setPosition(Point(600.0f, 0.0f));
+    planet->setAngle(0.0f);
+    planet->setAngleSpeed(M_PI * 2.0f / 87.0f);
     planet->setStyle(textHash32(L"mercur"));
 
     hPlanet->setOrbit(450.0f);
     hPlanet->setRadius(75.0f);
     hPlanet->setName("Earth");
-    hPlanet->setPosition(Point(-450.0f, 0.0f));
+    hPlanet->setAngle(1.0f);
+    hPlanet->setAngleSpeed(M_PI * 2.0f / 365.0f);
     hPlanet->setInvader(0);
     hPlanet->setPopulation(1000000);
     hPlanet->setStyle(textHash32(L"earth"));
@@ -96,7 +98,8 @@ void WorldManager::generateWorld()
     sPlanet->setOrbit(800.0f);
     sPlanet->setRadius(100.0f);
     sPlanet->setName("Saturn");
-    sPlanet->setPosition(Point(0.0f, 800.0f));
+    sPlanet->setAngle(M_PI);
+    sPlanet->setAngleSpeed(M_PI * 2.0f / 100.0f);
     sPlanet->setStyle(textHash32(L"saturn"));
 
     m_currentSystem = system;
@@ -147,6 +150,26 @@ bool WorldManager::saveWorld(const std::wstring& file) const
     }
 
     worldFile.close();
+}
+
+void WorldManager::calcTurn()
+{
+    std::map<uint64_t, boost::shared_ptr<WorldObject> > objects = m_objects;
+    std::map<uint64_t, boost::shared_ptr<WorldObject> >::iterator end = objects.end();
+    for (std::map<uint64_t, boost::shared_ptr<WorldObject> >::iterator i = objects.begin(); i != end; ++i)
+    {
+        (*i).second->calcTurn();
+    }
+}
+
+void WorldManager::finishTurn()
+{
+    std::map<uint64_t, boost::shared_ptr<WorldObject> > objects = m_objects;
+    std::map<uint64_t, boost::shared_ptr<WorldObject> >::iterator end = objects.end();
+    for (std::map<uint64_t, boost::shared_ptr<WorldObject> >::iterator i = objects.begin(); i != end; ++i)
+    {
+        (*i).second->finishTurn();
+    }
 }
 
 uint64_t WorldManager::getNextId()

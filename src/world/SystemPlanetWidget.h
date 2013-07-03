@@ -43,6 +43,8 @@ public:
     boost::shared_ptr<Planet> planet() const;
 
 private:
+    void updatePosition();
+
     Sprite *m_staticSprite;
     Sprite *m_ringBgSprite;
     Sprite *m_ringSprite;

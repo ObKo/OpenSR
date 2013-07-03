@@ -49,6 +49,7 @@ public:
     virtual bool serialize(std::ostream &stream) const;
     virtual bool deserialize(std::istream &stream);
     virtual std::list<uint64_t> dependencies();
+    virtual void turn(float progress);
 
 protected:
     Point m_position;

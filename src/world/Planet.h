@@ -33,18 +33,31 @@ public:
     float radius() const;
     float orbit() const;
     uint32_t style() const;
+    float angle() const;
+    float angleSpeed() const;
 
     void setRadius(float radius);
     void setOrbit(float orbit);
     void setStyle(uint32_t style);
+    void setAngle(float angle);
+    void setAngleSpeed(float speed);
 
     virtual uint32_t type() const;
     virtual bool serialize(std::ostream &stream) const;
     virtual bool deserialize(std::istream &stream);
+    virtual void calcTurn();
+    virtual void finishTurn();
+    virtual void turn(float progress);
 protected:
+    void updatePosition();
+
     float m_radius;
     float m_orbit;
+    float m_angle;
+    float m_angleSpeed;
     uint32_t m_style;
+
+    float m_startAngle;
 };
 }
 }

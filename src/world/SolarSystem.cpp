@@ -162,5 +162,14 @@ void SolarSystem::setSize(float size)
 {
     m_size = size;
 }
+
+void SolarSystem::turn(float progress)
+{
+    std::list<boost::shared_ptr<SystemObject> >::const_iterator end = m_systemObjects.end();
+    for (std::list< boost::shared_ptr<SystemObject> >::const_iterator i = m_systemObjects.begin(); i != end; ++i)
+    {
+        (*i)->turn(progress);
+    }
+}
 }
 }

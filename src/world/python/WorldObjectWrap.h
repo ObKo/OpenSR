@@ -37,11 +37,38 @@
     std::list<uint64_t> dependencies_() \
     { \
         return class::dependencies(); \
-    }
-
+    } \
+    void calcTurn() \
+    { \
+        RANGERS_PYTHON_WRAP_FUNC_VOID(class, calcTurn); \
+    } \
+    void calcTurn_() \
+    { \
+        return class::calcTurn(); \
+    } \
+    void turn(float progress) \
+    { \
+        RANGERS_PYTHON_WRAP_FUNC_VOID(class, turn, progress); \
+    } \
+    void turn_(float progress) \
+    { \
+        return class::turn(progress); \
+    } \
+    void finishTurn() \
+    { \
+        RANGERS_PYTHON_WRAP_FUNC_VOID(class, finishTurn); \
+    } \
+    void finishTurn_() \
+    { \
+        return class::finishTurn(); \
+    } \
+     
 #define WORLD_PYTHON_WRAP_WORLD_OBJECT_DEF(class, wrap, object) \
     object \
     .def("type", &class::type, &wrap::type_) \
-    .def("dependencies", &class::dependencies, &wrap::dependencies_);
-
+    .def("dependencies", &class::dependencies, &wrap::dependencies_) \
+    .def("calcTurn", &class::calcTurn, &wrap::calcTurn_) \
+    .def("finishTurn", &class::finishTurn, &wrap::finishTurn_) \
+    .def("turn", &class::turn, &wrap::turn_); \
+     
 #endif

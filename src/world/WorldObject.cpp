@@ -76,5 +76,16 @@ uint32_t WorldObject::type() const
     return WorldHelper::TYPE_WORLDOBJECT;
 }
 
+void WorldObject::calcTurn()
+{
+}
+
+void WorldObject::turn(float progress)
+{
+}
+
+void WorldObject::finishTurn()
+{
+}
 }
 }

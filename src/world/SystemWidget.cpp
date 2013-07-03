@@ -35,6 +35,12 @@
 #include <OpenSR/AnimatedTexture.h>
 #include <OpenSR/ResourceManager.h>
 #include <OpenSR/SpriteWidget.h>
+#include <OpenSR/Button.h>
+
+namespace
+{
+const int TURN_INTERVAL = 3000;
+}
 
 namespace Rangers
 {
@@ -49,23 +55,38 @@ public:
 
     virtual void actionPerformed(const Action &action)
     {
-        if (action.type() == Action::MOUSE_LEAVE)
+        if (action.source() == m_parent->m_turnButton)
         {
-            m_parent->m_infoWidget->clear();
-            m_parent->m_infoWidget->setVisible(false);
-        }
-        if (action.type() == Action::MOUSE_ENTER)
-        {
-            boost::shared_ptr<SystemPlanetWidget> w = boost::dynamic_pointer_cast<SystemPlanetWidget>(action.source());
-            if (w)
+            if (action.type() == Action::BUTTON_CLICKED)
             {
-                m_parent->m_infoWidget->showPlanet(w->planet());
-                m_parent->m_infoWidget->setVisible(true);
+                if (!m_parent->m_turn)
+                {
+                    WorldManager::instance().calcTurn();
+                    m_parent->m_turn = true;
+                    m_parent->m_turnTime = 0;
+                }
             }
-            else if (action.source() == m_parent->m_starWidget)
+        }
+        else
+        {
+            if (action.type() == Action::MOUSE_LEAVE)
             {
-                m_parent->m_infoWidget->showSystem(m_parent->m_system);
-                m_parent->m_infoWidget->setVisible(true);
+                m_parent->m_infoWidget->clear();
+                m_parent->m_infoWidget->setVisible(false);
+            }
+            if (action.type() == Action::MOUSE_ENTER)
+            {
+                boost::shared_ptr<SystemPlanetWidget> w = boost::dynamic_pointer_cast<SystemPlanetWidget>(action.source());
+                if (w)
+                {
+                    m_parent->m_infoWidget->showPlanet(w->planet());
+                    m_parent->m_infoWidget->setVisible(true);
+                }
+                else if (action.source() == m_parent->m_starWidget)
+                {
+                    m_parent->m_infoWidget->showSystem(m_parent->m_system);
+                    m_parent->m_infoWidget->setVisible(true);
+                }
             }
         }
     }
@@ -75,7 +96,7 @@ private:
 };
 
 SystemWidget::SystemWidget(boost::shared_ptr<SolarSystem> system, Widget* parent): Widget(parent),
-    m_xOffset(0), m_yOffset(0), m_moveDirection(NONE)
+    m_xOffset(0), m_yOffset(0), m_moveDirection(NONE), m_turn(false), m_turnTime(0)
 {
     setWidth(Engine::instance().screenWidth());
     setHeight(Engine::instance().screenHeight());
@@ -88,27 +109,42 @@ SystemWidget::SystemWidget(boost::shared_ptr<SolarSystem> system, Widget* parent
 
     m_infoWidget = boost::shared_ptr<SpaceInfoWidget>(new SpaceInfoWidget(WorldManager::instance().styleManager().infoWidgetStyle()));
     m_infoWidget->setPosition(10, 10);
-    //m_infoWidget->setWidth(549);
-    //m_infoWidget->setHeight(500);
     m_infoWidget->setVisible(false);
     addWidget(m_infoWidget);
+
+    m_turnButton = boost::shared_ptr<Button>(new Button(Engine::instance().defaultSkin().buttonStyle));
+    m_turnButton->setAutoResize(true);
+    m_turnButton->setText(L"Turn");
+    m_turnButton->addListener(m_actionListener);
+    m_turnButton->setPosition(Engine::instance().screenWidth() - m_turnButton->width() - 20, Engine::instance().screenHeight() - m_turnButton->height() - 20);
+    m_turnButton->setLayer(1);
+    addWidget(m_turnButton);
 
     setSystem(system);
 }
 
 SystemWidget::~SystemWidget()
 {
-    /*std::list<boost::shared_ptr<SystemPlanetWidget> >::const_iterator end = m_planetWidgets.end();
-    for (std::list<boost::shared_ptr<SystemPlanetWidget> >::const_iterator i = m_planetWidgets.begin(); i != end; ++i)
-    {
-        m_node->removeWidget(*i);
-    }
-    m_planetWidgets.clear();*/
 }
 
 void SystemWidget::processLogic(int dt)
 {
     Widget::processLogic(dt);
+
+    if (m_turn)
+    {
+        m_turnTime += dt;
+        if (m_turnTime >= TURN_INTERVAL)
+        {
+            WorldManager::instance().finishTurn();
+            m_turn = false;
+        }
+        else
+        {
+            if (m_system)
+                m_system->turn(float(m_turnTime) / TURN_INTERVAL);
+        }
+    }
 
     m_node->processLogic(dt);
 
@@ -247,6 +283,7 @@ void SystemWidget::draw() const
     m_bgSprite->draw();
     m_node->draw();
     m_infoWidget->draw();
+    m_turnButton->draw();
 
     endDraw();
 }

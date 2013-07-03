@@ -46,6 +46,8 @@ void exportWorldManager()
     .def("getObject", &WorldManager::getObject)
     .def("solarSystems", &WorldManager::solarSystems)
     .def("currentSolarSystem", &WorldManager::currentSolarSystem)
+    .def("calcTurn", &WorldManager::calcTurn)
+    .def("finishTurn", &WorldManager::finishTurn)
     .def("styleManager", &WorldManager::styleManager, return_value_policy<reference_existing_object>());
 }
 }
