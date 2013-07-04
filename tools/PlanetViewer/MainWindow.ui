@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>OpenSR PlanetViewer</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QHBoxLayout" name="horizontalLayout_9" stretch="0,1,0">
@@ -49,7 +49,7 @@
         <item>
          <widget class="QPushButton" name="textureBrowse">
           <property name="text">
-           <string>Browse</string>
+           <string>Browse...</string>
           </property>
          </widget>
         </item>
@@ -74,7 +74,7 @@
         <item>
          <widget class="QPushButton" name="cloudBrowse">
           <property name="text">
-           <string>Browse</string>
+           <string>Browse...</string>
           </property>
          </widget>
         </item>
@@ -95,7 +95,7 @@
         <item>
          <widget class="QPushButton" name="ringBrowse">
           <property name="text">
-           <string>Browse</string>
+           <string>Browse...</string>
           </property>
          </widget>
         </item>
@@ -219,7 +219,7 @@
         <item>
          <widget class="QPushButton" name="colorButton">
           <property name="text">
-           <string>Select</string>
+           <string>Select...</string>
           </property>
          </widget>
         </item>
@@ -253,7 +253,7 @@
         <item>
          <widget class="QPushButton" name="ringBgBrowse">
           <property name="text">
-           <string>Browse</string>
+           <string>Browse...</string>
           </property>
          </widget>
         </item>
@@ -447,33 +447,46 @@
      <x>0</x>
      <y>0</y>
      <width>925</width>
-     <height>25</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
-     <string>File</string>
+     <string>&amp;File</string>
     </property>
-    <addaction name="actionSave_JSON"/>
     <addaction name="actionOpen_JSON"/>
+    <addaction name="actionSave_JSON"/>
     <addaction name="actionSet_data_dir"/>
+    <addaction name="separator"/>
+    <addaction name="action_Quit"/>
    </widget>
    <addaction name="menuFile"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionSave_JSON">
    <property name="text">
-    <string>Save JSON</string>
+    <string>&amp;Save JSON</string>
    </property>
   </action>
   <action name="actionOpen_JSON">
    <property name="text">
-    <string>Open JSON</string>
+    <string>&amp;Open JSON</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
    </property>
   </action>
   <action name="actionSet_data_dir">
    <property name="text">
-    <string>Set data dir</string>
+    <string>Set &amp;data dir</string>
+   </property>
+  </action>
+  <action name="action_Quit">
+   <property name="text">
+    <string>&amp;Quit</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
    </property>
   </action>
  </widget>
@@ -487,5 +500,22 @@
   </customwidget>
  </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>action_Quit</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>462</x>
+     <y>325</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
