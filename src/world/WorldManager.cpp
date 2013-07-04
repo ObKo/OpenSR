@@ -19,12 +19,12 @@
 #include "WorldManager.h"
 #include "WorldObject.h"
 #include "SolarSystem.h"
-#include "DesertPlanet.h"
-#include "HabitablePlanet.h"
+#include "WorldGenHook.h"
 
 #include <fstream>
 #include <libRanger.h>
 #include <OpenSR/Log.h>
+#include <OpenSR/PythonBindings.h>
 
 namespace Rangers
 {
@@ -43,12 +43,13 @@ WorldManager& WorldManager::instance()
     return manager;
 }
 
-boost::shared_ptr<WorldObject> WorldManager::addObject(WorldObject *object)
+void WorldManager::addObject(boost::shared_ptr<WorldObject> object)
 {
-    boost::shared_ptr<WorldObject> result = boost::shared_ptr<WorldObject>(object);
-    m_objects[object->id()] = result;
-    return result;
+    if (!object)
+        return;
+    m_objects[object->id()] = object;
 }
+
 void WorldManager::removeObject(boost::shared_ptr<WorldObject> object)
 {
     std::map<uint64_t, boost::shared_ptr<WorldObject> >::iterator i = m_objects.find(object->id());
@@ -70,44 +71,11 @@ WorldStyleManager& WorldManager::styleManager()
 
 void WorldManager::generateWorld()
 {
-    boost::shared_ptr<SolarSystem> system = boost::static_pointer_cast<SolarSystem>(addObject(new SolarSystem()));
-    boost::shared_ptr<DesertPlanet> planet = boost::static_pointer_cast<DesertPlanet>(addObject(new DesertPlanet()));
-    boost::shared_ptr<DesertPlanet> sPlanet = boost::static_pointer_cast<DesertPlanet>(addObject(new DesertPlanet()));
-    boost::shared_ptr<HabitablePlanet> hPlanet = boost::static_pointer_cast<HabitablePlanet>(addObject(new HabitablePlanet()));
-
-    system->setName("Test system");
-    system->setSize(2000.0f);
-    system->setPosition(Point(0.0f, 0.0f));
-
-    planet->setOrbit(600.0f);
-    planet->setRadius(50.0f);
-    planet->setName("Planet");
-    planet->setAngle(0.0f);
-    planet->setAngleSpeed(M_PI * 2.0f / 87.0f);
-    planet->setStyle(textHash32(L"mercur"));
-
-    hPlanet->setOrbit(450.0f);
-    hPlanet->setRadius(75.0f);
-    hPlanet->setName("Earth");
-    hPlanet->setAngle(1.0f);
-    hPlanet->setAngleSpeed(M_PI * 2.0f / 365.0f);
-    hPlanet->setInvader(0);
-    hPlanet->setPopulation(1000000);
-    hPlanet->setStyle(textHash32(L"earth"));
-
-    sPlanet->setOrbit(800.0f);
-    sPlanet->setRadius(100.0f);
-    sPlanet->setName("Saturn");
-    sPlanet->setAngle(M_PI);
-    sPlanet->setAngleSpeed(M_PI * 2.0f / 100.0f);
-    sPlanet->setStyle(textHash32(L"saturn"));
-
-    m_currentSystem = system;
-    m_solarSystems.push_back(system);
-
-    system->addObject(planet);
-    system->addObject(hPlanet);
-    system->addObject(sPlanet);
+    std::list<boost::shared_ptr<WorldGenHook> >::const_iterator end = m_genHooks.end();
+    for (std::list<boost::shared_ptr<WorldGenHook> >::const_iterator i = m_genHooks.begin(); i != end; ++i)
+    {
+        (*i)->generate();
+    }
 }
 
 std::list<boost::shared_ptr<SolarSystem> > WorldManager::solarSystems() const
@@ -118,6 +86,13 @@ std::list<boost::shared_ptr<SolarSystem> > WorldManager::solarSystems() const
 boost::shared_ptr<SolarSystem> WorldManager::currentSolarSystem() const
 {
     return m_currentSystem;
+}
+
+void WorldManager::setCurrentSolarSystem(boost::shared_ptr<SolarSystem> system)
+{
+    std::map<uint64_t, boost::shared_ptr<WorldObject> >::iterator i = m_objects.find(system->id());
+    if (i != m_objects.end())
+        m_currentSystem = system;
 }
 
 bool WorldManager::saveWorld(const std::wstring& file) const
@@ -210,5 +185,18 @@ boost::shared_ptr<WorldObject> WorldManager::getObject(uint64_t id)
         return boost::shared_ptr<WorldObject>();
 }
 
+void WorldManager::addGenHook(boost::shared_ptr< WorldGenHook > hook)
+{
+    if (!hook)
+        return;
+    m_genHooks.push_back(hook);
+}
+
+void WorldManager::removeGenHook(boost::shared_ptr< WorldGenHook > hook)
+{
+    if (!hook)
+        return;
+    m_genHooks.remove(hook);
+}
 }
 }

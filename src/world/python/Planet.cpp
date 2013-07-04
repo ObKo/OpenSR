@@ -47,7 +47,12 @@ void exportPlanet()
     .def("orbit", &Planet::orbit)
     .def("setOrbit", &Planet::setOrbit)
     .def("style", &Planet::style)
-    .def("setStyle", &Planet::setStyle);
+    .def("setStyle", (void (Planet::*)(uint32_t))&Planet::setStyle)
+    .def("setStyle", (void (Planet::*)(const std::wstring&))&Planet::setStyle)
+    .def("angle", &Planet::angle)
+    .def("angleSpeed", &Planet::angleSpeed)
+    .def("setAngle", &Planet::setAngle)
+    .def("setAngleSpeed", &Planet::setAngleSpeed);
     WORLD_PYTHON_WRAP_WORLD_OBJECT_DEF(Planet, PlanetWrap, c);
     register_ptr_to_python<boost::shared_ptr<Planet> >();
 }

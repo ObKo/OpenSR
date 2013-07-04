@@ -39,6 +39,7 @@ public:
     void setRadius(float radius);
     void setOrbit(float orbit);
     void setStyle(uint32_t style);
+    void setStyle(const std::wstring& style);
     void setAngle(float angle);
     void setAngleSpeed(float speed);
 
@@ -48,6 +49,7 @@ public:
     virtual void calcTurn();
     virtual void finishTurn();
     virtual void turn(float progress);
+
 protected:
     void updatePosition();
 

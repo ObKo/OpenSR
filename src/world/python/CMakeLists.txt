@@ -31,10 +31,10 @@ SET(WORLD_PYTHON_SOURCES
     Types.cpp
     Weapon.cpp
     World.cpp
+    WorldGenHook.cpp
     WorldManager.cpp
     WorldObject.cpp
     WorldStyleManager.cpp
- 
 )
 
 SET(WORLD_PYTHON_HEADERS 

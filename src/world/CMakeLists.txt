@@ -29,6 +29,7 @@ SET(WORLD_SOURCES
     Tank.cpp
     Types.cpp
     Weapon.cpp
+    WorldGenHook.cpp
     WorldHelper.cpp
     WorldObject.cpp
     GameInterface.cpp
@@ -48,6 +49,7 @@ INCLUDE_DIRECTORIES(
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_BINARY_DIR}
     ${SDLMIXER_INCLUDE_DIR}
+    ${PYTHON_INCLUDE_DIRS}
     ${CMAKE_SOURCE_DIR}/include/
     ${CMAKE_BINARY_DIR}/include/
     ${CMAKE_SOURCE_DIR}/libRanger

@@ -21,6 +21,7 @@
 #include "WorldHelper.h"
 
 #include <cmath>
+#include <libRanger.h>
 
 namespace Rangers
 {
@@ -98,6 +99,11 @@ void Planet::setOrbit(float orbit)
 void Planet::setStyle(uint32_t style)
 {
     m_style = style;
+}
+
+void Planet::setStyle(const std::wstring& style)
+{
+    m_style = textHash32(style);
 }
 
 void Planet::setAngle(float angle)

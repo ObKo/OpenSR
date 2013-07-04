@@ -17,9 +17,9 @@
 */
 
 #include <boost/python.hpp>
-#include "HabitablePlanet.h"
+#include <OpenSR/python/Wrappers.h>
 
-#include "WorldObjectWrap.h"
+#include "WorldGenHook.h"
 
 namespace Rangers
 {
@@ -27,29 +27,29 @@ namespace World
 {
 namespace Python
 {
-struct HabitablePlanetWrap: HabitablePlanet, boost::python::wrapper<HabitablePlanet>
+struct WorldGenHookWrap: WorldGenHook, boost::python::wrapper<WorldGenHook>
 {
-    HabitablePlanetWrap(uint64_t id = 0): HabitablePlanet(id)
+    WorldGenHookWrap(): WorldGenHook()
     {
     }
 
-    WORLD_PYTHON_WRAP_WORLD_OBJECT(HabitablePlanet)
+    virtual void generate()
+    {
+        RANGERS_PYTHON_WRAP_FUNC_VOID(WorldGenHook, generate);
+    }
+    void generate_()
+    {
+        WorldGenHook::generate();
+    }
 };
 
-void exportHabitablePlanet()
+void exportWorldGenHook()
 {
     using namespace boost::python;
 
-    class_<HabitablePlanetWrap, bases<Planet>, boost::shared_ptr<HabitablePlanetWrap>, boost::noncopyable> c("HabitablePlanet", init<uint64_t>());
-    c.def(init<>())
-    .def("invader", &HabitablePlanet::invader)
-    .def("setInvader", &HabitablePlanet::setInvader)
-    .def("population", &HabitablePlanet::population)
-    .def("setPopulation", &HabitablePlanet::setPopulation)
-    .def("landContext", &HabitablePlanet::landContext)
-    .def("setLandContext", &HabitablePlanet::setLandContext);
-    WORLD_PYTHON_WRAP_WORLD_OBJECT_DEF(HabitablePlanet, HabitablePlanetWrap, c);
-    register_ptr_to_python<boost::shared_ptr<HabitablePlanet> >();
+    class_<WorldGenHookWrap, boost::shared_ptr<WorldGenHookWrap>, boost::noncopyable> c("WorldGenHook", init<>());
+    c.def("generate", &WorldGenHook::generate, &WorldGenHookWrap::generate_);
+    register_ptr_to_python<boost::shared_ptr<WorldGenHook> >();
 }
 }
 }

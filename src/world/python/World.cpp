@@ -56,6 +56,7 @@ void exportSpaceInfoWidget();
 void exportSystemPlanetWidget();
 void exportSystemWidget();
 void exportTypes();
+void exportWorldGenHook();
 void exportWorldManager();
 void exportWorldStyleManager();
 }
@@ -96,6 +97,7 @@ BOOST_PYTHON_MODULE(_World)
     Rangers::World::Python::exportSystemPlanetWidget();
     Rangers::World::Python::exportSystemWidget();
     Rangers::World::Python::exportTypes();
+    Rangers::World::Python::exportWorldGenHook();
     Rangers::World::Python::exportWorldManager();
     Rangers::World::Python::exportWorldStyleManager();
 }

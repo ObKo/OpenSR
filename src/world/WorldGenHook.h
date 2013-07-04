@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2012 - 2013 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2013 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,25 +16,20 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <OpenSR/PluginInterface.h>
-#include <OpenSR/ResourceManager.h>
-#include <OpenSR/version.h>
-#include <boost/python.hpp>
+#ifndef WORLD_WORLDGEN_HOOK_H
+#define WORLD_WORLDGEN_HOOK_H
 
-#include "Types.h"
-
-using namespace Rangers::World;
-
-int rangersAPIVersion()
+namespace Rangers
 {
-    return RANGERS_API_VERSION;
+namespace World
+{
+class WorldGenHook
+{
+public:
+    WorldGenHook();
+    virtual void generate();
+};
+}
 }
 
-int rangersPluginInit()
-{
-    return 0;
-}
-
-void rangersPluginDeinit()
-{
-}
+#endif

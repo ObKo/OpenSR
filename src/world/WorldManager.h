@@ -33,6 +33,8 @@ namespace World
 {
 class WorldObject;
 class SolarSystem;
+class WorldGenHook;
+
 class WorldManager
 {
 public:
@@ -40,7 +42,7 @@ public:
 
     static WorldManager& instance();
 
-    boost::shared_ptr<WorldObject> addObject(WorldObject *object);
+    void addObject(boost::shared_ptr<WorldObject> object);
     void removeObject(boost::shared_ptr<WorldObject> object);
     void removeObject(uint64_t id);
 
@@ -54,6 +56,10 @@ public:
 
     std::list<boost::shared_ptr<SolarSystem> > solarSystems() const;
     boost::shared_ptr<SolarSystem> currentSolarSystem() const;
+    void setCurrentSolarSystem(boost::shared_ptr<SolarSystem> system);
+
+    void addGenHook(boost::shared_ptr<WorldGenHook> hook);
+    void removeGenHook(boost::shared_ptr<WorldGenHook> hook);
 
     WorldStyleManager& styleManager();
 
@@ -66,6 +72,8 @@ private:
     std::list<boost::shared_ptr<SolarSystem> > m_solarSystems;
     boost::shared_ptr<SolarSystem> m_currentSystem;
     WorldStyleManager m_styleManager;
+
+    std::list<boost::shared_ptr<WorldGenHook> > m_genHooks;
 
     static uint64_t m_idCounter;
 };
