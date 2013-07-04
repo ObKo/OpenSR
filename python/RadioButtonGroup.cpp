@@ -17,7 +17,8 @@
 */
 
 #include <boost/python.hpp>
-#include <OpenSR/CheckBox.h>
+#include <OpenSR/RadioButtonGroup.h>
+#include <OpenSR/RadioButton.h>
 #include <OpenSR/Styles.h>
 
 #include "OpenSR/python/WidgetWrap.h"
@@ -26,26 +27,27 @@ namespace Rangers
 {
 namespace Python
 {
-struct CheckBoxWrap : CheckBox, boost::python::wrapper<CheckBox>
+struct RadioButtonGroupWrap : RadioButtonGroup, boost::python::wrapper<RadioButtonGroup>
 {
-    CheckBoxWrap(const CheckBoxStyle& style, const std::wstring &text, Widget *parent = 0)
-        : CheckBox(style, text, parent)
+    RadioButtonGroupWrap(Widget *parent = 0)
+        : RadioButtonGroup(parent)
     {
     }
 
-    RANGERS_PYTHON_WRAP_WIDGET(CheckBox)
+    RANGERS_PYTHON_WRAP_WIDGET(RadioButtonGroup)
 };
 
-void exportCheckBox()
+void exportRadioButtonGroup()
 {
     using namespace boost::python;
 
-    class_<CheckBoxWrap, bases<Button>, boost::shared_ptr<CheckBoxWrap>, boost::noncopyable> c("CheckBox", init<const CheckBoxStyle&, const std::wstring&, Widget*>());
-    c.def(init<const CheckBoxStyle&, const std::wstring&>())
-    .def("setChecked", &CheckBox::setChecked)
-    .def("checked", &CheckBox::checked);
-    RANGERS_PYTHON_WRAP_WIDGET_DEF(CheckBox, CheckBoxWrap, c);
-    register_ptr_to_python<boost::shared_ptr<CheckBox> >();
+    class_<RadioButtonGroupWrap, bases<WidgetNode>, boost::shared_ptr<RadioButtonGroupWrap>, boost::noncopyable> c("RadioButtonGroup", init<Widget*>());
+    c.def(init<>());
+    RANGERS_PYTHON_WRAP_WIDGET_DEF(RadioButtonGroup, RadioButtonGroupWrap, c);
+    c.def("addRadioButton", &RadioButtonGroup::addRadioButton)
+    .def("removeRadioButton", &RadioButtonGroup::removeRadioButton)
+    .def("selectRadioButton", &RadioButtonGroup::selectRadioButton);
+    register_ptr_to_python<boost::shared_ptr<RadioButtonGroup> >();
 }
 }
 }

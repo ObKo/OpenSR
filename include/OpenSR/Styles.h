@@ -79,8 +79,8 @@ struct RANGERS_ENGINE_API RadioButtonStyle
 {
     ResourceDescriptor normal;
     ResourceDescriptor hovered;
-    ResourceDescriptor checkedNormal;
-    ResourceDescriptor checkedHovered;
+    ResourceDescriptor selectedNormal;
+    ResourceDescriptor selectedHovered;
     int color;
     FontDescriptor font;
 };
@@ -106,6 +106,7 @@ struct RANGERS_ENGINE_API Skin
     ScrollBarStyle scrollStyle;
     LineEditStyle lineEditStyle;
     CheckBoxStyle checkBoxStyle;
+    RadioButtonStyle radioButtonStyle;
 };
 
 }

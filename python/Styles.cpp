@@ -66,8 +66,8 @@ void exportStyles()
     class_<RadioButtonStyle>("RadioButtonStyle")
     .def_readwrite("normal", &RadioButtonStyle::normal)
     .def_readwrite("hovered", &RadioButtonStyle::hovered)
-    .def_readwrite("checkedNormal", &RadioButtonStyle::checkedNormal)
-    .def_readwrite("checkedHovered", &RadioButtonStyle::checkedHovered)
+    .def_readwrite("checkedNormal", &RadioButtonStyle::selectedNormal)
+    .def_readwrite("checkedHovered", &RadioButtonStyle::selectedHovered)
     .def_readwrite("color", &RadioButtonStyle::color)
     .def_readwrite("font", &RadioButtonStyle::font);
 
@@ -86,7 +86,8 @@ void exportStyles()
     .def_readwrite("buttonStyle", &Skin::buttonStyle)
     .def_readwrite("scrollStyle", &Skin::scrollStyle)
     .def_readwrite("lineEditStyle", &Skin::lineEditStyle)
-    .def_readwrite("checkBoxStyle", &Skin::checkBoxStyle);
+    .def_readwrite("checkBoxStyle", &Skin::checkBoxStyle)
+    .def_readwrite("radioButtonStyle", &Skin::radioButtonStyle);
 }
 }
 }

@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2012 - 2013 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2013 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,36 +16,35 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef RANGERS_CHECKBOX_P_H
-#define RANGERS_CHECKBOX_P_H
+#ifndef RANGERS_RADIOBUTTON_H
+#define RANGERS_RADIOBUTTON_H
 
-#include "Button_p.h"
-
-#include "OpenSR/ActionListener.h"
-#include "OpenSR/Styles.h"
+#include "OpenSR/Button.h"
 
 namespace Rangers
 {
-class CheckBoxPrivate: public ButtonPrivate
+class RadioButtonPrivate;
+struct RadioButtonStyle;
+class RANGERS_ENGINE_API RadioButton: public Button
 {
-    RANGERS_DECLARE_PUBLIC(CheckBox)
+    RANGERS_DECLARE_PRIVATE(RadioButton);
 public:
-    class CheckBoxListener: public ActionListener
-    {
-    public:
-        virtual void actionPerformed(const Action& action);
-    };
+    RadioButton(const RadioButtonStyle& style, const std::wstring &text, Widget *parent = 0);
+    virtual ~RadioButton();
 
-    CheckBoxPrivate();
+    void select();
+    void deselect();
+    bool isSelected() const;
 
-    bool checked;
-    boost::shared_ptr<Sprite> checkedNormal;
-    boost::shared_ptr<Sprite> checkedHovered;
-    boost::shared_ptr<Sprite> uncheckedNormal;
-    boost::shared_ptr<Sprite> uncheckedHovered;
-    CheckBoxStyle checkBoxStyle;
+    virtual void processMain();
 
-    boost::shared_ptr<CheckBoxListener> checkBoxListener;
+    virtual int minWidth() const;
+    virtual int minHeight() const;
+
+protected:
+    RadioButton(RadioButtonPrivate &p, Widget *parent = 0);
+
+    RANGERS_DISABLE_COPY(RadioButton)
 };
 }
 

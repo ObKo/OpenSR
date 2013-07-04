@@ -331,6 +331,11 @@ Skin JSONHelper::parseSkin(const Json::Value& root, bool &error)
         Json::Value style = root.get("CheckBoxStyle", Json::Value());
         skin.checkBoxStyle = parseCheckBoxStyle(style, resources, error);
     }
+    if (std::find(members.begin(), members.end(), "RadioButtonStyle") != members.end())
+    {
+        Json::Value style = root.get("RadioButtonStyle", Json::Value());
+        skin.radioButtonStyle = parseRadioButtonStyle(style, resources, error);
+    }
     return skin;
 }
 
@@ -467,6 +472,43 @@ CheckBoxStyle JSONHelper::parseCheckBoxStyle(const Json::Value& object, const st
     {
         Log::error() << "Invalid JSON CheckBoxStyle";
         return CheckBoxStyle();
+    }
+    return style;
+}
+
+RadioButtonStyle JSONHelper::parseRadioButtonStyle(const Json::Value& object, const std::map< std::wstring, ResourceDescriptor >& resources, bool& error)
+{
+    error = false;
+    RadioButtonStyle style;
+    Json::Value::Members members = object.getMemberNames();
+
+    style.normal  = getResource(object.get("normal", "").asString(), resources, error);
+
+    if (std::find(members.begin(), members.end(), "hovered") != members.end())
+        style.hovered = getResource(object.get("hovered", "").asString(), resources, error);
+
+    style.selectedNormal = getResource(object.get("selected-normal", "").asString(), resources, error);
+
+    if (std::find(members.begin(), members.end(), "selected-hovered") != members.end())
+        style.selectedHovered = getResource(object.get("selected-hovered", "").asString(), resources, error);
+
+    if (std::find(members.begin(), members.end(), "font") != members.end())
+    {
+        ResourceDescriptor d = getResource(object.get("font", "").asString(), resources, error);
+
+        if (d.type != ResourceDescriptor::FONT)
+            error = true;
+        else
+            style.font = boost::get<FontDescriptor>(d.resource);
+    }
+
+    if (std::find(members.begin(), members.end(), "color") != members.end())
+        style.color = parseColor(object.get("color", "#").asString(), error);
+
+    if (error)
+    {
+        Log::error() << "Invalid JSON RadioButtonStyle";
+        return RadioButtonStyle();
     }
     return style;
 }

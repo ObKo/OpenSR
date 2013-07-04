@@ -16,8 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef RANGERS_CHECKBOX_P_H
-#define RANGERS_CHECKBOX_P_H
+#ifndef RANGERS_RADIOBUTTON_P_H
+#define RANGERS_RADIOBUTTON_P_H
 
 #include "Button_p.h"
 
@@ -26,26 +26,18 @@
 
 namespace Rangers
 {
-class CheckBoxPrivate: public ButtonPrivate
+class RadioButtonPrivate: public ButtonPrivate
 {
-    RANGERS_DECLARE_PUBLIC(CheckBox)
+    RANGERS_DECLARE_PUBLIC(RadioButton)
 public:
-    class CheckBoxListener: public ActionListener
-    {
-    public:
-        virtual void actionPerformed(const Action& action);
-    };
+    RadioButtonPrivate();
 
-    CheckBoxPrivate();
-
-    bool checked;
-    boost::shared_ptr<Sprite> checkedNormal;
-    boost::shared_ptr<Sprite> checkedHovered;
-    boost::shared_ptr<Sprite> uncheckedNormal;
-    boost::shared_ptr<Sprite> uncheckedHovered;
-    CheckBoxStyle checkBoxStyle;
-
-    boost::shared_ptr<CheckBoxListener> checkBoxListener;
+    bool selected;
+    boost::shared_ptr<Sprite> selectedNormal;
+    boost::shared_ptr<Sprite> selectedHovered;
+    boost::shared_ptr<Sprite> deselectedNormal;
+    boost::shared_ptr<Sprite> deselectedHovered;
+    RadioButtonStyle radioButtonStyle;
 };
 }
 

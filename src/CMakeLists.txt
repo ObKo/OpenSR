@@ -38,6 +38,8 @@ SET(SOURCES
     SpriteWidget.cpp
     PythonBindings.cpp
     ScriptWidget.cpp
+    RadioButton.cpp
+    RadioButtonGroup.cpp
 )
 
 SET(HEADERS
@@ -78,6 +80,8 @@ SET(HEADERS
     ${CMAKE_SOURCE_DIR}/include/OpenSR/PythonBindings.h
     ${CMAKE_SOURCE_DIR}/include/OpenSR/Widget.h
     ${CMAKE_SOURCE_DIR}/include/OpenSR/ScriptWidget.h
+    ${CMAKE_SOURCE_DIR}/include/OpenSR/RadioButton.h
+    ${CMAKE_SOURCE_DIR}/include/OpenSR/RadioButtonGroup.h
     ${CMAKE_BINARY_DIR}/include/OpenSR/version.h
     ${CMAKE_BINARY_DIR}/include/OpenSR/config.h
 )
@@ -100,6 +104,8 @@ SET(PRIVATE_HEADERS
     ${CMAKE_SOURCE_DIR}/include/OpenSR/private/ScrollArea_p.h
     ${CMAKE_SOURCE_DIR}/include/OpenSR/private/ScriptWidget_p.h
     ${CMAKE_SOURCE_DIR}/include/OpenSR/private/WidgetNode_p.h
+    ${CMAKE_SOURCE_DIR}/include/OpenSR/private/RadioButton_p.h
+    ${CMAKE_SOURCE_DIR}/include/OpenSR/private/RadioButtonGroup_p.h
 )
 
 INCLUDE_DIRECTORIES(

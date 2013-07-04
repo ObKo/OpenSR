@@ -27,6 +27,8 @@ SET(PYTHON_SOURCES
     SoundManager.cpp
     Styles.cpp
     Texture.cpp
+    RadioButton.cpp
+    RadioButtonGroup.cpp
 )
 
 SET(PYTHON_HEADERS 

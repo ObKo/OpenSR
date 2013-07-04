@@ -22,6 +22,7 @@
 #include "OpenSR/ResourceManager.h"
 #include "OpenSR/Texture.h"
 #include "OpenSR/NinePatch.h"
+#include "OpenSR/Label.h"
 
 #include "OpenSR/private/CheckBox_p.h"
 
@@ -103,9 +104,12 @@ CheckBox::CheckBox(const CheckBoxStyle& style, const std::wstring &text, Widget 
     d->normalSprite = d->uncheckedNormal;
     d->hoverSprite = d->uncheckedHovered;
     d->sprite = d->normalSprite;
-    d->autoResize = true;
 
     setText(text);
+
+    d->width = minWidth();
+    d->height = minHeight();
+
     addListener(d->checkBoxListener);
     markToUpdate();
 }
@@ -177,6 +181,8 @@ void CheckBox::processMain()
         return;
 
     d->label->setPosition(d->sprite->width() + 5, int(d->sprite->height() - d->label->height()) / 2);
+    d->width = minWidth();
+    d->height = minHeight();
     unlock();
 }
 }

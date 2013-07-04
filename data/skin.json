@@ -128,7 +128,11 @@
         "checkbox-normal": {"texture": "ORC/checkbox_normal.png"},
         "checkbox-hovered": {"texture": "ORC/checkbox_hovered.png"},
         "checkbox-checked-normal": {"texture": "ORC/checkbox_checked_normal.png"},
-        "checkbox-checked-hovered": {"texture": "ORC/checkbox_checked_hovered.png"}
+        "checkbox-checked-hovered": {"texture": "ORC/checkbox_checked_hovered.png"},
+        "radio-normal": {"texture": "DATA/FormOptions2/2SwitchN.gi"},
+        "radio-hovered": {"texture": "DATA/FormOptions2/2SwitchA.gi"},
+        "radio-selected-normal": {"texture": "DATA/FormOptions2/2SwitchD.gi"},
+        "radio-selected-hovered": {"texture": "DATA/FormOptions2/2SwitchD.gi"}
     },
     "Font":
     {
@@ -165,6 +169,15 @@
         "hovered": "checkbox-hovered",
         "checked-normal" : "checkbox-checked-normal", 
         "checked-hovered" : "checkbox-checked-hovered", 
+        "font": "default-font", 
+        "color": "#FFFFFFFF"
+    },
+    "RadioButtonStyle":
+    {
+        "normal": "radio-normal",
+        "hovered": "radio-hovered",
+        "selected-normal" : "radio-selected-normal", 
+        "selected-hovered" : "radio-selected-hovered", 
         "font": "default-font", 
         "color": "#FFFFFFFF"
     },

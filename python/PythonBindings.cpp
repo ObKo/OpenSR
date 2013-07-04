@@ -52,6 +52,8 @@ void exportSound();
 void exportSoundManager();
 void exportStyles();
 void exportTexture();
+void exportRadioButton();
+void exportRadioButtonGroup();
 
 void pythonError(const std::wstring& text)
 {
@@ -113,6 +115,8 @@ BOOST_PYTHON_MODULE(_Engine)
     Rangers::Python::exportSoundManager();
     Rangers::Python::exportStyles();
     Rangers::Python::exportTexture();
+    Rangers::Python::exportRadioButton();
+    Rangers::Python::exportRadioButtonGroup();
     boost::python::def("pythonError", &Rangers::Python::pythonError);
     boost::python::def("pythonOut", &Rangers::Python::pythonOut);
     boost::python::def("execPythonScript", (void (*)(const std::wstring&, const boost::python::object&))&Rangers::execPythonScript);
