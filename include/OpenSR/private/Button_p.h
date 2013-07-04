@@ -26,6 +26,7 @@
 
 namespace Rangers
 {
+class Label;
 class ButtonPrivate: public WidgetPrivate
 {
     RANGERS_DECLARE_PUBLIC(Button)
@@ -38,7 +39,7 @@ public:
 
     ButtonPrivate();
 
-    void calcAutoRresize();
+    void calcAutoResize();
     void initFromStyle();
 
     ButtonStyle style;

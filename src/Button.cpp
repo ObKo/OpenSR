@@ -86,6 +86,8 @@ ButtonPrivate::ButtonPrivate(): WidgetPrivate()
 Button::Button(Widget *parent):
     Widget(*(new ButtonPrivate()), parent)
 {
+    RANGERS_D(Button);
+    d->initFromStyle();
 }
 
 Button::Button(boost::shared_ptr<Texture> texture, Widget *parent):
@@ -270,6 +272,8 @@ Button::Button(const ButtonStyle& style, Widget *parent):
 
 Button::Button(ButtonPrivate &p, Widget *parent): Widget(p, parent)
 {
+    RANGERS_D(Button);
+    d->initFromStyle();
 }
 
 bool Button::autoResize() const
@@ -283,7 +287,7 @@ void Button::setAutoResize(bool autoResize)
     lock();
     RANGERS_D(Button);
     d->autoResize = autoResize;
-    d->calcAutoRresize();
+    d->calcAutoResize();
     unlock();
 }
 
@@ -293,7 +297,7 @@ void Button::setText(const std::wstring& text)
     RANGERS_D(Button);
     d->text = text;
     d->label->setText(text);
-    d->calcAutoRresize();
+    d->calcAutoResize();
     markToUpdate();
     unlock();
 }
@@ -311,7 +315,7 @@ void Button::setFont(boost::shared_ptr<Font> font)
     lock();
     RANGERS_D(Button);
     d->label->setFont(font);
-    d->calcAutoRresize();
+    d->calcAutoResize();
     markToUpdate();
     unlock();
 }
@@ -328,7 +332,7 @@ std::wstring Button::text() const
     return d->text;
 }
 
-void ButtonPrivate::calcAutoRresize()
+void ButtonPrivate::calcAutoResize()
 {
     RANGERS_Q(Button);
     if (!autoResize)
@@ -337,8 +341,8 @@ void ButtonPrivate::calcAutoRresize()
         return;
 
     q->lock();
-    float labelWidth = 0.0f;
-    float labelHeight = 0.0f;
+    int labelWidth = 0;
+    int labelHeight = 0;
     if (label->font())
     {
         labelWidth = label->font()->calculateStringWidth(text.begin(), text.end());
@@ -346,12 +350,12 @@ void ButtonPrivate::calcAutoRresize()
     }
     if (!style.contentRect.valid())
     {
-        q->setGeometry(std::max(labelWidth, normalSprite->normalWidth()), std::max(labelHeight, normalSprite->normalHeight()));
+        q->setGeometry(std::max(labelWidth, q->minWidth()), std::max(labelHeight, q->minHeight()));
     }
     else
     {
-        float width = normalSprite->normalWidth() + labelWidth - style.contentRect.width;
-        float height = normalSprite->normalHeight() + labelHeight - style.contentRect.height;
+        float width = normalSprite->normalWidth() - style.contentRect.width + labelWidth;
+        float height = normalSprite->normalHeight() - style.contentRect.height + labelHeight;
         q->setGeometry(std::max(width, normalSprite->normalWidth()), std::max(height, normalSprite->normalHeight()));
     }
     q->unlock();
@@ -462,14 +466,6 @@ void ButtonPrivate::initFromStyle()
 
 Button::~Button()
 {
-    RANGERS_D(const Button);
-    /*if (d->normalSprite)
-        delete d->normalSprite;
-    if (d->hoverSprite)
-        delete d->hoverSprite;
-    if (d->pressedSprite)
-        delete d->pressedSprite;
-    delete d->label;*/
 }
 
 void Button::draw() const
@@ -509,12 +505,12 @@ void Button::processMain()
     RANGERS_D(Button);
     if (d->label->needUpdate())
         d->label->processMain();
-    if (d->normalSprite)
+    /*if (d->normalSprite)
         d->normalSprite->setGeometry(d->width, d->height);
     if (d->hoverSprite)
         d->hoverSprite->setGeometry(d->width, d->height);
     if (d->pressedSprite)
-        d->pressedSprite->setGeometry(d->width, d->height);
+        d->pressedSprite->setGeometry(d->width, d->height);*/
     if (!d->style.contentRect.valid() || (!d->normalSprite))
     {
         d->label->setPosition(int((d->width - d->label->width()) / 2), int((d->height - d->label->height()) / 2));

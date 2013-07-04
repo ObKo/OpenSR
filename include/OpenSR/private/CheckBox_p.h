@@ -19,7 +19,7 @@
 #ifndef RANGERS_CHECKBOX_P_H
 #define RANGERS_CHECKBOX_P_H
 
-#include "Widget_p.h"
+#include "Button_p.h"
 
 #include "OpenSR/ActionListener.h"
 #include "OpenSR/Label.h"
@@ -27,7 +27,7 @@
 
 namespace Rangers
 {
-class CheckBoxPrivate: public WidgetPrivate
+class CheckBoxPrivate: public ButtonPrivate
 {
     RANGERS_DECLARE_PUBLIC(CheckBox)
 public:
@@ -40,13 +40,11 @@ public:
     CheckBoxPrivate();
 
     bool checked;
-    boost::shared_ptr<Sprite> normal;
     boost::shared_ptr<Sprite> checkedNormal;
-    boost::shared_ptr<Sprite> hovered;
     boost::shared_ptr<Sprite> checkedHovered;
-    boost::shared_ptr<Sprite> sprite;
-    boost::shared_ptr<Label> label;
-    CheckBoxStyle style;
+    boost::shared_ptr<Sprite> uncheckedNormal;
+    boost::shared_ptr<Sprite> uncheckedHovered;
+    CheckBoxStyle checkBoxStyle;
 
     boost::shared_ptr<CheckBoxListener> checkBoxListener;
 };

@@ -19,29 +19,27 @@
 #ifndef RANGERS_CHECKBOX_H
 #define RANGERS_CHECKBOX_H
 
-#include "OpenSR/Widget.h"
+#include "OpenSR/Button.h"
 
 namespace Rangers
 {
 class CheckBoxPrivate;
 struct CheckBoxStyle;
-class RANGERS_ENGINE_API CheckBox: public Widget
+class RANGERS_ENGINE_API CheckBox: public Button
 {
     RANGERS_DECLARE_PRIVATE(CheckBox);
 public:
     CheckBox(const CheckBoxStyle& style, const std::wstring &text, Widget *parent = 0);
     virtual ~CheckBox();
 
-    virtual void setColor(uint32_t color);
     void setChecked(bool checked);
-    void setText(const std::wstring& text);
 
-    virtual uint32_t color() const;
     bool checked() const;
-    std::wstring text() const;
 
-    virtual void draw() const;
     virtual void processMain();
+
+    virtual int minWidth() const;
+    virtual int minHeight() const;
 
 protected:
     CheckBox(CheckBoxPrivate &p, Widget *parent = 0);

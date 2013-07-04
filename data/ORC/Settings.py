@@ -106,12 +106,12 @@ class SettingsWidget(OpenSR.Engine.ScriptWidget, OpenSR.Engine.ActionListener):
 
         self.widthEdit.setWidth(50)
         self.widthEdit.setPosition(100, 5)
-        self.widthLabel.setPosition(5, 5 + (self.widthEdit.height() - self.widthLabel.font().size()) / 2)
+        self.widthLabel.setPosition(5, 5 + (self.widthEdit.height() - self.widthLabel.font().size()))
         self.heightEdit.setWidth(50)
         self.heightEdit.setPosition(270, 5)
-        self.heightLabel.setPosition(170, 5 + (self.widthEdit.height() - self.widthLabel.font().size()) / 2)
+        self.heightLabel.setPosition(170, 5 + (self.widthEdit.height() - self.widthLabel.font().size()))
         self.fullscreen.setPosition(5, self.widthEdit.height() + 15)
-        self.useShaders.setPosition(5, self.fullscreen.position().y + self.fullscreen.height() + 25)
+        self.useShaders.setPosition(5, self.fullscreen.position().y + self.fullscreen.height() + 15)
 
         self.scroll = OpenSR.Engine.ScrollArea(engine.defaultSkin().scrollStyle, self.paramNode)
         self.scroll.setPosition(self.formBg.position().x + 257, self.formBg.position().y + 149)
