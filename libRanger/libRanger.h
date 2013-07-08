@@ -167,6 +167,7 @@ struct HAIAnimation
     unsigned char *frames; //!< Frames data
 };
 
+//! Compression type of file in RPKG archive
 enum RPKGCompression {RPKG_SEEKABLE_ZLIB, RPKG_SEEKABLE_LZMA, RPKG_NONE};
 
 //! File in RPKG archive
@@ -175,12 +176,11 @@ struct RPKGItem
     uint32_t packType;  //!< Compression type
     uint32_t packSize;  //!< Compressed data size
     uint32_t size;  //!< Uncompressed data size
-    uint32_t chunkSize;
+    uint32_t chunkSize; //!< Compression chunk size
     unsigned char *data; //!< Data
 };
 
 //! File description in RPKG
-
 struct RPKGEntry
 {
     std::wstring name;  //!< File name
@@ -189,7 +189,6 @@ struct RPKGEntry
 };
 
 //! PKG archive item
-
 struct PKGItem
 {
     uint32_t sizeInArc;  //!< Compressed data size
@@ -256,14 +255,16 @@ enum DDSHeaderCaps2 {DDSCAPS2_CUBEMAP = 0x200, DDSCAPS2_CUBEMAP_POSITIVEX = 0x40
                      DDSCAPS2_VOLUME = 0x200000
                     };
 
+//! Supported PNG color types
 enum PNGType {PNG_INVALID, PNG_GRAY, PNG_RGB, PNG_RGBA};
 
+//! PNG frame
 struct PNGFrame
 {
-    int width;
-    int height;
-    PNGType type;
-    unsigned char *data;
+    int width;  		//!< Frame width
+    int height;   		//!< Frame width
+    PNGType type;		//!< Frame color type
+    unsigned char *data;	//!< Frame pixel data
 };
 
 //! Load GI frame type 0
@@ -323,13 +324,14 @@ LIBRANGER_API PKGItem *loadPKG(std::istream& stream);
 //! Extract file from PKG archive
 LIBRANGER_API unsigned char *extractFile(PKGItem item, std::istream& pkgfile);
 
-
+//! Pack data into RPKG using LZMA compression
 LIBRANGER_API bool packRSXZ(const char * src, size_t srclen, RPKGItem &item);
+//! Unpack LZMA-compressed file from RPKG archive
 LIBRANGER_API char *unpackRSXZ(RPKGItem item);
 
-//! Compress data to RSZL format
+//! Pack data into RPKG using ZLIB compression
 LIBRANGER_API bool packRSZL(const char * src, size_t srclen, RPKGItem &item);
-//! Uncompress data in ZLIB format
+//! Unpack ZLIB-compressed file from RPKG archive
 LIBRANGER_API char *unpackRSZL(RPKGItem item);
 
 //! Load file descriptions from RPKG archive
@@ -400,7 +402,9 @@ LIBRANGER_API bool checkDirWritable(const std::wstring& path);
 //! Check file/directory exists
 LIBRANGER_API bool fileExists(const std::wstring& path);
 
+//! Load PNG file into memory
 LIBRANGER_API PNGFrame loadPNG(const char *buffer, size_t bufferSize);
+//! Load PNG file into memory
 LIBRANGER_API PNGFrame loadPNG(std::istream &stream);
 }
 
