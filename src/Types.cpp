@@ -21,6 +21,8 @@
 #include "OpenSR/Texture.h"
 #include "OpenSR/ResourceManager.h"
 
+#include <cmath>
+
 namespace Rangers
 {
 Vector::Vector()
@@ -33,6 +35,13 @@ Vector::Vector(float x, float y)
 {
     this->x = x;
     this->y = y;
+}
+
+
+Vector Vector::norm() const
+{
+    float l = float(sqrt((*this) * (*this)));
+    return Vector(x / l, y / l);
 }
 
 Rect::Rect()
@@ -165,5 +174,20 @@ TextureRegion::TextureRegion()
     this->u2 = 0;
     this->v1 = 0;
     this->v2 = 0;
+}
+
+Vector operator+(const Vector& v1, const Vector& v2)
+{
+    return Vector(v1.x + v2.x, v1.y + v2.y);
+}
+
+Vector operator-(const Vector& v1, const Vector& v2)
+{
+    return Vector(v2.x - v1.x, v2.y - v1.y);
+}
+
+float operator*(const Vector& v1, const Vector& v2)
+{
+    return v1.x * v2.x + v1.y * v2.y;
 }
 }

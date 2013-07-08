@@ -36,6 +36,8 @@ struct RANGERS_ENGINE_API Vector
     Vector();
     Vector(float x, float y);
 
+    Vector norm() const;
+
     float x, y;
 };
 
@@ -91,6 +93,9 @@ struct RANGERS_ENGINE_API TextureRegionDescriptor
 };
 
 RANGERS_ENGINE_API Rect operator+(const Rect& r1, const Rect& r2);
+RANGERS_ENGINE_API Vector operator+(const Vector& v1, const Vector& v2);
+RANGERS_ENGINE_API Vector operator-(const Vector& v1, const Vector& v2);
+RANGERS_ENGINE_API float operator*(const Vector& v1, const Vector& v2);
 }
 
 #endif

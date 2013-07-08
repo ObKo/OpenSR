@@ -29,6 +29,7 @@ SET(PYTHON_SOURCES
     Texture.cpp
     RadioButton.cpp
     RadioButtonGroup.cpp
+    TiledLine.cpp
 )
 
 SET(PYTHON_HEADERS 
