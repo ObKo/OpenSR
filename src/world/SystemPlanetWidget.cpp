@@ -130,7 +130,7 @@ GLint SystemPlanetWidget::m_textureLocation;
 GLint SystemPlanetWidget::m_cloudLocation;
 
 SystemPlanetWidget::SystemPlanetWidget(boost::shared_ptr<Planet> planet): m_planet(planet), m_useShader(true), m_vertexBuffer(0),
-    m_phase(0.0f), m_cloudPhase(0.0f), m_solarAngle(0.0f), m_ringSprite(0), m_ringBgSprite(0), m_staticSprite(0)
+    m_phase(0.0f), m_cloudPhase(0.0f), m_solarAngle(0.0f), m_hasRingBackground(false), m_hasCloud(false), m_hasRing(false)
 {
     m_useShader = Rangers::Engine::instance().properties()->get<bool>("graphics.useShaders", true);
     if (planet)
@@ -149,16 +149,18 @@ SystemPlanetWidget::SystemPlanetWidget(boost::shared_ptr<Planet> planet): m_plan
             m_hasRing = style->hasRing;
             if (m_hasRing)
             {
-                m_ringSprite = new Sprite(style->ring);
+                m_ringSprite = boost::shared_ptr<Sprite>(new Sprite(style->ring));
                 m_ringSprite->setOrigin(POSITION_X_CENTER, POSITION_Y_CENTER);
                 m_ringSprite->setPosition(style->ringOffsetX + m_size / 2.0f, style->ringOffsetY + m_size / 2.0f);
+                addChild(m_ringSprite);
             }
             m_hasRingBackground = style->hasRingBackground;
             if (m_hasRingBackground)
             {
-                m_ringBgSprite = new Sprite(style->ringBackground);
+                m_ringBgSprite = boost::shared_ptr<Sprite>(new Sprite(style->ringBackground));
                 m_ringBgSprite->setOrigin(POSITION_X_CENTER, POSITION_Y_CENTER);
                 m_ringBgSprite->setPosition(style->ringBgOffsetX + m_size / 2.0f, style->ringBgOffsetY + m_size / 2.0f);
+                addChild(m_ringBgSprite);
             }
         }
         updatePosition();
@@ -178,13 +180,8 @@ void SystemPlanetWidget::updatePosition()
 
 SystemPlanetWidget::~SystemPlanetWidget()
 {
-    glDeleteBuffers(1, &m_vertexBuffer);
-    if (m_ringBgSprite)
-        delete m_ringBgSprite;
-    if (m_ringSprite)
-        delete m_ringSprite;
-    if (m_staticSprite)
-        delete m_staticSprite;
+    if (m_vertexBuffer)
+        glDeleteBuffers(1, &m_vertexBuffer);
 }
 
 void SystemPlanetWidget::draw() const
@@ -196,7 +193,6 @@ void SystemPlanetWidget::draw() const
 
     if (m_hasRingBackground && m_ringBgSprite)
         m_ringBgSprite->draw();
-
 
     if (m_useShader)
     {
@@ -276,7 +272,7 @@ void SystemPlanetWidget::processMain()
     }
     if (!m_useShader && !m_staticSprite)
     {
-        m_staticSprite = new Sprite(PlanetManager::instance().getPlanetImage(PlanetManager::instance().style(m_planet->style()), (int)m_size));
+        m_staticSprite = boost::shared_ptr<Sprite>(new Sprite(PlanetManager::instance().getPlanetImage(PlanetManager::instance().style(m_planet->style()), (int)m_size)));
     }
     Vertex *vertices;
     if (!m_vertexBuffer)

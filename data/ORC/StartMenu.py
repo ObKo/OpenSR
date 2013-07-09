@@ -105,7 +105,7 @@ class StartMenuWidget(OpenSR.Engine.ScriptWidget, OpenSR.Engine.ActionListener):
             engine.quit(0)
         elif action.source() == self.buttons['settings']:
             self.dispose()
-            engine.addWidget(OpenSR.ORC.Settings.SettingsWidget(None))
+            engine.addWidget(OpenSR.ORC.Settings.SettingsWidget())
         elif action.source() == self.buttons['newGame']:
             world = OpenSR.World.WorldManager.instance()
             world.addGenHook(OpenSR.World.DefaultWorldGen.DefaultWorldGen())

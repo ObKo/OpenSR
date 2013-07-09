@@ -45,9 +45,9 @@ public:
 private:
     void updatePosition();
 
-    Sprite *m_staticSprite;
-    Sprite *m_ringBgSprite;
-    Sprite *m_ringSprite;
+    boost::shared_ptr<Sprite> m_staticSprite;
+    boost::shared_ptr<Sprite> m_ringBgSprite;
+    boost::shared_ptr<Sprite> m_ringSprite;
 
     boost::shared_ptr<Planet> m_planet;
 
