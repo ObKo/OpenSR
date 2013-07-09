@@ -51,7 +51,8 @@ void exportWorldManager()
     .def("removeGenHook", &WorldManager::removeGenHook)
     .def("calcTurn", &WorldManager::calcTurn)
     .def("finishTurn", &WorldManager::finishTurn)
-    .def("styleManager", &WorldManager::styleManager, return_value_policy<reference_existing_object>());
+    .def("styleManager", &WorldManager::styleManager, return_value_policy<reference_existing_object>())
+    .def("raceManager", &WorldManager::raceManager, return_value_policy<reference_existing_object>());
 }
 }
 }

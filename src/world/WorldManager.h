@@ -26,6 +26,7 @@
 #include <boost/shared_ptr.hpp>
 
 #include "WorldStyleManager.h"
+#include "RaceManager.h"
 
 namespace Rangers
 {
@@ -62,6 +63,7 @@ public:
     void removeGenHook(boost::shared_ptr<WorldGenHook> hook);
 
     WorldStyleManager& styleManager();
+    RaceManager& raceManager();
 
     static uint64_t getNextId();
 
@@ -71,7 +73,9 @@ private:
     std::map<uint64_t, boost::shared_ptr<WorldObject> > m_objects;
     std::list<boost::shared_ptr<SolarSystem> > m_solarSystems;
     boost::shared_ptr<SolarSystem> m_currentSystem;
+
     WorldStyleManager m_styleManager;
+    RaceManager m_raceManager;
 
     std::list<boost::shared_ptr<WorldGenHook> > m_genHooks;
 

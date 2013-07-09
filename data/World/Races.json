@@ -1,0 +1,85 @@
+{
+    "races":
+    {
+        "human":
+        {
+            "name": "Humans",
+            "icon": {"texture": "DATA/Race/2EmPeople.png"}
+        },
+        "maloq":
+        {
+            "name": "Maloq",
+            "icon": {"texture": "DATA/Race/2EmMaloc.png"}
+        },
+        "faeyan":
+        {
+            "name": "Faeyan",
+            "icon": {"texture": "DATA/Race/2EmFei.png"}
+        },
+        "gaal":
+        {
+            "name": "Gaal",
+            "icon": {"texture": "DATA/Race/2EmGaal.png"}
+        },
+        "peleng":
+        {
+            "name": "Peleng",
+            "icon": {"texture": "DATA/Race/2EmPeleng.png"}
+        },
+        "blazer":
+        {
+            "name": "Blazer",
+            "icon": {"texture": "DATA/Race/2EmBlazer.png"}
+        },
+        "keller":
+        {
+            "name": "Keller",
+            "icon": {"texture": "DATA/Race/2EmKeller.png"}
+        },
+        "terron":
+        {
+            "name": "Terron",
+            "icon": {"texture": "DATA/Race/2EmTerron.png"}
+        }
+    },
+    
+    "relations":
+    {
+        "human:maloq": 0.0,
+        "human:faeyan": 0.75,
+        "human:gaal": 0.5,
+        "human:peleng": 0.0,
+        "human:blazer": -1.0,
+        "human:keller": -1.0,
+        "human:terron": -1.0,
+            
+        "maloq:faeyan": 0.0,
+        "maloq:gaal": -0.25,
+        "maloq:peleng": 0.0,
+        "maloq:blazer": -1.0,
+        "maloq:keller": -1.0,
+        "maloq:terron": -1.0,
+          
+        "faeyan:gaal": 0.5,
+        "faeyan:peleng": -0.25,
+        "faeyan:blazer": -1.0,
+        "faeyan:keller": -1.0,
+        "faeyan:terron": -1.0,
+            
+        "gaal:peleng": -0.5,
+        "gaal:blazer": -1.0,
+        "gaal:keller": -1.0,
+        "gaal:terron": -1.0,
+            
+        "peleng:blazer": -1.0,
+        "peleng:keller": -1.0,
+        "peleng:terron": -1.0,
+            
+        "blazer:keller": -1.0,
+        "blazer:terron": -1.0,
+            
+        "keller:terron": -1.0
+    },
+        
+    "invaders": ["blazer", "keller", "terron"]
+}

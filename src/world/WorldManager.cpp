@@ -69,6 +69,11 @@ WorldStyleManager& WorldManager::styleManager()
     return m_styleManager;
 }
 
+RaceManager& WorldManager::raceManager()
+{
+    return m_raceManager;
+}
+
 void WorldManager::generateWorld()
 {
     std::list<boost::shared_ptr<WorldGenHook> >::const_iterator end = m_genHooks.end();
