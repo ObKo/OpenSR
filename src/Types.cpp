@@ -183,7 +183,7 @@ Vector operator+(const Vector& v1, const Vector& v2)
 
 Vector operator-(const Vector& v1, const Vector& v2)
 {
-    return Vector(v2.x - v1.x, v2.y - v1.y);
+    return Vector(v1.x - v2.x, v1.y - v2.y);
 }
 
 float operator*(const Vector& v1, const Vector& v2)

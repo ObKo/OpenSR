@@ -118,18 +118,17 @@ void TiledLine::processMain()
     Vector dir = (d->end - d->start);
     Vector n;
 
-    float l = float(sqrt(dir * dir)) / d->texture->width();
-    float dl = float(floor(l));
-    dl = sqrt((l - dl) * d->texture->width());
-    l = float(floor(l));
+    float l = float(sqrt(dir * dir));
+    float dl = l - float(floor(l / d->texture->width())) * d->texture->width();
+    l = float(floor(l / d->texture->width()));
 
     dir = dir.norm();
-
+    
     n.x = - dir.y;
     n.y = dir.x;
 
-    vertices[0].x = d->start.x + n.x / 2.0f * d->texture->height() - dir.x * dl;
-    vertices[0].y = d->start.y + n.y / 2.0f * d->texture->height() - dir.y * dl;
+    vertices[0].x = d->start.x + n.x / 2.0f * d->texture->height();
+    vertices[0].y = d->start.y + n.y / 2.0f * d->texture->height();
     vertices[0].u = 0.0f;
     vertices[0].v = 0.0f;
 
@@ -143,8 +142,8 @@ void TiledLine::processMain()
     vertices[2].u = l;
     vertices[2].v = 1.0f;
 
-    vertices[3].x = d->start.x - n.x / 2.0f * d->texture->height() - dir.x * dl;
-    vertices[3].y = d->start.y - n.y / 2.0f * d->texture->height() - dir.y * dl;
+    vertices[3].x = d->start.x - n.x / 2.0f * d->texture->height();
+    vertices[3].y = d->start.y - n.y / 2.0f * d->texture->height();
     vertices[3].u = 0.0f;
     vertices[3].v = 1.0f;
 
