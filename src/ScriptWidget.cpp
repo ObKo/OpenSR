@@ -22,11 +22,7 @@
 namespace Rangers
 {
 
-ScriptWidget::ScriptWidget(Rangers::Widget* parent): Widget(parent)
-{
-}
-
-ScriptWidget::~ScriptWidget()
+ScriptWidget::ScriptWidget(): Widget()
 {
 }
 

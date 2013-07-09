@@ -27,7 +27,8 @@ SpriteWidgetPrivate::SpriteWidgetPrivate(): WidgetPrivate()
 {
 }
 
-SpriteWidget::SpriteWidget(boost::shared_ptr<Sprite> sprite, Widget* parent): Widget(*(new SpriteWidgetPrivate()), parent)
+SpriteWidget::SpriteWidget(boost::shared_ptr<Sprite> sprite): 
+    Widget(*(new SpriteWidgetPrivate()))
 {
     RANGERS_D(SpriteWidget);
     d->sprite = sprite;
@@ -36,13 +37,8 @@ SpriteWidget::SpriteWidget(boost::shared_ptr<Sprite> sprite, Widget* parent): Wi
     addChild(d->sprite);
 }
 
-SpriteWidget::SpriteWidget(SpriteWidgetPrivate &p, Widget *parent): Widget(p, parent)
+SpriteWidget::SpriteWidget(SpriteWidgetPrivate &p): Widget(p)
 {
-}
-
-SpriteWidget::~SpriteWidget()
-{
-    RANGERS_D(SpriteWidget);
 }
 
 void SpriteWidget::draw() const

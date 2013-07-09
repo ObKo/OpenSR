@@ -32,15 +32,15 @@
 
 namespace Rangers
 {
-NinePatch::NinePatch(Object *parent): Sprite(*(new NinePatchPrivate()), parent)
+NinePatch::NinePatch(): Sprite(*(new NinePatchPrivate()))
 {
     RANGERS_D(NinePatch);
     d->columns = 0;
     d->rows = 0;
 }
 
-NinePatch::NinePatch(const NinePatchDescriptor &desc, Object *parent):
-    Sprite(*(new NinePatchPrivate()), parent)
+NinePatch::NinePatch(const NinePatchDescriptor &desc):
+    Sprite(*(new NinePatchPrivate()))
 {
     RANGERS_D(NinePatch);
     d->rows = desc.rows;
@@ -65,7 +65,8 @@ NinePatch::NinePatch(const NinePatchDescriptor &desc, Object *parent):
     markToUpdate();
 }
 
-NinePatch::NinePatch(const std::wstring& name, Object *parent): Sprite(*(new NinePatchPrivate()), parent)
+NinePatch::NinePatch(const std::wstring& name):
+    Sprite(*(new NinePatchPrivate()))
 {
     RANGERS_D(NinePatch);
     d->rows = 0;
@@ -229,11 +230,8 @@ NinePatch::NinePatch(const std::wstring& name, Object *parent): Sprite(*(new Nin
     markToUpdate();
 }
 
-NinePatch::NinePatch(NinePatchPrivate &p, Object *parent): Sprite(p, parent)
+NinePatch::NinePatch(NinePatchPrivate &p): Sprite(p)
 {
-    RANGERS_D(NinePatch);
-    d->columns = 0;
-    d->rows = 0;
 }
 
 void NinePatch::processMain()

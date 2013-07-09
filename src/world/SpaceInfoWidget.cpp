@@ -38,7 +38,7 @@ namespace Rangers
 {
 namespace World
 {
-SpaceInfoWidget::SpaceInfoWidget(const InfoWidgetStyle& style, Widget* parent): Widget(parent), m_type(INFO_NONE)
+SpaceInfoWidget::SpaceInfoWidget(const InfoWidgetStyle& style): Widget(), m_type(INFO_NONE)
 {
     if (style.background.type == ResourceDescriptor::SPRITE)
     {
@@ -71,7 +71,7 @@ SpaceInfoWidget::SpaceInfoWidget(const InfoWidgetStyle& style, Widget* parent): 
     m_labelColor = style.labelColor;
     m_color = style.color;
 
-    m_caption = boost::shared_ptr<Label>(new Label(L"", 0, m_captionFont));
+    m_caption = boost::shared_ptr<Label>(new Label(L"", m_captionFont));
     m_caption->setOrigin(POSITION_X_CENTER, POSITION_Y_CENTER);
     m_caption->setColor(m_captionColor);
 
@@ -85,10 +85,6 @@ SpaceInfoWidget::SpaceInfoWidget(const InfoWidgetStyle& style, Widget* parent): 
         setWidth(m_bgSprite->normalWidth());
         setHeight(m_bgSprite->normalHeight());
     }
-}
-
-SpaceInfoWidget::~SpaceInfoWidget()
-{
 }
 
 void SpaceInfoWidget::processMain()

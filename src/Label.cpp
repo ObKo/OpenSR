@@ -33,11 +33,21 @@ LabelPrivate::LabelPrivate(): SpritePrivate()
     scaling = TEXTURE_NO;
 }
 
-Label::Label(Object *parent): Sprite(*(new LabelPrivate()), parent)
+Label::Label(): Sprite(*(new LabelPrivate()))
 {
 }
 
-Label::Label(const std::string& text, Object *parent, boost::shared_ptr<Font> font, SpriteXOrigin xpos, SpriteYOrigin ypos): Sprite(*(new LabelPrivate()), parent)
+Label::Label(const std::string& text, boost::shared_ptr<Font> font): Sprite(*(new LabelPrivate()))
+{
+    RANGERS_D(Label);
+    if (!font)
+        d->font = Engine::instance().coreFont();
+    else
+        d->font = font;
+    setText(text);
+}
+
+Label::Label(const std::wstring& text, boost::shared_ptr<Font> font): Sprite(*(new LabelPrivate()))
 {
     RANGERS_D(Label);
     if (!font)
@@ -45,25 +55,10 @@ Label::Label(const std::string& text, Object *parent, boost::shared_ptr<Font> fo
     else
         d->font = font;
 
-    d->xOrigin = xpos;
-    d->yOrigin = ypos;
     setText(text);
 }
 
-Label::Label(const std::wstring& text, Object *parent, boost::shared_ptr<Font> font, SpriteXOrigin xpos, SpriteYOrigin ypos): Sprite(*(new LabelPrivate()), parent)
-{
-    RANGERS_D(Label);
-    if (!font)
-        d->font = Engine::instance().coreFont();
-    else
-        d->font = font;
-
-    d->xOrigin = xpos;
-    d->yOrigin = ypos;
-    setText(text);
-}
-
-Label::Label(LabelPrivate &p, Object *parent): Sprite(p, parent)
+Label::Label(LabelPrivate &p): Sprite(p)
 {
 }
 

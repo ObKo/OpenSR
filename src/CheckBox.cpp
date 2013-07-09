@@ -47,7 +47,7 @@ void CheckBoxPrivate::CheckBoxListener::actionPerformed(const Action& action)
     }
 }
 
-CheckBox::CheckBox(const CheckBoxStyle& style, const std::wstring &text, Widget *parent): Button(*(new CheckBoxPrivate()), parent)
+CheckBox::CheckBox(const CheckBoxStyle& style, const std::wstring &text): Button(*(new CheckBoxPrivate()))
 {
     RANGERS_D(CheckBox);
     d->checkBoxStyle = style;
@@ -112,10 +112,6 @@ CheckBox::CheckBox(const CheckBoxStyle& style, const std::wstring &text, Widget 
 
     addListener(d->checkBoxListener);
     markToUpdate();
-}
-
-CheckBox::~CheckBox()
-{
 }
 
 void CheckBox::setChecked(bool checked)

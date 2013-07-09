@@ -27,12 +27,12 @@ namespace Python
 {
 struct GAISpriteWrap : GAISprite, boost::python::wrapper<GAISprite>
 {
-    GAISpriteWrap(Object *parent = 0): GAISprite(parent)
+    GAISpriteWrap(): GAISprite()
     {
     }
 
-    GAISpriteWrap(const std::wstring& name, Object *parent = 0)
-        : GAISprite(name, parent)
+    GAISpriteWrap(const std::wstring& name)
+        : GAISprite(name)
     {
     }
 
@@ -43,10 +43,8 @@ void exportGAISprite()
 {
     using namespace boost::python;
 
-    class_<GAISpriteWrap, bases<AnimatedSprite>, boost::shared_ptr<GAISpriteWrap>, boost::noncopyable> c("GAISprite", init<const std::wstring&, Object*>());
-    c.def(init<const std::wstring&>())
-    .def(init<Object*>())
-    .def(init<>())
+    class_<GAISpriteWrap, bases<AnimatedSprite>, boost::shared_ptr<GAISpriteWrap>, boost::noncopyable> c("GAISprite", init<const std::wstring&>());
+    c.def(init<>())
     .def("reset", &AnimatedSprite::reset)
     .def("setFrame", &AnimatedSprite::setFrame);
     RANGERS_PYTHON_WRAP_SPRITE_DEF(GAISprite, GAISpriteWrap, c);

@@ -28,18 +28,18 @@ namespace Python
 {
 struct LineEditWrap : LineEdit, boost::python::wrapper<LineEdit>
 {
-    LineEditWrap(float w, float h = 0, boost::shared_ptr<Font> font = boost::shared_ptr<Font>(), Widget* parent = 0)
-        : LineEdit(w, h, font, parent)
+    LineEditWrap(float w, float h = 0, boost::shared_ptr<Font> font = boost::shared_ptr<Font>())
+        : LineEdit(w, h, font)
     {
     }
 
-    LineEditWrap(Widget* parent = 0)
-        : LineEdit(parent)
+    LineEditWrap()
+        : LineEdit()
     {
     }
 
-    LineEditWrap(const LineEditStyle& style, Widget* parent = 0)
-        : LineEdit(style, parent)
+    LineEditWrap(const LineEditStyle& style)
+        : LineEdit(style)
     {
     }
 
@@ -50,13 +50,10 @@ void exportLineEdit()
 {
     using namespace boost::python;
 
-    class_<LineEditWrap, bases<Widget>, boost::shared_ptr<LineEditWrap>, boost::noncopyable> c("LineEdit", init<float, float, boost::shared_ptr<Font>, Widget*>());
-    c.def(init<float, float, boost::shared_ptr<Font> >())
-    .def(init<float, float>())
+    class_<LineEditWrap, bases<Widget>, boost::shared_ptr<LineEditWrap>, boost::noncopyable> c("LineEdit", init<float, float, boost::shared_ptr<Font> >());
+    c.def(init<float, float>())
     .def(init<float>())
-    .def(init<const LineEditStyle&, Widget*>())
     .def(init<const LineEditStyle&>())
-    .def(init<Widget*>())
     .def(init<>())
     .def("setText", &LineEdit::setText)
     .def("text", &LineEdit::text);

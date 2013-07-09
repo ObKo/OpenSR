@@ -29,8 +29,7 @@ class RANGERS_ENGINE_API RadioButton: public Button
 {
     RANGERS_DECLARE_PRIVATE(RadioButton);
 public:
-    RadioButton(const RadioButtonStyle& style, const std::wstring &text, Widget *parent = 0);
-    virtual ~RadioButton();
+    RadioButton(const RadioButtonStyle& style, const std::wstring &text);
 
     void select();
     void deselect();
@@ -42,7 +41,7 @@ public:
     virtual int minHeight() const;
 
 protected:
-    RadioButton(RadioButtonPrivate &p, Widget *parent = 0);
+    RadioButton(RadioButtonPrivate &p);
 
     RANGERS_DISABLE_COPY(RadioButton)
 };

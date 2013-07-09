@@ -29,13 +29,13 @@ namespace Python
 {
 struct ScrollAreaWrap : ScrollArea, boost::python::wrapper<ScrollArea>
 {
-    ScrollAreaWrap(const ScrollBarStyle& style, boost::shared_ptr<WidgetNode> node = boost::shared_ptr<WidgetNode>(), Widget *parent = 0)
-        : ScrollArea(style, node, parent)
+    ScrollAreaWrap(const ScrollBarStyle& style, boost::shared_ptr<WidgetNode> node = boost::shared_ptr<WidgetNode>())
+        : ScrollArea(style, node)
     {
     }
 
-    ScrollAreaWrap(Widget *parent = 0)
-        : ScrollArea(parent)
+    ScrollAreaWrap()
+        : ScrollArea()
     {
     }
 
@@ -46,10 +46,8 @@ void exportScrollArea()
 {
     using namespace boost::python;
 
-    class_<ScrollAreaWrap, bases<Widget>, boost::shared_ptr<ScrollAreaWrap>, boost::noncopyable> c("ScrollArea", init<const ScrollBarStyle&, boost::shared_ptr<WidgetNode>, Widget*>());
-    c.def(init<const ScrollBarStyle&, boost::shared_ptr<WidgetNode> >())
-    .def(init<const ScrollBarStyle&>())
-    .def(init<Widget*>())
+    class_<ScrollAreaWrap, bases<Widget>, boost::shared_ptr<ScrollAreaWrap>, boost::noncopyable> c("ScrollArea", init<const ScrollBarStyle&, boost::shared_ptr<WidgetNode> >());
+    c.def(init<const ScrollBarStyle&>())
     .def(init<>())
     .def("setWidth", &ScrollArea::setWidth)
     .def("setHeight", &ScrollArea::setHeight)

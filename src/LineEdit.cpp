@@ -97,14 +97,14 @@ void LineEdit::draw() const
     endDraw();
 }
 
-LineEdit::LineEdit(float w, float h, boost::shared_ptr< Font > font, Widget* parent):
-    Widget(*(new LineEditPrivate()), parent)
+LineEdit::LineEdit(float w, float h, boost::shared_ptr< Font > font):
+    Widget(*(new LineEditPrivate()))
 {
     RANGERS_D(LineEdit);
     if (!font)
         font = Engine::instance().coreFont();
 
-    d->label = boost::shared_ptr<Label>(new Label(L"", 0, font, POSITION_X_LEFT, POSITION_Y_TOP));
+    d->label = boost::shared_ptr<Label>(new Label(L"", font));
     addChild(d->label);
 
     d->height = h > font->size() + 4 ? h : font->size() + 4;
@@ -113,18 +113,18 @@ LineEdit::LineEdit(float w, float h, boost::shared_ptr< Font > font, Widget* par
     d->init();
 }
 
-LineEdit::LineEdit(Widget* parent): Widget(*(new LineEditPrivate()), parent)
+LineEdit::LineEdit(): Widget(*(new LineEditPrivate()))
 {
 }
 
-LineEdit::LineEdit(const LineEditStyle& style, Widget* parent): Widget(*(new LineEditPrivate()), parent)
+LineEdit::LineEdit(const LineEditStyle& style): Widget(*(new LineEditPrivate()))
 {
     RANGERS_D(LineEdit);
     d->style = style;
     d->init();
 }
 
-LineEdit::LineEdit(LineEditPrivate &p, Widget *parent): Widget(p, parent)
+LineEdit::LineEdit(LineEditPrivate &p): Widget(p)
 {
 }
 
@@ -143,7 +143,7 @@ void LineEditPrivate::init()
     }
     if ((style.font.path != L"") && (style.font.size > 0))
     {
-        label = boost::shared_ptr<Label>(new Label(text, 0, ResourceManager::instance().loadFont(style.font.path, style.font.size)));
+        label = boost::shared_ptr<Label>(new Label(text, ResourceManager::instance().loadFont(style.font.path, style.font.size)));
         label->setColor(((style.color >> 24) & 0xff) / 255.0f, ((style.color >> 16) & 0xff) / 255.0f, ((style.color >> 8) & 0xff) / 255.0f, ((style.color) & 0xff) / 255.0f);
         q->addChild(label);
     }
@@ -229,16 +229,6 @@ void LineEditPrivate::updateText()
     label->setText(text.substr(stringOffset, maxChars));
     q->markToUpdate();
     q->unlock();
-}
-
-LineEdit::~LineEdit()
-{
-    RANGERS_D(LineEdit);
-    /*if (d->background)
-        delete d->background;
-
-    if (d->label)
-        delete d->label;*/
 }
 
 void LineEdit::processMain()

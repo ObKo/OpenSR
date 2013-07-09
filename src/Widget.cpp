@@ -36,31 +36,21 @@ WidgetPrivate::WidgetPrivate(): ObjectPrivate()
     visible = true;
 }
 
-Widget::Widget(Widget *parent): Object(*(new WidgetPrivate()), parent)
+Widget::Widget(): Object(*(new WidgetPrivate()))
 {
     RANGERS_D(Widget);
-
-    //if (parent)
-    //    parent->addWidget(this);
 }
 
-Widget::Widget(float w, float h, Widget *parent): Object(*(new WidgetPrivate()), parent)
+Widget::Widget(float w, float h): Object(*(new WidgetPrivate()))
 {
     RANGERS_D(Widget);
 
     d->width = w;
     d->height = h;
-
-    //if (parent)
-    //    parent->addWidget(this);
 }
 
-Widget::Widget(WidgetPrivate &p, Widget *parent): Object(p, parent)
+Widget::Widget(WidgetPrivate &p): Object(p)
 {
-    RANGERS_D(Widget);
-
-    //if (parent)
-    //    parent->addWidget(this);
 }
 
 Widget::~Widget()

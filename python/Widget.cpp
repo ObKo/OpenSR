@@ -29,7 +29,7 @@ namespace Python
 {
 struct WidgetWrap : Widget, boost::python::wrapper<Widget>
 {
-    WidgetWrap(Widget *parent = 0): Widget(parent)
+    WidgetWrap(): Widget()
     {
     }
 
@@ -39,9 +39,8 @@ struct WidgetWrap : Widget, boost::python::wrapper<Widget>
 void exportWidget()
 {
     using namespace boost::python;
-    class_<WidgetWrap, bases<Object>, boost::shared_ptr<WidgetWrap>, boost::noncopyable> c("Widget", init<Widget*>());
-    c.def(init<>())
-    .def("width", &Widget::width)
+    class_<WidgetWrap, bases<Object>, boost::shared_ptr<WidgetWrap>, boost::noncopyable> c("Widget", init<>());
+    c.def("width", &Widget::width)
     .def("height", &Widget::height)
     .def("isFocused", &Widget::isFocused)
     .def("isVisible", &Widget::isVisible)

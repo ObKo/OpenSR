@@ -15,8 +15,8 @@ class StartMenuWidget(OpenSR.Engine.ScriptWidget, OpenSR.Engine.ActionListener):
     BUTTONS = ['newGame', 'loadGame', 'settings', 'records', 'about', 'exit']
     BUTTON_SPARSE = 60
     
-    def __init__(self, parent):
-        OpenSR.Engine.ScriptWidget.__init__(self, parent)
+    def __init__(self):
+        OpenSR.Engine.ScriptWidget.__init__(self)
         OpenSR.Engine.ActionListener.__init__(self)
                 
         self.t = 0

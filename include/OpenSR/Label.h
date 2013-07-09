@@ -30,9 +30,9 @@ class RANGERS_ENGINE_API Label: public Sprite
 {
     RANGERS_DECLARE_PRIVATE(Label)
 public:
-    Label(Object *parent = 0);
-    Label(const std::string& text, Object *parent = 0, boost::shared_ptr<Font> font = boost::shared_ptr<Font>(), SpriteXOrigin xpos = POSITION_X_LEFT, SpriteYOrigin ypos = POSITION_Y_TOP);
-    Label(const std::wstring& text, Object *parent = 0, boost::shared_ptr<Font> font = boost::shared_ptr<Font>(), SpriteXOrigin xpos = POSITION_X_LEFT, SpriteYOrigin ypos = POSITION_Y_TOP);
+    Label();
+    Label(const std::string& text, boost::shared_ptr<Font> font = boost::shared_ptr<Font>());
+    Label(const std::wstring& text, boost::shared_ptr<Font> font = boost::shared_ptr<Font>());
 
     void setText(const std::string& text);
     void setText(const std::wstring& text);
@@ -47,7 +47,7 @@ public:
     virtual void processMain();
 
 protected:
-    Label(LabelPrivate &p, Object *parent = 0);
+    Label(LabelPrivate &p);
 
     RANGERS_DISABLE_COPY(Label)
 };

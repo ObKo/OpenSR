@@ -10,4 +10,4 @@ engine = OpenSR.Engine.Engine.instance()
 resources = OpenSR.Engine.ResourceManager.instance()
 world = OpenSR.World.WorldManager.instance()
 
-engine.addWidget(OpenSR.ORC.StartMenu.StartMenuWidget(None))
+engine.addWidget(OpenSR.ORC.StartMenu.StartMenuWidget())

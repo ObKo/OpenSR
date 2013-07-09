@@ -28,12 +28,12 @@ class RANGERS_ENGINE_API Node: public Object
 {
     RANGERS_DECLARE_PRIVATE(Node)
 public:
-    Node(Object *parent = 0);
+    Node();
     virtual void draw() const;
     virtual void processLogic(int dt);
 
 protected:
-    Node(NodePrivate &p, Object *parent = 0);
+    Node(NodePrivate &p);
 
     RANGERS_DISABLE_COPY(Node)
 };

@@ -31,8 +31,8 @@ namespace Python
 {
 struct SystemWidgetWrap : SystemWidget, boost::python::wrapper<SystemWidget>
 {
-    SystemWidgetWrap(boost::shared_ptr<SolarSystem> system = boost::shared_ptr<SolarSystem>(), Widget *parent = 0)
-        : SystemWidget(system, parent)
+    SystemWidgetWrap(boost::shared_ptr<SolarSystem> system = boost::shared_ptr<SolarSystem>())
+        : SystemWidget(system)
     {
     }
     RANGERS_PYTHON_WRAP_WIDGET(SystemWidget)
@@ -42,9 +42,8 @@ void exportSystemWidget()
 {
     using namespace boost::python;
 
-    class_<SystemWidgetWrap, bases<Widget>, boost::shared_ptr<SystemWidgetWrap>, boost::noncopyable> c("SystemWidget", init<boost::shared_ptr<SolarSystem>, Widget*>());
-    c.def(init<boost::shared_ptr<SolarSystem> >())
-    .def(init<>())
+    class_<SystemWidgetWrap, bases<Widget>, boost::shared_ptr<SystemWidgetWrap>, boost::noncopyable> c("SystemWidget", init<boost::shared_ptr<SolarSystem> >());
+    c.def(init<>())
     .def("system", &SystemWidget::system)
     .def("setSystem", &SystemWidget::setSystem);
     RANGERS_PYTHON_WRAP_WIDGET_DEF(SystemWidget, SystemWidgetWrap, c);

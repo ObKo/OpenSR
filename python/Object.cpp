@@ -27,7 +27,7 @@ namespace Python
 {
 struct ObjectWrap: Object, boost::python::wrapper<Object>
 {
-    ObjectWrap(Object *parent = 0): Object(parent)
+    ObjectWrap(): Object()
     {
     }
     RANGERS_PYTHON_WRAP_OBJECT(Object)
@@ -36,16 +36,13 @@ struct ObjectWrap: Object, boost::python::wrapper<Object>
 void exportObject()
 {
     using namespace boost::python;
-    class_<Python::ObjectWrap, boost::shared_ptr<ObjectWrap>, boost::noncopyable> c("Object", init<Object*>());
-    c
-    .def(init<>())
-    .def("setPosition", (void (Object::*)(float, float))&Object::setPosition)
+    class_<Python::ObjectWrap, boost::shared_ptr<ObjectWrap>, boost::noncopyable> c("Object", init<>());
+    c.def("setPosition", (void (Object::*)(float, float))&Object::setPosition)
     .def("setPosition", (void (Object::*)(const Vector&))&Object::setPosition)
     .def("setRotation", &Object::setRotation)
     .def("setColor", (void (Object::*)(float, float, float, float))&Object::setColor)
     .def("addChild", &Object::addChild)
     .def("removeChild", &Object::removeChild)
-    .def("setParent", &Object::setParent)
     .def("position", &Object::position)
     .def("rotation", &Object::rotation)
     .def("layer", &Object::layer)

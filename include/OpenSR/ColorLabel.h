@@ -30,18 +30,18 @@ class RANGERS_ENGINE_API ColorLabel: public Label
     RANGERS_DECLARE_PRIVATE(ColorLabel)
 public:
     //! Default constructor
-    ColorLabel(Object *parent = 0);
+    ColorLabel();
     //! Construct from std::string
-    ColorLabel(const std::string& text, Object *parent = 0, boost::shared_ptr<Font> font = boost::shared_ptr<Font>(), SpriteXOrigin xpos = POSITION_X_CENTER, SpriteYOrigin ypos = POSITION_Y_CENTER);
+    ColorLabel(const std::string& text, boost::shared_ptr<Font> font = boost::shared_ptr<Font>());
     //! Construct from std::wstring
-    ColorLabel(const std::wstring& text, Object *parent = 0, boost::shared_ptr<Font> font = boost::shared_ptr<Font>(), SpriteXOrigin xpos = POSITION_X_CENTER, SpriteYOrigin ypos = POSITION_Y_CENTER);
+    ColorLabel(const std::wstring& text, boost::shared_ptr<Font> font = boost::shared_ptr<Font>());
 
     virtual void processMain();
     //! Set default text color
     virtual void setColor(uint32_t color);
 
 protected:
-    ColorLabel(ColorLabelPrivate &p, Object *parent = 0);
+    ColorLabel(ColorLabelPrivate &p);
 
     RANGERS_DISABLE_COPY(ColorLabel)
 };

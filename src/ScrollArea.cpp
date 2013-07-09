@@ -132,8 +132,8 @@ void ScrollAreaPrivate::ScrollAreaListener::actionPerformed(const Action &action
     }
 }
 
-ScrollArea::ScrollArea(const ScrollBarStyle& style, boost::shared_ptr<WidgetNode> node, Widget *parent):
-    Widget(*(new ScrollAreaPrivate()), parent)
+ScrollArea::ScrollArea(const ScrollBarStyle& style, boost::shared_ptr<WidgetNode> node):
+    Widget(*(new ScrollAreaPrivate()))
 {
     RANGERS_D(ScrollArea);
 
@@ -172,13 +172,13 @@ ScrollArea::ScrollArea(const ScrollBarStyle& style, boost::shared_ptr<WidgetNode
     setNode(node);
 }
 
-ScrollArea::ScrollArea(Widget *parent):
-    Widget(*(new ScrollAreaPrivate()), parent)
+ScrollArea::ScrollArea():
+    Widget(*(new ScrollAreaPrivate()))
 {
 }
 
-ScrollArea::ScrollArea(ScrollAreaPrivate &p, Widget *parent):
-    Widget(p, parent)
+ScrollArea::ScrollArea(ScrollAreaPrivate &p):
+    Widget(p)
 {
     RANGERS_D(ScrollArea);
     d->left = boost::shared_ptr<Button>(new Button());

@@ -28,9 +28,9 @@ class RANGERS_ENGINE_API NinePatch: public Sprite
 {
     RANGERS_DECLARE_PRIVATE(NinePatch)
 public:
-    NinePatch(Object *parent = 0);
-    NinePatch(const NinePatchDescriptor &desc, Object *parent = 0);
-    NinePatch(const std::wstring& name, Object *parent = 0);
+    NinePatch();
+    NinePatch(const NinePatchDescriptor &desc);
+    NinePatch(const std::wstring& name);
 
     virtual void processMain();
     virtual void draw() const;
@@ -39,7 +39,7 @@ public:
     virtual float normalHeight() const;
 
 protected:
-    NinePatch(NinePatchPrivate &p, Object *parent = 0);
+    NinePatch(NinePatchPrivate &p);
 
     RANGERS_DISABLE_COPY(NinePatch)
 };

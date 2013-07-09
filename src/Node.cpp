@@ -23,11 +23,11 @@ using namespace boost;
 
 namespace Rangers
 {
-Node::Node(Object *parent): Object(*(new NodePrivate()), parent)
+Node::Node(): Object(*(new NodePrivate()))
 {
 }
 
-Node::Node(NodePrivate &p, Object *parent): Object(p, parent)
+Node::Node(NodePrivate &p): Object(p)
 {
 }
 

@@ -29,8 +29,7 @@ class RANGERS_ENGINE_API CheckBox: public Button
 {
     RANGERS_DECLARE_PRIVATE(CheckBox);
 public:
-    CheckBox(const CheckBoxStyle& style, const std::wstring &text, Widget *parent = 0);
-    virtual ~CheckBox();
+    CheckBox(const CheckBoxStyle& style, const std::wstring &text);
 
     void setChecked(bool checked);
 
@@ -42,7 +41,7 @@ public:
     virtual int minHeight() const;
 
 protected:
-    CheckBox(CheckBoxPrivate &p, Widget *parent = 0);
+    CheckBox(CheckBoxPrivate &p);
 
     RANGERS_DISABLE_COPY(CheckBox)
 };

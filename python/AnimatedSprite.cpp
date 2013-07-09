@@ -27,16 +27,16 @@ namespace Python
 {
 struct AnimatedSpriteWrap : AnimatedSprite, boost::python::wrapper<AnimatedSprite>
 {
-    AnimatedSpriteWrap(Object *parent = 0): AnimatedSprite(parent)
+    AnimatedSpriteWrap(): AnimatedSprite()
     {
     }
 
-    AnimatedSpriteWrap(boost::shared_ptr<AnimatedTexture> texture, Object *parent = 0)
-        : AnimatedSprite(texture, parent)
+    AnimatedSpriteWrap(boost::shared_ptr<AnimatedTexture> texture)
+        : AnimatedSprite(texture)
     {
     }
-    AnimatedSpriteWrap(const std::wstring& animation, Object *parent = 0)
-        : AnimatedSprite(animation, parent)
+    AnimatedSpriteWrap(const std::wstring& animation)
+        : AnimatedSprite(animation)
     {
     }
     RANGERS_PYTHON_WRAP_SPRITE(AnimatedSprite)
@@ -46,13 +46,9 @@ void exportAnimatedSprite()
 {
     using namespace boost::python;
 
-    class_<AnimatedSpriteWrap, bases<Sprite>, boost::shared_ptr<AnimatedSpriteWrap>, boost::noncopyable> c("AnimatedSprite", init<const std::wstring&, Object*>());
-    c.def(init<const std::wstring&>())
-    .def(init<boost::shared_ptr<AnimatedTexture>, Object*>())
-    .def(init<boost::shared_ptr<AnimatedTexture> >())
-    .def(init<const std::wstring&, Object*>())
+    class_<AnimatedSpriteWrap, bases<Sprite>, boost::shared_ptr<AnimatedSpriteWrap>, boost::noncopyable> c("AnimatedSprite", init<const std::wstring&>());
+    c.def(init<boost::shared_ptr<AnimatedTexture> >())
     .def(init<const std::wstring&>())
-    .def(init<Object*>())
     .def(init<>())
     .def("setSingleShot", &AnimatedSprite::setSingleShot)
     .def("start", &AnimatedSprite::start)

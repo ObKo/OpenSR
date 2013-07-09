@@ -28,9 +28,8 @@ class RANGERS_ENGINE_API ScriptWidget: public Widget
 {
     RANGERS_DECLARE_PRIVATE(ScriptWidget)
 public:
-    ScriptWidget(Widget *parent = 0);
-    virtual ~ScriptWidget();
-
+    ScriptWidget();
+    
     virtual void draw() const;
     virtual void processLogic(int dt);
 

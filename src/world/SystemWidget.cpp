@@ -95,7 +95,7 @@ private:
     SystemWidget *m_parent;
 };
 
-SystemWidget::SystemWidget(boost::shared_ptr<SolarSystem> system, Widget* parent): Widget(parent),
+SystemWidget::SystemWidget(boost::shared_ptr<SolarSystem> system): Widget(),
     m_xOffset(0), m_yOffset(0), m_moveDirection(NONE), m_turn(false), m_turnTime(0)
 {
     setWidth(Engine::instance().screenWidth());
@@ -121,10 +121,6 @@ SystemWidget::SystemWidget(boost::shared_ptr<SolarSystem> system, Widget* parent
     addWidget(m_turnButton);
 
     setSystem(system);
-}
-
-SystemWidget::~SystemWidget()
-{
 }
 
 void SystemWidget::processLogic(int dt)

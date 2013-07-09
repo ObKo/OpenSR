@@ -27,7 +27,7 @@ namespace Python
 {
 struct ScriptWidgetWrap : ScriptWidget, boost::python::wrapper<ScriptWidget>
 {
-    ScriptWidgetWrap(Widget *parent = 0): ScriptWidget(parent)
+    ScriptWidgetWrap(): ScriptWidget()
     {
     }
     RANGERS_PYTHON_WRAP_WIDGET(ScriptWidget)
@@ -36,8 +36,7 @@ struct ScriptWidgetWrap : ScriptWidget, boost::python::wrapper<ScriptWidget>
 void exportScriptWidget()
 {
     using namespace boost::python;
-    class_<ScriptWidgetWrap, bases<Widget>, boost::shared_ptr<ScriptWidgetWrap>, boost::noncopyable> c("ScriptWidget", init<Widget*>());
-    c.def(init<>());
+    class_<ScriptWidgetWrap, bases<Widget>, boost::shared_ptr<ScriptWidgetWrap>, boost::noncopyable> c("ScriptWidget", init<>());
     RANGERS_PYTHON_WRAP_WIDGET_DEF(ScriptWidget, ScriptWidgetWrap, c);
     register_ptr_to_python<boost::shared_ptr<ScriptWidget> >();
 }

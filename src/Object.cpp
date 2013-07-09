@@ -45,24 +45,16 @@ ObjectPrivate::ObjectPrivate()
     parent = 0;
 }
 
-Object::Object(Object *parent): m_d(new ObjectPrivate())
+Object::Object(): m_d(new ObjectPrivate())
 {
     RANGERS_D(Object);
-
-    //if (parent)
-    //    parent->addChild(this);
     d->m_q = this;
-    d->parent = parent;
 }
 
-Object::Object(ObjectPrivate &dd, Object *parent): m_d(&dd)
+Object::Object(ObjectPrivate &dd): m_d(&dd)
 {
     RANGERS_D(Object);
-
-    //if (parent)
-    //    parent->addChild(this);
     d->m_q = this;
-    d->parent = parent;
 }
 
 Object::~Object()
@@ -345,7 +337,7 @@ void Object::addChild(boost::shared_ptr<Object> object)
     if (!object)
         return;
 
-    //FIXME: Debug
+    //FIXME: Remove child from old parent instead of error? 
     if (object->parent() && object->parent() != this)
     {
         Log::debug() << "Object::addChild(): object already has a parent!";

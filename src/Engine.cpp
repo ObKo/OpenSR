@@ -476,7 +476,7 @@ void Engine::init(int argc, char **argv, int w, int h, bool fullscreen)
     d->mainNode = new Node();
     d->mainNode->setPosition(0, 0);
 
-    d->fpsLabel = new Label("0", 0, d->monospaceFont, POSITION_X_LEFT, POSITION_Y_TOP);
+    d->fpsLabel = new Label("0", d->monospaceFont);
     d->fpsLabel->setPosition(5, 5);
 
     d->consoleWidget = boost::shared_ptr<Widget>(new ConsoleWidget(d->width, 168));

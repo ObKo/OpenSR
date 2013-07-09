@@ -28,8 +28,8 @@ namespace Python
 {
 struct RadioButtonWrap : RadioButton, boost::python::wrapper<RadioButton>
 {
-    RadioButtonWrap(const RadioButtonStyle& style, const std::wstring &text, Widget *parent = 0)
-        : RadioButton(style, text, parent)
+    RadioButtonWrap(const RadioButtonStyle& style, const std::wstring &text)
+        : RadioButton(style, text)
     {
     }
 
@@ -40,8 +40,8 @@ void exportRadioButton()
 {
     using namespace boost::python;
 
-    class_<RadioButtonWrap, bases<Button>, boost::shared_ptr<RadioButtonWrap>, boost::noncopyable> c("RadioButton", init<const RadioButtonStyle&, const std::wstring&, Widget*>());
-    c.def(init<const RadioButtonStyle&, const std::wstring&>());
+    class_<RadioButtonWrap, bases<Button>, boost::shared_ptr<RadioButtonWrap>, boost::noncopyable> c("RadioButton", init<const RadioButtonStyle&, const std::wstring&>());
+    c.def("isSelected", &RadioButton::isSelected);
     RANGERS_PYTHON_WRAP_WIDGET_DEF(RadioButton, RadioButtonWrap, c);
     register_ptr_to_python<boost::shared_ptr<RadioButton> >();
 }

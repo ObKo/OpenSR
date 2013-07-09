@@ -35,8 +35,7 @@ class SolarSystem;
 class SpaceInfoWidget: public Widget
 {
 public:
-    SpaceInfoWidget(const InfoWidgetStyle& style, Widget* parent = 0);
-    virtual ~SpaceInfoWidget();
+    SpaceInfoWidget(const InfoWidgetStyle& style);
 
     void clear();
 

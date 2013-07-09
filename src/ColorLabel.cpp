@@ -35,7 +35,7 @@ namespace Rangers
 /*!
  * \param parent parent object
  */
-ColorLabel::ColorLabel(Object* parent): Label(*(new ColorLabelPrivate()), parent)
+ColorLabel::ColorLabel(): Label(*(new ColorLabelPrivate()))
 {
 
 }
@@ -47,7 +47,7 @@ ColorLabel::ColorLabel(Object* parent): Label(*(new ColorLabelPrivate()), parent
  * \param xpos sprite x origin
  * \param ypos sprite y origin
  */
-ColorLabel::ColorLabel(const std::string& text, Object* parent, boost::shared_ptr< Font > font, SpriteXOrigin xpos, SpriteYOrigin ypos): Label(*(new ColorLabelPrivate()), parent)
+ColorLabel::ColorLabel(const std::string& text, boost::shared_ptr< Font > font): Label(*(new ColorLabelPrivate()))
 {
     RANGERS_D(ColorLabel);
     if (!font)
@@ -55,8 +55,6 @@ ColorLabel::ColorLabel(const std::string& text, Object* parent, boost::shared_pt
     else
         d->font = font;
 
-    d->xOrigin = xpos;
-    d->yOrigin = ypos;
     setText(text);
     d->wordWrap = false;
     d->fixedSize = false;
@@ -70,7 +68,7 @@ ColorLabel::ColorLabel(const std::string& text, Object* parent, boost::shared_pt
  * \param xpos sprite x origin
  * \param ypos sprite y origin
  */
-ColorLabel::ColorLabel(const std::wstring& text, Object* parent, boost::shared_ptr< Font > font, SpriteXOrigin xpos, SpriteYOrigin ypos): Label(*(new ColorLabelPrivate()), parent)
+ColorLabel::ColorLabel(const std::wstring& text, boost::shared_ptr< Font > font): Label(*(new ColorLabelPrivate()))
 {
     RANGERS_D(ColorLabel);
     if (!font)
@@ -78,15 +76,13 @@ ColorLabel::ColorLabel(const std::wstring& text, Object* parent, boost::shared_p
     else
         d->font = font;
 
-    d->xOrigin = xpos;
-    d->yOrigin = ypos;
     setText(text);
     d->wordWrap = false;
     d->fixedSize = false;
     d->scaling = TEXTURE_NO;
 }
 
-ColorLabel::ColorLabel(ColorLabelPrivate &p, Object *parent): Label(p, parent)
+ColorLabel::ColorLabel(ColorLabelPrivate &p): Label(p)
 {
 }
 

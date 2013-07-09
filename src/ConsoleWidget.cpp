@@ -94,14 +94,14 @@ ConsoleWidgetPrivate::ConsoleWidgetPrivate()
     listener = boost::shared_ptr<ConsoleLineEditListener>(new ConsoleLineEditListener());
 }
 
-ConsoleWidget::ConsoleWidget(float w, float h, Widget* parent): Widget(*(new ConsoleWidgetPrivate()), parent)
+ConsoleWidget::ConsoleWidget(float w, float h): Widget(*(new ConsoleWidgetPrivate()))
 {
     RANGERS_D(ConsoleWidget);
     d->width = w;
     d->height = h;
     int editSize = Engine::instance().serviceFont()->size() + 2;
     d->lineEdit = boost::shared_ptr<LineEdit>(new LineEdit(w - 8, Engine::instance().serviceFont()->size(), Engine::instance().serviceFont()));
-    d->logLabel = boost::shared_ptr<ColorLabel>(new ColorLabel("", 0, Engine::instance().serviceFont(), POSITION_X_LEFT, POSITION_Y_TOP));
+    d->logLabel = boost::shared_ptr<ColorLabel>(new ColorLabel("", Engine::instance().serviceFont()));
     d->logLabel->setPosition(4, 4);
     d->logLabel->setFixedSize(w - 8, h - editSize - 8);
     d->lineEdit->setPosition(4, h - editSize);
@@ -114,20 +114,12 @@ ConsoleWidget::ConsoleWidget(float w, float h, Widget* parent): Widget(*(new Con
     markToUpdate();
 }
 
-ConsoleWidget::ConsoleWidget(Widget* parent): Widget(*(new ConsoleWidgetPrivate()), parent)
+ConsoleWidget::ConsoleWidget(): Widget(*(new ConsoleWidgetPrivate()))
 {
 }
 
-ConsoleWidget::ConsoleWidget(ConsoleWidgetPrivate &p, Widget *parent): Widget(p, parent)
+ConsoleWidget::ConsoleWidget(ConsoleWidgetPrivate &p): Widget(p)
 {
-}
-
-ConsoleWidget::~ConsoleWidget()
-{
-    RANGERS_D(ConsoleWidget);
-
-    //delete d->lineEdit;
-    //delete d->logLabel;
 }
 
 void ConsoleWidget::draw() const

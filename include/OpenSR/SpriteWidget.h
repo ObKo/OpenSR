@@ -29,15 +29,14 @@ class RANGERS_ENGINE_API SpriteWidget: public Widget
 {
     RANGERS_DECLARE_PRIVATE(SpriteWidget)
 public:
-    SpriteWidget(boost::shared_ptr<Sprite> sprite, Widget *parent = 0);
-    virtual ~SpriteWidget();
+    SpriteWidget(boost::shared_ptr<Sprite> sprite);
 
     virtual void draw() const;
     virtual void processMain();
     virtual void processLogic(int dt);
 
 protected:
-    SpriteWidget(SpriteWidgetPrivate &p, Widget *parent = 0);
+    SpriteWidget(SpriteWidgetPrivate &p);
 
     RANGERS_DISABLE_COPY(SpriteWidget)
 };

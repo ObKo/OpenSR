@@ -37,7 +37,7 @@ AnimatedSpritePrivate::AnimatedSpritePrivate(): SpritePrivate()
 /*!
  * \param parent object parent
  */
-AnimatedSprite::AnimatedSprite(Object *parent): Sprite(*(new AnimatedSpritePrivate()), parent)
+AnimatedSprite::AnimatedSprite(): Sprite(*(new AnimatedSpritePrivate()))
 {
 }
 
@@ -45,7 +45,8 @@ AnimatedSprite::AnimatedSprite(Object *parent): Sprite(*(new AnimatedSpritePriva
  * \param texture texture
  * \param parent object parent
  */
-AnimatedSprite::AnimatedSprite(boost::shared_ptr<AnimatedTexture> texture, Object *parent): Sprite(*(new AnimatedSpritePrivate()), parent)
+AnimatedSprite::AnimatedSprite(boost::shared_ptr<AnimatedTexture> texture): 
+    Sprite(*(new AnimatedSpritePrivate()))
 {
     RANGERS_D(AnimatedSprite);
     d->region = TextureRegion(texture);
@@ -61,7 +62,8 @@ AnimatedSprite::AnimatedSprite(boost::shared_ptr<AnimatedTexture> texture, Objec
  * \param animation animation resource name
  * \param parent object parent
  */
-AnimatedSprite::AnimatedSprite(const std::wstring& animation, Object *parent): Sprite(*(new AnimatedSpritePrivate()), parent)
+AnimatedSprite::AnimatedSprite(const std::wstring& animation):
+    Sprite(*(new AnimatedSpritePrivate()))
 {
     RANGERS_D(AnimatedSprite);
     boost::shared_ptr<AnimatedTexture> animTexture = ResourceManager::instance().loadAnimation(animation);
@@ -77,7 +79,7 @@ AnimatedSprite::AnimatedSprite(const std::wstring& animation, Object *parent): S
     markToUpdate();
 }
 
-AnimatedSprite::AnimatedSprite(AnimatedSpritePrivate &p, Object *parent): Sprite(p, parent)
+AnimatedSprite::AnimatedSprite(AnimatedSpritePrivate &p): Sprite(p)
 {
     RANGERS_D(AnimatedSprite);
 }

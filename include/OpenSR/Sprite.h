@@ -36,11 +36,11 @@ class RANGERS_ENGINE_API Sprite: public Object
 {
     RANGERS_DECLARE_PRIVATE(Sprite)
 public:
-    Sprite(Object *parent = 0);
-    Sprite(boost::shared_ptr<Texture> texture, Object *parent = 0, TextureScaling  ts = TEXTURE_NORMAL, SpriteXOrigin xpos = POSITION_X_LEFT, SpriteYOrigin ypos = POSITION_Y_TOP);
-    Sprite(const std::wstring& texture, Object *parent = 0, TextureScaling  ts = TEXTURE_NORMAL, SpriteXOrigin xpos = POSITION_X_LEFT, SpriteYOrigin ypos = POSITION_Y_TOP);
-    Sprite(const TextureRegion& region, Object *parent = 0);
-    Sprite(const TextureRegionDescriptor& region, Object *parent = 0);
+    Sprite();
+    Sprite(boost::shared_ptr<Texture> texture);
+    Sprite(const std::wstring& texture);
+    Sprite(const TextureRegion& region);
+    Sprite(const TextureRegionDescriptor& region);
 
     virtual ~Sprite();
 
@@ -63,7 +63,7 @@ public:
     TextureRegion region() const;
 
 protected:
-    Sprite(SpritePrivate &p, Object *parent = 0);
+    Sprite(SpritePrivate &p);
 
     RANGERS_DISABLE_COPY(Sprite)
 };

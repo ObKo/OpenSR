@@ -45,11 +45,11 @@ void RadioButtonGroupPrivate::RadioButtonGroupListener::actionPerformed(const Ac
     }
 }
 
-RadioButtonGroup::RadioButtonGroup(Widget *parent): WidgetNode(*(new RadioButtonGroupPrivate()), parent)
+RadioButtonGroup::RadioButtonGroup(): WidgetNode(*(new RadioButtonGroupPrivate()))
 {
 }
 
-RadioButtonGroup::RadioButtonGroup(RadioButtonGroupPrivate &p, Widget *parent): WidgetNode(p, parent)
+RadioButtonGroup::RadioButtonGroup(RadioButtonGroupPrivate &p): WidgetNode(p)
 {
 }
 

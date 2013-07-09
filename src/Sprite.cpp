@@ -37,47 +37,38 @@ SpritePrivate::SpritePrivate(): ObjectPrivate()
     buffer = 0;
 }
 
-Sprite::Sprite(Object *parent): Object(*(new SpritePrivate), parent)
+Sprite::Sprite(): Object(*(new SpritePrivate))
 {
 }
 
-Sprite::Sprite(boost::shared_ptr<Texture> texture, Object *parent, TextureScaling  ts, SpriteXOrigin xpos, SpriteYOrigin ypos): Object(*(new SpritePrivate), parent)
+Sprite::Sprite(boost::shared_ptr<Texture> texture): Object(*(new SpritePrivate))
 {
     RANGERS_D(Sprite);
 
     d->region = TextureRegion(texture);
-    d->scaling = ts;
     if (texture)
     {
         d->width = texture->width();
         d->height = texture->height();
     }
-    d->xOrigin = xpos;
-    d->yOrigin = ypos;
     markToUpdate();
 }
 
-Sprite::Sprite(const std::wstring& texture, Object *parent, TextureScaling  ts, SpriteXOrigin xpos, SpriteYOrigin ypos): Object(*(new SpritePrivate), parent)
+Sprite::Sprite(const std::wstring& texture): Object(*(new SpritePrivate))
 {
     RANGERS_D(Sprite);
-    d->scaling = ts;
     d->region = TextureRegion(ResourceManager::instance().loadTexture(texture));
     if (d->region.texture)
     {
         d->width = d->region.texture->width();
         d->height = d->region.texture->height();
     }
-    d->xOrigin = xpos;
-    d->yOrigin = ypos;
     markToUpdate();
 }
 
-Sprite::Sprite(const TextureRegion& region, Object *parent): Object(*(new SpritePrivate), parent)
+Sprite::Sprite(const TextureRegion& region): Object(*(new SpritePrivate))
 {
     RANGERS_D(Sprite);
-    d->xOrigin = POSITION_X_LEFT;
-    d->yOrigin = POSITION_Y_TOP;
-    d->scaling = TEXTURE_NORMAL;
     d->region = region;
     if (d->region.texture)
     {
@@ -87,12 +78,9 @@ Sprite::Sprite(const TextureRegion& region, Object *parent): Object(*(new Sprite
     markToUpdate();
 }
 
-Sprite::Sprite(const TextureRegionDescriptor& region, Object *parent): Object(*(new SpritePrivate), parent)
+Sprite::Sprite(const TextureRegionDescriptor& region): Object(*(new SpritePrivate))
 {
     RANGERS_D(Sprite);
-    d->xOrigin = POSITION_X_LEFT;
-    d->yOrigin = POSITION_Y_TOP;
-    d->scaling = TEXTURE_NORMAL;
     d->region = TextureRegion(region);
     if (d->region.texture)
     {
@@ -102,7 +90,7 @@ Sprite::Sprite(const TextureRegionDescriptor& region, Object *parent): Object(*(
     markToUpdate();
 }
 
-Sprite::Sprite(SpritePrivate &p, Object *parent): Object(p, parent)
+Sprite::Sprite(SpritePrivate &p): Object(p)
 {
 }
 

@@ -27,16 +27,16 @@ namespace Python
 {
 struct NinePatchWrap : NinePatch, boost::python::wrapper<NinePatch>
 {
-    NinePatchWrap(Object *parent = 0)
-        : NinePatch(parent)
+    NinePatchWrap()
+        : NinePatch()
     {
     }
-    NinePatchWrap(const NinePatchDescriptor &desc, Object *parent = 0)
-        : NinePatch(desc, parent)
+    NinePatchWrap(const NinePatchDescriptor &desc)
+        : NinePatch(desc)
     {
     }
-    NinePatchWrap(const std::wstring& name, Object *parent = 0)
-        : NinePatch(name, parent)
+    NinePatchWrap(const std::wstring& name)
+        : NinePatch(name)
     {
     }
     RANGERS_PYTHON_WRAP_SPRITE(NinePatch)
@@ -46,11 +46,8 @@ void exportNinePatch()
 {
     using namespace boost::python;
 
-    class_<NinePatchWrap, bases<Sprite>, boost::shared_ptr<NinePatchWrap>, boost::noncopyable> c("NinePatch", init<const NinePatchDescriptor&, Object*>());
-    c.def(init<const NinePatchDescriptor&>())
-    .def(init<const std::wstring&, Object*>())
-    .def(init<const std::wstring&>())
-    .def(init<Object*>())
+    class_<NinePatchWrap, bases<Sprite>, boost::shared_ptr<NinePatchWrap>, boost::noncopyable> c("NinePatch", init<const NinePatchDescriptor&>());
+    c.def(init<const std::wstring&>())
     .def(init<>());
     RANGERS_PYTHON_WRAP_SPRITE_DEF(NinePatch, NinePatchWrap, c);
     register_ptr_to_python<boost::shared_ptr<NinePatch> >();

@@ -29,7 +29,7 @@ class RANGERS_ENGINE_API Object
 {
     RANGERS_DECLARE_PRIVATE(Object)
 public:
-    Object(Object *parent = 0);
+    Object();
 
     virtual ~Object();
 
@@ -49,8 +49,6 @@ public:
 
     void addChild(boost::shared_ptr<Object> object);
     void removeChild(boost::shared_ptr<Object> object);
-
-    void setParent(Object *parent);
 
     Vector position() const;
     float rotation() const;
@@ -76,7 +74,7 @@ public:
     boost::shared_ptr<Object> getChild(Object *ptr) const;
 
 protected:
-    Object(ObjectPrivate &p, Object *parent = 0);
+    Object(ObjectPrivate &p);
 
     ObjectPrivate *m_d;
 
@@ -85,6 +83,8 @@ protected:
     void lock() const;
     void unlock() const;
     void markToUpdate();
+    
+    void setParent(Object *parent);
 
     RANGERS_DISABLE_COPY(Object)
 };

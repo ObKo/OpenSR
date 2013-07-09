@@ -29,31 +29,23 @@ namespace Python
 struct ButtonWrap : Button, boost::python::wrapper<Button>
 {
     ButtonWrap(Widget *parent = 0)
-        : Button(parent)
+        : Button()
     {
     }
-    ButtonWrap(boost::shared_ptr<Texture> texture, Widget *parent = 0)
-        : Button(texture, parent)
+    ButtonWrap(boost::shared_ptr<Texture> texture)
+        : Button(texture)
     {
     }
-    ButtonWrap(boost::shared_ptr<Texture> texture, boost::shared_ptr<Texture> hoverTexture, Widget *parent = 0)
-        : Button(texture, hoverTexture, parent)
+    ButtonWrap(boost::shared_ptr<Texture> texture, boost::shared_ptr<Texture> hoverTexture, boost::shared_ptr<Texture> pressTexture)
+        : Button(texture, hoverTexture, pressTexture)
     {
     }
-    ButtonWrap(boost::shared_ptr<Texture> texture, boost::shared_ptr<Texture> hoverTexture, boost::shared_ptr<Texture> pressTexture, Widget *parent = 0)
-        : Button(texture, hoverTexture, pressTexture, parent)
+    ButtonWrap(const std::wstring& texture)
+        : Button(texture)
     {
     }
-    ButtonWrap(const std::wstring& texture, Widget *parent = 0)
-        : Button(texture, parent)
-    {
-    }
-    ButtonWrap(const std::wstring& texture, const std::wstring& hoverTexture, Widget *parent = 0)
-        : Button(texture, hoverTexture, parent)
-    {
-    }
-    ButtonWrap(const std::wstring& texture, const std::wstring& hoverTexture, const std::wstring& pressTexture, Widget *parent = 0)
-        : Button(texture, hoverTexture, pressTexture, parent)
+    ButtonWrap(const std::wstring& texture, const std::wstring& hoverTexture, const std::wstring& pressTexture)
+        : Button(texture, hoverTexture, pressTexture)
     {
     }
     RANGERS_PYTHON_WRAP_WIDGET(Button)
@@ -63,19 +55,10 @@ void exportButton()
 {
     using namespace boost::python;
 
-    class_<ButtonWrap, bases<Widget>, boost::shared_ptr<ButtonWrap>, boost::noncopyable> c("Button", init<boost::shared_ptr<Texture>, boost::shared_ptr<Texture>, boost::shared_ptr<Texture>, Widget*>());
-    c.def(init<boost::shared_ptr<Texture>, boost::shared_ptr<Texture>, boost::shared_ptr<Texture> >())
-    .def(init<boost::shared_ptr<Texture>, boost::shared_ptr<Texture>, Widget*>())
-    .def(init<boost::shared_ptr<Texture>, boost::shared_ptr<Texture> >())
-    .def(init<boost::shared_ptr<Texture>, Widget*>())
-    .def(init<boost::shared_ptr<Texture> >())
-    .def(init<const std::wstring&, const std::wstring&, const std::wstring&, Widget*>())
+    class_<ButtonWrap, bases<Widget>, boost::shared_ptr<ButtonWrap>, boost::noncopyable> c("Button", init<boost::shared_ptr<Texture>, boost::shared_ptr<Texture>, boost::shared_ptr<Texture> >());
+    c.def(init<boost::shared_ptr<Texture> >())
     .def(init<const std::wstring&, const std::wstring&, const std::wstring&>())
-    .def(init<const std::wstring&, const std::wstring&, Widget*>())
-    .def(init<const std::wstring&, const std::wstring& >())
-    .def(init<const std::wstring&, Widget*>())
     .def(init<const std::wstring&>())
-    .def(init<Widget*>())
     .def(init<>())
     .def("setText", &Button::setText)
     .def("text", &Button::text)

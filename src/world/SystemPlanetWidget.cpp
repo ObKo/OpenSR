@@ -129,7 +129,7 @@ GLint SystemPlanetWidget::m_cloudEnabledLocation;
 GLint SystemPlanetWidget::m_textureLocation;
 GLint SystemPlanetWidget::m_cloudLocation;
 
-SystemPlanetWidget::SystemPlanetWidget(boost::shared_ptr<Planet> planet, Widget* parent): Widget(parent), m_planet(planet), m_useShader(true), m_vertexBuffer(0),
+SystemPlanetWidget::SystemPlanetWidget(boost::shared_ptr<Planet> planet): m_planet(planet), m_useShader(true), m_vertexBuffer(0),
     m_phase(0.0f), m_cloudPhase(0.0f), m_solarAngle(0.0f), m_ringSprite(0), m_ringBgSprite(0), m_staticSprite(0)
 {
     m_useShader = Rangers::Engine::instance().properties()->get<bool>("graphics.useShaders", true);
@@ -149,14 +149,14 @@ SystemPlanetWidget::SystemPlanetWidget(boost::shared_ptr<Planet> planet, Widget*
             m_hasRing = style->hasRing;
             if (m_hasRing)
             {
-                m_ringSprite = new Sprite(style->ring, this);
+                m_ringSprite = new Sprite(style->ring);
                 m_ringSprite->setOrigin(POSITION_X_CENTER, POSITION_Y_CENTER);
                 m_ringSprite->setPosition(style->ringOffsetX + m_size / 2.0f, style->ringOffsetY + m_size / 2.0f);
             }
             m_hasRingBackground = style->hasRingBackground;
             if (m_hasRingBackground)
             {
-                m_ringBgSprite = new Sprite(style->ringBackground, this);
+                m_ringBgSprite = new Sprite(style->ringBackground);
                 m_ringBgSprite->setOrigin(POSITION_X_CENTER, POSITION_Y_CENTER);
                 m_ringBgSprite->setPosition(style->ringBgOffsetX + m_size / 2.0f, style->ringBgOffsetY + m_size / 2.0f);
             }
@@ -276,7 +276,7 @@ void SystemPlanetWidget::processMain()
     }
     if (!m_useShader && !m_staticSprite)
     {
-        m_staticSprite = new Sprite(PlanetManager::instance().getPlanetImage(PlanetManager::instance().style(m_planet->style()), (int)m_size), this);
+        m_staticSprite = new Sprite(PlanetManager::instance().getPlanetImage(PlanetManager::instance().style(m_planet->style()), (int)m_size));
     }
     Vertex *vertices;
     if (!m_vertexBuffer)

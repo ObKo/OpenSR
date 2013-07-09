@@ -21,11 +21,11 @@
 
 namespace Rangers
 {
-WidgetNode::WidgetNode(Widget *parent): Widget(*(new WidgetNodePrivate()), parent)
+WidgetNode::WidgetNode(): Widget(*(new WidgetNodePrivate()))
 {
 }
 
-WidgetNode::WidgetNode(WidgetNodePrivate &p, Widget *parent): Widget(p, parent)
+WidgetNode::WidgetNode(WidgetNodePrivate &p): Widget(p)
 {
 }
 

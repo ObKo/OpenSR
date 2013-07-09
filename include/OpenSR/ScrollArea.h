@@ -30,8 +30,8 @@ class RANGERS_ENGINE_API ScrollArea: public Widget
 {
     RANGERS_DECLARE_PRIVATE(ScrollArea)
 public:
-    ScrollArea(Widget* parent = 0);
-    ScrollArea(const ScrollBarStyle& style, boost::shared_ptr<WidgetNode> node = boost::shared_ptr<WidgetNode>(), Widget *parent = 0);
+    ScrollArea();
+    ScrollArea(const ScrollBarStyle& style, boost::shared_ptr<WidgetNode> node = boost::shared_ptr<WidgetNode>());
 
     virtual void draw() const;
     virtual void processMain();
@@ -47,7 +47,7 @@ public:
     virtual void processLogic(int dt);
 
 protected:
-    ScrollArea(ScrollAreaPrivate &p, Widget *parent = 0);
+    ScrollArea(ScrollAreaPrivate &p);
 
     RANGERS_DISABLE_COPY(ScrollArea)
 };

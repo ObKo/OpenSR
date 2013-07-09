@@ -28,12 +28,13 @@ class RANGERS_ENGINE_API WidgetNode: public Widget
 {
     RANGERS_DECLARE_PRIVATE(WidgetNode)
 public:
-    WidgetNode(Widget *parent = 0);
+    WidgetNode();
+    
     virtual void draw() const;
     virtual void processLogic(int dt);
 
 protected:
-    WidgetNode(WidgetNodePrivate &p, Widget *parent = 0);
+    WidgetNode(WidgetNodePrivate &p);
 
     RANGERS_DISABLE_COPY(WidgetNode)
 };

@@ -28,12 +28,12 @@ namespace Python
 {
 struct LabelWrap : Label, boost::python::wrapper<Label>
 {
-    LabelWrap(Object *parent = 0)
-        : Label(parent)
+    LabelWrap()
+        : Label()
     {
     }
-    LabelWrap(const std::wstring& text, Object *parent = 0, boost::shared_ptr<Font> font = boost::shared_ptr<Font>(), SpriteXOrigin xpos = POSITION_X_LEFT, SpriteYOrigin ypos = POSITION_Y_TOP)
-        : Label(text, parent, font, xpos, ypos)
+    LabelWrap(const std::wstring& text, boost::shared_ptr<Font> font = boost::shared_ptr<Font>())
+        : Label(text, font)
     {
     }
     RANGERS_PYTHON_WRAP_SPRITE(Label)
@@ -43,10 +43,8 @@ void exportLabel()
 {
     using namespace boost::python;
 
-    class_<LabelWrap, bases<Sprite>, boost::shared_ptr<LabelWrap>, boost::noncopyable> c("Label", init<const std::wstring&, Object*>());
-    c.def(init<const std::wstring&>())
-    .def(init<Object*>())
-    .def(init<>())
+    class_<LabelWrap, bases<Sprite>, boost::shared_ptr<LabelWrap>, boost::noncopyable> c("Label", init<const std::wstring&>());
+    c.def(init<>())
     .def("setText", (void (Label::*)(const std::wstring&))&Label::setText)
     .def("setFont", &Label::setFont)
     .def("font", &Label::font)

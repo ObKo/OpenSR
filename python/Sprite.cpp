@@ -27,28 +27,26 @@ namespace Python
 {
 struct SpriteWrap : Sprite, boost::python::wrapper<Sprite>
 {
-    SpriteWrap(Object *parent = 0): Sprite(parent)
+    SpriteWrap(): Sprite()
     {
     }
 
-    SpriteWrap(boost::shared_ptr<Texture> texture, Object *parent = 0, TextureScaling  ts = TEXTURE_NORMAL,
-               SpriteXOrigin xpos = POSITION_X_LEFT, SpriteYOrigin ypos = POSITION_Y_TOP)
-        : Sprite(texture, parent, ts, xpos, ypos)
+    SpriteWrap(boost::shared_ptr<Texture> texture)
+        : Sprite(texture)
     {
     }
-    SpriteWrap(const std::wstring& texture, Object *parent = 0, TextureScaling  ts = TEXTURE_NORMAL,
-               SpriteXOrigin xpos = POSITION_X_LEFT, SpriteYOrigin ypos = POSITION_Y_TOP)
-        : Sprite(texture, parent, ts, xpos, ypos)
-    {
-    }
-
-    SpriteWrap(const TextureRegion& region, Object *parent = 0)
-        : Sprite(region, parent)
+    SpriteWrap(const std::wstring& texture)
+        : Sprite(texture)
     {
     }
 
-    SpriteWrap(const TextureRegionDescriptor& region, Object *parent = 0)
-        : Sprite(region, parent)
+    SpriteWrap(const TextureRegion& region)
+        : Sprite(region)
+    {
+    }
+
+    SpriteWrap(const TextureRegionDescriptor& region)
+        : Sprite(region)
     {
     }
     RANGERS_PYTHON_WRAP_SPRITE(Sprite)
@@ -76,13 +74,9 @@ void exportSprite()
     .value("POSITION_Y_BOTTOM", POSITION_Y_BOTTOM)
     .value("POSITION_Y_CENTER", POSITION_Y_CENTER);
 
-    class_<SpriteWrap, bases<Object>, boost::shared_ptr<SpriteWrap>, boost::noncopyable> c("Sprite", init<const std::wstring&, Object*>());
-    c.def(init<const std::wstring&>())
-    .def(init<const TextureRegion&, Object*>())
-    .def(init<const TextureRegion&>())
-    .def(init<const TextureRegionDescriptor&, Object*>())
+    class_<SpriteWrap, bases<Object>, boost::shared_ptr<SpriteWrap>, boost::noncopyable> c("Sprite", init<const std::wstring&>());
+    c.def(init<const TextureRegion&>())
     .def(init<const TextureRegionDescriptor&>())
-    .def(init<Object*>())
     .def(init<>())
     .def("region", &Sprite::region)
     .def("setOrigin", &Sprite::setOrigin)

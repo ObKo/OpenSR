@@ -37,9 +37,8 @@ class SolarSystem;
 class SystemWidget: public Widget
 {
 public:
-    SystemWidget(boost::shared_ptr<SolarSystem> system = boost::shared_ptr<SolarSystem>(), Widget* parent = 0);
-    virtual ~SystemWidget();
-
+    SystemWidget(boost::shared_ptr<SolarSystem> system = boost::shared_ptr<SolarSystem>());
+    
     virtual void draw() const;
 
     virtual void processMain();

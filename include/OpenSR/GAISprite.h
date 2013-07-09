@@ -29,9 +29,10 @@ class RANGERS_ENGINE_API GAISprite: public AnimatedSprite
 {
     RANGERS_DECLARE_PRIVATE(GAISprite)
 public:
-    GAISprite(Object *parent = 0);
-    GAISprite(const char *data, int size, const GIFrame& baseFrame, Object *parent = 0);
-    GAISprite(const std::wstring& name, Object *parent = 0);
+    GAISprite();
+    GAISprite(const char *data, int size, const GIFrame& baseFrame);
+    GAISprite(const std::wstring& name);
+    
     virtual ~GAISprite();
 
     virtual void draw() const;
@@ -42,7 +43,7 @@ public:
     void reset();
 
 protected:
-    GAISprite(GAISpritePrivate &p, Object *parent = 0);
+    GAISprite(GAISpritePrivate &p);
 
     RANGERS_DISABLE_COPY(GAISprite);
 };

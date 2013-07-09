@@ -12,8 +12,8 @@ sound = OpenSR.Engine.SoundManager.instance()
 
 class SettingsWidget(OpenSR.Engine.ScriptWidget, OpenSR.Engine.ActionListener):
    
-    def __init__(self, parent):
-        OpenSR.Engine.ScriptWidget.__init__(self, parent)
+    def __init__(self):
+        OpenSR.Engine.ScriptWidget.__init__(self)
         OpenSR.Engine.ActionListener.__init__(self)
                 
         self.background = OpenSR.Engine.Sprite("DATA/FormOptions2/2Bg.gi")

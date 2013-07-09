@@ -83,15 +83,15 @@ ButtonPrivate::ButtonPrivate(): WidgetPrivate()
     buttonListener = boost::shared_ptr<ButtonListener>(new ButtonListener());
 }
 
-Button::Button(Widget *parent):
-    Widget(*(new ButtonPrivate()), parent)
+Button::Button():
+    Widget(*(new ButtonPrivate()))
 {
     RANGERS_D(Button);
     d->initFromStyle();
 }
 
-Button::Button(boost::shared_ptr<Texture> texture, Widget *parent):
-    Widget(*(new ButtonPrivate()), parent)
+Button::Button(boost::shared_ptr<Texture> texture):
+    Widget(*(new ButtonPrivate()))
 {
     RANGERS_D(Button);
     d->initFromStyle();
@@ -111,34 +111,8 @@ Button::Button(boost::shared_ptr<Texture> texture, Widget *parent):
     }
 }
 
-Button::Button(boost::shared_ptr<Texture> texture, boost::shared_ptr<Texture> hoverTexture, Widget *parent):
-    Widget(*(new ButtonPrivate()), parent)
-{
-    RANGERS_D(Button);
-    d->initFromStyle();
-
-    if (texture)
-    {
-        d->normalSprite = boost::shared_ptr<Sprite>(new Sprite(texture));
-        addChild(d->normalSprite);
-    }
-    if (hoverTexture)
-    {
-        d->hoverSprite = boost::shared_ptr<Sprite>(new Sprite(hoverTexture));
-        addChild(d->hoverSprite);
-    }
-
-    d->sprite = d->normalSprite;
-
-    if (texture)
-    {
-        d->width = texture->width();
-        d->height = texture->height();
-    }
-}
-
-Button::Button(boost::shared_ptr<Texture> texture, boost::shared_ptr<Texture> hoverTexture, boost::shared_ptr<Texture> pressTexture, Widget *parent):
-    Widget(*(new ButtonPrivate()), parent)
+Button::Button(boost::shared_ptr<Texture> texture, boost::shared_ptr<Texture> hoverTexture, boost::shared_ptr<Texture> pressTexture):
+    Widget(*(new ButtonPrivate()))
 {
     RANGERS_D(Button);
     d->initFromStyle();
@@ -168,8 +142,8 @@ Button::Button(boost::shared_ptr<Texture> texture, boost::shared_ptr<Texture> ho
     }
 }
 
-Button::Button(const std::wstring& texture, Widget *parent):
-    Widget(*(new ButtonPrivate()), parent)
+Button::Button(const std::wstring& texture):
+    Widget(*(new ButtonPrivate()))
 {
     RANGERS_D(Button);
     d->initFromStyle();
@@ -191,37 +165,8 @@ Button::Button(const std::wstring& texture, Widget *parent):
     }
 }
 
-Button::Button(const std::wstring& texture, const std::wstring& hoverTexture, Widget *parent):
-    Widget(*(new ButtonPrivate()), parent)
-{
-    RANGERS_D(Button);
-    d->initFromStyle();
-
-    boost::shared_ptr<Texture> main = ResourceManager::instance().loadTexture(texture);
-    boost::shared_ptr<Texture> hover = ResourceManager::instance().loadTexture(hoverTexture);
-
-    if (main)
-    {
-        d->normalSprite = boost::shared_ptr<Sprite>(new Sprite(main));
-        addChild(d->normalSprite);
-    }
-    if (hover)
-    {
-        d->hoverSprite = boost::shared_ptr<Sprite>(new Sprite(hover));
-        addChild(d->hoverSprite);
-    }
-
-    d->sprite = d->normalSprite;
-
-    if (main)
-    {
-        d->width = main->width();
-        d->height = main->height();
-    }
-}
-
-Button::Button(const std::wstring& texture, const std::wstring& hoverTexture, const std::wstring& pressTexture, Widget *parent):
-    Widget(*(new ButtonPrivate()), parent)
+Button::Button(const std::wstring& texture, const std::wstring& hoverTexture, const std::wstring& pressTexture):
+    Widget(*(new ButtonPrivate()))
 {
     RANGERS_D(Button);
     d->initFromStyle();
@@ -256,8 +201,8 @@ Button::Button(const std::wstring& texture, const std::wstring& hoverTexture, co
     }
 }
 
-Button::Button(const ButtonStyle& style, Widget *parent):
-    Widget(*(new ButtonPrivate()), parent)
+Button::Button(const ButtonStyle& style):
+    Widget(*(new ButtonPrivate()))
 {
     RANGERS_D(Button);
     d->style = style;
@@ -270,7 +215,7 @@ Button::Button(const ButtonStyle& style, Widget *parent):
 }
 
 
-Button::Button(ButtonPrivate &p, Widget *parent): Widget(p, parent)
+Button::Button(ButtonPrivate &p): Widget(p)
 {
     RANGERS_D(Button);
     d->initFromStyle();
@@ -442,7 +387,7 @@ void ButtonPrivate::initFromStyle()
     }
     if ((style.font.path != L"") && (style.font.size > 0))
     {
-        label = boost::shared_ptr<Label>(new Label(text, 0, ResourceManager::instance().loadFont(style.font.path, style.font.size)));
+        label = boost::shared_ptr<Label>(new Label(text, ResourceManager::instance().loadFont(style.font.path, style.font.size)));
     }
     else
     {

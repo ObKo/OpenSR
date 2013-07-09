@@ -28,8 +28,8 @@ namespace Python
 {
 struct CheckBoxWrap : CheckBox, boost::python::wrapper<CheckBox>
 {
-    CheckBoxWrap(const CheckBoxStyle& style, const std::wstring &text, Widget *parent = 0)
-        : CheckBox(style, text, parent)
+    CheckBoxWrap(const CheckBoxStyle& style, const std::wstring &text)
+        : CheckBox(style, text)
     {
     }
 
@@ -40,9 +40,8 @@ void exportCheckBox()
 {
     using namespace boost::python;
 
-    class_<CheckBoxWrap, bases<Button>, boost::shared_ptr<CheckBoxWrap>, boost::noncopyable> c("CheckBox", init<const CheckBoxStyle&, const std::wstring&, Widget*>());
-    c.def(init<const CheckBoxStyle&, const std::wstring&>())
-    .def("setChecked", &CheckBox::setChecked)
+    class_<CheckBoxWrap, bases<Button>, boost::shared_ptr<CheckBoxWrap>, boost::noncopyable> c("CheckBox", init<const CheckBoxStyle&, const std::wstring&>());
+    c.def("setChecked", &CheckBox::setChecked)
     .def("checked", &CheckBox::checked);
     RANGERS_PYTHON_WRAP_WIDGET_DEF(CheckBox, CheckBoxWrap, c);
     register_ptr_to_python<boost::shared_ptr<CheckBox> >();

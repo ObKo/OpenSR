@@ -32,11 +32,9 @@ class RANGERS_ENGINE_API LineEdit: public Widget
 {
     RANGERS_DECLARE_PRIVATE(LineEdit)
 public:
-    LineEdit(float w, float h = 0, boost::shared_ptr<Font> font = boost::shared_ptr<Font>(), Widget* parent = 0);
-    LineEdit(Widget* parent = 0);
-    LineEdit(const LineEditStyle& style, Widget* parent = 0);
-
-    virtual ~LineEdit();
+    LineEdit();
+    LineEdit(float w, float h = 0, boost::shared_ptr<Font> font = boost::shared_ptr<Font>());
+    LineEdit(const LineEditStyle& style);
 
     virtual void draw() const;
     virtual void processMain();
@@ -53,7 +51,7 @@ public:
     void setText(const std::wstring &s);
 
 protected:
-    LineEdit(LineEditPrivate &p, Widget *parent = 0);
+    LineEdit(LineEditPrivate &p);
 
     RANGERS_DISABLE_COPY(LineEdit)
 };

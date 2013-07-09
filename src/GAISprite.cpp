@@ -36,11 +36,11 @@ GAISpritePrivate::GAISpritePrivate(): AnimatedSpritePrivate()
     baseFrameWidth = 0;
 }
 
-GAISprite::GAISprite(Object *parent): AnimatedSprite(*(new GAISpritePrivate()), parent)
+GAISprite::GAISprite(): AnimatedSprite(*(new GAISpritePrivate()))
 {
 }
 
-GAISprite::GAISprite(const std::wstring& name, Object *parent): AnimatedSprite(*(new GAISpritePrivate()), parent)
+GAISprite::GAISprite(const std::wstring& name): AnimatedSprite(*(new GAISpritePrivate()))
 {
     RANGERS_D(GAISprite);
 
@@ -79,7 +79,7 @@ GAISprite::GAISprite(const std::wstring& name, Object *parent): AnimatedSprite(*
     markToUpdate();
 }
 
-GAISprite::GAISprite(GAISpritePrivate &p, Object *parent): AnimatedSprite(p, parent)
+GAISprite::GAISprite(GAISpritePrivate &p): AnimatedSprite(p)
 {
 }
 

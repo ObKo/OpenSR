@@ -28,12 +28,12 @@ namespace Python
 {
 struct ColorLabelWrap : ColorLabel, boost::python::wrapper<ColorLabel>
 {
-    ColorLabelWrap(Object *parent = 0)
-        : ColorLabel(parent)
+    ColorLabelWrap()
+        : ColorLabel()
     {
     }
-    ColorLabelWrap(const std::wstring& text, Object *parent = 0, boost::shared_ptr<Font> font = boost::shared_ptr<Font>())
-        : ColorLabel(text, parent, font)
+    ColorLabelWrap(const std::wstring& text, boost::shared_ptr<Font> font = boost::shared_ptr<Font>())
+        : ColorLabel(text, font)
     {
     }
     RANGERS_PYTHON_WRAP_SPRITE(ColorLabel)
@@ -43,10 +43,8 @@ void exportColorLabel()
 {
     using namespace boost::python;
 
-    class_<ColorLabelWrap, bases<Label>, boost::shared_ptr<ColorLabelWrap>, boost::noncopyable> c("ColorLabel", init<const std::wstring&, Object*>());
-    c.def(init<const std::wstring&>())
-    .def(init<Object*>())
-    .def(init<>());
+    class_<ColorLabelWrap, bases<Label>, boost::shared_ptr<ColorLabelWrap>, boost::noncopyable> c("ColorLabel", init<const std::wstring&>());
+    c.def(init<>());
     RANGERS_PYTHON_WRAP_SPRITE_DEF(ColorLabel, ColorLabelWrap, c);
     register_ptr_to_python<boost::shared_ptr<ColorLabel> >();
 }

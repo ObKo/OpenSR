@@ -31,13 +31,13 @@ TiledLinePrivate::TiledLinePrivate(): ObjectPrivate()
     buffer = 0;
 }
 
-TiledLine::TiledLine(Object *parent):
-    Object(*(new TiledLinePrivate), parent)
+TiledLine::TiledLine():
+    Object(*(new TiledLinePrivate))
 {
 }
 
-TiledLine::TiledLine(boost::shared_ptr<Texture> texture, Object *parent):
-    Object(*(new TiledLinePrivate), parent)
+TiledLine::TiledLine(boost::shared_ptr<Texture> texture):
+    Object(*(new TiledLinePrivate))
 {
     RANGERS_D(TiledLine);
     d->texture = texture;
@@ -45,8 +45,8 @@ TiledLine::TiledLine(boost::shared_ptr<Texture> texture, Object *parent):
     markToUpdate();
 }
 
-TiledLine::TiledLine(boost::shared_ptr<Texture> texture, const Vector& start, const Vector& end, Object *parent):
-    Object(*(new TiledLinePrivate), parent)
+TiledLine::TiledLine(boost::shared_ptr<Texture> texture, const Vector& start, const Vector& end):
+    Object(*(new TiledLinePrivate))
 {
     RANGERS_D(TiledLine);
     d->texture = texture;
@@ -56,8 +56,8 @@ TiledLine::TiledLine(boost::shared_ptr<Texture> texture, const Vector& start, co
     markToUpdate();
 }
 
-TiledLine::TiledLine(const std::wstring& texture, Object *parent):
-    Object(*(new TiledLinePrivate), parent)
+TiledLine::TiledLine(const std::wstring& texture):
+    Object(*(new TiledLinePrivate))
 {
     RANGERS_D(TiledLine);
     d->texture = ResourceManager::instance().loadTexture(texture);
@@ -65,8 +65,8 @@ TiledLine::TiledLine(const std::wstring& texture, Object *parent):
     markToUpdate();
 }
 
-TiledLine::TiledLine(const std::wstring& texture, const Vector& start, const Vector& end, Object *parent):
-    Object(*(new TiledLinePrivate), parent)
+TiledLine::TiledLine(const std::wstring& texture, const Vector& start, const Vector& end):
+    Object(*(new TiledLinePrivate))
 {
     RANGERS_D(TiledLine);
     d->texture = ResourceManager::instance().loadTexture(texture);
@@ -76,8 +76,8 @@ TiledLine::TiledLine(const std::wstring& texture, const Vector& start, const Vec
     markToUpdate();
 }
 
-TiledLine::TiledLine(TiledLinePrivate &p, Object *parent):
-    Object(p, parent)
+TiledLine::TiledLine(TiledLinePrivate &p):
+    Object(p)
 {
     markToUpdate();
 }

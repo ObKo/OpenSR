@@ -37,11 +37,11 @@ class RANGERS_ENGINE_API AnimatedSprite: public Sprite
 {
     RANGERS_DECLARE_PRIVATE(AnimatedSprite)
 public:
-    AnimatedSprite(Object *parent = 0);
+    AnimatedSprite();
     //! Create sprite from animated texture
-    AnimatedSprite(boost::shared_ptr<AnimatedTexture> texture, Object *parent = 0);
+    AnimatedSprite(boost::shared_ptr<AnimatedTexture> texture);
     //! Create sprite from resource name
-    AnimatedSprite(const std::wstring& animation, Object *parent = 0);
+    AnimatedSprite(const std::wstring& animation);
 
     virtual void processLogic(int dt);
     virtual void draw() const;
@@ -70,7 +70,7 @@ public:
     void setFrameRate(float f);
 
 protected:
-    AnimatedSprite(AnimatedSpritePrivate &p, Object *parent = 0);
+    AnimatedSprite(AnimatedSpritePrivate &p);
 
     RANGERS_DISABLE_COPY(AnimatedSprite)
 };

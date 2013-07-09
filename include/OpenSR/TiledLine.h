@@ -30,11 +30,11 @@ class RANGERS_ENGINE_API TiledLine: public Object
 {
     RANGERS_DECLARE_PRIVATE(TiledLine)
 public:
-    TiledLine(Object *parent = 0);
-    TiledLine(boost::shared_ptr<Texture> texture, Object *parent = 0);
-    TiledLine(boost::shared_ptr<Texture> texture, const Vector& start, const Vector& end, Object *parent = 0);
-    TiledLine(const std::wstring& texture, Object *parent = 0);
-    TiledLine(const std::wstring& texture, const Vector& start, const Vector& end, Object *parent = 0);
+    TiledLine();
+    TiledLine(boost::shared_ptr<Texture> texture0);
+    TiledLine(boost::shared_ptr<Texture> texture, const Vector& start, const Vector& end);
+    TiledLine(const std::wstring& texture);
+    TiledLine(const std::wstring& texture, const Vector& start, const Vector& end);
 
     virtual ~TiledLine();
 
@@ -49,7 +49,7 @@ public:
     void setTexture(boost::shared_ptr<Texture> texture);
 
 protected:
-    TiledLine(TiledLinePrivate &p, Object *parent = 0);
+    TiledLine(TiledLinePrivate &p);
 
     RANGERS_DISABLE_COPY(TiledLine)
 };

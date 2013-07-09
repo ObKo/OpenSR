@@ -32,17 +32,14 @@ class RANGERS_ENGINE_API Button: public Widget
 {
     RANGERS_DECLARE_PRIVATE(Button);
 public:
-    //TODO: Make consrtuctors more consistent
-    Button(Widget *parent = 0);
-    Button(boost::shared_ptr<Texture> texture, Widget *parent = 0);
-    Button(boost::shared_ptr<Texture> texture, boost::shared_ptr<Texture> hoverTexture, Widget *parent = 0);
-    Button(boost::shared_ptr<Texture> texture, boost::shared_ptr<Texture> hoverTexture, boost::shared_ptr<Texture> pressTexture, Widget *parent = 0);
+    Button();
+    Button(boost::shared_ptr<Texture> texture);
+    Button(boost::shared_ptr<Texture> texture, boost::shared_ptr<Texture> hoverTexture, boost::shared_ptr<Texture> pressTexture);
 
-    Button(const std::wstring& texture, Widget *parent = 0);
-    Button(const std::wstring& texture, const std::wstring& hoverTexture, Widget *parent = 0);
-    Button(const std::wstring& texture, const std::wstring& hoverTexture, const std::wstring& pressTexture, Widget *parent = 0);
+    Button(const std::wstring& texture);
+    Button(const std::wstring& texture, const std::wstring& hoverTexture, const std::wstring& pressTexture);
 
-    Button(const ButtonStyle& style, Widget *parent = 0);
+    Button(const ButtonStyle& style);
 
     virtual ~Button();
 
@@ -67,7 +64,7 @@ public:
     bool autoResize() const;
 
 protected:
-    Button(ButtonPrivate &p, Widget *parent = 0);
+    Button(ButtonPrivate &p);
 
     RANGERS_DISABLE_COPY(Button)
 };

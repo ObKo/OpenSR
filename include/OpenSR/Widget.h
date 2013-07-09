@@ -33,8 +33,8 @@ class RANGERS_ENGINE_API Widget: public Object
 {
     RANGERS_DECLARE_PRIVATE(Widget)
 public:
-    Widget(Widget *parent = 0);
-    Widget(float w, float h, Widget *parent = 0);
+    Widget();
+    Widget(float w, float h);
 
     virtual ~Widget();
 
@@ -73,7 +73,7 @@ public:
     void action(const Action& action);
 
 protected:
-    Widget(WidgetPrivate &p, Widget *parent = 0);
+    Widget(WidgetPrivate &p);
 
     virtual bool prepareDraw() const;
 

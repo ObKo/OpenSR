@@ -28,25 +28,25 @@ namespace Python
 {
 struct TiledLineWrap : TiledLine, boost::python::wrapper<TiledLine>
 {
-    TiledLineWrap(Object *parent = 0): TiledLine(parent)
+    TiledLineWrap(): TiledLine()
     {
     }
 
-    TiledLineWrap(boost::shared_ptr<Texture> texture, Object *parent = 0)
-        : TiledLine(texture, parent)
+    TiledLineWrap(boost::shared_ptr<Texture> texture)
+        : TiledLine(texture)
     {
     }
-    TiledLineWrap(boost::shared_ptr<Texture> texture, const Vector& start, const Vector& end, Object *parent = 0)
-        : TiledLine(texture, start, end, parent)
+    TiledLineWrap(boost::shared_ptr<Texture> texture, const Vector& start, const Vector& end)
+        : TiledLine(texture, start, end)
     {
     }
 
-    TiledLineWrap(const std::wstring& texture, Object *parent = 0)
-        : TiledLine(texture, parent)
+    TiledLineWrap(const std::wstring& texture)
+        : TiledLine(texture)
     {
     }
-    TiledLineWrap(const std::wstring& texture, const Vector& start, const Vector& end, Object *parent = 0)
-        : TiledLine(texture, start, end, parent)
+    TiledLineWrap(const std::wstring& texture, const Vector& start, const Vector& end)
+        : TiledLine(texture, start, end)
     {
     }
 
@@ -57,15 +57,10 @@ void exportTiledLine()
 {
     using namespace boost::python;
 
-    class_<TiledLineWrap, bases<Object>, boost::shared_ptr<TiledLineWrap>, boost::noncopyable> c("TiledLine", init<boost::shared_ptr<Texture>, const Vector&, const Vector&, Object*>());
-    c.def(init<boost::shared_ptr<Texture>, const Vector&, const Vector&>())
-    .def(init<boost::shared_ptr<Texture>, Object*>())
-    .def(init<boost::shared_ptr<Texture> >())
-    .def(init<const std::wstring&, const Vector&, const Vector&, Object*>())
+    class_<TiledLineWrap, bases<Object>, boost::shared_ptr<TiledLineWrap>, boost::noncopyable> c("TiledLine", init<boost::shared_ptr<Texture>, const Vector&, const Vector&>());
+    c.def(init<boost::shared_ptr<Texture> >())
     .def(init<const std::wstring&, const Vector&, const Vector&>())
-    .def(init<const std::wstring&, Object*>())
     .def(init<const std::wstring&>())
-    .def(init<Object*>())
     .def(init<>())
     .def("start", &TiledLine::start)
     .def("end", &TiledLine::end)

@@ -29,7 +29,7 @@ class RANGERS_ENGINE_API RadioButtonGroup: public WidgetNode
 {
     RANGERS_DECLARE_PRIVATE(RadioButtonGroup)
 public:
-    RadioButtonGroup(Widget *parent = 0);
+    RadioButtonGroup();
 
     void addRadioButton(boost::shared_ptr<RadioButton> button);
     void removeRadioButton(boost::shared_ptr<RadioButton> button);
@@ -37,7 +37,7 @@ public:
     void selectRadioButton(boost::shared_ptr<RadioButton> button);
 
 protected:
-    RadioButtonGroup(RadioButtonGroupPrivate &p, Widget *parent = 0);
+    RadioButtonGroup(RadioButtonGroupPrivate &p);
 
     RANGERS_DISABLE_COPY(RadioButtonGroup)
 };

@@ -29,8 +29,7 @@ namespace Python
 {
 struct RadioButtonGroupWrap : RadioButtonGroup, boost::python::wrapper<RadioButtonGroup>
 {
-    RadioButtonGroupWrap(Widget *parent = 0)
-        : RadioButtonGroup(parent)
+    RadioButtonGroupWrap(): RadioButtonGroup()
     {
     }
 
@@ -41,8 +40,7 @@ void exportRadioButtonGroup()
 {
     using namespace boost::python;
 
-    class_<RadioButtonGroupWrap, bases<WidgetNode>, boost::shared_ptr<RadioButtonGroupWrap>, boost::noncopyable> c("RadioButtonGroup", init<Widget*>());
-    c.def(init<>());
+    class_<RadioButtonGroupWrap, bases<WidgetNode>, boost::shared_ptr<RadioButtonGroupWrap>, boost::noncopyable> c("RadioButtonGroup", init<>());
     RANGERS_PYTHON_WRAP_WIDGET_DEF(RadioButtonGroup, RadioButtonGroupWrap, c);
     c.def("addRadioButton", &RadioButtonGroup::addRadioButton)
     .def("removeRadioButton", &RadioButtonGroup::removeRadioButton)

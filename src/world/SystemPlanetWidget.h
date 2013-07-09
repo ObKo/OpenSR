@@ -32,7 +32,7 @@ class Planet;
 class SystemPlanetWidget: public Widget
 {
 public:
-    SystemPlanetWidget(boost::shared_ptr<Planet> planet = boost::shared_ptr<Planet>(), Widget* parent = 0);
+    SystemPlanetWidget(boost::shared_ptr<Planet> planet = boost::shared_ptr<Planet>());
     virtual ~SystemPlanetWidget();
 
     virtual void draw() const;

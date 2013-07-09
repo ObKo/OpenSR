@@ -33,7 +33,7 @@ RadioButtonPrivate::RadioButtonPrivate()
     selected = false;
 }
 
-RadioButton::RadioButton(const RadioButtonStyle& style, const std::wstring &text, Widget *parent): Button(*(new RadioButtonPrivate()), parent)
+RadioButton::RadioButton(const RadioButtonStyle& style, const std::wstring &text): Button(*(new RadioButtonPrivate()))
 {
     RANGERS_D(RadioButton);
     d->radioButtonStyle = style;
@@ -97,10 +97,6 @@ RadioButton::RadioButton(const RadioButtonStyle& style, const std::wstring &text
     d->height = minHeight();
 
     markToUpdate();
-}
-
-RadioButton::~RadioButton()
-{
 }
 
 void RadioButton::select()
