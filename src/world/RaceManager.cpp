@@ -51,19 +51,20 @@ void RaceManager::loadRaces(const std::wstring& file)
     }
     if (!root.isObject())
     {
-        Log::error() << "Invalid planet races JSON";
+        Log::error() << "Invalid races JSON";
         return;
     }
     Json::Value races = root.get("races", Json::Value());
     Json::Value invaders = root.get("invaders", Json::Value());
-    if (!races.isObject() || !invaders.isArray())
+    Json::Value relations = root.get("relations", Json::Value());
+    if (!races.isObject() || !invaders.isArray() || !relations.isObject())
     {
-        Log::error() << "Invalid planet races JSON";
+        Log::error() << "Invalid races JSON";
         return;
     }
-    Json::Value::Members racesMembers = races.getMemberNames();
-    Json::Value::Members::const_iterator end = racesMembers.end();
-    for (Json::Value::Members::const_iterator i = racesMembers.begin(); i != end; ++i)
+    Json::Value::Members members = races.getMemberNames();
+    Json::Value::Members::const_iterator end = members.end();
+    for (Json::Value::Members::const_iterator i = members.begin(); i != end; ++i)
     {
         Json::Value race = races[*i];
         boost::shared_ptr<Race> r = boost::shared_ptr<Race>(new Race());
@@ -75,7 +76,8 @@ void RaceManager::loadRaces(const std::wstring& file)
 
         if (error)
         {
-            Log::error() << "Invalid planet races JSON";
+            Log::error() << "Invalid races JSON";
+            m_races.clear();
             return;
         }
 
@@ -87,6 +89,29 @@ void RaceManager::loadRaces(const std::wstring& file)
         boost::shared_ptr<Race> r = race(textHash32((*i).asString()));
         if (r)
             r->invader = true;
+    }
+    members = relations.getMemberNames();
+    end = members.end();
+    for (Json::Value::Members::const_iterator i = members.begin(); i != end; ++i)
+    {
+        std::vector<std::string> ids = split(*i, ':');
+        if (ids.size() < 2)
+        {
+            Log::error() << "Invalid races JSON - invalid relation id";
+            m_races.clear();
+            return;
+        }
+        float relation = relations[*i].asDouble();
+        boost::shared_ptr<Race> first = race(ids[0]);
+        boost::shared_ptr<Race> second = race(ids[1]);
+        if (!first || !second)
+        {
+            Log::error() << "Invalid races JSON - unknown race in relations";
+            m_races.clear();
+            return;
+        }
+        first->relations[second->id] = relation;
+        second->relations[first->id] = relation;
     }
 }
 
