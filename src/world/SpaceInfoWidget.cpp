@@ -80,6 +80,7 @@ SpaceInfoWidget::SpaceInfoWidget(const InfoWidgetStyle& style): Widget(), m_type
     m_contentRect = style.contentRect;
     m_captionContentRect = style.captionContentRect;
     m_iconPosition = style.iconPosition;
+    m_raceIconPosition = style.raceIconPosition;
     m_iconSize = style.iconSize;
 
     if (m_bgSprite)
@@ -171,6 +172,9 @@ void SpaceInfoWidget::draw() const
     if (m_iconSprite)
         m_iconSprite->draw();
 
+    if (m_raceIconSprite)
+        m_raceIconSprite->draw();
+
     std::vector<boost::shared_ptr<Object> >::const_iterator end = m_infoWidget.end();
     for (std::vector<boost::shared_ptr<Object> >::const_iterator i = m_infoWidget.begin(); i != end; ++i)
         (*i)->draw();
@@ -186,6 +190,11 @@ void SpaceInfoWidget::clear()
         removeChild(m_iconSprite);
         m_iconSprite = boost::shared_ptr<Sprite>();
     }
+    if (m_raceIconSprite)
+    {
+        removeChild(m_raceIconSprite);
+        m_raceIconSprite = boost::shared_ptr<Sprite>();
+    }
     std::vector<boost::shared_ptr<Object> >::iterator end = m_infoWidget.end();
     for (std::vector<boost::shared_ptr<Object> >::iterator i = m_infoWidget.begin(); i != end; ++i)
     {
@@ -199,7 +208,7 @@ void SpaceInfoWidget::clear()
 
 void SpaceInfoWidget::showPlanet(boost::shared_ptr<Planet> planet)
 {
-    m_caption->setText(_("Planet", "OpenSR-World") + L" " + _(planet->name(), "OpenSR-World"));
+    m_caption->setText(_(planet->name(), "OpenSR-World"));
     m_iconSprite = boost::shared_ptr<Sprite>(new Sprite(PlanetManager::instance().getPlanetImage(planet->style(), m_iconSize)));
     addChild(m_iconSprite);
 
@@ -242,18 +251,30 @@ void SpaceInfoWidget::showPlanet(boost::shared_ptr<Planet> planet)
         boost::shared_ptr<Race> race = WorldManager::instance().raceManager().race(hPlanet->race());
 
         if (race)
+        {
             l = boost::shared_ptr<Label>(new Label(_(race->name, "OpenSR-World")));
+            m_raceIconSprite = boost::shared_ptr<Sprite>(new Sprite(race->icon));
+            addChild(m_raceIconSprite);
+        }
         else
-            l = boost::shared_ptr<Label>(new Label(_("Unknown race", "OpenSR-World")));
+            l = boost::shared_ptr<Label>(new Label(_("Unknown", "OpenSR-World")));
 
         l->setColor(m_color);
         m_infoWidget.push_back(l);
         addChild(l);
         labelCount++;
+
     }
 
     int requiredHeight = (m_font->size() + 5) * labelCount;
-    setHeight(requiredHeight - m_contentRect.height + m_bgSprite->normalHeight());
+    int deltaHeight = requiredHeight - m_contentRect.height;
+    setHeight(std::max(deltaHeight + m_bgSprite->normalHeight(), m_bgSprite->normalHeight()));
+
+    if (m_raceIconSprite)
+    {
+        m_raceIconSprite->setPosition(m_raceIconPosition.x + (width() - m_bgSprite->normalWidth()) - m_raceIconSprite->width() / 2,
+                                      m_raceIconPosition.y + (height() - m_bgSprite->normalHeight()) - m_raceIconSprite->height() / 2);
+    }
 
     m_type = INFO_PLANET;
     markToUpdate();
@@ -261,7 +282,7 @@ void SpaceInfoWidget::showPlanet(boost::shared_ptr<Planet> planet)
 
 void SpaceInfoWidget::showSystem(boost::shared_ptr<SolarSystem> system)
 {
-    m_caption->setText(_("System", "OpenSR-World") + L" " + _(system->name(), "OpenSR-World"));
+    m_caption->setText(_(system->name(), "OpenSR-World"));
     m_type = INFO_SYSTEM;
     markToUpdate();
 }

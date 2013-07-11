@@ -57,6 +57,7 @@ private:
     Rect m_captionContentRect;
     boost::shared_ptr<Sprite> m_bgSprite;
     boost::shared_ptr<Sprite> m_iconSprite;
+    boost::shared_ptr<Sprite> m_raceIconSprite;
     int m_color;
     int m_captionColor;
     int m_labelColor;
@@ -64,6 +65,7 @@ private:
     InfoType m_type;
     int m_iconSize;
     Vector m_iconPosition;
+    Vector m_raceIconPosition;
 };
 }
 }

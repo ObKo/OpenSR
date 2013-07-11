@@ -35,6 +35,7 @@ struct InfoWidgetStyle
     int captionColor;
     int labelColor;
     Vector iconPosition;
+    Vector raceIconPosition;
     int iconSize;
     Rect contentRect;
     Rect captionContentRect;

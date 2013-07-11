@@ -58,6 +58,8 @@ void WorldStyleManager::loadStyles()
 
         if (std::find(styleMembers.begin(), styleMembers.end(), "icon-position") != styleMembers.end())
             m_infoWidgetStyle.iconPosition = JSONHelper::parseVector(style.get("icon-position", ""), error);
+        if (std::find(styleMembers.begin(), styleMembers.end(), "race-icon-position") != styleMembers.end())
+            m_infoWidgetStyle.raceIconPosition = JSONHelper::parseVector(style.get("race-icon-position", ""), error);
         if (std::find(styleMembers.begin(), styleMembers.end(), "icon-size") != styleMembers.end())
             m_infoWidgetStyle.iconSize = style.get("icon-size", 0).asInt();
 
