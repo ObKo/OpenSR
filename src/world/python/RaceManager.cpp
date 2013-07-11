@@ -41,8 +41,8 @@ void exportRaceManager()
     .def_readwrite("relations", &Race::relations);
 
     class_<RaceManager, boost::noncopyable>("RaceManager", boost::python::no_init)
-    .def("id", (boost::shared_ptr<Race> (RaceManager::*)(uint32_t) const)&RaceManager::race)
-    .def("id", (boost::shared_ptr<Race> (RaceManager::*)(const std::string&) const)&RaceManager::race);
+    .def("race", (boost::shared_ptr<Race> (RaceManager::*)(uint32_t) const)&RaceManager::race)
+    .def("race", (boost::shared_ptr<Race> (RaceManager::*)(const std::string&) const)&RaceManager::race);
 }
 }
 }

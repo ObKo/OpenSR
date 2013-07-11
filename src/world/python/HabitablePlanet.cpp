@@ -46,6 +46,8 @@ void exportHabitablePlanet()
     .def("setInvader", &HabitablePlanet::setInvader)
     .def("population", &HabitablePlanet::population)
     .def("setPopulation", &HabitablePlanet::setPopulation)
+    .def("race", &HabitablePlanet::race)
+    .def("setRace", &HabitablePlanet::setRace)
     .def("landContext", &HabitablePlanet::landContext)
     .def("setLandContext", &HabitablePlanet::setLandContext);
     WORLD_PYTHON_WRAP_WORLD_OBJECT_DEF(HabitablePlanet, HabitablePlanetWrap, c);

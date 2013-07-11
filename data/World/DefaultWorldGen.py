@@ -4,6 +4,7 @@ import math
 class DefaultWorldGen(OpenSR.World.WorldGenHook):        
     def generate(self):
         world = OpenSR.World.WorldManager.instance()
+        races = world.raceManager()
         
         system = OpenSR.World.SolarSystem()
         planet = OpenSR.World.DesertPlanet()
@@ -28,6 +29,7 @@ class DefaultWorldGen(OpenSR.World.WorldGenHook):
         hPlanet.setAngleSpeed(math.pi * 2.0 / 365.0)
         hPlanet.setInvader(0)
         hPlanet.setPopulation(1000000)
+        hPlanet.setRace(races.race("human").id)
         hPlanet.setStyle("earth")
 
         sPlanet.setOrbit(800.0)

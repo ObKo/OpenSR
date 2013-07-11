@@ -34,6 +34,7 @@ bool HabitablePlanet::deserialize(std::istream& stream)
 
     stream.read((char *)&m_population, sizeof(uint32_t));
     stream.read((char *)&m_invader, sizeof(uint32_t));
+    stream.read((char *)&m_race, sizeof(uint32_t));
 
     if (!stream.good())
         return false;
@@ -59,6 +60,11 @@ uint32_t HabitablePlanet::population() const
     return m_population;
 }
 
+uint32_t HabitablePlanet::race() const
+{
+    return m_race;
+}
+
 bool HabitablePlanet::serialize(std::ostream& stream) const
 {
     if (!Planet::serialize(stream))
@@ -66,6 +72,7 @@ bool HabitablePlanet::serialize(std::ostream& stream) const
 
     stream.write((const char *)&m_population, sizeof(uint32_t));
     stream.write((const char *)&m_invader, sizeof(uint32_t));
+    stream.write((const char *)&m_race, sizeof(uint32_t));
 
     if (!stream.good())
         return false;
@@ -94,6 +101,11 @@ void HabitablePlanet::setInvader(uint32_t invader)
 void HabitablePlanet::setLandContext(const LandContext& landContext)
 {
     m_landContext = landContext;
+}
+
+void HabitablePlanet::setRace(uint32_t race)
+{
+    m_race = race;
 }
 }
 }

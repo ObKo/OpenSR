@@ -33,6 +33,8 @@
 #include "Planet.h"
 #include "SolarSystem.h"
 #include "PlanetManager.h"
+#include "HabitablePlanet.h"
+#include "WorldManager.h"
 
 namespace Rangers
 {
@@ -201,21 +203,56 @@ void SpaceInfoWidget::showPlanet(boost::shared_ptr<Planet> planet)
     m_iconSprite = boost::shared_ptr<Sprite>(new Sprite(PlanetManager::instance().getPlanetImage(planet->style(), m_iconSize)));
     addChild(m_iconSprite);
 
-    boost::shared_ptr<Label> l = boost::shared_ptr<Label>(new Label(_("Planet radius:", "OpenSR-World") + L" "));
+    boost::shared_ptr<Label> l = boost::shared_ptr<Label>(new Label(_("Radius:", "OpenSR-World") + L" "));
     l->setColor(m_labelColor);
-
     m_infoWidget.push_back(l);
     addChild(l);
 
     std::wostringstream str;
     str << planet->radius();
+
     l = boost::shared_ptr<Label>(new Label(str.str()));
     l->setColor(m_color);
-
     m_infoWidget.push_back(l);
     addChild(l);
 
-    int requiredHeight = (m_font->size() + 5) * 1;
+    int labelCount = 1;
+
+    if (boost::shared_ptr<HabitablePlanet> hPlanet = boost::dynamic_pointer_cast<HabitablePlanet>(planet))
+    {
+        l = boost::shared_ptr<Label>(new Label(_("Population:", "OpenSR-World") + L" "));
+        l->setColor(m_labelColor);
+        m_infoWidget.push_back(l);
+        addChild(l);
+
+        str.clear();
+        str << hPlanet->population() / (1000 * 1000);
+
+        l = boost::shared_ptr<Label>(new Label(str.str()));
+        l->setColor(m_color);
+        m_infoWidget.push_back(l);
+        addChild(l);
+        labelCount++;
+
+        l = boost::shared_ptr<Label>(new Label(_("Race:", "OpenSR-World") + L" "));
+        l->setColor(m_labelColor);
+        m_infoWidget.push_back(l);
+        addChild(l);
+
+        boost::shared_ptr<Race> race = WorldManager::instance().raceManager().race(hPlanet->race());
+
+        if (race)
+            l = boost::shared_ptr<Label>(new Label(_(race->name, "OpenSR-World")));
+        else
+            l = boost::shared_ptr<Label>(new Label(_("Unknown race", "OpenSR-World")));
+
+        l->setColor(m_color);
+        m_infoWidget.push_back(l);
+        addChild(l);
+        labelCount++;
+    }
+
+    int requiredHeight = (m_font->size() + 5) * labelCount;
     setHeight(requiredHeight - m_contentRect.height + m_bgSprite->normalHeight());
 
     m_type = INFO_PLANET;
