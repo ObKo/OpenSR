@@ -6,7 +6,7 @@ class DefaultWorldGen(OpenSR.World.WorldGenHook):
         world = OpenSR.World.WorldManager.instance()
         races = world.raceManager()
         
-        system = OpenSR.World.SolarSystem()
+        system = OpenSR.World.PlanetarySystem()
         planet = OpenSR.World.DesertPlanet()
         sPlanet = OpenSR.World.DesertPlanet()
         hPlanet = OpenSR.World.HabitablePlanet()
@@ -48,4 +48,4 @@ class DefaultWorldGen(OpenSR.World.WorldGenHook):
         world.addObject(sPlanet)
         world.addObject(hPlanet)
         
-        world.setCurrentSolarSystem(system)
+        world.setCurrentPlanetarySystem(system)

@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2012 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2012 - 2013 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ public:
     static const uint32_t TYPE_RADAR = 0x5fcf4370;
     static const uint32_t TYPE_SCANNER = 0x28ff1510;
     static const uint32_t TYPE_SHIP = 0x2b9a8c11;
-    static const uint32_t TYPE_SOLARSYSTEM = 0x1c832836;
+    static const uint32_t TYPE_PLANETARYSYSTEM = 0x1c832836;
     static const uint32_t TYPE_SPACEBASE = 0x606e1534;
     static const uint32_t TYPE_SPACEOBJECT = 0x44357eaf;
     static const uint32_t TYPE_SYSTEMOBJECT = 0x127dbfab;

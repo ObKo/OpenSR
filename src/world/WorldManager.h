@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2012 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2012 - 2013 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ namespace Rangers
 namespace World
 {
 class WorldObject;
-class SolarSystem;
+class PlanetarySystem;
 class WorldGenHook;
 
 class WorldManager
@@ -55,9 +55,9 @@ public:
 
     boost::shared_ptr<WorldObject> getObject(uint64_t id);
 
-    std::list<boost::shared_ptr<SolarSystem> > solarSystems() const;
-    boost::shared_ptr<SolarSystem> currentSolarSystem() const;
-    void setCurrentSolarSystem(boost::shared_ptr<SolarSystem> system);
+    std::list<boost::shared_ptr<PlanetarySystem> > planetarySystems() const;
+    boost::shared_ptr<PlanetarySystem> currentPlanetarySystem() const;
+    void setCurrentPlanetarySystem(boost::shared_ptr<PlanetarySystem> system);
 
     void addGenHook(boost::shared_ptr<WorldGenHook> hook);
     void removeGenHook(boost::shared_ptr<WorldGenHook> hook);
@@ -71,8 +71,8 @@ private:
     void getSavingList(boost::shared_ptr<WorldObject> object, std::list<boost::shared_ptr<WorldObject> >& list, std::map<uint64_t, boost::shared_ptr<WorldObject> >& remainingObjects) const;
 
     std::map<uint64_t, boost::shared_ptr<WorldObject> > m_objects;
-    std::list<boost::shared_ptr<SolarSystem> > m_solarSystems;
-    boost::shared_ptr<SolarSystem> m_currentSystem;
+    std::list<boost::shared_ptr<PlanetarySystem> > m_systems;
+    boost::shared_ptr<PlanetarySystem> m_currentSystem;
 
     WorldStyleManager m_styleManager;
     RaceManager m_raceManager;

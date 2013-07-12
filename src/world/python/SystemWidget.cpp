@@ -19,7 +19,7 @@
 #include <boost/python.hpp>
 #include "SystemWidget.h"
 
-#include "SolarSystem.h"
+#include "PlanetarySystem.h"
 
 #include <OpenSR/python/WidgetWrap.h>
 
@@ -31,7 +31,7 @@ namespace Python
 {
 struct SystemWidgetWrap : SystemWidget, boost::python::wrapper<SystemWidget>
 {
-    SystemWidgetWrap(boost::shared_ptr<SolarSystem> system = boost::shared_ptr<SolarSystem>())
+    SystemWidgetWrap(boost::shared_ptr<PlanetarySystem> system = boost::shared_ptr<PlanetarySystem>())
         : SystemWidget(system)
     {
     }
@@ -42,7 +42,7 @@ void exportSystemWidget()
 {
     using namespace boost::python;
 
-    class_<SystemWidgetWrap, bases<Widget>, boost::shared_ptr<SystemWidgetWrap>, boost::noncopyable> c("SystemWidget", init<boost::shared_ptr<SolarSystem> >());
+    class_<SystemWidgetWrap, bases<Widget>, boost::shared_ptr<SystemWidgetWrap>, boost::noncopyable> c("SystemWidget", init<boost::shared_ptr<PlanetarySystem> >());
     c.def(init<>())
     .def("system", &SystemWidget::system)
     .def("setSystem", &SystemWidget::setSystem);

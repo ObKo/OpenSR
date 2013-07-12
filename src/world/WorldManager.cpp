@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2012 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2012 - 2013 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 #include "WorldManager.h"
 #include "WorldObject.h"
-#include "SolarSystem.h"
+#include "PlanetarySystem.h"
 #include "WorldGenHook.h"
 
 #include <fstream>
@@ -83,17 +83,17 @@ void WorldManager::generateWorld()
     }
 }
 
-std::list<boost::shared_ptr<SolarSystem> > WorldManager::solarSystems() const
+std::list<boost::shared_ptr<PlanetarySystem> > WorldManager::planetarySystems() const
 {
-    return m_solarSystems;
+    return m_systems;
 }
 
-boost::shared_ptr<SolarSystem> WorldManager::currentSolarSystem() const
+boost::shared_ptr<PlanetarySystem> WorldManager::currentPlanetarySystem() const
 {
     return m_currentSystem;
 }
 
-void WorldManager::setCurrentSolarSystem(boost::shared_ptr<SolarSystem> system)
+void WorldManager::setCurrentPlanetarySystem(boost::shared_ptr<PlanetarySystem> system)
 {
     std::map<uint64_t, boost::shared_ptr<WorldObject> >::iterator i = m_objects.find(system->id());
     if (i != m_objects.end())

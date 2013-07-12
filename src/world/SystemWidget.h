@@ -32,13 +32,13 @@ namespace World
 {
 class InfoWidget;
 class SystemPlanetWidget;
-class SolarSystem;
+class PlanetarySystem;
 
 class SystemWidget: public Widget
 {
 public:
-    SystemWidget(boost::shared_ptr<SolarSystem> system = boost::shared_ptr<SolarSystem>());
-    
+    SystemWidget(boost::shared_ptr<PlanetarySystem> system = boost::shared_ptr<PlanetarySystem>());
+
     virtual void draw() const;
 
     virtual void processMain();
@@ -46,16 +46,16 @@ public:
 
     virtual void mouseMove(const Vector &p);
 
-    boost::shared_ptr<SolarSystem> system() const;
+    boost::shared_ptr<PlanetarySystem> system() const;
 
-    void setSystem(boost::shared_ptr<SolarSystem> system);
+    void setSystem(boost::shared_ptr<PlanetarySystem> system);
 
 private:
     enum MoveDirection {NONE, LEFT, RIGHT, TOP, BOTTOM, TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT};
 
     class SystemWidgetListener;
 
-    boost::shared_ptr<SolarSystem> m_system;
+    boost::shared_ptr<PlanetarySystem> m_system;
     std::list<boost::shared_ptr<SystemPlanetWidget> > m_planetWidgets;
 
     boost::shared_ptr<Sprite> m_bgSprite;

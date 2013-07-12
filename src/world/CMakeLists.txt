@@ -20,7 +20,7 @@ SET(WORLD_SOURCES
     Scanner.cpp
     Ship.cpp
     ShipContext.cpp
-    SolarSystem.cpp
+    PlanetarySystem.cpp
     SpaceBase.cpp
     InfoWidget.cpp
     SpaceObject.cpp

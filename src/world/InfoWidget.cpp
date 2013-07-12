@@ -31,7 +31,7 @@
 
 #include "WorldStyleManager.h"
 #include "Planet.h"
-#include "SolarSystem.h"
+#include "PlanetarySystem.h"
 #include "PlanetManager.h"
 #include "HabitablePlanet.h"
 #include "WorldManager.h"
@@ -323,7 +323,7 @@ void InfoWidget::showPlanet(boost::shared_ptr<Planet> planet)
     markToUpdate();
 }
 
-void InfoWidget::showSystem(boost::shared_ptr<SolarSystem> system)
+void InfoWidget::showSystem(boost::shared_ptr<PlanetarySystem> system)
 {
     clear();
 

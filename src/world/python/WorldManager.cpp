@@ -20,7 +20,7 @@
 #include "WorldManager.h"
 
 #include "WorldObject.h"
-#include "SolarSystem.h"
+#include "PlanetarySystem.h"
 
 
 namespace Rangers
@@ -44,9 +44,9 @@ void exportWorldManager()
     .def("generateWorld", &WorldManager::generateWorld)
     .def("saveWorld", &WorldManager::saveWorld)
     .def("getObject", &WorldManager::getObject)
-    .def("solarSystems", &WorldManager::solarSystems)
-    .def("currentSolarSystem", &WorldManager::currentSolarSystem)
-    .def("setCurrentSolarSystem", &WorldManager::setCurrentSolarSystem)
+    .def("planetarySystems", &WorldManager::planetarySystems)
+    .def("currentPlanetarySystem", &WorldManager::currentPlanetarySystem)
+    .def("setCurrentPlanetarySystem", &WorldManager::setCurrentPlanetarySystem)
     .def("addGenHook", &WorldManager::addGenHook)
     .def("removeGenHook", &WorldManager::removeGenHook)
     .def("calcTurn", &WorldManager::calcTurn)

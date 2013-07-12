@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2012 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2012 - 2013 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@
 #include "Scanner.h"
 #include "Ship.h"
 #include "ShipContext.h"
-#include "SolarSystem.h"
+#include "PlanetarySystem.h"
 #include "SpaceBase.h"
 #include "SpaceObject.h"
 #include "SystemObject.h"
@@ -107,8 +107,8 @@ WorldObject* WorldHelper::objectByType(uint32_t type)
     case TYPE_SHIP:
         object = new Ship();
         break;
-    case TYPE_SOLARSYSTEM:
-        object = new SolarSystem();
+    case TYPE_PLANETARYSYSTEM:
+        object = new PlanetarySystem();
         break;
     case TYPE_SPACEBASE:
         object = new SpaceBase();

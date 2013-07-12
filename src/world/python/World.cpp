@@ -26,7 +26,7 @@ namespace Python
 {
 void exportWorldObject();
 void exportItem();
-void exportSolarSystem();
+void exportPlanetarySystem();
 void exportSpaceObject();
 void exportArtifact();
 void exportEquipment();
@@ -68,7 +68,7 @@ BOOST_PYTHON_MODULE(_World)
 {
     Rangers::World::Python::exportWorldObject();
     Rangers::World::Python::exportItem();
-    Rangers::World::Python::exportSolarSystem();
+    Rangers::World::Python::exportPlanetarySystem();
     Rangers::World::Python::exportSpaceObject();
     Rangers::World::Python::exportArtifact();
     Rangers::World::Python::exportEquipment();

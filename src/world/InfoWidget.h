@@ -31,7 +31,7 @@ namespace World
 {
 struct InfoWidgetStyle;
 class Planet;
-class SolarSystem;
+class PlanetarySystem;
 class InfoWidget: public Widget
 {
 public:
@@ -40,7 +40,7 @@ public:
     void clear();
 
     void showPlanet(boost::shared_ptr<Planet> planet);
-    void showSystem(boost::shared_ptr<SolarSystem> system);
+    void showSystem(boost::shared_ptr<PlanetarySystem> system);
 
     virtual void processMain();
     virtual void draw() const;

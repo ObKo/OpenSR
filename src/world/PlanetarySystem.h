@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2012 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2012 - 2013 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WORLD_SOLAR_SYSTEM_H
-#define WORLD_SOLAR_SYSTEM_H
+#ifndef WORLD_PLANETARY_SYSTEM_H
+#define WORLD_PLANETARY_SYSTEM_H
 
 #include "WorldObject.h"
 #include "SystemObject.h"
@@ -28,10 +28,10 @@ namespace Rangers
 {
 namespace World
 {
-class SolarSystem: public WorldObject
+class PlanetarySystem: public WorldObject
 {
 public:
-    SolarSystem(uint64_t id = 0);
+    PlanetarySystem(uint64_t id = 0);
 
     std::string name() const;
     Point position() const;

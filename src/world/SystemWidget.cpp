@@ -18,7 +18,7 @@
 
 #include "SystemWidget.h"
 #include "SystemPlanetWidget.h"
-#include "SolarSystem.h"
+#include "PlanetarySystem.h"
 #include "Planet.h"
 #include "WorldManager.h"
 #include "InfoWidget.h"
@@ -95,7 +95,7 @@ private:
     SystemWidget *m_parent;
 };
 
-SystemWidget::SystemWidget(boost::shared_ptr<SolarSystem> system): Widget(),
+SystemWidget::SystemWidget(boost::shared_ptr<PlanetarySystem> system): Widget(),
     m_xOffset(0), m_yOffset(0), m_moveDirection(NONE), m_turn(false), m_turnTime(0)
 {
     setWidth(Engine::instance().screenWidth());
@@ -181,7 +181,7 @@ void SystemWidget::processLogic(int dt)
     m_node->setPosition(m_xOffset + width() / 2, m_yOffset + height() / 2);
 }
 
-void SystemWidget::setSystem(boost::shared_ptr< SolarSystem > system)
+void SystemWidget::setSystem(boost::shared_ptr< PlanetarySystem > system)
 {
     if (m_system && (!system || system != m_system))
     {
@@ -228,7 +228,7 @@ void SystemWidget::setSystem(boost::shared_ptr< SolarSystem > system)
     addChild(m_bgSprite);
 }
 
-boost::shared_ptr< SolarSystem > SystemWidget::system() const
+boost::shared_ptr< PlanetarySystem > SystemWidget::system() const
 {
     return m_system;
 }
