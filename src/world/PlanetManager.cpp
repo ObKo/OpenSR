@@ -26,20 +26,18 @@
 #include <OpenSR/Texture.h>
 #include <json/value.h>
 
+namespace
+{
+const uint32_t PLANET_MANAGER_SIGNATURE = *((uint32_t*)"SRPM");
+}
+
 namespace Rangers
 {
 namespace World
 {
-PlanetManager& PlanetManager::instance()
-{
-    static PlanetManager manager;
-    return manager;
-}
-
-
 PlanetManager::PlanetManager()
 {
-    std::wstring stylesPath = fromUTF8(Engine::instance().properties()->get<std::string>("world.planetStyles", "World/Planets.json").c_str());
+    std::wstring stylesPath = fromUTF8(Engine::instance().properties()->get<std::string>("world.planetStyles", "World/PlanetStyles.json").c_str());
     if (!stylesPath.empty())
         loadStyles(stylesPath);
 }
@@ -47,6 +45,44 @@ PlanetManager::PlanetManager()
 PlanetManager::PlanetManager(const PlanetManager& other)
 {
 
+}
+
+bool PlanetManager::deserialize(std::istream& stream)
+{
+    uint32_t sig;
+    stream.read((char*)&sig, 4);
+
+    if (sig != PLANET_MANAGER_SIGNATURE)
+        return false;
+
+    uint32_t count;
+    stream.read((char*)&count, 4);
+
+    for (int i = 0; i < count; i++)
+    {
+        PlanetStyle style;
+        if (!style.deserialize(stream))
+            return false;
+    }
+}
+
+bool PlanetManager::serialize(std::ostream& stream) const
+{
+    stream.write((const char*)&PLANET_MANAGER_SIGNATURE, 4);
+
+    uint32_t count = m_styles.size();
+    stream.write((const char*)&count, 4);
+
+    if (!stream.good())
+        return false;
+
+    std::map<uint32_t, boost::shared_ptr<PlanetStyle> >::const_iterator end = m_styles.end();
+    for (std::map<uint32_t, boost::shared_ptr<PlanetStyle> >::const_iterator i = m_styles.begin(); i != end; ++i)
+    {
+        if (!((*i).second)->serialize(stream))
+            return false;
+    }
+    return true;
 }
 
 void PlanetManager::dropImageCache()
@@ -180,7 +216,7 @@ boost::shared_ptr<Texture> PlanetManager::getPlanetImage(boost::shared_ptr<Plane
     return result;
 }
 
-boost::shared_ptr<PlanetStyle> PlanetManager::style(const std::wstring& name)
+boost::shared_ptr<PlanetStyle> PlanetManager::style(const std::string& name)
 {
     uint32_t hash = textHash32(name);
     return style(hash);
@@ -225,7 +261,7 @@ void PlanetManager::loadStyles(const std::wstring& styleFile)
         style->texture = fromUTF8(jsonStyle.get("texture", "").asCString());
         style->speed = jsonStyle.get("speed", 0.0f).asDouble();
         style->hasCloud = jsonStyle.get("hasCloud", false).asBool();
-        style->id = fromUTF8((*i).c_str());
+        style->id = (*i);
         style->hasRing = jsonStyle.get("hasRing", false).asBool();
         style->hasRingBackground = jsonStyle.get("hasRingBackground", false).asBool();
 

@@ -39,7 +39,7 @@ public:
     void setRadius(float radius);
     void setOrbit(float orbit);
     void setStyle(uint32_t style);
-    void setStyle(const std::wstring& style);
+    void setStyle(const std::string& style);
     void setAngle(float angle);
     void setAngleSpeed(float speed);
 

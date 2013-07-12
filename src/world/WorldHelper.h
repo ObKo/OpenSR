@@ -21,6 +21,9 @@
 
 #include <stdint.h>
 
+#include <string>
+#include <iostream>
+
 namespace Rangers
 {
 namespace World
@@ -55,6 +58,11 @@ public:
     static const uint32_t TYPE_WORLDOBJECT = 0x1b90a69f;
 
     static WorldObject* objectByType(uint32_t type);
+
+    static bool serializeString(const std::wstring& str, std::ostream& stream);
+    static bool serializeString(const std::string& str, std::ostream& stream);
+    static bool deserializeString(std::wstring& str, std::istream& stream);
+    static bool deserializeString(std::string& str, std::istream& stream);
 };
 }
 }

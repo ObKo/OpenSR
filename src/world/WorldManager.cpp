@@ -74,6 +74,11 @@ RaceManager& WorldManager::raceManager()
     return m_raceManager;
 }
 
+PlanetManager& WorldManager::planetManager()
+{
+    return m_planetManager;
+}
+
 void WorldManager::generateWorld()
 {
     std::list<boost::shared_ptr<WorldGenHook> >::const_iterator end = m_genHooks.end();
@@ -119,17 +124,26 @@ bool WorldManager::saveWorld(const std::wstring& file) const
     worldFile.open(toLocal(file).c_str());
 #endif
 
+    if (!m_planetManager.serialize(worldFile))
+    {
+        Log::error() << "Cannot serialize PlanetManager";
+        worldFile.close();
+        return false;
+    }
+
     std::list<boost::shared_ptr<WorldObject> >::const_iterator end = savingList.end();
     for (std::list<boost::shared_ptr<WorldObject> >::const_iterator i = savingList.begin(); i != end; ++i)
     {
         if (!(*i)->serialize(worldFile))
         {
             Log::error() << "Cannot serialize world!";
-            break;
+            worldFile.close();
+            return false;
         }
     }
 
     worldFile.close();
+    return true;
 }
 
 void WorldManager::calcTurn()

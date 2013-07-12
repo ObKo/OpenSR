@@ -33,11 +33,12 @@ struct PlanetStyle;
 class PlanetManager
 {
 public:
-    static PlanetManager& instance();
+    PlanetManager();
 
-    boost::shared_ptr<PlanetStyle> style(const std::wstring& name);
+    boost::shared_ptr<PlanetStyle> style(const std::string& name);
     boost::shared_ptr<PlanetStyle> style(uint32_t id);
 
+    //! Load planet styles from JSON file
     void loadStyles(const std::wstring& styleFile);
 
     //! Get static planet image from planet style
@@ -48,8 +49,10 @@ public:
     //! Drop planet image cache
     void dropImageCache();
 
+    bool serialize(std::ostream &stream) const;
+    bool deserialize(std::istream &stream);
+
 private:
-    PlanetManager();
     PlanetManager(const PlanetManager& other);
 
     std::map<uint32_t, boost::shared_ptr<PlanetStyle> > m_styles;

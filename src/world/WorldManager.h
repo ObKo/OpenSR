@@ -27,6 +27,7 @@
 
 #include "WorldStyleManager.h"
 #include "RaceManager.h"
+#include "PlanetManager.h"
 
 namespace Rangers
 {
@@ -64,6 +65,7 @@ public:
 
     WorldStyleManager& styleManager();
     RaceManager& raceManager();
+    PlanetManager& planetManager();
 
     static uint64_t getNextId();
 
@@ -76,6 +78,7 @@ private:
 
     WorldStyleManager m_styleManager;
     RaceManager m_raceManager;
+    PlanetManager m_planetManager;
 
     std::list<boost::shared_ptr<WorldGenHook> > m_genHooks;
 

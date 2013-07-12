@@ -101,7 +101,7 @@ void Planet::setStyle(uint32_t style)
     m_style = style;
 }
 
-void Planet::setStyle(const std::wstring& style)
+void Planet::setStyle(const std::string& style)
 {
     m_style = textHash32(style);
 }

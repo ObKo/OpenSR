@@ -18,6 +18,8 @@
 
 #include "WorldHelper.h"
 
+#include <libRanger.h>
+
 #include "Artifact.h"
 #include "CargoHook.h"
 #include "DefenceGenerator.h"
@@ -130,6 +132,59 @@ WorldObject* WorldHelper::objectByType(uint32_t type)
         break;
     }
     return object;
+}
+
+bool WorldHelper::serializeString(const std::wstring& str, std::ostream& stream)
+{
+    std::string str_ = toUTF8(str);
+    return serializeString(str_, stream);
+}
+
+bool WorldHelper::serializeString(const std::string& str, std::ostream& stream)
+{
+    uint32_t l = str.length();
+
+    stream.write((const char *)&l, 4);
+    stream.write(str.c_str(), l);
+
+    if (!stream.good())
+        return false;
+
+    return true;
+}
+
+bool WorldHelper::deserializeString(std::wstring& str, std::istream& stream)
+{
+    uint32_t l;
+    char *s;
+
+    stream.read((char *)&l, 4);
+    if (!stream.good())
+        return false;
+    s = new char[l + 1];
+    stream.read(s, l);
+    if (!stream.good())
+        return false;
+    s[l] = '\0';
+    str = fromUTF8(s, l);
+    return true;
+}
+
+bool WorldHelper::deserializeString(std::string& str, std::istream& stream)
+{
+    uint32_t l;
+    char *s;
+
+    stream.read((char *)&l, 4);
+    if (!stream.good())
+        return false;
+    s = new char[l + 1];
+    stream.read(s, l);
+    if (!stream.good())
+        return false;
+    s[l] = '\0';
+    str = std::string(s, l);
+    return true;
 }
 }
 }

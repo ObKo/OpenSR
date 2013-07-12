@@ -17,6 +17,13 @@
 */
 
 #include "Types.h"
+#include <libRanger.h>
+#include "WorldHelper.h"
+
+namespace
+{
+const uint32_t PLANET_STYLE_SIGNATURE = *((uint32_t*)"SRPS");
+}
 
 namespace Rangers
 {
@@ -45,6 +52,78 @@ PlanetStyle::PlanetStyle()
     ringOffsetY = 0.0f;
     ringBgOffsetX = 0.0f;
     ringBgOffsetY = 0.0f;
+}
+
+bool PlanetStyle::serialize(std::ostream& stream) const
+{
+    stream.write((const char *)&PLANET_STYLE_SIGNATURE, 4);
+
+    if (!WorldHelper::serializeString(id, stream))
+        return false;
+    if (!WorldHelper::serializeString(texture, stream))
+        return false;
+    if (!WorldHelper::serializeString(cloud, stream))
+        return false;
+
+    stream.write((const char *)&hasCloud, sizeof(bool));
+    stream.write((const char *)&speed, sizeof(float));
+    stream.write((const char *)&cloudSpeed, sizeof(float));
+
+    if (!WorldHelper::serializeString(ring, stream))
+        return false;
+    if (!WorldHelper::serializeString(ringBackground, stream))
+        return false;
+
+    stream.write((const char *)&hasRing, sizeof(bool));
+    stream.write((const char *)&hasRingBackground, sizeof(bool));
+    stream.write((const char *)&ambientColor, sizeof(int));
+    stream.write((const char *)&ringOffsetX, sizeof(float));
+    stream.write((const char *)&ringOffsetY, sizeof(float));
+    stream.write((const char *)&ringBgOffsetX, sizeof(float));
+    stream.write((const char *)&ringBgOffsetY, sizeof(float));
+
+    if (!stream.good())
+        return false;
+
+    return true;
+}
+
+bool PlanetStyle::deserialize(std::istream& stream)
+{
+    uint32_t sig;
+    stream.read((char *)&sig, 4);
+
+    if (sig != PLANET_STYLE_SIGNATURE)
+        return false;
+
+    if (!WorldHelper::deserializeString(id, stream))
+        return false;
+    if (!WorldHelper::deserializeString(texture, stream))
+        return false;
+    if (!WorldHelper::deserializeString(cloud, stream))
+        return false;
+
+    stream.read((char *)&hasCloud, sizeof(bool));
+    stream.read((char *)&speed, sizeof(float));
+    stream.read((char *)&cloudSpeed, sizeof(float));
+
+    if (!WorldHelper::deserializeString(ring, stream))
+        return false;
+    if (!WorldHelper::deserializeString(ringBackground, stream))
+        return false;
+
+    stream.read((char *)&hasRing, sizeof(bool));
+    stream.read((char *)&hasRingBackground, sizeof(bool));
+    stream.read((char *)&ambientColor, sizeof(int));
+    stream.read((char *)&ringOffsetX, sizeof(float));
+    stream.read((char *)&ringOffsetY, sizeof(float));
+    stream.read((char *)&ringBgOffsetX, sizeof(float));
+    stream.read((char *)&ringBgOffsetY, sizeof(float));
+
+    if (!stream.good())
+        return false;
+
+    return true;
 }
 }
 }

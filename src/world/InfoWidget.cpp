@@ -258,7 +258,7 @@ void InfoWidget::showPlanet(boost::shared_ptr<Planet> planet)
     clear();
 
     m_caption->setText(_(planet->name(), "OpenSR-World"));
-    m_iconSprite = boost::shared_ptr<Sprite>(new Sprite(PlanetManager::instance().getPlanetImage(planet->style(), m_iconSize)));
+    m_iconSprite = boost::shared_ptr<Sprite>(new Sprite(WorldManager::instance().planetManager().getPlanetImage(planet->style(), m_iconSize)));
     addChild(m_iconSprite);
 
     boost::shared_ptr<Label> l = boost::shared_ptr<Label>(new Label(_("Radius:", "OpenSR-World") + L" ", m_font));
@@ -345,7 +345,7 @@ void InfoWidget::showSystem(boost::shared_ptr<PlanetarySystem> system)
             m_infoWidget.push_back(l);
             addChild(l);
 
-            boost::shared_ptr<Texture> planetImage = PlanetManager::instance().getPlanetImage(planet->style(), std::max(SMALL_ICON_SIZE, m_font->size()));
+            boost::shared_ptr<Texture> planetImage = WorldManager::instance().planetManager().getPlanetImage(planet->style(), std::max(SMALL_ICON_SIZE, m_font->size()));
 
             if (planetImage)
             {
