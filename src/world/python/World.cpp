@@ -52,7 +52,7 @@ void exportInteractionContext();
 void exportShipContext();
 void exportLandContext();
 void exportPlanetManager();
-void exportSpaceInfoWidget();
+void exportInfoWidget();
 void exportSystemPlanetWidget();
 void exportSystemWidget();
 void exportTypes();
@@ -94,7 +94,7 @@ BOOST_PYTHON_MODULE(_World)
     Rangers::World::Python::exportShipContext();
     Rangers::World::Python::exportLandContext();
     Rangers::World::Python::exportPlanetManager();
-    Rangers::World::Python::exportSpaceInfoWidget();
+    Rangers::World::Python::exportInfoWidget();
     Rangers::World::Python::exportSystemPlanetWidget();
     Rangers::World::Python::exportSystemWidget();
     Rangers::World::Python::exportTypes();

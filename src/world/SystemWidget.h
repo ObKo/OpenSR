@@ -30,7 +30,7 @@ class Button;
 
 namespace World
 {
-class SpaceInfoWidget;
+class InfoWidget;
 class SystemPlanetWidget;
 class SolarSystem;
 
@@ -64,7 +64,7 @@ private:
     float m_yOffset;
     MoveDirection m_moveDirection;
 
-    boost::shared_ptr<SpaceInfoWidget> m_infoWidget;
+    boost::shared_ptr<InfoWidget> m_infoWidget;
     boost::shared_ptr<SystemWidgetListener> m_actionListener;
     boost::shared_ptr<WidgetNode> m_node;
 

@@ -21,7 +21,7 @@
 #include "SolarSystem.h"
 #include "Planet.h"
 #include "WorldManager.h"
-#include "SpaceInfoWidget.h"
+#include "InfoWidget.h"
 
 #include <cmath>
 #include <OpenSR/AnimatedSprite.h>
@@ -107,7 +107,7 @@ SystemWidget::SystemWidget(boost::shared_ptr<SolarSystem> system): Widget(),
     m_node = boost::shared_ptr<WidgetNode>(new WidgetNode());
     addWidget(m_node);
 
-    m_infoWidget = boost::shared_ptr<SpaceInfoWidget>(new SpaceInfoWidget(WorldManager::instance().styleManager().infoWidgetStyle()));
+    m_infoWidget = boost::shared_ptr<InfoWidget>(new InfoWidget(WorldManager::instance().styleManager().infoWidgetStyle()));
     m_infoWidget->setPosition(10, 10);
     m_infoWidget->setVisible(false);
     addWidget(m_infoWidget);

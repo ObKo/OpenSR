@@ -22,7 +22,7 @@ SET(WORLD_SOURCES
     ShipContext.cpp
     SolarSystem.cpp
     SpaceBase.cpp
-    SpaceInfoWidget.cpp
+    InfoWidget.cpp
     SpaceObject.cpp
     SystemObject.cpp
     SystemPlanetWidget.cpp

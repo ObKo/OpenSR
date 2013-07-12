@@ -16,8 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WORLD_SPACEINFOWIDGET_H
-#define WORLD_SPACEINFOWIDGET_H
+#ifndef WORLD_INFOWIDGET_H
+#define WORLD_INFOWIDGET_H
 
 #include <OpenSR/Widget.h>
 #include <OpenSR/Types.h>
@@ -32,10 +32,10 @@ namespace World
 struct InfoWidgetStyle;
 class Planet;
 class SolarSystem;
-class SpaceInfoWidget: public Widget
+class InfoWidget: public Widget
 {
 public:
-    SpaceInfoWidget(const InfoWidgetStyle& style);
+    InfoWidget(const InfoWidgetStyle& style);
 
     void clear();
 
@@ -70,4 +70,4 @@ private:
 }
 }
 
-#endif // WORLD_SPACEINFOWIDGET_H
+#endif

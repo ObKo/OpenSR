@@ -17,7 +17,7 @@
 */
 
 #include <boost/python.hpp>
-#include "SpaceInfoWidget.h"
+#include "InfoWidget.h"
 
 #include "WorldStyleManager.h"
 
@@ -29,25 +29,25 @@ namespace World
 {
 namespace Python
 {
-struct SpaceInfoWidgetWrap : SpaceInfoWidget, boost::python::wrapper<SpaceInfoWidget>
+struct InfoWidgetWrap : InfoWidget, boost::python::wrapper<InfoWidget>
 {
-    SpaceInfoWidgetWrap(const InfoWidgetStyle &style)
-        : SpaceInfoWidget(style)
+    InfoWidgetWrap(const InfoWidgetStyle &style)
+        : InfoWidget(style)
     {
     }
-    RANGERS_PYTHON_WRAP_WIDGET(SpaceInfoWidget)
+    RANGERS_PYTHON_WRAP_WIDGET(InfoWidget)
 };
 
-void exportSpaceInfoWidget()
+void exportInfoWidget()
 {
     using namespace boost::python;
 
-    class_<SpaceInfoWidgetWrap, bases<Widget>, boost::shared_ptr<SpaceInfoWidgetWrap>, boost::noncopyable> c("SpaceInfoWidget", init<const InfoWidgetStyle&>());
-    c.def("clear", &SpaceInfoWidget::clear)
-    .def("showPlanet", &SpaceInfoWidget::showPlanet)
-    .def("showSystem", &SpaceInfoWidget::showSystem);
-    RANGERS_PYTHON_WRAP_WIDGET_DEF(SpaceInfoWidget, SpaceInfoWidgetWrap, c);
-    register_ptr_to_python<boost::shared_ptr<SpaceInfoWidget> >();
+    class_<InfoWidgetWrap, bases<Widget>, boost::shared_ptr<InfoWidgetWrap>, boost::noncopyable> c("InfoWidget", init<const InfoWidgetStyle&>());
+    c.def("clear", &InfoWidget::clear)
+    .def("showPlanet", &InfoWidget::showPlanet)
+    .def("showSystem", &InfoWidget::showSystem);
+    RANGERS_PYTHON_WRAP_WIDGET_DEF(InfoWidget, InfoWidgetWrap, c);
+    register_ptr_to_python<boost::shared_ptr<InfoWidget> >();
 }
 }
 }

@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "SpaceInfoWidget.h"
+#include "InfoWidget.h"
 
 #include <OpenSR/Sprite.h>
 #include <OpenSR/NinePatch.h>
@@ -40,7 +40,7 @@ namespace Rangers
 {
 namespace World
 {
-SpaceInfoWidget::SpaceInfoWidget(const InfoWidgetStyle& style): Widget(), m_type(INFO_NONE)
+InfoWidget::InfoWidget(const InfoWidgetStyle& style): Widget(), m_type(INFO_NONE)
 {
     if (style.background.type == ResourceDescriptor::SPRITE)
     {
@@ -90,7 +90,7 @@ SpaceInfoWidget::SpaceInfoWidget(const InfoWidgetStyle& style): Widget(), m_type
     }
 }
 
-void SpaceInfoWidget::processMain()
+void InfoWidget::processMain()
 {
     Widget::processMain();
 
@@ -154,12 +154,12 @@ void SpaceInfoWidget::processMain()
     }
 }
 
-Rect SpaceInfoWidget::getBoundingRect() const
+Rect InfoWidget::getBoundingRect() const
 {
     return Rect();
 }
 
-void SpaceInfoWidget::draw() const
+void InfoWidget::draw() const
 {
     if (!prepareDraw())
         return;
@@ -182,7 +182,7 @@ void SpaceInfoWidget::draw() const
     endDraw();
 }
 
-void SpaceInfoWidget::clear()
+void InfoWidget::clear()
 {
     m_caption->setText(L"");
     if (m_iconSprite)
@@ -206,7 +206,7 @@ void SpaceInfoWidget::clear()
     markToUpdate();
 }
 
-void SpaceInfoWidget::showPlanet(boost::shared_ptr<Planet> planet)
+void InfoWidget::showPlanet(boost::shared_ptr<Planet> planet)
 {
     m_caption->setText(_(planet->name(), "OpenSR-World"));
     m_iconSprite = boost::shared_ptr<Sprite>(new Sprite(PlanetManager::instance().getPlanetImage(planet->style(), m_iconSize)));
@@ -280,7 +280,7 @@ void SpaceInfoWidget::showPlanet(boost::shared_ptr<Planet> planet)
     markToUpdate();
 }
 
-void SpaceInfoWidget::showSystem(boost::shared_ptr<SolarSystem> system)
+void InfoWidget::showSystem(boost::shared_ptr<SolarSystem> system)
 {
     m_caption->setText(_(system->name(), "OpenSR-World"));
     m_type = INFO_SYSTEM;
