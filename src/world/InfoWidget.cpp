@@ -36,6 +36,11 @@
 #include "HabitablePlanet.h"
 #include "WorldManager.h"
 
+namespace
+{
+const int SMALL_ICON_SIZE = 16;
+}
+
 namespace Rangers
 {
 namespace World
@@ -137,11 +142,21 @@ void InfoWidget::processMain()
         m_iconSprite->setGeometry(m_iconSize, m_iconSize);
     }
 
+    if (m_raceIconSprite)
+    {
+        m_raceIconSprite->setPosition(m_raceIconPosition.x + (width() - m_bgSprite->normalWidth()) - m_raceIconSprite->width() / 2,
+                                      m_raceIconPosition.y + (height() - m_bgSprite->normalHeight()) - m_raceIconSprite->height() / 2);
+    }
+
     if (m_type == INFO_PLANET)
     {
         for (int i = 0; i < m_infoWidget.size(); i++)
         {
             boost::shared_ptr<Label> l = boost::dynamic_pointer_cast<Label>(m_infoWidget.at(i));
+
+            if (l->needUpdate())
+                l->processMain();
+
             if ((i % 2) == 0)
             {
                 l->setPosition(realContentRect.x + int(realContentRect.width) / 2 - l->width(), realContentRect.y + (m_font->size() + 5) * (i / 2));
@@ -149,6 +164,38 @@ void InfoWidget::processMain()
             else
             {
                 l->setPosition(realContentRect.x + int(realContentRect.width) / 2, realContentRect.y + (m_font->size() + 5) * (i / 2));
+            }
+        }
+    }
+    else if (m_type == INFO_SYSTEM)
+    {
+        int line = 0;
+        int sprites = 0;
+
+        int lineHeight = std::max(SMALL_ICON_SIZE, m_font->size()) + 5;
+        int labelOffset = std::max(SMALL_ICON_SIZE - m_font->size(), 0);
+        int iconWidth = std::max(SMALL_ICON_SIZE, m_font->size()) + 5;
+        for (int i = 0; i < m_infoWidget.size(); i++)
+        {
+            if (boost::shared_ptr<Label> l = boost::dynamic_pointer_cast<Label>(m_infoWidget.at(i)))
+            {
+                if (l->needUpdate())
+                    l->processMain();
+
+                l->setPosition(realContentRect.x + int(realContentRect.width) / 2 - l->width(),
+                               realContentRect.y + lineHeight * line + labelOffset);
+
+                line++;
+                sprites = 0;
+            }
+            else if (boost::shared_ptr<Sprite> s = boost::dynamic_pointer_cast<Sprite>(m_infoWidget.at(i)))
+            {
+                if (s->needUpdate())
+                    s->processMain();
+
+                s->setPosition(realContentRect.x + int(realContentRect.width) / 2 + sprites * iconWidth + 5,
+                               realContentRect.y + lineHeight * (line - 1));
+                sprites++;
             }
         }
     }
@@ -208,11 +255,13 @@ void InfoWidget::clear()
 
 void InfoWidget::showPlanet(boost::shared_ptr<Planet> planet)
 {
+    clear();
+
     m_caption->setText(_(planet->name(), "OpenSR-World"));
     m_iconSprite = boost::shared_ptr<Sprite>(new Sprite(PlanetManager::instance().getPlanetImage(planet->style(), m_iconSize)));
     addChild(m_iconSprite);
 
-    boost::shared_ptr<Label> l = boost::shared_ptr<Label>(new Label(_("Radius:", "OpenSR-World") + L" "));
+    boost::shared_ptr<Label> l = boost::shared_ptr<Label>(new Label(_("Radius:", "OpenSR-World") + L" ", m_font));
     l->setColor(m_labelColor);
     m_infoWidget.push_back(l);
     addChild(l);
@@ -220,7 +269,7 @@ void InfoWidget::showPlanet(boost::shared_ptr<Planet> planet)
     std::wostringstream str;
     str << planet->radius();
 
-    l = boost::shared_ptr<Label>(new Label(str.str()));
+    l = boost::shared_ptr<Label>(new Label(str.str(), m_font));
     l->setColor(m_color);
     m_infoWidget.push_back(l);
     addChild(l);
@@ -229,7 +278,7 @@ void InfoWidget::showPlanet(boost::shared_ptr<Planet> planet)
 
     if (boost::shared_ptr<HabitablePlanet> hPlanet = boost::dynamic_pointer_cast<HabitablePlanet>(planet))
     {
-        l = boost::shared_ptr<Label>(new Label(_("Population:", "OpenSR-World") + L" "));
+        l = boost::shared_ptr<Label>(new Label(_("Population:", "OpenSR-World") + L" ", m_font));
         l->setColor(m_labelColor);
         m_infoWidget.push_back(l);
         addChild(l);
@@ -237,13 +286,13 @@ void InfoWidget::showPlanet(boost::shared_ptr<Planet> planet)
         str.clear();
         str << hPlanet->population() / (1000 * 1000);
 
-        l = boost::shared_ptr<Label>(new Label(str.str()));
+        l = boost::shared_ptr<Label>(new Label(str.str(), m_font));
         l->setColor(m_color);
         m_infoWidget.push_back(l);
         addChild(l);
         labelCount++;
 
-        l = boost::shared_ptr<Label>(new Label(_("Race:", "OpenSR-World") + L" "));
+        l = boost::shared_ptr<Label>(new Label(_("Race:", "OpenSR-World") + L" ", m_font));
         l->setColor(m_labelColor);
         m_infoWidget.push_back(l);
         addChild(l);
@@ -252,12 +301,12 @@ void InfoWidget::showPlanet(boost::shared_ptr<Planet> planet)
 
         if (race)
         {
-            l = boost::shared_ptr<Label>(new Label(_(race->name, "OpenSR-World")));
+            l = boost::shared_ptr<Label>(new Label(_(race->name, "OpenSR-World"), m_font));
             m_raceIconSprite = boost::shared_ptr<Sprite>(new Sprite(race->icon));
             addChild(m_raceIconSprite);
         }
         else
-            l = boost::shared_ptr<Label>(new Label(_("Unknown", "OpenSR-World")));
+            l = boost::shared_ptr<Label>(new Label(_("Unknown", "OpenSR-World"), m_font));
 
         l->setColor(m_color);
         m_infoWidget.push_back(l);
@@ -270,19 +319,65 @@ void InfoWidget::showPlanet(boost::shared_ptr<Planet> planet)
     int deltaHeight = requiredHeight - m_contentRect.height;
     setHeight(std::max(deltaHeight + m_bgSprite->normalHeight(), m_bgSprite->normalHeight()));
 
-    if (m_raceIconSprite)
-    {
-        m_raceIconSprite->setPosition(m_raceIconPosition.x + (width() - m_bgSprite->normalWidth()) - m_raceIconSprite->width() / 2,
-                                      m_raceIconPosition.y + (height() - m_bgSprite->normalHeight()) - m_raceIconSprite->height() / 2);
-    }
-
     m_type = INFO_PLANET;
     markToUpdate();
 }
 
 void InfoWidget::showSystem(boost::shared_ptr<SolarSystem> system)
 {
+    clear();
+
+    if (!system)
+        return;
+
     m_caption->setText(_(system->name(), "OpenSR-World"));
+
+    std::list<boost::shared_ptr<SystemObject> > objects = system->systemObjects();
+    std::list<boost::shared_ptr<SystemObject> >::const_iterator end = objects.end();
+    int objectCount = 0;
+    for (std::list<boost::shared_ptr<SystemObject> >::const_iterator i = objects.begin(); i != end; ++i)
+    {
+        boost::shared_ptr<SystemObject> object = *i;
+        if (boost::shared_ptr<Planet> planet = boost::dynamic_pointer_cast<Planet>(object))
+        {
+            boost::shared_ptr<Label> l = boost::shared_ptr<Label>(new Label(_(planet->name(), "OpenSR-World"), m_font));
+            l->setColor(m_color);
+            m_infoWidget.push_back(l);
+            addChild(l);
+
+            boost::shared_ptr<Texture> planetImage = PlanetManager::instance().getPlanetImage(planet->style(), std::max(SMALL_ICON_SIZE, m_font->size()));
+
+            if (planetImage)
+            {
+                boost::shared_ptr<Sprite> s = boost::shared_ptr<Sprite>(new Sprite(planetImage));
+                m_infoWidget.push_back(s);
+                addChild(s);
+            }
+
+
+            if (boost::shared_ptr<HabitablePlanet> hPlanet = boost::dynamic_pointer_cast<HabitablePlanet>(planet))
+            {
+                boost::shared_ptr<Race> race = WorldManager::instance().raceManager().race(hPlanet->race());
+                if (race)
+                {
+                    boost::shared_ptr<Sprite> s = boost::shared_ptr<Sprite>(new Sprite(race->icon));
+                    float aspect = std::min(s->height() / SMALL_ICON_SIZE, s->height() / m_font->size());
+                    s->setGeometry(int(s->width() / aspect), int(s->height() / aspect));
+                    m_infoWidget.push_back(s);
+                    addChild(s);
+                }
+            }
+
+            objectCount++;
+        }
+    }
+
+    int lineHeight = std::max(SMALL_ICON_SIZE, m_font->size()) + 5;
+
+    int requiredHeight = lineHeight * objectCount;
+    int deltaHeight = requiredHeight - m_contentRect.height;
+    setHeight(std::max(deltaHeight + m_bgSprite->normalHeight(), m_bgSprite->normalHeight()));
+
     m_type = INFO_SYSTEM;
     markToUpdate();
 }

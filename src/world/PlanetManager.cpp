@@ -67,7 +67,7 @@ boost::shared_ptr<Texture> PlanetManager::getPlanetImage(boost::shared_ptr<Plane
     if (!style)
         return boost::shared_ptr<Texture>();
 
-    uint64_t cacheID = (textHash32(style->id) << 32) | (size & 0xffffffff);
+    uint64_t cacheID = (uint64_t(textHash32(style->id)) << 32) | (size & 0xffffffff);
 
     std::map<uint64_t, boost::shared_ptr<Texture> >::const_iterator cache = m_imageCache.find(cacheID);
     if (cache != m_imageCache.end())
