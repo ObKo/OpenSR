@@ -38,9 +38,13 @@ public:
 
     virtual ~Widget();
 
-    virtual Rect getBoundingRect() const;
-
     void mouseMove(float x, float y);
+
+
+    //! Is widget contains point. Used in mouse tracking
+    virtual bool containsPoint(const Vector &p) const;
+    //! Widget's bounding rect, including children
+    virtual Rect boundingRect() const;
 
     virtual void mouseMove(const Vector &p);
 
@@ -57,6 +61,7 @@ public:
     int height() const;
     bool isFocused() const;
     bool isVisible() const;
+
 
     void setWidth(int width);
     void setHeight(int height);

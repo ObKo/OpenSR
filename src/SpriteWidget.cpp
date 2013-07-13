@@ -23,11 +23,11 @@
 
 namespace Rangers
 {
-SpriteWidgetPrivate::SpriteWidgetPrivate(): WidgetPrivate()
+SpriteWidgetPrivate::SpriteWidgetPrivate(): WidgetPrivate(), shape(SpriteWidget::SHAPE_RECT)
 {
 }
 
-SpriteWidget::SpriteWidget(boost::shared_ptr<Sprite> sprite): 
+SpriteWidget::SpriteWidget(boost::shared_ptr<Sprite> sprite):
     Widget(*(new SpriteWidgetPrivate()))
 {
     RANGERS_D(SpriteWidget);
@@ -70,5 +70,40 @@ void SpriteWidget::processLogic(int dt)
     {
         d->sprite->processLogic(dt);
     }
+}
+
+bool SpriteWidget::containsPoint(const Vector &p) const
+{
+    RANGERS_D(const SpriteWidget);
+    float x, y, size;
+    switch (d->shape)
+    {
+    case SHAPE_RECT:
+        if ((p.x >= 0) && (p.x <= d->width) && (p.y >= 0) && (p.y <= d->height))
+            return true;
+        break;
+    case SHAPE_CIRCLE:
+        size = std::min(d->width, d->height) / 2.0;
+        x = p.x - d->width / 2.0f;
+        y = p.y - d->height / 2.0f;
+        return (x * x) + (y * y) < size * size;
+        break;
+    default:
+        return false;
+        break;
+    }
+    return false;
+}
+
+SpriteWidget::Shape SpriteWidget::shape() const
+{
+    RANGERS_D(const SpriteWidget);
+    return d->shape;
+}
+
+void SpriteWidget::setShape(SpriteWidget::Shape s)
+{
+    RANGERS_D(SpriteWidget);
+    d->shape = s;
 }
 }

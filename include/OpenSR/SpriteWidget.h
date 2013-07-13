@@ -29,11 +29,18 @@ class RANGERS_ENGINE_API SpriteWidget: public Widget
 {
     RANGERS_DECLARE_PRIVATE(SpriteWidget)
 public:
+    //! Shape of sprite for mouse handling.
+    enum Shape {SHAPE_NONE, SHAPE_RECT, SHAPE_CIRCLE};
+
     SpriteWidget(boost::shared_ptr<Sprite> sprite);
 
     virtual void draw() const;
     virtual void processMain();
     virtual void processLogic(int dt);
+    virtual bool containsPoint(const Vector &p) const;
+
+    Shape shape() const;
+    void setShape(Shape s);
 
 protected:
     SpriteWidget(SpriteWidgetPrivate &p);

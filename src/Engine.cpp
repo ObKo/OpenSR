@@ -773,10 +773,9 @@ void Engine::EnginePrivate::processMouseMove(const SDL_MouseMotionEvent &e)
     RANGERS_Q(Engine);
     for (std::list<boost::shared_ptr<Widget> >::iterator i = widgets.begin(); i != widgets.end(); i++)
     {
-        Rect bb = (*i)->mapToGlobal((*i)->getBoundingRect());
         Vector globalMouse = mainNode->mapFromScreen(Vector(e.x, e.y));
         boost::shared_ptr<Widget> currentW = currentWidget.lock();
-        if ((*i)->isVisible() && bb.contains(globalMouse))
+        if ((*i)->isVisible() && (*i)->containsPoint((*i)->mapFromGlobal(globalMouse)))
         {
             if ((*i) != currentW)
             {
@@ -785,7 +784,7 @@ void Engine::EnginePrivate::processMouseMove(const SDL_MouseMotionEvent &e)
                 currentWidget = boost::weak_ptr<Widget>(*i);
                 (*i)->action(Action(currentW, Action::MOUSE_ENTER));
             }
-            Vector mouse = (*i)->mapFromParent(globalMouse);
+            Vector mouse = (*i)->mapFromGlobal(globalMouse);
             (*i)->mouseMove(mouse.x, mouse.y);
             return;
         }

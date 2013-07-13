@@ -40,6 +40,8 @@ public:
     virtual void processMain();
     virtual void processLogic(int dt);
 
+    virtual bool containsPoint(const Vector &p) const;
+
     boost::shared_ptr<Planet> planet() const;
 
 private:

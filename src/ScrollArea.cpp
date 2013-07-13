@@ -52,7 +52,7 @@ void ScrollAreaPrivate::ScrollAreaListener::actionPerformed(const Action &action
         {
             uint8_t key = boost::get<uint8_t>(action.argument());
             //TODO: Port wheel to SDL 2.0
-			/*if (key == SDL_BUTTON_WHEELUP)
+            /*if (key == SDL_BUTTON_WHEELUP)
             {
                 if (d->vSize > 1.0f)
                 {
@@ -104,7 +104,7 @@ void ScrollAreaPrivate::ScrollAreaListener::actionPerformed(const Action &action
                         scroll = d->vScroll;
                     if (d->scrollDrag == ScrollAreaPrivate::HORIZONTAL)
                         scroll = d->hScroll;
-                    if (scroll && (!scroll->mapToParent(scroll->getBoundingRect()).contains(d->lastMousePosition)))
+                    if (scroll && (!scroll->containsPoint(scroll->mapFromParent(d->lastMousePosition))))
                     {
                         scroll->action(Action(scroll, Action::MOUSE_LEAVE));
                         d->currentChild = boost::weak_ptr<Widget>();
@@ -243,7 +243,7 @@ void ScrollArea::processMain()
     d->hSize = 0.0f;
     if (d->node)
     {
-        Rect nodeBB = d->node->getBoundingRect();
+        Rect nodeBB = Rect();// d->node->getBoundingRect();
         if (nodeBB.width > d->width)
         {
             d->hSize = nodeBB.width / d->width;
@@ -307,20 +307,28 @@ void ScrollArea::setHeight(float height)
     markToUpdate();
 }
 
-Rect ScrollArea::getBoundingRect() const
+bool ScrollArea::containsPoint(const Vector &p) const
 {
     RANGERS_D(const ScrollArea);
     if (d->scrollDrag == ScrollAreaPrivate::NONE)
     {
-        return Rect(0, 0, d->width, d->height);
+        return Widget::containsPoint(p);
     }
     else
     {
-        //FIXME: dirty hack
-        Vector topLeft = mapFromScreen(Vector(0, 0));
-        Vector bottomRight = mapFromScreen(Vector(Engine::instance().screenWidth(), Engine::instance().screenHeight()));
-        return Rect(std::min(topLeft.x, bottomRight.x), std::min(topLeft.y, bottomRight.y), std::max(topLeft.x, bottomRight.x), std::max(topLeft.y, bottomRight.y));
+        return true;
     }
+}
+
+Rect ScrollArea::boundingRect() const
+{
+    RANGERS_D(const ScrollArea);
+    Rect r;
+    r.x = 0.0f;
+    r.y = 0.0f;
+    r.width = d->width;
+    r.height = d->height;
+    return r;
 }
 
 void ScrollArea::mouseMove(const Vector &p)
@@ -353,8 +361,7 @@ void ScrollArea::mouseMove(const Vector &p)
             {
                 if ((*i) == d->node)
                     continue;
-                Rect bb = (*i)->mapToParent((*i)->getBoundingRect());
-                if (bb.contains(p))
+                if ((*i)->containsPoint((*i)->mapFromParent(p)))
                 {
                     if ((*i) != currentChild)
                     {

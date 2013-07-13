@@ -71,13 +71,21 @@
     { \
         return class::preferredHeight(); \
     } \
-    virtual Rect getBoundingRect() const \
+    virtual bool containsPoint(const Vector &p) const \
     { \
-        RANGERS_PYTHON_WRAP_FUNC(class, getBoundingRect); \
+        RANGERS_PYTHON_WRAP_FUNC(class, containsPoint, p); \
     } \
-    Rect getBoundingRect_() const \
+    bool containsPoint_(const Vector &p) const \
     { \
-        return class::getBoundingRect(); \
+        return class::containsPoint(p); \
+    } \
+    virtual Rect boundingRect() const \
+    { \
+        RANGERS_PYTHON_WRAP_FUNC(class, boundingRect); \
+    } \
+    Rect boundingRect_() const \
+    { \
+        return class::boundingRect(); \
     } \
     virtual void mouseMove(const Vector &p) \
     { \
@@ -115,7 +123,8 @@
     .def("preferredWidth", &class::preferredWidth, &wrap::preferredWidth_) \
     .def("focus", &class::focus, &wrap::focus_) \
     .def("unFocus", &class::unFocus, &wrap::unFocus_) \
-    .def("getBoundingRect", &class::getBoundingRect, &wrap::getBoundingRect_) \
+    .def("containsPoint", &class::containsPoint, &wrap::containsPoint_) \
+    .def("boundingRect", &class::boundingRect, &wrap::boundingRect_) \
     .def("mouseMove", (void (class::*)(const Vector&))&class::mouseMove, &wrap::mouseMove_);
 
 #endif

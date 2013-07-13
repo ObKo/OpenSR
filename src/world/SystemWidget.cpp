@@ -221,6 +221,7 @@ void SystemWidget::setSystem(boost::shared_ptr< PlanetarySystem > system)
     m_starWidget = boost::shared_ptr<SpriteWidget>(new SpriteWidget(boost::shared_ptr<Sprite>(new AnimatedSprite(L"DATA/Star/Star00.gai"))));
     m_starWidget->setPosition(-m_starWidget->width() / 2, -m_starWidget->height() / 2);
     m_starWidget->addListener(m_actionListener);
+    m_starWidget->setShape(SpriteWidget::SHAPE_CIRCLE);
     m_node->addWidget(m_starWidget);
 
     m_bgSprite = boost::shared_ptr<Sprite>(new AnimatedSprite(L"DATA/BGObj/bg00.gai"));

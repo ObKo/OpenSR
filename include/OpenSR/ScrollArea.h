@@ -35,7 +35,8 @@ public:
 
     virtual void draw() const;
     virtual void processMain();
-    virtual Rect getBoundingRect() const;
+    virtual bool containsPoint(const Vector &p) const;
+    virtual Rect boundingRect() const;
 
     void setWidth(float width);
     void setHeight(float height);

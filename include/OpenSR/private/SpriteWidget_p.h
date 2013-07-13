@@ -21,6 +21,8 @@
 
 #include "Widget_p.h"
 
+#include "OpenSR/SpriteWidget.h"
+
 namespace Rangers
 {
 class SpriteWidgetPrivate: public WidgetPrivate
@@ -28,7 +30,9 @@ class SpriteWidgetPrivate: public WidgetPrivate
     RANGERS_DECLARE_PUBLIC(SpriteWidget)
 public:
     SpriteWidgetPrivate();
+
     boost::shared_ptr<Sprite> sprite;
+    SpriteWidget::Shape shape;
 };
 }
 

@@ -166,4 +166,4 @@ class SettingsWidget(OpenSR.Engine.ScriptWidget, OpenSR.Engine.ActionListener):
             self.saveSettings()
             
         self.dispose()
-        engine.addWidget(OpenSR.ORC.StartMenu.StartMenuWidget(None))
+        engine.addWidget(OpenSR.ORC.StartMenu.StartMenuWidget())

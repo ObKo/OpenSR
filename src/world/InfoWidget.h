@@ -45,7 +45,7 @@ public:
     virtual void processMain();
     virtual void draw() const;
 
-    virtual Rect getBoundingRect() const;
+    virtual bool containsPoint(const Vector &p) const;
 
 private:
     enum InfoType {INFO_NONE, INFO_SYSTEM, INFO_PLANET};

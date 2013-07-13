@@ -70,8 +70,7 @@ void Widget::mouseMove(const Vector& p)
     lock();
     for (std::list<boost::shared_ptr<Widget> >::reverse_iterator i = d->childWidgets.rbegin(); i != d->childWidgets.rend(); ++i)
     {
-        Rect bb = (*i)->mapToParent((*i)->getBoundingRect());
-        if ((*i)->isVisible() && bb.contains(p))
+        if ((*i)->isVisible() && (*i)->containsPoint((*i)->mapFromParent(p)))
         {
             boost::shared_ptr<Widget> child = d->currentChild.lock();
             if ((*i) != child)
@@ -92,24 +91,35 @@ void Widget::mouseMove(const Vector& p)
     unlock();
 }
 
-Rect Widget::getBoundingRect() const
+bool Widget::containsPoint(const Vector &p) const
 {
     RANGERS_D(const Widget);
-    lock();
-    Rect r;
-    r.x = 0;
-    r.y = 0;
-    r.width = d->width;
-    r.height = d->height;
+
+    if ((p.x >= 0) && (p.x <= d->width) && (p.y >= 0) && (p.y <= d->height))
+        return true;
+
     for (std::list<boost::shared_ptr<Widget> >::const_reverse_iterator i = d->childWidgets.rbegin(); i != d->childWidgets.rend(); i++)
     {
-        Rect childRect = (*i)->getBoundingRect();
-        Vector position = (*i)->position();
-        childRect.x += position.x;
-        childRect.y += position.y;
-        r += childRect;
+        if ((*i)->containsPoint((*i)->mapFromParent(p)))
+            return true;
     }
-    unlock();
+}
+
+Rect Widget::boundingRect() const
+{
+    RANGERS_D(const Widget);
+
+    Rect r;
+
+    r.x = 0.0f;
+    r.y = 0.0f;
+    r.width = d->width;
+    r.height = d->height;
+
+    for (std::list<boost::shared_ptr<Widget> >::const_reverse_iterator i = d->childWidgets.rbegin(); i != d->childWidgets.rend(); i++)
+    {
+        r += (*i)->mapToParent((*i)->boundingRect());
+    }
     return r;
 }
 

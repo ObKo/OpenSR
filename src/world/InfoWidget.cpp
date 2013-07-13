@@ -201,9 +201,9 @@ void InfoWidget::processMain()
     }
 }
 
-Rect InfoWidget::getBoundingRect() const
+bool InfoWidget::containsPoint(const Vector &p) const
 {
-    return Rect();
+    return false;
 }
 
 void InfoWidget::draw() const

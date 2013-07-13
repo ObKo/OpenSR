@@ -248,6 +248,11 @@ void SystemPlanetWidget::draw() const
     endDraw();
 }
 
+bool SystemPlanetWidget::containsPoint(const Vector& p) const
+{
+    return ((p.x - m_size / 2.0f) * (p.x - m_size / 2.0f) + (p.y - m_size / 2.0f) * (p.y - m_size / 2.0f)) < (m_size * m_size / 4.0f);
+}
+
 void SystemPlanetWidget::processMain()
 {
     if (m_useShader && !m_shader.isLinked() && !m_shader.isInvalid())
