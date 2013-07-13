@@ -40,7 +40,10 @@ public:
     virtual bool containsPoint(const Vector &p) const;
 
     Shape shape() const;
+    boost::shared_ptr<Sprite> sprite() const;
+
     void setShape(Shape s);
+    void setSprite(boost::shared_ptr<Sprite> sprite);
 
 protected:
     SpriteWidget(SpriteWidgetPrivate &p);

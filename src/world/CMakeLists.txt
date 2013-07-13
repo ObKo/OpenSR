@@ -37,6 +37,7 @@ SET(WORLD_SOURCES
     SystemWidget.cpp
     WorldStyleManager.cpp
     RaceManager.cpp
+    SystemManager.cpp
 )
 
 INCLUDE_DIRECTORIES(

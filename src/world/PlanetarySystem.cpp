@@ -17,8 +17,11 @@
 */
 
 #include "PlanetarySystem.h"
+
 #include "WorldHelper.h"
 #include "WorldManager.h"
+
+#include <libRanger.h>
 
 namespace Rangers
 {
@@ -40,19 +43,11 @@ bool PlanetarySystem::deserialize(std::istream& stream)
     uint32_t objectCount;
 
     stream.read((char *)&m_position, sizeof(Point));
-    stream.read((char *)&nameLength, sizeof(uint32_t));
-
-    if (!stream.good())
+    if (!WorldHelper::deserializeString(m_name, stream))
         return false;
 
-    char *str = new char[nameLength + 1];
-    stream.read(str, nameLength);
-    str[nameLength] = '\0';
-
-    m_name = std::string(str);
-    delete[] str;
-
     stream.read((char *)&m_size, sizeof(float));
+    stream.read((char *)&m_style, sizeof(uint32_t));
 
     stream.read((char *)&objectCount, sizeof(uint32_t));
     if (!stream.good())
@@ -94,9 +89,13 @@ bool PlanetarySystem::serialize(std::ostream& stream) const
     uint32_t objectCount = m_systemObjects.size();
 
     stream.write((const char *)&m_position, sizeof(Point));
-    stream.write((const char *)&nameLength, sizeof(uint32_t));
-    stream.write(m_name.c_str(), m_name.length());
+
+    if (!WorldHelper::serializeString(m_name, stream))
+        return false;
+
     stream.write((const char *)&m_size, sizeof(float));
+    stream.write((const char *)&m_style, sizeof(uint32_t));
+
     stream.write((const char *)&objectCount, sizeof(uint32_t));
 
     std::list<boost::shared_ptr<SystemObject> >::const_iterator end = m_systemObjects.end();
@@ -170,6 +169,21 @@ void PlanetarySystem::turn(float progress)
     {
         (*i)->turn(progress);
     }
+}
+
+void PlanetarySystem::setStyle(uint32_t style)
+{
+    m_style = style;
+}
+
+void PlanetarySystem::setStyle(const std::string& style)
+{
+    m_style = textHash32(style);
+}
+
+uint32_t PlanetarySystem::style() const
+{
+    return m_style;
 }
 }
 }

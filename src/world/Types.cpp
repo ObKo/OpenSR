@@ -23,6 +23,7 @@
 namespace
 {
 const uint32_t PLANET_STYLE_SIGNATURE = *((uint32_t*)"SRPS");
+const uint32_t SYSTEM_STYLE_SIGNATURE = *((uint32_t*)"SRSS");
 }
 
 namespace Rangers
@@ -119,6 +120,57 @@ bool PlanetStyle::deserialize(std::istream& stream)
     stream.read((char *)&ringOffsetY, sizeof(float));
     stream.read((char *)&ringBgOffsetX, sizeof(float));
     stream.read((char *)&ringBgOffsetY, sizeof(float));
+
+    if (!stream.good())
+        return false;
+
+    return true;
+}
+
+SystemStyle::SystemStyle()
+{
+    animated = false;
+}
+
+bool SystemStyle::serialize(std::ostream& stream) const
+{
+    stream.write((const char *)&SYSTEM_STYLE_SIGNATURE, 4);
+
+    if (!WorldHelper::serializeString(id, stream))
+        return false;
+    if (!WorldHelper::serializeString(star, stream))
+        return false;
+
+    stream.write((const char *)&animated, sizeof(bool));
+    stream.write((const char *)&color, sizeof(uint32_t));
+
+    if (!WorldHelper::serializeString(background, stream))
+        return false;
+
+    if (!stream.good())
+        return false;
+
+    return true;
+}
+
+bool SystemStyle::deserialize(std::istream& stream)
+{
+    uint32_t sig;
+    stream.read((char *)&sig, 4);
+
+    if (sig != SYSTEM_STYLE_SIGNATURE)
+        return false;
+
+    if (!WorldHelper::deserializeString(id, stream))
+        return false;
+    if (!WorldHelper::deserializeString(star, stream))
+        return false;
+
+    stream.read((char *)&animated, sizeof(bool));
+    stream.read((char *)&color, sizeof(uint32_t));
+
+    if (!WorldHelper::deserializeString(background, stream))
+        return false;
 
     if (!stream.good())
         return false;

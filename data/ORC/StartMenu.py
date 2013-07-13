@@ -111,7 +111,7 @@ class StartMenuWidget(OpenSR.Engine.ScriptWidget, OpenSR.Engine.ActionListener):
             world.addGenHook(OpenSR.World.DefaultWorldGen.DefaultWorldGen())
             world.generateWorld()
             
-            widget = OpenSR.World.SystemWidget(world.currentPlanetarySystem())
+            widget = OpenSR.World.SystemWidget(world.systemManager().currentSystem())
             
             engine.addWidget(widget)
             self.dispose();

@@ -1,0 +1,8 @@
+{
+   "solar" : {
+      "star": "DATA/Star/Star00.gai", 
+      "star-animated": true,
+      "star-color" : "#FFFFFF",
+      "background" : "DATA/BGObj/bg00.gai"
+   }
+}

@@ -20,6 +20,7 @@
 #define WORLD_TYPES_H
 
 #include <string>
+#include <stdint.h>
 
 namespace Rangers
 {
@@ -50,6 +51,20 @@ struct PlanetStyle
     int ambientColor;
     float ringOffsetX, ringOffsetY;
     float ringBgOffsetX, ringBgOffsetY;
+
+    bool serialize(std::ostream &stream) const;
+    bool deserialize(std::istream &stream);
+};
+
+struct SystemStyle
+{
+    SystemStyle();
+
+    std::string id;
+    std::wstring star;
+    bool animated;
+    uint32_t color;
+    std::wstring background;
 
     bool serialize(std::ostream &stream) const;
     bool deserialize(std::istream &stream);

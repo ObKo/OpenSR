@@ -106,4 +106,16 @@ void SpriteWidget::setShape(SpriteWidget::Shape s)
     RANGERS_D(SpriteWidget);
     d->shape = s;
 }
+
+boost::shared_ptr<Sprite> SpriteWidget::sprite() const
+{
+    RANGERS_D(const SpriteWidget);
+    return d->sprite;
+}
+
+void SpriteWidget::setSprite(boost::shared_ptr<Sprite> sprite)
+{
+    RANGERS_D(SpriteWidget);
+    d->sprite = sprite;
+}
 }

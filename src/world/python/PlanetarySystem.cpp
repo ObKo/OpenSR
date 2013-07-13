@@ -50,6 +50,9 @@ void exportPlanetarySystem()
     .def("removeObject", &PlanetarySystem::removeObject)
     .def("setName", &PlanetarySystem::setName)
     .def("setPosition", &PlanetarySystem::setPosition)
+    .def("setStyle", (void (PlanetarySystem::*)(const std::string&))&PlanetarySystem::setStyle)
+    .def("setStyle", (void (PlanetarySystem::*)(uint32_t))&PlanetarySystem::setStyle)
+    .def("style", &PlanetarySystem::style)
     .def("setSize", &PlanetarySystem::setSize);
     WORLD_PYTHON_WRAP_WORLD_OBJECT_DEF(PlanetarySystem, PlanetarySystemWrap, c);
     register_ptr_to_python<boost::shared_ptr<PlanetarySystem> >();

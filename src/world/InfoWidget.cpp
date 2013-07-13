@@ -26,6 +26,7 @@
 #include <OpenSR/Engine.h>
 #include <OpenSR/Log.h>
 #include <OpenSR/Utils.h>
+#include <OpenSR/AnimatedSprite.h>
 #include <libintl.h>
 #include <libRanger.h>
 
@@ -331,6 +332,16 @@ void InfoWidget::showSystem(boost::shared_ptr<PlanetarySystem> system)
         return;
 
     m_caption->setText(_(system->name(), "OpenSR-World"));
+
+    //FIXME: AnimatedSprite/Sprite
+    boost::shared_ptr<SystemStyle> style = WorldManager::instance().systemManager().style(system->style());
+
+    if (style)
+    {
+        m_iconSprite = boost::shared_ptr<Sprite>(new AnimatedSprite(style->star));
+        m_iconSprite->setColor((style->color << 8) | 0xff);
+        addChild(m_iconSprite);
+    }
 
     std::list<boost::shared_ptr<SystemObject> > objects = system->systemObjects();
     std::list<boost::shared_ptr<SystemObject> >::const_iterator end = objects.end();

@@ -5,6 +5,7 @@ class DefaultWorldGen(OpenSR.World.WorldGenHook):
     def generate(self):
         world = OpenSR.World.WorldManager.instance()
         races = world.raceManager()
+        systemManager = world.systemManager()
         
         system = OpenSR.World.PlanetarySystem()
         planet = OpenSR.World.DesertPlanet()
@@ -13,6 +14,7 @@ class DefaultWorldGen(OpenSR.World.WorldGenHook):
         
         system.setName("Solar")
         system.setSize(2000.0)
+        system.setStyle("solar")
         system.setPosition(OpenSR.World.Point(0.0, 0.0))
 
         planet.setOrbit(600.0)
@@ -43,9 +45,11 @@ class DefaultWorldGen(OpenSR.World.WorldGenHook):
         system.addObject(hPlanet)
         system.addObject(sPlanet)
         
+        systemManager.addSystem(system)
+        
         world.addObject(system)
         world.addObject(planet)
         world.addObject(sPlanet)
         world.addObject(hPlanet)
         
-        world.setCurrentPlanetarySystem(system)
+        systemManager.setCurrentSystem(system)

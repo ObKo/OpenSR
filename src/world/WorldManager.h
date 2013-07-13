@@ -28,6 +28,7 @@
 #include "WorldStyleManager.h"
 #include "RaceManager.h"
 #include "PlanetManager.h"
+#include "SystemManager.h"
 
 namespace Rangers
 {
@@ -56,16 +57,13 @@ public:
 
     boost::shared_ptr<WorldObject> getObject(uint64_t id);
 
-    std::list<boost::shared_ptr<PlanetarySystem> > planetarySystems() const;
-    boost::shared_ptr<PlanetarySystem> currentPlanetarySystem() const;
-    void setCurrentPlanetarySystem(boost::shared_ptr<PlanetarySystem> system);
-
     void addGenHook(boost::shared_ptr<WorldGenHook> hook);
     void removeGenHook(boost::shared_ptr<WorldGenHook> hook);
 
     WorldStyleManager& styleManager();
     RaceManager& raceManager();
     PlanetManager& planetManager();
+    SystemManager& systemManager();
 
     static uint64_t getNextId();
 
@@ -73,12 +71,11 @@ private:
     void getSavingList(boost::shared_ptr<WorldObject> object, std::list<boost::shared_ptr<WorldObject> >& list, std::map<uint64_t, boost::shared_ptr<WorldObject> >& remainingObjects) const;
 
     std::map<uint64_t, boost::shared_ptr<WorldObject> > m_objects;
-    std::list<boost::shared_ptr<PlanetarySystem> > m_systems;
-    boost::shared_ptr<PlanetarySystem> m_currentSystem;
 
     WorldStyleManager m_styleManager;
     RaceManager m_raceManager;
     PlanetManager m_planetManager;
+    SystemManager m_systemManager;
 
     std::list<boost::shared_ptr<WorldGenHook> > m_genHooks;
 

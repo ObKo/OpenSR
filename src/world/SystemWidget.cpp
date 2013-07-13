@@ -218,15 +218,29 @@ void SystemWidget::setSystem(boost::shared_ptr< PlanetarySystem > system)
         }
     }
 
-    m_starWidget = boost::shared_ptr<SpriteWidget>(new SpriteWidget(boost::shared_ptr<Sprite>(new AnimatedSprite(L"DATA/Star/Star00.gai"))));
-    m_starWidget->setPosition(-m_starWidget->width() / 2, -m_starWidget->height() / 2);
-    m_starWidget->addListener(m_actionListener);
-    m_starWidget->setShape(SpriteWidget::SHAPE_CIRCLE);
-    m_node->addWidget(m_starWidget);
+    boost::shared_ptr<SystemStyle> style = WorldManager::instance().systemManager().style(m_system->style());
 
-    m_bgSprite = boost::shared_ptr<Sprite>(new AnimatedSprite(L"DATA/BGObj/bg00.gai"));
-    m_bgSprite->setPosition(m_xOffset / 10 - (m_bgSprite->width() - width()) / 2, m_yOffset / 10 - (m_bgSprite->height() - height()) / 2);
-    addChild(m_bgSprite);
+    if (style)
+    {
+        Sprite *s;
+        if (style->animated)
+            s = new AnimatedSprite(style->star);
+        else
+            s = new Sprite(style->star);
+
+        s->setColor((style->color << 8) | 0xff);
+        m_starWidget = boost::shared_ptr<SpriteWidget>(new SpriteWidget(boost::shared_ptr<Sprite>(s)));
+
+        m_starWidget->setPosition(-m_starWidget->width() / 2, -m_starWidget->height() / 2);
+        m_starWidget->addListener(m_actionListener);
+        m_starWidget->setShape(SpriteWidget::SHAPE_CIRCLE);
+        m_node->addWidget(m_starWidget);
+
+        //FIXME: AnimatedSprite/Sprite
+        m_bgSprite = boost::shared_ptr<Sprite>(new AnimatedSprite(style->background));
+        m_bgSprite->setPosition(m_xOffset / 10 - (m_bgSprite->width() - width()) / 2, m_yOffset / 10 - (m_bgSprite->height() - height()) / 2);
+        addChild(m_bgSprite);
+    }
 }
 
 boost::shared_ptr< PlanetarySystem > SystemWidget::system() const

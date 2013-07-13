@@ -44,16 +44,14 @@ void exportWorldManager()
     .def("generateWorld", &WorldManager::generateWorld)
     .def("saveWorld", &WorldManager::saveWorld)
     .def("getObject", &WorldManager::getObject)
-    .def("planetarySystems", &WorldManager::planetarySystems)
-    .def("currentPlanetarySystem", &WorldManager::currentPlanetarySystem)
-    .def("setCurrentPlanetarySystem", &WorldManager::setCurrentPlanetarySystem)
     .def("addGenHook", &WorldManager::addGenHook)
     .def("removeGenHook", &WorldManager::removeGenHook)
     .def("calcTurn", &WorldManager::calcTurn)
     .def("finishTurn", &WorldManager::finishTurn)
     .def("styleManager", &WorldManager::styleManager, return_value_policy<reference_existing_object>())
     .def("raceManager", &WorldManager::raceManager, return_value_policy<reference_existing_object>())
-    .def("planetManager", &WorldManager::planetManager, return_value_policy<reference_existing_object>());
+    .def("planetManager", &WorldManager::planetManager, return_value_policy<reference_existing_object>())
+    .def("systemManager", &WorldManager::systemManager, return_value_policy<reference_existing_object>());
 }
 }
 }

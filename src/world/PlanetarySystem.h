@@ -37,6 +37,7 @@ public:
     Point position() const;
     std::list< boost::shared_ptr<SystemObject> > systemObjects() const;
     float size() const;
+    uint32_t style() const;
 
     void addObject(boost::shared_ptr<SystemObject> object);
     void removeObject(boost::shared_ptr<SystemObject> object);
@@ -44,6 +45,8 @@ public:
     void setName(const std::string& name);
     void setPosition(const Point& point);
     void setSize(float size);
+    void setStyle(uint32_t style);
+    void setStyle(const std::string& style);
 
     virtual uint32_t type() const;
     virtual bool serialize(std::ostream &stream) const;
@@ -56,6 +59,7 @@ protected:
     std::string m_name;
     std::list< boost::shared_ptr<SystemObject> > m_systemObjects;
     float m_size;
+    uint32_t m_style;
 };
 }
 }

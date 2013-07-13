@@ -88,23 +88,6 @@ void WorldManager::generateWorld()
     }
 }
 
-std::list<boost::shared_ptr<PlanetarySystem> > WorldManager::planetarySystems() const
-{
-    return m_systems;
-}
-
-boost::shared_ptr<PlanetarySystem> WorldManager::currentPlanetarySystem() const
-{
-    return m_currentSystem;
-}
-
-void WorldManager::setCurrentPlanetarySystem(boost::shared_ptr<PlanetarySystem> system)
-{
-    std::map<uint64_t, boost::shared_ptr<WorldObject> >::iterator i = m_objects.find(system->id());
-    if (i != m_objects.end())
-        m_currentSystem = system;
-}
-
 bool WorldManager::saveWorld(const std::wstring& file) const
 {
     std::map<uint64_t, boost::shared_ptr<WorldObject> > objects = m_objects;
@@ -125,6 +108,13 @@ bool WorldManager::saveWorld(const std::wstring& file) const
 #endif
 
     if (!m_planetManager.serialize(worldFile))
+    {
+        Log::error() << "Cannot serialize PlanetManager";
+        worldFile.close();
+        return false;
+    }
+
+    if (!m_systemManager.serialize(worldFile))
     {
         Log::error() << "Cannot serialize PlanetManager";
         worldFile.close();
@@ -216,6 +206,11 @@ void WorldManager::removeGenHook(boost::shared_ptr< WorldGenHook > hook)
     if (!hook)
         return;
     m_genHooks.remove(hook);
+}
+
+SystemManager& WorldManager::systemManager()
+{
+    return m_systemManager;
 }
 }
 }
