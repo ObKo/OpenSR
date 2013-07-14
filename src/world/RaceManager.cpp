@@ -17,12 +17,18 @@
 */
 
 #include "RaceManager.h"
+#include "WorldHelper.h"
 
 #include <libRanger.h>
-#include <OpenSR/Engine.h>
 #include <OpenSR/ResourceManager.h>
 #include <OpenSR/Log.h>
 #include <OpenSR/JSONHelper.h>
+
+namespace
+{
+const uint32_t RACE_MANAGER_SIGNATURE = *((uint32_t*)"SRRM");
+const uint32_t RACE_SIGNATURE = *((uint32_t*)"SRRS");
+}
 
 namespace Rangers
 {
@@ -30,12 +36,13 @@ namespace World
 {
 RaceManager::RaceManager()
 {
-    std::wstring filePath = fromUTF8(Engine::instance().properties()->get<std::string>("world.races", "World/Races.json").c_str());
-    loadRaces(filePath);
+
 }
 
 void RaceManager::loadRaces(const std::wstring& file)
 {
+    m_races.clear();
+
     //TODO: relations
     boost::shared_ptr<std::istream> json = ResourceManager::instance().getFileStream(file);
 
@@ -113,6 +120,131 @@ void RaceManager::loadRaces(const std::wstring& file)
         first->relations[second->id] = relation;
         second->relations[first->id] = relation;
     }
+}
+
+bool Race::deserialize(std::istream& stream)
+{
+    uint32_t sig;
+    stream.read((char*)&sig, 4);
+
+    if (sig != RACE_SIGNATURE)
+        return false;
+
+    stream.read((char*)&id, 4);
+
+    if (!stream.good())
+        return false;
+
+    if (!WorldHelper::deserializeString(name, stream))
+        return false;
+
+    if (!WorldHelper::deserializeTextureRegion(icon, stream))
+        return false;
+
+    stream.read((char *)&invader, sizeof(bool));
+
+    if (!stream.good())
+        return false;
+
+    uint32_t relationCount;
+    stream.read((char *)&relationCount, 4);
+
+    for (int i = 0; i < relationCount; i++)
+    {
+        uint32_t id;
+        float relation;
+
+        stream.read((char *)&id, 4);
+        //FIXME: sizeof(float) === 4?
+        stream.read((char *)&relation, 4);
+
+        if (!stream.good())
+            return false;
+
+        relations[id] = relation;
+    }
+    return true;
+}
+
+bool Race::serialize(std::ostream& stream) const
+{
+    stream.write((const char*)&RACE_SIGNATURE, 4);
+    stream.write((const char*)&id, 4);
+
+    if (!stream.good())
+        return false;
+
+    if (!WorldHelper::serializeString(name, stream))
+        return false;
+
+    if (!WorldHelper::serializeTextureRegion(icon, stream))
+        return false;
+
+    stream.write((const char *)&invader, sizeof(bool));
+
+    uint32_t relationCount = relations.size();
+    stream.write((const char *)&relationCount, 4);
+
+    if (!stream.good())
+        return false;
+
+    std::map<uint32_t, float>::const_iterator end = relations.end();
+    for (std::map<uint32_t, float>::const_iterator i = relations.begin(); i != end; ++i)
+    {
+        uint32_t id = (*i).first;
+        float relation = (*i).second;
+
+        stream.write((const char *)&id, 4);
+        //FIXME: sizeof(float) === 4?
+        stream.write((const char *)&relation, 4);
+
+        if (!stream.good())
+            return false;
+    }
+    return true;
+}
+
+bool RaceManager::deserialize(std::istream& stream)
+{
+    uint32_t size, sig;
+
+    stream.read((char*)&sig, 4);
+
+    if (sig != RACE_MANAGER_SIGNATURE)
+        return false;
+
+    stream.read((char*)&size, 4);
+
+    if (!stream.good())
+        return false;
+
+    for (int i = 0; i < size; i++)
+    {
+        boost::shared_ptr<Race> r = boost::shared_ptr<Race>(new Race());
+        if (!r->deserialize(stream))
+            return false;
+
+        m_races[r->id] = r;
+    }
+    return true;
+}
+
+bool RaceManager::serialize(std::ostream& stream) const
+{
+    uint32_t size = m_races.size();
+    stream.write((const char*)&RACE_MANAGER_SIGNATURE, 4);
+    stream.write((const char*)&size, 4);
+
+    if (!stream.good())
+        return false;
+
+    std::map<uint32_t, boost::shared_ptr<Race> >::const_iterator end = m_races.end();
+    for (std::map<uint32_t, boost::shared_ptr<Race> >::const_iterator i = m_races.begin(); i != end; ++i)
+    {
+        if (!(*i).second->serialize(stream))
+            return false;
+    }
+    return true;
 }
 
 boost::shared_ptr<Race> RaceManager::race(uint32_t id) const

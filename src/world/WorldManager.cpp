@@ -21,6 +21,8 @@
 #include "PlanetarySystem.h"
 #include "WorldGenHook.h"
 
+#include <OpenSR/Engine.h>
+
 #include <fstream>
 #include <libRanger.h>
 #include <OpenSR/Log.h>
@@ -81,6 +83,19 @@ PlanetManager& WorldManager::planetManager()
 
 void WorldManager::generateWorld()
 {
+    std::wstring worldRaces = fromUTF8(Engine::instance().properties()->get<std::string>("world.races", "World/Races.json").c_str());
+    std::wstring worldSystemStyles = fromUTF8(Engine::instance().properties()->get<std::string>("world.systemStyles", "World/SystemStyles.json").c_str());
+    std::wstring worldPlanetStyles = fromUTF8(Engine::instance().properties()->get<std::string>("world.planetStyles", "World/PlanetStyles.json").c_str());
+
+    if (!worldRaces.empty())
+        m_raceManager.loadRaces(worldRaces);
+
+    if (!worldSystemStyles.empty())
+        m_systemManager.loadStyles(worldSystemStyles);
+
+    if (!worldPlanetStyles.empty())
+        m_planetManager.loadStyles(worldPlanetStyles);
+
     std::list<boost::shared_ptr<WorldGenHook> >::const_iterator end = m_genHooks.end();
     for (std::list<boost::shared_ptr<WorldGenHook> >::const_iterator i = m_genHooks.begin(); i != end; ++i)
     {
@@ -116,7 +131,14 @@ bool WorldManager::saveWorld(const std::wstring& file) const
 
     if (!m_systemManager.serialize(worldFile))
     {
-        Log::error() << "Cannot serialize PlanetManager";
+        Log::error() << "Cannot serialize SystemManager";
+        worldFile.close();
+        return false;
+    }
+    
+    if (!m_raceManager.serialize(worldFile))
+    {
+        Log::error() << "Cannot serialize RaceManager";
         worldFile.close();
         return false;
     }

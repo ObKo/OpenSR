@@ -33,6 +33,9 @@ struct Race
     TextureRegionDescriptor icon;
     bool invader;
     std::map<uint32_t, float> relations;
+
+    bool serialize(std::ostream &stream) const;
+    bool deserialize(std::istream &stream);
 };
 
 class RaceManager
@@ -44,6 +47,9 @@ public:
 
     boost::shared_ptr<Race> race(uint32_t id) const;
     boost::shared_ptr<Race> race(const std::string& id) const;
+
+    bool serialize(std::ostream &stream) const;
+    bool deserialize(std::istream &stream);
 
 private:
     std::map<uint32_t, boost::shared_ptr<Race> > m_races;

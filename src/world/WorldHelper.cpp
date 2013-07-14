@@ -48,6 +48,12 @@
 #include "Types.h"
 #include "Weapon.h"
 #include "WorldObject.h"
+#include <OpenSR/Types.h>
+
+namespace
+{
+const uint32_t TEXTURE_REGION_SIGNATURE = *((uint32_t*)"SRTR");
+}
 
 namespace Rangers
 {
@@ -184,6 +190,58 @@ bool WorldHelper::deserializeString(std::string& str, std::istream& stream)
         return false;
     s[l] = '\0';
     str = std::string(s, l);
+    return true;
+}
+
+bool WorldHelper::deserializeTextureRegion(TextureRegionDescriptor& region, std::istream& stream)
+{
+    int32_t x, y, width, height;
+    uint32_t sig;
+
+    stream.read((char *)&sig, 4);
+
+    if (sig != TEXTURE_REGION_SIGNATURE)
+        return false;
+
+    if (!deserializeString(region.texture, stream))
+        return false;
+
+    stream.read((char*)&x, 4);
+    stream.read((char*)&y, 4);
+    stream.read((char*)&width, 4);
+    stream.read((char*)&height, 4);
+
+    if (!stream.good())
+        return false;
+
+    region.x = x;
+    region.y = y;
+    region.width = width;
+    region.height = height;
+
+    return true;
+}
+
+bool WorldHelper::serializeTextureRegion(const TextureRegionDescriptor& region, std::ostream& stream)
+{
+    int32_t x = region.x, y = region.y, width = region.width, height = region.height;
+
+    stream.write((const char *)&TEXTURE_REGION_SIGNATURE, 4);
+
+    if (!stream.good())
+        return false;
+
+    if (!serializeString(region.texture, stream))
+        return false;
+
+    stream.write((const char*)&x, 4);
+    stream.write((const char*)&y, 4);
+    stream.write((const char*)&width, 4);
+    stream.write((const char*)&height, 4);
+
+    if (!stream.good())
+        return false;
+
     return true;
 }
 }

@@ -37,9 +37,7 @@ namespace World
 {
 PlanetManager::PlanetManager()
 {
-    std::wstring stylesPath = fromUTF8(Engine::instance().properties()->get<std::string>("world.planetStyles", "World/PlanetStyles.json").c_str());
-    if (!stylesPath.empty())
-        loadStyles(stylesPath);
+
 }
 
 PlanetManager::PlanetManager(const PlanetManager& other)
@@ -49,6 +47,8 @@ PlanetManager::PlanetManager(const PlanetManager& other)
 
 bool PlanetManager::deserialize(std::istream& stream)
 {
+    m_styles.clear();
+
     uint32_t sig;
     stream.read((char*)&sig, 4);
 
@@ -60,9 +60,11 @@ bool PlanetManager::deserialize(std::istream& stream)
 
     for (int i = 0; i < count; i++)
     {
-        PlanetStyle style;
-        if (!style.deserialize(stream))
+        boost::shared_ptr<PlanetStyle> style = boost::shared_ptr<PlanetStyle>(new PlanetStyle());
+        if (!style->deserialize(stream))
             return false;
+
+        m_styles[textHash32(style->id)] = style;
     }
 }
 
@@ -229,6 +231,8 @@ boost::shared_ptr<PlanetStyle> PlanetManager::style(uint32_t id)
 
 void PlanetManager::loadStyles(const std::wstring& styleFile)
 {
+    m_styles.clear();
+
     boost::shared_ptr<std::istream> json = ResourceManager::instance().getFileStream(styleFile);
     if (!json)
         return;

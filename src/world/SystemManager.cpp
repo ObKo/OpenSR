@@ -22,7 +22,6 @@
 #include <OpenSR/ResourceManager.h>
 #include <OpenSR/Log.h>
 #include <OpenSR/JSONHelper.h>
-#include <OpenSR/Engine.h>
 #include <OpenSR/Texture.h>
 #include <json/value.h>
 
@@ -37,9 +36,7 @@ namespace World
 {
 SystemManager::SystemManager()
 {
-    std::wstring stylesPath = fromUTF8(Engine::instance().properties()->get<std::string>("world.systemStyles", "World/SystemStyles.json").c_str());
-    if (!stylesPath.empty())
-        loadStyles(stylesPath);
+
 }
 
 SystemManager::SystemManager(const SystemManager& other)
@@ -49,6 +46,8 @@ SystemManager::SystemManager(const SystemManager& other)
 
 bool SystemManager::deserialize(std::istream& stream)
 {
+    m_styles.clear();
+
     uint32_t sig;
     stream.read((char*)&sig, 4);
 
@@ -60,10 +59,12 @@ bool SystemManager::deserialize(std::istream& stream)
 
     for (int i = 0; i < count; i++)
     {
-        SystemStyle style;
-        if (!style.deserialize(stream))
+        boost::shared_ptr<SystemStyle> style = boost::shared_ptr<SystemStyle>(new SystemStyle());
+        if (!style->deserialize(stream))
             return false;
+        m_styles[textHash32(style->id)] = style;
     }
+    return true;
 }
 
 bool SystemManager::serialize(std::ostream& stream) const
@@ -98,6 +99,8 @@ boost::shared_ptr<SystemStyle> SystemManager::style(uint32_t id)
 
 void SystemManager::loadStyles(const std::wstring& styleFile)
 {
+    m_styles.clear();
+
     boost::shared_ptr<std::istream> json = ResourceManager::instance().getFileStream(styleFile);
     if (!json)
         return;
