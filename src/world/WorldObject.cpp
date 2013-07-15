@@ -20,6 +20,11 @@
 #include "WorldHelper.h"
 #include "WorldManager.h"
 
+namespace
+{
+const uint32_t WORLD_OBJECT_SIGNATURE = *((uint32_t*)"SRWO");
+}
+
 namespace Rangers
 {
 namespace World
@@ -35,7 +40,7 @@ bool WorldObject::deserialize(std::istream& stream)
     uint32_t classType;
     uint32_t sig;
     stream.read((char *)&sig, 4);
-    if (sig != *((uint32_t*)"OSRW"))
+    if (sig != WORLD_OBJECT_SIGNATURE)
         return false;
 
     stream.read((char *)&classType, 4);
@@ -57,8 +62,7 @@ uint64_t WorldObject::id() const
 bool WorldObject::serialize(std::ostream& stream) const
 {
     uint32_t classType = type();
-    uint32_t sig = *((uint32_t*)"OSRW");
-    stream.write((const char *)&sig, 4);
+    stream.write((const char *)&WORLD_OBJECT_SIGNATURE, 4);
     stream.write((const char *)&classType, 4);
     stream.write((const char *)&m_objectID, 8);
     if (!stream.good())

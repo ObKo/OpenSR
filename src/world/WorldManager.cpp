@@ -28,6 +28,11 @@
 #include <OpenSR/Log.h>
 #include <OpenSR/PythonBindings.h>
 
+namespace
+{
+const uint32_t SAVE_FILE_SIGNATURE = *((uint32_t*)"SRSF");
+}
+
 namespace Rangers
 {
 namespace World
@@ -121,24 +126,33 @@ bool WorldManager::saveWorld(const std::wstring& file) const
 #else
     worldFile.open(toLocal(file).c_str());
 #endif
+    
+    worldFile.write((const char*)&SAVE_FILE_SIGNATURE, 4);
+    
+    if(!worldFile.good())
+    {
+        Log::error() << "Cannot save world";
+        worldFile.close();
+        return false;
+    }
 
     if (!m_planetManager.serialize(worldFile))
     {
-        Log::error() << "Cannot serialize PlanetManager";
+        Log::error() << "Cannot save PlanetManager";
         worldFile.close();
         return false;
     }
 
     if (!m_systemManager.serialize(worldFile))
     {
-        Log::error() << "Cannot serialize SystemManager";
+        Log::error() << "Cannot save SystemManager";
         worldFile.close();
         return false;
     }
     
     if (!m_raceManager.serialize(worldFile))
     {
-        Log::error() << "Cannot serialize RaceManager";
+        Log::error() << "Cannot save RaceManager";
         worldFile.close();
         return false;
     }
@@ -148,11 +162,68 @@ bool WorldManager::saveWorld(const std::wstring& file) const
     {
         if (!(*i)->serialize(worldFile))
         {
-            Log::error() << "Cannot serialize world!";
+            Log::error() << "Cannot save world objects";
             worldFile.close();
             return false;
         }
     }
+
+    worldFile.close();
+    return true;
+}
+
+
+bool WorldManager::loadWorld(const std::wstring& file)
+{
+    std::ifstream worldFile;
+
+#if defined(WIN32) && defined(_MSC_VER)
+    worldFile.open(file);
+#else
+    worldFile.open(toLocal(file).c_str());
+#endif
+    
+    uint32_t sig;
+    worldFile.read((char*)&sig, 4);
+    
+    if((!worldFile.good()) || (sig != SAVE_FILE_SIGNATURE))
+    {
+        Log::error() << "Cannot load world";
+        worldFile.close();
+        return false;
+    }
+
+    if (!m_planetManager.deserialize(worldFile))
+    {
+        Log::error() << "Cannot load PlanetManager";
+        worldFile.close();
+        return false;
+    }
+
+    if (!m_systemManager.deserialize(worldFile))
+    {
+        Log::error() << "Cannot load SystemManager";
+        worldFile.close();
+        return false;
+    }
+    
+    if (!m_raceManager.deserialize(worldFile))
+    {
+        Log::error() << "Cannot load RaceManager";
+        worldFile.close();
+        return false;
+    }
+
+    /*std::list<boost::shared_ptr<WorldObject> >::const_iterator end = savingList.end();
+    for (std::list<boost::shared_ptr<WorldObject> >::const_iterator i = savingList.begin(); i != end; ++i)
+    {
+        if (!(*i)->serialize(worldFile))
+        {
+            Log::error() << "Cannot serialize world!";
+            worldFile.close();
+            return false;
+        }
+    }*/
 
     worldFile.close();
     return true;

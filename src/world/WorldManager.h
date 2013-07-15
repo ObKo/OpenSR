@@ -51,6 +51,7 @@ public:
 
     void generateWorld();
     bool saveWorld(const std::wstring& file) const;
+    bool loadWorld(const std::wstring& file);
 
     void calcTurn();
     void finishTurn();
