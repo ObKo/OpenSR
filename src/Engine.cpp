@@ -469,7 +469,7 @@ void Engine::init(int argc, char **argv, int w, int h, bool fullscreen)
         monoFontAA = false;
     d->monospaceFont = ResourceManager::instance().loadFont(fromLocal(monoFontStrings.at(0).c_str()), monoFontSize, monoFontAA);
 
-    setDefaultSkin(fromLocal(d->properties->get<std::string>("graphics.defaultSkin", "").c_str()));
+    setDefaultSkin(fromLocal(d->properties->get<std::string>("graphics.defaultSkin", "skin.json").c_str()));
 
     d->frames = 0;
 
