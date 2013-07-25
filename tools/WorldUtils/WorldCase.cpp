@@ -21,7 +21,7 @@
 #include "Scanner.h"
 #include "Ship.h"
 #include "ShipContext.h"
-#include "SolarSystem.h"
+#include "PlanetarySystem.h"
 #include "SpaceBase.h"
 #include "SpaceObject.h"
 #include "SystemObject.h"
@@ -55,7 +55,7 @@ int main(int argc, char **argv)
     classes.push_back("Radar");
     classes.push_back("Scanner");
     classes.push_back("Ship");
-    classes.push_back("SolarSystem");
+    classes.push_back("PlanetarySystem");
     classes.push_back("SpaceBase");
     classes.push_back("SpaceObject");
     classes.push_back("SystemObject");

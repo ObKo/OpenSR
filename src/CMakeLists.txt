@@ -108,7 +108,7 @@ SET(PRIVATE_HEADERS
     ${CMAKE_SOURCE_DIR}/include/OpenSR/private/WidgetNode_p.h
     ${CMAKE_SOURCE_DIR}/include/OpenSR/private/RadioButton_p.h
     ${CMAKE_SOURCE_DIR}/include/OpenSR/private/RadioButtonGroup_p.h
-    ${CMAKE_SOURCE_DIR}/include/OpenSR/private/TiledLine.h
+    ${CMAKE_SOURCE_DIR}/include/OpenSR/private/TiledLine_p.h
 )
 
 INCLUDE_DIRECTORIES(

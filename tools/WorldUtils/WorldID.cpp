@@ -21,7 +21,7 @@
 #include "Scanner.h"
 #include "Ship.h"
 #include "ShipContext.h"
-#include "SolarSystem.h"
+#include "PlanetarySystem.h"
 #include "SpaceBase.h"
 #include "SpaceObject.h"
 #include "SystemObject.h"
@@ -51,7 +51,7 @@ int main(int argc, char **argv)
     std::cout << "Radar: " << "0x" << std::hex << (new Radar())->type() << std::endl;
     std::cout << "Scanner: " << "0x" << std::hex << (new Scanner())->type() << std::endl;
     std::cout << "Ship: " << "0x" << std::hex << (new Ship())->type() << std::endl;
-    std::cout << "SolarSystem: " << "0x" << std::hex << (new SolarSystem())->type() << std::endl;
+    std::cout << "PlanetarySystem: " << "0x" << std::hex << (new PlanetarySystem())->type() << std::endl;
     std::cout << "SpaceBase: " << "0x" << std::hex << (new SpaceBase())->type() << std::endl;
     std::cout << "SpaceObject: " << "0x" << std::hex << (new SpaceObject())->type() << std::endl;
     std::cout << "SystemObject: " << "0x" << std::hex << (new SystemObject())->type() << std::endl;
