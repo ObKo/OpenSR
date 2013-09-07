@@ -219,15 +219,11 @@ bool WorldManager::loadWorld(const std::wstring& file)
     {
         uint32_t classType;
         //FIXME: Ugly
-        int64_t t1 = worldFile.tellg();
         worldFile.seekg(4, std::ios_base::cur);
-        int64_t t2 = worldFile.tellg();
         worldFile.read((char *)&classType, 4);
         if (worldFile.eof())
             break;
-        int64_t t3 = worldFile.tellg();
         worldFile.seekg(-8, std::ios_base::cur);
-        int64_t t4 = worldFile.tellg();
 
         if (!worldFile.good())
         {
