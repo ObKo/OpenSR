@@ -1,21 +1,22 @@
-import OpenSR.World
+from OpenSR.World import WorldManager, WorldGenHook, PlanetarySystem, DesertPlanet, \
+                         HabitablePlanet, Point
 import math
 
-class DefaultWorldGen(OpenSR.World.WorldGenHook):        
+class DefaultWorldGen(WorldGenHook):        
     def generate(self):
-        world = OpenSR.World.WorldManager.instance()
+        world = WorldManager.instance()
         races = world.raceManager()
         systemManager = world.systemManager()
         
-        system = OpenSR.World.PlanetarySystem()
-        planet = OpenSR.World.DesertPlanet()
-        sPlanet = OpenSR.World.DesertPlanet()
-        hPlanet = OpenSR.World.HabitablePlanet()
+        system = PlanetarySystem()
+        planet = DesertPlanet()
+        sPlanet = DesertPlanet()
+        hPlanet = HabitablePlanet()
         
         system.setName("Solar")
         system.setSize(2000.0)
         system.setStyle("solar")
-        system.setPosition(OpenSR.World.Point(0.0, 0.0))
+        system.setPosition(Point(0.0, 0.0))
 
         planet.setOrbit(600.0)
         planet.setRadius(50.0)

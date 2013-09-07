@@ -1,13 +1,14 @@
-import OpenSR.Engine
-import OpenSR.ORC.StartMenu
-import OpenSR.World
+from OpenSR.Engine import Engine, ResourceManager
+from OpenSR.World import WorldManager
+from OpenSR.ORC.StartMenu import StartMenuWidget
+
 import gettext
 
 _ = gettext.gettext
 gettext.textdomain('OpenSR')
 
-engine = OpenSR.Engine.Engine.instance()
-resources = OpenSR.Engine.ResourceManager.instance()
-world = OpenSR.World.WorldManager.instance()
+engine = Engine.instance()
+resources = ResourceManager.instance()
+world = WorldManager.instance()
 
-engine.addWidget(OpenSR.ORC.StartMenu.StartMenuWidget())
+engine.addWidget(StartMenuWidget())

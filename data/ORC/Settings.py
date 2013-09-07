@@ -1,22 +1,25 @@
-import OpenSR.Engine
+from OpenSR.Engine import Engine, ResourceManager, SoundManager, ScriptWidget, ActionListener, \
+                          Sprite, NinePatch, WidgetNode, Button, Label, LineEdit, CheckBox, \
+                          ScrollArea, ActionType
 import OpenSR.ORC.StartMenu
+from gettext import gettext
+
 import sys
 import math
-import gettext
 
-_ = gettext.gettext
+_ = gettext
 
-engine = OpenSR.Engine.Engine.instance()
-resources = OpenSR.Engine.ResourceManager.instance()
-sound = OpenSR.Engine.SoundManager.instance()
+engine = Engine.instance()
+resources = ResourceManager.instance()
+sound = SoundManager.instance()
 
-class SettingsWidget(OpenSR.Engine.ScriptWidget, OpenSR.Engine.ActionListener):
+class SettingsWidget(ScriptWidget, ActionListener):
    
     def __init__(self):
-        OpenSR.Engine.ScriptWidget.__init__(self)
-        OpenSR.Engine.ActionListener.__init__(self)
+        ScriptWidget.__init__(self)
+        ActionListener.__init__(self)
                 
-        self.background = OpenSR.Engine.Sprite("DATA/FormOptions2/2Bg.gi")
+        self.background = Sprite("DATA/FormOptions2/2Bg.gi")
         self.background.setWidth(engine.screenWidth())
         self.background.setHeight(engine.screenHeight()) 
         self.background.setLayer(-2)
@@ -25,62 +28,62 @@ class SettingsWidget(OpenSR.Engine.ScriptWidget, OpenSR.Engine.ActionListener):
         deltaY = engine.screenHeight() - 768
         deltaX = engine.screenWidth() - 1024
 
-        self.formBg = OpenSR.Engine.NinePatch("ORC/settings_bg.9.json")
+        self.formBg = NinePatch("ORC/settings_bg.9.json")
         self.formBg.setGeometry(self.formBg.width() + deltaX, self.formBg.height() + deltaY)
         self.formBg.setPosition(math.floor((engine.screenWidth() - self.formBg.width()) / 2) - 10, 32)
         self.formBg.setLayer(-1)
         self.addChild(self.formBg)
 
-        self.formTop = OpenSR.Engine.NinePatch("ORC/settings_top.9.json")
+        self.formTop = NinePatch("ORC/settings_top.9.json")
         self.formTop.setWidth(self.formTop.width() + deltaX)
         self.formTop.setPosition(math.floor((engine.screenWidth() - self.formTop.width()) / 2), 0)
         self.formTop.setLayer(-1)
         self.addChild(self.formTop)
 
-        self.formBottom = OpenSR.Engine.NinePatch("ORC/settings_bottom.9.json")
+        self.formBottom = NinePatch("ORC/settings_bottom.9.json")
         self.formBottom.setWidth(self.formBottom.width() + deltaX)
         self.formBottom.setPosition(math.floor((engine.screenWidth() - self.formTop.width()) / 2), engine.screenHeight() - self.formBottom.height())
         self.formBottom.setLayer(-1)
         self.addChild(self.formBottom)
 
-        self.buttonNode = OpenSR.Engine.WidgetNode()
+        self.buttonNode = WidgetNode()
         self.buttonNode.setPosition(self.formBg.position().x + 80, self.formBg.position().y + 120)
         self.addWidget(self.buttonNode)
 
-        self.spaceButton = OpenSR.Engine.Button("DATA/FormOptions2/2SpaceN.gi", "DATA/FormOptions2/2SpaceN.gi", "DATA/FormOptions2/2SpaceD.gi")
+        self.spaceButton = Button("DATA/FormOptions2/2SpaceN.gi", "DATA/FormOptions2/2SpaceN.gi", "DATA/FormOptions2/2SpaceD.gi")
         self.spaceButton.setPosition(self.formBg.position().x + 26, self.formBg.position().y + 10)
         self.addWidget(self.spaceButton)
 
-        self.okButton = OpenSR.Engine.Button("DATA/FormOptions2/2OkN.gi", "DATA/FormOptions2/2OkA.gi", "DATA/FormOptions2/2OkD.gi")
+        self.okButton = Button("DATA/FormOptions2/2OkN.gi", "DATA/FormOptions2/2OkA.gi", "DATA/FormOptions2/2OkD.gi")
         self.okButton.setPosition(self.formBottom.position().x + 608 + deltaX, self.formBottom.position().y + 22)
         self.okButton.addListener(self)
         self.okButton.setSounds("Sound/ButtonClick.wav", "Sound/ButtonLeave.WAV", "Sound/ButtonEnter.wav")
         self.addWidget(self.okButton)
 
-        self.cancelButton = OpenSR.Engine.Button("DATA/FormOptions2/2CancelN.gi", "DATA/FormOptions2/2CancelA.gi", "DATA/FormOptions2/2CancelD.gi")
+        self.cancelButton = Button("DATA/FormOptions2/2CancelN.gi", "DATA/FormOptions2/2CancelA.gi", "DATA/FormOptions2/2CancelD.gi")
         self.cancelButton.setPosition(self.formBottom.position().x + 675 + deltaX, self.formBottom.position().y + 22)
         self.cancelButton.addListener(self)
         self.cancelButton.setSounds("Sound/ButtonClick.wav", "Sound/ButtonLeave.WAV", "Sound/ButtonEnter.wav")
         self.addWidget(self.cancelButton)
 
-        self.autoButton = OpenSR.Engine.Button("DATA/FormOptions2/2AutoN.gi", "DATA/FormOptions2/2AutoA.gi", "DATA/FormOptions2/2AutoD.gi")
+        self.autoButton = Button("DATA/FormOptions2/2AutoN.gi", "DATA/FormOptions2/2AutoA.gi", "DATA/FormOptions2/2AutoD.gi")
         self.autoButton.setPosition(self.formBottom.position().x + 102, self.formBottom.position().y + 22)
         self.autoButton.setSounds("Sound/ButtonClick.wav", "Sound/ButtonLeave.WAV", "Sound/ButtonEnter.wav")
         self.addWidget(self.autoButton)
-        self.highButton = OpenSR.Engine.Button("DATA/FormOptions2/2HighN.gi", "DATA/FormOptions2/2HighA.gi", "DATA/FormOptions2/2HighD.gi")
+        self.highButton = Button("DATA/FormOptions2/2HighN.gi", "DATA/FormOptions2/2HighA.gi", "DATA/FormOptions2/2HighD.gi")
         self.highButton.setPosition(self.formBottom.position().x + 176, self.formBottom.position().y + 4)
         self.highButton.setSounds("Sound/ButtonClick.wav", "Sound/ButtonLeave.WAV", "Sound/ButtonEnter.wav")
         self.addWidget(self.highButton)
-        self.mediumButton = OpenSR.Engine.Button("DATA/FormOptions2/2MediumN.gi", "DATA/FormOptions2/2MediumA.gi", "DATA/FormOptions2/2MediumD.gi")
+        self.mediumButton = Button("DATA/FormOptions2/2MediumN.gi", "DATA/FormOptions2/2MediumA.gi", "DATA/FormOptions2/2MediumD.gi")
         self.mediumButton.setPosition(self.formBottom.position().x + 170, self.formBottom.position().y + 33)
         self.mediumButton.setSounds("Sound/ButtonClick.wav", "Sound/ButtonLeave.WAV", "Sound/ButtonEnter.wav")
         self.addWidget(self.mediumButton)
-        self.lowButton = OpenSR.Engine.Button("DATA/FormOptions2/2LowN.gi", "DATA/FormOptions2/2LowA.gi", "DATA/FormOptions2/2LowD.gi")
+        self.lowButton = Button("DATA/FormOptions2/2LowN.gi", "DATA/FormOptions2/2LowA.gi", "DATA/FormOptions2/2LowD.gi")
         self.lowButton.setPosition(self.formBottom.position().x + 161, self.formBottom.position().y + 58)
         self.lowButton.setSounds("Sound/ButtonClick.wav", "Sound/ButtonLeave.WAV", "Sound/ButtonEnter.wav")
         self.addWidget(self.lowButton)
 
-        self.graphicsButton = OpenSR.Engine.Button("DATA/FormOptions2/2PageN.gi", "DATA/FormOptions2/2PageA.gi", "DATA/FormOptions2/2PageD.gi")
+        self.graphicsButton = Button("DATA/FormOptions2/2PageN.gi", "DATA/FormOptions2/2PageA.gi", "DATA/FormOptions2/2PageD.gi")
         self.graphicsButton.setFont(engine.coreFont())
         self.graphicsButton.setText(_("Graphics"))
         self.graphicsButton.setColor(0x00C4E0FF)
@@ -88,20 +91,20 @@ class SettingsWidget(OpenSR.Engine.ScriptWidget, OpenSR.Engine.ActionListener):
         self.graphicsButton.setSounds("Sound/ButtonClick.wav", "Sound/ButtonLeave.WAV", "Sound/ButtonEnter.wav")
         self.buttonNode.addWidget(self.graphicsButton)
         
-        self.paramNode = OpenSR.Engine.WidgetNode()
+        self.paramNode = WidgetNode()
 
-        self.widthLabel = OpenSR.Engine.Label(_("Width:"))
+        self.widthLabel = Label(_("Width:"))
         self.paramNode.addChild(self.widthLabel)
-        self.widthEdit = OpenSR.Engine.LineEdit(engine.defaultSkin().lineEditStyle)
+        self.widthEdit = LineEdit(engine.defaultSkin().lineEditStyle)
         self.paramNode.addWidget(self.widthEdit)
-        self.heightLabel = OpenSR.Engine.Label(_("Height:"))
+        self.heightLabel = Label(_("Height:"))
         self.paramNode.addChild(self.heightLabel)
-        self.heightEdit = OpenSR.Engine.LineEdit(engine.defaultSkin().lineEditStyle)
+        self.heightEdit = LineEdit(engine.defaultSkin().lineEditStyle)
         self.paramNode.addWidget(self.heightEdit)
 
-        self.fullscreen = OpenSR.Engine.CheckBox(engine.defaultSkin().checkBoxStyle, _("Fullscreen mode"))
+        self.fullscreen = CheckBox(engine.defaultSkin().checkBoxStyle, _("Fullscreen mode"))
         self.paramNode.addWidget(self.fullscreen)
-        self.useShaders = OpenSR.Engine.CheckBox(engine.defaultSkin().checkBoxStyle, _("Use shaders"))
+        self.useShaders = CheckBox(engine.defaultSkin().checkBoxStyle, _("Use shaders"))
         self.paramNode.addWidget(self.useShaders)
 
         self.widthEdit.setWidth(50)
@@ -113,7 +116,7 @@ class SettingsWidget(OpenSR.Engine.ScriptWidget, OpenSR.Engine.ActionListener):
         self.fullscreen.setPosition(5, self.widthEdit.height() + 15)
         self.useShaders.setPosition(5, self.fullscreen.position().y + self.fullscreen.height() + 5)
 
-        self.scroll = OpenSR.Engine.ScrollArea(engine.defaultSkin().scrollStyle, self.paramNode)
+        self.scroll = ScrollArea(engine.defaultSkin().scrollStyle, self.paramNode)
         self.scroll.setPosition(self.formBg.position().x + 257, self.formBg.position().y + 149)
         self.scroll.setGeometry(450 + deltaX, 440 + deltaY)
         self.addWidget(self.scroll)
@@ -159,7 +162,7 @@ class SettingsWidget(OpenSR.Engine.ScriptWidget, OpenSR.Engine.ActionListener):
         self.okButton.removeListener(self)
         
     def actionPerformed(self, action):
-        if action.type() != OpenSR.Engine.ActionType.BUTTON_CLICKED:
+        if action.type() != ActionType.BUTTON_CLICKED:
             return
 
         if action.source() == self.okButton:               
