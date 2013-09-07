@@ -59,9 +59,9 @@ namespace Rangers
 {
 namespace World
 {
-WorldObject* WorldHelper::objectByType(uint32_t type)
+boost::shared_ptr<WorldObject> WorldHelper::createObjectByType(uint32_t type)
 {
-    WorldObject *object;
+    WorldObject *object = 0;
     switch (type)
     {
     case TYPE_ARTIFACT:
@@ -137,7 +137,7 @@ WorldObject* WorldHelper::objectByType(uint32_t type)
         object = new WorldObject();
         break;
     }
-    return object;
+    return boost::shared_ptr<WorldObject>(object);
 }
 
 bool WorldHelper::serializeString(const std::wstring& str, std::ostream& stream)

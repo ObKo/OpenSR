@@ -20,6 +20,7 @@
 #include "WorldObject.h"
 #include "PlanetarySystem.h"
 #include "WorldGenHook.h"
+#include "WorldHelper.h"
 
 #include <OpenSR/Engine.h>
 
@@ -126,10 +127,10 @@ bool WorldManager::saveWorld(const std::wstring& file) const
 #else
     worldFile.open(toLocal(file).c_str());
 #endif
-    
+
     worldFile.write((const char*)&SAVE_FILE_SIGNATURE, 4);
-    
-    if(!worldFile.good())
+
+    if (!worldFile.good())
     {
         Log::error() << "Cannot save world";
         worldFile.close();
@@ -149,7 +150,7 @@ bool WorldManager::saveWorld(const std::wstring& file) const
         worldFile.close();
         return false;
     }
-    
+
     if (!m_raceManager.serialize(worldFile))
     {
         Log::error() << "Cannot save RaceManager";
@@ -182,11 +183,11 @@ bool WorldManager::loadWorld(const std::wstring& file)
 #else
     worldFile.open(toLocal(file).c_str());
 #endif
-    
+
     uint32_t sig;
     worldFile.read((char*)&sig, 4);
-    
-    if((!worldFile.good()) || (sig != SAVE_FILE_SIGNATURE))
+
+    if ((!worldFile.good()) || (sig != SAVE_FILE_SIGNATURE))
     {
         Log::error() << "Cannot load world";
         worldFile.close();
@@ -206,7 +207,7 @@ bool WorldManager::loadWorld(const std::wstring& file)
         worldFile.close();
         return false;
     }
-    
+
     if (!m_raceManager.deserialize(worldFile))
     {
         Log::error() << "Cannot load RaceManager";
@@ -214,16 +215,44 @@ bool WorldManager::loadWorld(const std::wstring& file)
         return false;
     }
 
-    /*std::list<boost::shared_ptr<WorldObject> >::const_iterator end = savingList.end();
-    for (std::list<boost::shared_ptr<WorldObject> >::const_iterator i = savingList.begin(); i != end; ++i)
+    while (worldFile.good())
     {
-        if (!(*i)->serialize(worldFile))
+        uint32_t classType;
+        //FIXME: Ugly
+        int64_t t1 = worldFile.tellg();
+        worldFile.seekg(4, std::ios_base::cur);
+        int64_t t2 = worldFile.tellg();
+        worldFile.read((char *)&classType, 4);
+        if (worldFile.eof())
+            break;
+        int64_t t3 = worldFile.tellg();
+        worldFile.seekg(-8, std::ios_base::cur);
+        int64_t t4 = worldFile.tellg();
+
+        if (!worldFile.good())
         {
-            Log::error() << "Cannot serialize world!";
+            Log::error() << "Cannot load world objects.";
             worldFile.close();
             return false;
         }
-    }*/
+
+        boost::shared_ptr<WorldObject> object = WorldHelper::createObjectByType(classType);
+        if ((!object) || (!object->deserialize(worldFile)))
+        {
+            Log::error() << "Cannot load world objects.";
+            worldFile.close();
+            return false;
+        }
+        addObject(object);
+        //FIXME: Quite ugly too.
+        if (object->type() == WorldHelper::TYPE_PLANETARYSYSTEM)
+        {
+            boost::shared_ptr<PlanetarySystem> system = boost::static_pointer_cast<PlanetarySystem>(object);
+            m_systemManager.addSystem(system);
+            //FIXME: Should save current system in some "game" context.
+            m_systemManager.setCurrentSystem(system);
+        }
+    }
 
     worldFile.close();
     return true;

@@ -8,6 +8,7 @@ import math
 engine = OpenSR.Engine.Engine.instance()
 resources = OpenSR.Engine.ResourceManager.instance()
 sound = OpenSR.Engine.SoundManager.instance()
+world = OpenSR.World.WorldManager.instance()
 
 class StartMenuWidget(OpenSR.Engine.ScriptWidget, OpenSR.Engine.ActionListener):
     BG_SPEED = 20.0 / 1000.0
@@ -95,6 +96,11 @@ class StartMenuWidget(OpenSR.Engine.ScriptWidget, OpenSR.Engine.ActionListener):
         
         for name in self.BUTTONS:
             self.buttons[name].removeListener(self) 
+            
+    def openGame(self):
+        widget = OpenSR.World.SystemWidget(world.systemManager().currentSystem())   
+        engine.addWidget(widget)
+        self.dispose()
         
     def actionPerformed(self, action):
         if action.type() != OpenSR.Engine.ActionType.BUTTON_CLICKED:
@@ -103,16 +109,17 @@ class StartMenuWidget(OpenSR.Engine.ScriptWidget, OpenSR.Engine.ActionListener):
         if action.source() == self.buttons['exit']:
             self.dispose()                
             engine.quit(0)
+            
         elif action.source() == self.buttons['settings']:
             self.dispose()
             engine.addWidget(OpenSR.ORC.Settings.SettingsWidget())
+            
         elif action.source() == self.buttons['newGame']:
-            world = OpenSR.World.WorldManager.instance()
             world.addGenHook(OpenSR.World.DefaultWorldGen.DefaultWorldGen())
             world.generateWorld()
-            
-            widget = OpenSR.World.SystemWidget(world.systemManager().currentSystem())
-            
-            engine.addWidget(widget)
-            self.dispose();
-            
+            world.saveWorld('test.srw')
+            self.openGame()
+        
+        elif action.source() == self.buttons['loadGame']:
+            world.loadWorld('test.srw')
+            self.openGame()

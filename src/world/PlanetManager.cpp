@@ -66,6 +66,7 @@ bool PlanetManager::deserialize(std::istream& stream)
 
         m_styles[textHash32(style->id)] = style;
     }
+    return true;
 }
 
 bool PlanetManager::serialize(std::ostream& stream) const

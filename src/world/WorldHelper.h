@@ -23,6 +23,7 @@
 
 #include <string>
 #include <iostream>
+#include <boost/shared_ptr.hpp>
 
 namespace Rangers
 {
@@ -58,7 +59,7 @@ public:
     static const uint32_t TYPE_WEAPON = 0x2ff422f6;
     static const uint32_t TYPE_WORLDOBJECT = 0x1b90a69f;
 
-    static WorldObject* objectByType(uint32_t type);
+    static boost::shared_ptr<WorldObject> createObjectByType(uint32_t type);
 
     static bool serializeTextureRegion(const TextureRegionDescriptor& region, std::ostream& stream);
     static bool deserializeTextureRegion(TextureRegionDescriptor& region, std::istream& stream);

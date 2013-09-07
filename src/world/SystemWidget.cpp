@@ -177,7 +177,8 @@ void SystemWidget::processLogic(int dt)
     default:
         break;
     }
-    m_bgSprite->setPosition(m_xOffset / 10 - (m_bgSprite->width() - width()) / 2, m_yOffset / 10 - (m_bgSprite->height() - height()) / 2);
+    if (m_bgSprite)
+        m_bgSprite->setPosition(m_xOffset / 10 - (m_bgSprite->width() - width()) / 2, m_yOffset / 10 - (m_bgSprite->height() - height()) / 2);
     m_node->setPosition(m_xOffset + width() / 2, m_yOffset + height() / 2);
 }
 
@@ -291,7 +292,8 @@ void SystemWidget::draw() const
     if (!prepareDraw())
         return;
 
-    m_bgSprite->draw();
+    if (m_bgSprite)
+        m_bgSprite->draw();
     m_node->draw();
     m_infoWidget->draw();
     m_turnButton->draw();

@@ -32,19 +32,7 @@ bool SystemObject::deserialize(std::istream& stream)
     if (!SpaceObject::deserialize(stream))
         return false;
 
-    uint32_t nameLength;
-
-    stream.read((char *)&nameLength, sizeof(uint32_t));
-
-    if (!stream.good())
-        return false;
-
-    char *str = new char[nameLength + 1];
-    stream.read(str, nameLength);
-    str[nameLength] = '\0';
-
-    m_name = std::string(str);
-    delete[] str;
+    WorldHelper::deserializeString(m_name, stream);
 
     if (!stream.good())
         return false;

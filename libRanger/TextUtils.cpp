@@ -68,12 +68,12 @@ char *convertText(const char *to, const char *from, const char *what, int srcLen
     size_t outbuflength = 4 * srcLength;
     char *pointer = result;
     char **inp = (char **)&what;
-	iconv(codec, inp, &inbuflength, &pointer, &outbuflength);
-/*#ifdef ICONV_SECOND_ARGUMENT_IS_CONST
-    iconv(codec, (const char **)inp, &inbuflength, &pointer, &outbuflength);
-#else
     iconv(codec, inp, &inbuflength, &pointer, &outbuflength);
-#endif*/
+    /*#ifdef ICONV_SECOND_ARGUMENT_IS_CONST
+        iconv(codec, (const char **)inp, &inbuflength, &pointer, &outbuflength);
+    #else
+        iconv(codec, inp, &inbuflength, &pointer, &outbuflength);
+    #endif*/
     size_t l = 4 * srcLength - outbuflength;
 
     result = (char *)realloc(result, l);
@@ -94,7 +94,7 @@ std::wstring fromCodec(const char *codec, const char *text, int length)
         return std::wstring();
 
     if (length < 0)
-        length = strlen(text) + 1;
+        length = strlen(text);
 
     int outl;
 
@@ -108,7 +108,7 @@ std::wstring fromCodec(const char *codec, const char *text, int length)
     if (!data)
         return std::wstring();
 
-    std::wstring result = std::wstring((wchar_t *)data);
+    std::wstring result = std::wstring((wchar_t *)data, length);
     free(data);
     return result;
 }
@@ -458,7 +458,7 @@ uint32_t textHash32(const std::string& s)
     std::string::const_iterator end = s.end();
     for (std::string::const_iterator i = s.begin(); i != end; i++)
     {
-        hash = hash ^(*i);
+        hash = hash ^ (*i);
         hash = hash * 16777619;
     }
     return hash;
@@ -471,18 +471,18 @@ uint32_t textHash32(const std::wstring& s)
     for (std::wstring::const_iterator i = s.begin(); i != end; i++)
     {
 #ifdef WIN32
-        hash = hash ^(((*i) >> 8) & 0xff);
+        hash = hash ^ (((*i) >> 8) & 0xff);
         hash = hash * 16777619;
-        hash = hash ^(*i) & 0xff;
+        hash = hash ^ (*i) & 0xff;
         hash = hash * 16777619;
 #else
-        hash = hash ^(((*i) >> 24) & 0xff);
+        hash = hash ^ (((*i) >> 24) & 0xff);
         hash = hash * 16777619;
-        hash = hash ^(((*i) >> 16) & 0xff);
+        hash = hash ^ (((*i) >> 16) & 0xff);
         hash = hash * 16777619;
-        hash = hash ^(((*i) >> 8) & 0xff);
+        hash = hash ^ (((*i) >> 8) & 0xff);
         hash = hash * 16777619;
-        hash = hash ^(*i) & 0xff;
+        hash = hash ^ (*i) & 0xff;
         hash = hash * 16777619;
 #endif
     }

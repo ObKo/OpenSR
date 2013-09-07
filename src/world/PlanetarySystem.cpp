@@ -59,6 +59,7 @@ bool PlanetarySystem::deserialize(std::istream& stream)
         stream.read((char *)&id, sizeof(uint64_t));
 
         boost::shared_ptr<SystemObject> object = boost::static_pointer_cast<SystemObject>(WorldManager::instance().getObject(id));
+        addObject(object);
 
         if (!object)
             return false;
