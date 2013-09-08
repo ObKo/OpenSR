@@ -55,13 +55,13 @@ class SettingsWidget(ScriptWidget, ActionListener):
         self.addWidget(self.spaceButton)
 
         self.okButton = Button("DATA/FormOptions2/2OkN.gi", "DATA/FormOptions2/2OkA.gi", "DATA/FormOptions2/2OkD.gi")
-        self.okButton.setPosition(self.formBottom.position().x + 608 + deltaX, self.formBottom.position().y + 22)
+        self.okButton.setPosition(self.formBottom.position().x + 603 + deltaX, self.formBottom.position().y + 22)
         self.okButton.addListener(self)
         self.okButton.setSounds("Sound/ButtonClick.wav", "Sound/ButtonLeave.WAV", "Sound/ButtonEnter.wav")
         self.addWidget(self.okButton)
 
         self.cancelButton = Button("DATA/FormOptions2/2CancelN.gi", "DATA/FormOptions2/2CancelA.gi", "DATA/FormOptions2/2CancelD.gi")
-        self.cancelButton.setPosition(self.formBottom.position().x + 675 + deltaX, self.formBottom.position().y + 22)
+        self.cancelButton.setPosition(self.formBottom.position().x + 670 + deltaX, self.formBottom.position().y + 22)
         self.cancelButton.addListener(self)
         self.cancelButton.setSounds("Sound/ButtonClick.wav", "Sound/ButtonLeave.WAV", "Sound/ButtonEnter.wav")
         self.addWidget(self.cancelButton)

@@ -287,27 +287,17 @@ LIBRANGER_API void drawF5ToBGRA(unsigned char * bufdes, int bufdesll, const unsi
 
 //! Load GI frame from file
 LIBRANGER_API GIFrame loadGIFrame(std::istream& stream, size_t &offset, GIFrame *background = 0, int startX = 0, int startY = 0, int finishX = 0, int finishY = 0);
-//! Load GI frame from memory
-LIBRANGER_API GIFrame loadGIFrame(const char *buffer, size_t &offset, GIFrame *background = 0, int startX = 0, int startY = 0, int finishX = 0, int finishY = 0);
 
 //! Load HAI animation from file
 LIBRANGER_API HAIAnimation loadHAI(std::istream& stream);
-//! Load HAI animation from memory
-LIBRANGER_API HAIAnimation loadHAI(const char *data);
 
 //! Load GI file
 LIBRANGER_API GIFrame loadGIFile(std::istream& stream);
-//! Load GI file from memory
-LIBRANGER_API GIFrame loadGIFile(const char *data);
 
 //! Load GAI animation file
 LIBRANGER_API GAIAnimation loadGAIAnimation(std::istream& stream, GIFrame *background = 0);
-//! Load GAI animation from memory
-LIBRANGER_API GAIAnimation loadGAIAnimation(const char *data, GIFrame *background = 0);
 //! Load GAI header from file
 LIBRANGER_API GAIHeader loadGAIHeader(std::istream& stream);
-//! Load GAI header from memory
-LIBRANGER_API GAIHeader loadGAIHeader(const char *data);
 
 //! Get std::istream of file in package
 LIBRANGER_API std::istream* getRPKGFileStream(const RPKGEntry& e, boost::shared_ptr<std::istream> stream);
