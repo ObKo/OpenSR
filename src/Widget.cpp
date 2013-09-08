@@ -98,7 +98,7 @@ bool Widget::containsPoint(const Vector &p) const
     if ((p.x >= 0) && (p.x <= d->width) && (p.y >= 0) && (p.y <= d->height))
         return true;
 
-    for (std::list<boost::shared_ptr<Widget> >::const_reverse_iterator i = d->childWidgets.rbegin(); i != d->childWidgets.rend(); i++)
+    for (std::list<boost::shared_ptr<Widget> >::const_reverse_iterator i = d->childWidgets.rbegin(); i != d->childWidgets.rend(); ++i)
     {
         if ((*i)->containsPoint((*i)->mapFromParent(p)))
             return true;
@@ -116,7 +116,7 @@ Rect Widget::boundingRect() const
     r.width = d->width;
     r.height = d->height;
 
-    for (std::list<boost::shared_ptr<Widget> >::const_reverse_iterator i = d->childWidgets.rbegin(); i != d->childWidgets.rend(); i++)
+    for (std::list<boost::shared_ptr<Widget> >::const_reverse_iterator i = d->childWidgets.rbegin(); i != d->childWidgets.rend(); ++i)
     {
         r += (*i)->mapToParent((*i)->boundingRect());
     }
@@ -135,7 +135,7 @@ void Widget::addWidget(boost::shared_ptr<Widget> w)
 
     addChild(w);
 
-    for (std::list<boost::shared_ptr<Widget> >::iterator i = d->childWidgets.begin(); i != d->childWidgets.end(); i++)
+    for (std::list<boost::shared_ptr<Widget> >::iterator i = d->childWidgets.begin(); i != d->childWidgets.end(); ++i)
     {
         if ((*i)->layer() > w->layer())
         {

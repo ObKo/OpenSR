@@ -22,7 +22,7 @@ namespace Rangers
 {
 namespace World
 {
-InteractionContext::InteractionContext(): m_race(0), m_relation(1.0f)
+InteractionContext::InteractionContext(): m_relation(1.0f), m_race(0)
 {
 }
 
@@ -31,12 +31,12 @@ bool InteractionContext::deserialize(std::istream& stream)
     return true;
 }
 
-uint32_t InteractionContext::race()
+uint32_t InteractionContext::race() const
 {
     return m_race;
 }
 
-float InteractionContext::relation()
+float InteractionContext::relation() const
 {
     return m_relation;
 }

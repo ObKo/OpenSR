@@ -146,7 +146,7 @@ void PlanetModel::loadJSON(const QString& file)
 
     QList<Planet> planets;
 
-    for (Json::Value::iterator i = root.begin(); i != end; i++)
+    for (Json::Value::iterator i = root.begin(); i != end; ++i)
     {
         if (!(*i).isObject())
             return;

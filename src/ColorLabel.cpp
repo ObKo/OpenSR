@@ -94,7 +94,7 @@ void ColorLabel::processMain()
     if (!d->wordWrap)
         d->region = TextureRegion(d->font->renderColoredText(d->text, (d->color >> 8) & 0xffffff));
     else
-        d->region = TextureRegion(d->font->renderColoredText(d->text, (d->color >> 8) & 0xffffff));
+        d->region = TextureRegion(d->font->renderColoredText(d->text, (d->color >> 8) & 0xffffff, d->width));
 
     if (!d->fixedSize)
     {

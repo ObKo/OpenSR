@@ -66,8 +66,6 @@ AnimatedTexture::AnimatedTexture(const GAIAnimation& a)
     m_textures[0] = m_openGLTexture;
     glGenTextures(m_frameCount - 1, m_textures + 1);
 
-    size_t s = 0;
-
     for (int i = 0; i < m_frameCount; i++)
     {
         glBindTexture(GL_TEXTURE_2D, m_textures[i]);

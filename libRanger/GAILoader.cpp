@@ -28,7 +28,6 @@ using namespace std;
 void copyImageData(unsigned char *bufdes, int destwidth, int x, int y, int w, int h, unsigned char *graphbuf)
 {
     uint32_t j;
-    unsigned char *row = bufdes + (destwidth * y + x) * 4;
 
     for (int i = 0; i < w * h; i++)
     {
@@ -55,8 +54,6 @@ GAIAnimation Rangers::loadGAIAnimation(std::istream& stream, GIFrame *background
 
     header.frames = new GIFrame[header.frameCount];
 
-    size_t delta = sizeof(header) - sizeof(GIFrame *);
-
     for (int i = 0; i < header.frameCount; i++)
     {
         uint32_t giSeek, giSize;
@@ -79,7 +76,7 @@ GAIAnimation Rangers::loadGAIAnimation(std::istream& stream, GIFrame *background
                 stream.read((char *)buffer, giSize);
                 unsigned char *gi = unpackZL01((unsigned char *)buffer, giSize, outsize);
                 delete[] buffer;
-		boost::iostreams::stream<boost::iostreams::array_source> giStream(boost::iostreams::array_source((const char*)gi, outsize));
+                boost::iostreams::stream<boost::iostreams::array_source> giStream(boost::iostreams::array_source((const char*)gi, outsize));
                 size_t giFrameOffset = 0;
                 header.frames[i] = loadGIFrame(giStream, giFrameOffset, background, header.startX, header.startY, header.finishX, header.finishY);
                 delete[] gi;
@@ -105,8 +102,6 @@ GAIAnimation Rangers::loadGAIAnimation(std::istream& stream, GIFrame *background
             header.frames[i] = frame;
             background = &(header.frames[i]);
         }
-
-        delta += giSize + 2 * sizeof(uint32_t);
     }
 
     GAIAnimation result;

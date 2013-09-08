@@ -28,6 +28,8 @@ namespace World
 {
 struct InfoWidgetStyle
 {
+    InfoWidgetStyle();
+
     ResourceDescriptor background;
     ResourceDescriptor font;
     ResourceDescriptor captionFont;
@@ -44,6 +46,8 @@ struct InfoWidgetStyle
 class WorldStyleManager
 {
 public:
+    WorldStyleManager();
+
     void loadStyles();
 
     InfoWidgetStyle infoWidgetStyle() const;

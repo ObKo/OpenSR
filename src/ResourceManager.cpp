@@ -166,7 +166,6 @@ void ResourceManager::addRPKG(const std::wstring& path)
 
 void ResourceManager::addMapping(const std::wstring& fileName)
 {
-    size_t fileSize;
     boost::shared_ptr<std::istream> s = getFileStream(fileName);
     if (!s)
         return;
@@ -568,7 +567,7 @@ void ResourceManager::processGAIQueue()
 {
     std::list<boost::shared_ptr<AnimatedTexture> > animationsToRemove;
 
-    for (std::map<boost::shared_ptr<AnimatedTexture>, GAIWorker*>::iterator i = m_gaiQueue.begin(); i != m_gaiQueue.end(); i++)
+    for (std::map<boost::shared_ptr<AnimatedTexture>, GAIWorker*>::iterator i = m_gaiQueue.begin(); i != m_gaiQueue.end(); ++i)
     {
         boost::shared_ptr<AnimatedTexture> t = (*i).first;
         GAIWorker *w = (*i).second;
@@ -589,7 +588,7 @@ void ResourceManager::processGAIQueue()
             }
         }
     }
-    for (std::list<boost::shared_ptr<AnimatedTexture> >::const_iterator i = animationsToRemove.begin(); i != animationsToRemove.end(); i++)
+    for (std::list<boost::shared_ptr<AnimatedTexture> >::const_iterator i = animationsToRemove.begin(); i != animationsToRemove.end(); ++i)
         m_gaiQueue.erase(*i);
     animationsToRemove.clear();
 }

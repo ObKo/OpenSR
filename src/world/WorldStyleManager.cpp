@@ -29,6 +29,17 @@ namespace Rangers
 {
 namespace World
 {
+InfoWidgetStyle::InfoWidgetStyle():
+    color(0xffffffff), captionColor(0xffffffff), labelColor(0xffffffff), iconSize(0)
+{
+
+}
+
+WorldStyleManager::WorldStyleManager()
+{
+
+}
+
 void WorldStyleManager::loadStyles()
 {
     std::wstring skinFile = fromUTF8(Engine::instance().properties()->get<std::string>("world.skin", "World/Skin.json").c_str());

@@ -146,9 +146,9 @@ std::list<LogEntry> Log::getLastLines(int n) const
     std::list<LogEntry>::const_iterator begin = m_logEntries.end();
     for (int i = 0; i < n; i++)
         if (begin != m_logEntries.begin())
-            begin--;
+            --begin;
 
-    for (std::list<LogEntry>::const_iterator i = begin; i != m_logEntries.end(); i++)
+    for (std::list<LogEntry>::const_iterator i = begin; i != m_logEntries.end(); ++i)
         r.push_back(*i);
 
     return r;

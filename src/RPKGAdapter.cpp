@@ -40,7 +40,7 @@ void RPKGAdapter::load(const wstring& fileName)
     }
     std::list<RPKGEntry> l = loadRPKG(rpkgArchive);
 
-    for (std::list<RPKGEntry>::const_iterator i = l.begin(); i != l.end(); i++)
+    for (std::list<RPKGEntry>::const_iterator i = l.begin(); i != l.end(); ++i)
         files[i->name] = *i;
 
     Log::info() << "Loaded " << files.size() << " files from RPKG archive " << fileName;

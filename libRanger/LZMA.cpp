@@ -62,8 +62,12 @@ bool packRSXZ(const char * src, size_t srclen, RPKGItem &item)
     }
 
     item.packSize = pos;
-    outdata = (char*)realloc(outdata, pos);
-    item.data = (unsigned char*)outdata;
+    item.data = (unsigned char*)realloc(outdata, pos);
+    if (!item.data)
+    {
+        free(outdata);
+        return false;
+    }
     return true;
 }
 

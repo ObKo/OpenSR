@@ -114,7 +114,7 @@ bool WorldManager::saveWorld(const std::wstring& file) const
     std::map<uint64_t, boost::shared_ptr<WorldObject> > objects = m_objects;
     std::list<boost::shared_ptr<WorldObject> > savingList;
 
-    while (objects.size())
+    while (!objects.empty())
     {
         boost::shared_ptr<WorldObject> object = (*objects.begin()).second;
         getSavingList(object, savingList, objects);

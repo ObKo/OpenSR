@@ -168,7 +168,7 @@ void ConsoleWidget::processLogic(int dt)
         std::list<LogEntry> l = Log::instance()->getLastLines(d->consoleLines);
         std::wstring text;
 
-        for (std::list<LogEntry>::const_iterator i = l.begin(); i != l.end(); i++)
+        for (std::list<LogEntry>::const_iterator i = l.begin(); i != l.end(); ++i)
         {
             const LogEntry& e = *i;
 

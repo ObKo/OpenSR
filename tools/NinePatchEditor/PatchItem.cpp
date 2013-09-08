@@ -225,7 +225,7 @@ void PatchItem::normalize()
             if (!removing.contains(i - m_rows.begin()))
                 removing << i - m_rows.begin();
         }
-        prev++;
+        ++prev;
     }
     if (((*(end - 1)) >= 1.0f) && (!removing.contains(end - 1 - m_rows.begin())))
         removing << end - 1 - m_rows.begin();
@@ -251,7 +251,7 @@ void PatchItem::normalize()
             if (!removing.contains(i - m_columns.begin()))
                 removing << i - m_columns.begin();
         }
-        prev++;
+        ++prev;
     }
     if (((*(end - 1)) >= 1.0f) && (!removing.contains(end - 1 - m_columns.begin())))
         removing << end - 1 - m_columns.begin();

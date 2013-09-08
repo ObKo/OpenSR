@@ -170,9 +170,13 @@ bool WorldHelper::deserializeString(std::wstring& str, std::istream& stream)
     s = new char[l + 1];
     stream.read(s, l);
     if (!stream.good())
+    {
+        delete[] s;
         return false;
+    }
     s[l] = '\0';
     str = fromUTF8(s, l);
+    delete[] s;
     return true;
 }
 
@@ -187,9 +191,13 @@ bool WorldHelper::deserializeString(std::string& str, std::istream& stream)
     s = new char[l + 1];
     stream.read(s, l);
     if (!stream.good())
+    {
+        delete[] s;
         return false;
+    }
     s[l] = '\0';
     str = std::string(s, l);
+    delete[] s;
     return true;
 }
 

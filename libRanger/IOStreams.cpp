@@ -314,7 +314,7 @@ private:
             m_invalidStream = true;
             return false;
         }
-        s = boost::iostreams::read(src, (char*)&m_currentChunkSize, 4);
+        boost::iostreams::read(src, (char*)&m_currentChunkSize, 4);
         m_inputPos += 8;
         return true;
     }
@@ -333,8 +333,8 @@ private:
             m_compression = Rangers::RPKG_SEEKABLE_LZMA;
             m_internalStream = new lzma_stream;
             //FIXME: F***ing MSVC cannot into C99
-			//*((lzma_stream *)m_internalStream) = LZMA_STREAM_INIT;
-			memset(m_internalStream, 0, sizeof(lzma_stream));
+            //*((lzma_stream *)m_internalStream) = LZMA_STREAM_INIT;
+            memset(m_internalStream, 0, sizeof(lzma_stream));
             lzma_auto_decoder(((lzma_stream *)m_internalStream), 1 << 24, LZMA_CHECK_CRC32);
         }
         else if (type == *((const uint32_t*)"NONE"))
@@ -504,8 +504,8 @@ private:
             {
                 lzma_end(lzmaStream);
                 //FIXME: F***ing MSVC cannot into C99
-			    //*((lzma_stream *)m_internalStream) = LZMA_STREAM_INIT;
-			    memset(m_internalStream, 0, sizeof(lzma_stream));
+                //*((lzma_stream *)m_internalStream) = LZMA_STREAM_INIT;
+                memset(m_internalStream, 0, sizeof(lzma_stream));
                 lzma_auto_decoder(lzmaStream, 1 << 24, LZMA_CHECK_CRC32);
             }
         }
@@ -521,8 +521,8 @@ private:
             lzma_stream *lzmaStream = ((lzma_stream *)m_internalStream);
             lzma_end(lzmaStream);
             //FIXME: F***ing MSVC cannot into C99
-			//*((lzma_stream *)m_internalStream) = LZMA_STREAM_INIT;
-			memset(lzmaStream, 0, sizeof(lzma_stream));
+            //*((lzma_stream *)m_internalStream) = LZMA_STREAM_INIT;
+            memset(lzmaStream, 0, sizeof(lzma_stream));
             lzma_auto_decoder(lzmaStream, 1 << 24, LZMA_CHECK_CRC32);
         }
         uint32_t seeked = 0;

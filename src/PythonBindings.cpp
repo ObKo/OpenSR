@@ -51,14 +51,14 @@ void handlePythonError()
     boost::python::object extype(hType);
 
     std::wstring tracebackString;
-    long lineno = 0;
+    //long lineno = 0;
     if (ptraceback)
     {
         try
         {
             boost::python::handle<> hTraceback(ptraceback);
             boost::python::object traceback(hTraceback);
-            lineno =  boost::python::extract<long> (traceback.attr("tb_lineno"));
+            //lineno =  boost::python::extract<long> (traceback.attr("tb_lineno"));
             boost::python::object tb(boost::python::import("traceback"));
             boost::python::object fmt_tb(tb.attr("format_tb"));
             boost::python::object tb_list(fmt_tb(hTraceback));

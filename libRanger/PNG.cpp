@@ -38,7 +38,7 @@ void readPNGDataFromBuffer(png_structp png_ptr, png_bytep out, png_size_t size)
 {
     if (png_get_io_ptr(png_ptr) == 0)
         return;
-    PNGBufferHandler *h = (PNGBufferHandler*)png_get_io_ptr(png_ptr);
+    PNGBufferHandler *h = static_cast<PNGBufferHandler*>(png_get_io_ptr(png_ptr));
     if (h->size < h->pos + size)
         return;
 
@@ -50,7 +50,7 @@ void readPNGDataFromStream(png_structp png_ptr, png_bytep out, png_size_t size)
 {
     if (png_get_io_ptr(png_ptr) == 0)
         return;
-    PNGStreamHandler *h = (PNGStreamHandler*)png_get_io_ptr(png_ptr);
+    PNGStreamHandler *h = static_cast<PNGStreamHandler*>(png_get_io_ptr(png_ptr));
     h->stream->read((char *)out, size);
 }
 

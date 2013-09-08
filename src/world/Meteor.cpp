@@ -23,7 +23,7 @@ namespace Rangers
 {
 namespace World
 {
-Meteor::Meteor(uint64_t id): SystemObject(id)
+Meteor::Meteor(uint64_t id): SystemObject(id), m_speed(0), m_mineral(0)
 {
 }
 

@@ -63,7 +63,7 @@ Object::~Object()
 
     Engine::instance().unmarkToUpdate(this);
 
-    for (std::list<boost::shared_ptr<Object> >::iterator i = d->children.begin(); i != d->children.end(); i++)
+    for (std::list<boost::shared_ptr<Object> >::iterator i = d->children.begin(); i != d->children.end(); ++i)
     {
         if ((*i)->parent() == this)
             (*i)->setParent(0);
@@ -179,7 +179,6 @@ Rect Object::mapToGlobal(const Rect& r) const
     result.y = std::min(std::min(a.y, b.y), std::min(c.y, d.y));
     result.width = std::max(std::max(a.x, b.x), std::max(c.x, d.x)) - result.x;
     result.height = std::max(std::max(a.y, b.y), std::max(c.y, d.y)) - result.y;
-    return result;
     return result;
 }
 
@@ -337,7 +336,7 @@ void Object::addChild(boost::shared_ptr<Object> object)
     if (!object)
         return;
 
-    //FIXME: Remove child from old parent instead of error? 
+    //FIXME: Remove child from old parent instead of error?
     if (object->parent() && object->parent() != this)
     {
         Log::debug() << "Object::addChild(): object already has a parent!";
@@ -347,7 +346,7 @@ void Object::addChild(boost::shared_ptr<Object> object)
     //TODO: Check dublicates
 
     object->setParent(this);
-    for (std::list<boost::shared_ptr<Object> >::iterator i = d->children.begin(); i != d->children.end(); i++)
+    for (std::list<boost::shared_ptr<Object> >::iterator i = d->children.begin(); i != d->children.end(); ++i)
     {
         if ((*i)->layer() > object->layer())
         {
@@ -416,12 +415,12 @@ boost::shared_ptr<Object> Object::getChild(Object *ptr) const
         return boost::shared_ptr<Object>();
 
     lock();
-    for (std::list<boost::shared_ptr<Object> >::const_iterator i = d->children.begin(); i != d->children.end(); i++)
+    for (std::list<boost::shared_ptr<Object> >::const_iterator i = d->children.begin(); i != d->children.end(); ++i)
     {
         if ((*i).get() == ptr)
         {
-            return *i;
             unlock();
+            return *i;
         }
     }
     unlock();

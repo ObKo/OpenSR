@@ -223,7 +223,6 @@ std::vector<std::wstring> split(const std::wstring& s, wchar_t c)
 {
     std::vector<std::wstring> array;
     std::wstring::const_iterator begin = s.begin();
-    std::wstring::const_iterator it = s.begin();
     for (std::wstring::const_iterator it = s.begin(); it != s.end(); ++it)
     {
         if (*it == c)
@@ -323,7 +322,6 @@ std::vector<std::string> split(const std::string& s, char c)
 {
     std::vector<std::string> array;
     std::string::const_iterator begin = s.begin();
-    std::string::const_iterator it = s.begin();
     for (std::string::const_iterator it = s.begin(); it != s.end(); ++it)
     {
         if (*it == c)
@@ -456,7 +454,7 @@ uint32_t textHash32(const std::string& s)
 {
     uint32_t hash = 2166136261;
     std::string::const_iterator end = s.end();
-    for (std::string::const_iterator i = s.begin(); i != end; i++)
+    for (std::string::const_iterator i = s.begin(); i != end; ++i)
     {
         hash = hash ^ (*i);
         hash = hash * 16777619;
@@ -468,7 +466,7 @@ uint32_t textHash32(const std::wstring& s)
 {
     uint32_t hash = 2166136261;
     std::wstring::const_iterator end = s.end();
-    for (std::wstring::const_iterator i = s.begin(); i != end; i++)
+    for (std::wstring::const_iterator i = s.begin(); i != end; ++i)
     {
 #ifdef WIN32
         hash = hash ^ (((*i) >> 8) & 0xff);

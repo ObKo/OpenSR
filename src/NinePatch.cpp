@@ -74,7 +74,6 @@ NinePatch::NinePatch(const std::wstring& name):
     std::wstring s = suffix(name);
     if (s == L"9.json")
     {
-        size_t dataSize;
         boost::shared_ptr<std::istream> json = ResourceManager::instance().getFileStream(name);
         if (json)
         {
@@ -245,8 +244,6 @@ void NinePatch::processMain()
         glGenBuffers(1, &d->buffer);
     }
 
-    float x1 = 0, x2 = 0, y1 = 0, y2 = 0;
-    float u1 = 0, u2 = 0, v1 = 0, v2 = 0;
     float xOffset = 0, yOffset = 0;
 
     switch (d->xOrigin)
@@ -274,8 +271,6 @@ void NinePatch::processMain()
         yOffset = -d->height;
         break;
     }
-
-    float uStart = 0, uEnd = 0, vStart = 0, vEnd = 0;
 
     std::vector<float> widths;
     std::vector<float> heights;
@@ -351,10 +346,10 @@ void NinePatch::processMain()
         delete[] d->vertices;
     d->vertices = new Vertex[d->vertexCount];
 
-    float x = 0.0f, y = 0.0f;
+    float y = 0.0f;
     for (int i = 0; i < d->rows; i++)
     {
-        x = 0.0f;
+        float x = 0.0f;
         for (int j = 0; j < d->columns; j++)
         {
             d->vertices[(i * d->columns + j) * 4].x = xOffset + x;
@@ -398,7 +393,7 @@ void NinePatch::processMain()
 
     glBindBuffer(GL_ARRAY_BUFFER, d->buffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * d->vertexCount, d->vertices, GL_DYNAMIC_DRAW);
-    
+
     delete d->vertices;
     d->vertices = 0;
 

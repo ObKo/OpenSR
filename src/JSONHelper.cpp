@@ -43,8 +43,6 @@ TextureRegionDescriptor JSONHelper::parseTextureRegion(const Json::Value& object
     }
     result.texture = fromUTF8(object.get("texture", "").asString().c_str());
 
-    int x, y, width, height;
-
     result.x = object.get("x", 0).asInt();
     result.y = object.get("y", 0).asInt();
     result.width = object.get("width", -1).asInt();
@@ -80,7 +78,6 @@ FontDescriptor JSONHelper::parseFont(const Json::Value& object, bool &error)
 std::wstring JSONHelper::parseSound(const Json::Value& object, bool &error)
 {
     error = false;
-    std::wstring font;
     if (!object.isObject())
     {
         Log::warning() << "Invalid JSON object.";

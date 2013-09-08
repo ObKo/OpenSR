@@ -27,7 +27,7 @@ namespace
 {
 struct SoundDeleter
 {
-    void operator()(Mix_Chunk*& chunk)
+    void operator()(Mix_Chunk*& chunk) const
     {
         if (chunk)
         {

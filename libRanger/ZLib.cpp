@@ -41,7 +41,7 @@ unsigned char *unpackZL01(const unsigned char * src, size_t srclen, size_t& dest
 
     if (sig != 0x31304c5a)
     {
-        destlen == 0;
+        destlen = 0;
         return 0;
     }
 
@@ -74,7 +74,7 @@ void unpackZL02(unsigned char * dst, const unsigned char * src, size_t srclen, s
 
     if (sig != 0x32304c5a)
     {
-        destlen == 0;
+        destlen = 0;
         return;
     }
 
@@ -101,7 +101,7 @@ unsigned char *unpackZL02(const unsigned char * src, size_t srclen, size_t& dest
 
     if (sig != 0x32304c5a)
     {
-        destlen == 0;
+        destlen = 0;
         return 0;
     }
 
@@ -130,7 +130,7 @@ unsigned char *unpackZL02(const unsigned char * src, size_t srclen, size_t& dest
 bool packRSZL(const char * src, size_t srclen, RPKGItem &item)
 {
     uint32_t outBufSize = (compressBound(DEFAULT_ZLIB_CHUNK_SIZE) + 8) * (srclen / DEFAULT_ZLIB_CHUNK_SIZE + 1);
-    char* outdata = (char*)malloc(outBufSize);
+    char* outdata = new char[outBufSize];
     uint32_t pos = 0;
     int32_t chunkSize;
 
@@ -162,8 +162,12 @@ bool packRSZL(const char * src, size_t srclen, RPKGItem &item)
     }
 
     item.packSize = pos;
-    outdata = (char*)realloc(outdata, pos);
-    item.data = (unsigned char*)outdata;
+    item.data = (unsigned char*)realloc(outdata, pos);
+    if (!item.data)
+    {
+        delete[] outdata;
+        return false;
+    }
     return true;
 }
 

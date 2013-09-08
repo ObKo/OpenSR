@@ -402,7 +402,7 @@ void Engine::init(int argc, char **argv, int w, int h, bool fullscreen)
     if ((pathes = getenv("XDG_DATA_DIRS")) != NULL)
     {
         std::vector<std::wstring> list = split(fromLocal(pathes), L':');
-        for (std::vector<std::wstring>::const_iterator i = list.begin(); i != list.end(); i++)
+        for (std::vector<std::wstring>::const_iterator i = list.begin(); i != list.end(); ++i)
             ResourceManager::instance().addDir((*i) + L"/OpenSR/");
     }
     else
@@ -771,7 +771,7 @@ void Engine::EnginePrivate::processEvents()
 void Engine::EnginePrivate::processMouseMove(const SDL_MouseMotionEvent &e)
 {
     RANGERS_Q(Engine);
-    for (std::list<boost::shared_ptr<Widget> >::iterator i = widgets.begin(); i != widgets.end(); i++)
+    for (std::list<boost::shared_ptr<Widget> >::iterator i = widgets.begin(); i != widgets.end(); ++i)
     {
         Vector globalMouse = mainNode->mapFromScreen(Vector(e.x, e.y));
         boost::shared_ptr<Widget> currentW = currentWidget.lock();

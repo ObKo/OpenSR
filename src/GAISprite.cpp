@@ -48,7 +48,6 @@ GAISprite::GAISprite(const std::wstring& name): AnimatedSprite(*(new GAISpritePr
     std::transform(sfx.begin(), sfx.end(), sfx.begin(), towlower);
     if (sfx == L"gai")
     {
-        size_t s;
         boost::shared_ptr<std::istream> stream = ResourceManager::instance().getFileStream(name);
 
         if (stream)
@@ -62,7 +61,6 @@ GAISprite::GAISprite(const std::wstring& name): AnimatedSprite(*(new GAISpritePr
             }
             else
             {
-                size_t size;
                 boost::shared_ptr<std::istream> bgFrameStream = ResourceManager::instance().getFileStream(directory(name) + basename(name) + L".gi");
                 if (bgFrameStream)
                 {
@@ -146,7 +144,6 @@ void GAISprite::processMain()
         if (d->currentFrame == 0)
         {
             unsigned char* data = (unsigned char*)glMapBuffer(GL_PIXEL_UNPACK_BUFFER, GL_READ_WRITE);
-            memset(data, 0, d->baseFrameWidth * d->baseFrameHeight * 4);
             memcpy(data, d->baseFrame.get(), d->baseFrameWidth * d->baseFrameHeight * 4);
             //copyImageData(data, baseFrameWidth, 0, 0, baseFrameWidth, baseFrameHeight, baseFrame.get());
             glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER);
@@ -199,12 +196,7 @@ void GAISpritePrivate::loadGIFrame5(const char * data, unsigned char * backgroun
         image.layers[i].finishY -= startY;
     }
 
-    int width;
-    int height;
-
-
-    width = image.finishX;
-    height = image.finishY;
+    int width = image.finishX;
 
     if (image.layers[0].size)
         drawF5ToBGRA(background + (image.layers[0].startY * width + image.layers[0].startX) * 4, width * 4, (const unsigned char *)image.layers[0].data);
@@ -241,8 +233,6 @@ void GAISpritePrivate::loadGAI(boost::shared_ptr<std::istream> stream, const GIF
     {
         width = gaiHeader.finishX - gaiHeader.startX;
         height = gaiHeader.finishY - gaiHeader.startY;
-        int width = gaiHeader.finishX - gaiHeader.startX;
-        int height = gaiHeader.finishY - gaiHeader.startY;
 
         //Background as frame #0
         gaiFrames.push_back(boost::shared_array<char>());

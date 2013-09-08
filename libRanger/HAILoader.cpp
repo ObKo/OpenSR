@@ -46,7 +46,7 @@ HAIAnimation Rangers::loadHAI(std::istream& stream)
         outbuf += size * 4;
     }
 
-    delete buffer;
+    delete[] buffer;
 
     HAIAnimation result;
     result.frameCount = header.count;

@@ -31,8 +31,8 @@ class InteractionContext
 public:
     InteractionContext();
 
-    float relation();
-    uint32_t race();
+    float relation() const;
+    uint32_t race() const;
 
     virtual bool serialize(std::ostream &stream) const;
     virtual bool deserialize(std::istream &stream);

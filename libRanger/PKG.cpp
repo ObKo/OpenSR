@@ -116,7 +116,16 @@ unsigned char *Rangers::extractFile(PKGItem item, std::istream& pkgfile)
         {
             buffer_size = 0;
             pkgfile.read((char *)&buffer_size, 4);
-            inputbuffer = (unsigned char *)realloc(inputbuffer, buffer_size);
+            unsigned char *inp = (unsigned char *)realloc(inputbuffer, buffer_size);
+            if (!inp)
+            {
+                delete inputbuffer;
+                return 0;
+            }
+            else
+            {
+                inputbuffer = inp;
+            }
             pkgfile.read((char *)inputbuffer, buffer_size);
             unpackZL02(outbuffer + done, inputbuffer, buffer_size, outsize);
             done += outsize;

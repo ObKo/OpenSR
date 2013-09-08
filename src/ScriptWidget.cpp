@@ -34,7 +34,7 @@ void ScriptWidget::draw() const
 
     std::list<boost::shared_ptr<Object> > children = d->children;
 
-    for (std::list<boost::shared_ptr<Object> >::const_iterator i = children.begin(); i != children.end(); i++)
+    for (std::list<boost::shared_ptr<Object> >::const_iterator i = children.begin(); i != children.end(); ++i)
         (*i)->draw();
 
     endDraw();
@@ -46,7 +46,7 @@ void ScriptWidget::processLogic(int dt)
 
     std::list<boost::shared_ptr<Object> > children = d->children;
 
-    for (std::list<boost::shared_ptr<Object> >::const_iterator i = children.begin(); i != children.end(); i++)
+    for (std::list<boost::shared_ptr<Object> >::const_iterator i = children.begin(); i != children.end(); ++i)
         (*i)->processLogic(dt);
 }
 }

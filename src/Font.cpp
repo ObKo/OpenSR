@@ -27,18 +27,18 @@
 #include "OpenSR/ResourceManager.h"
 #include "OpenSR/Texture.h"
 
-//TODO: Move this
-
 namespace Rangers
 {
+//TODO: Move this
 extern FT_Library trueTypeLibrary;
 
+//TODO: Error handling
 Font::Font(const char* data, size_t dataSize, int size, bool antialiased):
     m_antialiased(antialiased), m_fontSize(size)
 {
     m_fontData = boost::shared_array<char>(new char[dataSize]);
     memcpy(m_fontData.get(), data, dataSize);
-    int error = FT_New_Memory_Face(trueTypeLibrary, (FT_Byte *)m_fontData.get(), dataSize, 0, &m_fontFace);
+    FT_New_Memory_Face(trueTypeLibrary, (FT_Byte *)m_fontData.get(), dataSize, 0, &m_fontFace);
     FT_Set_Pixel_Sizes(m_fontFace, 0, size);
 }
 
@@ -47,7 +47,7 @@ Font::Font(const std::wstring& file, int size, bool antialiased):
 {
     size_t s;
     m_fontData = ResourceManager::instance().loadData(file, s);
-    int error = FT_New_Memory_Face(trueTypeLibrary, (FT_Byte *)m_fontData.get(), s, 0, &m_fontFace);
+    FT_New_Memory_Face(trueTypeLibrary, (FT_Byte *)m_fontData.get(), s, 0, &m_fontFace);
     FT_Set_Pixel_Sizes(m_fontFace, 0, size);
 }
 
@@ -173,7 +173,6 @@ int Font::maxChars(const std::wstring::const_iterator& first, const std::wstring
 boost::shared_ptr<Texture> Font::renderText(const std::wstring& t, int wrapWidth) const
 {
     int x = 0;
-    int y = 0;
     int lines = 1;
     int bearingY = 0;
     int width = 0;
@@ -265,7 +264,6 @@ boost::shared_ptr<Texture> Font::renderText(const std::wstring& t, int wrapWidth
 
 
     int fullHeight = lines * m_fontSize;
-    int lineHeight = m_fontSize;
     int fullWidth;
 
     if (wrapWidth)
@@ -274,7 +272,6 @@ boost::shared_ptr<Texture> Font::renderText(const std::wstring& t, int wrapWidth
         fullWidth = width;
 
     x = 0;
-    y = 0;
     int line = 0;
 
     unsigned char *textureData = new unsigned char[fullWidth * fullHeight];
@@ -313,7 +310,6 @@ boost::shared_ptr<Texture> Font::renderText(const std::wstring& t, int wrapWidth
 boost::shared_ptr<Texture> Font::renderColoredText(const std::wstring& t, int defaultTextColor, int wrapWidth) const
 {
     int x = 0;
-    int y = 0;
     int lines = 1;
     int bearingY = 0;
     int width = 0;
@@ -431,7 +427,6 @@ boost::shared_ptr<Texture> Font::renderColoredText(const std::wstring& t, int de
 
 
     int fullHeight = lines * m_fontSize;
-    int lineHeight = m_fontSize;
     int fullWidth;
 
     if (wrapWidth)
@@ -440,7 +435,6 @@ boost::shared_ptr<Texture> Font::renderColoredText(const std::wstring& t, int de
         fullWidth = width + 1;
 
     x = 0;
-    y = 0;
     int line = 0;
 
     unsigned char *textureData = new unsigned char[fullWidth * fullHeight * 4];

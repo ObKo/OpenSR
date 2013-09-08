@@ -49,7 +49,6 @@ uint16_t R5G6B5(char b, char g, char r)
 void drawA6ToBGRA(unsigned char * bufdes, int bufdesll, unsigned char * graphbuf)
 {
     int size, cnt;
-    unsigned char byte;
 
     size = *(uint32_t *)graphbuf;
     graphbuf += 16;
@@ -58,7 +57,7 @@ void drawA6ToBGRA(unsigned char * bufdes, int bufdesll, unsigned char * graphbuf
 
     while (size > 0)
     {
-        byte = *graphbuf;
+        unsigned char byte = *graphbuf;
         graphbuf++;
 
         if ((byte == 0) || (byte == 0x80))
@@ -96,7 +95,6 @@ void drawR5G6B5ToBGRA(unsigned char * bufdes, int bufdesll, unsigned char * grap
 {
     int size, cnt;
     uint16_t j;
-    unsigned char byte;
 
     size = *(uint32_t *)graphbuf;
     graphbuf += 16;
@@ -105,7 +103,7 @@ void drawR5G6B5ToBGRA(unsigned char * bufdes, int bufdesll, unsigned char * grap
 
     while (size > 0)
     {
-        byte = *graphbuf;
+        unsigned char byte = *graphbuf;
         graphbuf++;
 
         if ((byte == 0) || (byte == 0x80))
@@ -462,7 +460,6 @@ void Rangers::drawF5ToBGRA(unsigned char * bufdes, int bufdesll, const unsigned 
 void blitBGRAToBGRA(unsigned char *bufdes, int destwidth, int x, int y, int w, int h, unsigned char *graphbuf)
 {
     uint32_t j;
-    unsigned char *row = bufdes + (destwidth * y + x) * 4;
 
     for (int i = 0; i < w * h; i++)
     {
@@ -478,7 +475,6 @@ void blitR5G6B5ToBGRA(unsigned char *bufdes, int destwidth, int x, int y, int w,
     uint32_t j;
     uint32_t *dest = (uint32_t *)bufdes;
     uint16_t *src = (uint16_t *)graphbuf;
-    unsigned char *row = bufdes + (destwidth * y + x) * 4;
 
     for (int i = 0; i < w * h; i++)
     {

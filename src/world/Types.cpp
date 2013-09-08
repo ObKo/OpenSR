@@ -53,6 +53,7 @@ PlanetStyle::PlanetStyle()
     ringOffsetY = 0.0f;
     ringBgOffsetX = 0.0f;
     ringBgOffsetY = 0.0f;
+    ambientColor = 0xffffffff;
 }
 
 bool PlanetStyle::serialize(std::ostream& stream) const
