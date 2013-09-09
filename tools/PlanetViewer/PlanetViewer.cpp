@@ -31,6 +31,9 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 
+#include <boost/iostreams/device/array.hpp>
+#include <boost/iostreams/stream.hpp>
+
 struct Vertex
 {
     float x, y;
@@ -453,7 +456,8 @@ QImage PlanetViewer::loadImage(const QString& file)
         }
         QByteArray data = f.readAll();
         f.close();
-        frame = Rangers::loadGIFile(data.data());
+        boost::iostreams::stream<boost::iostreams::array_source> stream(boost::iostreams::array_source(data.constData(), data.size()));
+        frame = Rangers::loadGIFile(stream);
         result = QImage(frame.data, frame.width, frame.height, QImage::Format_ARGB32).mirrored(false, true);
         delete[] frame.data;
     }

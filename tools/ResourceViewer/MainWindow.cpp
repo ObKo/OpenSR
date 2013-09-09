@@ -10,6 +10,9 @@
 #include <squish.h>
 #include <QProgressDialog>
 
+#include <boost/iostreams/device/array.hpp>
+#include <boost/iostreams/stream.hpp>
+
 using namespace Rangers;
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -167,12 +170,16 @@ void MainWindow::loadResource(FileNode *node)
     QFileInfo fileInfo(fileName);
     if (fileInfo.suffix().toLower() == "gi")
     {
-        Rangers::GIFrame frame = Rangers::loadGIFile(model.getData(node).data());
+        QByteArray data = model.getData(node);
+        boost::iostreams::stream<boost::iostreams::array_source> stream(boost::iostreams::array_source(data.constData(), data.size()));
+        Rangers::GIFrame frame = Rangers::loadGIFile(stream);
         loadGI(frame);
     }
     else if (fileInfo.suffix().toLower() == "gai")
     {
-        Rangers::GAIHeader h = Rangers::loadGAIHeader(model.getData(node).data());
+        QByteArray data = model.getData(node);
+        boost::iostreams::stream<boost::iostreams::array_source> stream(boost::iostreams::array_source(data.constData(), data.size()));
+        Rangers::GAIHeader h = Rangers::loadGAIHeader(stream);
         Rangers::GIFrame *bg = 0;
         if (h.haveBackground)
         {
@@ -185,10 +192,13 @@ void MainWindow::loadResource(FileNode *node)
             else
             {
                 bg = new Rangers::GIFrame;
-                *bg = Rangers::loadGIFile(model.getData(bgNode).data());
+                QByteArray bgData = model.getData(bgNode);
+                boost::iostreams::stream<boost::iostreams::array_source> bgStream(boost::iostreams::array_source(bgData.constData(), bgData.size()));
+                *bg = Rangers::loadGIFile(bgStream);
             }
         }
-        Rangers::GAIAnimation anim = Rangers::loadGAIAnimation(model.getData(node).data(), bg);
+        boost::iostreams::seek(stream, 0, std::ios_base::beg);
+        Rangers::GAIAnimation anim = Rangers::loadGAIAnimation(stream, bg);
         loadGAI(anim);
         /*if (bg)
             delete bg->data;
@@ -196,7 +206,9 @@ void MainWindow::loadResource(FileNode *node)
     }
     else if (fileInfo.suffix().toLower() == "hai")
     {
-        Rangers::HAIAnimation anim = Rangers::loadHAI(model.getData(node).data());
+        QByteArray data = model.getData(node);
+        boost::iostreams::stream<boost::iostreams::array_source> stream(boost::iostreams::array_source(data.constData(), data.size()));
+        Rangers::HAIAnimation anim = Rangers::loadHAI(stream);
         loadHAI(anim);
     }
     else if (fileInfo.suffix().toLower() == "dds")
