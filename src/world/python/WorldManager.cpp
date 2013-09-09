@@ -50,6 +50,7 @@ void exportWorldManager()
     .def("calcTurn", &WorldManager::calcTurn)
     .def("finishTurn", &WorldManager::finishTurn)
     .def("styleManager", &WorldManager::styleManager, return_value_policy<reference_existing_object>())
+    .def("skinManager", &WorldManager::skinManager, return_value_policy<reference_existing_object>())
     .def("raceManager", &WorldManager::raceManager, return_value_policy<reference_existing_object>())
     .def("planetManager", &WorldManager::planetManager, return_value_policy<reference_existing_object>())
     .def("systemManager", &WorldManager::systemManager, return_value_policy<reference_existing_object>());

@@ -34,10 +34,7 @@ void exportSystemManager()
     using namespace boost::python;
 
     class_<SystemManager, boost::noncopyable> c("SystemManager", boost::python::no_init);
-    c.def("style", (boost::shared_ptr<SystemStyle> (SystemManager::*)(const std::string&))&SystemManager::style)
-    .def("style", (boost::shared_ptr<SystemStyle> (SystemManager::*)(uint32_t))&SystemManager::style)
-    .def("loadStyles", &SystemManager::loadStyles)
-    .def("systems", &SystemManager::systems)
+    c.def("systems", &SystemManager::systems)
     .def("currentSystem", &SystemManager::currentSystem)
     .def("setCurrentSystem", &SystemManager::setCurrentSystem)
     .def("addSystem", &SystemManager::addSystem);

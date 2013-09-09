@@ -19,7 +19,7 @@
 #include <boost/python.hpp>
 #include "InfoWidget.h"
 
-#include "WorldStyleManager.h"
+#include "WorldSkinManager.h"
 
 #include <OpenSR/python/WidgetWrap.h>
 

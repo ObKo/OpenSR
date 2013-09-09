@@ -17,13 +17,6 @@
 */
 
 #include "SystemManager.h"
-#include "Types.h"
-#include <libRanger.h>
-#include <OpenSR/ResourceManager.h>
-#include <OpenSR/Log.h>
-#include <OpenSR/JSONHelper.h>
-#include <OpenSR/Texture.h>
-#include <json/value.h>
 
 namespace
 {
@@ -46,97 +39,12 @@ SystemManager::SystemManager(const SystemManager& other)
 
 bool SystemManager::deserialize(std::istream& stream)
 {
-    m_styles.clear();
-
-    uint32_t sig;
-    stream.read((char*)&sig, 4);
-
-    if (sig != SYSTEM_MANAGER_SIGNATURE)
-        return false;
-
-    uint32_t count;
-    stream.read((char*)&count, 4);
-
-    for (int i = 0; i < count; i++)
-    {
-        boost::shared_ptr<SystemStyle> style = boost::shared_ptr<SystemStyle>(new SystemStyle());
-        if (!style->deserialize(stream))
-            return false;
-        m_styles[textHash32(style->id)] = style;
-    }
     return true;
 }
 
 bool SystemManager::serialize(std::ostream& stream) const
 {
-    stream.write((const char*)&SYSTEM_MANAGER_SIGNATURE, 4);
-
-    uint32_t count = m_styles.size();
-    stream.write((const char*)&count, 4);
-
-    if (!stream.good())
-        return false;
-
-    std::map<uint32_t, boost::shared_ptr<SystemStyle> >::const_iterator end = m_styles.end();
-    for (std::map<uint32_t, boost::shared_ptr<SystemStyle> >::const_iterator i = m_styles.begin(); i != end; ++i)
-    {
-        if (!((*i).second)->serialize(stream))
-            return false;
-    }
     return true;
-}
-
-boost::shared_ptr<SystemStyle> SystemManager::style(const std::string& name)
-{
-    uint32_t hash = textHash32(name);
-    return style(hash);
-}
-
-boost::shared_ptr<SystemStyle> SystemManager::style(uint32_t id)
-{
-    return m_styles.at(id);
-}
-
-void SystemManager::loadStyles(const std::wstring& styleFile)
-{
-    m_styles.clear();
-
-    boost::shared_ptr<std::istream> json = ResourceManager::instance().getFileStream(styleFile);
-    if (!json)
-        return;
-    Json::Reader reader;
-    Json::Value root;
-    if (!reader.parse(*json, root))
-    {
-        Log::error() << "Error parsing system styles JSON: " << reader.getFormatedErrorMessages();
-        return;
-    }
-    if (!root.isObject())
-    {
-        Log::error() << "Invalid system styles JSON";
-        return;
-    }
-    Json::Value::Members members = root.getMemberNames();
-    Json::Value::Members::const_iterator end = members.end();
-    for (Json::Value::Members::const_iterator i = members.begin(); i != end; ++i)
-    {
-        Json::Value jsonStyle = root[(*i)];
-
-        if (!jsonStyle.isObject())
-        {
-            Log::error() << "Invalid system styles JSON";
-            return;
-        }
-        bool error = false;
-        SystemStyle *style = new SystemStyle();
-        style->id = (*i);
-        style->star = fromUTF8(jsonStyle.get("star", "").asCString());
-        style->animated = jsonStyle.get("star-animated", "").asBool();
-        style->color = JSONHelper::parseColor(jsonStyle.get("star-color", "#FFFFFF").asString(), error);
-        style->background = fromUTF8(jsonStyle.get("background", "").asCString());
-        m_styles[textHash32(style->id)] = boost::shared_ptr<SystemStyle>(style);
-    }
-    Log::info() << "Loaded " << members.size() << " system styles";
 }
 
 std::list<boost::shared_ptr<PlanetarySystem> > SystemManager::systems() const

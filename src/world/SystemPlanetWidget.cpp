@@ -136,7 +136,7 @@ SystemPlanetWidget::SystemPlanetWidget(boost::shared_ptr<Planet> planet): m_plan
     m_useShader = Rangers::Engine::instance().properties()->get<bool>("graphics.useShaders", true);
     if (planet)
     {
-        boost::shared_ptr<PlanetStyle> style = WorldManager::instance().planetManager().style(planet->style());
+        boost::shared_ptr<PlanetStyle> style = WorldManager::instance().styleManager().planetStyle(planet->style());
         if (style)
         {
             m_texture = ResourceManager::instance().loadTexture(style->texture);
@@ -278,7 +278,7 @@ void SystemPlanetWidget::processMain()
     }
     if (!m_useShader && !m_staticSprite)
     {
-        m_staticSprite = boost::shared_ptr<Sprite>(new Sprite(WorldManager::instance().planetManager().getPlanetImage(WorldManager::instance().planetManager().style(m_planet->style()), (int)m_size)));
+        m_staticSprite = boost::shared_ptr<Sprite>(new Sprite(WorldManager::instance().planetManager().getPlanetImage(WorldManager::instance().styleManager().planetStyle(m_planet->style()), (int)m_size)));
     }
     Vertex *vertices;
     if (!m_vertexBuffer)

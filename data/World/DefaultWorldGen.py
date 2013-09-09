@@ -3,9 +3,10 @@ from OpenSR.World import WorldManager, WorldGenHook, PlanetarySystem, DesertPlan
 import math
 
 world = WorldManager.instance()
+systemManager = world.systemManager()
 
 class DefaultWorldGen(WorldGenHook):  
-    def genDesertPlanet(self, orbit, radius, name, angle, angleSpeed, style):
+    def genDesertPlanet(self, system, orbit, radius, name, angle, angleSpeed, style):
         planet = DesertPlanet()
         planet.setOrbit(orbit)
         planet.setRadius(radius)
@@ -15,10 +16,11 @@ class DefaultWorldGen(WorldGenHook):
         planet.setStyle(style)
         
         world.addObject(planet)
+        system.addObject(planet)
         
         return planet
         
-    def genHabitablePlanet(self, orbit, radius, name, angle, angleSpeed, style, population, race, invader = None, relation = None):
+    def genHabitablePlanet(self, system, orbit, radius, name, angle, angleSpeed, style, population, race, invader = None, relation = None):
         planet = HabitablePlanet()
         planet.setOrbit(orbit)
         planet.setRadius(radius)
@@ -39,29 +41,30 @@ class DefaultWorldGen(WorldGenHook):
         planet.setLandContext(context)
         
         world.addObject(planet)
+        system.addObject(planet)
         
         return planet
       
-    def generate(self):
-        races = world.raceManager()
-        systemManager = world.systemManager()
-        
+    def genPlanetarySystem(self, name, size, style, position):
         system = PlanetarySystem()
         
-        system.setName("Solar")
-        system.setSize(2000.0)
-        system.setStyle("solar")
-        system.setPosition(Point(0.0, 0.0))
-        
-        planet = self.genDesertPlanet(600.0, 50.0, "Mercur", 0.0, math.pi * 2.0 / 87.0, "mercur")
-        hPlanet = self.genHabitablePlanet(450.0, 75.0, "Earth", 1.0, math.pi * 2.0 / 365.0, "earth", 1000000, races.race("human"))
-        sPlanet = self.genDesertPlanet(800.0, 100.0, "Saturn", math.pi, math.pi * 2.0 / 100.0, "saturn")
-
-        system.addObject(planet)
-        system.addObject(hPlanet)
-        system.addObject(sPlanet)
+        system.setName(name)
+        system.setSize(size)
+        system.setStyle(style)
+        system.setPosition(position)
         
         systemManager.addSystem(system)
         world.addObject(system)
         
+        return system
+      
+    def generate(self):
+        races = world.raceManager()
+       
+        system = self.genPlanetarySystem('Solar', 2000.0, 'solar', Point(0.0, 0.0))
+        
+        planet = self.genDesertPlanet(system, 600.0, 50.0, 'Mercur', 0.0, math.pi * 2.0 / 87.0, 'mercur')
+        hPlanet = self.genHabitablePlanet(system, 450.0, 75.0, 'Earth', 1.0, math.pi * 2.0 / 365.0, 'earth', 1000000, races.race('human'))
+        sPlanet = self.genDesertPlanet(system, 800.0, 100.0, 'Saturn', math.pi, math.pi * 2.0 / 100.0, 'saturn')
+                
         systemManager.setCurrentSystem(system)

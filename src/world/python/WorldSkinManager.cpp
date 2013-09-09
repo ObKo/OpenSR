@@ -17,7 +17,7 @@
 */
 
 #include <boost/python.hpp>
-#include "WorldStyleManager.h"
+#include "WorldSkinManager.h"
 
 namespace Rangers
 {
@@ -25,13 +25,13 @@ namespace World
 {
 namespace Python
 {
-void exportWorldStyleManager()
+void exportWorldSkinManager()
 {
     using namespace boost::python;
 
-    class_<WorldStyleManager, boost::noncopyable> c("WorldStyleManager", boost::python::no_init);
-    c.def("loadStyles", &WorldStyleManager::loadStyles)
-    .def("infoWidgetStyle", &WorldStyleManager::infoWidgetStyle);
+    class_<WorldSkinManager, boost::noncopyable> c("WorldSkinManager", boost::python::no_init);
+    c.def("loadStyles", &WorldSkinManager::loadStyles)
+    .def("infoWidgetStyle", &WorldSkinManager::infoWidgetStyle);
 
     class_<InfoWidgetStyle> c2("InfoWidgetStyle", init<>());
     c2.def_readwrite("background", &InfoWidgetStyle::background)

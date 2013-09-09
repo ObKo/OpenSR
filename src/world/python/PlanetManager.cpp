@@ -35,10 +35,7 @@ void exportPlanetManager()
     using namespace boost::python;
 
     class_<PlanetManager, boost::noncopyable> c("PlanetManager", boost::python::no_init);
-    c.def("style", (boost::shared_ptr<PlanetStyle> (PlanetManager::*)(const std::string&))&PlanetManager::style)
-    .def("style", (boost::shared_ptr<PlanetStyle> (PlanetManager::*)(uint32_t))&PlanetManager::style)
-    .def("loadStyles", &PlanetManager::loadStyles)
-    .def("getPlanetImage", (boost::shared_ptr<Texture> (PlanetManager::*)(boost::shared_ptr<PlanetStyle>, int))&PlanetManager::getPlanetImage)
+    c.def("getPlanetImage", (boost::shared_ptr<Texture> (PlanetManager::*)(boost::shared_ptr<PlanetStyle>, int))&PlanetManager::getPlanetImage)
     .def("getPlanetImage", (boost::shared_ptr<Texture> (PlanetManager::*)(uint32_t, int))&PlanetManager::getPlanetImage)
     .def("dropImageCache", &PlanetManager::dropImageCache);
 }

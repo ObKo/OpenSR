@@ -35,9 +35,10 @@ SET(WORLD_SOURCES
     GameInterface.cpp
     WorldManager.cpp
     SystemWidget.cpp
-    WorldStyleManager.cpp
+    WorldSkinManager.cpp
     RaceManager.cpp
     SystemManager.cpp
+    StyleManager.cpp
 )
 
 INCLUDE_DIRECTORIES(

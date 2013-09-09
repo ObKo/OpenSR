@@ -35,12 +35,6 @@ class PlanetManager
 public:
     PlanetManager();
 
-    boost::shared_ptr<PlanetStyle> style(const std::string& name);
-    boost::shared_ptr<PlanetStyle> style(uint32_t id);
-
-    //! Load planet styles from JSON file
-    void loadStyles(const std::wstring& styleFile);
-
     //! Get static planet image from planet style
     boost::shared_ptr<Texture> getPlanetImage(boost::shared_ptr<PlanetStyle> style, int size);
     //! Get static planet image from planet style id
@@ -55,7 +49,6 @@ public:
 private:
     PlanetManager(const PlanetManager& other);
 
-    std::map<uint32_t, boost::shared_ptr<PlanetStyle> > m_styles;
     std::map<uint64_t, boost::shared_ptr<Texture> > m_imageCache;
 };
 }

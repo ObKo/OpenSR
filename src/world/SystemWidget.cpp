@@ -107,7 +107,7 @@ SystemWidget::SystemWidget(boost::shared_ptr<PlanetarySystem> system): Widget(),
     m_node = boost::shared_ptr<WidgetNode>(new WidgetNode());
     addWidget(m_node);
 
-    m_infoWidget = boost::shared_ptr<InfoWidget>(new InfoWidget(WorldManager::instance().styleManager().infoWidgetStyle()));
+    m_infoWidget = boost::shared_ptr<InfoWidget>(new InfoWidget(WorldManager::instance().skinManager().infoWidgetStyle()));
     m_infoWidget->setPosition(10, 10);
     m_infoWidget->setVisible(false);
     addWidget(m_infoWidget);
@@ -219,7 +219,7 @@ void SystemWidget::setSystem(boost::shared_ptr< PlanetarySystem > system)
         }
     }
 
-    boost::shared_ptr<SystemStyle> style = WorldManager::instance().systemManager().style(m_system->style());
+    boost::shared_ptr<SystemStyle> style = WorldManager::instance().styleManager().systemStyle(m_system->style());
 
     if (style)
     {

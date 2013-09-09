@@ -16,8 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WORLD_WORLDSTYLEMANAGER_H
-#define WORLD_WORLDSTYLEMANAGER_H
+#ifndef WORLD_WORLDSKINMANAGER_H
+#define WORLD_WORLDSKINMANAGER_H
 
 #include <OpenSR/Styles.h>
 #include <OpenSR/Types.h>
@@ -43,10 +43,10 @@ struct InfoWidgetStyle
     Rect captionContentRect;
 };
 
-class WorldStyleManager
+class WorldSkinManager
 {
 public:
-    WorldStyleManager();
+    WorldSkinManager();
 
     void loadStyles();
 
@@ -58,4 +58,4 @@ private:
 }
 }
 
-#endif // WORLD_WORLDSTYLEMANAGER_H
+#endif // WORLD_WORLDSKINMANAGER_H

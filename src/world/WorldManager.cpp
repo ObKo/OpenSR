@@ -42,7 +42,7 @@ uint64_t WorldManager::m_idCounter = 0;
 
 WorldManager::WorldManager()
 {
-    m_styleManager.loadStyles();
+    m_skinManager.loadStyles();
 }
 
 WorldManager& WorldManager::instance()
@@ -72,9 +72,9 @@ void WorldManager::removeObject(uint64_t id)
 }
 
 
-WorldStyleManager& WorldManager::styleManager()
+WorldSkinManager& WorldManager::skinManager()
 {
-    return m_styleManager;
+    return m_skinManager;
 }
 
 RaceManager& WorldManager::raceManager()
@@ -97,10 +97,10 @@ void WorldManager::generateWorld()
         m_raceManager.loadRaces(worldRaces);
 
     if (!worldSystemStyles.empty())
-        m_systemManager.loadStyles(worldSystemStyles);
+        m_styleManager.loadSystemStyles(worldSystemStyles);
 
     if (!worldPlanetStyles.empty())
-        m_planetManager.loadStyles(worldPlanetStyles);
+        m_styleManager.loadPlanetStyles(worldPlanetStyles);
 
     std::list<boost::shared_ptr<WorldGenHook> >::const_iterator end = m_genHooks.end();
     for (std::list<boost::shared_ptr<WorldGenHook> >::const_iterator i = m_genHooks.begin(); i != end; ++i)
@@ -158,6 +158,13 @@ bool WorldManager::saveWorld(const std::wstring& file) const
         return false;
     }
 
+    if (!m_styleManager.serialize(worldFile))
+    {
+        Log::error() << "Cannot save StyleManager";
+        worldFile.close();
+        return false;
+    }
+
     std::list<boost::shared_ptr<WorldObject> >::const_iterator end = savingList.end();
     for (std::list<boost::shared_ptr<WorldObject> >::const_iterator i = savingList.begin(); i != end; ++i)
     {
@@ -211,6 +218,13 @@ bool WorldManager::loadWorld(const std::wstring& file)
     if (!m_raceManager.deserialize(worldFile))
     {
         Log::error() << "Cannot load RaceManager";
+        worldFile.close();
+        return false;
+    }
+
+    if (!m_styleManager.deserialize(worldFile))
+    {
+        Log::error() << "Cannot load StyleManager";
         worldFile.close();
         return false;
     }
@@ -329,6 +343,11 @@ void WorldManager::removeGenHook(boost::shared_ptr< WorldGenHook > hook)
 SystemManager& WorldManager::systemManager()
 {
     return m_systemManager;
+}
+
+StyleManager& WorldManager::styleManager()
+{
+    return m_styleManager;
 }
 }
 }

@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "WorldStyleManager.h"
+#include "WorldSkinManager.h"
 #include <libRanger.h>
 
 #include <OpenSR/ResourceManager.h>
@@ -35,12 +35,12 @@ InfoWidgetStyle::InfoWidgetStyle():
 
 }
 
-WorldStyleManager::WorldStyleManager()
+WorldSkinManager::WorldSkinManager()
 {
 
 }
 
-void WorldStyleManager::loadStyles()
+void WorldSkinManager::loadStyles()
 {
     std::wstring skinFile = fromUTF8(Engine::instance().properties()->get<std::string>("world.skin", "World/Skin.json").c_str());
     boost::shared_ptr<std::istream> json = ResourceManager::instance().getFileStream(skinFile);
@@ -103,7 +103,7 @@ void WorldStyleManager::loadStyles()
     }
 }
 
-InfoWidgetStyle WorldStyleManager::infoWidgetStyle() const
+InfoWidgetStyle WorldSkinManager::infoWidgetStyle() const
 {
     return m_infoWidgetStyle;
 }

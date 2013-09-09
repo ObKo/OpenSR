@@ -30,7 +30,6 @@
 #include <libintl.h>
 #include <libRanger.h>
 
-#include "WorldStyleManager.h"
 #include "Planet.h"
 #include "PlanetarySystem.h"
 #include "PlanetManager.h"
@@ -337,7 +336,7 @@ void InfoWidget::showSystem(boost::shared_ptr<PlanetarySystem> system)
     m_caption->setText(_(system->name(), "OpenSR-World"));
 
     //FIXME: AnimatedSprite/Sprite
-    boost::shared_ptr<SystemStyle> style = WorldManager::instance().systemManager().style(system->style());
+    boost::shared_ptr<SystemStyle> style = WorldManager::instance().styleManager().systemStyle(system->style());
 
     if (style)
     {

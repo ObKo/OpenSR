@@ -17,10 +17,9 @@
 */
 
 
-#ifndef WORLD_SYSTEM_MANAGER_H
-#define WORLD_SYSTEM_MANAGER_H
+#ifndef WORLD_STYLEMANAGER_H
+#define WORLD_STYLEMANAGER_H
 
-#include <list>
 #include <map>
 #include <boost/shared_ptr.hpp>
 #include <stdint.h>
@@ -30,29 +29,35 @@ namespace Rangers
 class Texture;
 namespace World
 {
-class PlanetarySystem;
+struct PlanetStyle;
 struct SystemStyle;
-class SystemManager
+class StyleManager
 {
 public:
-    SystemManager();
+    StyleManager();
 
-    void addSystem(boost::shared_ptr<PlanetarySystem> system);
-    std::list<boost::shared_ptr<PlanetarySystem> > systems() const;
-    boost::shared_ptr<PlanetarySystem> currentSystem() const;
+    boost::shared_ptr<PlanetStyle> planetStyle(const std::string& name);
+    boost::shared_ptr<PlanetStyle> planetStyle(uint32_t id);
 
-    void setCurrentSystem(boost::shared_ptr<PlanetarySystem> system);
+    boost::shared_ptr<SystemStyle> systemStyle(const std::string& name);
+    boost::shared_ptr<SystemStyle> systemStyle(uint32_t id);
+
+    //! Load planet styles from JSON file
+    void loadPlanetStyles(const std::wstring& styleFile);
+    //! Load system styles from JSON file
+    void loadSystemStyles(const std::wstring& styleFile);
+
 
     bool serialize(std::ostream &stream) const;
     bool deserialize(std::istream &stream);
 
 private:
-    SystemManager(const SystemManager& other);
+    StyleManager(const StyleManager& other);
 
-    std::list<boost::shared_ptr<PlanetarySystem> > m_systems;
-    boost::shared_ptr<PlanetarySystem> m_currentSystem;
+    std::map<uint32_t, boost::shared_ptr<SystemStyle> > m_systemStyles;
+    std::map<uint32_t, boost::shared_ptr<PlanetStyle> > m_planetStyles;
 };
 }
 }
 
-#endif
+#endif // WORLD_STYLEMANAGER_H

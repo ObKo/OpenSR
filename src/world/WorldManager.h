@@ -25,10 +25,11 @@
 #include <stdint.h>
 #include <boost/shared_ptr.hpp>
 
-#include "WorldStyleManager.h"
+#include "WorldSkinManager.h"
 #include "RaceManager.h"
 #include "PlanetManager.h"
 #include "SystemManager.h"
+#include "StyleManager.h"
 
 namespace Rangers
 {
@@ -61,10 +62,11 @@ public:
     void addGenHook(boost::shared_ptr<WorldGenHook> hook);
     void removeGenHook(boost::shared_ptr<WorldGenHook> hook);
 
-    WorldStyleManager& styleManager();
+    WorldSkinManager& skinManager();
     RaceManager& raceManager();
     PlanetManager& planetManager();
     SystemManager& systemManager();
+    StyleManager& styleManager();
 
     static uint64_t getNextId();
 
@@ -73,10 +75,11 @@ private:
 
     std::map<uint64_t, boost::shared_ptr<WorldObject> > m_objects;
 
-    WorldStyleManager m_styleManager;
+    WorldSkinManager m_skinManager;
     RaceManager m_raceManager;
     PlanetManager m_planetManager;
     SystemManager m_systemManager;
+    StyleManager m_styleManager;
 
     std::list<boost::shared_ptr<WorldGenHook> > m_genHooks;
 

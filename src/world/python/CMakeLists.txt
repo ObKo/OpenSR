@@ -34,9 +34,10 @@ SET(WORLD_PYTHON_SOURCES
     WorldGenHook.cpp
     WorldManager.cpp
     WorldObject.cpp
-    WorldStyleManager.cpp
+    WorldSkinManager.cpp
     RaceManager.cpp
     SystemManager.cpp
+    StyleManager.cpp
 )
 
 SET(WORLD_PYTHON_HEADERS 
