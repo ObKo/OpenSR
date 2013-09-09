@@ -25,7 +25,7 @@
 #include <stdint.h>
 #include <boost/shared_ptr.hpp>
 
-#include "WorldSkinManager.h"
+#include "SkinManager.h"
 #include "RaceManager.h"
 #include "PlanetManager.h"
 #include "SystemManager.h"
@@ -62,7 +62,7 @@ public:
     void addGenHook(boost::shared_ptr<WorldGenHook> hook);
     void removeGenHook(boost::shared_ptr<WorldGenHook> hook);
 
-    WorldSkinManager& skinManager();
+    SkinManager& skinManager();
     RaceManager& raceManager();
     PlanetManager& planetManager();
     SystemManager& systemManager();
@@ -75,7 +75,7 @@ private:
 
     std::map<uint64_t, boost::shared_ptr<WorldObject> > m_objects;
 
-    WorldSkinManager m_skinManager;
+    SkinManager m_skinManager;
     RaceManager m_raceManager;
     PlanetManager m_planetManager;
     SystemManager m_systemManager;

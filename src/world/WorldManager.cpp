@@ -72,7 +72,7 @@ void WorldManager::removeObject(uint64_t id)
 }
 
 
-WorldSkinManager& WorldManager::skinManager()
+SkinManager& WorldManager::skinManager()
 {
     return m_skinManager;
 }

@@ -16,39 +16,46 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <boost/python.hpp>
-#include "InfoWidget.h"
+#ifndef WORLD_SKINMANAGER_H
+#define WORLD_SKINMANAGER_H
 
-#include "SkinManager.h"
-
-#include <OpenSR/python/WidgetWrap.h>
+#include <OpenSR/Styles.h>
+#include <OpenSR/Types.h>
 
 namespace Rangers
 {
 namespace World
 {
-namespace Python
+struct InfoWidgetStyle
 {
-struct InfoWidgetWrap : InfoWidget, boost::python::wrapper<InfoWidget>
-{
-    InfoWidgetWrap(const InfoWidgetStyle &style)
-        : InfoWidget(style)
-    {
-    }
-    RANGERS_PYTHON_WRAP_WIDGET(InfoWidget)
+    InfoWidgetStyle();
+
+    ResourceDescriptor background;
+    ResourceDescriptor font;
+    ResourceDescriptor captionFont;
+    int color;
+    int captionColor;
+    int labelColor;
+    Vector iconPosition;
+    Vector raceIconPosition;
+    int iconSize;
+    Rect contentRect;
+    Rect captionContentRect;
 };
 
-void exportInfoWidget()
+class SkinManager
 {
-    using namespace boost::python;
+public:
+    SkinManager();
 
-    class_<InfoWidgetWrap, bases<Widget>, boost::shared_ptr<InfoWidgetWrap>, boost::noncopyable> c("InfoWidget", init<const InfoWidgetStyle&>());
-    c.def("clear", &InfoWidget::clear)
-    .def("showPlanet", &InfoWidget::showPlanet)
-    .def("showSystem", &InfoWidget::showSystem);
-    RANGERS_PYTHON_WRAP_WIDGET_DEF(InfoWidget, InfoWidgetWrap, c);
-    register_ptr_to_python<boost::shared_ptr<InfoWidget> >();
+    void loadStyles();
+
+    InfoWidgetStyle infoWidgetStyle() const;
+
+private:
+    InfoWidgetStyle m_infoWidgetStyle;
+};
 }
 }
-}
-}
+
+#endif // WORLD_SKINMANAGER_H

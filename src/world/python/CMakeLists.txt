@@ -34,7 +34,7 @@ SET(WORLD_PYTHON_SOURCES
     WorldGenHook.cpp
     WorldManager.cpp
     WorldObject.cpp
-    WorldSkinManager.cpp
+    SkinManager.cpp
     RaceManager.cpp
     SystemManager.cpp
     StyleManager.cpp

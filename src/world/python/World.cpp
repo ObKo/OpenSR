@@ -58,7 +58,7 @@ void exportSystemWidget();
 void exportTypes();
 void exportWorldGenHook();
 void exportWorldManager();
-void exportWorldSkinManager();
+void exportSkinManager();
 void exportRaceManager();
 void exportSystemManager();
 void exportStyleManager();
@@ -102,7 +102,7 @@ BOOST_PYTHON_MODULE(_World)
     Rangers::World::Python::exportTypes();
     Rangers::World::Python::exportWorldGenHook();
     Rangers::World::Python::exportWorldManager();
-    Rangers::World::Python::exportWorldSkinManager();
+    Rangers::World::Python::exportSkinManager();
     Rangers::World::Python::exportRaceManager();
     Rangers::World::Python::exportSystemManager();
     Rangers::World::Python::exportStyleManager();

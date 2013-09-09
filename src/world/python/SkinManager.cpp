@@ -16,46 +16,32 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WORLD_WORLDSKINMANAGER_H
-#define WORLD_WORLDSKINMANAGER_H
-
-#include <OpenSR/Styles.h>
-#include <OpenSR/Types.h>
+#include <boost/python.hpp>
+#include "SkinManager.h"
 
 namespace Rangers
 {
 namespace World
 {
-struct InfoWidgetStyle
+namespace Python
 {
-    InfoWidgetStyle();
-
-    ResourceDescriptor background;
-    ResourceDescriptor font;
-    ResourceDescriptor captionFont;
-    int color;
-    int captionColor;
-    int labelColor;
-    Vector iconPosition;
-    Vector raceIconPosition;
-    int iconSize;
-    Rect contentRect;
-    Rect captionContentRect;
-};
-
-class WorldSkinManager
+void exportSkinManager()
 {
-public:
-    WorldSkinManager();
+    using namespace boost::python;
 
-    void loadStyles();
+    class_<SkinManager, boost::noncopyable> c("SkinManager", boost::python::no_init);
+    c.def("loadStyles", &SkinManager::loadStyles)
+    .def("infoWidgetStyle", &SkinManager::infoWidgetStyle);
 
-    InfoWidgetStyle infoWidgetStyle() const;
-
-private:
-    InfoWidgetStyle m_infoWidgetStyle;
-};
+    class_<InfoWidgetStyle> c2("InfoWidgetStyle", init<>());
+    c2.def_readwrite("background", &InfoWidgetStyle::background)
+    .def_readwrite("font", &InfoWidgetStyle::font)
+    .def_readwrite("captionFont", &InfoWidgetStyle::captionFont)
+    .def_readwrite("color", &InfoWidgetStyle::color)
+    .def_readwrite("captionColor", &InfoWidgetStyle::captionColor)
+    .def_readwrite("labelColor", &InfoWidgetStyle::labelColor)
+    .def_readwrite("contentRect", &InfoWidgetStyle::contentRect);
 }
 }
-
-#endif // WORLD_WORLDSKINMANAGER_H
+}
+}
