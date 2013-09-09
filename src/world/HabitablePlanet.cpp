@@ -18,6 +18,7 @@
 
 #include "HabitablePlanet.h"
 #include "WorldHelper.h"
+#include "WorldManager.h"
 
 namespace Rangers
 {
@@ -32,15 +33,16 @@ bool HabitablePlanet::deserialize(std::istream& stream)
     if (!Planet::deserialize(stream))
         return false;
 
+    uint64_t landContext;
     stream.read((char *)&m_population, sizeof(uint32_t));
     stream.read((char *)&m_invader, sizeof(uint32_t));
-    stream.read((char *)&m_race, sizeof(uint32_t));
+    stream.read((char *)&landContext, sizeof(uint64_t));
 
     if (!stream.good())
         return false;
 
-    if (!m_landContext.deserialize(stream))
-        return false;
+    if (landContext)
+        m_landContext = boost::dynamic_pointer_cast<LandContext>(WorldManager::instance().getObject(landContext));
 
     return true;
 }
@@ -50,7 +52,7 @@ uint32_t HabitablePlanet::invader() const
     return m_invader;
 }
 
-LandContext HabitablePlanet::landContext() const
+boost::shared_ptr<LandContext> HabitablePlanet::landContext() const
 {
     return m_landContext;
 }
@@ -60,24 +62,19 @@ uint32_t HabitablePlanet::population() const
     return m_population;
 }
 
-uint32_t HabitablePlanet::race() const
-{
-    return m_race;
-}
-
 bool HabitablePlanet::serialize(std::ostream& stream) const
 {
     if (!Planet::serialize(stream))
         return false;
 
+    uint64_t landContext = 0;
+    if (m_landContext)
+        landContext = m_landContext->id();
     stream.write((const char *)&m_population, sizeof(uint32_t));
     stream.write((const char *)&m_invader, sizeof(uint32_t));
-    stream.write((const char *)&m_race, sizeof(uint32_t));
+    stream.write((const char *)&landContext, sizeof(uint64_t));
 
     if (!stream.good())
-        return false;
-
-    if (!m_landContext.serialize(stream))
         return false;
 
     return true;
@@ -98,14 +95,17 @@ void HabitablePlanet::setInvader(uint32_t invader)
     m_invader = invader;
 }
 
-void HabitablePlanet::setLandContext(const LandContext& landContext)
+void HabitablePlanet::setLandContext(boost::shared_ptr<LandContext> landContext)
 {
     m_landContext = landContext;
 }
 
-void HabitablePlanet::setRace(uint32_t race)
+std::list< uint64_t > HabitablePlanet::dependencies()
 {
-    m_race = race;
+    std::list< uint64_t > dep = WorldObject::dependencies();
+    if (m_landContext)
+        dep.push_back(m_landContext->id());
+    return dep;
 }
 }
 }

@@ -19,23 +19,27 @@
 #ifndef WORLD_INTERACTION_CONTEXT_H
 #define WORLD_INTERACTION_CONTEXT_H
 
-#include <iostream>
-#include <stdint.h>
+#include "WorldObject.h"
 
 namespace Rangers
 {
 namespace World
 {
-class InteractionContext
+class InteractionContext: public WorldObject
 {
 public:
-    InteractionContext();
+    InteractionContext(uint64_t id = 0);
 
     float relation() const;
     uint32_t race() const;
 
+    void setRelation(float relation);
+    void setRace(uint32_t race);
+
+    virtual uint32_t type() const;
     virtual bool serialize(std::ostream &stream) const;
     virtual bool deserialize(std::istream &stream);
+
 protected:
     float m_relation;
     uint32_t m_race;

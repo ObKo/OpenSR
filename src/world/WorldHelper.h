@@ -45,12 +45,15 @@ public:
     static const uint32_t TYPE_HABITABLEPLANET = 0x79f89bfa;
     static const uint32_t TYPE_HULL = 0x3938e105;
     static const uint32_t TYPE_ITEM = 0x4b74e518;
+    static const uint32_t TYPE_INTERACTION_CONTEXT = 0xf62886ad;
+    static const uint32_t TYPE_LAND_CONTEXT = 0x9b5430be;
     static const uint32_t TYPE_METEOR = 0x71691dfd;
     static const uint32_t TYPE_MICROMODULUS = 0x6921522f;
     static const uint32_t TYPE_PLANET = 0x79105c84;
     static const uint32_t TYPE_RADAR = 0x5fcf4370;
     static const uint32_t TYPE_SCANNER = 0x28ff1510;
     static const uint32_t TYPE_SHIP = 0x2b9a8c11;
+    static const uint32_t TYPE_SHIP_CONTEXT = 0x3e572751;
     static const uint32_t TYPE_PLANETARYSYSTEM = 0x1c832836;
     static const uint32_t TYPE_SPACEBASE = 0x606e1534;
     static const uint32_t TYPE_SPACEOBJECT = 0x44357eaf;

@@ -18,6 +18,7 @@
 
 #include <boost/python.hpp>
 #include "ShipContext.h"
+#include "WorldObjectWrap.h"
 
 namespace Rangers
 {
@@ -25,12 +26,22 @@ namespace World
 {
 namespace Python
 {
+struct ShipContextWrap: ShipContext, boost::python::wrapper<ShipContext>
+{
+    ShipContextWrap(uint64_t id = 0): ShipContext(id)
+    {
+    }
+
+    WORLD_PYTHON_WRAP_WORLD_OBJECT(ShipContext)
+};
+
 void exportShipContext()
 {
     using namespace boost::python;
 
-    class_<ShipContext, bases<InteractionContext>, boost::shared_ptr<ShipContext>, boost::noncopyable> c("ShipContext", init<>());
-    c.def("cargo", &ShipContext::cargo);
+    class_<ShipContextWrap, bases<InteractionContext>, boost::shared_ptr<ShipContextWrap>, boost::noncopyable> c("ShipContext", init<>());
+    WORLD_PYTHON_WRAP_WORLD_OBJECT_DEF(ShipContext, ShipContextWrap, c);
+    register_ptr_to_python<boost::shared_ptr<ShipContext> >();
 }
 }
 }

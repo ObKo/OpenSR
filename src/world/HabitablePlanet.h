@@ -22,6 +22,8 @@
 #include "Planet.h"
 #include "LandContext.h"
 
+#include <boost/shared_ptr.hpp>
+
 namespace Rangers
 {
 namespace World
@@ -33,22 +35,21 @@ public:
 
     uint32_t invader() const;
     uint32_t population() const;
-    uint32_t race() const;
-    LandContext landContext() const;
+    boost::shared_ptr<LandContext> landContext() const;
 
     void setPopulation(uint32_t population);
     void setInvader(uint32_t invader);
-    void setRace(uint32_t race);
-    void setLandContext(const LandContext& landContext);
+    void setLandContext(boost::shared_ptr<LandContext> landContext);
 
     virtual uint32_t type() const;
     virtual bool serialize(std::ostream &stream) const;
     virtual bool deserialize(std::istream &stream);
+    virtual std::list<uint64_t> dependencies();
+
 protected:
     uint32_t m_population;
     uint32_t m_invader;
-    uint32_t m_race;
-    LandContext m_landContext;
+    boost::shared_ptr<LandContext> m_landContext;
 };
 }
 }

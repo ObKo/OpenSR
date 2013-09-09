@@ -298,7 +298,10 @@ void InfoWidget::showPlanet(boost::shared_ptr<Planet> planet)
         m_infoWidget.push_back(l);
         addChild(l);
 
-        boost::shared_ptr<Race> race = WorldManager::instance().raceManager().race(hPlanet->race());
+        boost::shared_ptr<Race> race;
+
+        if (hPlanet->landContext())
+            race = WorldManager::instance().raceManager().race(hPlanet->landContext()->race());
 
         if (race)
         {
@@ -368,7 +371,11 @@ void InfoWidget::showSystem(boost::shared_ptr<PlanetarySystem> system)
 
             if (boost::shared_ptr<HabitablePlanet> hPlanet = boost::dynamic_pointer_cast<HabitablePlanet>(planet))
             {
-                boost::shared_ptr<Race> race = WorldManager::instance().raceManager().race(hPlanet->race());
+                boost::shared_ptr<Race> race;
+
+                if (hPlanet->landContext())
+                    race = WorldManager::instance().raceManager().race(hPlanet->landContext()->race());
+
                 if (race)
                 {
                     boost::shared_ptr<Sprite> s = boost::shared_ptr<Sprite>(new Sprite(race->icon));

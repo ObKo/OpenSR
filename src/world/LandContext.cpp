@@ -17,13 +17,19 @@
 */
 
 #include "LandContext.h"
+#include "WorldHelper.h"
 
 namespace Rangers
 {
 namespace World
 {
-LandContext::LandContext(): InteractionContext()
+LandContext::LandContext(uint64_t id): InteractionContext(id)
 {
+}
+
+uint32_t LandContext::type() const
+{
+    return WorldHelper::TYPE_LAND_CONTEXT;
 }
 
 bool LandContext::deserialize(std::istream& stream)

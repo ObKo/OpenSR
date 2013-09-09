@@ -18,6 +18,7 @@
 
 #include <boost/python.hpp>
 #include "LandContext.h"
+#include "WorldObjectWrap.h"
 
 namespace Rangers
 {
@@ -25,11 +26,22 @@ namespace World
 {
 namespace Python
 {
+struct LandContextWrap: LandContext, boost::python::wrapper<LandContext>
+{
+    LandContextWrap(uint64_t id = 0): LandContext(id)
+    {
+    }
+
+    WORLD_PYTHON_WRAP_WORLD_OBJECT(LandContext)
+};
+
 void exportLandContext()
 {
     using namespace boost::python;
 
-    class_<LandContext, bases<InteractionContext>, boost::shared_ptr<LandContext>, boost::noncopyable> c("LandContext", init<>());
+    class_<LandContextWrap, bases<InteractionContext>, boost::shared_ptr<LandContextWrap>, boost::noncopyable> c("LandContext", init<>());
+    WORLD_PYTHON_WRAP_WORLD_OBJECT_DEF(LandContext, LandContextWrap, c);
+    register_ptr_to_python<boost::shared_ptr<LandContext> >();
 }
 }
 }

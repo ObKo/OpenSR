@@ -18,6 +18,7 @@
 
 #include <boost/python.hpp>
 #include "InteractionContext.h"
+#include "WorldObjectWrap.h"
 
 namespace Rangers
 {
@@ -25,13 +26,26 @@ namespace World
 {
 namespace Python
 {
+struct InteractionContextWrap: InteractionContext, boost::python::wrapper<InteractionContext>
+{
+    InteractionContextWrap(uint64_t id = 0): InteractionContext(id)
+    {
+    }
+
+    WORLD_PYTHON_WRAP_WORLD_OBJECT(InteractionContext)
+};
+
 void exportInteractionContext()
 {
     using namespace boost::python;
 
-    class_<InteractionContext, boost::shared_ptr<InteractionContext>, boost::noncopyable> c("InteractionContext", init<>());
+    class_<InteractionContextWrap, bases<WorldObject>, boost::shared_ptr<InteractionContextWrap>, boost::noncopyable> c("InteractionContext", init<>());
     c.def("relation", &InteractionContext::relation)
-    .def("race", &InteractionContext::race);
+    .def("race", &InteractionContext::race)
+    .def("setRelation", &InteractionContext::setRelation)
+    .def("setRace", &InteractionContext::setRace);
+    WORLD_PYTHON_WRAP_WORLD_OBJECT_DEF(InteractionContext, InteractionContextWrap, c);
+    register_ptr_to_python<boost::shared_ptr<InteractionContext> >();
 }
 }
 }

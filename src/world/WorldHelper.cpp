@@ -48,6 +48,9 @@
 #include "Types.h"
 #include "Weapon.h"
 #include "WorldObject.h"
+#include "InteractionContext.h"
+#include "LandContext.h"
+#include "ShipContext.h"
 #include <OpenSR/Types.h>
 
 namespace
@@ -94,6 +97,12 @@ boost::shared_ptr<WorldObject> WorldHelper::createObjectByType(uint32_t type)
     case TYPE_HULL:
         object = new Hull();
         break;
+    case TYPE_INTERACTION_CONTEXT:
+        object = new InteractionContext();
+        break;
+    case TYPE_LAND_CONTEXT:
+        object = new LandContext();
+        break;
     case TYPE_ITEM:
         object = new Item();
         break;
@@ -114,6 +123,9 @@ boost::shared_ptr<WorldObject> WorldHelper::createObjectByType(uint32_t type)
         break;
     case TYPE_SHIP:
         object = new Ship();
+        break;
+    case TYPE_SHIP_CONTEXT:
+        object = new ShipContext();
         break;
     case TYPE_PLANETARYSYSTEM:
         object = new PlanetarySystem();

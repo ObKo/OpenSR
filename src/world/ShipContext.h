@@ -31,10 +31,11 @@ namespace World
 class ShipContext: public InteractionContext
 {
 public:
-    ShipContext();
+    ShipContext(uint64_t id = 0);
 
     std::list< boost::shared_ptr<Item> > cargo() const;
 
+    virtual uint32_t type() const;
     virtual bool serialize(std::ostream &stream) const;
     virtual bool deserialize(std::istream &stream);
 protected:

@@ -17,12 +17,13 @@
 */
 
 #include "ShipContext.h"
+#include "WorldHelper.h"
 
 namespace Rangers
 {
 namespace World
 {
-ShipContext::ShipContext(): InteractionContext()
+ShipContext::ShipContext(uint64_t id): InteractionContext(id)
 {
 }
 
@@ -41,5 +42,9 @@ bool ShipContext::serialize(std::ostream& stream) const
     return InteractionContext::serialize(stream);
 }
 
+uint32_t ShipContext::type() const
+{
+    return WorldHelper::TYPE_SHIP_CONTEXT;
+}
 }
 }

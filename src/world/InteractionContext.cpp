@@ -17,17 +17,27 @@
 */
 
 #include "InteractionContext.h"
+#include "WorldHelper.h"
 
 namespace Rangers
 {
 namespace World
 {
-InteractionContext::InteractionContext(): m_relation(1.0f), m_race(0)
+InteractionContext::InteractionContext(uint64_t id): WorldObject(id), m_relation(1.0f), m_race(0)
 {
 }
 
 bool InteractionContext::deserialize(std::istream& stream)
 {
+    if (!WorldObject::deserialize(stream))
+        return false;
+
+    stream.read((char *)&m_race, sizeof(uint32_t));
+    stream.read((char *)&m_relation, sizeof(float));
+
+    if (!stream.good())
+        return false;
+
     return true;
 }
 
@@ -41,8 +51,32 @@ float InteractionContext::relation() const
     return m_relation;
 }
 
+uint32_t InteractionContext::type() const
+{
+    return WorldHelper::TYPE_INTERACTION_CONTEXT;
+}
+
+void InteractionContext::setRace(uint32_t race)
+{
+    m_race = race;
+}
+
+void InteractionContext::setRelation(float relation)
+{
+    m_relation = relation;
+}
+
 bool InteractionContext::serialize(std::ostream& stream) const
 {
+    if (!WorldObject::serialize(stream))
+        return false;
+
+    stream.write((const char *)&m_race, sizeof(uint32_t));
+    stream.write((const char *)&m_relation, sizeof(float));
+
+    if (!stream.good())
+        return false;
+
     return true;
 }
 }
