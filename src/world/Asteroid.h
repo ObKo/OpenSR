@@ -40,6 +40,8 @@ public:
     float time() const;
     float mineral() const;
     uint32_t style() const;
+    //! Current approximate asteroid speed
+    float speed() const;
 
     void setSemiAxis(float a, float b);
     void setPeriod(float T);
@@ -59,6 +61,7 @@ public:
 protected:
     void calcEccentricity();
     void calcPosition();
+    void calcSpeed();
 
     //! Semi-axis of the ellipse, a >= b
     float m_a, m_b;
@@ -72,6 +75,7 @@ protected:
 
     float m_e;
     float m_prevT;
+    float m_speed;
 };
 }
 }

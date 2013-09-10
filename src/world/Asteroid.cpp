@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2012 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2012 - 2013 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 #include "Asteroid.h"
 #include "WorldHelper.h"
 #include <libRanger.h>
+#include <OpenSR/Log.h>
 #include <cmath>
 
 namespace
@@ -31,7 +32,8 @@ namespace Rangers
 namespace World
 {
 Asteroid::Asteroid(uint64_t id): SystemObject(id),
-    m_a(0), m_b(0), m_period(0), m_angle(0), m_t(0), m_style(0), m_mineral(0)
+    m_a(0), m_b(0), m_period(0), m_angle(0), m_t(0), m_style(0), m_mineral(0),
+    m_speed(0)
 {
 }
 
@@ -113,15 +115,27 @@ float Asteroid::time() const
 
 void Asteroid::setSemiAxis(float a, float b)
 {
-    m_a = a;
-    m_b = b;
+    if (a < b)
+    {
+        Log::warning() << "Asteroid: semi-major axis is less than semi-minor, axis will be swapped.";
+        m_a = b;
+        m_b = a;
+    }
+    else
+    {
+        m_a = a;
+        m_b = b;
+    }
     calcEccentricity();
+    calcPosition();
+    calcSpeed();
 }
 
 void Asteroid::setPeriod(float T)
 {
     m_period = T;
     calcPosition();
+    calcSpeed();
 }
 
 void Asteroid::setAngle(float angle)
@@ -164,6 +178,25 @@ void Asteroid::calcPosition()
     m_position.y = x * sin(angle) + y * cos(angle);
 }
 
+void Asteroid::calcSpeed()
+{
+    float M = 2.0f * M_PI / m_period * (m_t + 1.0f);
+    float E = M;
+    for (int j = 0; j < ITERATION_COUNTS; j++)
+    {
+        E = m_e * sin(E) + M;
+    }
+    float alpha = 2.0f * atan(sqrt((1.0f + m_e) / (1.0f - m_e)) * tan(E / 2.0f));
+    float r = m_a * (1.0f - m_e * cos(E));
+    float dx = r * cos(alpha) - m_position.x, dy = r * sin(alpha) - m_position.y;
+    m_speed = sqrt(dx * dx + dy * dy);
+}
+
+float Asteroid::speed() const
+{
+    return m_speed;
+}
+
 void Asteroid::calcTurn()
 {
     m_prevT = m_t;
@@ -172,6 +205,7 @@ void Asteroid::calcTurn()
 void Asteroid::finishTurn()
 {
     setTime(m_prevT + 1.0f);
+    calcSpeed();
 }
 
 void Asteroid::turn(float progress)
