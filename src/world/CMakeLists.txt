@@ -12,7 +12,7 @@ SET(WORLD_SOURCES
     InteractionContext.cpp
     Item.cpp
     LandContext.cpp
-    Meteor.cpp
+    Asteroid.cpp
     Micromodulus.cpp
     Planet.cpp
     PlanetManager.cpp

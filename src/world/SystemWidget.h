@@ -20,6 +20,7 @@
 #define WORLD_SYSTEMWIDGET_H
 
 #include <OpenSR/Widget.h>
+#include <map>
 
 namespace Rangers
 {
@@ -30,6 +31,7 @@ class Button;
 
 namespace World
 {
+class Asteroid;
 class InfoWidget;
 class SystemPlanetWidget;
 class PlanetarySystem;
@@ -54,9 +56,10 @@ private:
     enum MoveDirection {NONE, LEFT, RIGHT, TOP, BOTTOM, TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT};
 
     class SystemWidgetListener;
-
     boost::shared_ptr<PlanetarySystem> m_system;
     std::list<boost::shared_ptr<SystemPlanetWidget> > m_planetWidgets;
+    //TODO: Use more complex widget than SpriteWidget
+    std::map<boost::shared_ptr<Asteroid>, boost::shared_ptr<SpriteWidget> > m_asteroidsWidgets;
 
     boost::shared_ptr<Sprite> m_bgSprite;
     boost::shared_ptr<SpriteWidget> m_starWidget;

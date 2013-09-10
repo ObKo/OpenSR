@@ -1,0 +1,62 @@
+{
+   "00" : {
+      "sprite": "DATA/Asteroid/00.gai", 
+      "animated": true
+   },
+   "01" : {
+      "sprite": "DATA/Asteroid/01.gai", 
+      "animated": true
+   },
+   "02" : {
+      "sprite": "DATA/Asteroid/02.gai", 
+      "animated": true
+   },
+   "03" : {
+      "sprite": "DATA/Asteroid/03.gai", 
+      "animated": true
+   },
+   "04" : {
+      "sprite": "DATA/Asteroid/04.gai", 
+      "animated": true
+   },
+   "05" : {
+      "sprite": "DATA/Asteroid/05.gai", 
+      "animated": true
+   },
+   "06" : {
+      "sprite": "DATA/Asteroid/06.gai", 
+      "animated": true
+   },
+   "07" : {
+      "sprite": "DATA/Asteroid/07.gai", 
+      "animated": true
+   },
+   "08" : {
+      "sprite": "DATA/Asteroid/08.gai", 
+      "animated": true
+   },
+   "09" : {
+      "sprite": "DATA/Asteroid/09.gai", 
+      "animated": true
+   },
+   "10" : {
+      "sprite": "DATA/Asteroid/10.gai", 
+      "animated": true
+   },
+   "11" : {
+      "sprite": "DATA/Asteroid/11.gai", 
+      "animated": true
+   },
+   "12" : {
+      "sprite": "DATA/Asteroid/12.gai", 
+      "animated": true
+   },
+   "13" : {
+      "sprite": "DATA/Asteroid/13.gai", 
+      "animated": true
+   },
+   "14" : {
+      "sprite": "DATA/Asteroid/14.gai", 
+      "animated": true
+   }
+}

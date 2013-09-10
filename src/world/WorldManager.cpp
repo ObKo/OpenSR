@@ -92,6 +92,7 @@ void WorldManager::generateWorld()
     std::wstring worldRaces = fromUTF8(Engine::instance().properties()->get<std::string>("world.races", "World/Races.json").c_str());
     std::wstring worldSystemStyles = fromUTF8(Engine::instance().properties()->get<std::string>("world.systemStyles", "World/SystemStyles.json").c_str());
     std::wstring worldPlanetStyles = fromUTF8(Engine::instance().properties()->get<std::string>("world.planetStyles", "World/PlanetStyles.json").c_str());
+    std::wstring worldAsteroidStyles = fromUTF8(Engine::instance().properties()->get<std::string>("world.asteroidStyles", "World/AsteroidStyles.json").c_str());
 
     if (!worldRaces.empty())
         m_raceManager.loadRaces(worldRaces);
@@ -101,6 +102,9 @@ void WorldManager::generateWorld()
 
     if (!worldPlanetStyles.empty())
         m_styleManager.loadPlanetStyles(worldPlanetStyles);
+
+    if (!worldAsteroidStyles.empty())
+        m_styleManager.loadAsteroidStyles(worldAsteroidStyles);
 
     std::list<boost::shared_ptr<WorldGenHook> >::const_iterator end = m_genHooks.end();
     for (std::list<boost::shared_ptr<WorldGenHook> >::const_iterator i = m_genHooks.begin(); i != end; ++i)

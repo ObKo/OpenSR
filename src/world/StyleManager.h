@@ -31,6 +31,7 @@ namespace World
 {
 struct PlanetStyle;
 struct SystemStyle;
+struct AsteroidStyle;
 class StyleManager
 {
 public:
@@ -42,10 +43,15 @@ public:
     boost::shared_ptr<SystemStyle> systemStyle(const std::string& name);
     boost::shared_ptr<SystemStyle> systemStyle(uint32_t id);
 
+    boost::shared_ptr<AsteroidStyle> asteroidStyle(const std::string& name);
+    boost::shared_ptr<AsteroidStyle> asteroidStyle(uint32_t id);
+
     //! Load planet styles from JSON file
     void loadPlanetStyles(const std::wstring& styleFile);
     //! Load system styles from JSON file
     void loadSystemStyles(const std::wstring& styleFile);
+    //! Load asteroid styles from JSON file
+    void loadAsteroidStyles(const std::wstring& styleFile);
 
 
     bool serialize(std::ostream &stream) const;
@@ -56,6 +62,7 @@ private:
 
     std::map<uint32_t, boost::shared_ptr<SystemStyle> > m_systemStyles;
     std::map<uint32_t, boost::shared_ptr<PlanetStyle> > m_planetStyles;
+    std::map<uint32_t, boost::shared_ptr<AsteroidStyle> > m_asteroidStyles;
 };
 }
 }

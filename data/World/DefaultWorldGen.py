@@ -1,5 +1,5 @@
 from OpenSR.World import WorldManager, WorldGenHook, PlanetarySystem, DesertPlanet, \
-                         HabitablePlanet, Point, LandContext
+                         HabitablePlanet, Point, LandContext, Asteroid
 import math
 
 world = WorldManager.instance()
@@ -45,6 +45,19 @@ class DefaultWorldGen(WorldGenHook):
         
         return planet
       
+    def genAsteroid(self, system, a, b, period, angle, time, mineral, style):
+        asteroid = Asteroid()
+        asteroid.setSemiAxis(a, b)
+        asteroid.setPeriod(period)
+        asteroid.setAngle(angle)
+        asteroid.setTime(time)
+        asteroid.setMineral(mineral)
+        asteroid.setStyle(style)
+        
+        world.addObject(asteroid)
+        system.addObject(asteroid)
+        
+      
     def genPlanetarySystem(self, name, size, style, position):
         system = PlanetarySystem()
         
@@ -63,8 +76,10 @@ class DefaultWorldGen(WorldGenHook):
        
         system = self.genPlanetarySystem('Solar', 2000.0, 'solar', Point(0.0, 0.0))
         
-        planet = self.genDesertPlanet(system, 600.0, 50.0, 'Mercur', 0.0, math.pi * 2.0 / 87.0, 'mercur')
-        hPlanet = self.genHabitablePlanet(system, 450.0, 75.0, 'Earth', 1.0, math.pi * 2.0 / 365.0, 'earth', 1000000, races.race('human'))
-        sPlanet = self.genDesertPlanet(system, 800.0, 100.0, 'Saturn', math.pi, math.pi * 2.0 / 100.0, 'saturn')
+        self.genDesertPlanet(system, 600.0, 50.0, 'Mercur', 0.0, math.pi * 2.0 / 87.0, 'mercur')
+        self.genHabitablePlanet(system, 450.0, 75.0, 'Earth', 1.0, math.pi * 2.0 / 365.0, 'earth', 1000000, races.race('human'))
+        self.genDesertPlanet(system, 800.0, 100.0, 'Saturn', math.pi, math.pi * 2.0 / 100.0, 'saturn')
+        self.genAsteroid(system, 1000.0, 500.0, 20.0, 0.0, 0.0, 100.0, '00')   
+        self.genAsteroid(system, 1500.0, 700.0, 10.0, 100.0, 0.0, 100.0, '01')
                 
         systemManager.setCurrentSystem(system)

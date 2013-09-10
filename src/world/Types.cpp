@@ -24,6 +24,7 @@ namespace
 {
 const uint32_t PLANET_STYLE_SIGNATURE = *((uint32_t*)"SRPS");
 const uint32_t SYSTEM_STYLE_SIGNATURE = *((uint32_t*)"SRSS");
+const uint32_t ASTEROID_STYLE_SIGNATURE = *((uint32_t*)"SRAS");
 }
 
 namespace Rangers
@@ -178,5 +179,49 @@ bool SystemStyle::deserialize(std::istream& stream)
 
     return true;
 }
+
+AsteroidStyle::AsteroidStyle(): animated(true)
+{
+
+}
+
+bool AsteroidStyle::serialize(std::ostream& stream) const
+{
+    stream.write((const char *)&ASTEROID_STYLE_SIGNATURE, 4);
+
+    if (!WorldHelper::serializeString(id, stream))
+        return false;
+    if (!WorldHelper::serializeString(sprite, stream))
+        return false;
+
+    stream.write((const char *)&animated, sizeof(bool));
+
+    if (!stream.good())
+        return false;
+
+    return true;
+}
+
+bool AsteroidStyle::deserialize(std::istream& stream)
+{
+    uint32_t sig;
+    stream.read((char *)&sig, 4);
+
+    if (sig != ASTEROID_STYLE_SIGNATURE)
+        return false;
+
+    if (!WorldHelper::deserializeString(id, stream))
+        return false;
+    if (!WorldHelper::deserializeString(sprite, stream))
+        return false;
+
+    stream.read((char *)&animated, sizeof(bool));
+
+    if (!stream.good())
+        return false;
+
+    return true;
+}
+
 }
 }

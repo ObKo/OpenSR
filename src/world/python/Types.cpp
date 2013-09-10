@@ -50,6 +50,11 @@ void exportTypes()
     .def_readwrite("ringOffsetY", &PlanetStyle::ringOffsetY)
     .def_readwrite("ringBgOffsetX", &PlanetStyle::ringBgOffsetX)
     .def_readwrite("ringBgOffsetY", &PlanetStyle::ringBgOffsetY);
+
+    class_<AsteroidStyle> c3("AsteroidStyle", init<>());
+    c3.def_readwrite("id", &AsteroidStyle::id)
+    .def_readwrite("sprite", &AsteroidStyle::sprite)
+    .def_readwrite("animated", &AsteroidStyle::animated);
 }
 }
 }

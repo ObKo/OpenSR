@@ -33,7 +33,7 @@
 #include "InteractionContext.h"
 #include "Item.h"
 #include "LandContext.h"
-#include "Meteor.h"
+#include "Asteroid.h"
 #include "Micromodulus.h"
 #include "Planet.h"
 #include "Radar.h"
@@ -106,8 +106,8 @@ boost::shared_ptr<WorldObject> WorldHelper::createObjectByType(uint32_t type)
     case TYPE_ITEM:
         object = new Item();
         break;
-    case TYPE_METEOR:
-        object = new Meteor();
+    case TYPE_ASTEROID:
+        object = new Asteroid();
         break;
     case TYPE_MICROMODULUS:
         object = new Micromodulus();

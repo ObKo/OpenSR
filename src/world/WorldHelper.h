@@ -47,7 +47,7 @@ public:
     static const uint32_t TYPE_ITEM = 0x4b74e518;
     static const uint32_t TYPE_INTERACTION_CONTEXT = 0xf62886ad;
     static const uint32_t TYPE_LAND_CONTEXT = 0x9b5430be;
-    static const uint32_t TYPE_METEOR = 0x71691dfd;
+    static const uint32_t TYPE_ASTEROID = 0x71691dfd;
     static const uint32_t TYPE_MICROMODULUS = 0x6921522f;
     static const uint32_t TYPE_PLANET = 0x79105c84;
     static const uint32_t TYPE_RADAR = 0x5fcf4370;

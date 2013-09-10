@@ -22,6 +22,8 @@
 #include "Planet.h"
 #include "WorldManager.h"
 #include "InfoWidget.h"
+#include "WorldHelper.h"
+#include "Asteroid.h"
 
 #include <cmath>
 #include <OpenSR/AnimatedSprite.h>
@@ -180,6 +182,13 @@ void SystemWidget::processLogic(int dt)
     if (m_bgSprite)
         m_bgSprite->setPosition(m_xOffset / 10 - (m_bgSprite->width() - width()) / 2, m_yOffset / 10 - (m_bgSprite->height() - height()) / 2);
     m_node->setPosition(m_xOffset + width() / 2, m_yOffset + height() / 2);
+
+    std::map<boost::shared_ptr<Asteroid>, boost::shared_ptr<SpriteWidget> >::const_iterator aend = m_asteroidsWidgets.end();
+    for (std::map<boost::shared_ptr<Asteroid>, boost::shared_ptr<SpriteWidget> >::const_iterator i = m_asteroidsWidgets.begin(); i != aend; ++i)
+    {
+        Point p = (*i).first->position();
+        (*i).second->setPosition(p.x, p.y);
+    }
 }
 
 void SystemWidget::setSystem(boost::shared_ptr< PlanetarySystem > system)
@@ -200,6 +209,13 @@ void SystemWidget::setSystem(boost::shared_ptr< PlanetarySystem > system)
     }
     m_planetWidgets.clear();
 
+    std::map<boost::shared_ptr<Asteroid>, boost::shared_ptr<SpriteWidget> >::const_iterator aend = m_asteroidsWidgets.end();
+    for (std::map<boost::shared_ptr<Asteroid>, boost::shared_ptr<SpriteWidget> >::const_iterator i = m_asteroidsWidgets.begin(); i != aend; ++i)
+    {
+        removeWidget((*i).second);
+    }
+    m_asteroidsWidgets.clear();
+
     if (!m_system)
         return;
 
@@ -208,15 +224,29 @@ void SystemWidget::setSystem(boost::shared_ptr< PlanetarySystem > system)
     std::list<boost::shared_ptr<SystemObject> >::const_iterator end = objects.end();
     for (std::list<boost::shared_ptr<SystemObject> >::const_iterator i = objects.begin(); i != end; ++i)
     {
-        boost::shared_ptr<Planet> planet = boost::dynamic_pointer_cast<Planet>(*i);
-        if (planet)
+
+        if (boost::shared_ptr<Planet> planet = boost::dynamic_pointer_cast<Planet>(*i))
         {
             boost::shared_ptr<SystemPlanetWidget> w = boost::shared_ptr<SystemPlanetWidget>(new SystemPlanetWidget(planet));
             w->addListener(m_actionListener);
 
             m_planetWidgets.push_back(w);
             m_node->addWidget(w);
+
         }
+        else if (boost::shared_ptr<Asteroid> asteroid = boost::dynamic_pointer_cast<Asteroid>(*i))
+        {
+            boost::shared_ptr<AsteroidStyle> s = WorldManager::instance().styleManager().asteroidStyle(asteroid->style());
+            boost::shared_ptr<Sprite> sprite;
+            if (s->animated)
+                sprite = boost::shared_ptr<Sprite>(new AnimatedSprite(s->sprite));
+            else
+                sprite = boost::shared_ptr<Sprite>(new Sprite(s->sprite));
+            boost::shared_ptr<SpriteWidget> w = boost::shared_ptr<SpriteWidget>(new SpriteWidget(sprite));
+            m_asteroidsWidgets[asteroid] = w;
+            m_node->addWidget(w);
+        }
+
     }
 
     boost::shared_ptr<SystemStyle> style = WorldManager::instance().styleManager().systemStyle(m_system->style());

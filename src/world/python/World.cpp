@@ -43,7 +43,7 @@ void exportRadar();
 void exportScanner();
 void exportTank();
 void exportWeapon();
-void exportMeteor();
+void exportAsteroid();
 void exportPlanet();
 void exportSpaceBase();
 void exportDesertPlanet();
@@ -87,7 +87,7 @@ BOOST_PYTHON_MODULE(_World)
     Rangers::World::Python::exportScanner();
     Rangers::World::Python::exportTank();
     Rangers::World::Python::exportWeapon();
-    Rangers::World::Python::exportMeteor();
+    Rangers::World::Python::exportAsteroid();
     Rangers::World::Python::exportPlanet();
     Rangers::World::Python::exportSpaceBase();
     Rangers::World::Python::exportDesertPlanet();

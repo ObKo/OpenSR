@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2012 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2012 - 2013 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WORLD_METEOR_H
-#define WORLD_METEOR_H
+#ifndef WORLD_ASTEROID_H
+#define WORLD_ASTEROID_H
 
 #include "SystemObject.h"
 
@@ -25,26 +25,53 @@ namespace Rangers
 {
 namespace World
 {
-class Meteor: public SystemObject
+class Asteroid: public SystemObject
 {
 public:
-    Meteor(uint64_t id = 0);
+    Asteroid(uint64_t id = 0);
 
-    Point focus() const;
-    float speed() const;
+    //! Semi-major axis
+    float a() const;
+    //! Semi-minor axis
+    float b() const;
+    float period() const;
+    //! Orbit angle, in degrees.
+    float angle() const;
+    float time() const;
     float mineral() const;
+    uint32_t style() const;
 
-    void setFocus(const Point& focus);
-    void setSpeed(float speed);
+    void setSemiAxis(float a, float b);
+    void setPeriod(float T);
+    void setAngle(float angle);
+    void setTime(float time);
     void setMineral(float mineral);
+    void setStyle(uint32_t style);
+    void setStyle(const std::string& style);
 
     virtual uint32_t type() const;
     virtual bool serialize(std::ostream &stream) const;
     virtual bool deserialize(std::istream &stream);
+
+    virtual void calcTurn();
+    virtual void turn(float progress);
+    virtual void finishTurn();
 protected:
-    Point m_focus;
-    float m_speed;
+    void calcEccentricity();
+    void calcPosition();
+
+    //! Semi-axis of the ellipse, a >= b
+    float m_a, m_b;
+    //! Orbit period, in days.
+    float m_period;
+    //! Orbit angle, in degrees.
+    float m_angle;
+    float m_t;
     float m_mineral;
+    uint32_t m_style;
+
+    float m_e;
+    float m_prevT;
 };
 }
 }

@@ -139,6 +139,19 @@ bool StyleManager::serialize(std::ostream &stream) const
             return false;
     }
 
+    count = m_asteroidStyles.size();
+    stream.write((const char*)&count, 4);
+
+    if (!stream.good())
+        return false;
+
+    std::map<uint32_t, boost::shared_ptr<AsteroidStyle> >::const_iterator aend = m_asteroidStyles.end();
+    for (std::map<uint32_t, boost::shared_ptr<AsteroidStyle> >::const_iterator i = m_asteroidStyles.begin(); i != aend; ++i)
+    {
+        if (!((*i).second)->serialize(stream))
+            return false;
+    }
+
     return true;
 }
 
@@ -172,6 +185,16 @@ bool StyleManager::deserialize(std::istream &stream)
         if (!style->deserialize(stream))
             return false;
         m_systemStyles[textHash32(style->id)] = style;
+    }
+
+    stream.read((char*)&count, 4);
+
+    for (int i = 0; i < count; i++)
+    {
+        boost::shared_ptr<AsteroidStyle> style = boost::shared_ptr<AsteroidStyle>(new AsteroidStyle());
+        if (!style->deserialize(stream))
+            return false;
+        m_asteroidStyles[textHash32(style->id)] = style;
     }
     return true;
 }
@@ -227,6 +250,57 @@ void StyleManager::loadSystemStyles(const std::wstring& styleFile)
         m_systemStyles[textHash32(style->id)] = boost::shared_ptr<SystemStyle>(style);
     }
     Log::info() << "Loaded " << members.size() << " system styles";
+}
+
+void StyleManager::loadAsteroidStyles(const std::wstring& styleFile)
+{
+    m_asteroidStyles.clear();
+
+    boost::shared_ptr<std::istream> json = ResourceManager::instance().getFileStream(styleFile);
+    if (!json)
+        return;
+    Json::Reader reader;
+    Json::Value root;
+    if (!reader.parse(*json, root))
+    {
+        Log::error() << "Error parsing asteroid styles JSON: " << reader.getFormatedErrorMessages();
+        return;
+    }
+    if (!root.isObject())
+    {
+        Log::error() << "Invalid asteroid styles JSON";
+        return;
+    }
+    Json::Value::Members members = root.getMemberNames();
+    Json::Value::Members::const_iterator end = members.end();
+    for (Json::Value::Members::const_iterator i = members.begin(); i != end; ++i)
+    {
+        Json::Value jsonStyle = root[(*i)];
+
+        if (!jsonStyle.isObject())
+        {
+            Log::error() << "Invalid asteroid styles JSON";
+            return;
+        }
+        bool error = false;
+        AsteroidStyle *style = new AsteroidStyle();
+        style->id = (*i);
+        style->sprite = fromUTF8(jsonStyle.get("sprite", "").asCString());
+        style->animated = jsonStyle.get("animated", "").asBool();
+        m_asteroidStyles[textHash32(style->id)] = boost::shared_ptr<AsteroidStyle>(style);
+    }
+    Log::info() << "Loaded " << members.size() << " asteroid styles";
+}
+
+boost::shared_ptr<AsteroidStyle> StyleManager::asteroidStyle(const std::string& name)
+{
+    uint32_t hash = textHash32(name);
+    return asteroidStyle(hash);
+}
+
+boost::shared_ptr<AsteroidStyle> StyleManager::asteroidStyle(uint32_t id)
+{
+    return m_asteroidStyles.at(id);
 }
 
 StyleManager::StyleManager(const StyleManager& other)

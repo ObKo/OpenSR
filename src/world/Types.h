@@ -69,6 +69,18 @@ struct SystemStyle
     bool serialize(std::ostream &stream) const;
     bool deserialize(std::istream &stream);
 };
+
+struct AsteroidStyle
+{
+    AsteroidStyle();
+
+    std::string id;
+    std::wstring sprite;
+    bool animated;
+
+    bool serialize(std::ostream &stream) const;
+    bool deserialize(std::istream &stream);
+};
 }
 }
 
