@@ -25,7 +25,7 @@ namespace Rangers
 {
 namespace World
 {
-class LandContext: public InteractionContext
+class RANGERS_WORLD_API LandContext: public InteractionContext
 {
 public:
     LandContext(uint64_t id = 0);

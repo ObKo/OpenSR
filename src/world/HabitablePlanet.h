@@ -28,7 +28,7 @@ namespace Rangers
 {
 namespace World
 {
-class HabitablePlanet: public Planet
+class RANGERS_WORLD_API HabitablePlanet: public Planet
 {
 public:
     HabitablePlanet(uint64_t id = 0);

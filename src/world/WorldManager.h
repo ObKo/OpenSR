@@ -39,7 +39,7 @@ class WorldObject;
 class PlanetarySystem;
 class WorldGenHook;
 
-class WorldManager
+class RANGERS_WORLD_API WorldManager
 {
 public:
     WorldManager();

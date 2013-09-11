@@ -25,7 +25,7 @@ namespace Rangers
 {
 namespace World
 {
-class Artifact: public Item
+class RANGERS_WORLD_API Artifact: public Item
 {
 public:
     Artifact(uint64_t id = 0);

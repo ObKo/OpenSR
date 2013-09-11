@@ -19,6 +19,8 @@
 #ifndef WORLD_RACE_MANAGER_H
 #define WORLD_RACE_MANAGER_H
 
+#include "world-global.h"
+
 #include <OpenSR/Types.h>
 #include <map>
 
@@ -26,7 +28,7 @@ namespace Rangers
 {
 namespace World
 {
-struct Race
+struct RANGERS_WORLD_API Race
 {
     uint32_t id;
     std::string name;
@@ -38,7 +40,7 @@ struct Race
     bool deserialize(std::istream &stream);
 };
 
-class RaceManager
+class RANGERS_WORLD_API RaceManager
 {
 public:
     RaceManager();

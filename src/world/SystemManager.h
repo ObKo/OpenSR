@@ -20,6 +20,8 @@
 #ifndef WORLD_SYSTEM_MANAGER_H
 #define WORLD_SYSTEM_MANAGER_H
 
+#include "world-global.h"
+
 #include <list>
 #include <map>
 #include <boost/shared_ptr.hpp>
@@ -32,7 +34,7 @@ namespace World
 {
 class PlanetarySystem;
 struct SystemStyle;
-class SystemManager
+class RANGERS_WORLD_API SystemManager
 {
 public:
     SystemManager();

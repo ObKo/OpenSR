@@ -20,6 +20,8 @@
 #ifndef WORLD_PLANETMANAGER_H
 #define WORLD_PLANETMANAGER_H
 
+#include "world-global.h"
+
 #include <map>
 #include <boost/shared_ptr.hpp>
 #include <stdint.h>
@@ -30,7 +32,7 @@ class Texture;
 namespace World
 {
 struct PlanetStyle;
-class PlanetManager
+class RANGERS_WORLD_API PlanetManager
 {
 public:
     PlanetManager();

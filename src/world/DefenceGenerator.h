@@ -25,7 +25,7 @@ namespace Rangers
 {
 namespace World
 {
-class DefenceGenerator: public Equipment
+class RANGERS_WORLD_API DefenceGenerator: public Equipment
 {
 public:
     DefenceGenerator(uint64_t id = 0);

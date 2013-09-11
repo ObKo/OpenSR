@@ -28,7 +28,7 @@ namespace Rangers
 {
 namespace World
 {
-class ShipContext: public InteractionContext
+class RANGERS_WORLD_API ShipContext: public InteractionContext
 {
 public:
     ShipContext(uint64_t id = 0);

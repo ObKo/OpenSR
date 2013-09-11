@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2012 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2013 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,26 +16,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WORLD_SCANNER_H
-#define WORLD_SCANNER_H
+#ifndef RANGERS_WORLD_GLOBAL_H
+#define RANGERS_WORLD_GLOBAL_H
 
-#include "Equipment.h"
-
-namespace Rangers
-{
-namespace World
-{
-class RANGERS_WORLD_API Scanner: public Equipment
-{
-public:
-    Scanner(uint64_t id = 0);
-
-    virtual uint32_t type() const;
-    virtual bool serialize(std::ostream &stream) const;
-    virtual bool deserialize(std::istream &stream);
-protected:
-};
-}
-}
+#ifndef RANGERS_WORLD_API
+# define RANGERS_WORLD_API
+#endif
 
 #endif

@@ -25,7 +25,7 @@ namespace Rangers
 {
 namespace World
 {
-class InteractionContext: public WorldObject
+class RANGERS_WORLD_API InteractionContext: public WorldObject
 {
 public:
     InteractionContext(uint64_t id = 0);

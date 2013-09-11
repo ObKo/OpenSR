@@ -19,6 +19,8 @@
 #ifndef WORLD_INFOWIDGET_H
 #define WORLD_INFOWIDGET_H
 
+#include "world-global.h"
+
 #include <OpenSR/Widget.h>
 #include <OpenSR/Types.h>
 
@@ -32,7 +34,7 @@ namespace World
 struct InfoWidgetStyle;
 class Planet;
 class PlanetarySystem;
-class InfoWidget: public Widget
+class RANGERS_WORLD_API InfoWidget: public Widget
 {
 public:
     InfoWidget(const InfoWidgetStyle& style);

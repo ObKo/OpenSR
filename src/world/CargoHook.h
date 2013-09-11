@@ -25,7 +25,7 @@ namespace Rangers
 {
 namespace World
 {
-class CargoHook: public Equipment
+class RANGERS_WORLD_API CargoHook: public Equipment
 {
 public:
     CargoHook(uint64_t id = 0);

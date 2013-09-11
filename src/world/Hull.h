@@ -25,7 +25,7 @@ namespace Rangers
 {
 namespace World
 {
-class Hull: public Equipment
+class RANGERS_WORLD_API Hull: public Equipment
 {
 public:
     Hull(uint64_t id = 0);

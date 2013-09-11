@@ -20,6 +20,8 @@
 #ifndef WORLD_STYLEMANAGER_H
 #define WORLD_STYLEMANAGER_H
 
+#include "world-global.h"
+
 #include <map>
 #include <boost/shared_ptr.hpp>
 #include <stdint.h>
@@ -32,7 +34,7 @@ namespace World
 struct PlanetStyle;
 struct SystemStyle;
 struct AsteroidStyle;
-class StyleManager
+class RANGERS_WORLD_API StyleManager
 {
 public:
     StyleManager();

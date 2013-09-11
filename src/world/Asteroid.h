@@ -25,7 +25,7 @@ namespace Rangers
 {
 namespace World
 {
-class Asteroid: public SystemObject
+class RANGERS_WORLD_API Asteroid: public SystemObject
 {
 public:
     Asteroid(uint64_t id = 0);

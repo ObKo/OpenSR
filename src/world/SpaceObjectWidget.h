@@ -19,6 +19,8 @@
 #ifndef WORLD_SPACE_OBJECT_WIDGET_H
 #define WORLD_SPACE_OBJECT_WIDGET_H
 
+#include "world-global.h"
+
 #include <OpenSR/Widget.h>
 
 namespace Rangers
@@ -27,7 +29,7 @@ class Sprite;
 namespace World
 {
 class SpaceObject;
-class SpaceObjectWidget: public Widget
+class RANGERS_WORLD_API SpaceObjectWidget: public Widget
 {
 public:
     SpaceObjectWidget(boost::shared_ptr<SpaceObject> object = boost::shared_ptr<SpaceObject>());

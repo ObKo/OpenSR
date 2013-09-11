@@ -25,7 +25,7 @@ namespace Rangers
 {
 namespace World
 {
-class Droid: public Equipment
+class RANGERS_WORLD_API Droid: public Equipment
 {
 public:
     Droid(uint64_t id = 0);

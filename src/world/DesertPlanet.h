@@ -25,7 +25,7 @@ namespace Rangers
 {
 namespace World
 {
-class DesertPlanet: public Planet
+class RANGERS_WORLD_API DesertPlanet: public Planet
 {
 public:
     DesertPlanet(uint64_t id = 0);

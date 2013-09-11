@@ -25,7 +25,7 @@ namespace Rangers
 {
 namespace World
 {
-class Micromodulus: public Item
+class RANGERS_WORLD_API Micromodulus: public Item
 {
 public:
     Micromodulus(uint64_t id = 0);

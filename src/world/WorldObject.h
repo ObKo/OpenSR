@@ -19,6 +19,8 @@
 #ifndef WORLD_WORLD_OBJECT_H
 #define WORLD_WORLD_OBJECT_H
 
+#include "world-global.h"
+
 #include <list>
 #include <iostream>
 #include <stdint.h>
@@ -27,7 +29,7 @@ namespace Rangers
 {
 namespace World
 {
-class WorldObject
+class RANGERS_WORLD_API WorldObject
 {
 public:
     WorldObject(uint64_t id = 0);

@@ -19,6 +19,8 @@
 #ifndef WORLD_SYSTEMWIDGET_H
 #define WORLD_SYSTEMWIDGET_H
 
+#include "world-global.h"
+
 #include <OpenSR/Widget.h>
 #include <map>
 
@@ -36,7 +38,7 @@ class InfoWidget;
 class SystemPlanetWidget;
 class PlanetarySystem;
 
-class SystemWidget: public Widget
+class RANGERS_WORLD_API SystemWidget: public Widget
 {
 public:
     SystemWidget(boost::shared_ptr<PlanetarySystem> system = boost::shared_ptr<PlanetarySystem>());

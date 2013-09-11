@@ -19,11 +19,13 @@
 #ifndef WORLD_WORLDGEN_HOOK_H
 #define WORLD_WORLDGEN_HOOK_H
 
+#include "world-global.h"
+
 namespace Rangers
 {
 namespace World
 {
-class WorldGenHook
+class RANGERS_WORLD_API WorldGenHook
 {
 public:
     WorldGenHook();

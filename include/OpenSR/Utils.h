@@ -20,11 +20,12 @@
 #define RANGERS_UTILS_H
 
 #include <string>
+#include "OpenSR/config.h"
 
 namespace Rangers
 {
-std::wstring _(const std::string& text, const std::string& domain);
-std::wstring _(const std::string& text);
+RANGERS_ENGINE_API std::wstring _(const std::string& text, const std::string& domain);
+RANGERS_ENGINE_API std::wstring _(const std::string& text);
 };
 
 #endif

@@ -30,7 +30,7 @@ class Sprite;
 namespace World
 {
 class Planet;
-class SystemPlanetWidget: public SpaceObjectWidget
+class RANGERS_WORLD_API SystemPlanetWidget: public SpaceObjectWidget
 {
 public:
     SystemPlanetWidget(boost::shared_ptr<Planet> planet = boost::shared_ptr<Planet>());

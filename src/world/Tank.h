@@ -25,7 +25,7 @@ namespace Rangers
 {
 namespace World
 {
-class Tank: public Equipment
+class RANGERS_WORLD_API Tank: public Equipment
 {
 public:
     Tank(uint64_t id = 0);

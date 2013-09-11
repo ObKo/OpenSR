@@ -19,6 +19,8 @@
 #ifndef WORLD_SKINMANAGER_H
 #define WORLD_SKINMANAGER_H
 
+#include "world-global.h"
+
 #include <OpenSR/Styles.h>
 #include <OpenSR/Types.h>
 
@@ -26,7 +28,7 @@ namespace Rangers
 {
 namespace World
 {
-struct InfoWidgetStyle
+struct RANGERS_WORLD_API InfoWidgetStyle
 {
     InfoWidgetStyle();
 
@@ -43,7 +45,7 @@ struct InfoWidgetStyle
     Rect captionContentRect;
 };
 
-class SkinManager
+class RANGERS_WORLD_API SkinManager
 {
 public:
     SkinManager();

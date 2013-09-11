@@ -27,7 +27,7 @@ namespace Rangers
 {
 namespace World
 {
-class SpaceBase: public SystemObject
+class RANGERS_WORLD_API SpaceBase: public SystemObject
 {
 public:
     SpaceBase(uint64_t id = 0);

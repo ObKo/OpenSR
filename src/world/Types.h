@@ -19,6 +19,8 @@
 #ifndef WORLD_TYPES_H
 #define WORLD_TYPES_H
 
+#include "world-global.h"
+
 #include <string>
 #include <stdint.h>
 
@@ -26,7 +28,7 @@ namespace Rangers
 {
 namespace World
 {
-struct Point
+struct RANGERS_WORLD_API Point
 {
     Point(float _x, float _y);
     Point();
@@ -34,7 +36,7 @@ struct Point
     float x;
     float y;
 };
-struct PlanetStyle
+struct RANGERS_WORLD_API PlanetStyle
 {
     PlanetStyle();
 
@@ -56,7 +58,7 @@ struct PlanetStyle
     bool deserialize(std::istream &stream);
 };
 
-struct SystemStyle
+struct RANGERS_WORLD_API SystemStyle
 {
     SystemStyle();
 
@@ -70,7 +72,7 @@ struct SystemStyle
     bool deserialize(std::istream &stream);
 };
 
-struct AsteroidStyle
+struct RANGERS_WORLD_API AsteroidStyle
 {
     AsteroidStyle();
 

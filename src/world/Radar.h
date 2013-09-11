@@ -25,7 +25,7 @@ namespace Rangers
 {
 namespace World
 {
-class Radar: public Equipment
+class RANGERS_WORLD_API Radar: public Equipment
 {
 public:
     Radar(uint64_t id = 0);

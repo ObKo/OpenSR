@@ -31,7 +31,7 @@ class TextureRegionDescriptor;
 namespace World
 {
 class WorldObject;
-class WorldHelper
+class RANGERS_WORLD_API WorldHelper
 {
 public:
     static const uint32_t TYPE_ARTIFACT = 0x17436ae1;
