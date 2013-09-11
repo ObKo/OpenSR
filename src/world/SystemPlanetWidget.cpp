@@ -24,7 +24,6 @@
 #include <OpenSR/Texture.h>
 #include <OpenSR/Sprite.h>
 #include <OpenSR/Engine.h>
-#define _USE_MATH_DEFINES
 #include <cmath>
 
 namespace
@@ -130,7 +129,7 @@ GLint SystemPlanetWidget::m_cloudEnabledLocation;
 GLint SystemPlanetWidget::m_textureLocation;
 GLint SystemPlanetWidget::m_cloudLocation;
 
-SystemPlanetWidget::SystemPlanetWidget(boost::shared_ptr<Planet> planet): m_planet(planet), m_useShader(true), m_vertexBuffer(0),
+SystemPlanetWidget::SystemPlanetWidget(boost::shared_ptr<Planet> planet): SpaceObjectWidget(planet), m_useShader(true), m_vertexBuffer(0),
     m_phase(0.0f), m_cloudPhase(0.0f), m_solarAngle(0.0f), m_hasRingBackground(false), m_hasCloud(false), m_hasRing(false)
 {
     m_useShader = Rangers::Engine::instance().properties()->get<bool>("graphics.useShaders", true);
@@ -152,7 +151,7 @@ SystemPlanetWidget::SystemPlanetWidget(boost::shared_ptr<Planet> planet): m_plan
             {
                 m_ringSprite = boost::shared_ptr<Sprite>(new Sprite(style->ring));
                 m_ringSprite->setOrigin(POSITION_X_CENTER, POSITION_Y_CENTER);
-                m_ringSprite->setPosition(style->ringOffsetX + m_size / 2.0f, style->ringOffsetY + m_size / 2.0f);
+                m_ringSprite->setPosition(style->ringOffsetX, style->ringOffsetY);
                 addChild(m_ringSprite);
             }
             m_hasRingBackground = style->hasRingBackground;
@@ -160,7 +159,7 @@ SystemPlanetWidget::SystemPlanetWidget(boost::shared_ptr<Planet> planet): m_plan
             {
                 m_ringBgSprite = boost::shared_ptr<Sprite>(new Sprite(style->ringBackground));
                 m_ringBgSprite->setOrigin(POSITION_X_CENTER, POSITION_Y_CENTER);
-                m_ringBgSprite->setPosition(style->ringBgOffsetX + m_size / 2.0f, style->ringBgOffsetY + m_size / 2.0f);
+                m_ringBgSprite->setPosition(style->ringBgOffsetX, style->ringBgOffsetY);
                 addChild(m_ringBgSprite);
             }
         }
@@ -169,14 +168,6 @@ SystemPlanetWidget::SystemPlanetWidget(boost::shared_ptr<Planet> planet): m_plan
     setWidth(m_size);
     setHeight(m_size);
     markToUpdate();
-}
-
-void SystemPlanetWidget::updatePosition()
-{
-    if (!m_planet)
-        return;
-
-    setPosition(m_planet->position().x - m_size / 2.0f, m_planet->position().y - m_size / 2.0f);
 }
 
 SystemPlanetWidget::~SystemPlanetWidget()
@@ -238,8 +229,8 @@ void SystemPlanetWidget::draw() const
     }
     else
     {
-        if (m_staticSprite)
-            m_staticSprite->draw();
+        if (m_sprite)
+            m_sprite->draw();
     }
 
     if (m_hasRing && m_ringSprite)
@@ -250,11 +241,13 @@ void SystemPlanetWidget::draw() const
 
 bool SystemPlanetWidget::containsPoint(const Vector& p) const
 {
-    return ((p.x - m_size / 2.0f) * (p.x - m_size / 2.0f) + (p.y - m_size / 2.0f) * (p.y - m_size / 2.0f)) < (m_size * m_size / 4.0f);
+    return ((p.x) * (p.x) + (p.y) * (p.y)) < (m_size * m_size / 4.0f);
 }
 
 void SystemPlanetWidget::processMain()
 {
+    boost::shared_ptr<Planet> planet = boost::dynamic_pointer_cast<Planet>(m_object);
+
     if (m_useShader && !m_shader.isLinked() && !m_shader.isInvalid())
     {
         m_shader.addShader(m_vertexShader);
@@ -276,9 +269,11 @@ void SystemPlanetWidget::processMain()
             m_cloudLocation = m_shader.getUniformLocation("cloud");
         }
     }
-    if (!m_useShader && !m_staticSprite)
+
+    if (!m_useShader && !m_sprite)
     {
-        m_staticSprite = boost::shared_ptr<Sprite>(new Sprite(WorldManager::instance().planetManager().getPlanetImage(WorldManager::instance().styleManager().planetStyle(m_planet->style()), (int)m_size)));
+        m_sprite = boost::shared_ptr<Sprite>(new Sprite(WorldManager::instance().planetManager().getPlanetImage(WorldManager::instance().styleManager().planetStyle(planet->style()), (int)m_size)));
+        m_sprite->setPosition(int(- m_size / 2.0f), int(- m_size / 2.0f));
     }
     Vertex *vertices;
     if (!m_vertexBuffer)
@@ -290,31 +285,34 @@ void SystemPlanetWidget::processMain()
         delete[] vertices;
     }
     glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer);
+    float a = int(m_size / 2.0f);
     vertices = (Vertex *)glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
     vertices[0].u = 0.0f;
     vertices[0].v = 0.0f;
-    vertices[0].x = 0.0f;
-    vertices[0].y = 0.0f;
+    vertices[0].x = -a;
+    vertices[0].y = -a;
     vertices[1].u = 1.0f;
     vertices[1].v = 0.0f;
-    vertices[1].x = m_size;
-    vertices[1].y = 0.0f;
+    vertices[1].x = a;
+    vertices[1].y = -a;
     vertices[2].u = 1.0f;
     vertices[2].v = 1.0f;
-    vertices[2].x = m_size;
-    vertices[2].y = m_size;
+    vertices[2].x = a;
+    vertices[2].y = a;
     vertices[3].u = 0.0f;
     vertices[3].v = 1.0f;
-    vertices[3].x = 0.0f;
-    vertices[3].y = m_size;
+    vertices[3].x = -a;
+    vertices[3].y = a;
     glUnmapBuffer(GL_ARRAY_BUFFER);
 }
 
 void SystemPlanetWidget::processLogic(int dt)
 {
     updatePosition();
-    if (m_planet)
-        m_solarAngle = m_planet->angle() + M_PI;
+    boost::shared_ptr<Planet> planet = boost::dynamic_pointer_cast<Planet>(m_object);
+
+    if (planet)
+        m_solarAngle = planet->angle() + M_PI;
 
     m_phase += m_speed / 180000.0f * dt * M_PI;
     while (m_phase > M_PI)
@@ -331,7 +329,7 @@ void SystemPlanetWidget::processLogic(int dt)
 
 boost::shared_ptr<Planet> SystemPlanetWidget::planet() const
 {
-    return m_planet;
+    return boost::dynamic_pointer_cast<Planet>(m_object);
 }
 }
 }

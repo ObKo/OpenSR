@@ -62,6 +62,7 @@ void exportSkinManager();
 void exportRaceManager();
 void exportSystemManager();
 void exportStyleManager();
+void exportSpaceObjectWidget();
 }
 }
 }
@@ -106,4 +107,5 @@ BOOST_PYTHON_MODULE(_World)
     Rangers::World::Python::exportRaceManager();
     Rangers::World::Python::exportSystemManager();
     Rangers::World::Python::exportStyleManager();
+    Rangers::World::Python::exportSpaceObjectWidget();
 }

@@ -265,11 +265,13 @@ void SystemWidget::setSystem(boost::shared_ptr< PlanetarySystem > system)
         m_starWidget->setPosition(-m_starWidget->width() / 2, -m_starWidget->height() / 2);
         m_starWidget->addListener(m_actionListener);
         m_starWidget->setShape(SpriteWidget::SHAPE_CIRCLE);
+        m_starWidget->setLayer(-1);
         m_node->addWidget(m_starWidget);
 
         //FIXME: AnimatedSprite/Sprite
         m_bgSprite = boost::shared_ptr<Sprite>(new AnimatedSprite(style->background));
         m_bgSprite->setPosition(m_xOffset / 10 - (m_bgSprite->width() - width()) / 2, m_yOffset / 10 - (m_bgSprite->height() - height()) / 2);
+        m_bgSprite->setLayer(-2);
         addChild(m_bgSprite);
     }
 }

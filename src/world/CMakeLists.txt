@@ -39,6 +39,7 @@ SET(WORLD_SOURCES
     RaceManager.cpp
     SystemManager.cpp
     StyleManager.cpp
+    SpaceObjectWidget.cpp
 )
 
 INCLUDE_DIRECTORIES(

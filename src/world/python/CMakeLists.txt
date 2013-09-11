@@ -38,6 +38,7 @@ SET(WORLD_PYTHON_SOURCES
     RaceManager.cpp
     SystemManager.cpp
     StyleManager.cpp
+    SpaceObjectWidget.cpp
 )
 
 SET(WORLD_PYTHON_HEADERS 

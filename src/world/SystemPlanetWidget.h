@@ -19,9 +19,10 @@
 #ifndef WORLD_SYSTEM_PLANET_WIDGET_H
 #define WORLD_SYSTEM_PLANET_WIDGET_H
 
-#include <OpenSR/Widget.h>
 #include <OpenSR/Shader.h>
 #include <OpenSR/ShaderProgram.h>
+
+#include "SpaceObjectWidget.h"
 
 namespace Rangers
 {
@@ -29,7 +30,7 @@ class Sprite;
 namespace World
 {
 class Planet;
-class SystemPlanetWidget: public Widget
+class SystemPlanetWidget: public SpaceObjectWidget
 {
 public:
     SystemPlanetWidget(boost::shared_ptr<Planet> planet = boost::shared_ptr<Planet>());
@@ -45,13 +46,8 @@ public:
     boost::shared_ptr<Planet> planet() const;
 
 private:
-    void updatePosition();
-
-    boost::shared_ptr<Sprite> m_staticSprite;
     boost::shared_ptr<Sprite> m_ringBgSprite;
     boost::shared_ptr<Sprite> m_ringSprite;
-
-    boost::shared_ptr<Planet> m_planet;
 
     boost::shared_ptr<Texture> m_texture;
     boost::shared_ptr<Texture> m_cloud;
