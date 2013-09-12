@@ -103,6 +103,7 @@ bool Widget::containsPoint(const Vector &p) const
         if ((*i)->containsPoint((*i)->mapFromParent(p)))
             return true;
     }
+	return false;
 }
 
 Rect Widget::boundingRect() const

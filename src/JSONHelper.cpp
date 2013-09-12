@@ -189,8 +189,7 @@ std::map<std::wstring, ResourceDescriptor> JSONHelper::parseResources(const Json
 {
     std::map<std::wstring, ResourceDescriptor> result;
     error = false;
-    Json::Value::Members members = object.getMemberNames();
-    if (std::find(members.begin(), members.end(), "NinePatch") != members.end())
+	if (object.isMember("NinePatch"))
     {
         Json::Value ninepatches = object.get("NinePatch", Json::Value());
         Json::Value::iterator end = ninepatches.end();
@@ -214,7 +213,7 @@ std::map<std::wstring, ResourceDescriptor> JSONHelper::parseResources(const Json
             result[fromUTF8(it.memberName())] = desc;
         }
     }
-    if (std::find(members.begin(), members.end(), "Sprite") != members.end())
+    if (object.isMember("Sprite"))
     {
         Json::Value sprites = object.get("Sprite", Json::Value());
         Json::Value::iterator end = sprites.end();
@@ -238,7 +237,7 @@ std::map<std::wstring, ResourceDescriptor> JSONHelper::parseResources(const Json
             result[fromUTF8(it.memberName())] = desc;
         }
     }
-    if (std::find(members.begin(), members.end(), "Font") != members.end())
+    if (object.isMember("Font"))
     {
         Json::Value sprites = object.get("Font", Json::Value());
         Json::Value::iterator end = sprites.end();
@@ -262,7 +261,7 @@ std::map<std::wstring, ResourceDescriptor> JSONHelper::parseResources(const Json
             result[fromUTF8(it.memberName())] = desc;
         }
     }
-    if (std::find(members.begin(), members.end(), "Sound") != members.end())
+    if (object.isMember("Sound"))
     {
         Json::Value sounds = object.get("Sound", Json::Value());
         Json::Value::iterator end = sounds.end();

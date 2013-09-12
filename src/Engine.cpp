@@ -757,7 +757,7 @@ void Engine::EnginePrivate::processEvents()
         case SDL_TEXTINPUT:
             if (boost::shared_ptr<Widget> fw = focusedWidget.lock())
             {
-                std::wstring text = fromLocal(event.edit.text, event.edit.length);
+				std::wstring text = fromUTF8(event.text.text);
                 fw->action(Action(fw, Rangers::Action::TEXT_INPUT, text));
             }
             break;
