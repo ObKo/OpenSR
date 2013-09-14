@@ -132,9 +132,9 @@ std::string toCodec(const char *codec, const std::wstring& text)
     int resultLength;
 //FIXME: Workaround about not working WCHAR_T on Windows XP
 #ifdef _WIN32
-    char *data = convertText(codec, "UCS-2LE", (char *)text.c_str(), (text.length() + 1) * sizeof(wchar_t), resultLength);
+    char *data = convertText(codec, "UCS-2LE", (char *)text.c_str(), text.length() * sizeof(wchar_t), resultLength);
 #else
-    char *data = convertText(codec, "WCHAR_T", (char *)text.c_str(), (text.length() + 1) * sizeof(wchar_t), resultLength);
+    char *data = convertText(codec, "WCHAR_T", (char *)text.c_str(), text.length() * sizeof(wchar_t), resultLength);
 #endif
     if (!data)
         return std::string();
