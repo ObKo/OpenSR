@@ -23,7 +23,8 @@
 
 #include <vector>
 #include <boost/shared_array.hpp>
-#include <libRanger.h>
+
+#include <OpenSR/libRanger.h>
 
 namespace Rangers
 {

@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 - 2013 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2013 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,33 +16,22 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef RANGERS_RPKGADAPTER_H
-#define RANGERS_RPKGADAPTER_H
+#ifndef WORLD_WORLDGEN_HOOK_H
+#define WORLD_WORLDGEN_HOOK_H
 
-#include "OpenSR/ResourceAdapter.h"
-
-#include <OpenSR/libRanger.h>
-
-#include <string>
-#include <fstream>
-#include <map>
+#include "OpenSR/World/world-global.h"
 
 namespace Rangers
 {
-class RPKGAdapter: public ResourceAdapter
+namespace World
+{
+class RANGERS_WORLD_API WorldGenHook
 {
 public:
-    void load(const std::wstring& fileName);
-    ~RPKGAdapter();
-
-    std::list<std::wstring> getFiles() const;
-    std::istream* getStream(const std::wstring& name);
-
-private:
-    std::ifstream rpkgArchive;
-    std::map<std::wstring, RPKGEntry> files;
-    std::wstring m_fileName;
+    WorldGenHook();
+    virtual void generate();
 };
 }
+}
 
-#endif // RPKGADAPTER_H
+#endif

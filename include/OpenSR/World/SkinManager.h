@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 - 2013 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2013 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,33 +16,48 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef RANGERS_RPKGADAPTER_H
-#define RANGERS_RPKGADAPTER_H
+#ifndef WORLD_SKINMANAGER_H
+#define WORLD_SKINMANAGER_H
 
-#include "OpenSR/ResourceAdapter.h"
+#include "OpenSR/World/world-global.h"
 
-#include <OpenSR/libRanger.h>
-
-#include <string>
-#include <fstream>
-#include <map>
+#include <OpenSR/Styles.h>
+#include <OpenSR/Types.h>
 
 namespace Rangers
 {
-class RPKGAdapter: public ResourceAdapter
+namespace World
+{
+struct RANGERS_WORLD_API InfoWidgetStyle
+{
+    InfoWidgetStyle();
+
+    ResourceDescriptor background;
+    ResourceDescriptor font;
+    ResourceDescriptor captionFont;
+    int color;
+    int captionColor;
+    int labelColor;
+    Vector iconPosition;
+    Vector raceIconPosition;
+    int iconSize;
+    Rect contentRect;
+    Rect captionContentRect;
+};
+
+class RANGERS_WORLD_API SkinManager
 {
 public:
-    void load(const std::wstring& fileName);
-    ~RPKGAdapter();
+    SkinManager();
 
-    std::list<std::wstring> getFiles() const;
-    std::istream* getStream(const std::wstring& name);
+    void loadStyles();
+
+    InfoWidgetStyle infoWidgetStyle() const;
 
 private:
-    std::ifstream rpkgArchive;
-    std::map<std::wstring, RPKGEntry> files;
-    std::wstring m_fileName;
+    InfoWidgetStyle m_infoWidgetStyle;
 };
 }
+}
 
-#endif // RPKGADAPTER_H
+#endif // WORLD_SKINMANAGER_H

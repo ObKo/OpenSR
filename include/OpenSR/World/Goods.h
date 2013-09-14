@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 - 2013 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2012 - 2013 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,33 +16,34 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef RANGERS_RPKGADAPTER_H
-#define RANGERS_RPKGADAPTER_H
+#ifndef WORLD_GOODS_H
+#define WORLD_GOODS_H
 
-#include "OpenSR/ResourceAdapter.h"
-
-#include <OpenSR/libRanger.h>
-
-#include <string>
-#include <fstream>
-#include <map>
+#include "OpenSR/World/Item.h"
 
 namespace Rangers
 {
-class RPKGAdapter: public ResourceAdapter
+namespace World
+{
+class RANGERS_WORLD_API Goods: public Item
 {
 public:
-    void load(const std::wstring& fileName);
-    ~RPKGAdapter();
+    Goods(uint64_t id = 0);
 
-    std::list<std::wstring> getFiles() const;
-    std::istream* getStream(const std::wstring& name);
+    uint32_t price() const;
+    uint32_t quantity() const;
 
-private:
-    std::ifstream rpkgArchive;
-    std::map<std::wstring, RPKGEntry> files;
-    std::wstring m_fileName;
+    void setPrice(uint32_t price);
+    void setQuantity(uint32_t quantity);
+
+    virtual uint32_t type() const;
+    virtual bool serialize(std::ostream &stream) const;
+    virtual bool deserialize(std::istream &stream);
+protected:
+    uint32_t m_quantity;
+    uint32_t m_price;
 };
 }
+}
 
-#endif // RPKGADAPTER_H
+#endif

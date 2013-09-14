@@ -16,33 +16,22 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef RANGERS_RPKGADAPTER_H
-#define RANGERS_RPKGADAPTER_H
-
-#include "OpenSR/ResourceAdapter.h"
+#include "OpenSR/Utils.h"
 
 #include <OpenSR/libRanger.h>
 
+#include <libintl.h>
 #include <string>
-#include <fstream>
-#include <map>
 
 namespace Rangers
 {
-class RPKGAdapter: public ResourceAdapter
+std::wstring _(const std::string& text, const std::string& domain)
 {
-public:
-    void load(const std::wstring& fileName);
-    ~RPKGAdapter();
-
-    std::list<std::wstring> getFiles() const;
-    std::istream* getStream(const std::wstring& name);
-
-private:
-    std::ifstream rpkgArchive;
-    std::map<std::wstring, RPKGEntry> files;
-    std::wstring m_fileName;
-};
+    return fromLocal(dgettext(domain.c_str(), text.c_str()));
 }
 
-#endif // RPKGADAPTER_H
+std::wstring _(const std::string& text)
+{
+    return fromLocal(gettext(text.c_str()));
+}
+}

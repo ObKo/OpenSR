@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 - 2013 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2013 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,33 +16,35 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef RANGERS_RPKGADAPTER_H
-#define RANGERS_RPKGADAPTER_H
+#include <boost/python.hpp>
+#include <OpenSR/World/python/WorldObjectWrap.h>
 
-#include "OpenSR/ResourceAdapter.h"
-
-#include <OpenSR/libRanger.h>
-
-#include <string>
-#include <fstream>
-#include <map>
+#include <OpenSR/World/Micromodulus.h>
 
 namespace Rangers
 {
-class RPKGAdapter: public ResourceAdapter
+namespace World
 {
-public:
-    void load(const std::wstring& fileName);
-    ~RPKGAdapter();
+namespace Python
+{
+struct MicromodulusWrap: Micromodulus, boost::python::wrapper<Micromodulus>
+{
+    MicromodulusWrap(uint64_t id = 0): Micromodulus(id)
+    {
+    }
 
-    std::list<std::wstring> getFiles() const;
-    std::istream* getStream(const std::wstring& name);
-
-private:
-    std::ifstream rpkgArchive;
-    std::map<std::wstring, RPKGEntry> files;
-    std::wstring m_fileName;
+    WORLD_PYTHON_WRAP_WORLD_OBJECT(Micromodulus)
 };
-}
 
-#endif // RPKGADAPTER_H
+void exportMicromodulus()
+{
+    using namespace boost::python;
+
+    class_<MicromodulusWrap, bases<Item>, boost::shared_ptr<MicromodulusWrap>, boost::noncopyable> c("Micromodulus", init<uint64_t>());
+    c.def(init<>());
+    WORLD_PYTHON_WRAP_WORLD_OBJECT_DEF(Micromodulus, MicromodulusWrap, c);
+    register_ptr_to_python<boost::shared_ptr<Micromodulus> >();
+}
+}
+}
+}
