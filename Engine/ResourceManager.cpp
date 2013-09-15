@@ -259,97 +259,35 @@ boost::shared_ptr<Texture> ResourceManager::loadTexture(const std::wstring& name
         m_textures[name] = boost::shared_ptr<Texture>(t);
         return m_textures[name];
     }
-    /*else if (sfx == L"dds")
+    else if (sfx == L"gai")
     {
-        //size_t size;
-        //char *data = loadData(name, size);
-        //if (!data)
-        //    return boost::shared_ptr<Texture>();
-        boost::shared_ptr<std::istream> stream = getFileStream(name);
-    if (!stream)
+        boost::shared_ptr<std::istream> s = getFileStream(name);
+        if (!s)
             return boost::shared_ptr<Texture>();
 
-        uint32_t signature;
-    (*stream).read((char*)&signature, 4);
+        boost::shared_ptr<std::istream> bgFrameStream;
+        GAIHeader header = loadGAIHeader(*s);
 
-        if (signature != 0x20534444)
-        {
-            Log::error() << "Invalid dds file";
-            return boost::shared_ptr<Texture>();
-        }
-        DDSHeader header;
-        (*stream).read((char*)&header, sizeof(DDSHeader));
-        //int imageSize = size - sizeof(DDSHeader) - 4;
-        //char *image = data + sizeof(DDSHeader) + 4;
+        s->seekg(0, ios_base::beg);
 
-        if (!((header.flags & DDSD_CAPS) && (header.caps & DDSCAPS_TEXTURE)))
+        if (header.haveBackground)
         {
-            Log::warning() << "Unsupported DDS file";
-            return boost::shared_ptr<Texture>();
+            return loadTexture(directory(name) + basename(name) + L".gi");
         }
 
-        Texture *t = 0;
-        if (header.ddspf.flags & DDPF_FOURCC)
-        {
-            switch (header.ddspf.fourCC)
-            {
-            case 0x31545844:
-                t = new Texture(header.width, header.height, Rangers::TEXTURE_DXT1, (unsigned char *)image, imageSize);
-                break;
-            case 0x33545844:
-                t = new Texture(header.width, header.height, Rangers::TEXTURE_DXT3, (unsigned char *)image, imageSize);
-                break;
-            case 0x35545844:
-                t = new Texture(header.width, header.height, Rangers::TEXTURE_DXT5, (unsigned char *)image, imageSize);
-                break;
-            default:
-                Log::warning() << "Unsupported DDS file";
-                delete data;
-                break;
-            }
-        }
-        else
-        {
-            switch (header.ddspf.rgbBitCount)
-            {
-            case 16:
-                if ((header.ddspf.rBitMask != 0xf800) || (header.ddspf.gBitMask != 0x7e) || (header.ddspf.bBitMask != 0x1f))
-                {
-                    Log::warning() << "Unsupported DDS file";
-                    break;
-                }
-                t = new Texture(header.width, header.height, Rangers::TEXTURE_R5G6B5, (unsigned char *)image, imageSize);
-                break;
-            case 24:
-                if ((header.ddspf.rBitMask != 0xff0000) || (header.ddspf.gBitMask != 0xff00) || (header.ddspf.bBitMask != 0xff))
-                {
-                    Log::warning() << "Unsupported DDS file";
-                    break;
-                }
-                t = new Texture(header.width, header.height, Rangers::TEXTURE_R8G8B8, (unsigned char *)image, imageSize);
-                break;
-            case 32:
-                if ((header.ddspf.rBitMask != 0xff000000) || (header.ddspf.gBitMask != 0xff0000) || (header.ddspf.bBitMask != 0xff00) || (header.ddspf.aBitMask != 0xff))
-                {
-                    Log::warning() << "Unsupported DDS file";
-                    break;
-                }
-                t = new Texture(header.width, header.height, Rangers::TEXTURE_R8G8B8A8, (unsigned char *)image, imageSize);
-                break;
-            default:
-                Log::warning() << "Unsupported DDS file";
-                break;
-            }
-        }
-        delete[] data;
-        if (!t)
-            return boost::shared_ptr<Texture>();
-        else
-        {
-            m_textures[name] = boost::shared_ptr<Texture>(t);;
-            return m_textures[name];
-        }
-    }*/
+        GAIAnimation animation = loadGAIAnimation(*s);
+        m_textures[name] = boost::shared_ptr<Texture>(
+                               new Texture(animation.frames[0].width,
+                                           animation.frames[0].height,
+                                           Rangers::TEXTURE_R8G8B8A8,
+                                           animation.frames[0].data)
+                           );
+
+        for (int i = 0; i < animation.frameCount; i++)
+            delete[] animation.frames[i].data;
+        delete[] animation.frames;
+        return m_textures[name];
+    }
     else
         Log::error() << "Unknown texture format: " << sfx;
 
