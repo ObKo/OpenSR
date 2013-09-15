@@ -19,13 +19,17 @@
 #include "SpaceObjectWidget.h"
 #include "SpaceObject.h"
 
+#include "Asteroid.h"
+#include "WorldManager.h"
+
 #include <OpenSR/Sprite.h>
+#include <OpenSR/AnimatedSprite.h>
 
 namespace Rangers
 {
 namespace World
 {
-SpaceObjectWidget::SpaceObjectWidget(boost::shared_ptr< SpaceObject > object): Widget()
+SpaceObjectWidget::SpaceObjectWidget(boost::shared_ptr< SpaceObject > object): SpriteWidget()
 {
     setObject(object);
 }
@@ -35,17 +39,6 @@ SpaceObjectWidget::~SpaceObjectWidget()
 
 }
 
-void SpaceObjectWidget::draw() const
-{
-    if (!prepareDraw())
-        return;
-
-    if (m_sprite)
-        m_sprite->draw();
-
-    endDraw();
-}
-
 boost::shared_ptr<SpaceObject> SpaceObjectWidget::object() const
 {
     return m_object;
@@ -53,9 +46,7 @@ boost::shared_ptr<SpaceObject> SpaceObjectWidget::object() const
 
 void SpaceObjectWidget::processLogic(int dt)
 {
-    if (m_sprite)
-        m_sprite->processLogic(dt);
-
+    SpriteWidget::processLogic(dt);
     updatePosition();
 }
 
@@ -64,14 +55,33 @@ void SpaceObjectWidget::setObject(boost::shared_ptr< SpaceObject > object)
     m_object = object;
     if (!m_object)
         return;
+
+    if (boost::shared_ptr<Asteroid> a = boost::dynamic_pointer_cast<Asteroid>(object))
+    {
+        boost::shared_ptr<AsteroidStyle> s = WorldManager::instance().styleManager().asteroidStyle(a->style());
+
+        if (s->animated)
+            setSprite(boost::shared_ptr<Sprite>(new AnimatedSprite(s->sprite)));
+        else
+            setSprite(boost::shared_ptr<Sprite>(new Sprite(s->sprite)));
+    }
+
+    updatePosition();
 }
 
 void SpaceObjectWidget::updatePosition()
 {
     if (!m_object)
         return;
+    boost::shared_ptr<Sprite> s = sprite();
+    float dx = 0.0f, dy = 0.0f;
+    if (s)
+    {
+        dx = s->width() / 2.0f;
+        dy = s->height() / 2.0f;
+    }
     Point p = m_object->position();
-    setPosition(p.x, p.y);
+    setPosition(p.x - dx, p.y - dy);
 }
 }
 }

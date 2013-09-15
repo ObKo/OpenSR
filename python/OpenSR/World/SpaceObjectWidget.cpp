@@ -41,7 +41,7 @@ void exportSpaceObjectWidget()
 {
     using namespace boost::python;
 
-    class_<SpaceObjectWidgetWrap, bases<Widget>, boost::shared_ptr<SpaceObjectWidgetWrap>, boost::noncopyable> c("SpaceObjectWidget", init<boost::shared_ptr<SpaceObject> >());
+    class_<SpaceObjectWidgetWrap, bases<SpriteWidget>, boost::shared_ptr<SpaceObjectWidgetWrap>, boost::noncopyable> c("SpaceObjectWidget", init<boost::shared_ptr<SpaceObject> >());
     c.def(init<>())
     .def("object", &SpaceObjectWidget::object)
     .def("setObject", &SpaceObjectWidget::setObject);

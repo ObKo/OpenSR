@@ -32,7 +32,7 @@ public:
     //! Shape of sprite for mouse handling.
     enum Shape {SHAPE_NONE, SHAPE_RECT, SHAPE_CIRCLE};
 
-    SpriteWidget(boost::shared_ptr<Sprite> sprite);
+    SpriteWidget(boost::shared_ptr<Sprite> sprite = boost::shared_ptr<Sprite>());
 
     virtual void draw() const;
     virtual void processMain();

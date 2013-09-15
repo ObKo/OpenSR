@@ -229,8 +229,9 @@ void SystemPlanetWidget::draw() const
     }
     else
     {
-        if (m_sprite)
-            m_sprite->draw();
+        boost::shared_ptr<Sprite> s = sprite();
+        if (s)
+            s->draw();
     }
 
     if (m_hasRing && m_ringSprite)
@@ -270,10 +271,12 @@ void SystemPlanetWidget::processMain()
         }
     }
 
-    if (!m_useShader && !m_sprite)
+    boost::shared_ptr<Sprite> s = sprite();
+    if (!m_useShader && !s)
     {
-        m_sprite = boost::shared_ptr<Sprite>(new Sprite(WorldManager::instance().planetManager().getPlanetImage(WorldManager::instance().styleManager().planetStyle(planet->style()), (int)m_size)));
-        m_sprite->setPosition(int(- m_size / 2.0f), int(- m_size / 2.0f));
+        s = boost::shared_ptr<Sprite>(new Sprite(WorldManager::instance().planetManager().getPlanetImage(WorldManager::instance().styleManager().planetStyle(planet->style()), (int)m_size)));
+        s->setPosition(int(- m_size / 2.0f), int(- m_size / 2.0f));
+        setSprite(s);
     }
     Vertex *vertices;
     if (!m_vertexBuffer)

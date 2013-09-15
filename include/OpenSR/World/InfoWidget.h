@@ -34,6 +34,7 @@ namespace World
 struct InfoWidgetStyle;
 class Planet;
 class PlanetarySystem;
+class Asteroid;
 class RANGERS_WORLD_API InfoWidget: public Widget
 {
 public:
@@ -43,6 +44,7 @@ public:
 
     void showPlanet(boost::shared_ptr<Planet> planet);
     void showSystem(boost::shared_ptr<PlanetarySystem> system);
+    void showAsteroid(boost::shared_ptr<Asteroid> asteroid);
 
     virtual void processMain();
     virtual void draw() const;
@@ -50,7 +52,7 @@ public:
     virtual bool containsPoint(const Vector &p) const;
 
 private:
-    enum InfoType {INFO_NONE, INFO_SYSTEM, INFO_PLANET};
+    enum InfoType {INFO_NONE, INFO_SYSTEM, INFO_PLANET, INFO_ASTEROID};
 
     boost::shared_ptr<Font> m_font;
     boost::shared_ptr<Font> m_captionFont;

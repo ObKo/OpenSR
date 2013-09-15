@@ -33,10 +33,11 @@ class Button;
 
 namespace World
 {
-class Asteroid;
+class SpaceObject;
 class InfoWidget;
 class SystemPlanetWidget;
 class PlanetarySystem;
+class SpaceObjectWidget;
 
 class RANGERS_WORLD_API SystemWidget: public Widget
 {
@@ -60,8 +61,7 @@ private:
     class SystemWidgetListener;
     boost::shared_ptr<PlanetarySystem> m_system;
     std::list<boost::shared_ptr<SystemPlanetWidget> > m_planetWidgets;
-    //TODO: Use more complex widget than SpriteWidget
-    std::map<boost::shared_ptr<Asteroid>, boost::shared_ptr<SpriteWidget> > m_asteroidsWidgets;
+    std::map<boost::shared_ptr<SpaceObject>, boost::shared_ptr<SpaceObjectWidget> > m_objectWidgets;
 
     boost::shared_ptr<Sprite> m_bgSprite;
     boost::shared_ptr<SpriteWidget> m_starWidget;

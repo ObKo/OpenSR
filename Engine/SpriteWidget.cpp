@@ -31,10 +31,7 @@ SpriteWidget::SpriteWidget(boost::shared_ptr<Sprite> sprite):
     Widget(*(new SpriteWidgetPrivate()))
 {
     RANGERS_D(SpriteWidget);
-    d->sprite = sprite;
-    d->width = sprite->width();
-    d->height = sprite->height();
-    addChild(d->sprite);
+    setSprite(sprite);
 }
 
 SpriteWidget::SpriteWidget(SpriteWidgetPrivate &p): Widget(p)
@@ -116,6 +113,21 @@ boost::shared_ptr<Sprite> SpriteWidget::sprite() const
 void SpriteWidget::setSprite(boost::shared_ptr<Sprite> sprite)
 {
     RANGERS_D(SpriteWidget);
+    if (d->sprite)
+    {
+        removeChild(d->sprite);
+    }
     d->sprite = sprite;
+    if (d->sprite)
+    {
+        d->width = sprite->width();
+        d->height = sprite->height();
+        addChild(d->sprite);
+    }
+    else
+    {
+        d->width = 0;
+        d->height = 0;
+    }
 }
 }

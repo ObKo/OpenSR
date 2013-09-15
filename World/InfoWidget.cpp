@@ -35,6 +35,7 @@
 #include "PlanetManager.h"
 #include "HabitablePlanet.h"
 #include "WorldManager.h"
+#include "Asteroid.h"
 
 namespace
 {
@@ -167,6 +168,25 @@ void InfoWidget::processMain()
             }
         }
     }
+    if (m_type == INFO_ASTEROID)
+    {
+        for (int i = 0; i < m_infoWidget.size(); i++)
+        {
+            boost::shared_ptr<Label> l = boost::dynamic_pointer_cast<Label>(m_infoWidget.at(i));
+
+            if (l->needUpdate())
+                l->processMain();
+
+            if ((i % 2) == 0)
+            {
+                l->setPosition(realContentRect.x + int(realContentRect.width) / 2 - l->width(), realContentRect.y + (m_font->size() + 5) * (i / 2));
+            }
+            else
+            {
+                l->setPosition(realContentRect.x + int(realContentRect.width) / 2, realContentRect.y + (m_font->size() + 5) * (i / 2));
+            }
+        }
+    }
     else if (m_type == INFO_SYSTEM)
     {
         int line = 0;
@@ -250,6 +270,35 @@ void InfoWidget::clear()
     m_infoWidget.clear();
     m_type = INFO_NONE;
     setHeight(m_bgSprite->normalHeight());
+    markToUpdate();
+}
+
+void InfoWidget::showAsteroid(boost::shared_ptr<Asteroid> asteroid)
+{
+    clear();
+
+    m_caption->setText(_("Asteroid", "OpenSR-World"));
+    m_iconSprite = boost::shared_ptr<Sprite>(new Sprite(WorldManager::instance().styleManager().asteroidStyle(asteroid->style())->sprite));
+    addChild(m_iconSprite);
+
+    boost::shared_ptr<Label> l = boost::shared_ptr<Label>(new Label(_("Speed:", "OpenSR-World") + L" ", m_font));
+    l->setColor(m_labelColor);
+    m_infoWidget.push_back(l);
+    addChild(l);
+
+    std::wostringstream str;
+    str << int(round(asteroid->speed()));
+
+    l = boost::shared_ptr<Label>(new Label(str.str(), m_font));
+    l->setColor(m_color);
+    m_infoWidget.push_back(l);
+    addChild(l);
+
+    int requiredHeight = (m_font->size() + 5);
+    int deltaHeight = requiredHeight - m_contentRect.height;
+    setHeight(std::max(deltaHeight + m_bgSprite->normalHeight(), m_bgSprite->normalHeight()));
+
+    m_type = INFO_ASTEROID;
     markToUpdate();
 }
 

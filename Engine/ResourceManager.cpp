@@ -279,7 +279,7 @@ boost::shared_ptr<Texture> ResourceManager::loadTexture(const std::wstring& name
         m_textures[name] = boost::shared_ptr<Texture>(
                                new Texture(animation.frames[0].width,
                                            animation.frames[0].height,
-                                           Rangers::TEXTURE_R8G8B8A8,
+                                           Rangers::TEXTURE_B8G8R8A8,
                                            animation.frames[0].data)
                            );
 

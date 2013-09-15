@@ -188,7 +188,10 @@ void Asteroid::calcSpeed()
     }
     float alpha = 2.0f * atan(sqrt((1.0f + m_e) / (1.0f - m_e)) * tan(E / 2.0f));
     float r = m_a * (1.0f - m_e * cos(E));
-    float dx = r * cos(alpha) - m_position.x, dy = r * sin(alpha) - m_position.y;
+    float x = r * cos(alpha), y = r * sin(alpha);
+    float angle = m_angle / 180.0f * M_PI;
+    float dx = x * cos(angle) - y * sin(angle) - m_position.x;
+    float dy = x * sin(angle) + y * cos(angle) - m_position.y;
     m_speed = sqrt(dx * dx + dy * dy);
 }
 
