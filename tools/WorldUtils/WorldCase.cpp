@@ -2,6 +2,7 @@
 #include <boost/concept_check.hpp>
 
 #include "Artifact.h"
+#include "Asteroid.h"
 #include "CargoHook.h"
 #include "DefenceGenerator.h"
 #include "DesertPlanet.h"
@@ -14,7 +15,6 @@
 #include "InteractionContext.h"
 #include "Item.h"
 #include "LandContext.h"
-#include "Meteor.h"
 #include "Micromodulus.h"
 #include "Planet.h"
 #include "Radar.h"
@@ -39,6 +39,7 @@ using namespace Rangers::World;
 int main(int argc, char **argv)
 {
     classes.push_back("Artifact");
+    classes.push_back("Asteroid");
     classes.push_back("CargoHook");
     classes.push_back("DefenceGenerator");
     classes.push_back("DesertPlanet");
@@ -49,7 +50,6 @@ int main(int argc, char **argv)
     classes.push_back("HabitablePlanet");
     classes.push_back("Hull");
     classes.push_back("Item");
-    classes.push_back("Meteor");
     classes.push_back("Micromodulus");
     classes.push_back("Planet");
     classes.push_back("Radar");
