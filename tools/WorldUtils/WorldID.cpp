@@ -2,6 +2,7 @@
 #include <boost/concept_check.hpp>
 
 #include "Artifact.h"
+#include "Asteroid.h"
 #include "CargoHook.h"
 #include "DefenceGenerator.h"
 #include "DesertPlanet.h"
@@ -14,7 +15,6 @@
 #include "InteractionContext.h"
 #include "Item.h"
 #include "LandContext.h"
-#include "Meteor.h"
 #include "Micromodulus.h"
 #include "Planet.h"
 #include "Radar.h"
@@ -35,6 +35,7 @@ using namespace Rangers::World;
 int main(int argc, char **argv)
 {
     std::cout << "Artifact: " << "0x" << std::hex << (new Artifact())->type() << std::endl;
+    std::cout << "Asteroid: " << "0x" << std::hex << (new Asteroid())->type() << std::endl;
     std::cout << "CargoHook: " << "0x" << std::hex << (new CargoHook())->type() << std::endl;
     std::cout << "DefenceGenerator: " << "0x" << std::hex << (new DefenceGenerator())->type() << std::endl;
     std::cout << "DesertPlanet: " << "0x" << std::hex << (new DesertPlanet())->type() << std::endl;
@@ -45,7 +46,6 @@ int main(int argc, char **argv)
     std::cout << "HabitablePlanet: " << "0x" << std::hex << (new HabitablePlanet())->type() << std::endl;
     std::cout << "Hull: " << "0x" << std::hex << (new Hull())->type() << std::endl;
     std::cout << "Item: " << "0x" << std::hex << (new Item())->type() << std::endl;
-    std::cout << "Meteor: " << "0x" << std::hex << (new Meteor())->type() << std::endl;
     std::cout << "Micromodulus: " << "0x" << std::hex << (new Micromodulus())->type() << std::endl;
     std::cout << "Planet: " << "0x" << std::hex << (new Planet())->type() << std::endl;
     std::cout << "Radar: " << "0x" << std::hex << (new Radar())->type() << std::endl;
