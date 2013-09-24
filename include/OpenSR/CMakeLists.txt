@@ -37,6 +37,7 @@ SET(ENGINE_HEADERS
     Styles.h
     Texture.h
     TiledLine.h
+    TiledPolyline.h
     Types.h
     Utils.h
     Widget.h

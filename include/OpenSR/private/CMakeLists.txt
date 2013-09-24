@@ -20,6 +20,7 @@ SET(ENGINE_PRIVATE_HEADERS
     TiledLine_p.h
     WidgetNode_p.h
     Widget_p.h
+    TiledPolyline_p.h
 )
 
 INSTALL(FILES ${ENGINE_PRIVATE_HEADERS} DESTINATION include/OpenSR/private)
