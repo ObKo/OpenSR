@@ -39,6 +39,8 @@ struct RANGERS_ENGINE_API Vector
     Vector norm() const;
 
     float x, y;
+
+    bool operator==(const Vector& other);
 };
 
 struct RANGERS_ENGINE_API Vertex

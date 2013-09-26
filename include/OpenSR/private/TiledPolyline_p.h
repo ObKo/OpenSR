@@ -29,7 +29,9 @@ class TiledPolylinePrivate: public ObjectPrivate
 public:
     TiledPolylinePrivate();
 
-    std::vector<boost::shared_ptr<TiledLine> > lines;
+    GLuint vertexBuffer;
+    int vertexCount;
+    std::vector<Vector> points;
     boost::shared_ptr<Texture> texture;
 };
 }

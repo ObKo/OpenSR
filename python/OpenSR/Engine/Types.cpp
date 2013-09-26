@@ -21,6 +21,8 @@
 
 #include <boost/python.hpp>
 
+#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
+
 namespace Rangers
 {
 namespace Python
@@ -32,6 +34,9 @@ void exportTypes()
     .def(init<>())
     .def_readwrite("x", &Vector::x)
     .def_readwrite("y", &Vector::y);
+
+    class_<std::vector<Vector> >("VectorOfVector")
+    .def(vector_indexing_suite<std::vector<Vector> >());
 
     class_<Rect>("Rect", init<float, float, float, float>())
     .def(init<>())

@@ -44,6 +44,11 @@ Vector Vector::norm() const
     return Vector(x / l, y / l);
 }
 
+bool Vector::operator==(const Vector& other)
+{
+    return (other.x == x) && (other.y == y);
+}
+
 Rect::Rect()
 {
     x = 0;

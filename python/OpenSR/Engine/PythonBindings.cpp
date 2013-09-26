@@ -56,6 +56,7 @@ void exportRadioButton();
 void exportRadioButtonGroup();
 void exportTiledLine();
 void exportSpriteWidget();
+void exportTiledPolyline();
 
 void pythonError(const std::wstring& text)
 {
@@ -121,6 +122,7 @@ BOOST_PYTHON_MODULE(_Engine)
     Rangers::Python::exportRadioButtonGroup();
     Rangers::Python::exportTiledLine();
     Rangers::Python::exportSpriteWidget();
+    Rangers::Python::exportTiledPolyline();
     boost::python::def("pythonError", &Rangers::Python::pythonError);
     boost::python::def("pythonOut", &Rangers::Python::pythonOut);
     boost::python::def("execPythonScript", (void (*)(const std::wstring&, const boost::python::object&))&Rangers::execPythonScript);

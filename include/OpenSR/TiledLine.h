@@ -31,7 +31,7 @@ class RANGERS_ENGINE_API TiledLine: public Object
     RANGERS_DECLARE_PRIVATE(TiledLine)
 public:
     TiledLine();
-    TiledLine(boost::shared_ptr<Texture> texture0);
+    TiledLine(boost::shared_ptr<Texture> texture);
     TiledLine(boost::shared_ptr<Texture> texture, const Vector& start, const Vector& end);
     TiledLine(const std::wstring& texture);
     TiledLine(const std::wstring& texture, const Vector& start, const Vector& end);

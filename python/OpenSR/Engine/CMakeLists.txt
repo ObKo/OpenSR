@@ -31,6 +31,7 @@ SET(PYTHON_ENGINE_SOURCES
     RadioButtonGroup.cpp
     TiledLine.cpp
     SpriteWidget.cpp
+    TiledPolyline.cpp
 )
 
 SET(PYTHON_ENGINE_HEADERS 

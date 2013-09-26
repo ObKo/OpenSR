@@ -37,11 +37,12 @@ public:
     virtual ~TiledPolyline();
 
     virtual void draw() const;
+    virtual void processMain();
 
     boost::shared_ptr<Texture> texture() const;
     std::vector<Vector> polyline() const;
 
-    void setPolyLine(const std::vector<Vector> points);
+    void setPolyline(const std::vector<Vector> points);
     void setTexture(boost::shared_ptr<Texture> texture);
     void setTexture(const std::wstring& texture);
 
