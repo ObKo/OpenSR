@@ -37,16 +37,27 @@ Vector::Vector(float x, float y)
     this->y = y;
 }
 
-
 Vector Vector::norm() const
 {
-    float l = float(sqrt((*this) * (*this)));
+    float l = length();
     return Vector(x / l, y / l);
+}
+
+float Vector::length() const
+{
+    return float(sqrt((*this) * (*this)));
 }
 
 bool Vector::operator==(const Vector& other)
 {
     return (other.x == x) && (other.y == y);
+}
+
+Vector& Vector::operator+=(const Vector& other)
+{
+    x += other.x;
+    y += other.y;
+    return *this;
 }
 
 Rect::Rect()
@@ -194,5 +205,15 @@ Vector operator-(const Vector& v1, const Vector& v2)
 float operator*(const Vector& v1, const Vector& v2)
 {
     return v1.x * v2.x + v1.y * v2.y;
+}
+
+Vector operator*(const Vector& v, float s)
+{
+    return Vector(s * v.x, s * v.y);
+}
+
+Vector operator*(float s, const Vector& v)
+{
+    return Vector(s * v.x, s * v.y);
 }
 }

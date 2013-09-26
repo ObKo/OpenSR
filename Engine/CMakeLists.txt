@@ -40,6 +40,7 @@ SET(SOURCES
     RadioButtonGroup.cpp
     TiledLine.cpp
     TiledPolyline.cpp
+    TiledBeizerCurve.cpp
 )
 
 INCLUDE_DIRECTORIES(

@@ -37,10 +37,12 @@ struct RANGERS_ENGINE_API Vector
     Vector(float x, float y);
 
     Vector norm() const;
+    float length() const;
 
     float x, y;
 
     bool operator==(const Vector& other);
+    Vector& operator+=(const Vector& other);
 };
 
 struct RANGERS_ENGINE_API Vertex
@@ -98,6 +100,8 @@ RANGERS_ENGINE_API Rect operator+(const Rect& r1, const Rect& r2);
 RANGERS_ENGINE_API Vector operator+(const Vector& v1, const Vector& v2);
 RANGERS_ENGINE_API Vector operator-(const Vector& v1, const Vector& v2);
 RANGERS_ENGINE_API float operator*(const Vector& v1, const Vector& v2);
+RANGERS_ENGINE_API Vector operator*(const Vector& v, float s);
+RANGERS_ENGINE_API Vector operator*(float s, const Vector& v);
 }
 
 #endif
