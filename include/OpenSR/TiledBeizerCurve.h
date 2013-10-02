@@ -36,7 +36,7 @@ public:
 
     virtual ~TiledBeizerCurve();
 
-    void setControlPoints(Vector p0, Vector p1, Vector p2, Vector p3);
+    void setCurve(const BeizerCurve& curve);
 
 protected:
     TiledBeizerCurve(TiledBeizerCurvePrivate &p);

@@ -32,7 +32,7 @@ public:
     int findPoints(float t0, float t1, int index);
     Vector calcBezierPoint(float t);
 
-    Vector p0, p1, p2, p3;
+    BeizerCurve curve;
 };
 }
 

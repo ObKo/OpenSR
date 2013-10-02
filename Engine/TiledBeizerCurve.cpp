@@ -57,13 +57,10 @@ TiledBeizerCurvePrivate::TiledBeizerCurvePrivate()
 {
 }
 
-void TiledBeizerCurve::setControlPoints(Vector p0, Vector p1, Vector p2, Vector p3)
+void TiledBeizerCurve::setCurve(const BeizerCurve& curve)
 {
     RANGERS_D(TiledBeizerCurve);
-    d->p0 = p0;
-    d->p1 = p1;
-    d->p2 = p2;
-    d->p3 = p3;
+    d->curve = curve;
     calcCurve();
 }
 
@@ -75,10 +72,10 @@ Vector TiledBeizerCurvePrivate::calcBezierPoint(float t)
     float uuu = uu * u;
     float ttt = tt * t;
 
-    Vector p = uuu * p0;
-    p += 3 * uu * t * p1;
-    p += 3 * u * tt * p2;
-    p += ttt * p3;
+    Vector p = uuu * curve.p0;
+    p += 3 * uu * t * curve.p1;
+    p += 3 * u * tt * curve.p2;
+    p += ttt * curve.p3;
 
     return p;
 }
@@ -122,8 +119,6 @@ void TiledBeizerCurve::calcCurve()
     d->points.push_back(p1);
 
     d->findPoints(0.0f, 1.0f, 1);
-
-    Log::debug() << "Beizer points count: " << d->points.size();
 
     markToUpdate();
 }

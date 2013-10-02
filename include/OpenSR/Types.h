@@ -45,6 +45,14 @@ struct RANGERS_ENGINE_API Vector
     Vector& operator+=(const Vector& other);
 };
 
+struct RANGERS_ENGINE_API BeizerCurve
+{
+    BeizerCurve();
+    BeizerCurve(const Vector& p0, const Vector& p1, const Vector& p2, const Vector& p3);
+    
+    Vector p0, p1, p2, p3;
+};
+
 struct RANGERS_ENGINE_API Vertex
 {
     float x, y;

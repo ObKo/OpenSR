@@ -52,7 +52,7 @@ void exportTiledBeizerCurve()
     class_<TiledBeizerCurveWrap, bases<Object>, boost::shared_ptr<TiledBeizerCurve>, boost::noncopyable> c("TiledBeizerCurve", init<boost::shared_ptr<Texture> >());
     c.def(init<const std::wstring&>())
     .def(init<>())
-    .def("setControlPoints", &TiledBeizerCurve::setControlPoints);
+    .def("setCurve", &TiledBeizerCurve::setCurve);
     RANGERS_PYTHON_WRAP_OBJECT_DEF(TiledBeizerCurve, TiledBeizerCurveWrap, c);
     register_ptr_to_python<boost::shared_ptr<TiledBeizerCurve> >();
 }
