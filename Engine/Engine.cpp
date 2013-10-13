@@ -773,7 +773,8 @@ void Engine::EnginePrivate::processEvents()
 void Engine::EnginePrivate::processMouseMove(const SDL_MouseMotionEvent &e)
 {
     RANGERS_Q(Engine);
-    for (std::list<boost::shared_ptr<Widget> >::iterator i = widgets.begin(); i != widgets.end(); ++i)
+    std::list<boost::shared_ptr<Widget> > w = widgets;
+    for (std::list<boost::shared_ptr<Widget> >::iterator i = w.begin(); i != w.end(); ++i)
     {
         Vector globalMouse = mainNode->mapFromScreen(Vector(e.x, e.y));
         boost::shared_ptr<Widget> currentW = currentWidget.lock();

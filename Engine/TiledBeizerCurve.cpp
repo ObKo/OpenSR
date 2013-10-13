@@ -80,7 +80,7 @@ Vector TiledBeizerCurvePrivate::calcBezierPoint(float t)
     return p;
 }
 
-int TiledBeizerCurvePrivate::findPoints(float t0, float t1, int index)
+void TiledBeizerCurvePrivate::findPoints(float t0, float t1, std::list<Vector>& points, std::list<Vector>::iterator& i)
 {
     float tMid = (t0 + t1) / 2;
     Vector p0 = calcBezierPoint(t0);
@@ -88,7 +88,7 @@ int TiledBeizerCurvePrivate::findPoints(float t0, float t1, int index)
 
     if (texture && ((p0 - p1).length() < texture->width()))
     {
-        return 0;
+        return;
     }
 
     Vector pMid = calcBezierPoint(tMid);
@@ -99,26 +99,33 @@ int TiledBeizerCurvePrivate::findPoints(float t0, float t1, int index)
     {
         int pointsAdded = 0;
 
-        pointsAdded += findPoints(t0, tMid, index);
+        findPoints(t0, tMid, points, i);
 
-        points.insert(points.begin() + index + pointsAdded, pMid);
-        pointsAdded++;
+        points.insert(i, pMid);
+        i++;
 
-        pointsAdded += findPoints(tMid, t1, index + pointsAdded);
-        return pointsAdded;
+        findPoints(tMid, t1, points, i);
+        return;
     }
-    return 0;
 }
 
 void TiledBeizerCurve::calcCurve()
 {
     RANGERS_D(TiledBeizerCurve);
+
+    std::list<Vector> points;
+
     Vector p0 = d->calcBezierPoint(0.0f);
     Vector p1 = d->calcBezierPoint(1.0f);
-    d->points.push_back(p0);
-    d->points.push_back(p1);
+    points.push_back(p0);
+    points.push_back(p1);
 
-    d->findPoints(0.0f, 1.0f, 1);
+    std::list<Vector>::iterator i = points.begin();
+    i++;
+
+    d->findPoints(0.0f, 1.0f, points, i);
+    d->points = std::vector<Vector>(points.size());
+    std::copy(points.begin(), points.end(), d->points.begin());
 
     markToUpdate();
 }

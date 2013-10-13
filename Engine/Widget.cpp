@@ -68,7 +68,8 @@ void Widget::mouseMove(const Vector& p)
 {
     RANGERS_D(Widget);
     lock();
-    for (std::list<boost::shared_ptr<Widget> >::reverse_iterator i = d->childWidgets.rbegin(); i != d->childWidgets.rend(); ++i)
+    std::list<boost::shared_ptr<Widget> > childs = d->childWidgets;
+    for (std::list<boost::shared_ptr<Widget> >::reverse_iterator i = childs.rbegin(); i != childs.rend(); ++i)
     {
         if ((*i)->isVisible() && (*i)->containsPoint((*i)->mapFromParent(p)))
         {
@@ -98,12 +99,13 @@ bool Widget::containsPoint(const Vector &p) const
     if ((p.x >= 0) && (p.x <= d->width) && (p.y >= 0) && (p.y <= d->height))
         return true;
 
-    for (std::list<boost::shared_ptr<Widget> >::const_reverse_iterator i = d->childWidgets.rbegin(); i != d->childWidgets.rend(); ++i)
+    std::list<boost::shared_ptr<Widget> > childs = d->childWidgets;
+    for (std::list<boost::shared_ptr<Widget> >::reverse_iterator i = childs.rbegin(); i != childs.rend(); ++i)
     {
         if ((*i)->containsPoint((*i)->mapFromParent(p)))
             return true;
     }
-	return false;
+    return false;
 }
 
 Rect Widget::boundingRect() const
@@ -117,7 +119,8 @@ Rect Widget::boundingRect() const
     r.width = d->width;
     r.height = d->height;
 
-    for (std::list<boost::shared_ptr<Widget> >::const_reverse_iterator i = d->childWidgets.rbegin(); i != d->childWidgets.rend(); ++i)
+    std::list<boost::shared_ptr<Widget> > childs = d->childWidgets;
+    for (std::list<boost::shared_ptr<Widget> >::reverse_iterator i = childs.rbegin(); i != childs.rend(); ++i)
     {
         r += (*i)->mapToParent((*i)->boundingRect());
     }

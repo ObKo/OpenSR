@@ -28,6 +28,8 @@ namespace Rangers
 {
 TiledPolylinePrivate::TiledPolylinePrivate()
 {
+    vertexBuffer = 0;
+    vertexCount = 0;
 }
 
 TiledPolyline::TiledPolyline(): Object(*(new TiledPolylinePrivate()))
@@ -92,7 +94,7 @@ void TiledPolyline::draw() const
 void TiledPolyline::processMain()
 {
     Object::processMain();
-    
+
     // TODO: Optimize this
     RANGERS_D(TiledPolyline);
 
@@ -106,7 +108,7 @@ void TiledPolyline::processMain()
     {
         glGenBuffers(1, &d->vertexBuffer);
     }
-    
+
     /*
      * Calc vertex positions for polyline.
      */
@@ -126,7 +128,7 @@ void TiledPolyline::processMain()
 
     vertexPoints.push_back(v1);
     vertexPoints.push_back(v2);
-    
+
     ++next;
 
     for (std::vector<Vector>::const_iterator i = prev + 1; i != end; ++i)
@@ -162,11 +164,11 @@ void TiledPolyline::processMain()
     d->vertexCount = d->points.size() * 4;
     Vertex *vertices = new Vertex[d->vertexCount];
 
-    
+
     /*
      * Calc texture coordinates.
      */
-    
+
     float uStart = 0.0f, uDelta = 0.0f;
     bool bottomStart = false;
     Vector &prevTop = vertexPoints[0];

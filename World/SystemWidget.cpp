@@ -31,13 +31,13 @@
 #include <OpenSR/Engine.h>
 #include <OpenSR/ActionListener.h>
 #include <OpenSR/Action.h>
-#include <OpenSR/Log.h>
 #include <OpenSR/WidgetNode.h>
 #include <OpenSR/Button.h>
 #include <OpenSR/AnimatedTexture.h>
 #include <OpenSR/ResourceManager.h>
 #include <OpenSR/SpriteWidget.h>
 #include <OpenSR/Button.h>
+#include <OpenSR/TiledBeizerCurve.h>
 
 namespace
 {
@@ -75,6 +75,7 @@ public:
             {
                 m_parent->m_infoWidget->clear();
                 m_parent->m_infoWidget->setVisible(false);
+                m_parent->hideTrajectory();
             }
             if (action.type() == Action::MOUSE_ENTER)
             {
@@ -84,6 +85,8 @@ public:
                     {
                         m_parent->m_infoWidget->showAsteroid(a);
                         m_parent->m_infoWidget->setVisible(true);
+                        Trajectory t = w->object()->trajectory();
+                        m_parent->showTrajectory(t);
                     }
                     else if (boost::shared_ptr<Planet> p = boost::dynamic_pointer_cast<Planet>(w->object()))
                     {
@@ -202,17 +205,15 @@ void SystemWidget::setSystem(boost::shared_ptr< PlanetarySystem > system)
     }
     m_system = system;
 
-    std::list<boost::shared_ptr<SystemPlanetWidget> >::const_iterator wend = m_planetWidgets.end();
-    for (std::list<boost::shared_ptr<SystemPlanetWidget> >::const_iterator i = m_planetWidgets.begin(); i != wend; ++i)
+    for (boost::shared_ptr<SystemPlanetWidget> w : m_planetWidgets)
     {
-        removeWidget(*i);
+        removeWidget(w);
     }
     m_planetWidgets.clear();
 
-    std::map<boost::shared_ptr<SpaceObject>, boost::shared_ptr<SpaceObjectWidget> >::const_iterator aend = m_objectWidgets.end();
-    for (std::map<boost::shared_ptr<SpaceObject>, boost::shared_ptr<SpaceObjectWidget> >::const_iterator i = m_objectWidgets.begin(); i != aend; ++i)
+    for (const std::pair<boost::shared_ptr<SpaceObject>, boost::shared_ptr<SpaceObjectWidget> > &p : m_objectWidgets)
     {
-        removeWidget((*i).second);
+        removeWidget(p.second);
     }
     m_objectWidgets.clear();
 
@@ -325,6 +326,29 @@ void SystemWidget::draw() const
     m_turnButton->draw();
 
     endDraw();
+}
+
+void SystemWidget::showTrajectory(const Trajectory& t)
+{
+    if (m_trajectory.size())
+        hideTrajectory();
+    for (const BeizerCurve & c : t.nextTurns)
+    {
+        auto o = boost::shared_ptr<TiledBeizerCurve>(new TiledBeizerCurve(L"ORC/UnitPath2.png"));
+        o->setCurve(c);
+        o->setLayer(100);
+        m_node->addChild(o);
+        m_trajectory.push_back(o);
+    }
+}
+
+void SystemWidget::hideTrajectory()
+{
+    for (boost::shared_ptr<TiledBeizerCurve> c : m_trajectory)
+    {
+        m_node->removeChild(c);
+    }
+    m_trajectory.clear();
 }
 }
 }

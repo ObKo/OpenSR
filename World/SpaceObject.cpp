@@ -71,5 +71,9 @@ void SpaceObject::setPosition(const Point& point)
     m_position = point;
 }
 
+Trajectory SpaceObject::trajectory() const
+{
+    return m_trajectory;
+}
 }
 }

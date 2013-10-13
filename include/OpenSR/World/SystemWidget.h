@@ -26,6 +26,8 @@
 
 namespace Rangers
 {
+
+class TiledBeizerCurve;
 class Sprite;
 class WidgetNode;
 class SpriteWidget;
@@ -33,6 +35,8 @@ class Button;
 
 namespace World
 {
+struct Point;
+struct Trajectory;
 class SpaceObject;
 class InfoWidget;
 class SystemPlanetWidget;
@@ -59,6 +63,10 @@ private:
     enum MoveDirection {NONE, LEFT, RIGHT, TOP, BOTTOM, TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT};
 
     class SystemWidgetListener;
+
+    void showTrajectory(const Trajectory& t);
+    void hideTrajectory();
+
     boost::shared_ptr<PlanetarySystem> m_system;
     std::list<boost::shared_ptr<SystemPlanetWidget> > m_planetWidgets;
     std::map<boost::shared_ptr<SpaceObject>, boost::shared_ptr<SpaceObjectWidget> > m_objectWidgets;
@@ -72,6 +80,7 @@ private:
     boost::shared_ptr<InfoWidget> m_infoWidget;
     boost::shared_ptr<SystemWidgetListener> m_actionListener;
     boost::shared_ptr<WidgetNode> m_node;
+    std::list<boost::shared_ptr<TiledBeizerCurve> > m_trajectory;
 
     bool m_turn;
     int m_turnTime;

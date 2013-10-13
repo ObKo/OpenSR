@@ -58,10 +58,13 @@ public:
     virtual void calcTurn();
     virtual void turn(float progress);
     virtual void finishTurn();
+
 protected:
+    void calcTrajectory();
     void calcEccentricity();
     void calcPosition();
     void calcSpeed();
+    Point solveKepler(float t);
 
     //! Semi-axis of the ellipse, a >= b
     float m_a, m_b;
@@ -76,6 +79,8 @@ protected:
     float m_e;
     float m_prevT;
     float m_speed;
+
+    std::list<BeizerCurve> fullTrajectory;
 };
 }
 }

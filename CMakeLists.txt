@@ -23,6 +23,9 @@ SET(MINOR_VERSION 1)
 SET(BUILD_VERSION 1)
 SET(API_VERSION 1)
 
+# Enable C++11 support.
+ADD_DEFINITIONS(-std=c++11)
+
 # Disable auto-linking boost
 ADD_DEFINITIONS(-DBOOST_ALL_NO_LIB)
 

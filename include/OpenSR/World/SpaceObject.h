@@ -32,14 +32,18 @@ public:
     SpaceObject(uint64_t id = 0);
 
     Point position() const;
+    //! Trajectory of object, only used for representation.
+    Trajectory trajectory() const;
 
     void setPosition(const Point& point);
 
     virtual uint32_t type() const;
     virtual bool serialize(std::ostream &stream) const;
     virtual bool deserialize(std::istream &stream);
+
 protected:
     Point m_position;
+    Trajectory m_trajectory;
 };
 }
 }

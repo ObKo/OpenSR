@@ -25,6 +25,7 @@ namespace
 const uint32_t PLANET_STYLE_SIGNATURE = *((uint32_t*)"SRPS");
 const uint32_t SYSTEM_STYLE_SIGNATURE = *((uint32_t*)"SRSS");
 const uint32_t ASTEROID_STYLE_SIGNATURE = *((uint32_t*)"SRAS");
+const uint32_t TRAJECTORY_SIGNATURE = *((uint32_t*)"SRTR");
 }
 
 namespace Rangers
@@ -221,6 +222,10 @@ bool AsteroidStyle::deserialize(std::istream& stream)
         return false;
 
     return true;
+}
+
+Trajectory::Trajectory()
+{
 }
 
 }

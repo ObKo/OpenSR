@@ -56,6 +56,9 @@ void exportTypes()
     c3.def_readwrite("id", &AsteroidStyle::id)
     .def_readwrite("sprite", &AsteroidStyle::sprite)
     .def_readwrite("animated", &AsteroidStyle::animated);
+
+    class_<Trajectory> c4("Trajectory", init<>());
+    c4.def_readwrite("nextTurns", &Trajectory::nextTurns);
 }
 }
 }

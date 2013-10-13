@@ -20,8 +20,10 @@
 #define WORLD_TYPES_H
 
 #include "OpenSR/World/world-global.h"
+#include <OpenSR/Types.h>
 
 #include <string>
+#include <list>
 #include <stdint.h>
 
 namespace Rangers
@@ -36,6 +38,14 @@ struct RANGERS_WORLD_API Point
     float x;
     float y;
 };
+
+struct RANGERS_WORLD_API Trajectory
+{
+    Trajectory();
+
+    std::list<BeizerCurve> nextTurns;
+};
+
 struct RANGERS_WORLD_API PlanetStyle
 {
     PlanetStyle();

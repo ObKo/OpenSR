@@ -76,6 +76,11 @@ bool Object::prepareDraw() const
 {
     lock();
     RANGERS_D(const Object);
+    if (d->needUpdate)
+    {
+        unlock();
+        return false;
+    }
     glPushMatrix();
     glTranslatef(d->position.x, d->position.y, 0);
     glRotatef(d->rotation, 0, 0, -1);
@@ -415,7 +420,8 @@ boost::shared_ptr<Object> Object::getChild(Object *ptr) const
         return boost::shared_ptr<Object>();
 
     lock();
-    for (std::list<boost::shared_ptr<Object> >::const_iterator i = d->children.begin(); i != d->children.end(); ++i)
+    std::list<boost::shared_ptr<Object> > children = d->children;
+    for (std::list<boost::shared_ptr<Object> >::const_iterator i = children.begin(); i != children.end(); ++i)
     {
         if ((*i).get() == ptr)
         {

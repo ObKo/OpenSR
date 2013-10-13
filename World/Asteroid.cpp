@@ -129,6 +129,7 @@ void Asteroid::setSemiAxis(float a, float b)
     calcEccentricity();
     calcPosition();
     calcSpeed();
+    calcTrajectory();
 }
 
 void Asteroid::setPeriod(float T)
@@ -136,11 +137,15 @@ void Asteroid::setPeriod(float T)
     m_period = T;
     calcPosition();
     calcSpeed();
+    calcTrajectory();
 }
 
 void Asteroid::setAngle(float angle)
 {
     m_angle = angle;
+    calcPosition();
+    calcSpeed();
+    calcTrajectory();
 }
 
 void Asteroid::setTime(float time)
@@ -151,7 +156,7 @@ void Asteroid::setTime(float time)
         m_t = fmod(m_t, m_period);
 
     if (m_t < 0)
-        m_t = 2.0f * M_PI + m_t;
+        m_t = m_period + m_t;
 
     calcPosition();
 }
@@ -163,24 +168,21 @@ void Asteroid::calcEccentricity()
 
 void Asteroid::calcPosition()
 {
-    // http://en.wikipedia.org/wiki/Kepler's_equation
-    float M = 2.0f * M_PI / m_period * m_t;
-    float E = M;
-    for (int j = 0; j < ITERATION_COUNTS; j++)
-    {
-        E = m_e * sin(E) + M;
-    }
-    float alpha = 2.0f * atan(sqrt((1.0f + m_e) / (1.0f - m_e)) * tan(E / 2.0f));
-    float r = m_a * (1.0f - m_e * cos(E));
-    float x = r * cos(alpha), y = r * sin(alpha);
-    float angle = m_angle / 180.0f * M_PI;
-    m_position.x = x * cos(angle) - y * sin(angle);
-    m_position.y = x * sin(angle) + y * cos(angle);
+    m_position = solveKepler(m_t);
 }
 
 void Asteroid::calcSpeed()
 {
-    float M = 2.0f * M_PI / m_period * (m_t + 1.0f);
+    Point nextPos = solveKepler(m_t + 1.0f);
+    float dx = nextPos.x - m_position.x;
+    float dy = nextPos.y - m_position.y;
+    m_speed = sqrt(dx * dx + dy * dy);
+}
+
+Point Asteroid::solveKepler(float t)
+{
+    // http://en.wikipedia.org/wiki/Kepler's_equation
+    float M = 2.0f * M_PI / m_period * t;
     float E = M;
     for (int j = 0; j < ITERATION_COUNTS; j++)
     {
@@ -190,9 +192,34 @@ void Asteroid::calcSpeed()
     float r = m_a * (1.0f - m_e * cos(E));
     float x = r * cos(alpha), y = r * sin(alpha);
     float angle = m_angle / 180.0f * M_PI;
-    float dx = x * cos(angle) - y * sin(angle) - m_position.x;
-    float dy = x * sin(angle) + y * cos(angle) - m_position.y;
-    m_speed = sqrt(dx * dx + dy * dy);
+    return Point(x * cos(angle) - y * sin(angle), x * sin(angle) + y * cos(angle));
+}
+
+void Asteroid::calcTrajectory()
+{
+    m_trajectory.nextTurns.clear();
+
+    Point prevP = solveKepler(m_t);
+
+    for (int i = 1; i < int(round(m_period)); i++)
+    {
+        float t = m_t + i;
+        if (fabs(t) > m_period)
+            t = fmod(t, m_period);
+
+        if (t < 0)
+            t = m_period + t;
+        Point p = solveKepler(t);
+        float dx = p.x - prevP.x;
+        float dy = p.y - prevP.y;
+        BeizerCurve c = BeizerCurve(
+                            Vector(prevP.x, prevP.y),
+                            Vector(prevP.x + dx / 3.0f, prevP.y + dy / 3.0f),
+                            Vector(prevP.x + 2.0f * dx / 3.0f, prevP.y + 2.0f * dy / 3.0f),
+                            Vector(p.x, p.y));
+        m_trajectory.nextTurns.push_back(c);
+        prevP = p;
+    }
 }
 
 float Asteroid::speed() const
@@ -208,6 +235,7 @@ void Asteroid::calcTurn()
 void Asteroid::finishTurn()
 {
     setTime(m_prevT + 1.0f);
+    calcTrajectory();
     calcSpeed();
 }
 

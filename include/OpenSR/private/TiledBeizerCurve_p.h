@@ -29,7 +29,7 @@ class TiledBeizerCurvePrivate: public TiledPolylinePrivate
 public:
     TiledBeizerCurvePrivate();
 
-    int findPoints(float t0, float t1, int index);
+    void findPoints(float t0, float t1, std::list<Vector>& points, std::list<Vector>::iterator& i);
     Vector calcBezierPoint(float t);
 
     BeizerCurve curve;
