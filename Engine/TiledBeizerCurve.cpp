@@ -24,7 +24,7 @@
 
 namespace
 {
-const float ANGLE_TRESHOLD = 0.99f;
+const float ANGLE_TRESHOLD = 0.999f;
 }
 
 namespace Rangers
@@ -102,7 +102,6 @@ void TiledBeizerCurvePrivate::findPoints(float t0, float t1, std::list<Vector>& 
         findPoints(t0, tMid, points, i);
 
         points.insert(i, pMid);
-        i++;
 
         findPoints(tMid, t1, points, i);
         return;

@@ -168,18 +168,18 @@ void Asteroid::calcEccentricity()
 
 void Asteroid::calcPosition()
 {
-    m_position = solveKepler(m_t);
+    m_position = E(solveKepler(m_t));
 }
 
 void Asteroid::calcSpeed()
 {
-    Point nextPos = solveKepler(m_t + 1.0f);
+    Point nextPos = E(solveKepler(m_t + 1));
     float dx = nextPos.x - m_position.x;
     float dy = nextPos.y - m_position.y;
     m_speed = sqrt(dx * dx + dy * dy);
 }
 
-Point Asteroid::solveKepler(float t)
+float Asteroid::solveKepler(float t)
 {
     // http://en.wikipedia.org/wiki/Kepler's_equation
     float M = 2.0f * M_PI / m_period * t;
@@ -188,18 +188,32 @@ Point Asteroid::solveKepler(float t)
     {
         E = m_e * sin(E) + M;
     }
-    float alpha = 2.0f * atan(sqrt((1.0f + m_e) / (1.0f - m_e)) * tan(E / 2.0f));
-    float r = m_a * (1.0f - m_e * cos(E));
-    float x = r * cos(alpha), y = r * sin(alpha);
+    return E;
+}
+
+Point Asteroid::E(float eta)
+{
+    Point p;
     float angle = m_angle / 180.0f * M_PI;
-    return Point(x * cos(angle) - y * sin(angle), x * sin(angle) + y * cos(angle));
+    p.x = - (m_a * m_e) * cos(angle) + m_a * cos(angle) * cos(eta) - m_b * sin(angle) * sin(eta);
+    p.y = - (m_a * m_e) * sin(angle) + m_a * sin(angle) * cos(eta) + m_b * cos(angle) * sin(eta);
+    return p;
+}
+
+Point Asteroid::Ederiv(float eta)
+{
+    Point p;
+    float angle = m_angle / 180.0f * M_PI;
+    p.x = - m_a * cos(angle) * sin(eta) - m_b * sin(angle) * cos(eta);
+    p.y = - m_a * sin(angle) * sin(eta) + m_b * cos(angle) * cos(eta);
+    return p;
 }
 
 void Asteroid::calcTrajectory()
 {
     m_trajectory.nextTurns.clear();
 
-    Point prevP = solveKepler(m_t);
+    float prev = solveKepler(m_t);
 
     for (int i = 1; i < int(round(m_period)); i++)
     {
@@ -209,16 +223,31 @@ void Asteroid::calcTrajectory()
 
         if (t < 0)
             t = m_period + t;
-        Point p = solveKepler(t);
-        float dx = p.x - prevP.x;
-        float dy = p.y - prevP.y;
-        BeizerCurve c = BeizerCurve(
-                            Vector(prevP.x, prevP.y),
-                            Vector(prevP.x + dx / 3.0f, prevP.y + dy / 3.0f),
-                            Vector(prevP.x + 2.0f * dx / 3.0f, prevP.y + 2.0f * dy / 3.0f),
-                            Vector(p.x, p.y));
+
+        float eta = solveKepler(t);
+
+        Vector p1, p2, p3, p4;
+        Point p;
+
+        // http://www.spaceroots.org/documents/ellipse/elliptical-arc.pdf
+        p = E(prev);
+        p1 = Vector(p.x, p.y);
+        p = E(eta);
+        p4 = Vector(p.x, p.y);
+
+        float tangent = tan((eta - prev) / 2.0f);
+        float k = sin(eta - prev) * (sqrt(4.0f + 3.0f * tangent * tangent) - 1.0f) / 3.0f;
+
+        p = Ederiv(prev);
+        p2 = p1 + k * Vector(p.x, p.y);
+        p = Ederiv(eta);
+        p3 = p4 - k * Vector(p.x, p.y);
+
+        BeizerCurve c = BeizerCurve(p1, p2, p3, p4);
+
         m_trajectory.nextTurns.push_back(c);
-        prevP = p;
+
+        prev = eta;
     }
 }
 
@@ -235,6 +264,8 @@ void Asteroid::calcTurn()
 void Asteroid::finishTurn()
 {
     setTime(m_prevT + 1.0f);
+    float E = solveKepler(m_t);
+    Log::debug() << "eta: " << (float)(E * 180 / M_PI);
     calcTrajectory();
     calcSpeed();
 }

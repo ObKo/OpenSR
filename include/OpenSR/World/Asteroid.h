@@ -64,7 +64,11 @@ protected:
     void calcEccentricity();
     void calcPosition();
     void calcSpeed();
-    Point solveKepler(float t);
+    //! Get current angle
+    float solveKepler(float t);
+    //! Ellipse equation
+    Point E(float eta);
+    Point Ederiv(float eta);
 
     //! Semi-axis of the ellipse, a >= b
     float m_a, m_b;
