@@ -58,6 +58,7 @@ void exportTiledLine();
 void exportSpriteWidget();
 void exportTiledPolyline();
 void exportTiledBeizerCurve();
+void exportAnimatedTexture();
 
 void pythonError(const std::wstring& text)
 {
@@ -125,6 +126,8 @@ BOOST_PYTHON_MODULE(_Engine)
     Rangers::Python::exportSpriteWidget();
     Rangers::Python::exportTiledPolyline();
     Rangers::Python::exportTiledBeizerCurve();
+    Rangers::Python::exportAnimatedTexture();
+
     boost::python::def("pythonError", &Rangers::Python::pythonError);
     boost::python::def("pythonOut", &Rangers::Python::pythonOut);
     boost::python::def("execPythonScript", (void (*)(const std::wstring&, const boost::python::object&))&Rangers::execPythonScript);

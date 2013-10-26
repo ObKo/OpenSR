@@ -28,6 +28,7 @@ struct GAIAnimation;
 class RANGERS_ENGINE_API AnimatedTexture: public Texture
 {
 public:
+    AnimatedTexture();
     //! Create texture from HAI animation
     AnimatedTexture(const HAIAnimation& a);
     //! Create texture from GAI animation

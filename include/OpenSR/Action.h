@@ -50,17 +50,6 @@ public:
     //! Argument of action
     Argument argument() const;
 
-    //! Get argument as string
-    std::wstring stringArgument() const;
-    //! Get argument as Rect
-    Rect rectArgument() const;
-    //! Get argument as keysym
-    SDL_Keysym keyArgument() const;
-    //! Get argument as bool
-    bool boolArgument() const;
-    //! Get argument as 8-bit unsigned integer
-    uint8_t byteArgument() const;
-
 private:
     boost::shared_ptr<Widget> m_source;
     Type m_type;

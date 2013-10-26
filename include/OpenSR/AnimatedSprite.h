@@ -60,6 +60,8 @@ public:
     //! Animation is single shot
     bool isSingleShot() const;
 
+    //! Animation frame count
+    int frameCount() const;
     //! Current animation frame
     int currentFrame() const;
     //! Animation frames per second

@@ -19,6 +19,7 @@
 #include <boost/python.hpp>
 #include <OpenSR/Button.h>
 #include <OpenSR/Font.h>
+#include <OpenSR/Sound.h>
 
 #include "OpenSR/python/WidgetWrap.h"
 
@@ -60,14 +61,12 @@ void exportButton()
     .def(init<const std::wstring&, const std::wstring&, const std::wstring&>())
     .def(init<const std::wstring&>())
     .def(init<>())
-    .def("setText", &Button::setText)
-    .def("text", &Button::text)
-    .def("setFont", &Button::setFont)
-    .def("font", &Button::font)
-    .def("setAutoResize", &Button::setAutoResize)
-    .def("autoResize", &Button::autoResize)
-    .def("setSounds", (void (Button::*)(boost::shared_ptr<Sound>, boost::shared_ptr<Sound>, boost::shared_ptr<Sound>))&Button::setSounds)
-    .def("setSounds", (void (Button::*)(const std::wstring&, const std::wstring&, const std::wstring&))&Button::setSounds);
+    .add_property("text", &Button::text, &Button::setText)
+    .add_property("font", &Button::font, &Button::setFont)
+    .add_property("autoResize", &Button::autoResize, &Button::setAutoResize)
+    .add_property("clickSound", &Button::clickSound, (void (Button::*)(boost::shared_ptr<Sound>))&Button::setClickSound)
+    .add_property("enterSound", &Button::enterSound, (void (Button::*)(boost::shared_ptr<Sound>))&Button::setEnterSound)
+    .add_property("leaveSound", &Button::leaveSound, (void (Button::*)(boost::shared_ptr<Sound>))&Button::setLeaveSound);
     RANGERS_PYTHON_WRAP_WIDGET_DEF(Button, ButtonWrap, c);
     register_ptr_to_python<boost::shared_ptr<Button> >();
 }

@@ -53,42 +53,42 @@ class SettingsWidget(ScriptWidget, ActionListener):
         self.spaceButton = Button("DATA/FormOptions2/2SpaceN.gi", "DATA/FormOptions2/2SpaceN.gi", "DATA/FormOptions2/2SpaceD.gi")
         self.spaceButton.setPosition(self.formBg.position().x + 26, self.formBg.position().y + 10)
         self.addWidget(self.spaceButton)
-
+        
         self.okButton = Button("DATA/FormOptions2/2OkN.gi", "DATA/FormOptions2/2OkA.gi", "DATA/FormOptions2/2OkD.gi")
         self.okButton.setPosition(self.formBottom.position().x + 603 + deltaX, self.formBottom.position().y + 22)
         self.okButton.addListener(self)
-        self.okButton.setSounds("Sound/ButtonClick.wav", "Sound/ButtonLeave.WAV", "Sound/ButtonEnter.wav")
+        self.setSoundsDefault(self.okButton)
         self.addWidget(self.okButton)
 
         self.cancelButton = Button("DATA/FormOptions2/2CancelN.gi", "DATA/FormOptions2/2CancelA.gi", "DATA/FormOptions2/2CancelD.gi")
         self.cancelButton.setPosition(self.formBottom.position().x + 670 + deltaX, self.formBottom.position().y + 22)
         self.cancelButton.addListener(self)
-        self.cancelButton.setSounds("Sound/ButtonClick.wav", "Sound/ButtonLeave.WAV", "Sound/ButtonEnter.wav")
+        self.setSoundsDefault(self.cancelButton)       
         self.addWidget(self.cancelButton)
 
         self.autoButton = Button("DATA/FormOptions2/2AutoN.gi", "DATA/FormOptions2/2AutoA.gi", "DATA/FormOptions2/2AutoD.gi")
         self.autoButton.setPosition(self.formBottom.position().x + 102, self.formBottom.position().y + 22)
-        self.autoButton.setSounds("Sound/ButtonClick.wav", "Sound/ButtonLeave.WAV", "Sound/ButtonEnter.wav")
+        self.setSoundsDefault(self.autoButton)
         self.addWidget(self.autoButton)
         self.highButton = Button("DATA/FormOptions2/2HighN.gi", "DATA/FormOptions2/2HighA.gi", "DATA/FormOptions2/2HighD.gi")
         self.highButton.setPosition(self.formBottom.position().x + 176, self.formBottom.position().y + 4)
-        self.highButton.setSounds("Sound/ButtonClick.wav", "Sound/ButtonLeave.WAV", "Sound/ButtonEnter.wav")
+        self.setSoundsDefault(self.highButton)  
         self.addWidget(self.highButton)
         self.mediumButton = Button("DATA/FormOptions2/2MediumN.gi", "DATA/FormOptions2/2MediumA.gi", "DATA/FormOptions2/2MediumD.gi")
         self.mediumButton.setPosition(self.formBottom.position().x + 170, self.formBottom.position().y + 33)
-        self.mediumButton.setSounds("Sound/ButtonClick.wav", "Sound/ButtonLeave.WAV", "Sound/ButtonEnter.wav")
+        self.setSoundsDefault(self.mediumButton)
         self.addWidget(self.mediumButton)
         self.lowButton = Button("DATA/FormOptions2/2LowN.gi", "DATA/FormOptions2/2LowA.gi", "DATA/FormOptions2/2LowD.gi")
         self.lowButton.setPosition(self.formBottom.position().x + 161, self.formBottom.position().y + 58)
-        self.lowButton.setSounds("Sound/ButtonClick.wav", "Sound/ButtonLeave.WAV", "Sound/ButtonEnter.wav")
+        self.setSoundsDefault(self.lowButton)
         self.addWidget(self.lowButton)
 
         self.graphicsButton = Button("DATA/FormOptions2/2PageN.gi", "DATA/FormOptions2/2PageA.gi", "DATA/FormOptions2/2PageD.gi")
-        self.graphicsButton.setFont(engine.coreFont())
-        self.graphicsButton.setText(_("Graphics"))
-        self.graphicsButton.setColor(0x00C4E0FF)
+        self.graphicsButton.font = engine.coreFont()
+        self.graphicsButton.text = _("Graphics")
+        self.graphicsButton.color = 0xC4E0FF00
         self.graphicsButton.setPosition(0, 0)
-        self.graphicsButton.setSounds("Sound/ButtonClick.wav", "Sound/ButtonLeave.WAV", "Sound/ButtonEnter.wav")
+        self.setSoundsDefault(self.graphicsButton)
         self.buttonNode.addWidget(self.graphicsButton)
         
         self.paramNode = WidgetNode()
@@ -142,8 +142,8 @@ class SettingsWidget(ScriptWidget, ActionListener):
     def loadSettings(self):
         self.widthEdit.setText(str(engine.propertiesGetInt("graphics.width", 1024)))
         self.heightEdit.setText(str(engine.propertiesGetInt("graphics.height", 768)))
-        self.fullscreen.setChecked(engine.propertiesGetBool("graphics.fullscreen", False))
-        self.useShaders.setChecked(engine.propertiesGetBool("graphics.useShaders", True))
+        self.fullscreen.checked = engine.propertiesGetBool("graphics.fullscreen", False)
+        self.useShaders.checked = engine.propertiesGetBool("graphics.useShaders", True)
 
     def saveSettings(self):
         width = int(self.widthEdit.text())
@@ -170,3 +170,12 @@ class SettingsWidget(ScriptWidget, ActionListener):
             
         self.dispose()
         engine.addWidget(OpenSR.ORC.StartMenu.StartMenuWidget())
+        
+    def setSoundsDefault(self, button):
+        clickSound = sound.loadSound("Sound/ButtonClick.wav")
+        leaveSound = sound.loadSound("Sound/ButtonLeave.WAV")
+        enterSound = sound.loadSound("Sound/ButtonEnter.wav")
+        
+        button.clickSound = clickSound
+        button.enterSound = enterSound
+        button.leaveSound = leaveSound   

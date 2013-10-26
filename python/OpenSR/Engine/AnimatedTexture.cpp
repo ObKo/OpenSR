@@ -16,20 +16,23 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <OpenSR/Sound.h>
+#include <OpenSR/AnimatedTexture.h>
 #include <boost/python.hpp>
 
 namespace Rangers
 {
 namespace Python
 {
-void exportSound()
+void exportAnimatedTexture()
 {
     using namespace boost::python;
 
-    class_<Sound, boost::shared_ptr<Sound> >("Sound", init<const std::wstring&>())
-    .def(init<>())
-    .def("play", &Sound::play);
+    //TODO: Do we need constructors?
+    class_<AnimatedTexture, bases<Texture>, boost::shared_ptr<AnimatedTexture>, boost::noncopyable>("AnimatedTexture", init<>())
+    .add_property("waitSeek", &AnimatedTexture::waitSeek)
+    .add_property("waitSize", &AnimatedTexture::waitSize)
+    .add_property("frameCount", &AnimatedTexture::frameCount)
+    .def("openGLTexture", &AnimatedTexture::openGLTexture);
 }
 }
 }

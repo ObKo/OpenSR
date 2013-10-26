@@ -24,10 +24,19 @@
 
 namespace Rangers
 {
+AnimatedTexture::AnimatedTexture(): Texture()
+{
+    m_waitSeek = 0;
+    m_waitSize = 0;
+    m_frameCount = 0;
+    m_loadedFrames = 0;
+    m_needFrames = false;
+    m_textures = 0;
+}
 /*!
  * \param a hai animation
  */
-AnimatedTexture::AnimatedTexture(const HAIAnimation& a)
+AnimatedTexture::AnimatedTexture(const HAIAnimation& a): Texture()
 {
     m_waitSeek = 600;
     m_waitSize = 600;
@@ -55,7 +64,7 @@ AnimatedTexture::AnimatedTexture(const HAIAnimation& a)
 /*!
  * \param a gai animation
  */
-AnimatedTexture::AnimatedTexture(const GAIAnimation& a)
+AnimatedTexture::AnimatedTexture(const GAIAnimation& a): Texture()
 {
     m_waitSeek = a.waitSeek;
     m_waitSize = a.waitSize;

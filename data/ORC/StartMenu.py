@@ -1,7 +1,7 @@
 from OpenSR.World import WorldManager, DefaultWorldGen, SystemWidget
 from OpenSR.Engine import Engine, ResourceManager, SoundManager, ScriptWidget, ActionListener, \
                           Sprite, GAISprite, SpriteXOrigin, SpriteYOrigin, WidgetNode, Button, \
-                          ActionType
+                          ActionType, LineEdit
 import OpenSR.ORC.Settings
 from OpenSR.World.DefaultWorldGen import DefaultWorldGen
 import sys
@@ -67,17 +67,29 @@ class StartMenuWidget(ScriptWidget, ActionListener):
         self.menuNode.setPosition(engine.screenWidth() - 400, 300)
         self.addWidget(self.menuNode)
         
+        self.edit = LineEdit(500)
+        self.edit.setPosition(0, -100)
+        self.edit.addListener(self)
+        self.menuNode.addWidget(self.edit)
+        
         sound.playMusic("music/SPECIAL/SpaceIsCalling.dat", False)
         
         self.buttons = {}
         
+        clickSound = sound.loadSound("Sound/ButtonClick.wav")
+        leaveSound = sound.loadSound("Sound/ButtonLeave.WAV")
+        enterSound = sound.loadSound("Sound/ButtonEnter.wav")
+        
         y = 0
         for name in self.BUTTONS:  
-            self.buttons[name] = Button('DATA/FormMain2/' + self.BUTTON_FILES[name] + 'N.gi', 'DATA/FormMain2/' + self.BUTTON_FILES[name] + 'A.gi', 'DATA/FormMain2/' + self.BUTTON_FILES[name] + 'D.gi')
-            self.buttons[name].addListener(self)
-            self.buttons[name].setPosition(0, y)
-            self.buttons[name].setSounds("Sound/ButtonClick.wav", "Sound/ButtonLeave.WAV", "Sound/ButtonEnter.wav")
-            self.menuNode.addWidget(self.buttons[name])
+            button = Button('DATA/FormMain2/' + self.BUTTON_FILES[name] + 'N.gi', 'DATA/FormMain2/' + self.BUTTON_FILES[name] + 'A.gi', 'DATA/FormMain2/' + self.BUTTON_FILES[name] + 'D.gi')
+            self.buttons[name] = button
+            button.addListener(self)
+            button.setPosition(0, y)
+            button.clickSound = clickSound
+            button.enterSound = enterSound
+            button.leaveSound = leaveSound
+            self.menuNode.addWidget(button)
             y = y + self.BUTTON_SPARSE
 
     def processLogic(self, dt):
@@ -104,24 +116,24 @@ class StartMenuWidget(ScriptWidget, ActionListener):
         engine.addWidget(widget)
         self.dispose()
         
-    def actionPerformed(self, action):
-        if action.type() != ActionType.BUTTON_CLICKED:
+    def actionPerformed(self, action):        
+        if action.type != ActionType.BUTTON_CLICKED:
             return
 
-        if action.source() == self.buttons['exit']:
+        if action.source == self.buttons['exit']:
             self.dispose()                
             engine.quit(0)
             
-        elif action.source() == self.buttons['settings']:
+        elif action.source == self.buttons['settings']:
             self.dispose()
             engine.addWidget(OpenSR.ORC.Settings.SettingsWidget())
             
-        elif action.source() == self.buttons['newGame']:
+        elif action.source == self.buttons['newGame']:
             world.addGenHook(DefaultWorldGen())
             world.generateWorld()
             world.saveWorld('test.srw')
             self.openGame()
         
-        elif action.source() == self.buttons['loadGame']:
+        elif action.source == self.buttons['loadGame']:
             world.loadWorld('test.srw')
             self.openGame()

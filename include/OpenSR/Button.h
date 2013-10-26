@@ -55,13 +55,21 @@ public:
     virtual void setColor(uint32_t color);
     void setFont(boost::shared_ptr<Font> font);
     void setAutoResize(bool autoResize);
-    void setSounds(boost::shared_ptr<Sound> clickSound, boost::shared_ptr<Sound> leaveSound, boost::shared_ptr<Sound> enterSound);
-    void setSounds(const std::wstring& clickSound, const std::wstring& leaveSound, const std::wstring& enterSound);
+
+    void setClickSound(boost::shared_ptr<Sound> clickSound);
+    void setClickSound(const std::wstring& clickSound);
+    void setEnterSound(boost::shared_ptr<Sound> enterSound);
+    void setEnterSound(const std::wstring& enterSound);
+    void setLeaveSound(boost::shared_ptr<Sound> leaveSound);
+    void setLeaveSound(const std::wstring& leaveSound);
 
     std::wstring text() const;
     virtual uint32_t color() const;
     boost::shared_ptr<Font> font() const;
     bool autoResize() const;
+    boost::shared_ptr<Sound> clickSound() const;
+    boost::shared_ptr<Sound> enterSound() const;
+    boost::shared_ptr<Sound> leaveSound() const;
 
 protected:
     Button(ButtonPrivate &p);

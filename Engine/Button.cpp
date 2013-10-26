@@ -424,32 +424,67 @@ void Button::draw() const
     endDraw();
 }
 
-void Button::setSounds(boost::shared_ptr<Sound> clickSound, boost::shared_ptr<Sound> leaveSound, boost::shared_ptr<Sound> enterSound)
+void Button::setClickSound(boost::shared_ptr<Sound> clickSound)
 {
-    lock();
     RANGERS_D(Button);
     d->clickSound = clickSound;
-    d->enterSound = enterSound;
-    d->leaveSound = leaveSound;
-    unlock();
 }
 
-void Button::setSounds(const std::wstring& clickSound, const std::wstring& leaveSound, const std::wstring& enterSound)
+void Button::setClickSound(const std::wstring& clickSound)
 {
-    lock();
     RANGERS_D(Button);
-    d->clickSound = SoundManager::instance().loadSound(clickSound);
-    d->enterSound = SoundManager::instance().loadSound(enterSound);
-    d->leaveSound = SoundManager::instance().loadSound(leaveSound);
-    unlock();
+    setClickSound(SoundManager::instance().loadSound(clickSound));
+}
+
+void Button::setEnterSound(boost::shared_ptr<Sound> enterSound)
+{
+    RANGERS_D(Button);
+    d->enterSound = enterSound;
+}
+
+void Button::setEnterSound(const std::wstring& enterSound)
+{
+    RANGERS_D(Button);
+    setEnterSound(SoundManager::instance().loadSound(enterSound));
+}
+
+void Button::setLeaveSound(boost::shared_ptr<Sound> leaveSound)
+{
+    RANGERS_D(Button);
+    d->leaveSound = leaveSound;
+}
+
+void Button::setLeaveSound(const std::wstring& leaveSound)
+{
+    RANGERS_D(Button);
+    setLeaveSound(SoundManager::instance().loadSound(leaveSound));
+}
+
+boost::shared_ptr<Sound> Button::clickSound() const
+{
+    RANGERS_D(const Button);
+    return d->clickSound;
+}
+
+boost::shared_ptr<Sound> Button::enterSound() const
+{
+    RANGERS_D(const Button);
+    return d->enterSound;
+}
+
+boost::shared_ptr<Sound> Button::leaveSound() const
+{
+    RANGERS_D(const Button);
+    return d->leaveSound;
 }
 
 void Button::processMain()
 {
     lock();
     RANGERS_D(Button);
-    if (d->label->needUpdate())
-        d->label->processMain();
+    d->calcAutoResize();
+    //if (d->label->needUpdate())
+    //    d->label->processMain();
     /*if (d->normalSprite)
         d->normalSprite->setGeometry(d->width, d->height);
     if (d->hoverSprite)

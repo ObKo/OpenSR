@@ -45,7 +45,7 @@ AnimatedSprite::AnimatedSprite(): Sprite(*(new AnimatedSpritePrivate()))
  * \param texture texture
  * \param parent object parent
  */
-AnimatedSprite::AnimatedSprite(boost::shared_ptr<AnimatedTexture> texture): 
+AnimatedSprite::AnimatedSprite(boost::shared_ptr<AnimatedTexture> texture):
     Sprite(*(new AnimatedSpritePrivate()))
 {
     RANGERS_D(AnimatedSprite);
@@ -71,7 +71,7 @@ AnimatedSprite::AnimatedSprite(const std::wstring& animation):
     if (animTexture)
     {
         d->animationStarted = true;
-//TODO: Find relations between seek/size and FPS.
+        //TODO: Find relations between seek/size and FPS.
         d->frameDuration = animTexture->waitSeek() > 1000 ? 50 : 100;
         d->width = animTexture->width();
         d->height = animTexture->height();
@@ -91,7 +91,7 @@ void AnimatedSprite::processLogic(int dt)
         return;
 
     lock();
-    AnimatedTexture *texture = static_cast<AnimatedTexture *>(d->region.texture.get());
+    boost::shared_ptr<AnimatedTexture> texture = boost::static_pointer_cast<AnimatedTexture>(d->region.texture);
 
     if (d->animationStarted)
     {
@@ -113,14 +113,14 @@ void AnimatedSprite::draw() const
     if (!d->region.texture)
         return;
 
-    GLuint texture = ((AnimatedTexture*)d->region.texture.get())->openGLTexture(d->currentFrame);
+    boost::shared_ptr<AnimatedTexture> texture = boost::static_pointer_cast<AnimatedTexture>(d->region.texture);
     if (!texture)
         return;
 
     if (!prepareDraw())
         return;
 
-    glBindTexture(GL_TEXTURE_2D, texture);
+    glBindTexture(GL_TEXTURE_2D, texture->openGLTexture(d->currentFrame));
     if (d->scaling == TEXTURE_TILE_X)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     else
@@ -224,6 +224,15 @@ bool AnimatedSprite::isStarted() const
 {
     RANGERS_D(const AnimatedSprite);
     return d->animationStarted;
+}
+
+int AnimatedSprite::frameCount() const
+{
+    RANGERS_D(const AnimatedSprite);
+    boost::shared_ptr<AnimatedTexture> texture = boost::static_pointer_cast<AnimatedTexture>(d->region.texture);
+    if (!texture)
+        return 0;
+    return texture->frameCount();
 }
 
 void AnimatedSprite::start()

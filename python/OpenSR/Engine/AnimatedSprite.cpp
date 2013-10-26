@@ -50,16 +50,14 @@ void exportAnimatedSprite()
     c.def(init<boost::shared_ptr<AnimatedTexture> >())
     .def(init<const std::wstring&>())
     .def(init<>())
-    .def("setSingleShot", &AnimatedSprite::setSingleShot)
+    .add_property("singleShot", &AnimatedSprite::isSingleShot, &AnimatedSprite::setSingleShot)
     .def("start", &AnimatedSprite::start)
     .def("stop", &AnimatedSprite::stop)
     .def("reset", &AnimatedSprite::reset)
-    .def("isStarted", &AnimatedSprite::isStarted)
-    .def("isSingleShot", &AnimatedSprite::isSingleShot)
-    .def("currentFrame", &AnimatedSprite::currentFrame)
-    .def("frameRate", &AnimatedSprite::frameRate)
-    .def("setFrame", &AnimatedSprite::setFrame)
-    .def("setFrameRate", &AnimatedSprite::setFrameRate);
+    .add_property("started", &AnimatedSprite::isStarted)
+    .add_property("frame", &AnimatedSprite::currentFrame, &AnimatedSprite::setFrame)
+    .add_property("frameRate", &AnimatedSprite::frameRate, &AnimatedSprite::setFrameRate)
+    .add_property("frameCount", &AnimatedSprite::frameCount);
     RANGERS_PYTHON_WRAP_SPRITE_DEF(AnimatedSprite, AnimatedSpriteWrap, c);
     register_ptr_to_python<boost::shared_ptr<AnimatedSprite> >();
 }
