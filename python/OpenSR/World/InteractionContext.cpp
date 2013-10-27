@@ -41,10 +41,8 @@ void exportInteractionContext()
     using namespace boost::python;
 
     class_<InteractionContextWrap, bases<WorldObject>, boost::shared_ptr<InteractionContextWrap>, boost::noncopyable> c("InteractionContext", init<>());
-    c.def("relation", &InteractionContext::relation)
-    .def("race", &InteractionContext::race)
-    .def("setRelation", &InteractionContext::setRelation)
-    .def("setRace", &InteractionContext::setRace);
+    c.add_property("relation", &InteractionContext::relation, &InteractionContext::setRelation)
+    .add_property("race", &InteractionContext::race, &InteractionContext::setRace);
     WORLD_PYTHON_WRAP_WORLD_OBJECT_DEF(InteractionContext, InteractionContextWrap, c);
     register_ptr_to_python<boost::shared_ptr<InteractionContext> >();
 }

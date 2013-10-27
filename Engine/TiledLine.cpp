@@ -123,7 +123,7 @@ void TiledLine::processMain()
     l = float(floor(l / d->texture->width()));
 
     dir = dir.norm();
-    
+
     n.x = - dir.y;
     n.y = dir.x;
 
@@ -213,5 +213,10 @@ void TiledLine::setTexture(boost::shared_ptr<Texture> texture)
     RANGERS_D(TiledLine);
     d->texture = texture;
     TiledLine::markToUpdate();
+}
+
+void TiledLine::setTexture(const std::wstring& texture)
+{
+    setTexture(ResourceManager::instance().loadTexture(texture));
 }
 }

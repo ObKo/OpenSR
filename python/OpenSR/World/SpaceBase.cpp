@@ -42,10 +42,8 @@ void exportSpaceBase()
 
     class_<SpaceBaseWrap, bases<SystemObject>, boost::shared_ptr<SpaceBaseWrap>, boost::noncopyable> c("SpaceBase", init<uint64_t>());
     c.def(init<>())
-    .def("landContext", &SpaceBase::landContext)
-    .def("setLandContext", &SpaceBase::setLandContext)
-    .def("shipContext", &SpaceBase::shipContext)
-    .def("setShipContext", &SpaceBase::setShipContext);
+    .add_property("landContext", &SpaceBase::landContext, &SpaceBase::setLandContext)
+    .add_property("shipContext", &SpaceBase::shipContext, &SpaceBase::setShipContext);
     WORLD_PYTHON_WRAP_WORLD_OBJECT_DEF(SpaceBase, SpaceBaseWrap, c);
     register_ptr_to_python<boost::shared_ptr<SpaceBase> >();
 }

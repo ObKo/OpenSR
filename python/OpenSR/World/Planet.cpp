@@ -34,6 +34,19 @@ struct PlanetWrap: Planet, boost::python::wrapper<Planet>
     }
 
     WORLD_PYTHON_WRAP_WORLD_OBJECT(Planet)
+
+    static void setStyle(Planet &self, boost::python::object o)
+    {
+        boost::python::extract<uint32_t> i(o);
+        if (i.check())
+        {
+            self.setStyle(boost::python::extract<uint32_t>(o));
+        }
+        else
+        {
+            self.setStyle(boost::python::extract<std::string>(o));
+        }
+    }
 };
 
 void exportPlanet()
@@ -42,17 +55,11 @@ void exportPlanet()
 
     class_<PlanetWrap, bases<SystemObject>, boost::shared_ptr<PlanetWrap>, boost::noncopyable> c("Planet", init<uint64_t>());
     c.def(init<>())
-    .def("radius", &Planet::radius)
-    .def("setRadius", &Planet::setRadius)
-    .def("orbit", &Planet::orbit)
-    .def("setOrbit", &Planet::setOrbit)
-    .def("style", &Planet::style)
-    .def("setStyle", (void (Planet::*)(uint32_t))&Planet::setStyle)
-    .def("setStyle", (void (Planet::*)(const std::string&))&Planet::setStyle)
-    .def("angle", &Planet::angle)
-    .def("angleSpeed", &Planet::angleSpeed)
-    .def("setAngle", &Planet::setAngle)
-    .def("setAngleSpeed", &Planet::setAngleSpeed);
+    .add_property("radius", &Planet::radius, &Planet::setRadius)
+    .add_property("orbit", &Planet::orbit, &Planet::setOrbit)
+    .add_property("style", &Planet::style, &PlanetWrap::setStyle)
+    .add_property("angle", &Planet::angle, &Planet::setAngle)
+    .add_property("angleSpeed", &Planet::angleSpeed, &Planet::setAngleSpeed);
     WORLD_PYTHON_WRAP_WORLD_OBJECT_DEF(Planet, PlanetWrap, c);
     register_ptr_to_python<boost::shared_ptr<Planet> >();
 }

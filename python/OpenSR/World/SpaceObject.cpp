@@ -34,6 +34,20 @@ struct SpaceObjectWrap: SpaceObject, boost::python::wrapper<SpaceObject>
     }
 
     WORLD_PYTHON_WRAP_WORLD_OBJECT(SpaceObject)
+
+    static void setPosition(SpaceObject &self, boost::python::object o)
+    {
+        boost::python::extract<Point> p(o);
+        if (p.check())
+        {
+            self.setPosition(boost::python::extract<Point>(o));
+        }
+        else
+        {
+            boost::python::tuple t = boost::python::extract<boost::python::tuple>(o);
+            self.setPosition(Point(boost::python::extract<float>(t[0]), boost::python::extract<float>(t[1])));
+        }
+    }
 };
 
 void exportSpaceObject()
@@ -42,9 +56,8 @@ void exportSpaceObject()
 
     class_<SpaceObjectWrap, bases<WorldObject>, boost::shared_ptr<SpaceObjectWrap>, boost::noncopyable> c("SpaceObject", init<uint64_t>());
     c.def(init<>())
-    .def("position", &SpaceObject::position)
-    .def("trajectory", &SpaceObject::trajectory)
-    .def("setPosition", &SpaceObject::setPosition);
+    .add_property("position", &SpaceObject::position, &SpaceObjectWrap::setPosition)
+    .add_property("trajectory", &SpaceObject::trajectory);
     WORLD_PYTHON_WRAP_WORLD_OBJECT_DEF(SpaceObject, SpaceObjectWrap, c);
     register_ptr_to_python<boost::shared_ptr<SpaceObject> >();
 }

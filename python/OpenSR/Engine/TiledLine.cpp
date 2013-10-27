@@ -51,6 +51,53 @@ struct TiledLineWrap : TiledLine, boost::python::wrapper<TiledLine>
     }
 
     RANGERS_PYTHON_WRAP_OBJECT(TiledLine)
+
+    static void setLine(TiledLine& self, boost::python::object pos)
+    {
+        boost::python::tuple mt = boost::python::extract<boost::python::tuple>(pos);
+        boost::python::extract<boost::python::tuple> t(mt[0]);
+        boost::python::extract<Vector> v(mt[0]);
+        if (v.check())
+        {
+            self.setLine(boost::python::extract<Vector>(mt[0]), boost::python::extract<Vector>(mt[1]));
+        }
+        else if (t.check())
+        {
+            boost::python::tuple p1 = boost::python::extract<boost::python::tuple>(mt[0]);
+            boost::python::tuple p2 = boost::python::extract<boost::python::tuple>(mt[1]);
+            self.setLine(Vector(boost::python::extract<float>(p1[0]), boost::python::extract<float>(p1[1])),
+                         Vector(boost::python::extract<float>(p2[0]), boost::python::extract<float>(p2[1])));
+        }
+        else
+        {
+            //FIXME: Ugly way to throw TypeError
+            self.setLine(boost::python::extract<Vector>(mt[0]), boost::python::extract<Vector>(mt[1]));
+        }
+    }
+
+    static void setTexture(TiledLine&  self, boost::python::object g)
+    {
+        boost::python::extract<boost::shared_ptr<Texture> > t(g);
+        boost::python::extract<std::wstring> s(g);
+        if (t.check())
+        {
+            self.setTexture(t);
+        }
+        else if (s.check())
+        {
+            self.setTexture(s);
+        }
+        else
+        {
+            //FIXME:
+            self.setTexture(boost::python::extract<boost::shared_ptr<Texture> >(g));
+        }
+    }
+
+    static boost::python::object line(TiledLine& self)
+    {
+        return boost::python::make_tuple(self.start(), self.end());
+    }
 };
 
 void exportTiledLine()
@@ -62,11 +109,8 @@ void exportTiledLine()
     .def(init<const std::wstring&, const Vector&, const Vector&>())
     .def(init<const std::wstring&>())
     .def(init<>())
-    .def("start", &TiledLine::start)
-    .def("end", &TiledLine::end)
-    .def("texture", &TiledLine::texture)
-    .def("setTexture", &TiledLine::setTexture)
-    .def("setLine", &TiledLine::setLine);
+    .add_property("texture", &TiledLine::texture, &TiledLineWrap::setTexture)
+    .add_property("line", &TiledLineWrap::line, &TiledLineWrap::setLine);
     RANGERS_PYTHON_WRAP_OBJECT_DEF(TiledLine, TiledLineWrap, c);
     register_ptr_to_python<boost::shared_ptr<TiledLine> >();
 }

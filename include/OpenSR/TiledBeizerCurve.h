@@ -38,6 +38,8 @@ public:
 
     void setCurve(const BeizerCurve& curve);
 
+    BeizerCurve curve() const;
+
 protected:
     TiledBeizerCurve(TiledBeizerCurvePrivate &p);
 

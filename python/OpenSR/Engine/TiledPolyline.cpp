@@ -44,6 +44,51 @@ struct TiledPolylineWrap : TiledPolyline, boost::python::wrapper<TiledPolyline>
     }
 
     RANGERS_PYTHON_WRAP_OBJECT(TiledPolyline)
+
+    static void setTexture(TiledPolyline& self, boost::python::object g)
+    {
+        boost::python::extract<boost::shared_ptr<Texture> > t(g);
+        boost::python::extract<std::wstring> s(g);
+        if (t.check())
+        {
+            self.setTexture(t);
+        }
+        else if (s.check())
+        {
+            self.setTexture(s);
+        }
+        else
+        {
+            //FIXME:
+            self.setTexture(boost::python::extract<boost::shared_ptr<Texture> >(g));
+        }
+    }
+
+    static boost::python::object polyline(TiledPolyline& self)
+    {
+        return boost::python::list(self.polyline());
+    }
+
+    static void setPolyline(TiledPolyline& self, boost::python::object p)
+    {
+        boost::python::list l = boost::python::extract<boost::python::list>(p);
+        int len = boost::python::len(l);
+        std::vector<Vector> points;
+        for (int i = 0; i < len; i++)
+        {
+            boost::python::extract<boost::python::tuple> t(l[i]);
+            if (t.check())
+            {
+                boost::python::tuple p = t;
+                points.push_back(Vector(boost::python::extract<float>(p[0]), boost::python::extract<float>(p[1])));
+            }
+            else
+            {
+                points.push_back(boost::python::extract<Vector>(l[i]));
+            }
+        }
+        self.setPolyline(points);
+    }
 };
 
 void exportTiledPolyline()
@@ -53,11 +98,8 @@ void exportTiledPolyline()
     class_<TiledPolylineWrap, bases<Object>, boost::shared_ptr<TiledPolylineWrap>, boost::noncopyable> c("TiledPolyline", init<boost::shared_ptr<Texture> >());
     c.def(init<const std::wstring&>())
     .def(init<>())
-    .def("texture", &TiledPolyline::texture)
-    .def("setTexture", (void (TiledPolyline::*)(boost::shared_ptr<Texture>))&TiledPolyline::setTexture)
-    .def("setTexture", (void (TiledPolyline::*)(const std::wstring&))&TiledPolyline::setTexture)
-    .def("polyline", &TiledPolyline::polyline)
-    .def("setPolyline", &TiledPolyline::setPolyline);
+    .add_property("texture", &TiledPolyline::texture, &TiledPolylineWrap::setTexture)
+    .add_property("polyline", &TiledPolylineWrap::polyline, &TiledPolylineWrap::setPolyline);
     RANGERS_PYTHON_WRAP_OBJECT_DEF(TiledPolyline, TiledPolylineWrap, c);
     register_ptr_to_python<boost::shared_ptr<TiledPolyline> >();
 }

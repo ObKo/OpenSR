@@ -42,8 +42,7 @@ void exportEquipment()
 
     class_<EquipmentWrap, bases<Item>, boost::shared_ptr<EquipmentWrap>, boost::noncopyable> c("Equipment", init<uint64_t>());
     c.def(init<>())
-    .def("race", &Equipment::race)
-    .def("setRace", &Equipment::setRace);
+    .add_property("race", &Equipment::race, &Equipment::setRace);
     WORLD_PYTHON_WRAP_WORLD_OBJECT_DEF(Equipment, EquipmentWrap, c);
     register_ptr_to_python<boost::shared_ptr<Equipment> >();
 }

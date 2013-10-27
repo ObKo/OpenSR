@@ -47,6 +47,7 @@ public:
 
     void setLine(const Vector& start, const Vector& end);
     void setTexture(boost::shared_ptr<Texture> texture);
+    void setTexture(const std::wstring& texture);
 
 protected:
     TiledLine(TiledLinePrivate &p);

@@ -34,6 +34,30 @@ struct AsteroidWrap: Asteroid, boost::python::wrapper<Asteroid>
     }
 
     WORLD_PYTHON_WRAP_WORLD_OBJECT(Asteroid)
+
+    static void setSemiAxis(Asteroid &self, boost::python::object o)
+    {
+        boost::python::tuple t = boost::python::extract<boost::python::tuple>(o);
+        self.setSemiAxis(boost::python::extract<float>(t[0]), boost::python::extract<float>(t[1]));
+    }
+
+    static boost::python::object semiAxis(Asteroid &self)
+    {
+        return boost::python::make_tuple(self.a(), self.b());
+    }
+
+    static void setStyle(Asteroid &self, boost::python::object o)
+    {
+        boost::python::extract<uint32_t> i(o);
+        if (i.check())
+        {
+            self.setStyle(boost::python::extract<uint32_t>(o));
+        }
+        else
+        {
+            self.setStyle(boost::python::extract<std::string>(o));
+        }
+    }
 };
 
 void exportAsteroid()
@@ -42,21 +66,13 @@ void exportAsteroid()
 
     class_<AsteroidWrap, bases<SystemObject>, boost::shared_ptr<AsteroidWrap>, boost::noncopyable> c("Asteroid", init<uint64_t>());
     c.def(init<>())
-    .def("a", &Asteroid::a)
-    .def("b", &Asteroid::b)
-    .def("period", &Asteroid::period)
-    .def("angle", &Asteroid::angle)
-    .def("time", &Asteroid::time)
-    .def("speed", &Asteroid::speed)
-    .def("mineral", &Asteroid::mineral)
-    .def("style", &Asteroid::style)
-    .def("setStyle", (void (Asteroid::*)(uint32_t))&Asteroid::setStyle)
-    .def("setStyle", (void (Asteroid::*)(const std::string&))&Asteroid::setStyle)
-    .def("setSemiAxis", &Asteroid::setSemiAxis)
-    .def("setPeriod", &Asteroid::setPeriod)
-    .def("setAngle", &Asteroid::setAngle)
-    .def("setTime", &Asteroid::setTime)
-    .def("setMineral", &Asteroid::setMineral);
+    .add_property("semiAxis", &AsteroidWrap::semiAxis, &AsteroidWrap::setSemiAxis)
+    .add_property("period", &Asteroid::period, &Asteroid::setPeriod)
+    .add_property("angle", &Asteroid::angle, &Asteroid::setAngle)
+    .add_property("time", &Asteroid::time, &Asteroid::setTime)
+    .add_property("mineral", &Asteroid::mineral, &Asteroid::setMineral)
+    .add_property("speed", &Asteroid::speed)
+    .add_property("style", &Asteroid::style, &AsteroidWrap::setStyle);
     WORLD_PYTHON_WRAP_WORLD_OBJECT_DEF(Asteroid, AsteroidWrap, c);
     register_ptr_to_python<boost::shared_ptr<Asteroid> >();
 }

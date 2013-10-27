@@ -109,16 +109,16 @@ class SettingsWidget(ScriptWidget, ActionListener):
 
         self.widthEdit.width = 50
         self.widthEdit.position = (100, 5)
-        self.widthLabel.position = (5, 5 + (self.widthEdit.height() - self.widthLabel.font.size))
+        self.widthLabel.position = (5, 5 + (self.widthEdit.height - self.widthLabel.font.size))
         self.heightEdit.width = 50
         self.heightEdit.position = (270, 5)
-        self.heightLabel.position = (170, 5 + (self.widthEdit.height() - self.widthLabel.font.size))
-        self.fullscreen.position = (5, self.widthEdit.height() + 15)
-        self.useShaders.position = (5, self.fullscreen.position.y + self.fullscreen.height() + 5)
+        self.heightLabel.position = (170, 5 + (self.widthEdit.height - self.widthLabel.font.size))
+        self.fullscreen.position = (5, self.widthEdit.height + 15)
+        self.useShaders.position = (5, self.fullscreen.position.y + self.fullscreen.height + 5)
 
         self.scroll = ScrollArea(engine.defaultSkin.scrollStyle, self.paramNode)
         self.scroll.position = (self.formBg.position.x + 257, self.formBg.position.y + 149)
-        self.scroll.setGeometry(450 + deltaX, 440 + deltaY)
+        self.scroll.geometry = (450 + deltaX, 440 + deltaY)
         self.addWidget(self.scroll)
         
         # RadioButton example
@@ -127,8 +127,8 @@ class SettingsWidget(ScriptWidget, ActionListener):
         #self.r2 = OpenSR.Engine.RadioButton(engine.defaultSkin().radioButtonStyle, "No")
         #self.r3 = OpenSR.Engine.RadioButton(engine.defaultSkin().radioButtonStyle, "I dunno lol")
 
-        #self.r2.setPosition(0, self.r1.height() + 5)
-        #self.r3.setPosition(0, self.r2.position.y + self.r2.height() + 5)
+        #self.r2.setPosition(0, self.r1.height + 5)
+        #self.r3.setPosition(0, self.r2.position.y + self.r2.height + 5)
         
         #self.group.addRadioButton(self.r1)
         #self.group.addRadioButton(self.r2)

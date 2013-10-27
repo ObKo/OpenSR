@@ -29,14 +29,24 @@ namespace World
 {
 namespace Python
 {
+boost::python::object systems(SystemManager &self)
+{
+    boost::python::list pl;
+    std::list< boost::shared_ptr<PlanetarySystem> > l = self.systems();
+    for (boost::shared_ptr<PlanetarySystem> o : l)
+    {
+        pl.append(o);
+    }
+    return pl;
+}
+
 void exportSystemManager()
 {
     using namespace boost::python;
 
     class_<SystemManager, boost::noncopyable> c("SystemManager", boost::python::no_init);
-    c.def("systems", &SystemManager::systems)
-    .def("currentSystem", &SystemManager::currentSystem)
-    .def("setCurrentSystem", &SystemManager::setCurrentSystem)
+    c.add_property("systems", &systems)
+    .add_property("currentSystem", &SystemManager::currentSystem, &SystemManager::setCurrentSystem)
     .def("addSystem", &SystemManager::addSystem);
 }
 }

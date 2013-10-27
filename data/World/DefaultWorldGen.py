@@ -8,12 +8,12 @@ systemManager = world.systemManager()
 class DefaultWorldGen(WorldGenHook):  
     def genDesertPlanet(self, system, orbit, radius, name, angle, angleSpeed, style):
         planet = DesertPlanet()
-        planet.setOrbit(orbit)
-        planet.setRadius(radius)
-        planet.setName(name)
-        planet.setAngle(angle)
-        planet.setAngleSpeed(angleSpeed)
-        planet.setStyle(style)
+        planet.orbit = orbit
+        planet.radius = radius
+        planet.name = name
+        planet.angle = angle
+        planet.angleSpeed = angleSpeed
+        planet.style = style
         
         world.addObject(planet)
         system.addObject(planet)
@@ -22,23 +22,23 @@ class DefaultWorldGen(WorldGenHook):
         
     def genHabitablePlanet(self, system, orbit, radius, name, angle, angleSpeed, style, population, race, invader = None, relation = None):
         planet = HabitablePlanet()
-        planet.setOrbit(orbit)
-        planet.setRadius(radius)
-        planet.setName(name)
-        planet.setAngle(angle)
-        planet.setAngleSpeed(angleSpeed)
-        planet.setStyle(style)
+        planet.orbit = orbit
+        planet.radius = radius
+        planet.name = name
+        planet.angle = angle
+        planet.angleSpeed = angleSpeed
+        planet.style = style
         if invader:
-            planet.setInvader(invader)
-        planet.setPopulation(population)
+            planet.invader = invader
+        planet.opulation = population
         
         context = LandContext()
         world.addObject(context)
-        context.setRace(race.id)
+        context.race = race.id
         if relation:
-            planet.landContext().setRelation(relation)
+            planet.landContext().relation = relation
     
-        planet.setLandContext(context)
+        planet.landContext = context
         
         world.addObject(planet)
         system.addObject(planet)
@@ -47,12 +47,12 @@ class DefaultWorldGen(WorldGenHook):
       
     def genAsteroid(self, system, a, b, period, angle, time, mineral, style):
         asteroid = Asteroid()
-        asteroid.setSemiAxis(a, b)
-        asteroid.setPeriod(period)
-        asteroid.setAngle(angle)
-        asteroid.setTime(time)
-        asteroid.setMineral(mineral)
-        asteroid.setStyle(style)
+        asteroid.semiAxis = (a, b)
+        asteroid.period = period
+        asteroid.angle = angle
+        asteroid.time = time
+        asteroid.mineral = mineral
+        asteroid.style = style
         
         world.addObject(asteroid)
         system.addObject(asteroid)
@@ -61,10 +61,10 @@ class DefaultWorldGen(WorldGenHook):
     def genPlanetarySystem(self, name, size, style, position):
         system = PlanetarySystem()
         
-        system.setName(name)
-        system.setSize(size)
-        system.setStyle(style)
-        system.setPosition(position)
+        system.name = name
+        system.size = size
+        system.style = style
+        system.position = position
         
         systemManager.addSystem(system)
         world.addObject(system)
@@ -82,4 +82,4 @@ class DefaultWorldGen(WorldGenHook):
         self.genAsteroid(system, 1000.0, 500.0, 20.0, 0.0, 0.0, 100.0, '00')   
         self.genAsteroid(system, 1500.0, 700.0, 10.0, 100.0, 0.0, 100.0, '01')
                 
-        systemManager.setCurrentSystem(system)
+        systemManager.currentSystem = system

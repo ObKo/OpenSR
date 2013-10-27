@@ -42,12 +42,9 @@ void exportItem()
 
     class_<ItemWrap, bases<WorldObject>, boost::shared_ptr<ItemWrap>, boost::noncopyable> c("Item", init<uint64_t>());
     c.def(init<>())
-    .def("name", &Item::name)
-    .def("size", &Item::size)
-    .def("cost", &Item::cost)
-    .def("setName", &Item::setName)
-    .def("setSize", &Item::setSize)
-    .def("setCost", &Item::setCost);
+    .add_property("name", &Item::name, &Item::setName)
+    .add_property("size", &Item::size, &Item::setSize)
+    .add_property("cost", &Item::cost, &Item::setCost);
     WORLD_PYTHON_WRAP_WORLD_OBJECT_DEF(Item, ItemWrap, c);
     register_ptr_to_python<boost::shared_ptr<Item> >();
 }

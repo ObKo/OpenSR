@@ -42,12 +42,9 @@ void exportHabitablePlanet()
 
     class_<HabitablePlanetWrap, bases<Planet>, boost::shared_ptr<HabitablePlanetWrap>, boost::noncopyable> c("HabitablePlanet", init<uint64_t>());
     c.def(init<>())
-    .def("invader", &HabitablePlanet::invader)
-    .def("setInvader", &HabitablePlanet::setInvader)
-    .def("population", &HabitablePlanet::population)
-    .def("setPopulation", &HabitablePlanet::setPopulation)
-    .def("landContext", &HabitablePlanet::landContext)
-    .def("setLandContext", &HabitablePlanet::setLandContext);
+    .add_property("invader", &HabitablePlanet::invader, &HabitablePlanet::setInvader)
+    .add_property("population", &HabitablePlanet::population, &HabitablePlanet::setPopulation)
+    .add_property("landContext", &HabitablePlanet::landContext, &HabitablePlanet::setLandContext);
     WORLD_PYTHON_WRAP_WORLD_OBJECT_DEF(HabitablePlanet, HabitablePlanetWrap, c);
     register_ptr_to_python<boost::shared_ptr<HabitablePlanet> >();
 }

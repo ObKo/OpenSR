@@ -64,6 +64,12 @@ void TiledBeizerCurve::setCurve(const BeizerCurve& curve)
     calcCurve();
 }
 
+BeizerCurve TiledBeizerCurve::curve() const
+{
+    RANGERS_D(const TiledBeizerCurve);
+    return d->curve;
+}
+
 Vector TiledBeizerCurvePrivate::calcBezierPoint(float t)
 {
     float u = 1 - t;

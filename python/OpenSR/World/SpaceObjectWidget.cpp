@@ -43,8 +43,7 @@ void exportSpaceObjectWidget()
 
     class_<SpaceObjectWidgetWrap, bases<SpriteWidget>, boost::shared_ptr<SpaceObjectWidgetWrap>, boost::noncopyable> c("SpaceObjectWidget", init<boost::shared_ptr<SpaceObject> >());
     c.def(init<>())
-    .def("object", &SpaceObjectWidget::object)
-    .def("setObject", &SpaceObjectWidget::setObject);
+    .add_property("object", &SpaceObjectWidget::object, &SpaceObjectWidget::setObject);
     RANGERS_PYTHON_WRAP_WIDGET_DEF(SpaceObjectWidget, SpaceObjectWidgetWrap, c);
     register_ptr_to_python<boost::shared_ptr<SpaceObjectWidget> >();
 }

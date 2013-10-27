@@ -34,20 +34,28 @@ struct WidgetWrap : Widget, boost::python::wrapper<Widget>
     }
 
     RANGERS_PYTHON_WRAP_WIDGET(Widget)
+
+    static void setGeometry(Widget& self, boost::python::object g)
+    {
+        boost::python::tuple t = boost::python::extract<boost::python::tuple>(g);
+        self.setGeometry(boost::python::extract<float>(t[0]), boost::python::extract<float>(t[1]));
+    }
+
+    static boost::python::tuple geometry(Widget& self)
+    {
+        return boost::python::make_tuple(self.width(), self.height());
+    }
 };
 
 void exportWidget()
 {
     using namespace boost::python;
     class_<WidgetWrap, bases<Object>, boost::shared_ptr<WidgetWrap>, boost::noncopyable> c("Widget", init<>());
-    c.def("width", &Widget::width)
-    .def("height", &Widget::height)
-    .def("isFocused", &Widget::isFocused)
-    .def("isVisible", &Widget::isVisible)
-    .def("setWidth", &Widget::setWidth)
-    .def("setHeight", &Widget::setHeight)
-    .def("setGeometry", &Widget::setGeometry)
-    .def("setVisible", &Widget::setVisible)
+    c.add_property("width", &Widget::width, &Widget::setWidth)
+    .add_property("height", &Widget::height, &Widget::setHeight)
+    .add_property("focused", &Widget::isFocused)
+    .add_property("visible", &Widget::isVisible, &Widget::setVisible)
+    .add_property("geometry", &WidgetWrap::geometry, &WidgetWrap::setGeometry)
     .def("addWidget", &Widget::addWidget)
     .def("removeWidget", &Widget::removeWidget)
     .def("childWidgets", &Widget::childWidgets)

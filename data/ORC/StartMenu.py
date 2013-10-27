@@ -105,7 +105,7 @@ class StartMenuWidget(ScriptWidget, ActionListener):
             self.buttons[name].removeListener(self) 
             
     def openGame(self):
-        widget = SystemWidget(world.systemManager().currentSystem())   
+        widget = SystemWidget(world.systemManager().currentSystem)   
         engine.addWidget(widget)
         self.dispose()
         

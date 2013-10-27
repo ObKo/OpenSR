@@ -33,21 +33,27 @@ void exportTypes()
     class_<Vector>("Vector", init<float, float>())
     .def(init<>())
     .def_readwrite("x", &Vector::x)
-    .def_readwrite("y", &Vector::y);
-
-    class_<std::vector<Vector> >("VectorOfVector")
-    .def(vector_indexing_suite<std::vector<Vector> >());
+    .def_readwrite("y", &Vector::y)
+    .add_property("length", &Vector::length)
+    .def("norm", &Vector::norm)
+    .def(self += self)
+    .def(self + self)
+    .def(self - self)
+    .def(self * self)
+    .def(self * float())
+    .def(float() * self);
 
     class_<Rect>("Rect", init<float, float, float, float>())
     .def(init<>())
     .def("contains", &Rect::contains)
-    .def("valid", &Rect::valid)
+    .add_property("valid", &Rect::valid)
+    .def(self += self)
     .def(self + self)
     .def_readwrite("x", &Rect::x)
     .def_readwrite("y", &Rect::y)
     .def_readwrite("width", &Rect::width)
     .def_readwrite("height", &Rect::height);
-    
+
     class_<BeizerCurve>("BeizerCurve", init<const Vector&, const Vector&, const Vector&, const Vector&>())
     .def(init<>())
     .def_readwrite("p0", &BeizerCurve::p0)

@@ -34,6 +34,44 @@ struct PlanetarySystemWrap: PlanetarySystem, boost::python::wrapper<PlanetarySys
     }
 
     WORLD_PYTHON_WRAP_WORLD_OBJECT(PlanetarySystem)
+
+    static void setStyle(PlanetarySystem &self, boost::python::object o)
+    {
+        boost::python::extract<uint32_t> i(o);
+        if (i.check())
+        {
+            self.setStyle(boost::python::extract<uint32_t>(o));
+        }
+        else
+        {
+            self.setStyle(boost::python::extract<std::string>(o));
+        }
+    }
+
+    static void setPosition(PlanetarySystem &self, boost::python::object o)
+    {
+        boost::python::extract<Point> p(o);
+        if (p.check())
+        {
+            self.setPosition(boost::python::extract<Point>(o));
+        }
+        else
+        {
+            boost::python::tuple t = boost::python::extract<boost::python::tuple>(o);
+            self.setPosition(Point(boost::python::extract<float>(t[0]), boost::python::extract<float>(t[1])));
+        }
+    }
+
+    static boost::python::object systemObjects(PlanetarySystem &self)
+    {
+        boost::python::list pl;
+        std::list< boost::shared_ptr<SystemObject> > l = self.systemObjects();
+        for (boost::shared_ptr<SystemObject> o : l)
+        {
+            pl.append(o);
+        }
+        return pl;
+    }
 };
 
 void exportPlanetarySystem()
@@ -42,18 +80,13 @@ void exportPlanetarySystem()
 
     class_<PlanetarySystemWrap, bases<WorldObject>, boost::shared_ptr<PlanetarySystemWrap>, boost::noncopyable> c("PlanetarySystem", init<uint64_t>());
     c.def(init<>())
-    .def("name", &PlanetarySystem::name)
-    .def("position", &PlanetarySystem::position)
-    .def("systemObjects", &PlanetarySystem::systemObjects)
-    .def("size", &PlanetarySystem::size)
+    .add_property("name", &PlanetarySystem::name, &PlanetarySystem::setName)
+    .add_property("position", &PlanetarySystem::position, &PlanetarySystemWrap::setPosition)
+    .add_property("systemObjects", &PlanetarySystemWrap::systemObjects)
+    .add_property("size", &PlanetarySystem::size, &PlanetarySystem::setSize)
+    .add_property("style", &PlanetarySystem::style, &PlanetarySystemWrap::setStyle)
     .def("addObject", &PlanetarySystem::addObject)
-    .def("removeObject", &PlanetarySystem::removeObject)
-    .def("setName", &PlanetarySystem::setName)
-    .def("setPosition", &PlanetarySystem::setPosition)
-    .def("setStyle", (void (PlanetarySystem::*)(const std::string&))&PlanetarySystem::setStyle)
-    .def("setStyle", (void (PlanetarySystem::*)(uint32_t))&PlanetarySystem::setStyle)
-    .def("style", &PlanetarySystem::style)
-    .def("setSize", &PlanetarySystem::setSize);
+    .def("removeObject", &PlanetarySystem::removeObject);
     WORLD_PYTHON_WRAP_WORLD_OBJECT_DEF(PlanetarySystem, PlanetarySystemWrap, c);
     register_ptr_to_python<boost::shared_ptr<PlanetarySystem> >();
 }

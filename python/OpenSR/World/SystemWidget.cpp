@@ -44,8 +44,7 @@ void exportSystemWidget()
 
     class_<SystemWidgetWrap, bases<Widget>, boost::shared_ptr<SystemWidgetWrap>, boost::noncopyable> c("SystemWidget", init<boost::shared_ptr<PlanetarySystem> >());
     c.def(init<>())
-    .def("system", &SystemWidget::system)
-    .def("setSystem", &SystemWidget::setSystem);
+    .add_property("system", &SystemWidget::system, &SystemWidget::setSystem);
     RANGERS_PYTHON_WRAP_WIDGET_DEF(SystemWidget, SystemWidgetWrap, c);
     register_ptr_to_python<boost::shared_ptr<SystemWidget> >();
 }

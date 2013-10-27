@@ -62,7 +62,6 @@ public:
     bool isFocused() const;
     bool isVisible() const;
 
-
     void setWidth(int width);
     void setHeight(int height);
     void setGeometry(int width, int height);
