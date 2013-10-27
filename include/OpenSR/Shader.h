@@ -47,6 +47,8 @@ public:
     ShaderType type() const;
     //! OpenGL shader handle
     GLuint handle() const;
+    //! Shader source code
+    std::string source() const;
 
 private:
     GLuint m_handle;

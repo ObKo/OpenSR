@@ -45,8 +45,8 @@ void exportGAISprite()
 
     class_<GAISpriteWrap, bases<AnimatedSprite>, boost::shared_ptr<GAISpriteWrap>, boost::noncopyable> c("GAISprite", init<const std::wstring&>());
     c.def(init<>())
-    .def("reset", &AnimatedSprite::reset)
-    .def("setFrame", &AnimatedSprite::setFrame);
+    .def("reset", &GAISprite::reset)
+    .def("setFrame", &GAISprite::setFrame);
     RANGERS_PYTHON_WRAP_SPRITE_DEF(GAISprite, GAISpriteWrap, c);
     register_ptr_to_python<boost::shared_ptr<GAISprite> >();
 }

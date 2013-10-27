@@ -247,14 +247,6 @@ void Button::setText(const std::wstring& text)
     unlock();
 }
 
-void Button::setColor(uint32_t color)
-{
-    lock();
-    RANGERS_D(Button);
-    d->label->setColor(color);
-    unlock();
-}
-
 void Button::setFont(boost::shared_ptr<Font> font)
 {
     lock();
@@ -263,12 +255,6 @@ void Button::setFont(boost::shared_ptr<Font> font)
     d->calcAutoResize();
     markToUpdate();
     unlock();
-}
-
-uint32_t Button::color() const
-{
-    RANGERS_D(const Button);
-    return d->label->color();
 }
 
 std::wstring Button::text() const
@@ -418,46 +404,30 @@ void Button::draw() const
     RANGERS_D(const Button);
     if (!prepareDraw())
         return;
+
+    glColor3f(1.0f, 1.0f, 1.0f);
+
     if (d->sprite)
         d->sprite->draw();
+
+    d->label->setColor(d->color);
     d->label->draw();
     endDraw();
 }
 
-void Button::setClickSound(boost::shared_ptr<Sound> clickSound)
+void Button::setSounds(boost::shared_ptr<Sound> clickSound, boost::shared_ptr<Sound> enterSound, boost::shared_ptr<Sound> leaveSound)
 {
     RANGERS_D(Button);
     d->clickSound = clickSound;
-}
-
-void Button::setClickSound(const std::wstring& clickSound)
-{
-    RANGERS_D(Button);
-    setClickSound(SoundManager::instance().loadSound(clickSound));
-}
-
-void Button::setEnterSound(boost::shared_ptr<Sound> enterSound)
-{
-    RANGERS_D(Button);
     d->enterSound = enterSound;
-}
-
-void Button::setEnterSound(const std::wstring& enterSound)
-{
-    RANGERS_D(Button);
-    setEnterSound(SoundManager::instance().loadSound(enterSound));
-}
-
-void Button::setLeaveSound(boost::shared_ptr<Sound> leaveSound)
-{
-    RANGERS_D(Button);
     d->leaveSound = leaveSound;
 }
 
-void Button::setLeaveSound(const std::wstring& leaveSound)
+void Button::setSounds(const std::wstring& clickSound, const std::wstring& enterSound, const std::wstring& leaveSound)
 {
     RANGERS_D(Button);
-    setLeaveSound(SoundManager::instance().loadSound(leaveSound));
+    SoundManager &m = SoundManager::instance();
+    setSounds(m.loadSound(clickSound), m.loadSound(enterSound), m.loadSound(leaveSound));
 }
 
 boost::shared_ptr<Sound> Button::clickSound() const

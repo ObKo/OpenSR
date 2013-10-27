@@ -44,8 +44,7 @@ public:
     void setPosition(const Vector& pos);
     void setRotation(float angle);
     void setColor(float r, float g, float b, float a = 1.0f);
-
-    virtual void setColor(uint32_t color);
+    void setColor(uint32_t color);
 
     void addChild(boost::shared_ptr<Object> object);
     void removeChild(boost::shared_ptr<Object> object);
@@ -55,7 +54,7 @@ public:
     int layer() const;
     Object* parent() const;
     bool needUpdate() const;
-    virtual uint32_t color() const;
+    uint32_t color() const;
 
     void setLayer(int layer);
 
@@ -83,7 +82,7 @@ protected:
     void lock() const;
     void unlock() const;
     void markToUpdate();
-    
+
     void setParent(Object *parent);
 
     RANGERS_DISABLE_COPY(Object)

@@ -38,10 +38,8 @@ public:
     virtual bool containsPoint(const Vector &p) const;
     virtual Rect boundingRect() const;
 
-    void setWidth(float width);
-    void setHeight(float height);
-
     void setNode(boost::shared_ptr<WidgetNode> node);
+    boost::shared_ptr<WidgetNode> node() const;
 
     virtual void mouseMove(const Vector &p);
 

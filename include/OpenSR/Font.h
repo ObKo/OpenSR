@@ -45,6 +45,7 @@ public:
     int maxChars(const std::wstring::const_iterator& first, const std::wstring::const_iterator& last, int width) const;
 
     int size() const;
+    bool antialiased() const;
 
 private:
     static void drawGlyph(unsigned char *dest, int destwidth, int destheight,

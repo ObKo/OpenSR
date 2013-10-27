@@ -50,6 +50,52 @@ struct SpriteWrap : Sprite, boost::python::wrapper<Sprite>
     {
     }
     RANGERS_PYTHON_WRAP_SPRITE(Sprite)
+
+    static void setOrigin(Sprite& self, boost::python::object origin)
+    {
+        boost::python::tuple t = boost::python::extract<boost::python::tuple>(origin);
+        self.setOrigin(boost::python::extract<SpriteXOrigin>(t[0]), boost::python::extract<SpriteYOrigin>(t[1]));
+    }
+
+    static boost::python::tuple origin(Sprite& self)
+    {
+        return boost::python::make_tuple(self.xOrigin(), self.yOrigin());
+    }
+
+    static void setGeometry(Sprite& self, boost::python::object g)
+    {
+        boost::python::tuple t = boost::python::extract<boost::python::tuple>(g);
+        self.setGeometry(boost::python::extract<float>(t[0]), boost::python::extract<float>(t[1]));
+    }
+
+    static boost::python::tuple geometry(Sprite& self)
+    {
+        return boost::python::make_tuple(self.width(), self.height());
+    }
+
+    static void setTexture(Sprite& self, boost::python::object g)
+    {
+        boost::python::extract<TextureRegion> r(g);
+        boost::python::extract<boost::shared_ptr<Texture> > t(g);
+        boost::python::extract<std::wstring> s(g);
+        if (r.check())
+        {
+            self.setTexture(r);
+        }
+        else if (t.check())
+        {
+            self.setTexture(t);
+        }
+        else if (s.check())
+        {
+            self.setTexture(s);
+        }
+        else
+        {
+            //FIXME:
+            self.setTexture(boost::python::extract<TextureRegion>(g));
+        }
+    }
 };
 
 void exportSprite()
@@ -78,15 +124,12 @@ void exportSprite()
     c.def(init<const TextureRegion&>())
     .def(init<const TextureRegionDescriptor&>())
     .def(init<>())
-    .def("region", &Sprite::region)
-    .def("setOrigin", &Sprite::setOrigin)
-    .def("setGeometry", &Sprite::setGeometry)
-    .def("setWidth", &Sprite::setWidth)
-    .def("setHeight", &Sprite::setHeight)
-    .def("setTextureScaling", &Sprite::setTextureScaling)
-    .def("setTexture", &Sprite::setTexture)
-    .def("width", &Sprite::width)
-    .def("height", &Sprite::height);
+    .add_property("texture", &Sprite::texture, &SpriteWrap::setTexture)
+    .add_property("origin", &SpriteWrap::origin, &SpriteWrap::setOrigin)
+    .add_property("geometry", &SpriteWrap::geometry, &SpriteWrap::setGeometry)
+    .add_property("width", &Sprite::width, &Sprite::setWidth)
+    .add_property("height", &Sprite::height, &Sprite::setHeight)
+    .add_property("textureScaling", &Sprite::textureScaling, &Sprite::setTextureScaling);
     RANGERS_PYTHON_WRAP_SPRITE_DEF(Sprite, SpriteWrap, c);
     register_ptr_to_python<boost::shared_ptr<Sprite> >();
 }

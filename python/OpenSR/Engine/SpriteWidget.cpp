@@ -38,9 +38,14 @@ struct SpriteWidgetWrap : SpriteWidget, boost::python::wrapper<SpriteWidget>
 void exportSpriteWidget()
 {
     using namespace boost::python;
+    enum_<SpriteWidget::Shape>("SpriteWidgetShape")
+    .value("SHAPE_NONE", SpriteWidget::SHAPE_NONE)
+    .value("SHAPE_RECT", SpriteWidget::SHAPE_RECT)
+    .value("SHAPE_CIRCLE", SpriteWidget::SHAPE_CIRCLE);
+
     class_<SpriteWidgetWrap, bases<Widget>, boost::shared_ptr<SpriteWidgetWrap>, boost::noncopyable> c("SpriteWidget", init<>());
-    c.def("sprite", &SpriteWidget::sprite)
-    .def("setSprite", &SpriteWidget::setSprite);
+    c.add_property("sprite", &SpriteWidget::sprite, &SpriteWidget::setSprite)
+    .add_property("shape", &SpriteWidget::shape, &SpriteWidget::setShape);
     RANGERS_PYTHON_WRAP_WIDGET_DEF(SpriteWidget, SpriteWidgetWrap, c);
     register_ptr_to_python<boost::shared_ptr<SpriteWidget> >();
 }

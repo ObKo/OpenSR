@@ -30,11 +30,9 @@ void exportFont()
     class_<Font, boost::shared_ptr<Font> >("Font", init<const std::wstring&, int, bool>())
     .def(init<const std::wstring&, int>())
     .def("renderText", (boost::shared_ptr<Texture> (Font::*)(const std::wstring&, int) const)&Font::renderText)
-    //.def("renderText", (boost::shared_ptr<Texture> (Font::*)(const std::wstring&) const)&Font::renderText)
     .def("renderColoredText", (boost::shared_ptr<Texture> (Font::*)(const std::wstring&, int, int) const)&Font::renderColoredText)
-    //.def("renderColoredText", (boost::shared_ptr<Texture> (Font::*)(const std::wstring&, int) const)&Font::renderColoredText)
-    //.def("renderColoredText", (boost::shared_ptr<Texture> (Font::*)(const std::wstring&) const)&Font::renderColoredText)
-    .def("size", &Font::size)
+    .add_property("size", &Font::size)
+    .add_property("antialiased", &Font::antialiased)
     .def("calculateStringWidth", &Font::calculateStringWidth)
     .def("maxChars", &Font::maxChars);
 }

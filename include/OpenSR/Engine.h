@@ -92,7 +92,7 @@ public:
     //! Global program options
     boost::shared_ptr<boost::property_tree::ptree> properties() const;
 
-    Node *rootNode();
+    boost::shared_ptr<Node> rootNode();
 
     Skin defaultSkin() const;
     void setDefaultSkin(const Skin& skin);

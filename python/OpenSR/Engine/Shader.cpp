@@ -34,12 +34,11 @@ void exportShader()
     class_<Shader>("Shader", init<>())
     .def(init<Shader::ShaderType>())
     .def(init<Shader::ShaderType, const std::string&>())
-    .def("setSource", &Shader::setSource)
-    .def("compile", &Shader::compile)
-    .def("isCompiled", &Shader::isCompiled)
-    .def("isInvalid", &Shader::isInvalid)
-    .def("type", &Shader::type)
-    .def("handle", &Shader::handle);
+    .add_property("source", &Shader::source, &Shader::setSource)
+    .add_property("compiled", &Shader::isCompiled)
+    .add_property("invalid", &Shader::isInvalid)
+    .add_property("type", &Shader::type)
+    .add_property("handle", &Shader::handle);
 }
 }
 }

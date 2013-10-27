@@ -173,12 +173,39 @@ float Sprite::normalWidth() const
         return 0.0f;
 }
 
+void Sprite::setTexture(const std::wstring& texture)
+{
+    setTexture(TextureRegion(ResourceManager::instance().loadTexture(texture)));
+}
+
 void Sprite::setTexture(boost::shared_ptr<Texture> texture)
 {
-    lock();
+    setTexture(TextureRegion(texture));
+}
+
+void Sprite::setTexture(const TextureRegion& texture)
+{
     RANGERS_D(Sprite);
-    d->region = TextureRegion(texture);
-    unlock();
+    d->region = texture;
+}
+
+TextureScaling Sprite::textureScaling() const
+{
+    RANGERS_D(const Sprite);
+    return d->scaling;
+}
+
+
+SpriteXOrigin Sprite::xOrigin() const
+{
+    RANGERS_D(const Sprite);
+    return d->xOrigin;
+}
+
+SpriteYOrigin Sprite::yOrigin() const
+{
+    RANGERS_D(const Sprite);
+    return d->yOrigin;
 }
 
 void Sprite::setGeometry(float width, float height)
@@ -403,7 +430,7 @@ float Sprite::width() const
     return d->width;
 }
 
-TextureRegion Sprite::region() const
+TextureRegion Sprite::texture() const
 {
     RANGERS_D(const Sprite);
     return d->region;

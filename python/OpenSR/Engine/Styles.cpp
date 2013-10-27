@@ -39,10 +39,10 @@ void exportStyles()
     .def(init<const FontDescriptor&>())
     .def(init<const std::wstring&>())
     .def_readwrite("type", &ResourceDescriptor::type)
-    .def("texture", &ResourceDescriptor::texture)
-    .def("ninePatch", &ResourceDescriptor::ninePatch)
-    .def("sound", &ResourceDescriptor::sound)
-    .def("font", &ResourceDescriptor::font);
+    .add_property("texture", &ResourceDescriptor::texture)
+    .add_property("ninePatch", &ResourceDescriptor::ninePatch)
+    .add_property("sound", &ResourceDescriptor::sound)
+    .add_property("font", &ResourceDescriptor::font);
 
     class_<ButtonStyle>("ButtonStyle")
     .def_readwrite("normal", &ButtonStyle::normal)

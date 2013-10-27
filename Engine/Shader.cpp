@@ -125,4 +125,10 @@ GLuint Shader::handle() const
 {
     return m_handle;
 }
+
+
+std::string Shader::source() const
+{
+    return m_source;
+}
 }

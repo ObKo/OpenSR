@@ -31,9 +31,9 @@ void exportShaderProgram()
     .def("addShader", &ShaderProgram::addShader)
     .def("link", &ShaderProgram::link)
     .def("getUniformLocation", &ShaderProgram::getUniformLocation)
-    .def("isLinked", &ShaderProgram::isLinked)
-    .def("isInvalid", &ShaderProgram::isInvalid)
-    .def("handle", &ShaderProgram::handle);
+    .add_property("linked", &ShaderProgram::isLinked)
+    .add_property("invalid", &ShaderProgram::isInvalid)
+    .add_property("handle", &ShaderProgram::handle);
 }
 }
 }

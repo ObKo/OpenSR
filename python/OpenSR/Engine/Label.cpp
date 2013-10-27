@@ -45,11 +45,9 @@ void exportLabel()
 
     class_<LabelWrap, bases<Sprite>, boost::shared_ptr<LabelWrap>, boost::noncopyable> c("Label", init<const std::wstring&>());
     c.def(init<>())
-    .def("setText", (void (Label::*)(const std::wstring&))&Label::setText)
-    .def("setFont", &Label::setFont)
-    .def("font", &Label::font)
-    .def("text", &Label::text)
-    .def("setWordWrap", &Label::setWordWrap)
+    .add_property("text", &Label::text, (void (Label::*)(const std::wstring&))&Label::setText)
+    .add_property("font", &Label::font, &Label::setFont)
+    .add_property("wordWrap", &Label::wordWrap, &Label::setWordWrap)
     .def("setFixedSize", &Label::setFixedSize);
     RANGERS_PYTHON_WRAP_SPRITE_DEF(Label, LabelWrap, c);
     register_ptr_to_python<boost::shared_ptr<Label> >();

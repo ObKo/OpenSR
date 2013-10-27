@@ -45,29 +45,12 @@
     void processLogic_(int dt) \
     { \
         class::processLogic(dt); \
-    } \
-    virtual void setColor(uint32_t color) \
-    { \
-        RANGERS_PYTHON_WRAP_FUNC_VOID(class, setColor, color); \
-    } \
-    void setColor_(uint32_t color) \
-    { \
-        class::setColor(color); \
-    } \
-    virtual uint32_t color() const \
-    { \
-        RANGERS_PYTHON_WRAP_FUNC(class, color); \
-    } \
-    uint32_t color_() const \
-    { \
-        return class::color(); \
     }
 
 #define RANGERS_PYTHON_WRAP_OBJECT_DEF(class, wrap, object) \
     object \
     .def("draw", &class::draw, &wrap::draw_) \
     .def("processMain", &class::processMain, &wrap::processMain_) \
-    .def("processLogic", &class::processLogic, &wrap::processLogic_) \
-    .def("setColor", (void (class::*)(uint32_t))&class::setColor, &wrap::setColor_);
+    .def("processLogic", &class::processLogic, &wrap::processLogic_)
 
 #endif

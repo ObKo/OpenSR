@@ -293,20 +293,6 @@ void ScrollArea::processMain()
     }
 }
 
-void ScrollArea::setWidth(float width)
-{
-    RANGERS_D(ScrollArea);
-    d->width = width;
-    markToUpdate();
-}
-
-void ScrollArea::setHeight(float height)
-{
-    RANGERS_D(ScrollArea);
-    d->height = height;
-    markToUpdate();
-}
-
 bool ScrollArea::containsPoint(const Vector &p) const
 {
     RANGERS_D(const ScrollArea);
@@ -465,5 +451,11 @@ void ScrollAreaPrivate::updateScrollPosition()
 
     node->setPosition((int)(hPosition * width), (int)(vPosition * height));
     q->unlock();
+}
+
+boost::shared_ptr<WidgetNode> ScrollArea::node() const
+{
+    RANGERS_D(const ScrollArea);
+    return d->node;
 }
 }

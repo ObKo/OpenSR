@@ -72,8 +72,8 @@ public:
 
     std::list<Plugin *> plugins;
 
-    Node *mainNode;
-    Label *fpsLabel;
+    boost::shared_ptr<Node> mainNode;
+    boost::shared_ptr<Label> fpsLabel;
     boost::shared_ptr<Widget> consoleWidget;
     boost::shared_ptr<Font> coreFont;
     boost::shared_ptr<Font> monospaceFont;

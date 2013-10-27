@@ -92,7 +92,6 @@ Engine::Engine(): m_d(new EnginePrivate())
     d->showFPS = true;
     d->frames = 0;
     d->m_q = this;
-    d->mainNode = 0;
     d->fpsLabel = 0;
     d->window = 0;
 
@@ -132,9 +131,6 @@ Engine::~Engine()
     {
         delete *i;
     }
-    //delete d->consoleWidget;
-    delete d->fpsLabel;
-    delete d->mainNode;
     delete m_d;
 
     SDL_Quit();
@@ -442,7 +438,6 @@ void Engine::init(int argc, char **argv, int w, int h, bool fullscreen)
     glEnable(GL_TEXTURE_2D);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glEnable(GL_LINE_SMOOTH);
-    glEnable(GL_ARB_texture_non_power_of_two);
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -474,10 +469,10 @@ void Engine::init(int argc, char **argv, int w, int h, bool fullscreen)
 
     d->frames = 0;
 
-    d->mainNode = new Node();
+    d->mainNode = boost::shared_ptr<Node>(new Node());
     d->mainNode->setPosition(0, 0);
 
-    d->fpsLabel = new Label("0", d->monospaceFont);
+    d->fpsLabel = boost::shared_ptr<Label>(new Label("0", d->monospaceFont));
     d->fpsLabel->setPosition(5, 5);
 
     d->consoleWidget = boost::shared_ptr<Widget>(new ConsoleWidget(d->width, 168));
@@ -797,7 +792,7 @@ void Engine::EnginePrivate::processMouseMove(const SDL_MouseMotionEvent &e)
     currentWidget = boost::weak_ptr<Widget>();
 }
 
-Node* Engine::rootNode()
+boost::shared_ptr<Node> Engine::rootNode()
 {
     RANGERS_D(Engine);
     return d->mainNode;

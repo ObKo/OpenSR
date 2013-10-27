@@ -52,6 +52,19 @@ struct ButtonWrap : Button, boost::python::wrapper<Button>
     RANGERS_PYTHON_WRAP_WIDGET(Button)
 };
 
+void setSounds(Button &b, boost::python::tuple sounds)
+{
+    boost::shared_ptr<Sound> click = boost::python::extract<boost::shared_ptr<Sound> >(sounds[0]);
+    boost::shared_ptr<Sound> enter = boost::python::extract<boost::shared_ptr<Sound> >(sounds[1]);
+    boost::shared_ptr<Sound> leave = boost::python::extract<boost::shared_ptr<Sound> >(sounds[2]);
+    b.setSounds(click, enter, leave);
+}
+
+boost::python::tuple getSounds(Button &b)
+{
+    return boost::python::make_tuple(b.clickSound(), b.enterSound(), b.leaveSound());
+}
+
 void exportButton()
 {
     using namespace boost::python;
@@ -64,9 +77,7 @@ void exportButton()
     .add_property("text", &Button::text, &Button::setText)
     .add_property("font", &Button::font, &Button::setFont)
     .add_property("autoResize", &Button::autoResize, &Button::setAutoResize)
-    .add_property("clickSound", &Button::clickSound, (void (Button::*)(boost::shared_ptr<Sound>))&Button::setClickSound)
-    .add_property("enterSound", &Button::enterSound, (void (Button::*)(boost::shared_ptr<Sound>))&Button::setEnterSound)
-    .add_property("leaveSound", &Button::leaveSound, (void (Button::*)(boost::shared_ptr<Sound>))&Button::setLeaveSound);
+    .add_property("sounds", &getSounds, &setSounds);
     RANGERS_PYTHON_WRAP_WIDGET_DEF(Button, ButtonWrap, c);
     register_ptr_to_python<boost::shared_ptr<Button> >();
 }

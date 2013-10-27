@@ -41,7 +41,7 @@ void exportRadioButton()
     using namespace boost::python;
 
     class_<RadioButtonWrap, bases<Button>, boost::shared_ptr<RadioButtonWrap>, boost::noncopyable> c("RadioButton", init<const RadioButtonStyle&, const std::wstring&>());
-    c.def("isSelected", &RadioButton::isSelected);
+    c.add_property("selected", &RadioButton::isSelected);
     RANGERS_PYTHON_WRAP_WIDGET_DEF(RadioButton, RadioButtonWrap, c);
     register_ptr_to_python<boost::shared_ptr<RadioButton> >();
 }

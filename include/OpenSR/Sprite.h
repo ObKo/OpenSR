@@ -52,15 +52,18 @@ public:
     void setWidth(float width);
     void setHeight(float height);
     void setTextureScaling(TextureScaling  ts);
+    void setTexture(const std::wstring& texture);
     void setTexture(boost::shared_ptr<Texture> texture);
+    void setTexture(const TextureRegion& texture);
 
     float width() const;
     float height() const;
-
+    TextureScaling textureScaling() const;
     virtual float normalWidth() const;
     virtual float normalHeight() const;
-
-    TextureRegion region() const;
+    TextureRegion texture() const;
+    SpriteXOrigin xOrigin() const;
+    SpriteYOrigin yOrigin() const;
 
 protected:
     Sprite(SpritePrivate &p);

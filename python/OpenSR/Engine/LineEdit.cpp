@@ -55,8 +55,7 @@ void exportLineEdit()
     .def(init<float>())
     .def(init<const LineEditStyle&>())
     .def(init<>())
-    .def("setText", &LineEdit::setText)
-    .def("text", &LineEdit::text);
+    .add_property("text", &LineEdit::text, &LineEdit::setText);
     RANGERS_PYTHON_WRAP_WIDGET_DEF(LineEdit, LineEditWrap, c);
     register_ptr_to_python<boost::shared_ptr<LineEdit> >();
 }

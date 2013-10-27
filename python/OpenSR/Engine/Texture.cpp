@@ -40,9 +40,9 @@ void exportTexture()
     .def(init<int, int>())
     .def(init<int, int, TextureType, unsigned char*, int>())
     .def(init<int, int, TextureType, unsigned char*>())
-    .def("width", &Texture::width)
-    .def("height", &Texture::height)
-    .def("openGLTexture", &Texture::openGLTexture)
+    .add_property("width", &Texture::width)
+    .add_property("height", &Texture::height)
+    .add_property("openGLTexture", &Texture::openGLTexture)
     .def("setRawData", &Texture::setRawData);
 }
 }

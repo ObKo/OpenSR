@@ -125,6 +125,12 @@ std::wstring Label::text() const
     return d->text;
 }
 
+bool Label::wordWrap() const
+{
+    RANGERS_D(const Label);
+    return d->wordWrap;
+}
+
 void Label::setWordWrap(bool wordWrap)
 {
     lock();

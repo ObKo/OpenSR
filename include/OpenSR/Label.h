@@ -37,11 +37,12 @@ public:
     void setText(const std::string& text);
     void setText(const std::wstring& text);
     void setFont(boost::shared_ptr<Font> font);
+    void setWordWrap(bool wordWrap);
 
     std::wstring text() const;
     boost::shared_ptr<Font> font() const;
+    bool wordWrap() const;
 
-    void setWordWrap(bool wordWrap);
     void setFixedSize(float w, float h);
 
     virtual void processMain();
