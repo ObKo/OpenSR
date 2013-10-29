@@ -24,6 +24,9 @@ namespace Rangers
 {
 namespace Python
 {
+
+namespace
+{
 std::wstring argumentGetString(Action::Argument &self)
 {
     return boost::get<std::wstring>(self);
@@ -47,6 +50,7 @@ bool argumentGetBool(Action::Argument &self)
 uint8_t argumentGetUint(Action::Argument &self)
 {
     return boost::get<uint8_t>(self);
+}
 }
 
 void exportAction()

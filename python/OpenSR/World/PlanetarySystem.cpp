@@ -64,13 +64,7 @@ struct PlanetarySystemWrap: PlanetarySystem, boost::python::wrapper<PlanetarySys
 
     static boost::python::object systemObjects(PlanetarySystem &self)
     {
-        boost::python::list pl;
-        std::list< boost::shared_ptr<SystemObject> > l = self.systemObjects();
-        for (boost::shared_ptr<SystemObject> o : l)
-        {
-            pl.append(o);
-        }
-        return pl;
+        return Rangers::Python::listToPythonList(self.systemObjects());
     }
 };
 

@@ -20,6 +20,8 @@
 #define RANGERS_PYTHON_WRAPPERS_H
 
 #include <boost/python.hpp>
+#include <boost/python/stl_iterator.hpp>
+#include <list>
 
 #define RANGERS_PYTHON_WRAP_FUNC(class, func, ...) { \
         Rangers::Python::GILGuard g; \
@@ -59,6 +61,44 @@ namespace Rangers
 void handlePythonError();
 namespace Python
 {
+template<class T>
+boost::python::list vectorToPythonList(const std::vector<T>& v)
+{
+    boost::python::list l;
+    for (const T & item : v)
+    {
+        l.append(item);
+    }
+    return l;
+}
+
+template<class T>
+boost::python::list listToPythonList(const std::list<T>& v)
+{
+    boost::python::list l;
+    for (const T & item : v)
+    {
+        l.append(item);
+    }
+    return l;
+}
+
+//TODO: Optimize?
+template<class T>
+std::vector<T> pythonObjectToVector(const boost::python::object &l)
+{
+    boost::python::stl_input_iterator<T> begin(l), end;
+    return std::vector<T>(begin, end);
+}
+
+//TODO: Optimize?
+template<class T>
+std::list<T> pythonObjectToList(const boost::python::object &l)
+{
+    boost::python::stl_input_iterator<T> begin(l), end;
+    return std::list<T>(begin, end);
+}
+
 class GILGuard
 {
 public:

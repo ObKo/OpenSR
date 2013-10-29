@@ -45,6 +45,11 @@ struct WidgetWrap : Widget, boost::python::wrapper<Widget>
     {
         return boost::python::make_tuple(self.width(), self.height());
     }
+
+    static boost::python::list childWidgets(Widget& self)
+    {
+        return listToPythonList(self.childWidgets());
+    }
 };
 
 void exportWidget()
@@ -56,9 +61,9 @@ void exportWidget()
     .add_property("focused", &Widget::isFocused)
     .add_property("visible", &Widget::isVisible, &Widget::setVisible)
     .add_property("geometry", &WidgetWrap::geometry, &WidgetWrap::setGeometry)
+    .add_property("childWidgets", &WidgetWrap::childWidgets)
     .def("addWidget", &Widget::addWidget)
     .def("removeWidget", &Widget::removeWidget)
-    .def("childWidgets", &Widget::childWidgets)
     .def("addListener", &Widget::addListener)
     .def("removeListener", &Widget::removeListener)
     .def("action", &Widget::action);

@@ -17,7 +17,7 @@
 */
 
 #include <boost/python.hpp>
-
+#include <OpenSR/python/Wrappers.h>
 #include <OpenSR/World/SystemManager.h>
 
 #include <OpenSR/World/Types.h>
@@ -31,13 +31,7 @@ namespace Python
 {
 boost::python::object systems(SystemManager &self)
 {
-    boost::python::list pl;
-    std::list< boost::shared_ptr<PlanetarySystem> > l = self.systems();
-    for (boost::shared_ptr<PlanetarySystem> o : l)
-    {
-        pl.append(o);
-    }
-    return pl;
+    Rangers::Python::listToPythonList(self.systems());
 }
 
 void exportSystemManager()

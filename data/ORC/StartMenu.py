@@ -71,9 +71,9 @@ class StartMenuWidget(ScriptWidget, ActionListener):
         
         self.buttons = {}
         
-        clickSound = sound.loadSound("Sound/ButtonClick.wav")
-        leaveSound = sound.loadSound("Sound/ButtonLeave.WAV")
-        enterSound = sound.loadSound("Sound/ButtonEnter.wav")
+        clickSound = "Sound/ButtonClick.wav"
+        leaveSound = "Sound/ButtonLeave.WAV"
+        enterSound = "Sound/ButtonEnter.wav"
         
         y = 0
         for name in self.BUTTONS:  

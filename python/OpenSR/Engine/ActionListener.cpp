@@ -39,9 +39,7 @@ struct ActionListenerWrap: ActionListener, boost::python::wrapper<ActionListener
         GILGuard g;
         try
         {
-            //{ Log::debug() << "Precall"; }
             get_override("actionPerformed")(action);
-            //{ Log::debug() << "Postcall"; }
         }
         catch (const boost::python::error_already_set& e)
         {

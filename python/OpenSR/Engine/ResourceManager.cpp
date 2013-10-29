@@ -29,7 +29,6 @@ namespace Python
 void exportResourceManager()
 {
     using namespace boost::python;
-    //class_<std::istream, boost::noncopyable>("stdStream", no_init())
     class_<ResourceManager, boost::noncopyable>("ResourceManager", no_init)
     .def("addRPKG", &ResourceManager::addRPKG)
     .def("addDir", &ResourceManager::addDir)

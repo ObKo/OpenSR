@@ -31,6 +31,8 @@ namespace Rangers
 {
 namespace Python
 {
+namespace
+{
 int propertiesGetInt(Engine &self, const std::string& key, int defaultValue)
 {
     return self.properties()->get<int>(key, defaultValue);
@@ -55,14 +57,13 @@ void propertiesSetBool(Engine &self, const std::string& key, bool value)
 {
     self.properties()->put(key, value);
 }
+}
 
 void exportEngine()
 {
     using namespace boost::python;
     class_<Engine, boost::noncopyable>("Engine", boost::python::no_init)
-//        .def("init", &Engine::init)
     .def("quit", &Engine::quit)
-//        .def("run", &Engine::run)
     .def("instance", &Engine::instance, return_value_policy<reference_existing_object>())
     .staticmethod("instance")
     .def("markToUpdate", &Engine::markToUpdate)

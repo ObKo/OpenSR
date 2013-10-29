@@ -68,11 +68,6 @@ struct TiledLineWrap : TiledLine, boost::python::wrapper<TiledLine>
             self.setLine(Vector(boost::python::extract<float>(p1[0]), boost::python::extract<float>(p1[1])),
                          Vector(boost::python::extract<float>(p2[0]), boost::python::extract<float>(p2[1])));
         }
-        else
-        {
-            //FIXME: Ugly way to throw TypeError
-            self.setLine(boost::python::extract<Vector>(mt[0]), boost::python::extract<Vector>(mt[1]));
-        }
     }
 
     static void setTexture(TiledLine&  self, boost::python::object g)
@@ -86,11 +81,6 @@ struct TiledLineWrap : TiledLine, boost::python::wrapper<TiledLine>
         else if (s.check())
         {
             self.setTexture(s);
-        }
-        else
-        {
-            //FIXME:
-            self.setTexture(boost::python::extract<boost::shared_ptr<Texture> >(g));
         }
     }
 

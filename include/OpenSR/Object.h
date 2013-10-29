@@ -21,6 +21,7 @@
 
 #include "OpenSR/global.h"
 #include "OpenSR/Types.h"
+#include <list>
 
 namespace Rangers
 {
@@ -55,6 +56,7 @@ public:
     Object* parent() const;
     bool needUpdate() const;
     uint32_t color() const;
+    std::list<boost::shared_ptr<Object> > children() const;
 
     void setLayer(int layer);
 

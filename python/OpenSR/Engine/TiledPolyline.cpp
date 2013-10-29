@@ -57,11 +57,6 @@ struct TiledPolylineWrap : TiledPolyline, boost::python::wrapper<TiledPolyline>
         {
             self.setTexture(s);
         }
-        else
-        {
-            //FIXME:
-            self.setTexture(boost::python::extract<boost::shared_ptr<Texture> >(g));
-        }
     }
 
     static boost::python::object polyline(TiledPolyline& self)
@@ -72,22 +67,23 @@ struct TiledPolylineWrap : TiledPolyline, boost::python::wrapper<TiledPolyline>
     static void setPolyline(TiledPolyline& self, boost::python::object p)
     {
         boost::python::list l = boost::python::extract<boost::python::list>(p);
-        int len = boost::python::len(l);
-        std::vector<Vector> points;
-        for (int i = 0; i < len; i++)
+        boost::python::extract<boost::python::tuple> t(l[0]);
+        boost::python::extract<Vector> v(l[0]);
+
+        if (v.check())
         {
-            boost::python::extract<boost::python::tuple> t(l[i]);
-            if (t.check())
-            {
-                boost::python::tuple p = t;
-                points.push_back(Vector(boost::python::extract<float>(p[0]), boost::python::extract<float>(p[1])));
-            }
-            else
-            {
-                points.push_back(boost::python::extract<Vector>(l[i]));
-            }
+            self.setPolyline(pythonObjectToVector<Vector>(l));
         }
-        self.setPolyline(points);
+        else
+        {
+            std::vector<boost::python::tuple> vt = pythonObjectToVector<boost::python::tuple>(l);
+            std::vector<Vector> vv;
+            for (const boost::python::tuple & t : vt)
+            {
+                vv.push_back(Vector(boost::python::extract<float>(t[0]), boost::python::extract<float>(t[1])));
+            }
+            self.setPolyline(vv);
+        }
     }
 };
 

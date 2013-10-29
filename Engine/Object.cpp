@@ -364,6 +364,13 @@ void Object::addChild(boost::shared_ptr<Object> object)
     unlock();
 }
 
+
+std::list<boost::shared_ptr<Object> > Object::children() const
+{
+    RANGERS_D(const Object);
+    return d->children;
+}
+
 void Object::setParent(Object *parent)
 {
     lock();
