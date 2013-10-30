@@ -161,7 +161,7 @@ void TiledPolyline::processMain()
     vertexPoints.push_back(v1);
     vertexPoints.push_back(v2);
 
-    d->vertexCount = d->points.size() * 4;
+    d->vertexCount = (d->points.size() - 1) * 4;
     Vertex *vertices = new Vertex[d->vertexCount];
 
 
