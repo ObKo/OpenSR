@@ -117,9 +117,9 @@ namespace Rangers
 {
 namespace World
 {
-Shader SystemPlanetWidget::m_vertexShader(Shader::VERTEX_SHADER, PLANET_VERTEX_SHADER);
-Shader SystemPlanetWidget::m_fragmentShader(Shader::FRAGMENT_SHADER, PLANET_FRAGMENT_SHADER);
-ShaderProgram SystemPlanetWidget::m_shader;
+boost::shared_ptr<Shader> SystemPlanetWidget::m_vertexShader(new Shader(Shader::VERTEX_SHADER, PLANET_VERTEX_SHADER));
+boost::shared_ptr<Shader> SystemPlanetWidget::m_fragmentShader(new Shader(Shader::FRAGMENT_SHADER, PLANET_FRAGMENT_SHADER));
+boost::shared_ptr<ShaderProgram> SystemPlanetWidget::m_shader(new ShaderProgram());
 
 GLint SystemPlanetWidget::m_phaseLocation;
 GLint SystemPlanetWidget::m_cloudPhaseLocation;
@@ -203,7 +203,7 @@ void SystemPlanetWidget::draw() const
             glActiveTexture(GL_TEXTURE1);
             glBindTexture(GL_TEXTURE_2D, m_cloud->openGLTexture());
         }
-        glUseProgram(m_shader.handle());
+        glUseProgram(m_shader->handle());
         glUniform1i(m_textureLocation, 0);
         glUniform1i(m_cloudLocation, 1);
         glUniform1f(m_phaseLocation, m_phase);
@@ -249,25 +249,25 @@ void SystemPlanetWidget::processMain()
 {
     boost::shared_ptr<Planet> planet = boost::dynamic_pointer_cast<Planet>(m_object);
 
-    if (m_useShader && !m_shader.isLinked() && !m_shader.isInvalid())
+    if (m_useShader && !m_shader->isLinked() && !m_shader->isInvalid())
     {
-        m_shader.addShader(m_vertexShader);
-        m_shader.addShader(m_fragmentShader);
-        m_shader.link();
+        m_shader->addShader(m_vertexShader);
+        m_shader->addShader(m_fragmentShader);
+        m_shader->link();
 
-        if (m_shader.isInvalid())
+        if (m_shader->isInvalid())
         {
             m_useShader = false;
         }
         else
         {
-            m_phaseLocation = m_shader.getUniformLocation("phase");
-            m_cloudPhaseLocation = m_shader.getUniformLocation("cloudPhase");
-            m_cloudEnabledLocation = m_shader.getUniformLocation("cloudEnabled");
-            m_solarAngleLocation = m_shader.getUniformLocation("solarAngle");
-            m_ambientColorLocation = m_shader.getUniformLocation("ambientColor");
-            m_textureLocation = m_shader.getUniformLocation("texture");
-            m_cloudLocation = m_shader.getUniformLocation("cloud");
+            m_phaseLocation = m_shader->getUniformLocation("phase");
+            m_cloudPhaseLocation = m_shader->getUniformLocation("cloudPhase");
+            m_cloudEnabledLocation = m_shader->getUniformLocation("cloudEnabled");
+            m_solarAngleLocation = m_shader->getUniformLocation("solarAngle");
+            m_ambientColorLocation = m_shader->getUniformLocation("ambientColor");
+            m_textureLocation = m_shader->getUniformLocation("texture");
+            m_cloudLocation = m_shader->getUniformLocation("cloud");
         }
     }
 

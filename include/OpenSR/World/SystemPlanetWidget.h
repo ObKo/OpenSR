@@ -66,9 +66,9 @@ private:
 
     GLuint m_vertexBuffer;
 
-    static Shader m_vertexShader;
-    static Shader m_fragmentShader;
-    static ShaderProgram m_shader;
+    static boost::shared_ptr<Shader> m_vertexShader;
+    static boost::shared_ptr<Shader> m_fragmentShader;
+    static boost::shared_ptr<ShaderProgram> m_shader;
 
     static GLint m_phaseLocation;
     static GLint m_cloudPhaseLocation;

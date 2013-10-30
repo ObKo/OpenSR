@@ -76,11 +76,10 @@ bool Object::prepareDraw() const
 {
     lock();
     RANGERS_D(const Object);
-    if (d->needUpdate)
-    {
-        unlock();
-        return false;
-    }
+    //if (d->needUpdate)
+    //{
+    //    d->processMain();
+    //}
     glPushMatrix();
     glTranslatef(d->position.x, d->position.y, 0);
     glRotatef(d->rotation, 0, 0, -1);

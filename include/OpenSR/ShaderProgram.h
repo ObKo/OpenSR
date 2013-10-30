@@ -33,7 +33,7 @@ public:
     virtual ~ShaderProgram();
 
     //! Add shader to shader program
-    void addShader(Shader& shader);
+    void addShader(boost::shared_ptr<Shader> shader);
     //! Link shader program
     bool link();
 
@@ -46,6 +46,9 @@ public:
     GLuint handle() const;
 
 private:
+    ShaderProgram(const ShaderProgram& other);
+    ShaderProgram& operator=(const ShaderProgram& other);
+
     bool m_linked;
     bool m_invalid;
     GLuint m_handle;

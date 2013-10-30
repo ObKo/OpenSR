@@ -18,7 +18,7 @@
 
 #include <OpenSR/Types.h>
 #include <OpenSR/Texture.h>
-
+#include <OpenSR/python/Wrappers.h>
 #include <boost/python.hpp>
 
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
@@ -27,6 +27,38 @@ namespace Rangers
 {
 namespace Python
 {
+namespace
+{
+boost::python::list getRegions(NinePatchDescriptor& self)
+{
+    return vectorToPythonList(self.regions);
+}
+
+void setRegions(NinePatchDescriptor& self, const boost::python::object& r)
+{
+    self.regions = pythonObjectToVector<TextureRegionDescriptor>(r);
+}
+
+boost::python::list getSizeableRows(NinePatchDescriptor& self)
+{
+    return vectorToPythonList(self.sizeableRows);
+}
+
+void setSizeableRows(NinePatchDescriptor& self, const boost::python::object& r)
+{
+    self.sizeableRows = pythonObjectToVector<int>(r);
+}
+
+boost::python::list getSizeableColumns(NinePatchDescriptor& self)
+{
+    return vectorToPythonList(self.sizeableColumns);
+}
+
+void setSizeableColumns(NinePatchDescriptor& self, const boost::python::object& c)
+{
+    self.sizeableColumns = pythonObjectToVector<int>(c);
+}
+}
 void exportTypes()
 {
     using namespace boost::python;
@@ -74,9 +106,9 @@ void exportTypes()
     class_<NinePatchDescriptor>("NinePatchDescriptor")
     .def_readwrite("rows", &NinePatchDescriptor::rows)
     .def_readwrite("columns", &NinePatchDescriptor::columns)
-    .def_readwrite("regions", &NinePatchDescriptor::regions)
-    .def_readwrite("sizeableRows", &NinePatchDescriptor::sizeableRows)
-    .def_readwrite("sizeableColumns", &NinePatchDescriptor::sizeableColumns);
+    .add_property("regions", &getRegions, &setRegions)
+    .add_property("sizeableRows", &getSizeableRows, &setSizeableRows)
+    .add_property("sizeableColumns", &getSizeableColumns, &setSizeableColumns);
 
     class_<FontDescriptor>("FontDescriptor")
     .def_readwrite("path", &FontDescriptor::path)

@@ -31,7 +31,7 @@ void exportShader()
     .value("VERTEX_SHADER", Shader::VERTEX_SHADER)
     .value("FRAGMENT_SHADER", Shader::FRAGMENT_SHADER);
 
-    class_<Shader>("Shader", init<>())
+    class_<Shader, boost::shared_ptr<Shader>, boost::noncopyable>("Shader", init<>())
     .def(init<Shader::ShaderType>())
     .def(init<Shader::ShaderType, const std::string&>())
     .add_property("source", &Shader::source, &Shader::setSource)

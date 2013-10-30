@@ -33,7 +33,7 @@ ShaderProgram::~ShaderProgram()
         glDeleteProgram(m_handle);
 }
 
-void ShaderProgram::addShader(Shader& shader)
+void ShaderProgram::addShader(boost::shared_ptr<Shader> shader)
 {
     if (m_handle == 0)
     {
@@ -45,16 +45,16 @@ void ShaderProgram::addShader(Shader& shader)
             return;
         }
     }
-    if (!shader.isCompiled())
+    if (!shader->isCompiled())
     {
-        if (!shader.compile())
+        if (!shader->compile())
             return;
     }
 
     m_linked = false;
     m_invalid = false;
 
-    glAttachShader(m_handle, shader.handle());
+    glAttachShader(m_handle, shader->handle());
 }
 
 bool ShaderProgram::link()

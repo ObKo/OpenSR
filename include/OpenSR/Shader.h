@@ -51,6 +51,9 @@ public:
     std::string source() const;
 
 private:
+    Shader(const Shader& other);
+    Shader& operator=(const Shader& other);
+
     GLuint m_handle;
     std::string m_source;
     bool m_invalid;

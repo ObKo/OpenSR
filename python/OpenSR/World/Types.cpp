@@ -17,6 +17,7 @@
 */
 
 #include <boost/python.hpp>
+#include <OpenSR/python/Wrappers.h>
 
 #include <OpenSR/World/Types.h>
 
@@ -26,6 +27,19 @@ namespace World
 {
 namespace Python
 {
+namespace
+{
+boost::python::list getNextTurns(Trajectory& self)
+{
+    return Rangers::Python::listToPythonList(self.nextTurns);
+}
+
+void setNextTurns(Trajectory& self, const boost::python::object& r)
+{
+    self.nextTurns = Rangers::Python::pythonObjectToList<BeizerCurve>(r);
+}
+}
+
 void exportTypes()
 {
     using namespace boost::python;
@@ -58,7 +72,7 @@ void exportTypes()
     .def_readwrite("animated", &AsteroidStyle::animated);
 
     class_<Trajectory> c4("Trajectory", init<>());
-    c4.def_readwrite("nextTurns", &Trajectory::nextTurns);
+    c4.add_property("nextTurns", &getNextTurns, &setNextTurns);
 }
 }
 }
