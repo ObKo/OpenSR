@@ -170,6 +170,8 @@ struct Quest
     std::map<uint32_t, Parameter> parameters;
     std::map<uint32_t, Location> locations;
 
+    uint32_t startLocation;
+
     QuestInfo info;
 
     std::wstring toStar;

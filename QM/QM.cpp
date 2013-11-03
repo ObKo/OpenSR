@@ -404,6 +404,8 @@ Quest readQuest(std::istream& s)
     {
         Location l = readLocation(s, q, paramsCount);
         q.locations[l.id] = l;
+        if (l.type == Location::LOCATION_START)
+            q.startLocation = l.id;
     }
 
     for (uint32_t i = 0; i < pathCount; i++)
