@@ -20,6 +20,7 @@
 #define RANGERS_PLAYER_WINDOW_H
 
 #include <QMainWindow>
+#include <QMap>
 
 #include "QuestPlayer.h"
 
@@ -27,7 +28,7 @@ namespace Ui
 {
 class PlayerWindow;
 }
-
+class QLabel;
 namespace Rangers
 {
 namespace QuestPlayer
@@ -40,13 +41,20 @@ public:
     explicit PlayerWindow(QWidget *parent = 0);
     ~PlayerWindow();
 
+protected:
+    bool eventFilter(QObject *obj, QEvent *event);
+
 private:
     Ui::PlayerWindow *m_ui;
     QuestPlayer m_player;
+    bool m_transition;
+
+    QMap<QLabel*, uint32_t> m_transitionButtons;
 
 private Q_SLOTS:
     void loadQuest();
     void updateQuest();
+    void showTransition(const QString& text);
 };
 
 }

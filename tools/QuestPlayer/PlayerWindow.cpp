@@ -22,7 +22,10 @@
 
 #include <QtWidgets/QAction>
 #include <QtWidgets/QFileDialog>
+#include <QtGui/QCursor>
+#include <QtGui/QMouseEvent>
 #include <QtCore/QDebug>
+#include <QtCore/QtGlobal>
 
 namespace Rangers
 {
@@ -37,6 +40,7 @@ PlayerWindow::PlayerWindow(QWidget *parent) :
 
     connect(m_ui->actionOpen, SIGNAL(triggered(bool)), this, SLOT(loadQuest()));
     connect(&m_player, SIGNAL(locationChanged()), this, SLOT(updateQuest()));
+    connect(&m_player, SIGNAL(transitionText(QString)), this, SLOT(showTransition(QString)));
 }
 
 PlayerWindow::~PlayerWindow()
@@ -53,9 +57,79 @@ void PlayerWindow::loadQuest()
 
 void PlayerWindow::updateQuest()
 {
+    for (QLabel * b : m_transitionButtons.keys())
+    {
+        m_ui->buttonLayout->removeWidget(b);
+        delete b;
+    }
+    m_transitionButtons.clear();
+
     QStringList ps = m_player.visibleParameters();
     m_ui->variableLabel->setText(ps.join("<br>"));
     m_ui->textLabel->setText("<p>" + m_player.locationText().replace("\r\n", "</p><p>") + "</p>");
+
+    std::map<uint32_t, QString> newButtons = m_player.visibleTransitions();
+    for (std::pair<uint32_t, QString> p : newButtons)
+    {
+        QLabel *b = new QLabel(p.second, this);
+        b->setWordWrap(true);
+        b->setStyleSheet("QLabel {color: blue} QLabel:hover {color: darkblue}");
+        b->setCursor(QCursor(Qt::PointingHandCursor));
+        b->installEventFilter(this);
+        m_ui->buttonLayout->addWidget(b);
+        m_transitionButtons[b] = p.first;
+    }
+}
+
+void PlayerWindow::showTransition(const QString& text)
+{
+    m_transition = true;
+    for (QLabel * b : m_transitionButtons.keys())
+    {
+        m_ui->buttonLayout->removeWidget(b);
+        delete b;
+    }
+    m_transitionButtons.clear();
+    QString t = text;
+    QStringList ps = m_player.visibleParameters();
+    m_ui->variableLabel->setText(ps.join("<br>"));
+    m_ui->textLabel->setText("<p>" + t.replace("\r\n", "</p><p>") + "</p>");
+
+    QLabel *b = new QLabel(tr("Next"), this);
+    b->setWordWrap(true);
+    b->setStyleSheet("QLabel {color: blue} QLabel:hover {color: darkblue}");
+    b->setCursor(QCursor(Qt::PointingHandCursor));
+    b->installEventFilter(this);
+    m_ui->buttonLayout->addWidget(b);
+    m_transitionButtons[b] = 0;
+}
+
+bool PlayerWindow::eventFilter(QObject* obj, QEvent* event)
+{
+    if (event->type() == QEvent::MouseButtonPress)
+    {
+        QMouseEvent *m = dynamic_cast<QMouseEvent*>(event);
+        if (m->button() == Qt::LeftButton)
+        {
+            if (m_transition)
+            {
+                m_player.finishTransition();
+                m_transition = false;
+            }
+            else
+            {
+                auto t = m_transitionButtons.find(dynamic_cast<QLabel*>(obj));
+                if (t != m_transitionButtons.end())
+                {
+                    m_player.startTransition(*t);
+                }
+            }
+            return true;
+        }
+        return obj->event(event);
+    }
+    else
+        return obj->event(event);
 }
 
 }

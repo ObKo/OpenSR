@@ -40,16 +40,24 @@ public:
 
     QString locationText() const;
     QStringList visibleParameters() const;
+    std::map<uint32_t, QString> visibleTransitions();
+
+    void startTransition(uint32_t num);
+    void finishTransition();
 
 public Q_SLOTS:
     void loadQuest(const QString& file);
 
 Q_SIGNALS:
     void locationChanged();
+    void transitionText(const QString &text);
 
 private:
     void applyModifier(const QM::Modifier &m);
+    bool checkCondition(const QM::Transition::Condition &c) const;
     void setLocation(uint32_t location);
+    void checkTransitions();
+    void reduceTransitions();
 
     QString substituteValues(const QString &str) const;
 
@@ -57,11 +65,14 @@ private:
 
     uint32_t m_currentLocation;
     QString m_locationText;
+    uint32_t m_currentTransition;
 
     std::map<uint32_t, int32_t> m_parametersVisibility;
     std::map<uint32_t, int32_t> m_parameters;
+    std::map<uint32_t, int32_t> m_oldParameters;
     std::map<uint32_t, int32_t> m_transitionCounts;
     std::map<uint32_t, int32_t> m_locationDescriptionsCount;
+    std::list<uint32_t> m_possibleTransitions;
 };
 
 }

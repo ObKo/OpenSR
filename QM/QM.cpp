@@ -150,11 +150,12 @@ Transition readTransition(std::istream& s, const Quest &q, uint32_t totalParamCo
     t.passCount = readUInt(s);
     t.position = readUInt(s);
 
-    for (uint32_t i = 0; i < totalParamCount; i++)
+    for (uint32_t i = 1; i < totalParamCount + 1; i++)
     {
         Modifier m;
         Transition::Condition c;
         m.param = i;
+        c.param = i;
 
         s.seekg(4, std::ios_base::cur);
         c.rangeFrom = readInt(s);
@@ -199,12 +200,12 @@ Transition readTransition(std::istream& s, const Quest &q, uint32_t totalParamCo
 
         uint32_t count = readUInt(s);
         c.includeValues = readByte(s) == 1;
-        for (uint32_t i = 0; i < count; i++)
+        for (uint32_t j = 0; j < count; j++)
             c.values.push_back(readInt(s));
 
         count = readUInt(s);
         c.includeMultiples = readByte(s) == 1;
-        for (uint32_t i = 0; i < count; i++)
+        for (uint32_t j = 0; j < count; j++)
             c.multiples.push_back(readUInt(s));
 
         s.seekg(4, std::ios_base::cur);
@@ -259,7 +260,7 @@ Location readLocation(std::istream& s, const Quest &q, uint32_t totalParamCount)
 
     l.empty = readByte(s) == 1;
 
-    for (uint32_t i = 0; i < totalParamCount; i++)
+    for (uint32_t i = 1; i < totalParamCount + 1; i++)
     {
         Modifier m;
 
@@ -360,7 +361,7 @@ Quest readQuest(std::istream& s)
     pathCount = readUInt(s);
     q.info.difficulty = readUInt(s);
 
-    for (uint8_t i = 0; i < paramsCount; i++)
+    for (uint8_t i = 1; i < paramsCount + 1; i++)
     {
         Parameter p = readParameter(s);
         p.id = i;
