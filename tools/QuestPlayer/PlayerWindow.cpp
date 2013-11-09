@@ -39,8 +39,11 @@ PlayerWindow::PlayerWindow(QWidget *parent) :
     m_ui->setupUi(this);
 
     connect(m_ui->actionOpen, SIGNAL(triggered(bool)), this, SLOT(loadQuest()));
+    connect(m_ui->actionRestart, SIGNAL(triggered(bool)), &m_player, SLOT(resetQuest()));
     connect(&m_player, SIGNAL(locationChanged()), this, SLOT(updateQuest()));
     connect(&m_player, SIGNAL(transitionText(QString)), this, SLOT(showTransition(QString)));
+    connect(&m_player, SIGNAL(questFailed(QString, bool)), this, SLOT(showQuestFailed(QString, bool)));
+    connect(&m_player, SIGNAL(questCompleted(QString)), this, SLOT(showQuestCompleted(QString)));
 }
 
 PlayerWindow::~PlayerWindow()
@@ -102,6 +105,35 @@ void PlayerWindow::showTransition(const QString& text)
     b->installEventFilter(this);
     m_ui->buttonLayout->addWidget(b);
     m_transitionButtons[b] = 0;
+}
+
+void PlayerWindow::showQuestCompleted(const QString& text)
+{
+    for (QLabel * b : m_transitionButtons.keys())
+    {
+        m_ui->buttonLayout->removeWidget(b);
+        delete b;
+    }
+    m_transitionButtons.clear();
+
+    QString t = text;
+    m_ui->textLabel->setText("<p>" + t.replace("\r\n", "</p><p>") + "</p><p><font color=\"green\">Quest completed!</font></p>");
+}
+
+void PlayerWindow::showQuestFailed(const QString& text, bool death)
+{
+    for (QLabel * b : m_transitionButtons.keys())
+    {
+        m_ui->buttonLayout->removeWidget(b);
+        delete b;
+    }
+    m_transitionButtons.clear();
+
+    QString t = text;
+    m_ui->textLabel->setText("<p>" + t.replace("\r\n", "</p><p>") +
+                             "</p><p><font color=\"red\">" + tr("Quest failed!") + "</font></p>" +
+                             (death ? "<p><font color=\"red\">" + tr("You're dead!") + "</font></p>" : ""));
+
 }
 
 bool PlayerWindow::eventFilter(QObject* obj, QEvent* event)

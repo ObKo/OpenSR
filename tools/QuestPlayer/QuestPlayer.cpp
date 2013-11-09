@@ -53,21 +53,21 @@ QString QuestPlayer::substituteValues(const QString &str) const
     QRegularExpression expExp("\\{(.+?)\\}");
     int deltaPos = 0;
 
-    QRegularExpressionMatchIterator i = valueExp.globalMatch(str);
+    QRegularExpressionMatchIterator i = expExp.globalMatch(str);
     while (i.hasNext())
     {
         QRegularExpressionMatch match = i.next();
-        QString value = QString::number(eval(match.captured(0), m_parameters));
+        QString value = "<font color=\"blue\">" + QString::number(eval(match.captured(1), m_parameters)) + "</font>";
         result.replace(match.capturedStart() + deltaPos, match.capturedLength(), value);
         deltaPos += value.length() - match.capturedLength();
     }
     deltaPos = 0;
     QString str2 = result;
-    i = expExp.globalMatch(str2);
+    i = valueExp.globalMatch(str2);
     while (i.hasNext())
     {
         QRegularExpressionMatch match = i.next();
-        QString value = QString::number(eval(match.captured(1), m_parameters));
+        QString value = "<font color=\"blue\">" + QString::number(eval(match.captured(0), m_parameters)) + "</font>";
         result.replace(match.capturedStart() + deltaPos, match.capturedLength(), value);
         deltaPos += value.length() - match.capturedLength();
     }
@@ -88,23 +88,25 @@ QString QuestPlayer::substituteValues(const QString &str) const
 
 void QuestPlayer::loadQuest(const QString& file)
 {
+    std::ifstream f(file.toStdString());
+    m_quest = Rangers::QM::readQuest(f);
+
+    resetQuest();
+}
+
+void QuestPlayer::resetQuest()
+{
     m_parametersVisibility.clear();
     m_parameters.clear();
     m_transitionCounts.clear();
     m_locationDescriptionsCount.clear();
-
-    std::ifstream f(file.toStdString());
-    m_quest = Rangers::QM::readQuest(f);
 
     for (const std::pair<uint32_t, QM::Parameter>& p : m_quest.parameters)
     {
         QString start = QString::fromStdWString(p.second.start);
         int32_t value = eval(start, std::map<uint32_t, int32_t>());
         m_parameters[p.first] = value;
-        if (!value && !p.second.showOnZero)
-            m_parametersVisibility[p.first] = false;
-        else
-            m_parametersVisibility[p.first] = true;
+        m_parametersVisibility[p.first] = true;
     }
 
     setLocation(m_quest.startLocation);
@@ -151,11 +153,15 @@ void QuestPlayer::setLocation(uint32_t location)
                 value = 0;
             }
             else
+            {
                 value = m_locationDescriptionsCount[m_currentLocation.id];
+                value = (value + 1) % 10;
+            }
 
-            value = (value + 1) % 10;
             for (int i = 0; (i < 10) && (m_currentLocation.descriptions.at(value).empty()); i++)
                 value = (value + 1) % 10;
+
+            m_locationDescriptionsCount[m_currentLocation.id] = value;
 
             m_locationText = substituteValues(QString::fromStdWString(m_currentLocation.descriptions.at(value)));
         }
@@ -166,8 +172,48 @@ void QuestPlayer::setLocation(uint32_t location)
     if (m_currentLocation.empty && (m_possibleTransitions.size() == 1) && m_currentLocation.transitions[m_possibleTransitions.front()].title.empty() &&
             m_currentTransition.description.empty())
         startTransition(m_possibleTransitions.front());
-    else
+    else if (m_currentLocation.type == QM::Location::LOCATION_SUCCESS)
+        emit(questCompleted(m_locationText));
+    else if (m_currentLocation.type == QM::Location::LOCATION_FAIL)
+        emit(questFailed(m_locationText, m_currentLocation.death));
+    else if (checkCriticalParameters())
         emit(locationChanged());
+}
+
+bool QuestPlayer::checkCriticalParameters()
+{
+    for (const std::pair<uint32_t, int32_t>& p : m_parameters)
+    {
+        const QM::Parameter &pr = m_quest.parameters.at(p.first);
+
+        if (pr.type == QM::Parameter::PARAMETER_NORMAL)
+            continue;
+
+        bool crit = false;
+
+        if (pr.minCritical && p.second <= pr.min)
+            crit = true;
+        else if (!pr.minCritical && p.second >= pr.max)
+            crit = true;
+
+        if (crit)
+        {
+            switch (pr.type)
+            {
+            case QM::Parameter::PARAMETER_DEATH:
+                emit(questFailed(substituteValues(QString::fromStdWString(pr.critText)), true));
+                break;
+            case QM::Parameter::PARAMETER_FAIL:
+                emit(questFailed(substituteValues(QString::fromStdWString(pr.critText)), false));
+                break;
+            case QM::Parameter::PARAMETER_SUCCESS:
+                emit(questCompleted(substituteValues(QString::fromStdWString(pr.critText))));
+                break;
+            }
+            return false;
+        }
+    }
+    return true;
 }
 
 QString QuestPlayer::locationText() const
@@ -180,7 +226,7 @@ QStringList QuestPlayer::visibleParameters() const
     QStringList params;
     for (const std::pair<uint32_t, int32_t>& p : m_parameters)
     {
-        if (m_parametersVisibility.at(p.first))
+        if ((p.second != 0 || m_quest.parameters.at(p.first).showOnZero) && m_parametersVisibility.at(p.first))
         {
             QString value;
             for (const Rangers::QM::Parameter::Range & r : m_quest.parameters.at(p.first).ranges)
@@ -266,7 +312,7 @@ std::map<uint32_t, QString> QuestPlayer::visibleTransitions()
     for (uint32_t t : m_possibleTransitions)
     {
         if (!m_currentLocation.transitions.at(t).title.empty())
-            r[t] = QString::fromStdWString(m_currentLocation.transitions.at(t).title);
+            r[t] = substituteValues(QString::fromStdWString(m_currentLocation.transitions.at(t).title));
         else
             r[t] = tr("Next");
     }
@@ -346,6 +392,14 @@ void QuestPlayer::startTransition(uint32_t num)
 
 void QuestPlayer::finishTransition()
 {
+    if (m_transitionCounts.find(m_currentTransition.id) == m_transitionCounts.end())
+    {
+        m_transitionCounts[m_currentTransition.id] = 1;
+    }
+    else
+    {
+        m_transitionCounts[m_currentTransition.id]++;
+    }
     setLocation(m_currentTransition.to);
 }
 
@@ -378,17 +432,15 @@ void QuestPlayer::reduceTransitions()
 
         uint32_t randRange = range * 1000;
         uint32_t r = rand() % randRange;
-        uint32_t counter;
-        uint32_t selected;
+        uint32_t counter = 0;
+        uint32_t selected = 0;
 
         for (uint32_t t : p.second)
         {
             counter += m_currentLocation.transitions.at(t).priority * 1000;
+            selected = t;
             if (counter >= r)
-            {
-                selected = t;
                 break;
-            }
         }
         m_possibleTransitions.push_back(selected);
     }

@@ -55,6 +55,8 @@ private Q_SLOTS:
     void loadQuest();
     void updateQuest();
     void showTransition(const QString& text);
+    void showQuestCompleted(const QString& text);
+    void showQuestFailed(const QString& text, bool death);
 };
 
 }

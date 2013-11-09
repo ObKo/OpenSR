@@ -47,10 +47,13 @@ public:
 
 public Q_SLOTS:
     void loadQuest(const QString& file);
+    void resetQuest();
 
 Q_SIGNALS:
     void locationChanged();
     void transitionText(const QString &text);
+    void questCompleted(const QString &text);
+    void questFailed(const QString &text, bool death);
 
 private:
     void applyModifier(const QM::Modifier &m);
@@ -58,6 +61,7 @@ private:
     void setLocation(uint32_t location);
     void checkTransitions();
     void reduceTransitions();
+    bool checkCriticalParameters();
 
     QString substituteValues(const QString &str) const;
 

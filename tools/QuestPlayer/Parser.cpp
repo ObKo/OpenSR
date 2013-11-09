@@ -29,7 +29,7 @@ namespace QuestPlayer
 {
 namespace
 {
-const uint8_t PRECEDENCES[22] = {0, 0, 0, 0, 6, 6, 8, 7, 8, 3, 3, 3, 3, 3, 3, 1, 2, 9, 4, 5, 0, 0};
+const uint8_t PRECEDENCES[22] = {0, 0, 0, 0, 6, 6, 7, 7, 8, 3, 3, 3, 3, 3, 3, 1, 2, 9, 4, 5, 0, 0};
 }
 
 Token::Token()
@@ -188,8 +188,10 @@ std::list<Token> tokenize(const QString& exp)
             break;
 
         Token t;
+        //FIXME: Ugly unary minus detection.
         if (((exp[pos] >= '0') && (exp[pos] <= '9')) || ((exp[pos] == '-') && (prev.type != Token::TOKEN_NUMBER) &&
-                (prev.type != Token::TOKEN_RANGE) && (prev.type != Token::TOKEN_PARAMETER)))
+                (prev.type != Token::TOKEN_RANGE) && (prev.type != Token::TOKEN_PARAMETER) && (prev.type != Token::TOKEN_LIST) &&
+                (prev.type != Token::TOKEN_OPEN_PAR) && (prev.type != Token::TOKEN_CLOSE_PAR)))
         {
             t = Token(getNumber(pos, exp));
         }
