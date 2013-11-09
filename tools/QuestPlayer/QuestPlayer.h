@@ -63,9 +63,9 @@ private:
 
     Rangers::QM::Quest m_quest;
 
-    uint32_t m_currentLocation;
+    QM::Location m_currentLocation;
     QString m_locationText;
-    uint32_t m_currentTransition;
+    QM::Transition m_currentTransition;
 
     std::map<uint32_t, int32_t> m_parametersVisibility;
     std::map<uint32_t, int32_t> m_parameters;
