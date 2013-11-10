@@ -71,14 +71,22 @@ void PlayerWindow::updateQuest()
     m_ui->variableLabel->setText(ps.join("<br>"));
     m_ui->textLabel->setText("<p>" + m_player.locationText().replace("\r\n", "</p><p>") + "</p>");
 
-    std::map<uint32_t, QString> newButtons = m_player.visibleTransitions();
-    for (std::pair<uint32_t, QString> p : newButtons)
+    std::vector<std::pair<uint32_t, std::pair<QString, bool> > > newButtons = m_player.visibleTransitions();
+    for (const std::pair<uint32_t, std::pair<QString, bool> > &p : newButtons)
     {
-        QLabel *b = new QLabel(p.second, this);
+        QLabel *b = new QLabel(p.second.first, this);
         b->setWordWrap(true);
-        b->setStyleSheet("QLabel {color: blue} QLabel:hover {color: darkblue}");
-        b->setCursor(QCursor(Qt::PointingHandCursor));
-        b->installEventFilter(this);
+        if (p.second.second)
+        {
+            b->setCursor(QCursor(Qt::PointingHandCursor));
+            b->setStyleSheet("QLabel {color: blue} QLabel:hover {color: darkblue}");
+            b->installEventFilter(this);
+        }
+        else
+        {
+            b->setStyleSheet("QLabel {color: grey} QLabel:hover {color: darkgrey}");
+        }
+
         m_ui->buttonLayout->addWidget(b);
         m_transitionButtons[b] = p.first;
     }

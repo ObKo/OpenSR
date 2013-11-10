@@ -131,7 +131,7 @@ void QuestPlayer::setLocation(uint32_t location)
     checkTransitions();
     reduceTransitions();
 
-    if (!m_currentLocation.empty)
+    if (!m_currentLocation.empty || m_currentTransition.description.empty())
     {
         if (m_currentLocation.descriptionExpression && !m_currentLocation.expression.empty())
         {
@@ -169,7 +169,7 @@ void QuestPlayer::setLocation(uint32_t location)
 
     qDebug() << "L" << m_currentLocation.id;
 
-    if (m_currentLocation.empty && (m_possibleTransitions.size() == 1) && m_currentLocation.transitions[m_possibleTransitions.front()].title.empty() &&
+    if ((m_possibleTransitions.size() == 1) && m_currentLocation.transitions[m_possibleTransitions.front()].title.empty() &&
             m_currentTransition.description.empty())
         startTransition(m_possibleTransitions.front());
     else if (m_currentLocation.type == QM::Location::LOCATION_SUCCESS)
@@ -288,6 +288,7 @@ bool QuestPlayer::checkCondition(const QM::Transition::Condition& c) const
 void QuestPlayer::checkTransitions()
 {
     m_possibleTransitions.clear();
+    m_alwaysVisibleTransitions.clear();
 
     int i = 0;
     for (const QM::Transition & t : m_currentLocation.transitions)
@@ -302,20 +303,44 @@ void QuestPlayer::checkTransitions()
         {
             m_possibleTransitions.push_back(i);
         }
+        else if (t.alwaysVisible)
+            m_alwaysVisibleTransitions.push_back(i);
         i++;
     }
 }
 
-std::map<uint32_t, QString> QuestPlayer::visibleTransitions()
+std::vector<std::pair<uint32_t, std::pair<QString, bool> > > QuestPlayer::visibleTransitions()
 {
-    std::map<uint32_t, QString> r;
+    std::vector<std::pair<uint32_t, std::pair<QString, bool> > > r;
     for (uint32_t t : m_possibleTransitions)
     {
-        if (!m_currentLocation.transitions.at(t).title.empty())
-            r[t] = substituteValues(QString::fromStdWString(m_currentLocation.transitions.at(t).title));
+        const QM::Transition &trans = m_currentLocation.transitions.at(t);
+
+        if (!trans.title.empty())
+        {
+            r.push_back(std::pair<uint32_t, std::pair<QString, bool> >(t,
+                        std::pair<QString, bool>(substituteValues(QString::fromStdWString(trans.title)),
+                                                 true)));
+        }
         else
-            r[t] = tr("Next");
+            r.push_back(std::pair<uint32_t, std::pair<QString, bool> >(t,
+                        std::pair<QString, bool>(tr("Next"),
+                                                 true)));
     }
+
+    for (uint32_t t : m_alwaysVisibleTransitions)
+    {
+        r.push_back(std::pair<uint32_t, std::pair<QString, bool> >(t,
+                    std::pair<QString, bool>(substituteValues(QString::fromStdWString(m_currentLocation.transitions.at(t).title)),
+                                             false)));
+    }
+
+    std::sort(r.begin(), r.end(),
+              [&](const std::pair<uint32_t, std::pair<QString, bool> >& a, const std::pair<uint32_t, std::pair<QString, bool> >& b) -> bool
+    {
+        return m_currentLocation.transitions.at(a.first).position < m_currentLocation.transitions.at(b.first).position;
+    });
+
     return r;
 }
 
@@ -407,6 +432,7 @@ void QuestPlayer::finishTransition()
 void QuestPlayer::reduceTransitions()
 {
     std::map<std::wstring, std::list<uint32_t> > transitions;
+    std::map<std::wstring, uint32_t> alwaysVisibleTransitions;
 
     for (uint32_t t : m_possibleTransitions)
     {
@@ -414,13 +440,33 @@ void QuestPlayer::reduceTransitions()
         transitions[tr.title].push_back(t);
     }
 
+    for (uint32_t t : m_alwaysVisibleTransitions)
+    {
+        const QM::Transition& tr = m_currentLocation.transitions.at(t);
+        if (transitions.find(tr.title) == transitions.end())
+            alwaysVisibleTransitions[tr.title] = t;
+    }
+
     m_possibleTransitions.clear();
+    m_alwaysVisibleTransitions.clear();
+
+    for (std::pair<std::wstring, uint32_t> p : alwaysVisibleTransitions)
+    {
+        m_alwaysVisibleTransitions.push_back(p.second);
+    }
 
     for (std::pair<std::wstring, std::list<uint32_t> > p : transitions)
     {
         if (p.second.size() == 1)
         {
-            m_possibleTransitions.push_back(p.second.front());
+            double pr = m_currentLocation.transitions.at(p.second.front()).priority;
+            if (pr < 1.0)
+            {
+                if ((rand() % 1000) < pr * 1000)
+                    m_possibleTransitions.push_back(p.second.front());
+            }
+            else
+                m_possibleTransitions.push_back(p.second.front());
             continue;
         }
         double range = 0;

@@ -40,7 +40,7 @@ public:
 
     QString locationText() const;
     QStringList visibleParameters() const;
-    std::map<uint32_t, QString> visibleTransitions();
+    std::vector<std::pair<uint32_t, std::pair<QString, bool> > > visibleTransitions();
 
     void startTransition(uint32_t num);
     void finishTransition();
@@ -77,6 +77,7 @@ private:
     std::map<uint32_t, int32_t> m_transitionCounts;
     std::map<uint32_t, int32_t> m_locationDescriptionsCount;
     std::list<uint32_t> m_possibleTransitions;
+    std::list<uint32_t> m_alwaysVisibleTransitions;
 };
 
 }
