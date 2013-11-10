@@ -70,7 +70,7 @@ int32_t readInt(std::istream& s)
     return r;
 }
 
-int32_t readDouble(std::istream& s)
+double readDouble(std::istream& s)
 {
     double r;
     s.read((char*)&r, 8);
