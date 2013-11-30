@@ -72,8 +72,8 @@ private:
     QM::Transition m_currentTransition;
 
     std::map<uint32_t, int32_t> m_parametersVisibility;
-    std::map<uint32_t, int32_t> m_parameters;
-    std::map<uint32_t, int32_t> m_oldParameters;
+    std::map<uint32_t, float> m_parameters;
+    std::map<uint32_t, float> m_oldParameters;
     std::map<uint32_t, int32_t> m_transitionCounts;
     std::map<uint32_t, int32_t> m_locationDescriptionsCount;
     std::list<uint32_t> m_possibleTransitions;

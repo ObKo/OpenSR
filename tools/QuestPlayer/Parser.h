@@ -39,29 +39,30 @@ public:
                TOKEN_LIST = 21
               };
     Token();
-    Token(int32_t number);
-    Token(int32_t from, int32_t to);
+    Token(float number);
+    Token(float from, float to);
 
     Type type;
 
     union
     {
-        int32_t number;
+        uint32_t id;
+        float number;
         struct
         {
-            int32_t from;
-            int32_t to;
+            float from;
+            float to;
         };
     } value;
 
-    std::vector<int32_t> list;
+    std::vector<float> list;
 
-    Token apply(const Token &a, const Token &b, const std::map<uint32_t, int32_t> &parameters) const;
+    Token apply(const Token &a, const Token &b, const std::map<uint32_t, float> &parameters) const;
 };
 
 std::list<Token> tokenize(const QString& exp);
-int32_t eval(const std::list<Token>& exp, const std::map<uint32_t, int32_t> &parameters);
-int32_t eval(const QString& exp, const std::map<uint32_t, int32_t> &parameters);
+float eval(const std::list<Token>& exp, const std::map<uint32_t, float> &parameters);
+float eval(const QString& exp, const std::map<uint32_t, float> &parameters);
 }
 }
 

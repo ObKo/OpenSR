@@ -29,49 +29,49 @@ namespace QuestPlayer
 {
 namespace
 {
-const uint8_t PRECEDENCES[22] = {0, 0, 0, 0, 6, 6, 7, 7, 8, 3, 3, 3, 3, 3, 3, 1, 2, 9, 4, 5, 0, 0};
+const uint8_t PRECEDENCES[22] = {0, 0, 0, 0, 6, 6, 8, 7, 8, 3, 3, 3, 3, 3, 3, 1, 2, 9, 4, 5, 0, 0};
 }
 
 Token::Token()
 {
     type = TOKEN_NONE;
-    value.from = 0;
-    value.to = 0;
-    value.number = 0;
+    value.from = 0.0f;
+    value.to = 0.0f;
+    value.number = 0.0f;
 }
 
-Token::Token(int32_t number)
+Token::Token(float number)
 {
     type = TOKEN_NUMBER;
     value.number = number;
 }
 
-Token::Token(int32_t from, int32_t to)
+Token::Token(float from, float to)
 {
     type = TOKEN_RANGE;
     value.from = from;
     value.to = to;
 }
 
-Token Token::apply(const Token& a, const Token& b, const std::map<uint32_t, int32_t> &parameters) const
+Token Token::apply(const Token& a, const Token& b, const std::map<uint32_t, float> &parameters) const
 {
-    int32_t av, bv;
+    float av, bv;
 
     if (a.type == TOKEN_RANGE)
-        av = a.value.from + (rand() % (a.value.to - a.value.from + 1));
+        av = a.value.from + (rand() % (uint32_t)(a.value.to - a.value.from + 1));
     else if (a.type == TOKEN_LIST)
         av = a.list.at(rand() % a.list.size());
     else if (a.type == TOKEN_PARAMETER)
-        av = parameters.at((uint32_t)a.value.number);
+        av = parameters.at(a.value.id);
     else
         av = a.value.number;
 
     if (b.type == TOKEN_RANGE)
-        bv = b.value.from + (rand() % (b.value.to - b.value.from + 1));
+        bv = b.value.from + (rand() % (uint32_t)(b.value.to - b.value.from + 1));
     else if (b.type == TOKEN_LIST)
         bv = b.list.at(rand() % b.list.size());
     else if (b.type == TOKEN_PARAMETER)
-        bv = parameters.at((uint32_t)b.value.number);
+        bv = parameters.at(b.value.id);
     else
         bv = b.value.number;
 
@@ -94,7 +94,7 @@ Token Token::apply(const Token& a, const Token& b, const std::map<uint32_t, int3
     case TOKEN_OP_MULTIPLY:
         return Token(av * bv);
     case TOKEN_OP_MOD:
-        return Token(av % bv);
+        return Token(fmod(av, bv));
     case TOKEN_EQUAL:
         return Token(av == bv);
     case TOKEN_MORE:
@@ -117,26 +117,26 @@ Token Token::apply(const Token& a, const Token& b, const std::map<uint32_t, int3
         //FIXME: List?
         if ((a.type == TOKEN_RANGE) && (b.type == TOKEN_RANGE))
         {
-            int32_t min = std::min(a.value.from, b.value.from);
-            int32_t max = std::max(a.value.to, b.value.to);
+            float min = std::min(a.value.from, b.value.from);
+            float max = std::max(a.value.to, b.value.to);
             return Token(min, max);
         }
         else if ((a.type == TOKEN_RANGE) && (b.type != TOKEN_RANGE))
         {
-            int32_t min = std::min(a.value.from, bv);
-            int32_t max = std::max(a.value.to, bv);
+            float min = std::min(a.value.from, bv);
+            float max = std::max(a.value.to, bv);
             return Token(min, max);
         }
         else if ((a.type != TOKEN_RANGE) && (b.type == TOKEN_RANGE))
         {
-            int32_t min = std::min(av, b.value.from);
-            int32_t max = std::max(av, b.value.to);
+            float min = std::min(av, b.value.from);
+            float max = std::max(av, b.value.to);
             return Token(min, max);
         }
         else
         {
-            int32_t min = std::min(av, bv);
-            int32_t max = std::max(av, bv);
+            float min = std::min(av, bv);
+            float max = std::max(av, bv);
             return Token(min, max);
         }
     case TOKEN_IN:
@@ -159,9 +159,10 @@ Token Token::apply(const Token& a, const Token& b, const std::map<uint32_t, int3
     }
 }
 
+//FIXME: Seems only integers are valid in expressions...
 int32_t getNumber(int &pos, const QString& exp)
 {
-    int32_t value = 0;
+    uint32_t value = 0.0f;
     bool minus = false;
     if (exp[pos] == '-')
         minus = true;
@@ -267,7 +268,7 @@ std::list<Token> tokenize(const QString& exp)
             {
                 pos += 2;
                 t.type = Token::TOKEN_PARAMETER;
-                t.value.number = getNumber(pos, exp);
+                t.value.id = getNumber(pos, exp);
                 if (exp[pos] != ']')
                 {
                     qCritical() << "Unclosed parameter token in \"" << exp << "\"";
@@ -428,7 +429,7 @@ std::list<Token> tokenize(const QString& exp)
     return result;
 }
 
-int32_t eval(const std::list< Token >& exp, const std::map<uint32_t, int32_t>& parameters)
+float eval(const std::list< Token >& exp, const std::map<uint32_t, float>& parameters)
 {
     if (exp.empty())
         return 0;
@@ -453,16 +454,16 @@ int32_t eval(const std::list< Token >& exp, const std::map<uint32_t, int32_t>& p
     Token r = opStack.top();
 
     if (r.type == Token::TOKEN_PARAMETER)
-        return parameters.at((uint32_t)r.value.number);
+        return parameters.at(r.value.id);
     else if (r.type == Token::TOKEN_RANGE)
-        return r.value.from + (rand() % (r.value.to - r.value.from + 1));
+        return r.value.from + (rand() % (uint32_t)(r.value.to - r.value.from + 1));
     else if (r.type == Token::TOKEN_LIST)
         return r.list.at(rand() % r.list.size());
     else
         return r.value.number;
 }
 
-int32_t eval(const QString& exp, const std::map<uint32_t, int32_t>& parameters)
+float eval(const QString& exp, const std::map<uint32_t, float>& parameters)
 {
     return eval(tokenize(exp), parameters);
 }
