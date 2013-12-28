@@ -45,6 +45,18 @@ public:
     //! OpenGL shader program handle
     GLuint handle() const;
 
+    template <class T>
+    void setUniform(const std::string& name, const T& value)
+    {
+        setUniform(getUniformLocation(name), value);
+    }
+
+    void setUniform(GLint id, const Color& value);
+    void setUniform(GLint id, const Vector& value);
+    void setUniform(GLint id, int value);
+    void setUniform(GLint id, float value);
+    void setUniform(GLint id, bool value);
+
 private:
     ShaderProgram(const ShaderProgram& other);
     ShaderProgram& operator=(const ShaderProgram& other);
@@ -52,6 +64,8 @@ private:
     bool m_linked;
     bool m_invalid;
     GLuint m_handle;
+
+    std::map<std::string, GLint> m_uniforms;
 };
 }
 

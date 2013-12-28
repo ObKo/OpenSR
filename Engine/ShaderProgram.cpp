@@ -53,6 +53,7 @@ void ShaderProgram::addShader(boost::shared_ptr<Shader> shader)
 
     m_linked = false;
     m_invalid = false;
+    m_uniforms.clear();
 
     glAttachShader(m_handle, shader->handle());
 }
@@ -93,13 +94,34 @@ bool ShaderProgram::link()
         return false;
     }
 
+    int totalUniforms = -1;
+    glGetProgramiv(m_handle, GL_ACTIVE_UNIFORMS, &totalUniforms);
+    for (int i = 0; i < totalUniforms; ++i)
+    {
+        int name_len = -1, num = -1;
+        GLenum type = GL_ZERO;
+        char name[255];
+        glGetActiveUniform(m_handle, i, sizeof(name) - 1, &name_len, &num, &type, name);
+        name[name_len] = '\0';
+        GLuint location = glGetUniformLocation(m_handle, name);
+        m_uniforms[name] = location;
+    }
+
     m_linked = true;
     return true;
 }
 
 GLint ShaderProgram::getUniformLocation(const std::string &name) const
 {
-    return glGetUniformLocation(m_handle, name.c_str());
+    try
+    {
+        return m_uniforms.at(name);
+    }
+    catch (std::out_of_range &e)
+    {
+        Log::warning() << "Unknown shader uniform: " << name;
+        return -1;
+    }
 }
 
 bool ShaderProgram::isInvalid() const
@@ -115,5 +137,30 @@ bool ShaderProgram::isLinked() const
 GLuint ShaderProgram::handle() const
 {
     return m_handle;
+}
+
+void ShaderProgram::setUniform(GLint id, float value)
+{
+    glUniform1f(id, value);
+}
+
+void ShaderProgram::setUniform(GLint id, int value)
+{
+    glUniform1i(id, value);
+}
+
+void ShaderProgram::setUniform(GLint id, bool value)
+{
+    glUniform1i(id, value);
+}
+
+void ShaderProgram::setUniform(GLint id, const Vector& value)
+{
+    glUniform2f(id, value.x, value.y);
+}
+
+void ShaderProgram::setUniform(GLint id, const Color& value)
+{
+    glUniform4f(id, value.r, value.g, value.b, value.a);
 }
 }

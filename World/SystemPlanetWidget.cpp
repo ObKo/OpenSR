@@ -36,7 +36,7 @@ uniform float phase; \
 uniform float cloudPhase; \
 uniform bool cloudEnabled; \
 uniform float solarAngle; \
-uniform vec3 ambientColor; \
+uniform vec4 ambientColor; \
 \
 float PI = 3.14159265358979323846264; \
 float tr = (tex_coord.x - 0.5f) * (tex_coord.x - 0.5f) + (tex_coord.y - 0.5f) * (tex_coord.y - 0.5f); \
@@ -101,7 +101,7 @@ void main() \
     float x = sqrt(0.5f * 0.5f - (tex_coord.x - 0.5f) * (tex_coord.x - 0.5f) - (tex_coord.y - 0.5f) * (tex_coord.y - 0.5f)); \
     vec3 normal = normalize(vec3(x, tex_coord.x - 0.5f, tex_coord.y - 0.5f)); \
     float diffuse = max(dot(normal, vec3(0.5f, cos(solarAngle), sin(solarAngle))), 0.0); \
-    gl_FragColor.rgb = gl_FragColor.rgb * 0.3 * ambientColor + gl_FragColor.rgb * diffuse * vec3(1.0, 1.0f, 1.0f); \
+    gl_FragColor.rgb = gl_FragColor.rgb * 0.3 * ambientColor.rgb + gl_FragColor.rgb * diffuse * vec3(1.0, 1.0f, 1.0f); \
 }";
 
 static const std::string PLANET_VERTEX_SHADER = " \
@@ -204,13 +204,13 @@ void SystemPlanetWidget::draw() const
             glBindTexture(GL_TEXTURE_2D, m_cloud->openGLTexture());
         }
         glUseProgram(m_shader->handle());
-        glUniform1i(m_textureLocation, 0);
-        glUniform1i(m_cloudLocation, 1);
-        glUniform1f(m_phaseLocation, m_phase);
-        glUniform1f(m_cloudPhaseLocation, m_cloudPhase);
-        glUniform1f(m_solarAngleLocation, m_solarAngle);
-        glUniform3f(m_ambientColorLocation, m_ambientColor.r, m_ambientColor.g, m_ambientColor.b);
-        glUniform1i(m_cloudEnabledLocation, m_hasCloud);
+        m_shader->setUniform(m_textureLocation, 0);
+        m_shader->setUniform(m_cloudLocation, 1);
+        m_shader->setUniform(m_phaseLocation, m_phase);
+        m_shader->setUniform(m_cloudPhaseLocation, m_cloudPhase);
+        m_shader->setUniform(m_solarAngleLocation, m_solarAngle);
+        m_shader->setUniform(m_ambientColorLocation, m_ambientColor);
+        m_shader->setUniform(m_cloudEnabledLocation, m_hasCloud);
 
         glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer);
 

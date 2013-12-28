@@ -40,8 +40,8 @@
         "content-rect": {"x": 13, "y": 65, "width": 195, "height": 55},
         "font": "default-font",
         "caption-font": "bold-font",
-        "color": "#FFFFFFFF",
-        "caption-color": "#31EFFFFF",
-        "label-color": "#8C8A8CFF"
+        "color": "#FFFFFF",
+        "caption-color": "#31EFFF",
+        "label-color": "#8C8A8C"
     }
 }
