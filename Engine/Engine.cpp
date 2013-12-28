@@ -561,9 +561,9 @@ int Engine::run()
 #endif
             d->fpsLabel->setText(str);
             if (fps >= 30)
-                d->fpsLabel->setColor(0.0f, 1.0f, 0.0f);
+                d->fpsLabel->setColor(Color(0.0f, 1.0f, 0.0f));
             else
-                d->fpsLabel->setColor(1.0f, 0.0f, 0.0f);
+                d->fpsLabel->setColor(Color(1.0f, 0.0f, 0.0f));
             d->frames = 0;
             d->fpsTime = getTicks();
         }

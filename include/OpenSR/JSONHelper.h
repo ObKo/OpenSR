@@ -44,7 +44,6 @@ public:
     static NinePatchDescriptor parseNinePatch(std::istream& json, bool &error);
     static Skin parseSkin(const std::string& json, bool &error);
     static Skin parseSkin(std::istream& json, bool &error);
-    static int parseColor(const std::string& string, bool &error);
 
     static ResourceDescriptor getResource(const std::string& name, const std::map<std::wstring, ResourceDescriptor>& resources, bool &error);
     static Rect parseRect(const Json::Value& object, bool &error);

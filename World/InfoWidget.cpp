@@ -390,7 +390,7 @@ void InfoWidget::showSystem(boost::shared_ptr<PlanetarySystem> system)
     if (style)
     {
         m_iconSprite = boost::shared_ptr<Sprite>(new AnimatedSprite(style->star));
-        m_iconSprite->setColor((style->color << 8) | 0xff);
+        m_iconSprite->setColor(style->color);
         addChild(m_iconSprite);
     }
 

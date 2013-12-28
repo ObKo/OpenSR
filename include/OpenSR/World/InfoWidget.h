@@ -62,9 +62,9 @@ private:
     boost::shared_ptr<Sprite> m_bgSprite;
     boost::shared_ptr<Sprite> m_iconSprite;
     boost::shared_ptr<Sprite> m_raceIconSprite;
-    int m_color;
-    int m_captionColor;
-    int m_labelColor;
+    Color m_color;
+    Color m_captionColor;
+    Color m_labelColor;
     std::vector<boost::shared_ptr<Object> > m_infoWidget;
     InfoType m_type;
     int m_iconSize;

@@ -79,7 +79,7 @@ void LineEdit::draw() const
     if (isFocused() && d->cursorVisible && d->cursorBuffer)
     {
         glBindTexture(GL_TEXTURE_2D, 0);
-        glColor3ub((d->style.color >> 24) & 0xff, (d->style.color >> 16) & 0xff, (d->style.color >> 8) & 0xff);
+        glColor4f(d->style.color.r, d->style.color.g, d->style.color.b, d->style.color.a);
 
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_ARRAY_BUFFER);
@@ -109,7 +109,6 @@ LineEdit::LineEdit(float w, float h, boost::shared_ptr< Font > font):
 
     d->height = h > font->size() + 4 ? h : font->size() + 4;
     d->width = w;
-    d->style.color = 0xffffffff;
     d->init();
 }
 
@@ -144,7 +143,7 @@ void LineEditPrivate::init()
     if ((style.font.path != L"") && (style.font.size > 0))
     {
         label = boost::shared_ptr<Label>(new Label(text, ResourceManager::instance().loadFont(style.font.path, style.font.size)));
-        label->setColor(((style.color >> 24) & 0xff) / 255.0f, ((style.color >> 16) & 0xff) / 255.0f, ((style.color >> 8) & 0xff) / 255.0f, ((style.color) & 0xff) / 255.0f);
+        label->setColor(style.color);
         q->addChild(label);
     }
     else

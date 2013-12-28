@@ -75,6 +75,20 @@ void exportTypes()
     .def(self * float())
     .def(float() * self);
 
+    class_<Color>("Color", init<float, float, float, float>())
+    .def(init<float, float, float>())
+    .def(init<>())
+    .def_readwrite("r", &Color::r)
+    .def_readwrite("g", &Color::g)
+    .def_readwrite("b", &Color::b)
+    .def_readwrite("a", &Color::a)
+    .def("toRGB", &Color::toRGB)
+    .def("toARGB", &Color::toARGB)
+    .def("fromUInt", &Color::fromUInt)
+    .staticmethod("fromUInt")
+    .def("fromString", (Color(*)(const std::wstring&))&Color::fromString)
+    .staticmethod("fromString");
+
     class_<Rect>("Rect", init<float, float, float, float>())
     .def(init<>())
     .def("contains", &Rect::contains)

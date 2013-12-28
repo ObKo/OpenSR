@@ -191,7 +191,7 @@ std::map<std::wstring, ResourceDescriptor> JSONHelper::parseResources(const Json
 {
     std::map<std::wstring, ResourceDescriptor> result;
     error = false;
-	if (object.isMember("NinePatch"))
+    if (object.isMember("NinePatch"))
     {
         Json::Value ninepatches = object.get("NinePatch", Json::Value());
         Json::Value::iterator end = ninepatches.end();
@@ -396,7 +396,7 @@ ButtonStyle JSONHelper::parseButtonStyle(const Json::Value& object, const std::m
     }
 
     if (std::find(members.begin(), members.end(), "color") != members.end())
-        style.color = parseColor(object.get("color", "#").asString(), error);
+        style.color = Color::fromString(object.get("color", "#FFFFFF").asString());
 
     if (std::find(members.begin(), members.end(), "content-rect") != members.end())
         style.contentRect = parseRect(object.get("content-rect", Json::Value()), error);
@@ -464,7 +464,7 @@ CheckBoxStyle JSONHelper::parseCheckBoxStyle(const Json::Value& object, const st
     }
 
     if (std::find(members.begin(), members.end(), "color") != members.end())
-        style.color = parseColor(object.get("color", "#").asString(), error);
+        style.color = Color::fromString(object.get("color", "#FFFFFF").asString());
 
     if (error)
     {
@@ -501,7 +501,7 @@ RadioButtonStyle JSONHelper::parseRadioButtonStyle(const Json::Value& object, co
     }
 
     if (std::find(members.begin(), members.end(), "color") != members.end())
-        style.color = parseColor(object.get("color", "#").asString(), error);
+        style.color = Color::fromString(object.get("color", "#FFFFFF").asString());
 
     if (error)
     {
@@ -530,7 +530,7 @@ LineEditStyle JSONHelper::parseLineEditStyle(const Json::Value& object, const st
     }
 
     if (std::find(members.begin(), members.end(), "color") != members.end())
-        style.color = parseColor(object.get("color", "#").asString(), error);
+        style.color = Color::fromString(object.get("color", "#FFFFFF").asString());
 
     if (std::find(members.begin(), members.end(), "content-rect") != members.end())
         style.contentRect = parseRect(object.get("content-rect", Json::Value()), error);
@@ -541,23 +541,6 @@ LineEditStyle JSONHelper::parseLineEditStyle(const Json::Value& object, const st
         return LineEditStyle();
     }
     return style;
-}
-
-int JSONHelper::parseColor(const std::string& string, bool &error)
-{
-    if (error)
-        return 0;
-    std::istringstream ss(string);
-    uint32_t color;
-    char c;
-    ss >> c >> std::hex >> color;
-    if (ss.fail())
-    {
-        error = true;
-        Log::error() << "Invalid JSON color.";
-        color = 0;
-    }
-    return color;
 }
 
 ResourceDescriptor JSONHelper::getResource(const std::string& name, const std::map<std::wstring, ResourceDescriptor>& resources, bool &error)

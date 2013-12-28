@@ -60,7 +60,7 @@ struct RANGERS_WORLD_API PlanetStyle
     std::wstring ringBackground;
     bool hasRing;
     bool hasRingBackground;
-    int ambientColor;
+    Color ambientColor;
     float ringOffsetX, ringOffsetY;
     float ringBgOffsetX, ringBgOffsetY;
 
@@ -75,7 +75,7 @@ struct RANGERS_WORLD_API SystemStyle
     std::string id;
     std::wstring star;
     bool animated;
-    uint32_t color;
+    Color color;
     std::wstring background;
 
     bool serialize(std::ostream &stream) const;

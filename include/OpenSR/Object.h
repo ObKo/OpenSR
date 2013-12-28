@@ -44,8 +44,7 @@ public:
     void setPosition(float x, float y);
     void setPosition(const Vector& pos);
     void setRotation(float angle);
-    void setColor(float r, float g, float b, float a = 1.0f);
-    void setColor(uint32_t color);
+    void setColor(const Color& color);
 
     void addChild(boost::shared_ptr<Object> object);
     void removeChild(boost::shared_ptr<Object> object);
@@ -55,7 +54,7 @@ public:
     int layer() const;
     Object* parent() const;
     bool needUpdate() const;
-    uint32_t color() const;
+    Color color() const;
     std::list<boost::shared_ptr<Object> > children() const;
 
     void setLayer(int layer);

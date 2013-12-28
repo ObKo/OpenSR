@@ -209,7 +209,7 @@ void SystemPlanetWidget::draw() const
         glUniform1f(m_phaseLocation, m_phase);
         glUniform1f(m_cloudPhaseLocation, m_cloudPhase);
         glUniform1f(m_solarAngleLocation, m_solarAngle);
-        glUniform3f(m_ambientColorLocation, ((m_ambientColor >> 16) & 0xFF) / 255.0f, ((m_ambientColor >> 8) & 0xFF) / 255.0f, ((m_ambientColor) & 0xFF) / 255.0f);
+        glUniform3f(m_ambientColorLocation, m_ambientColor.r, m_ambientColor.g, m_ambientColor.b);
         glUniform1i(m_cloudEnabledLocation, m_hasCloud);
 
         glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer);

@@ -254,7 +254,7 @@ void SystemWidget::setSystem(boost::shared_ptr< PlanetarySystem > system)
         else
             s = new Sprite(style->star);
 
-        s->setColor((style->color << 8) | 0xff);
+        s->setColor(style->color);
         m_starWidget = boost::shared_ptr<SpriteWidget>(new SpriteWidget(boost::shared_ptr<Sprite>(s)));
 
         m_starWidget->setPosition(-m_starWidget->width() / 2, -m_starWidget->height() / 2);

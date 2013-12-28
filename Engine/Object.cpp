@@ -37,7 +37,6 @@ ObjectPrivate::~ObjectPrivate()
 ObjectPrivate::ObjectPrivate()
 {
     rotation = 0;
-    color = 0xffffffff;
     needUpdate = false;
     position.x = 0.0f;
     position.y = 0.0f;
@@ -83,7 +82,7 @@ bool Object::prepareDraw() const
     glPushMatrix();
     glTranslatef(d->position.x, d->position.y, 0);
     glRotatef(d->rotation, 0, 0, -1);
-    glColor4ub((d->color >> 24) & 0xff, (d->color >> 16) & 0xff, (d->color >> 8) & 0xff, d->color & 0xff);
+    glColor4f(d->color.r, d->color.g, d->color.b, d->color.a);
     return true;
 }
 
@@ -251,19 +250,7 @@ void Object::endDraw() const
     unlock();
 }
 
-void Object::setColor(float r, float g, float b, float a)
-{
-    lock();
-    uint32_t color = 0;
-    color |= (int(r * 255.0) & 0xff) << 24;
-    color |= (int(g * 255.0) & 0xff) << 16;
-    color |= (int(b * 255.0) & 0xff) << 8;
-    color |= int(a * 255.0) & 0xff;
-    setColor(color);
-    unlock();
-}
-
-void Object::setColor(uint32_t color)
+void Object::setColor(const Color& color)
 {
     lock();
     RANGERS_D(Object);
@@ -326,7 +313,7 @@ bool Object::needUpdate() const
     return d->needUpdate;
 }
 
-uint32_t Object::color() const
+Color Object::color() const
 {
     RANGERS_D(const Object);
     return d->color;

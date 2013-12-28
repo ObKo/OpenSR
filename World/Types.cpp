@@ -55,7 +55,6 @@ PlanetStyle::PlanetStyle()
     ringOffsetY = 0.0f;
     ringBgOffsetX = 0.0f;
     ringBgOffsetY = 0.0f;
-    ambientColor = 0xffffffff;
 }
 
 bool PlanetStyle::serialize(std::ostream& stream) const
@@ -80,7 +79,8 @@ bool PlanetStyle::serialize(std::ostream& stream) const
 
     stream.write((const char *)&hasRing, sizeof(bool));
     stream.write((const char *)&hasRingBackground, sizeof(bool));
-    stream.write((const char *)&ambientColor, sizeof(int));
+    uint32_t c = ambientColor.toARGB();
+    stream.write((const char *)&c, sizeof(uint32_t));
     stream.write((const char *)&ringOffsetX, sizeof(float));
     stream.write((const char *)&ringOffsetY, sizeof(float));
     stream.write((const char *)&ringBgOffsetX, sizeof(float));
@@ -118,7 +118,9 @@ bool PlanetStyle::deserialize(std::istream& stream)
 
     stream.read((char *)&hasRing, sizeof(bool));
     stream.read((char *)&hasRingBackground, sizeof(bool));
-    stream.read((char *)&ambientColor, sizeof(int));
+    uint32_t c;
+    stream.read((char *)&c, sizeof(int));
+    ambientColor = Color::fromUInt(c);
     stream.read((char *)&ringOffsetX, sizeof(float));
     stream.read((char *)&ringOffsetY, sizeof(float));
     stream.read((char *)&ringBgOffsetX, sizeof(float));
@@ -145,7 +147,8 @@ bool SystemStyle::serialize(std::ostream& stream) const
         return false;
 
     stream.write((const char *)&animated, sizeof(bool));
-    stream.write((const char *)&color, sizeof(uint32_t));
+    uint32_t c = color.toARGB();
+    stream.write((const char *)&c, sizeof(uint32_t));
 
     if (!WorldHelper::serializeString(background, stream))
         return false;
@@ -170,7 +173,9 @@ bool SystemStyle::deserialize(std::istream& stream)
         return false;
 
     stream.read((char *)&animated, sizeof(bool));
-    stream.read((char *)&color, sizeof(uint32_t));
+    uint32_t c;
+    stream.read((char *)&c, sizeof(uint32_t));
+    color = Color::fromUInt(c);
 
     if (!WorldHelper::deserializeString(background, stream))
         return false;

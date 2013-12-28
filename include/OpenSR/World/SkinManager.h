@@ -35,9 +35,9 @@ struct RANGERS_WORLD_API InfoWidgetStyle
     ResourceDescriptor background;
     ResourceDescriptor font;
     ResourceDescriptor captionFont;
-    int color;
-    int captionColor;
-    int labelColor;
+    Color color;
+    Color captionColor;
+    Color labelColor;
     Vector iconPosition;
     Vector raceIconPosition;
     int iconSize;

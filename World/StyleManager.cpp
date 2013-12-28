@@ -79,7 +79,7 @@ void StyleManager::loadPlanetStyles(const std::wstring& styleFile)
         }
         bool error = false;
         PlanetStyle *style = new PlanetStyle();
-        style->ambientColor = JSONHelper::parseColor(jsonStyle.get("ambientColor", "#FFFFFF").asString(), error);
+        style->ambientColor = Color::fromString(jsonStyle.get("ambientColor", "#FFFFFF").asString());
         style->texture = fromUTF8(jsonStyle.get("texture", "").asCString());
         style->speed = jsonStyle.get("speed", 0.0f).asDouble();
         style->hasCloud = jsonStyle.get("hasCloud", false).asBool();
@@ -245,7 +245,7 @@ void StyleManager::loadSystemStyles(const std::wstring& styleFile)
         style->id = (*i);
         style->star = fromUTF8(jsonStyle.get("star", "").asCString());
         style->animated = jsonStyle.get("star-animated", "").asBool();
-        style->color = JSONHelper::parseColor(jsonStyle.get("star-color", "#FFFFFF").asString(), error);
+        style->color = Color::fromString(jsonStyle.get("star-color", "#FFFFFF").asString());
         style->background = fromUTF8(jsonStyle.get("background", "").asCString());
         m_systemStyles[textHash32(style->id)] = boost::shared_ptr<SystemStyle>(style);
     }

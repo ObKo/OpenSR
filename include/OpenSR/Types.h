@@ -31,6 +31,29 @@ namespace Rangers
 class Texture;
 struct TextureRegionDescriptor;
 
+struct Color
+{
+    Color();
+    Color(float red, float greeb, float blue, float alpha = 1.0f);
+
+    float r;
+    float g;
+    float b;
+    float a;
+
+    //! To usigned int in 0xRRGGBB format
+    uint32_t toRGB() const;
+    //! To usigned int in 0xAARRGGBB format
+    uint32_t toARGB() const;
+
+    //! From unsigned int in 0xAARRGGBB format
+    static Color fromUInt(uint32_t color);
+    //! From string in "#AARRGGBB" or "#RRGGBB" format
+    static Color fromString(const std::string& color);
+    //! From wstring in "#AARRGGBB" or "#RRGGBB" format
+    static Color fromString(const std::wstring& color);
+};
+
 struct RANGERS_ENGINE_API Vector
 {
     Vector();
@@ -49,7 +72,7 @@ struct RANGERS_ENGINE_API BeizerCurve
 {
     BeizerCurve();
     BeizerCurve(const Vector& p0, const Vector& p1, const Vector& p2, const Vector& p3);
-    
+
     Vector p0, p1, p2, p3;
 };
 

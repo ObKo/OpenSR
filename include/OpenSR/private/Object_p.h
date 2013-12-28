@@ -37,7 +37,7 @@ public:
 
     int layer;
     mutable boost::recursive_mutex mutex;
-    int color;
+    Color color;
     bool needUpdate;
     Object *parent;
     std::list<boost::shared_ptr<Object> > children;

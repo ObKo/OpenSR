@@ -20,6 +20,7 @@
 
 #include "OpenSR/Texture.h"
 #include "OpenSR/ResourceManager.h"
+#include <OpenSR/Log.h>
 
 #include <cmath>
 
@@ -67,6 +68,99 @@ BeizerCurve::BeizerCurve()
 BeizerCurve::BeizerCurve(const Vector& p0, const Vector& p1, const Vector& p2, const Vector& p3):
     p0(p0), p1(p1), p2(p2), p3(p3)
 {
+}
+
+Color::Color()
+{
+    r = 1.0f;
+    g = 1.0f;
+    b = 1.0f;
+    a = 1.0f;
+}
+
+Color::Color(float red, float green, float blue, float alpha)
+{
+    r = std::min(std::max(red, 0.0f), 1.0f);
+    g = std::min(std::max(green, 0.0f), 1.0f);
+    b = std::min(std::max(blue, 0.0f), 1.0f);
+    a = std::min(std::max(alpha, 0.0f), 1.0f);
+}
+
+Color Color::fromUInt(uint32_t color)
+{
+    return Color(((color >> 16) & 0xFF) / 255.0f,
+                 ((color >> 8) & 0xFF) / 255.0f,
+                 ((color) & 0xFF) / 255.0f,
+                 ((color >> 24) & 0xFF) / 255.0f);
+}
+
+Color Color::fromString(const std::string& color)
+{
+    if (color.at(0) != '#')
+    {
+        Log::warning() << "Invalid color string: " << color;
+        return Color();
+    }
+
+    Color c;
+    try
+    {
+        if (color.length() == 7)
+            c = fromUInt(std::stoul(color.substr(1), 0, 16) | 0xFF000000);
+        else if (color.length() == 9)
+            c = fromUInt(std::stoul(color.substr(1), 0, 16));
+        else
+            Log::warning() << "Invalid color string: " << color;
+
+    }
+    catch (std::invalid_argument &e)
+    {
+        Log::warning() << "Invalid color string: " << color;
+    }
+    return c;
+}
+
+Color Color::fromString(const std::wstring& color)
+{
+    if (color.at(0) != L'#')
+    {
+        Log::warning() << "Invalid color string: " << color;
+        return Color();
+    }
+
+    Color c;
+    try
+    {
+        if (color.length() == 7)
+            c = fromUInt(std::stoul(color.substr(1), 0, 16) | 0xFF000000);
+        else if (color.length() == 9)
+            c = fromUInt(std::stoul(color.substr(1), 0, 16));
+        else
+            Log::warning() << "Invalid color string: " << color;
+
+    }
+    catch (std::invalid_argument &e)
+    {
+        Log::warning() << "Invalid color string: " << color;
+    }
+    return c;
+}
+
+uint32_t Color::toRGB() const
+{
+    uint8_t red = uint8_t(std::min(std::max(r, 0.0f), 1.0f) * 255.0f);
+    uint8_t green = uint8_t(std::min(std::max(g, 0.0f), 1.0f) * 255.0f);
+    uint8_t blue = uint8_t(std::min(std::max(b, 0.0f), 1.0f) * 255.0f);
+    return (red << 16) | (green << 8) | (blue);
+}
+
+uint32_t Color::toARGB() const
+{
+    uint8_t red = uint8_t(std::min(std::max(r, 0.0f), 1.0f) * 255.0f);
+    uint8_t green = uint8_t(std::min(std::max(g, 0.0f), 1.0f) * 255.0f);
+    uint8_t blue = uint8_t(std::min(std::max(b, 0.0f), 1.0f) * 255.0f);
+    uint8_t alpha = uint8_t(std::min(std::max(a, 0.0f), 1.0f) * 255.0f);
+    return (alpha << 24) | (red << 16) | (green << 8) | (blue);
 }
 
 Rect::Rect()

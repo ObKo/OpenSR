@@ -52,7 +52,7 @@ private:
     boost::shared_ptr<Texture> m_texture;
     boost::shared_ptr<Texture> m_cloud;
 
-    uint32_t m_ambientColor;
+    Color m_ambientColor;
     float m_speed;
     float m_cloudSpeed;
     float m_size;

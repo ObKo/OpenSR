@@ -154,9 +154,9 @@ boost::shared_ptr<Texture> PlanetManager::getPlanetImage(boost::shared_ptr<Plane
                     a = outa;
                 }
 
-                r *= 1.3f + ((style->ambientColor >> 16) & 0xff) / 255.0f * 0.5f;
-                g *= 1.3f + ((style->ambientColor >> 8) & 0xff) / 255.0f * 0.5f;
-                b *= 1.3f + (style->ambientColor & 0xff) / 255.0f * 0.5f;
+                r *= 1.3f + style->ambientColor.r * 0.5f;
+                g *= 1.3f + style->ambientColor.g * 0.5f;
+                b *= 1.3f + style->ambientColor.b * 0.5f;
 
                 if (tr >= 0.23)
                     a = (0.25f - tr) * 50.0f;

@@ -54,7 +54,7 @@ struct ObjectWrap: Object, boost::python::wrapper<Object>
 
     static void setColor(Object& self, boost::python::object pos)
     {
-        boost::python::extract<uint32_t> u(pos);
+        boost::python::extract<Color> u(pos);
         boost::python::extract<boost::python::tuple> t(pos);
         if (u.check())
         {
@@ -65,19 +65,19 @@ struct ObjectWrap: Object, boost::python::wrapper<Object>
             boost::python::tuple p = t;
             if (boost::python::len(p) == 3)
             {
-                self.setColor(boost::python::extract<float>(p[0]), boost::python::extract<float>(p[1]),
-                              boost::python::extract<float>(p[2]));
+                self.setColor(Color(boost::python::extract<float>(p[0]), boost::python::extract<float>(p[1]),
+                                    boost::python::extract<float>(p[2])));
             }
             else
             {
-                self.setColor(boost::python::extract<float>(p[0]), boost::python::extract<float>(p[1]),
-                              boost::python::extract<float>(p[2]), boost::python::extract<float>(p[3]));
+                self.setColor(Color(boost::python::extract<float>(p[0]), boost::python::extract<float>(p[1]),
+                                    boost::python::extract<float>(p[2]), boost::python::extract<float>(p[3])));
             }
         }
         else
         {
             //FIXME: Ugly way to throw TypeError
-            self.setColor(boost::python::extract<uint32_t>(pos));
+            self.setColor(boost::python::extract<Color>(pos));
         }
     }
 

@@ -38,7 +38,7 @@ public:
 
     virtual void processMain();
     //! Set default text color
-    virtual void setColor(uint32_t color);
+    virtual void setColor(const Color& color);
 
 protected:
     ColorLabel(ColorLabelPrivate &p);

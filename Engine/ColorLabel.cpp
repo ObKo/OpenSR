@@ -92,9 +92,9 @@ void ColorLabel::processMain()
     RANGERS_D(ColorLabel);
 
     if (!d->wordWrap)
-        d->region = TextureRegion(d->font->renderColoredText(d->text, (d->color >> 8) & 0xffffff));
+        d->region = TextureRegion(d->font->renderColoredText(d->text, d->color.toRGB()));
     else
-        d->region = TextureRegion(d->font->renderColoredText(d->text, (d->color >> 8) & 0xffffff, d->width));
+        d->region = TextureRegion(d->font->renderColoredText(d->text, d->color.toRGB(), d->width));
 
     if (!d->fixedSize)
     {
@@ -105,7 +105,7 @@ void ColorLabel::processMain()
     Sprite::processMain();
 }
 
-void ColorLabel::setColor(uint32_t color)
+void ColorLabel::setColor(const Color& color)
 {
     markToUpdate();
     Object::setColor(color);

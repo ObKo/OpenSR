@@ -57,7 +57,7 @@ struct RANGERS_ENGINE_API ButtonStyle
     ResourceDescriptor normal;
     ResourceDescriptor hovered;
     ResourceDescriptor pressed;
-    int color;
+    Color color;
     FontDescriptor font;
     Rect contentRect;
     std::wstring clickSound;
@@ -71,7 +71,7 @@ struct RANGERS_ENGINE_API CheckBoxStyle
     ResourceDescriptor hovered;
     ResourceDescriptor checkedNormal;
     ResourceDescriptor checkedHovered;
-    int color;
+    Color color;
     FontDescriptor font;
 };
 
@@ -81,14 +81,14 @@ struct RANGERS_ENGINE_API RadioButtonStyle
     ResourceDescriptor hovered;
     ResourceDescriptor selectedNormal;
     ResourceDescriptor selectedHovered;
-    int color;
+    Color color;
     FontDescriptor font;
 };
 
 struct RANGERS_ENGINE_API LineEditStyle
 {
     ResourceDescriptor background;
-    int color;
+    Color color;
     FontDescriptor font;
     Rect contentRect;
 };
