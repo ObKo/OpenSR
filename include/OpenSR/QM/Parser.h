@@ -16,19 +16,20 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef OPENSR_PARSER_H
-#define OPENSR_PARSER_H
+#ifndef RANGERS_QM_PARSER_H
+#define RANGERS_QM_PARSER_H
 
 #include <list>
 #include <map>
-#include <QString>
+
+#include "QM.h"
 
 namespace Rangers
 {
 namespace QuestPlayer
 {
 //FIXME: better way for token abstraction?
-class Token
+class QM_API Token
 {
 
 public:
@@ -60,10 +61,10 @@ public:
     Token apply(const Token &a, const Token &b, const std::map<uint32_t, float> &parameters) const;
 };
 
-std::list<Token> tokenize(const QString& exp);
-float eval(const std::list<Token>& exp, const std::map<uint32_t, float> &parameters);
-float eval(const QString& exp, const std::map<uint32_t, float> &parameters);
+QM_API std::list<Token> tokenize(const std::string& exp);
+QM_API float eval(const std::list<Token>& exp, const std::map<uint32_t, float> &parameters);
+QM_API float eval(const std::string& exp, const std::map<uint32_t, float> &parameters);
 }
 }
 
-#endif // OPENSR_PARSER_H
+#endif

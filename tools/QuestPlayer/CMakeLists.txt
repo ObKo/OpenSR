@@ -7,7 +7,6 @@ SET(QP_SOURCES
     main.cpp
     PlayerWindow.cpp
     QuestPlayer.cpp
-    Parser.cpp
 )
 
 SET(QP_UI

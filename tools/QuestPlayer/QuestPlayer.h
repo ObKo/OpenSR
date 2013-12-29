@@ -21,7 +21,7 @@
 
 #include <QtCore/QObject>
 
-#include <OpenSR/QM.h>
+#include <OpenSR/QM/QM.h>
 
 class QString;
 namespace Rangers

@@ -18,7 +18,7 @@
 
 #include "QuestPlayer.h"
 
-#include "Parser.h"
+#include <OpenSR/QM/Parser.h>
 
 #include <fstream>
 
@@ -57,7 +57,7 @@ QString QuestPlayer::substituteValues(const QString &str) const
     while (i.hasNext())
     {
         QRegularExpressionMatch match = i.next();
-        QString value = "<font color=\"blue\">" + QString::number((int32_t)round(eval(match.captured(1), m_parameters))) + "</font>";
+        QString value = "<font color=\"blue\">" + QString::number((int32_t)round(eval(match.captured(1).toStdString(), m_parameters))) + "</font>";
         result.replace(match.capturedStart() + deltaPos, match.capturedLength(), value);
         deltaPos += value.length() - match.capturedLength();
     }
@@ -67,7 +67,7 @@ QString QuestPlayer::substituteValues(const QString &str) const
     while (i.hasNext())
     {
         QRegularExpressionMatch match = i.next();
-        QString value = "<font color=\"blue\">" + QString::number((int32_t)round(eval(match.captured(0), m_parameters))) + "</font>";
+        QString value = "<font color=\"blue\">" + QString::number((int32_t)round(eval(match.captured(0).toStdString(), m_parameters))) + "</font>";
         result.replace(match.capturedStart() + deltaPos, match.capturedLength(), value);
         deltaPos += value.length() - match.capturedLength();
     }
@@ -104,7 +104,7 @@ void QuestPlayer::resetQuest()
     for (const std::pair<uint32_t, QM::Parameter>& p : m_quest.parameters)
     {
         QString start = QString::fromStdWString(p.second.start);
-        float value = eval(start, std::map<uint32_t, float>());
+        float value = eval(start.toStdString(), std::map<uint32_t, float>());
         m_parameters[p.first] = value;
         m_parametersVisibility[p.first] = true;
     }
@@ -135,7 +135,7 @@ void QuestPlayer::setLocation(uint32_t location)
     {
         if (m_currentLocation.descriptionExpression && !m_currentLocation.expression.empty())
         {
-            int32_t t = (int32_t)eval(QString::fromStdWString(m_currentLocation.expression), m_parameters);
+            int32_t t = (int32_t)eval(QString::fromStdWString(m_currentLocation.expression).toStdString(), m_parameters);
             if ((t > 10) || (m_currentLocation.descriptions.at(t - 1).empty()))
             {
                 qCritical() << "Invalid location description selection in location " << m_currentLocation.id;
@@ -300,7 +300,7 @@ void QuestPlayer::checkTransitions()
             cond = cond && checkCondition(c);
         }
         bool passed = (t.passCount == 0) || !((m_transitionCounts.find(t.id) != m_transitionCounts.end()) && (m_transitionCounts.at(t.id) >= t.passCount));
-        if (passed && cond && (t.globalCondition.empty() || eval(QString::fromStdWString(t.globalCondition), m_parameters)))
+        if (passed && cond && (t.globalCondition.empty() || eval(QString::fromStdWString(t.globalCondition).toStdString(), m_parameters)))
         {
             m_possibleTransitions.push_back(i);
         }
@@ -374,7 +374,7 @@ void QuestPlayer::applyModifier(const QM::Modifier& m)
         break;
     case QM::Modifier::OPERATION_EXPRESSION:
         if (!m.expression.empty())
-            value = eval(QString::fromStdWString(m.expression), m_oldParameters);
+            value = eval(QString::fromStdWString(m.expression).toStdString(), m_oldParameters);
         else
             value = m_oldParameters[m.param];
         break;

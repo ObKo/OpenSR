@@ -16,12 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "Parser.h"
+#include "OpenSR/QM/Parser.h"
 
 #include <algorithm>
 #include <map>
 #include <stack>
-#include <QDebug>
+#include <cctype>
 
 namespace Rangers
 {
@@ -160,21 +160,21 @@ Token Token::apply(const Token& a, const Token& b, const std::map<uint32_t, floa
 }
 
 //FIXME: Seems only integers are valid in expressions...
-int32_t getNumber(int &pos, const QString& exp)
+int32_t getNumber(int &pos, const std::string& exp)
 {
-    uint32_t value = 0.0f;
-    bool minus = false;
-    if (exp[pos] == '-')
-        minus = true;
-
-    for (; (pos < exp.length()) && ((exp[pos] >= '0') && (exp[pos] <= '9')); pos++)
+    size_t offset = 0;
+    try
     {
-        value = value * 10 + (exp[pos].toLatin1() - '0');
+        int32_t i = std::stoi(exp.substr(pos), &offset);
+        pos += offset;
+        return i;
     }
-
-    return minus ? -value : value;
+    catch (std::invalid_argument & e)
+    {
+        return 0;
+    }
 }
-std::list<Token> tokenize(const QString& exp)
+std::list<Token> tokenize(const std::string& exp)
 {
     int pos = 0;
     Token prev;
@@ -184,7 +184,7 @@ std::list<Token> tokenize(const QString& exp)
 
     while (pos < exp.length())
     {
-        while ((pos < exp.length()) && (exp[pos].isSpace())) pos++;
+        while ((pos < exp.length()) && (std::isspace(exp[pos]))) pos++;
         if (pos == exp.length())
             break;
 
@@ -271,7 +271,7 @@ std::list<Token> tokenize(const QString& exp)
                 t.value.id = getNumber(pos, exp);
                 if (exp[pos] != ']')
                 {
-                    qCritical() << "Unclosed parameter token in \"" << exp << "\"";
+                    std::cerr << "Unclosed parameter token in \"" << exp << "\"";
                     return std::list<Token>();
                 }
                 pos++;
@@ -290,7 +290,7 @@ std::list<Token> tokenize(const QString& exp)
                 {
                     if ((exp[pos] == '.') && (exp[pos + 1] != '.'))
                     {
-                        qCritical() << "Invalid range token in \"" << exp << "\"";
+                        std::cerr << "Invalid range token in \"" << exp << "\"";
                         return std::list<Token>();
                     }
                     if (exp[pos] == 'h')
@@ -300,7 +300,7 @@ std::list<Token> tokenize(const QString& exp)
                     v2 = getNumber(pos, exp);
                     if (exp[pos] != ']')
                     {
-                        qCritical() << "Unclosed range token in \"" << exp << "\"";
+                        std::cerr << "Unclosed range token in \"" << exp << "\"";
                         return std::list<Token>();
                     }
                     t = Token(v1, v2);
@@ -317,7 +317,7 @@ std::list<Token> tokenize(const QString& exp)
                     }
                     if (exp[pos] != ']')
                     {
-                        qCritical() << "Unclosed list token in \"" << exp << "\"";
+                        std::cerr << "Unclosed list token in \"" << exp << "\"";
                         return std::list<Token>();
                     }
                     pos++;
@@ -325,48 +325,48 @@ std::list<Token> tokenize(const QString& exp)
             }
             else
             {
-                qCritical() << "Invalid token in \"" << exp << "\"";
+                std::cerr << "Invalid token in \"" << exp << "\"";
                 return std::list<Token>();
             }
         }
-        else if (exp.mid(pos, 3) == "mod")
+        else if (exp.substr(pos, 3) == "mod")
         {
             t.type = Token::TOKEN_OP_MOD;
             pos += 3;
         }
-        else if (exp.mid(pos, 3) == "div")
+        else if (exp.substr(pos, 3) == "div")
         {
             t.type = Token::TOKEN_OP_DIV;
             pos += 3;
         }
-        else if (exp.mid(pos, 3) == "and")
+        else if (exp.substr(pos, 3) == "and")
         {
             t.type = Token::TOKEN_AND;
             pos += 3;
         }
-        else if (exp.mid(pos, 3) == "not")
+        else if (exp.substr(pos, 3) == "not")
         {
             t.type = Token::TOKEN_NOT;
             pos += 3;
         }
-        else if (exp.mid(pos, 2) == "or")
+        else if (exp.substr(pos, 2) == "or")
         {
             t.type = Token::TOKEN_OR;
             pos += 2;
         }
-        else if (exp.mid(pos, 2) == "to")
+        else if (exp.substr(pos, 2) == "to")
         {
             t.type = Token::TOKEN_TO;
             pos += 2;
         }
-        else if (exp.mid(pos, 2) == "in")
+        else if (exp.substr(pos, 2) == "in")
         {
             t.type = Token::TOKEN_IN;
             pos += 2;
         }
         else
         {
-            qCritical() << "Invalid range token in \"" << exp << "\"";
+            std::cerr << "Invalid range token in \"" << exp << "\"";
             return std::list<Token>();
         }
 
@@ -386,7 +386,7 @@ std::list<Token> tokenize(const QString& exp)
             {
                 if (opStack.empty())
                 {
-                    qCritical() << "Parenthesis error in \"" << exp << "\"";
+                    std::cerr << "Parenthesis error in \"" << exp << "\"";
                     return std::list<Token>();
                 }
                 t2 = opStack.top();
@@ -421,7 +421,7 @@ std::list<Token> tokenize(const QString& exp)
         opStack.pop();
         if (t.type == Token::TOKEN_OPEN_PAR)
         {
-            qCritical() << "Parenthesis error in \"" << exp << "\"";
+            std::cerr << "Parenthesis error in \"" << exp << "\"";
             return std::list<Token>();
         }
         result.push_back(t);
@@ -463,7 +463,7 @@ float eval(const std::list< Token >& exp, const std::map<uint32_t, float>& param
         return r.value.number;
 }
 
-float eval(const QString& exp, const std::map<uint32_t, float>& parameters)
+float eval(const std::string& exp, const std::map<uint32_t, float>& parameters)
 {
     return eval(tokenize(exp), parameters);
 }

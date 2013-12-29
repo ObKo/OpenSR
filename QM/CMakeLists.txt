@@ -1,5 +1,6 @@
 SET(QM_SOURCES
     QM.cpp
+    Parser.cpp
 )
 
 INCLUDE_DIRECTORIES(

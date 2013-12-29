@@ -36,7 +36,7 @@
 #ifdef WIN32
 #define QM_API
 #else
-#define QM_API extern
+#define QM_API
 #endif
 #endif
 
@@ -44,7 +44,7 @@ namespace Rangers
 {
 namespace QM
 {
-struct Parameter
+struct QM_API Parameter
 {
     enum Type {PARAMETER_NORMAL = 0, PARAMETER_FAIL = 1, PARAMETER_SUCCESS = 2, PARAMETER_DEATH = 3};
     struct Range
@@ -74,7 +74,7 @@ struct Parameter
     std::wstring start;
 };
 
-struct Modifier
+struct QM_API Modifier
 {
     enum Operation {OPERATION_ASSIGN, OPERATION_CHANGE, OPERATION_PERCENT, OPERATION_EXPRESSION};
     enum Visibility {VISIBILITY_NO_CHANGE, VISIBILITY_HIDE, VISIBILITY_SHOW};
@@ -87,7 +87,7 @@ struct Modifier
     std::wstring expression;
 };
 
-struct Transition
+struct QM_API Transition
 {
     struct Condition
     {
@@ -123,7 +123,7 @@ struct Transition
     std::wstring description;
 };
 
-struct Location
+struct QM_API Location
 {
     enum Type {LOCATION_NORMAL, LOCATION_START, LOCATION_FAIL, LOCATION_SUCCESS};
 
@@ -148,7 +148,7 @@ struct Location
     std::vector<Transition> transitions;
 };
 
-struct QuestInfo
+struct QM_API QuestInfo
 {
     uint8_t races;
     bool doneImmediately;
@@ -162,7 +162,7 @@ struct QuestInfo
     std::wstring descriptionText;
 };
 
-struct Quest
+struct QM_API Quest
 {
     enum Race {RACE_MALOQ = 0x01, RACE_PELENG = 0x02, RACE_HUMAN = 0x04, RACE_FAEYAN = 0x08, RACE_GAAL = 0x10, RACE_NONE = 0x40, RACE_ANY = 0xFF};
     enum PlayerType {PLAYER_TRADER = 0x01, PLAYER_PIRATE = 0x02, PLAYER_WARRIOR = 0x04, PLAYER_ANY = 0xFF};
@@ -184,10 +184,10 @@ struct Quest
 };
 
 //! Load whole quest.
-Quest readQuest(std::istream& s);
+QM_API Quest readQuest(std::istream& s);
 
 //! Load only information about quest
-QuestInfo readQuestInfo(std::istream& s);
+QM_API QuestInfo readQuestInfo(std::istream& s);
 }
 }
 
