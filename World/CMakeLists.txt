@@ -40,6 +40,7 @@ SET(WORLD_SOURCES
     SystemManager.cpp
     StyleManager.cpp
     SpaceObjectWidget.cpp
+    QuestPlayer.cpp
 )
 
 INCLUDE_DIRECTORIES(

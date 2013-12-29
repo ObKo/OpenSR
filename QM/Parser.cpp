@@ -25,7 +25,7 @@
 
 namespace Rangers
 {
-namespace QuestPlayer
+namespace QM
 {
 namespace
 {

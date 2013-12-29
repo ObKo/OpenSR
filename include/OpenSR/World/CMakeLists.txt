@@ -39,6 +39,7 @@ SET(WORLD_HEADERS
     WorldHelper.h
     WorldManager.h
     WorldObject.h
+    QuestPlayer.h
     world-global.h
 )
 

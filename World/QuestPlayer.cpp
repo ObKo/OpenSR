@@ -19,19 +19,20 @@
 #include "QuestPlayer.h"
 
 #include <OpenSR/QM/Parser.h>
+#include <OpenSR/ResourceManager.h>
+#include <OpenSR/Log.h>
+#include <OpenSR/libRanger.h>
+
+#include <boost/algorithm/string.hpp>
 
 #include <fstream>
 
-#include <QStringList>
-#include <QDebug>
-#include <QRegularExpression>
-
 namespace Rangers
 {
-namespace QuestPlayer
+namespace World
 {
 
-QuestPlayer::QuestPlayer(QObject *parent): QObject(parent)
+QuestPlayer::QuestPlayer()
 {
 }
 
@@ -40,16 +41,11 @@ QuestPlayer::~QuestPlayer()
 
 }
 
-QM::Location QuestPlayer::currentLocation() const
-{
-    return m_currentLocation;
-}
-
-QString QuestPlayer::substituteValues(const QString &str) const
+std::wstring QuestPlayer::substituteValues(const std::wstring &str) const
 {
     //TODO: Use <regex>
-    QString result = str;
-    QRegularExpression valueExp("\\[p(\\d)+\\]");
+    std::wstring result = str;
+    /*QRegularExpression valueExp("\\[p(\\d)+\\]");
     QRegularExpression expExp("\\{(.+?)\\}");
     int deltaPos = 0;
 
@@ -57,7 +53,7 @@ QString QuestPlayer::substituteValues(const QString &str) const
     while (i.hasNext())
     {
         QRegularExpressionMatch match = i.next();
-        QString value = "<font color=\"blue\">" + QString::number((int32_t)round(QM::eval(match.captured(1).toStdString(), m_parameters))) + "</font>";
+        QString value = "<font color=\"blue\">" + QString::number((int32_t)round(eval(match.captured(1).toStdString(), m_parameters))) + "</font>";
         result.replace(match.capturedStart() + deltaPos, match.capturedLength(), value);
         deltaPos += value.length() - match.capturedLength();
     }
@@ -67,7 +63,7 @@ QString QuestPlayer::substituteValues(const QString &str) const
     while (i.hasNext())
     {
         QRegularExpressionMatch match = i.next();
-        QString value = "<font color=\"blue\">" + QString::number((int32_t)round(QM::eval(match.captured(0).toStdString(), m_parameters))) + "</font>";
+        QString value = "<font color=\"blue\">" + QString::number((int32_t)round(eval(match.captured(0).toStdString(), m_parameters))) + "</font>";
         result.replace(match.capturedStart() + deltaPos, match.capturedLength(), value);
         deltaPos += value.length() - match.capturedLength();
     }
@@ -81,15 +77,19 @@ QString QuestPlayer::substituteValues(const QString &str) const
     result.replace("<Ranger>", "<font color=\"blue\">" + QString::fromStdWString(m_quest.ranger) + "</font>");
 
     result.replace("<clr>", "<font color=\"blue\">");
-    result.replace("<clrEnd>", "</font>");
+    result.replace("<clrEnd>", "</font>");*/
 
     return result;
 }
 
-void QuestPlayer::loadQuest(const QString& file)
+void QuestPlayer::loadQuest(const std::wstring& file)
 {
-    std::ifstream f(file.toStdString());
-    m_quest = Rangers::QM::readQuest(f);
+    boost::shared_ptr<std::istream> s = ResourceManager::instance().getFileStream(file);
+
+    if (!s)
+        return;
+
+    m_quest = Rangers::QM::readQuest(*s);
 
     resetQuest();
 }
@@ -101,10 +101,14 @@ void QuestPlayer::resetQuest()
     m_transitionCounts.clear();
     m_locationDescriptionsCount.clear();
 
+    m_transition = false;
+    m_completed = false;
+    m_failed = false;
+    m_death = false;
+
     for (const std::pair<uint32_t, QM::Parameter>& p : m_quest.parameters)
     {
-        QString start = QString::fromStdWString(p.second.start);
-        float value = QM::eval(start.toStdString(), std::map<uint32_t, float>());
+        float value = QM::eval(toASCII(p.second.start), std::map<uint32_t, float>());
         m_parameters[p.first] = value;
         m_parametersVisibility[p.first] = true;
     }
@@ -116,7 +120,7 @@ void QuestPlayer::setLocation(uint32_t location)
 {
     if (m_quest.locations.find(location) == m_quest.locations.end())
     {
-        qWarning() << "Invalid location: " << location;
+        Log::error() << "[Quest] Invalid location: " << location;
         return;
     }
     m_currentLocation = m_quest.locations.at(location);
@@ -135,14 +139,14 @@ void QuestPlayer::setLocation(uint32_t location)
     {
         if (m_currentLocation.descriptionExpression && !m_currentLocation.expression.empty())
         {
-            int32_t t = (int32_t)QM::eval(QString::fromStdWString(m_currentLocation.expression).toStdString(), m_parameters);
+            int32_t t = (int32_t)QM::eval(toASCII(m_currentLocation.expression), m_parameters);
             if ((t > 10) || (m_currentLocation.descriptions.at(t - 1).empty()))
             {
-                qCritical() << "Invalid location description selection in location " << m_currentLocation.id;
-                m_locationText = "";
+                Log::error() << "[Quest] Invalid location description selection in location " << m_currentLocation.id;
+                m_currentText = std::wstring();
             }
             else
-                m_locationText = substituteValues(QString::fromStdWString(m_currentLocation.descriptions.at(t - 1)));
+                m_currentText = substituteValues(m_currentLocation.descriptions.at(t - 1));
         }
         else
         {
@@ -163,21 +167,21 @@ void QuestPlayer::setLocation(uint32_t location)
 
             m_locationDescriptionsCount[m_currentLocation.id] = value;
 
-            m_locationText = substituteValues(QString::fromStdWString(m_currentLocation.descriptions.at(value)));
+            m_currentText = substituteValues(m_currentLocation.descriptions.at(value));
         }
     }
 
-    qDebug() << "L" << m_currentLocation.id;
+    Log::debug() << "[Quest] L" << m_currentLocation.id;
 
     if ((m_possibleTransitions.size() == 1) && m_currentLocation.transitions[m_possibleTransitions.front()].title.empty() &&
             m_currentTransition.description.empty())
-        startTransition(m_possibleTransitions.front());
+        transit(m_possibleTransitions.front());
     else if (m_currentLocation.type == QM::Location::LOCATION_SUCCESS)
-        emit(questCompleted(m_locationText));
+        m_completed = true;
     else if (m_currentLocation.type == QM::Location::LOCATION_FAIL)
-        emit(questFailed(m_locationText, m_currentLocation.death));
+        m_failed = true;
     else if (checkCriticalParameters())
-        emit(locationChanged());
+        m_transition = false;
 }
 
 bool QuestPlayer::checkCriticalParameters()
@@ -198,16 +202,16 @@ bool QuestPlayer::checkCriticalParameters()
 
         if (crit)
         {
+            m_currentText = pr.critText;
             switch (pr.type)
             {
             case QM::Parameter::PARAMETER_DEATH:
-                emit(questFailed(substituteValues(QString::fromStdWString(pr.critText)), true));
-                break;
+                m_death = true;
             case QM::Parameter::PARAMETER_FAIL:
-                emit(questFailed(substituteValues(QString::fromStdWString(pr.critText)), false));
+                m_failed = true;
                 break;
             case QM::Parameter::PARAMETER_SUCCESS:
-                emit(questCompleted(substituteValues(QString::fromStdWString(pr.critText))));
+                m_completed = true;
                 break;
             }
             return false;
@@ -216,25 +220,25 @@ bool QuestPlayer::checkCriticalParameters()
     return true;
 }
 
-QString QuestPlayer::locationText() const
+std::wstring QuestPlayer::currentText() const
 {
-    return m_locationText;
+    return m_currentText;
 }
 
-QStringList QuestPlayer::visibleParameters() const
+std::vector<std::wstring> QuestPlayer::visibleParameters() const
 {
-    QStringList params;
+    std::vector<std::wstring> params;
     for (const std::pair<uint32_t, float>& p : m_parameters)
     {
         if ((p.second != 0 || m_quest.parameters.at(p.first).showOnZero) && m_parametersVisibility.at(p.first))
         {
-            QString value;
+            std::wstring value;
             for (const Rangers::QM::Parameter::Range & r : m_quest.parameters.at(p.first).ranges)
             {
                 int32_t v = (int32_t)round(p.second);
                 if ((v >= r.from) && (v <= r.to))
                 {
-                    value = QString::fromStdWString(r.text).replace("<>", QString::number(v));
+                    value = boost::algorithm::replace_all_copy(r.text, "<>", std::to_string(v));
                     break;
                 }
             }
@@ -300,7 +304,7 @@ void QuestPlayer::checkTransitions()
             cond = cond && checkCondition(c);
         }
         bool passed = (t.passCount == 0) || !((m_transitionCounts.find(t.id) != m_transitionCounts.end()) && (m_transitionCounts.at(t.id) >= t.passCount));
-        if (passed && cond && (t.globalCondition.empty() || QM::eval(QString::fromStdWString(t.globalCondition).toStdString(), m_parameters)))
+        if (passed && cond && (t.globalCondition.empty() || QM::eval(toASCII(t.globalCondition), m_parameters)))
         {
             m_possibleTransitions.push_back(i);
         }
@@ -310,37 +314,37 @@ void QuestPlayer::checkTransitions()
     }
 }
 
-std::vector<std::pair<uint32_t, std::pair<QString, bool> > > QuestPlayer::visibleTransitions()
+std::vector<std::tuple<uint32_t, std::wstring, bool> > QuestPlayer::visibleTransitions() const
 {
-    std::vector<std::pair<uint32_t, std::pair<QString, bool> > > r;
-    for (uint32_t t : m_possibleTransitions)
-    {
-        const QM::Transition &trans = m_currentLocation.transitions.at(t);
+    std::vector<std::tuple<uint32_t, std::wstring, bool > > r;
 
-        if (!trans.title.empty())
+    if (!m_transition)
+    {
+        for (uint32_t t : m_possibleTransitions)
         {
-            r.push_back(std::pair<uint32_t, std::pair<QString, bool> >(t,
-                        std::pair<QString, bool>(substituteValues(QString::fromStdWString(trans.title)),
-                                                 true)));
+            const QM::Transition &trans = m_currentLocation.transitions.at(t);
+
+            if (!trans.title.empty())
+                r.push_back(std::tuple<uint32_t, std::wstring, bool>(t, substituteValues(trans.title), true));
+            else
+                r.push_back(std::tuple<uint32_t, std::wstring, bool>(t, L"Next", true));
         }
-        else
-            r.push_back(std::pair<uint32_t, std::pair<QString, bool> >(t,
-                        std::pair<QString, bool>(tr("Next"),
-                                                 true)));
-    }
 
-    for (uint32_t t : m_alwaysVisibleTransitions)
-    {
-        r.push_back(std::pair<uint32_t, std::pair<QString, bool> >(t,
-                    std::pair<QString, bool>(substituteValues(QString::fromStdWString(m_currentLocation.transitions.at(t).title)),
-                                             false)));
-    }
+        for (uint32_t t : m_alwaysVisibleTransitions)
+        {
+            r.push_back(std::tuple<uint32_t, std::wstring, bool>(t, substituteValues(m_currentLocation.transitions.at(t).title), false));
+        }
 
-    std::sort(r.begin(), r.end(),
-              [&](const std::pair<uint32_t, std::pair<QString, bool> >& a, const std::pair<uint32_t, std::pair<QString, bool> >& b) -> bool
+        std::sort(r.begin(), r.end(),
+                  [&](const std::tuple<uint32_t, std::wstring, bool>& a, const std::tuple<uint32_t, std::wstring, bool>& b) -> bool
+        {
+            return m_currentLocation.transitions.at(std::get<0>(a)).position < m_currentLocation.transitions.at(std::get<0>(b)).position;
+        });
+    }
+    else
     {
-        return m_currentLocation.transitions.at(a.first).position < m_currentLocation.transitions.at(b.first).position;
-    });
+        r.push_back(std::tuple<uint32_t, std::wstring, bool>(0, L"Next", true));
+    }
 
     return r;
 }
@@ -374,7 +378,7 @@ void QuestPlayer::applyModifier(const QM::Modifier& m)
         break;
     case QM::Modifier::OPERATION_EXPRESSION:
         if (!m.expression.empty())
-            value = QM::eval(QString::fromStdWString(m.expression).toStdString(), m_oldParameters);
+            value = QM::eval(toASCII(m.expression), m_oldParameters);
         else
             value = m_oldParameters[m.param];
         break;
@@ -384,35 +388,42 @@ void QuestPlayer::applyModifier(const QM::Modifier& m)
     m_parameters[m.param] = std::max(m_parameters[m.param], (float)m_quest.parameters.at(m.param).min);
 }
 
-void QuestPlayer::startTransition(uint32_t num)
+void QuestPlayer::transit(uint32_t num)
 {
-    if (m_currentLocation.transitions.size() <= num)
-        return;
-
-    m_currentTransition = m_currentLocation.transitions[num];
-
-    m_oldParameters = m_parameters;
-
-    for (const QM::Modifier & m : m_currentTransition.modifiers)
-    {
-        applyModifier(m);
-    }
-
-    qDebug() << "P" << m_currentTransition.id;
-
-    m_locationText = substituteValues(QString::fromStdWString(m_currentTransition.description));
-
-    if (m_quest.locations.at(m_currentTransition.to).empty)
-    {
-        finishTransition();
-    }
-    else if (m_currentTransition.description.empty())
+    if (m_transition)
     {
         finishTransition();
     }
     else
     {
-        emit(transitionText(substituteValues(QString::fromStdWString(m_currentTransition.description))));
+        if (m_currentLocation.transitions.size() <= num)
+            return;
+
+        m_currentTransition = m_currentLocation.transitions[num];
+
+        m_oldParameters = m_parameters;
+
+        for (const QM::Modifier & m : m_currentTransition.modifiers)
+        {
+            applyModifier(m);
+        }
+
+        Log::debug() << "[Quest] P" << m_currentTransition.id;
+
+        m_currentText = substituteValues(m_currentTransition.description);
+
+        if (m_quest.locations.at(m_currentTransition.to).empty)
+        {
+            finishTransition();
+        }
+        else if (m_currentTransition.description.empty())
+        {
+            finishTransition();
+        }
+        else
+        {
+            m_transition = true;
+        }
     }
 }
 
@@ -492,5 +503,21 @@ void QuestPlayer::reduceTransitions()
         m_possibleTransitions.push_back(selected);
     }
 }
+
+bool QuestPlayer::death() const
+{
+    return m_death;
+}
+
+bool QuestPlayer::questCompleted() const
+{
+    return m_completed;
+}
+
+bool QuestPlayer::questFailed() const
+{
+    return m_failed;
+}
+
 }
 }

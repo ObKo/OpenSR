@@ -26,7 +26,7 @@
 
 namespace Rangers
 {
-namespace QuestPlayer
+namespace QM
 {
 //FIXME: better way for token abstraction?
 class QM_API Token
