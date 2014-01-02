@@ -40,7 +40,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->cloudSpeed->setValue(ui->planetWidget->cloudSpeed());
     ui->planetSize->setValue(ui->planetWidget->planetSize());
     ui->cloud->setChecked(ui->planetWidget->cloudEnabled());
-    ui->colorCorrection->setChecked(ui->planetWidget->colorCorrection());
+    ui->bumpMapping->setChecked(ui->planetWidget->bumpMapping());
     ui->solarAngle->setValue((int)(ui->planetWidget->solarAngle() * 180 / M_PI) - 90);
     ui->ring->setChecked(ui->planetWidget->ringEnabled());
     ui->ringBg->setChecked(ui->planetWidget->ringBackgroundEnabled());
@@ -60,7 +60,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->cloud, SIGNAL(toggled(bool)), this, SLOT(updateParams()));
     connect(ui->ring, SIGNAL(toggled(bool)), this, SLOT(updateParams()));
     connect(ui->ringBg, SIGNAL(toggled(bool)), this, SLOT(updateParams()));
-    connect(ui->colorCorrection, SIGNAL(toggled(bool)), this, SLOT(updateParams()));
+    connect(ui->bumpMapping, SIGNAL(toggled(bool)), this, SLOT(updateParams()));
     connect(ui->solarAngle, SIGNAL(valueChanged(int)), this, SLOT(updateParams()));
     connect(ui->ringOffsetX, SIGNAL(valueChanged(double)), this, SLOT(updateParams()));
     connect(ui->ringOffsetY, SIGNAL(valueChanged(double)), this, SLOT(updateParams()));
@@ -250,7 +250,7 @@ void MainWindow::updateParams()
     ui->planetWidget->setCloudSpeed(ui->cloudSpeed->value());
     ui->planetWidget->setPlanetSize(ui->planetSize->value());
     ui->planetWidget->setCloudEnabled(ui->cloud->isChecked());
-    ui->planetWidget->setColorCorrection(ui->colorCorrection->isChecked());
+    ui->planetWidget->setBumpMapping(ui->bumpMapping->isChecked());
     ui->planetWidget->setSolarAngle((ui->solarAngle->value() + 90) / 180.0 * M_PI);
     ui->planetWidget->setRingEnabled(ui->ring->isChecked());
     ui->planetWidget->setRingBackgroundEnabled(ui->ringBg->isChecked());

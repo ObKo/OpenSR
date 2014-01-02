@@ -275,9 +275,11 @@ void PlanetViewer::initializeGL()
     m_cloudArgument = glGetUniformLocation(m_shaderProgram, "cloud");
     m_cloudPhaseArgument = glGetUniformLocation(m_shaderProgram, "cloudPhase");
     m_cloudEnableArgument = glGetUniformLocation(m_shaderProgram, "cloudEnabled");
-    m_colorCorrectionArgument = glGetUniformLocation(m_shaderProgram, "colorCorrection");
+    m_bumpMappingArgument = glGetUniformLocation(m_shaderProgram, "bumpMapping");
     m_solarAngleArgument = glGetUniformLocation(m_shaderProgram, "solarAngle");
     m_ambientColorArgument = glGetUniformLocation(m_shaderProgram, "ambientColor");
+    m_pixelSizeArgument = glGetUniformLocation(m_shaderProgram, "pixelSize");
+    m_texPixelSizeArgument = glGetUniformLocation(m_shaderProgram, "texPixelSize");
 }
 
 void PlanetViewer::updateSize()
@@ -391,11 +393,13 @@ void PlanetViewer::paintGL()
     glUniform1i(m_textureArgument, 0);
     glUniform1i(m_cloudArgument, 1);
     glUniform1i(m_cloudEnableArgument, m_cloudEnabled);
-    glUniform1i(m_colorCorrectionArgument, m_colorCorrection);
+    glUniform1i(m_bumpMappingArgument, m_bumpMapping);
     glUniform1f(m_solarAngleArgument, (float)m_solarAngle);
 
     glUniform3f(m_ambientColorArgument, ((m_ambientColor >> 16) & 0xff) / 255.0f,
                 ((m_ambientColor >> 8) & 0xff) / 255.0f, ((m_ambientColor) & 0xff) / 255.0f);
+    glUniform1f(m_pixelSizeArgument, 1.0 / m_planetSize);
+    glUniform2f(m_texPixelSizeArgument, 1.0 / m_texture.width(), 1.0 / m_texture.height());
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, m_textureID);
@@ -468,14 +472,14 @@ QImage PlanetViewer::loadImage(const QString& file)
     return result;
 }
 
-bool PlanetViewer::colorCorrection() const
+bool PlanetViewer::bumpMapping() const
 {
-    return m_colorCorrection;
+    return m_bumpMapping;
 }
 
-void PlanetViewer::setColorCorrection(bool correction)
+void PlanetViewer::setBumpMapping(bool bump)
 {
-    m_colorCorrection = correction;
+    m_bumpMapping = bump;
 }
 
 void PlanetViewer::resizeGL(int width, int height)

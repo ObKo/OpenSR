@@ -43,7 +43,7 @@ public:
     int planetSize() const;
     bool cloudEnabled() const;
     bool ringEnabled() const;
-    bool colorCorrection() const;
+    bool bumpMapping() const;
     double solarAngle() const;
     QColor ambientColor() const;
     bool ringBackgroundEnabled() const;
@@ -54,7 +54,7 @@ public:
     void setCloudEnabled(bool enabled);
     void setRingEnabled(bool enabled);
     void setRingBackgroundEnabled(bool enabled);
-    void setColorCorrection(bool correction);
+    void setBumpMapping(bool bump);
     void setSolarAngle(double angle);
     void setCloudTexture(const QString& cloud);
     void setTexture(const QString& texture);
@@ -88,7 +88,7 @@ private:
     float m_phaseSpeed;
     float m_cloudPhaseSpeed;
     bool m_cloudEnabled;
-    bool m_colorCorrection;
+    bool m_bumpMapping;
     bool m_ringEnabled;
     bool m_ringBackgroundEnabled;
     float m_solarAngle;
@@ -113,9 +113,11 @@ private:
     GLuint m_textureArgument;
     GLuint m_cloudArgument;
     GLuint m_cloudEnableArgument;
-    GLuint m_colorCorrectionArgument;
+    GLuint m_bumpMappingArgument;
     GLuint m_solarAngleArgument;
     GLuint m_ambientColorArgument;
+    GLuint m_pixelSizeArgument;
+    GLuint m_texPixelSizeArgument;
 
 private Q_SLOTS:
     void rotatePlanet();

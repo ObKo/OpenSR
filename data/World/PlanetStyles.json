@@ -1,18 +1,20 @@
 {
    "earth" : {
-      "ambientColor" : "#C0C0FF",
-      "cloud" : "ORC/Planet2/Solar/cloud/c07.png",
-      "cloudSpeed" : -10.0,
+      "ambientColor" : "#97BFE3",
+      "cloud" : "ORC/Planet2/Solar/cloud/c04.png",
+      "cloudSpeed" : -20.0,
       "hasCloud" : true,
       "hasRing" : false,
       "hasRingBackground" : false,
       "size" : 150,
-      "speed" : -15.0,
+      "speed" : -10.0,
       "texture" : "ORC/Planet2/Solar/Earth.png"
    },
    "jupiter" : {
-      "ambientColor" : "#FFFF80",
-      "hasCloud" : false,
+      "ambientColor" : "#B3B58D",
+      "cloud" : "ORC/Planet2/Solar/cloud/c02.png",
+      "cloudSpeed" : -10.0,
+      "hasCloud" : true,
       "hasRing" : false,
       "hasRingBackground" : false,
       "size" : 200,
@@ -20,7 +22,7 @@
       "texture" : "ORC/Planet2/Solar/Jupiter.png"
    },
    "mars" : {
-      "ambientColor" : "#FFC080",
+      "ambientColor" : "#AB7554",
       "hasCloud" : false,
       "hasRing" : false,
       "hasRingBackground" : false,
@@ -29,16 +31,18 @@
       "texture" : "ORC/Planet2/Solar/Mars.png"
    },
    "mercur" : {
-      "ambientColor" : "#FFFFC0",
-      "hasCloud" : false,
+      "ambientColor" : "#C1A1B4",
+      "cloud" : "ORC/Planet2/Solar/cloud/r02.png",
+      "cloudSpeed" : -15.0,
+      "hasCloud" : true,
       "hasRing" : false,
       "hasRingBackground" : false,
       "size" : 120,
-      "speed" : -20.0,
+      "speed" : -10.0,
       "texture" : "ORC/Planet2/Solar/Mercur.png"
    },
    "neptune" : {
-      "ambientColor" : "#80FF80",
+      "ambientColor" : "#6BABCC",
       "cloud" : "ORC/Planet2/Solar/cloud/c10.png",
       "cloudSpeed" : 10.0,
       "hasCloud" : true,
@@ -49,7 +53,7 @@
       "texture" : "ORC/Planet2/Solar/Neptune.png"
    },
    "saturn" : {
-      "ambientColor" : "#C0C0FF",
+      "ambientColor" : "#8390B6",
       "cloud" : "ORC/Planet2/Solar/cloud/c05.png",
       "cloudSpeed" : 10.0,
       "hasCloud" : true,
@@ -58,14 +62,14 @@
       "ring" : "DATA/PlanetRing/2r21_0_1.gi",
       "ringBackground" : "DATA/PlanetRing/2r21_0_2.gi",
       "ringBgOffsetX" : 10.0,
-      "ringBgOffsetY" : -115.5,
+      "ringBgOffsetY" : -115.0,
       "size" : 214,
       "speed" : 20.0,
       "texture" : "ORC/Planet2/Solar/Saturn.png"
    },
    "venus" : {
-      "ambientColor" : "#80FFFF",
-      "cloud" : "ORC/Planet2/Solar/cloud/c04.png",
+      "ambientColor" : "#89B5C5",
+      "cloud" : "ORC/Planet2/Solar/cloud/c07.png",
       "cloudSpeed" : -10.0,
       "hasCloud" : true,
       "hasRing" : false,
