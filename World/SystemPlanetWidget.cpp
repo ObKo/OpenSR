@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2013 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2013 - 2014 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -24,92 +24,17 @@
 #include <OpenSR/Texture.h>
 #include <OpenSR/Sprite.h>
 #include <OpenSR/Engine.h>
+#include <OpenSR/libRanger.h>
 #include <cmath>
 
 namespace
 {
-static const std::string PLANET_FRAGMENT_SHADER = "\
-varying vec2 tex_coord; \
-uniform sampler2D cloud; \
-uniform sampler2D texture; \
-uniform float phase; \
-uniform float cloudPhase; \
-uniform bool cloudEnabled; \
-uniform float solarAngle; \
-uniform vec4 ambientColor; \
-\
-float PI = 3.14159265358979323846264; \
-float tr = (tex_coord.x - 0.5f) * (tex_coord.x - 0.5f) + (tex_coord.y - 0.5f) * (tex_coord.y - 0.5f); \
-\
-void getColor(in sampler2D tex, in float phase, in float radius, in bool cloud, out vec4 color) \
-{ \
-    float x = sqrt(radius * radius - (tex_coord.x - 0.5f) * (tex_coord.x - 0.5f) - (tex_coord.y - 0.5f) * (tex_coord.y - 0.5f)); \
-    float r = sqrt(x * x + (tex_coord.x - 0.5f) * (tex_coord.x - 0.5f) + (tex_coord.y - 0.5f) * (tex_coord.y - 0.5f)); \
-    float lambda = atan((tex_coord.x - 0.5f) / x) + phase; \
-    float theta = acos((1.0f - tex_coord.y - 0.5f) / r); \
-    vec2 result; \
-    result.x = 0.5f + (1.0f / (2.0f * PI) * lambda); \
-    result.y = 0.5f - cos(theta) / 2.0f; \
-\
-    if(tr <= radius * radius) \
-    { \
-        color = texture2D(tex, result); \
-\
-        if (!cloud) \
-        { \
-            float y = 0.299 * color.r + 0.587 * color.g + 0.114 * color.b; \
-            float u = -0.14713 * color.r - 0.28886 * color.g + 0.436 * color.b; \
-            float v = 0.615 * color.r - 0.51499 * color.g - 0.10001 * color.b; \
-            y = y * (0.5f + color.a / 2.0f); \
-            color.r = y + 1.13983 * v; \
-            color.g = y - 0.39465 * u - 0.58060 * v; \
-            color.b = y + 2.03211 * u; \
-            color.a = 1.0f; \
-        } \
-\
-        if (!cloud) \
-            color.a = 1.0f; \
-    } \
-    else \
-        color = vec4(0.0f, 0.0f, 0.0f, 0.0f); \
-} \
-\
-void main() \
-{ \
-    vec4 t0, t1; \
-    if (cloudEnabled) \
-    { \
-        getColor(texture, phase, 0.5f, false, t0); \
-        getColor(cloud, cloudPhase, 0.5f, true, t1); \
-        gl_FragColor = mix(t0, t1, t1.a); \
-\
-        if (tr >= 0.23) \
-            gl_FragColor.a = (0.25f - tr) * 50.0f; \
-        else \
-            gl_FragColor.a = 1.0f; \
-    } \
-    else \
-    { \
-        getColor(texture, phase, 0.5f, false, t0); \
-        gl_FragColor = t0; \
-\
-        if (tr >= 0.23) \
-            gl_FragColor.a = (0.25f - tr) * 50.0f; \
-        else \
-            gl_FragColor.a = 1.0f; \
-    } \
-    float x = sqrt(0.5f * 0.5f - (tex_coord.x - 0.5f) * (tex_coord.x - 0.5f) - (tex_coord.y - 0.5f) * (tex_coord.y - 0.5f)); \
-    vec3 normal = normalize(vec3(x, tex_coord.x - 0.5f, tex_coord.y - 0.5f)); \
-    float diffuse = max(dot(normal, vec3(0.5f, cos(solarAngle), sin(solarAngle))), 0.0); \
-    gl_FragColor.rgb = gl_FragColor.rgb * 0.3 * ambientColor.rgb + gl_FragColor.rgb * diffuse * vec3(1.0, 1.0f, 1.0f); \
-}";
-
 static const std::string PLANET_VERTEX_SHADER = " \
-varying vec2 tex_coord; \
+varying vec2 texCoord; \
 void main() \
 { \
     gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex; \
-    tex_coord = vec2(gl_MultiTexCoord0); \
+    texCoord = vec2(gl_MultiTexCoord0); \
 }";
 }
 
@@ -117,9 +42,9 @@ namespace Rangers
 {
 namespace World
 {
-boost::shared_ptr<Shader> SystemPlanetWidget::m_vertexShader(new Shader(Shader::VERTEX_SHADER, PLANET_VERTEX_SHADER));
-boost::shared_ptr<Shader> SystemPlanetWidget::m_fragmentShader(new Shader(Shader::FRAGMENT_SHADER, PLANET_FRAGMENT_SHADER));
-boost::shared_ptr<ShaderProgram> SystemPlanetWidget::m_shader(new ShaderProgram());
+boost::shared_ptr<Shader> SystemPlanetWidget::m_vertexShader;
+boost::shared_ptr<Shader> SystemPlanetWidget::m_fragmentShader;
+boost::shared_ptr<ShaderProgram> SystemPlanetWidget::m_shader;
 
 GLint SystemPlanetWidget::m_phaseLocation;
 GLint SystemPlanetWidget::m_cloudPhaseLocation;
@@ -128,11 +53,20 @@ GLint SystemPlanetWidget::m_ambientColorLocation;
 GLint SystemPlanetWidget::m_cloudEnabledLocation;
 GLint SystemPlanetWidget::m_textureLocation;
 GLint SystemPlanetWidget::m_cloudLocation;
+GLint SystemPlanetWidget::m_texPixelSizeLocation;
+GLint SystemPlanetWidget::m_pixelSizeLocation;
 
 SystemPlanetWidget::SystemPlanetWidget(boost::shared_ptr<Planet> planet): SpaceObjectWidget(planet), m_useShader(true), m_vertexBuffer(0),
     m_phase(0.0f), m_cloudPhase(0.0f), m_solarAngle(0.0f), m_hasRingBackground(false), m_hasCloud(false), m_hasRing(false)
 {
     m_useShader = Rangers::Engine::instance().properties()->get<bool>("graphics.useShaders", true);
+    if (m_useShader && (!m_vertexShader || !m_fragmentShader || !m_shader))
+    {
+        std::wstring fragShaderFile = fromUTF8(Engine::instance().properties()->get<std::string>("world.planetShader", "World/Planet.frag").c_str());
+        m_vertexShader = boost::shared_ptr<Shader>(new Shader(Shader::VERTEX_SHADER, PLANET_VERTEX_SHADER));
+        m_fragmentShader = boost::shared_ptr<Shader>(new Shader(fragShaderFile));
+        m_shader = boost::shared_ptr<ShaderProgram>(new ShaderProgram());
+    }
     if (planet)
     {
         boost::shared_ptr<PlanetStyle> style = WorldManager::instance().styleManager().planetStyle(planet->style());
@@ -211,6 +145,8 @@ void SystemPlanetWidget::draw() const
         m_shader->setUniform(m_solarAngleLocation, m_solarAngle);
         m_shader->setUniform(m_ambientColorLocation, m_ambientColor);
         m_shader->setUniform(m_cloudEnabledLocation, m_hasCloud);
+        m_shader->setUniform(m_texPixelSizeLocation, Vector(1.0f / m_texture->width(), 1.0f / m_texture->height()));
+        m_shader->setUniform(m_pixelSizeLocation, 1.0f / m_size);
 
         glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer);
 
@@ -268,6 +204,8 @@ void SystemPlanetWidget::processMain()
             m_ambientColorLocation = m_shader->getUniformLocation("ambientColor");
             m_textureLocation = m_shader->getUniformLocation("texture");
             m_cloudLocation = m_shader->getUniformLocation("cloud");
+            m_texPixelSizeLocation = m_shader->getUniformLocation("texPixelSize");
+            m_pixelSizeLocation = m_shader->getUniformLocation("pixelSize");
         }
     }
 

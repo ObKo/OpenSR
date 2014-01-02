@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2013 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2013 - 2014 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -21,6 +21,8 @@
 #include <string>
 
 #include "OpenSR/Log.h"
+#include <OpenSR/libRanger.h>
+#include <OpenSR/ResourceManager.h>
 
 namespace Rangers
 {
@@ -30,6 +32,28 @@ Shader::Shader(): m_handle(0), m_compiled(false), m_type(NONE), m_invalid(true)
 
 Shader::Shader(ShaderType type): m_handle(0), m_compiled(false), m_type(type), m_invalid(true)
 {
+}
+
+/*!
+ * Shader type determined by extension (*.frag or *.vert)
+ */
+Shader::Shader(const std::wstring& shader): m_handle(0), m_compiled(false), m_type(NONE), m_invalid(true)
+{
+    std::wstring extension = suffix(shader);
+    if (extension == L"frag")
+        m_type = FRAGMENT_SHADER;
+    else if (extension == L"vert")
+        m_type = VERTEX_SHADER;
+    else
+    {
+        Log::error() << "Unknown shader file extension: " << extension;
+        return;
+    }
+    boost::shared_ptr<std::istream> f = ResourceManager::instance().getFileStream(shader);
+    if (!f)
+        return;
+    m_source = std::string(std::istreambuf_iterator<char>(*f), std::istreambuf_iterator<char>());
+    m_invalid = false;
 }
 
 Shader::Shader(ShaderType type, const std::string& shaderSource): m_handle(0), m_compiled(false),

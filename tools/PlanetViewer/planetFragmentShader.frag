@@ -13,6 +13,14 @@ uniform float pixelSize;
 float PI = 3.14159265358979323846264;
 float tr = sqrt((tex_coord.x - 0.5) * (tex_coord.x - 0.5) + (tex_coord.y - 0.5) * (tex_coord.y - 0.5));
 
+vec4 blend(vec4 dst, vec4 src)
+{
+   vec4 color;
+   color.a = src.a + dst.a * (1.0 - src.a);
+   color.rgb = (src.rgb * src.a + dst.rgb * dst.a * (1.0 - src.a)) / color.a;
+   return color;
+}
+
 void getPosition(in float radius, out vec3 pos)
 {
     pos.x = ((tex_coord.x - 0.5)) / radius;
@@ -44,8 +52,8 @@ void calcLight(in sampler2D tex, in vec2 texCoord, in vec3 pos, in bool bump, in
         vec3 t2 = vec3(0, 1, h_0p1 - h_0m1);
         vec3 texn = normalize(cross(t1, t2));
 
-        vec3 t = normalize(vec3(-sqrt(1.0 - pos.x * pos.x), 0.0, pos.x));
-        vec3 b = cross(t, n);
+        vec3 t = normalize(vec3(sqrt(1.0 - pos.x * pos.x), 0.0, -pos.x));
+        vec3 b = cross(n, t);
 
         vec3 v;
         v.x = dot(l, t);
@@ -60,7 +68,7 @@ void calcLight(in sampler2D tex, in vec2 texCoord, in vec3 pos, in bool bump, in
         k = max(dot(l, n), 0.0);
     }
 
-    light = vec3(1.0, 1.0, 1.0) * k * 0.8 + 0.4 * ambient;
+    light = vec3(1.0, 1.0, 1.0) * k * 0.7 + 0.3 * ambient;
 }
 
 void calcColor(out vec4 color)
@@ -84,14 +92,15 @@ void calcColor(out vec4 color)
     {
         float atmAlpha = clamp(1.0 - abs((tr - planetRadius) / (pixelSize * 4.0)), 0.0, 1.0);
         vec3 atmColor = light;
-        planetColor = mix(planetColor, vec4(atmColor, atmAlpha), 0.8 * atmAlpha);
+        planetColor = blend(planetColor, vec4(atmColor, 0.6 * atmAlpha));
     }
 
     if (cloudEnabled)
     {
+        mapTexture(pos, cloudPhase, texCoord);
         vec4 texColor = texture2D(cloud, texCoord);
-        vec4 cloudColor = vec4(texColor.rgb * light, texColor.a * 0.7);
-        color = mix(planetColor, cloudColor, cloudColor.a);
+        vec4 cloudColor = vec4(texColor.rgb * light, texColor.a);
+        color = blend(planetColor, cloudColor);
     }
     else
     {

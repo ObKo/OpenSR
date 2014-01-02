@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2013 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2013 - 2014 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -77,6 +77,8 @@ private:
     static GLint m_cloudEnabledLocation;
     static GLint m_textureLocation;
     static GLint m_cloudLocation;
+    static GLint m_texPixelSizeLocation;
+    static GLint m_pixelSizeLocation;
 };
 }
 }
