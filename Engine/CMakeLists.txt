@@ -6,6 +6,7 @@ SET(SOURCES
     Types.cpp
     Texture.cpp
     Label.cpp
+    LabelWidget.cpp
     Font.cpp
     AnimatedTexture.cpp
     AnimatedSprite.cpp

@@ -7,6 +7,7 @@ SET(ENGINE_PRIVATE_HEADERS
     Engine_p.h
     GAISprite_p.h
     Label_p.h
+    LabelWidget_p.h
     LineEdit_p.h
     NinePatch_p.h
     Node_p.h

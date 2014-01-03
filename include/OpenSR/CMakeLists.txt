@@ -13,6 +13,7 @@ SET(ENGINE_HEADERS
     GAISprite.h
     JSONHelper.h
     Label.h
+    LabelWidget.h
     LineEdit.h
     Log.h
     NinePatch.h

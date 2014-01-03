@@ -34,6 +34,7 @@ SET(PYTHON_ENGINE_SOURCES
     TiledPolyline.cpp
     TiledBeizerCurve.cpp
     AnimatedTexture.cpp
+    LabelWidget.cpp
 )
 
 SET(PYTHON_ENGINE_HEADERS 
