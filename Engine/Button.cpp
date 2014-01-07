@@ -455,12 +455,12 @@ void Button::processMain()
     d->calcAutoResize();
     //if (d->label->needUpdate())
     //    d->label->processMain();
-    /*if (d->normalSprite)
+    if (d->normalSprite)
         d->normalSprite->setGeometry(d->width, d->height);
     if (d->hoverSprite)
         d->hoverSprite->setGeometry(d->width, d->height);
     if (d->pressedSprite)
-        d->pressedSprite->setGeometry(d->width, d->height);*/
+        d->pressedSprite->setGeometry(d->width, d->height);
     if (!d->style.contentRect.valid() || (!d->normalSprite))
     {
         d->label->setPosition(int((d->width - d->label->width()) / 2), int((d->height - d->label->height()) / 2));
