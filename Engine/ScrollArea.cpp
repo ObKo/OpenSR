@@ -23,9 +23,9 @@
 #include "OpenSR/Action.h"
 #include "OpenSR/Engine.h"
 
-namespace 
+namespace
 {
-    const float SCROLL_INDENT = 5.0f;
+const float SCROLL_INDENT = 5.0f;
 }
 
 namespace Rangers
@@ -261,19 +261,19 @@ void ScrollArea::processMain()
         {
             float scrollSize;
             d->left->setPosition(0, d->height + d->left->width() + SCROLL_INDENT);
-            d->right->setPosition(d->width - d->right->height(), d->height + d->left->width() + SCROLL_INDENT); 
-        scrollSize = (d->width - d->right->height() - d->left->height()) / (d->hSize);           
+            d->right->setPosition(d->width - d->right->height(), d->height + d->left->width() + SCROLL_INDENT);
+            scrollSize = (d->width - d->right->height() - d->left->height()) / (d->hSize);
             d->hScroll->setHeight(scrollSize);
         }
         if (d->vSize > 1.0f)
         {
             float scrollSize;
-            
-                d->top->setPosition(d->width + SCROLL_INDENT, 0);
-                d->bottom->setPosition(d->width + SCROLL_INDENT, d->height - d->bottom->height());
 
-                scrollSize = (d->height - d->bottom->height() - d->top->height()) / (d->vSize);
-            
+            d->top->setPosition(d->width + SCROLL_INDENT, 0);
+            d->bottom->setPosition(d->width + SCROLL_INDENT, d->height - d->bottom->height());
+
+            scrollSize = (d->height - d->bottom->height() - d->top->height()) / (d->vSize);
+
             d->vScroll->setHeight(scrollSize);
         }
         d->hScroll->setPosition(d->left->height(), d->height + d->left->width() + SCROLL_INDENT);
