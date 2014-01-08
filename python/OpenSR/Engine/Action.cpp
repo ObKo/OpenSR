@@ -56,16 +56,6 @@ uint8_t argumentGetUint(Action::Argument &self)
 void exportAction()
 {
     using namespace boost::python;
-    enum_<Action::Type>("ActionType")
-    .value("NONE", Action::NONE)
-    .value("BUTTON_CLICKED", Action::BUTTON_CLICKED)
-    .value("KEY_PRESSED", Action::KEY_PRESSED)
-    .value("CHECKBOX_TOGGLED", Action::CHECKBOX_TOGGLED)
-    .value("MOUSE_ENTER", Action::MOUSE_ENTER)
-    .value("MOUSE_LEAVE", Action::MOUSE_LEAVE)
-    .value("MOUSE_DOWN", Action::MOUSE_DOWN)
-    .value("MOUSE_UP", Action::MOUSE_UP)
-    .value("MOUSE_CLICK", Action::MOUSE_CLICK);
 
     class_<Action::Argument>("ActionArgument")
     .def(init<>())
@@ -80,12 +70,26 @@ void exportAction()
     .add_property("bool", &argumentGetBool)
     .add_property("uint", &argumentGetUint);
 
-    class_<Action>("Action", init<>())
-    .def(init<boost::shared_ptr<Widget>, Action::Type, const Action::Argument&>()[with_custodian_and_ward<1, 2>()])
-    .def(init<boost::shared_ptr<Widget>, Action::Type>()[with_custodian_and_ward<1, 2>()])
-    .add_property("source", &Action::source)
-    .add_property("type", &Action::type)
-    .add_property("argument", &Action::argument);
+    {
+        scope s = class_<Action>("Action", init<>())
+                  .def(init<boost::shared_ptr<Widget>, uint32_t, const Action::Argument&>()[with_custodian_and_ward<1, 2>()])
+                  .def(init<boost::shared_ptr<Widget>, uint32_t>()[with_custodian_and_ward<1, 2>()])
+                  .add_property("source", &Action::source)
+                  .add_property("type", &Action::type)
+                  .add_property("argument", &Action::argument);
+
+        enum_<Action::Type>("Type")
+        .value("NONE", Action::NONE)
+        .value("BUTTON_CLICKED", Action::BUTTON_CLICKED)
+        .value("KEY_PRESSED", Action::KEY_PRESSED)
+        .value("CHECKBOX_TOGGLED", Action::CHECKBOX_TOGGLED)
+        .value("MOUSE_ENTER", Action::MOUSE_ENTER)
+        .value("MOUSE_LEAVE", Action::MOUSE_LEAVE)
+        .value("MOUSE_DOWN", Action::MOUSE_DOWN)
+        .value("MOUSE_UP", Action::MOUSE_UP)
+        .value("MOUSE_CLICK", Action::MOUSE_CLICK)
+        .value("USER", Action::USER);
+    }
 }
 }
 }

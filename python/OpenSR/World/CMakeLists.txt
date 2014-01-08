@@ -10,6 +10,7 @@ SET(PYTHON_WORLD_SOURCES
     HabitablePlanet.cpp
     Hull.cpp
     InteractionContext.cpp
+    InteractionWidget.cpp
     Item.cpp
     LandContext.cpp
     Asteroid.cpp

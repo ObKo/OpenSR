@@ -48,7 +48,9 @@ void exportLabel()
     .add_property("text", &Label::text, (void (Label::*)(const std::wstring&))&Label::setText)
     .add_property("font", &Label::font, &Label::setFont)
     .add_property("wordWrap", &Label::wordWrap, &Label::setWordWrap)
-    .def("setFixedSize", &Label::setFixedSize);
+    .def("setFixedSize", &Label::setFixedSize)
+    .def("setFixedWidth", &Label::setFixedWidth)
+    .def("setFixedHeight", &Label::setFixedHeight);
     RANGERS_PYTHON_WRAP_SPRITE_DEF(Label, LabelWrap, c);
     register_ptr_to_python<boost::shared_ptr<Label> >();
 }

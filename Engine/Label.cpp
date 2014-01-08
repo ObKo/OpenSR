@@ -29,7 +29,8 @@ LabelPrivate::LabelPrivate(): SpritePrivate()
 {
     font = boost::shared_ptr<Font>();
     wordWrap = false;
-    fixedSize = false;
+    fixedWidth = false;
+    fixedHeight = false;
     scaling = TEXTURE_NO;
 }
 
@@ -109,11 +110,10 @@ void Label::processMain()
     else
         d->region = TextureRegion(d->font->renderText(d->text, d->width));
 
-    if (!d->fixedSize)
-    {
+    if (!d->fixedWidth)
         d->width = d->region.texture->width();
+    if (!d->fixedHeight)
         d->height = d->region.texture->height();
-    }
 
     unlock();
     Sprite::processMain();
@@ -148,11 +148,37 @@ void Label::setFixedSize(float width, float height)
     {
         d->width = width;
         d->height = height;
-        d->fixedSize = true;
+        d->fixedHeight  = true;
+        d->fixedWidth  = true;
     }
     else
-        d->fixedSize = false;
+    {
+        d->fixedHeight  = false;
+        d->fixedWidth  = false;
+    }
     markToUpdate();
     unlock();
+}
+
+void Label::setFixedWidth(float w)
+{
+    RANGERS_D(Label);
+    d->fixedWidth  = true;
+    if (w > 0)
+        d->width = w;
+    else
+        d->fixedWidth = false;
+    markToUpdate();
+}
+
+void Label::setFixedHeight(float h)
+{
+    RANGERS_D(Label);
+    d->fixedHeight  = true;
+    if (h > 0)
+        d->height = h;
+    else
+        d->fixedHeight = false;
+    markToUpdate();
 }
 }

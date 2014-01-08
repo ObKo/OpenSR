@@ -1,6 +1,6 @@
 from OpenSR.Engine import Engine, ResourceManager, SoundManager, ScriptWidget, ActionListener, \
                           Sprite, NinePatch, WidgetNode, Button, Label, LineEdit, CheckBox, \
-                          ScrollArea, ActionType
+                          ScrollArea, Action, Color
 import OpenSR.ORC.StartMenu
 from gettext import gettext
 
@@ -86,7 +86,7 @@ class SettingsWidget(ScriptWidget, ActionListener):
         self.graphicsButton = Button("DATA/FormOptions2/2PageN.gi", "DATA/FormOptions2/2PageA.gi", "DATA/FormOptions2/2PageD.gi")
         self.graphicsButton.font = engine.coreFont
         self.graphicsButton.text = _("Graphics")
-        self.graphicsButton.color = 0xC4E0FF
+        self.graphicsButton.color = Color(0.75, 0.85, 1.0)
         self.graphicsButton.position = (0, 0)
         self.setSoundsDefault(self.graphicsButton)
         self.buttonNode.addWidget(self.graphicsButton)
@@ -115,10 +115,10 @@ class SettingsWidget(ScriptWidget, ActionListener):
         self.heightLabel.position = (170, 5 + (self.widthEdit.height - self.widthLabel.font.size))
         self.fullscreen.position = (5, self.widthEdit.height + 15)
         self.useShaders.position = (5, self.fullscreen.position.y + self.fullscreen.height + 5)
-
+        
         self.scroll = ScrollArea(engine.defaultSkin.scrollStyle, self.paramNode)
         self.scroll.position = (self.formBg.position.x + 257, self.formBg.position.y + 149)
-        self.scroll.geometry = (450 + deltaX, 440 + deltaY)
+        self.scroll.geometry = (426 + deltaX, 439 + deltaY)
         self.addWidget(self.scroll)
         
         # RadioButton example
@@ -162,7 +162,7 @@ class SettingsWidget(ScriptWidget, ActionListener):
         self.okButton.removeListener(self)
         
     def actionPerformed(self, action):
-        if action.type != ActionType.BUTTON_CLICKED:
+        if action.type != Action.Type.BUTTON_CLICKED:
             return
 
         if action.source == self.okButton:               

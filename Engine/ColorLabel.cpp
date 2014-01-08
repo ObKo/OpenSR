@@ -57,7 +57,8 @@ ColorLabel::ColorLabel(const std::string& text, boost::shared_ptr< Font > font):
 
     setText(text);
     d->wordWrap = false;
-    d->fixedSize = false;
+    d->fixedWidth = false;
+    d->fixedHeight = false;
     d->scaling = TEXTURE_NO;
 }
 
@@ -78,7 +79,8 @@ ColorLabel::ColorLabel(const std::wstring& text, boost::shared_ptr< Font > font)
 
     setText(text);
     d->wordWrap = false;
-    d->fixedSize = false;
+    d->fixedWidth = false;
+    d->fixedHeight = false;
     d->scaling = TEXTURE_NO;
 }
 
@@ -96,11 +98,10 @@ void ColorLabel::processMain()
     else
         d->region = TextureRegion(d->font->renderColoredText(d->text, d->color.toRGB(), d->width));
 
-    if (!d->fixedSize)
-    {
+    if (!d->fixedWidth)
         d->width = d->region.texture->width();
+    if (!d->fixedHeight)
         d->height = d->region.texture->height();
-    }
     unlock();
     Sprite::processMain();
 }

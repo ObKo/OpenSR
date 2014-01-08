@@ -43,6 +43,8 @@ public:
     boost::shared_ptr<Font> font() const;
     bool wordWrap() const;
 
+    void setFixedWidth(float w);
+    void setFixedHeight(float h);
     void setFixedSize(float w, float h);
 
     virtual void processMain();

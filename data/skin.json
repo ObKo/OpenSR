@@ -148,7 +148,7 @@
     {
         "background": "line-edit",
         "font": "default-font", 
-        "color": "#000000FF",
+        "color": "#000000",
         "content-rect": {"x": 5, "y": 4, "width": 1, "height": 13} 
     },
     "ButtonStyle":
@@ -157,7 +157,7 @@
         "hovered": "default-button-hover",
         "pressed" : "default-button-pressed", 
         "font": "default-font", 
-        "color": "#082430FF",
+        "color": "#082430",
         "content-rect": {"x": 4, "y": 4, "width": 108, "height": 13},
         "enter-sound": "button-enter-sound",
         "leave-sound": "button-leave-sound",
@@ -170,7 +170,7 @@
         "checked-normal" : "checkbox-checked-normal", 
         "checked-hovered" : "checkbox-checked-hovered", 
         "font": "default-font", 
-        "color": "#FFFFFFFF"
+        "color": "#FFFFFF"
     },
     "RadioButtonStyle":
     {
@@ -179,7 +179,7 @@
         "selected-normal" : "radio-selected-normal", 
         "selected-hovered" : "radio-selected-hovered", 
         "font": "default-font", 
-        "color": "#FFFFFFFF"
+        "color": "#FFFFFF"
     },
     "ScrollBarStyle":
     {

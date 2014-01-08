@@ -32,7 +32,8 @@ public:
     boost::shared_ptr<Font> font;
     std::wstring text;
     bool wordWrap;
-    bool fixedSize;
+    bool fixedWidth;
+    bool fixedHeight;
 };
 }
 

@@ -12,6 +12,7 @@ SET(WORLD_HEADERS
     Hull.h
     InfoWidget.h
     InteractionContext.h
+    InteractionWidget.h
     Item.h
     LandContext.h
     Micromodulus.h

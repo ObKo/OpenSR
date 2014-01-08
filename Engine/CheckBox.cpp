@@ -169,8 +169,6 @@ int CheckBox::minHeight() const
 
 void CheckBox::processMain()
 {
-    Button::processMain();
-
     lock();
     RANGERS_D(CheckBox);
     if (!d->sprite)

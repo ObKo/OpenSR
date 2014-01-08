@@ -40,7 +40,7 @@ Action::Action(): m_type(NONE)
  * \param type action type
  * \param arg action argument
  */
-Action::Action(boost::shared_ptr<Widget> source, Action::Type type, const Action::Argument& arg): m_source(source), m_type(type), m_argument(arg)
+Action::Action(boost::shared_ptr<Widget> source, uint32_t type, const Action::Argument& arg): m_source(source), m_type(type), m_argument(arg)
 {
 }
 
@@ -55,7 +55,7 @@ boost::shared_ptr<Widget> Action::source() const
 /*!
  * \returns action type
  */
-Action::Type Action::type() const
+uint32_t Action::type() const
 {
     return m_type;
 }

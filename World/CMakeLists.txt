@@ -23,6 +23,7 @@ SET(WORLD_SOURCES
     PlanetarySystem.cpp
     SpaceBase.cpp
     InfoWidget.cpp
+    InteractionWidget.cpp
     SpaceObject.cpp
     SystemObject.cpp
     SystemPlanetWidget.cpp

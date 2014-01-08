@@ -374,9 +374,10 @@ void Object::removeChild(boost::shared_ptr<Object> object)
         return;
 
     //FIXME: Debug
-    if (object->parent() != this)
+    if (object->parent() && (object->parent() != this))
     {
         Log::debug() << "Object::removeChild(): parent mismatch!";
+        d->children.remove(object);
         return;
     }
 

@@ -34,25 +34,28 @@ class RANGERS_ENGINE_API Action
 {
 public:
     //! Type of action
-    enum Type {NONE, BUTTON_CLICKED, KEY_PRESSED, CHECKBOX_TOGGLED, MOUSE_ENTER, MOUSE_LEAVE, MOUSE_DOWN, MOUSE_UP, MOUSE_CLICK, TEXT_INPUT};
+    enum Type {NONE = 0, BUTTON_CLICKED = 1, KEY_PRESSED = 2, CHECKBOX_TOGGLED = 3, MOUSE_ENTER = 4,
+               MOUSE_LEAVE = 5, MOUSE_DOWN = 6, MOUSE_UP = 7, MOUSE_CLICK = 8, TEXT_INPUT = 9,
+               USER = 127
+              };
     //! Argument of action
     typedef boost::variant<std::wstring, Rect, SDL_Keysym, bool, uint8_t> Argument;
 
     //! Constructs empty action
     Action();
     //! Constructs new action
-    Action(boost::shared_ptr<Widget> source, Type type, const Argument& argument = Argument());
+    Action(boost::shared_ptr<Widget> source, uint32_t type, const Argument& argument = Argument());
 
     //! Source of action
     boost::shared_ptr<Widget> source() const;
     //! Type of action
-    Type type() const;
+    uint32_t type() const;
     //! Argument of action
     Argument argument() const;
 
 private:
     boost::shared_ptr<Widget> m_source;
-    Type m_type;
+    uint32_t m_type;
     Argument m_argument;
 };
 }
