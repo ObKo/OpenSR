@@ -1,7 +1,10 @@
 from OpenSR.World import WorldManager, DefaultWorldGen, SystemWidget
 from OpenSR.Engine import Engine, ResourceManager, SoundManager, ScriptWidget, ActionListener, \
                           Sprite, GAISprite, SpriteXOrigin, SpriteYOrigin, WidgetNode, Button, \
-                          ActionType
+                          Action, Label, LabelWidget, ColorLabel
+
+from OpenSR.ORC.QuestWidget import QuestWidget
+
 import OpenSR.ORC.Settings
 from OpenSR.World.DefaultWorldGen import DefaultWorldGen
 import sys
@@ -85,6 +88,13 @@ class StartMenuWidget(ScriptWidget, ActionListener):
             self.menuNode.addWidget(button)
             y = y + self.BUTTON_SPARSE
 
+        self.questButton = Button('DATA/FormLoadRobot/2LoadQuestN.gi', 'DATA/FormLoadRobot/2LoadQuestA.gi', 'DATA/FormLoadRobot/2LoadQuestN.gi')
+        self.questButton.addListener(self)
+        self.questButton.position = (305, engine.screenHeight - 135)
+        self.questButton.layer = 2
+        self.questButton.sounds = (clickSound, enterSound, leaveSound)
+        self.addWidget(self.questButton)
+
     def processLogic(self, dt):
         ScriptWidget.processLogic(self, dt)
         
@@ -103,6 +113,8 @@ class StartMenuWidget(ScriptWidget, ActionListener):
         
         for name in self.BUTTONS:
             self.buttons[name].removeListener(self) 
+        
+        self.questButton.removeListener(self)
             
     def openGame(self):
         widget = SystemWidget(world.systemManager().currentSystem)   
@@ -110,23 +122,28 @@ class StartMenuWidget(ScriptWidget, ActionListener):
         self.dispose()
         
     def actionPerformed(self, action):        
-        if action.type != ActionType.BUTTON_CLICKED:
+        if action.type != Action.Type.BUTTON_CLICKED:
             return
 
         if action.source == self.buttons['exit']:
             self.dispose()                
             engine.quit(0)
-            
+                
         elif action.source == self.buttons['settings']:
             self.dispose()
             engine.addWidget(OpenSR.ORC.Settings.SettingsWidget())
-            
+                
         elif action.source == self.buttons['newGame']:
             world.addGenHook(DefaultWorldGen())
             world.generateWorld()
             world.saveWorld('test.srw')
             self.openGame()
-        
+                
         elif action.source == self.buttons['loadGame']:
             world.loadWorld('test.srw')
-            self.openGame()
+            self.openGame()   
+                
+        elif action.source == self.questButton:
+            self.dispose()
+            engine.addWidget(OpenSR.ORC.QuestWidget.QuestWidget())
+        

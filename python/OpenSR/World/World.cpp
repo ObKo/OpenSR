@@ -64,6 +64,7 @@ void exportSystemManager();
 void exportStyleManager();
 void exportSpaceObjectWidget();
 void exportInteractionWidget();
+void exportQuestPlayer();
 }
 }
 }
@@ -110,4 +111,5 @@ BOOST_PYTHON_MODULE(_World)
     Rangers::World::Python::exportStyleManager();
     Rangers::World::Python::exportSpaceObjectWidget();
     Rangers::World::Python::exportInteractionWidget();
+    Rangers::World::Python::exportQuestPlayer();
 }

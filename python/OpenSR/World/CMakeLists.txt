@@ -17,6 +17,7 @@ SET(PYTHON_WORLD_SOURCES
     Micromodulus.cpp
     Planet.cpp
     PlanetManager.cpp
+    QuestPlayer.cpp
     Radar.cpp
     Scanner.cpp
     Ship.cpp

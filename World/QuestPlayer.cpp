@@ -66,18 +66,18 @@ std::wstring QuestPlayer::substituteValues(const std::wstring &str) const
         QString value = "<font color=\"blue\">" + QString::number((int32_t)round(eval(match.captured(0).toStdString(), m_parameters))) + "</font>";
         result.replace(match.capturedStart() + deltaPos, match.capturedLength(), value);
         deltaPos += value.length() - match.capturedLength();
-    }
+    }*/
 
-    result.replace("<ToStar>", "<font color=\"blue\">" + QString::fromStdWString(m_quest.toStar) + "</font>");
-    result.replace("<ToPlanet>", "<font color=\"blue\">" + QString::fromStdWString(m_quest.toPlanet) + "</font>");
-    result.replace("<FromStar>", "<font color=\"blue\">" + QString::fromStdWString(m_quest.fromStar) + "</font>");
-    result.replace("<FromPlanet>", "<font color=\"blue\">" + QString::fromStdWString(m_quest.fromPlanet) + "</font>");
-    result.replace("<Date>", "<font color=\"blue\">" + QString::fromStdWString(m_quest.date) + "</font>");
-    result.replace("<Money>", "<font color=\"blue\">" + QString::fromStdWString(m_quest.money) + "</font>");
-    result.replace("<Ranger>", "<font color=\"blue\">" + QString::fromStdWString(m_quest.ranger) + "</font>");
+    boost::algorithm::replace_all(result, L"<ToStar>", L"\\cS" + m_quest.toStar + L"\\cR");
+    boost::algorithm::replace_all(result, L"<ToPlanet>", L"\\cS" + m_quest.toPlanet + L"\\cR");
+    boost::algorithm::replace_all(result, L"<FromStar>", L"\\cS" + m_quest.fromStar + L"\\cR");
+    boost::algorithm::replace_all(result, L"<FromPlanet>", L"\\cS" + m_quest.fromPlanet + L"\\cR");
+    boost::algorithm::replace_all(result, L"<Date>", L"\\cS" + m_quest.date + L"\\cR");
+    boost::algorithm::replace_all(result, L"<Money>", L"\\cS" + m_quest.money + L"\\cR");
+    boost::algorithm::replace_all(result, L"<Ranger>", L"\\cS" + m_quest.ranger + L"\\cR");
 
-    result.replace("<clr>", "<font color=\"blue\">");
-    result.replace("<clrEnd>", "</font>");*/
+    boost::algorithm::replace_all(result, L"<clr>", L"\\cS");
+    boost::algorithm::replace_all(result, L"<clrEnd>", L"\\cR");
 
     return result;
 }
@@ -179,7 +179,10 @@ void QuestPlayer::setLocation(uint32_t location)
     else if (m_currentLocation.type == QM::Location::LOCATION_SUCCESS)
         m_completed = true;
     else if (m_currentLocation.type == QM::Location::LOCATION_FAIL)
+    {
         m_failed = true;
+        m_death = m_currentLocation.death;
+    }
     else if (checkCriticalParameters())
         m_transition = false;
 }
@@ -242,6 +245,8 @@ std::vector<std::wstring> QuestPlayer::visibleParameters() const
                     break;
                 }
             }
+            if (value.empty())
+                continue;
             params.push_back(substituteValues(value));
         }
     }

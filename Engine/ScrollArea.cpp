@@ -243,6 +243,8 @@ void ScrollArea::setNode(boost::shared_ptr<WidgetNode> node)
 
 void ScrollArea::processMain()
 {
+    Widget::processMain();
+
     RANGERS_D(ScrollArea);
     d->vSize = 0.0f;
     d->hSize = 0.0f;

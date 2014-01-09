@@ -3,9 +3,9 @@
     {
         "info-widget":
         {
-            "rows": 4,
+            "rows": 3,
             "columns": 3,
-            "sizeableRows": [2],
+            "sizeableRows": [1],
             "sizeableColumns": [1],
             "tiled": [1],
             "regions":
@@ -13,15 +13,12 @@
                 {"texture": "DATA/FormNote/2SimpleTopLeft.gi"},
                 {"texture": "DATA/FormNote/2SimpleTop.gi"},
                 {"texture": "DATA/FormNote/2SimpleTopRight.gi"},
-                {"texture": "DATA/FormNote/2SimpleLeft.gi", "x": 0, "y": 0, "width": 119, "height": 1},
-                {"texture": "DATA/FormNote/2SimpleTexture.gi", "x": 0, "y": 0, "width": 3, "height": 1},
-                {"texture": "DATA/FormNote/2SimpleRight.gi", "x": 0, "y": 0, "width": 121, "height": 1},
-                {"texture": "DATA/FormNote/2SimpleLeft.gi", "x": 0, "y": 1, "width": 119, "height": 1},
-                {"texture": "DATA/FormNote/2SimpleTexture.gi", "x": 0, "y": 1, "width": 3, "height": 1},
-                {"texture": "DATA/FormNote/2SimpleRight.gi", "x": 0, "y": 1, "width": 121, "height": 1},
-                {"texture": "DATA/FormNote/2SimpleBottomLeft.gi", "x": 0, "y": 1, "width": 119, "height": 60},
-                {"texture": "DATA/FormNote/2SimpleBottom.gi", "x": 0, "y": 1, "width": 3, "height": 60},
-                {"texture": "DATA/FormNote/2SimpleBottomRight.gi", "x": 0, "y": 1, "width": 121, "height": 60}
+                {"texture": "DATA/FormNote/2SimpleLeft.gi"},
+                {"texture": "DATA/FormNote/2SimpleTexture.gi"},
+                {"texture": "DATA/FormNote/2SimpleRight.gi"},
+                {"texture": "DATA/FormNote/2SimpleBottomLeft.gi"},
+                {"texture": "DATA/FormNote/2SimpleBottom.gi"},
+                {"texture": "DATA/FormNote/2SimpleBottomRight.gi"}
             ] 
         }
     },
