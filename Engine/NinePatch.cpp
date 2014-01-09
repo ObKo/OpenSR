@@ -395,7 +395,7 @@ void NinePatch::processMain()
     glBindBuffer(GL_ARRAY_BUFFER, d->buffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * d->vertexCount, d->vertices, GL_DYNAMIC_DRAW);
 
-    delete d->vertices;
+    delete[] d->vertices;
     d->vertices = 0;
 
     unlock();

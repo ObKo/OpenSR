@@ -37,7 +37,7 @@ std::wstring readString(std::istream& s)
         //FIXME: Assume that string is in UCS-2 (wchar_t on windows)
         result[i] = str[i];
     }
-    delete str;
+    delete[] str;
 
     return result;
 }

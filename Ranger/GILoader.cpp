@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2014 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ void drawA6ToBGRA(unsigned char * bufdes, int bufdesll, unsigned char * graphbuf
     size = *(uint32_t *)graphbuf;
     graphbuf += 16;
 
-    unsigned char * bufdesrow = bufdes;
+    unsigned char * bufdesrow = bufdes + 3;
 
     while (size > 0)
     {
