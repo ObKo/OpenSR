@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 - 2012 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2014 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -26,13 +26,35 @@
 #include <OpenSR/libRanger.h>
 
 #include "OpenSR/Texture.h"
-#include "OpenSR/JSONHelper.h"
 #include "OpenSR/ResourceManager.h"
 
 
 
 namespace Rangers
 {
+void NinePatchPrivate::initFromDescriptor(const NinePatchDescriptor& desc)
+{
+    rows = desc.rows;
+    columns = desc.columns;
+    sizeableColumns = desc.sizeableColumns;
+    sizeableRows = desc.sizeableRows;
+    tiledRegions = desc.tiledRegions;
+
+    for (int i = 0; i < rows; i++)
+    {
+        for (int j = 0; j < columns; j++)
+        {
+            regions.push_back(TextureRegion(*desc.regions[i * columns + j]));
+        }
+    }
+
+    for (int i = 0; i < columns; i++)
+        width += regions[i].texture->width() * (regions[i].u2 - regions[i].u1);
+    for (int i = 0; i < rows; i++)
+        height += regions[i * columns].texture->height() * (regions[i * columns].v2 - regions[i * columns].v1);
+
+}
+
 NinePatch::NinePatch(): Sprite(*(new NinePatchPrivate()))
 {
     RANGERS_D(NinePatch);
@@ -44,25 +66,7 @@ NinePatch::NinePatch(const NinePatchDescriptor &desc):
     Sprite(*(new NinePatchPrivate()))
 {
     RANGERS_D(NinePatch);
-    d->rows = desc.rows;
-    d->columns = desc.columns;
-    d->sizeableColumns = desc.sizeableColumns;
-    d->sizeableRows = desc.sizeableRows;
-    d->tiledRegions = desc.tiledRegions;
-
-    for (int i = 0; i < d->rows; i++)
-    {
-        for (int j = 0; j < d->columns; j++)
-        {
-            d->regions.push_back(TextureRegion(desc.regions[i * d->columns + j]));
-        }
-    }
-
-    for (int i = 0; i < d->columns; i++)
-        d->width += d->regions[i].texture->width() * (d->regions[i].u2 - d->regions[i].u1);
-    for (int i = 0; i < d->rows; i++)
-        d->height += d->regions[i * d->columns].texture->height() * (d->regions[i * d->columns].v2 - d->regions[i * d->columns].v1);
-
+    d->initFromDescriptor(desc);
     markToUpdate();
 }
 
@@ -75,31 +79,10 @@ NinePatch::NinePatch(const std::wstring& name):
     std::wstring s = suffix(name);
     if (s == L"9.json")
     {
-        boost::shared_ptr<std::istream> json = ResourceManager::instance().getFileStream(name);
-        if (json)
-        {
-            bool parseError = false;
-            NinePatchDescriptor desc = JSONHelper::parseNinePatch(*json, parseError);
-            d->rows = desc.rows;
-            d->columns = desc.columns;
-            d->sizeableColumns = desc.sizeableColumns;
-            d->sizeableRows = desc.sizeableRows;
-            d->tiledRegions = desc.tiledRegions;
-
-            for (int i = 0; i < d->rows; i++)
-            {
-                for (int j = 0; j < d->columns; j++)
-                {
-                    d->regions.push_back(TextureRegion(desc.regions[i * d->columns + j]));
-                }
-            }
-
-            for (int i = 0; i < d->columns; i++)
-                d->width += d->regions[i].texture->width() * (d->regions[i].u2 - d->regions[i].u1);
-            for (int i = 0; i < d->rows; i++)
-                d->height += d->regions[i * d->columns].texture->height() * (d->regions[i * d->columns].v2 - d->regions[i * d->columns].v1);
-
-        }
+        boost::shared_ptr<NinePatchDescriptor> desc = boost::dynamic_pointer_cast<NinePatchDescriptor>(
+                    ResourceManager::instance().objectManager().loadObject(name, "ninepatch"));
+        if (desc)
+            d->initFromDescriptor(*desc);
     }
     else
     {

@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 - 2013 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2014 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -130,19 +130,21 @@ LineEdit::LineEdit(LineEditPrivate &p): Widget(p)
 void LineEditPrivate::init()
 {
     RANGERS_Q(LineEdit);
-    if (style.background.type == ResourceDescriptor::NINEPATCH)
+    boost::shared_ptr<TextureRegionDescriptor> texture = boost::dynamic_pointer_cast<TextureRegionDescriptor>(style.background);
+    boost::shared_ptr<NinePatchDescriptor> ninepatch = boost::dynamic_pointer_cast<NinePatchDescriptor>(style.background);
+    if (ninepatch)
     {
-        background = boost::shared_ptr<Sprite>(new NinePatch(boost::get<NinePatchDescriptor>(style.background.resource)));
+        background = boost::shared_ptr<Sprite>(new NinePatch(*ninepatch));
         q->addChild(background);
     }
-    else if (style.background.type == ResourceDescriptor::SPRITE)
+    else if (texture)
     {
-        background = boost::shared_ptr<Sprite>(new Sprite(boost::get<TextureRegionDescriptor>(style.background.resource)));
+        background = boost::shared_ptr<Sprite>(new Sprite(*texture));
         q->addChild(background);
     }
-    if ((style.font.path != L"") && (style.font.size > 0))
+    if ((style.font) && (style.font->path != L"") && (style.font->size > 0))
     {
-        label = boost::shared_ptr<Label>(new Label(text, ResourceManager::instance().loadFont(style.font.path, style.font.size)));
+        label = boost::shared_ptr<Label>(new Label(text, ResourceManager::instance().loadFont(style.font->path, style.font->size)));
         label->setColor(style.color);
         q->addChild(label);
     }

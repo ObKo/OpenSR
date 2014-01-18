@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2013 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2013 - 2014 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ boost::python::list getRegions(NinePatchDescriptor& self)
 
 void setRegions(NinePatchDescriptor& self, const boost::python::object& r)
 {
-    self.regions = pythonObjectToVector<TextureRegionDescriptor>(r);
+    self.regions = pythonObjectToVector<boost::shared_ptr<TextureRegionDescriptor> >(r);
 }
 
 boost::python::list getSizeableRows(NinePatchDescriptor& self)
@@ -62,6 +62,9 @@ void setSizeableColumns(NinePatchDescriptor& self, const boost::python::object& 
 void exportTypes()
 {
     using namespace boost::python;
+
+    class_<ResourceObject, boost::shared_ptr<ResourceObject> >("ResourceObject");
+
     class_<Vector>("Vector", init<float, float>())
     .def(init<>())
     .def_readwrite("x", &Vector::x)
@@ -117,18 +120,19 @@ void exportTypes()
     .def_readwrite("u2", &TextureRegion::u2)
     .def_readwrite("v2", &TextureRegion::v2);
 
-    class_<NinePatchDescriptor>("NinePatchDescriptor")
+    class_<NinePatchDescriptor, boost::shared_ptr<NinePatchDescriptor>, bases<ResourceObject> >("NinePatchDescriptor")
     .def_readwrite("rows", &NinePatchDescriptor::rows)
     .def_readwrite("columns", &NinePatchDescriptor::columns)
     .add_property("regions", &getRegions, &setRegions)
     .add_property("sizeableRows", &getSizeableRows, &setSizeableRows)
     .add_property("sizeableColumns", &getSizeableColumns, &setSizeableColumns);
 
-    class_<FontDescriptor>("FontDescriptor")
+    class_<FontDescriptor, boost::shared_ptr<FontDescriptor>, bases<ResourceObject> >("FontDescriptor")
     .def_readwrite("path", &FontDescriptor::path)
-    .def_readwrite("size", &FontDescriptor::size);
+    .def_readwrite("size", &FontDescriptor::size)
+    .def_readwrite("antialiasing", &FontDescriptor::antialiasing);
 
-    class_<TextureRegionDescriptor>("TextureRegionDescriptor")
+    class_<TextureRegionDescriptor, boost::shared_ptr<TextureRegionDescriptor>, bases<ResourceObject> >("TextureRegionDescriptor")
     .def_readwrite("texture", &TextureRegionDescriptor::texture)
     .def_readwrite("x", &TextureRegionDescriptor::x)
     .def_readwrite("y", &TextureRegionDescriptor::y)

@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2012 - 2013 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2012 - 2014 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -27,6 +27,8 @@ class NinePatchPrivate: public SpritePrivate
 {
     RANGERS_DECLARE_PUBLIC(NinePatch)
 public:
+    void initFromDescriptor(const NinePatchDescriptor& desc);
+
     int rows;
     int columns;
     std::vector<TextureRegion> regions;

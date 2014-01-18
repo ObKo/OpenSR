@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 - 2013 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2014 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -93,6 +93,40 @@ struct RANGERS_ENGINE_API Rect
     bool valid() const;
 };
 
+struct RANGERS_ENGINE_API ResourceObject
+{
+    virtual ~ResourceObject() {}
+};
+
+struct RANGERS_ENGINE_API TextureRegionDescriptor: public ResourceObject
+{
+    std::wstring texture;
+    int x, y, width, height;
+};
+
+struct RANGERS_ENGINE_API NinePatchDescriptor: public ResourceObject
+{
+    int rows;
+    int columns;
+    std::vector<boost::shared_ptr<TextureRegionDescriptor> > regions;
+    std::vector<int> sizeableRows;
+    std::vector<int> sizeableColumns;
+    std::vector<int> tiledRegions;
+};
+
+//TODO: Load font from descriptor
+struct RANGERS_ENGINE_API FontDescriptor: public ResourceObject
+{
+    std::wstring path;
+    int size;
+    bool antialiasing;
+};
+
+struct RANGERS_ENGINE_API SoundDescriptor: public ResourceObject
+{
+    std::wstring path;
+};
+
 //! Struct that handles region of texture.
 struct RANGERS_ENGINE_API TextureRegion
 {
@@ -103,28 +137,6 @@ struct RANGERS_ENGINE_API TextureRegion
     TextureRegion();
     boost::shared_ptr<Texture> texture;
     float u1, v1, u2, v2;
-};
-
-struct RANGERS_ENGINE_API NinePatchDescriptor
-{
-    int rows;
-    int columns;
-    std::vector<TextureRegionDescriptor> regions;
-    std::vector<int> sizeableRows;
-    std::vector<int> sizeableColumns;
-    std::vector<int> tiledRegions;
-};
-
-struct RANGERS_ENGINE_API FontDescriptor
-{
-    std::wstring path;
-    int size;
-};
-
-struct RANGERS_ENGINE_API TextureRegionDescriptor
-{
-    std::wstring texture;
-    int x, y, width, height;
 };
 
 RANGERS_ENGINE_API Rect operator+(const Rect& r1, const Rect& r2);

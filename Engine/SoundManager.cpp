@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 - 2012 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2014 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -38,6 +38,8 @@ SoundManager::SoundManager(const SoundManager& other)
 
 SoundManager::~SoundManager()
 {
+    if (m_currentMusic)
+        Mix_FreeMusic(m_currentMusic);
     Mix_CloseAudio();
 }
 

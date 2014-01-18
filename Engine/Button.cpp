@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 - 2013 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2014 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -75,6 +75,19 @@ void ButtonPrivate::ButtonListener::actionPerformed(const Action &action)
         q->action(Action(q, Action::BUTTON_CLICKED));
         break;
     }
+}
+
+
+boost::shared_ptr<Sprite> ButtonPrivate::spriteFromStyleObject(boost::shared_ptr<ResourceObject> o)
+{
+    boost::shared_ptr<TextureRegionDescriptor> texture = boost::dynamic_pointer_cast<TextureRegionDescriptor>(o);
+    boost::shared_ptr<NinePatchDescriptor> ninepatch = boost::dynamic_pointer_cast<NinePatchDescriptor>(o);
+    if (ninepatch)
+        return boost::shared_ptr<Sprite>(new NinePatch(*ninepatch));
+    else if (texture)
+        return boost::shared_ptr<Sprite>(new Sprite(*texture));
+
+    return boost::shared_ptr<Sprite>();
 }
 
 ButtonPrivate::ButtonPrivate(): WidgetPrivate()
@@ -341,39 +354,22 @@ boost::shared_ptr<Font> Button::font() const
 void ButtonPrivate::initFromStyle()
 {
     RANGERS_Q(Button);
-    if (style.normal.type == ResourceDescriptor::NINEPATCH)
-    {
-        normalSprite = boost::shared_ptr<Sprite>(new NinePatch(boost::get<NinePatchDescriptor>(style.normal.resource)));
+
+    normalSprite = spriteFromStyleObject(style.normal);
+    if (normalSprite)
         q->addChild(normalSprite);
-    }
-    else if (style.normal.type == ResourceDescriptor::SPRITE)
-    {
-        normalSprite = boost::shared_ptr<Sprite>(new Sprite(boost::get<TextureRegionDescriptor>(style.normal.resource)));
-        q->addChild(normalSprite);
-    }
-    if (style.hovered.type == ResourceDescriptor::NINEPATCH)
-    {
-        hoverSprite = boost::shared_ptr<Sprite>(new NinePatch(boost::get<NinePatchDescriptor>(style.hovered.resource)));
+
+    hoverSprite = spriteFromStyleObject(style.hovered);
+    if (hoverSprite)
         q->addChild(hoverSprite);
-    }
-    else if (style.hovered.type == ResourceDescriptor::SPRITE)
-    {
-        hoverSprite = boost::shared_ptr<Sprite>(new Sprite(boost::get<TextureRegionDescriptor>(style.hovered.resource)));
-        q->addChild(hoverSprite);
-    }
-    if (style.pressed.type == ResourceDescriptor::NINEPATCH)
-    {
-        pressedSprite = boost::shared_ptr<Sprite>(new NinePatch(boost::get<NinePatchDescriptor>(style.pressed.resource)));
+
+    pressedSprite = spriteFromStyleObject(style.pressed);
+    if (pressedSprite)
         q->addChild(pressedSprite);
-    }
-    else if (style.pressed.type == ResourceDescriptor::SPRITE)
+
+    if ((style.font) && (style.font->path != L"") && (style.font->size > 0))
     {
-        pressedSprite = boost::shared_ptr<Sprite>(new Sprite(boost::get<TextureRegionDescriptor>(style.pressed.resource)));
-        q->addChild(pressedSprite);
-    }
-    if ((style.font.path != L"") && (style.font.size > 0))
-    {
-        label = boost::shared_ptr<Label>(new Label(text, ResourceManager::instance().loadFont(style.font.path, style.font.size)));
+        label = boost::shared_ptr<Label>(new Label(text, ResourceManager::instance().loadFont(style.font->path, style.font->size)));
     }
     else
     {

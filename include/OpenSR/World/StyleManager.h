@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2013 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2013 - 2014 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -48,12 +48,12 @@ public:
     boost::shared_ptr<AsteroidStyle> asteroidStyle(const std::string& name);
     boost::shared_ptr<AsteroidStyle> asteroidStyle(uint32_t id);
 
-    //! Load planet styles from JSON file
-    void loadPlanetStyles(const std::wstring& styleFile);
-    //! Load system styles from JSON file
-    void loadSystemStyles(const std::wstring& styleFile);
-    //! Load asteroid styles from JSON file
-    void loadAsteroidStyles(const std::wstring& styleFile);
+    //! Load planet styles from resource object
+    void loadPlanetStyles(const std::string& path);
+    //! Load system styles from resource object
+    void loadSystemStyles(const std::string& path);
+    //! Load asteroid styles from resource object
+    void loadAsteroidStyles(const std::string& path);
 
 
     bool serialize(std::ostream &stream) const;

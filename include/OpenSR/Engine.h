@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 - 2013 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2014 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -94,9 +94,9 @@ public:
 
     boost::shared_ptr<Node> rootNode();
 
-    Skin defaultSkin() const;
-    void setDefaultSkin(const Skin& skin);
-    void setDefaultSkin(const std::wstring& skinPath);
+    boost::shared_ptr<Skin> defaultSkin() const;
+    void setDefaultSkin(boost::shared_ptr<Skin> skin);
+    void setDefaultSkin(const std::string& skinObjectPath);
 
     void loadPlugin(const std::wstring &path);
 

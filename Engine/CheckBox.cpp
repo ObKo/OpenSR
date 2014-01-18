@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 - 2013 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2014 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -51,53 +51,26 @@ CheckBox::CheckBox(const CheckBoxStyle& style, const std::wstring &text): Button
 {
     RANGERS_D(CheckBox);
     d->checkBoxStyle = style;
-    if (d->checkBoxStyle.normal.type == ResourceDescriptor::NINEPATCH)
-    {
-        d->uncheckedNormal = boost::shared_ptr<Sprite>(new NinePatch(boost::get<NinePatchDescriptor>(d->checkBoxStyle.normal.resource)));
+
+    d->uncheckedNormal = d->spriteFromStyleObject(style.normal);
+    if (d->uncheckedNormal)
         addChild(d->uncheckedNormal);
-    }
-    else if (d->checkBoxStyle.normal.type == ResourceDescriptor::SPRITE)
-    {
-        d->uncheckedNormal = boost::shared_ptr<Sprite>(new Sprite(boost::get<TextureRegionDescriptor>(d->checkBoxStyle.normal.resource)));
-        addChild(d->uncheckedNormal);
-    }
 
-    if (d->checkBoxStyle.checkedNormal.type == ResourceDescriptor::NINEPATCH)
-    {
-        d->checkedNormal = boost::shared_ptr<Sprite>(new NinePatch(boost::get<NinePatchDescriptor>(d->checkBoxStyle.checkedNormal.resource)));
+    d->checkedNormal = d->spriteFromStyleObject(style.checkedNormal);
+    if (d->checkedNormal)
         addChild(d->checkedNormal);
-    }
-    else if (d->checkBoxStyle.checkedNormal.type == ResourceDescriptor::SPRITE)
-    {
-        d->checkedNormal = boost::shared_ptr<Sprite>(new Sprite(boost::get<TextureRegionDescriptor>(d->checkBoxStyle.checkedNormal.resource)));
-        addChild(d->checkedNormal);
-    }
 
-    if (d->checkBoxStyle.hovered.type == ResourceDescriptor::NINEPATCH)
-    {
-        d->uncheckedHovered = boost::shared_ptr<Sprite>(new NinePatch(boost::get<NinePatchDescriptor>(d->checkBoxStyle.hovered.resource)));
+    d->uncheckedHovered = d->spriteFromStyleObject(style.hovered);
+    if (d->uncheckedHovered)
         addChild(d->uncheckedHovered);
-    }
-    else if (d->checkBoxStyle.hovered.type == ResourceDescriptor::SPRITE)
-    {
-        d->uncheckedHovered = boost::shared_ptr<Sprite>(new Sprite(boost::get<TextureRegionDescriptor>(d->checkBoxStyle.hovered.resource)));
-        addChild(d->uncheckedHovered);
-    }
 
-    if (d->checkBoxStyle.checkedHovered.type == ResourceDescriptor::NINEPATCH)
-    {
-        d->checkedHovered = boost::shared_ptr<Sprite>(new NinePatch(boost::get<NinePatchDescriptor>(d->checkBoxStyle.checkedHovered.resource)));
+    d->checkedHovered = d->spriteFromStyleObject(style.checkedHovered);
+    if (d->checkedHovered)
         addChild(d->checkedHovered);
-    }
-    else if (d->checkBoxStyle.checkedHovered.type == ResourceDescriptor::SPRITE)
-    {
-        d->checkedHovered = boost::shared_ptr<Sprite>(new Sprite(boost::get<TextureRegionDescriptor>(d->checkBoxStyle.checkedHovered.resource)));
-        addChild(d->checkedHovered);
-    }
 
-    if ((d->checkBoxStyle.font.path != L"") && (d->checkBoxStyle.font.size > 0))
+    if ((d->checkBoxStyle.font) && (d->checkBoxStyle.font->path != L"") && (d->checkBoxStyle.font->size > 0))
     {
-        d->label->setFont(ResourceManager::instance().loadFont(d->checkBoxStyle.font.path, d->checkBoxStyle.font.size));
+        d->label->setFont(ResourceManager::instance().loadFont(d->checkBoxStyle.font->path, d->checkBoxStyle.font->size));
     }
     setColor(d->checkBoxStyle.color);
 

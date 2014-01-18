@@ -1,0 +1,5 @@
+{
+    "@type": "directory",
+    "styles": ":ORC/styles.json",
+    "skins": ":ORC/skins.json"
+}

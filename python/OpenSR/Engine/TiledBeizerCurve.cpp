@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2013 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2013 - 2014 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ void exportTiledBeizerCurve()
 {
     using namespace boost::python;
 
-    class_<TiledBeizerCurveWrap, bases<Object>, boost::shared_ptr<TiledBeizerCurve>, boost::noncopyable> c("TiledBeizerCurve", init<boost::shared_ptr<Texture> >());
+    class_<TiledBeizerCurveWrap, bases<Object>, boost::shared_ptr<TiledBeizerCurveWrap>, boost::noncopyable> c("TiledBeizerCurve", init<boost::shared_ptr<Texture> >());
     c.def(init<const std::wstring&>())
     .def(init<>())
     .add_property("curve", &TiledBeizerCurve::curve, &TiledBeizerCurve::setCurve);

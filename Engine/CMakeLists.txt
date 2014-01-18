@@ -27,7 +27,6 @@ SET(SOURCES
     CheckBox.cpp
     NinePatch.cpp
     ScrollArea.cpp
-    JSONHelper.cpp
     Styles.cpp
     SoundManager.cpp
     Sound.cpp
@@ -42,6 +41,7 @@ SET(SOURCES
     TiledLine.cpp
     TiledPolyline.cpp
     TiledBeizerCurve.cpp
+    ResourceObjectManager.cpp
 )
 
 INCLUDE_DIRECTORIES(

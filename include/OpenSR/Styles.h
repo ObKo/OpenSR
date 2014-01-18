@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011  - 2013 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2014 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -31,82 +31,63 @@ struct ButtonStyle;
 struct ScrollBarStyle;
 struct FontDescriptor;
 struct TextureRegionDescriptor;
+struct ResourceObject;
 
-struct RANGERS_ENGINE_API ResourceDescriptor
+struct RANGERS_ENGINE_API ButtonStyle: public ResourceObject
 {
-    ResourceDescriptor();
-    ResourceDescriptor(const NinePatchDescriptor& ninePatch);
-    ResourceDescriptor(const FontDescriptor& font);
-    ResourceDescriptor(const TextureRegionDescriptor& texture);
-    ResourceDescriptor(const std::wstring& sound);
-
-    enum Type {NONE, NINEPATCH, SPRITE, FONT, SOUND};
-    typedef boost::variant<TextureRegionDescriptor, NinePatchDescriptor, FontDescriptor, std::wstring> Resource;
-
-    Type type;
-    Resource resource;
-
-    TextureRegionDescriptor texture() const;
-    NinePatchDescriptor ninePatch() const;
-    FontDescriptor font() const;
-    std::wstring sound() const;
-};
-
-struct RANGERS_ENGINE_API ButtonStyle
-{
-    ResourceDescriptor normal;
-    ResourceDescriptor hovered;
-    ResourceDescriptor pressed;
+    boost::shared_ptr<ResourceObject> normal;
+    boost::shared_ptr<ResourceObject> hovered;
+    boost::shared_ptr<ResourceObject> pressed;
     Color color;
-    FontDescriptor font;
+    boost::shared_ptr<FontDescriptor> font;
     Rect contentRect;
     std::wstring clickSound;
     std::wstring leaveSound;
     std::wstring enterSound;
 };
 
-struct RANGERS_ENGINE_API CheckBoxStyle
+struct RANGERS_ENGINE_API CheckBoxStyle: public ResourceObject
 {
-    ResourceDescriptor normal;
-    ResourceDescriptor hovered;
-    ResourceDescriptor checkedNormal;
-    ResourceDescriptor checkedHovered;
+    boost::shared_ptr<ResourceObject> normal;
+    boost::shared_ptr<ResourceObject> hovered;
+    boost::shared_ptr<ResourceObject> checkedNormal;
+    boost::shared_ptr<ResourceObject> checkedHovered;
     Color color;
-    FontDescriptor font;
+    boost::shared_ptr<FontDescriptor> font;
 };
 
-struct RANGERS_ENGINE_API RadioButtonStyle
+struct RANGERS_ENGINE_API RadioButtonStyle: public ResourceObject
 {
-    ResourceDescriptor normal;
-    ResourceDescriptor hovered;
-    ResourceDescriptor selectedNormal;
-    ResourceDescriptor selectedHovered;
+    boost::shared_ptr<ResourceObject> normal;
+    boost::shared_ptr<ResourceObject> hovered;
+    boost::shared_ptr<ResourceObject> selectedNormal;
+    boost::shared_ptr<ResourceObject> selectedHovered;
     Color color;
-    FontDescriptor font;
+    boost::shared_ptr<FontDescriptor> font;
 };
 
-struct RANGERS_ENGINE_API LineEditStyle
+struct RANGERS_ENGINE_API LineEditStyle: public ResourceObject
 {
-    ResourceDescriptor background;
+    boost::shared_ptr<ResourceObject> background;
     Color color;
-    FontDescriptor font;
+    boost::shared_ptr<FontDescriptor> font;
     Rect contentRect;
 };
 
-struct RANGERS_ENGINE_API ScrollBarStyle
+struct RANGERS_ENGINE_API ScrollBarStyle: public ResourceObject
 {
-    ButtonStyle upButton;
-    ButtonStyle scroll;
-    ButtonStyle downButton;
+    boost::shared_ptr<ButtonStyle> upButton;
+    boost::shared_ptr<ButtonStyle> scroll;
+    boost::shared_ptr<ButtonStyle> downButton;
 };
 
-struct RANGERS_ENGINE_API Skin
+struct RANGERS_ENGINE_API Skin: public ResourceObject
 {
-    ButtonStyle buttonStyle;
-    ScrollBarStyle scrollStyle;
-    LineEditStyle lineEditStyle;
-    CheckBoxStyle checkBoxStyle;
-    RadioButtonStyle radioButtonStyle;
+    boost::shared_ptr<ButtonStyle> buttonStyle;
+    boost::shared_ptr<ScrollBarStyle> scrollStyle;
+    boost::shared_ptr<LineEditStyle> lineEditStyle;
+    boost::shared_ptr<CheckBoxStyle> checkBoxStyle;
+    boost::shared_ptr<RadioButtonStyle> radioButtonStyle;
 };
 
 }

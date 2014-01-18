@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 - 2013 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2014 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 
 #include "OpenSR/config.h"
 #include "OpenSR/ResourceAdapter.h"
+#include "OpenSR/ResourceObjectManager.h"
 
 #include <map>
 #include <list>
@@ -45,7 +46,6 @@ class RANGERS_ENGINE_API ResourceManager
 public:
     void addRPKG(const std::wstring& path);
     void addDir(const std::wstring& path);
-    void addMapping(const std::wstring& fileName);
 
     boost::shared_array<char> loadData(const std::wstring& name, size_t &size);
     boost::shared_ptr<std::istream> getFileStream(const std::wstring& name);
@@ -56,6 +56,8 @@ public:
     boost::shared_ptr<Font> loadFont(const std::wstring& name, int size, bool antialiased = true);
 
     bool resourceExists(const std::wstring& path);
+
+    ResourceObjectManager& objectManager();
 
     static ResourceManager& instance();
 
@@ -68,7 +70,7 @@ private:
     class GAIWorker;
     void processGAIQueue();
     void cleanupUnused();
-    std::map<std::wstring, std::wstring> m_fileMapping;
+
     std::map<std::wstring, boost::shared_ptr<ResourceAdapter> > m_files;
     std::list<boost::shared_ptr<ResourceAdapter> > m_adapters;
 
@@ -76,6 +78,8 @@ private:
     std::map<std::wstring, boost::shared_ptr<AnimatedTexture> > m_animations;
     std::map<std::wstring, boost::shared_ptr<Font> > m_fonts;
     std::map<boost::shared_ptr<AnimatedTexture>, GAIWorker *> m_gaiQueue;
+
+    ResourceObjectManager m_objectManager;
 };
 }
 

@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2013 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2014 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -37,53 +37,26 @@ RadioButton::RadioButton(const RadioButtonStyle& style, const std::wstring &text
 {
     RANGERS_D(RadioButton);
     d->radioButtonStyle = style;
-    if (d->radioButtonStyle.normal.type == ResourceDescriptor::NINEPATCH)
-    {
-        d->deselectedNormal = boost::shared_ptr<Sprite>(new NinePatch(boost::get<NinePatchDescriptor>(d->radioButtonStyle.normal.resource)));
+
+    d->deselectedNormal = d->spriteFromStyleObject(style.normal);
+    if (d->deselectedNormal)
         addChild(d->deselectedNormal);
-    }
-    else if (d->radioButtonStyle.normal.type == ResourceDescriptor::SPRITE)
-    {
-        d->deselectedNormal = boost::shared_ptr<Sprite>(new Sprite(boost::get<TextureRegionDescriptor>(d->radioButtonStyle.normal.resource)));
-        addChild(d->deselectedNormal);
-    }
 
-    if (d->radioButtonStyle.selectedNormal.type == ResourceDescriptor::NINEPATCH)
-    {
-        d->selectedNormal = boost::shared_ptr<Sprite>(new NinePatch(boost::get<NinePatchDescriptor>(d->radioButtonStyle.selectedNormal.resource)));
+    d->selectedNormal = d->spriteFromStyleObject(style.selectedNormal);
+    if (d->selectedNormal)
         addChild(d->selectedNormal);
-    }
-    else if (d->radioButtonStyle.selectedNormal.type == ResourceDescriptor::SPRITE)
-    {
-        d->selectedNormal = boost::shared_ptr<Sprite>(new Sprite(boost::get<TextureRegionDescriptor>(d->radioButtonStyle.selectedNormal.resource)));
-        addChild(d->selectedNormal);
-    }
 
-    if (d->radioButtonStyle.hovered.type == ResourceDescriptor::NINEPATCH)
-    {
-        d->deselectedHovered = boost::shared_ptr<Sprite>(new NinePatch(boost::get<NinePatchDescriptor>(d->radioButtonStyle.hovered.resource)));
+    d->deselectedHovered = d->spriteFromStyleObject(style.hovered);
+    if (d->deselectedHovered)
         addChild(d->deselectedHovered);
-    }
-    else if (d->radioButtonStyle.hovered.type == ResourceDescriptor::SPRITE)
-    {
-        d->deselectedHovered = boost::shared_ptr<Sprite>(new Sprite(boost::get<TextureRegionDescriptor>(d->radioButtonStyle.hovered.resource)));
-        addChild(d->deselectedHovered);
-    }
 
-    if (d->radioButtonStyle.selectedHovered.type == ResourceDescriptor::NINEPATCH)
-    {
-        d->selectedHovered = boost::shared_ptr<Sprite>(new NinePatch(boost::get<NinePatchDescriptor>(d->radioButtonStyle.selectedHovered.resource)));
+    d->selectedHovered = d->spriteFromStyleObject(style.selectedHovered);
+    if (d->selectedHovered)
         addChild(d->selectedHovered);
-    }
-    else if (d->radioButtonStyle.selectedHovered.type == ResourceDescriptor::SPRITE)
-    {
-        d->selectedHovered = boost::shared_ptr<Sprite>(new Sprite(boost::get<TextureRegionDescriptor>(d->radioButtonStyle.selectedHovered.resource)));
-        addChild(d->selectedHovered);
-    }
 
-    if ((d->radioButtonStyle.font.path != L"") && (d->radioButtonStyle.font.size > 0))
+    if ((d->radioButtonStyle.font) && (d->radioButtonStyle.font->path != L"") && (d->radioButtonStyle.font->size > 0))
     {
-        d->label->setFont(ResourceManager::instance().loadFont(d->radioButtonStyle.font.path, d->radioButtonStyle.font.size));
+        d->label->setFont(ResourceManager::instance().loadFont(d->radioButtonStyle.font->path, d->radioButtonStyle.font->size));
     }
     setColor(d->radioButtonStyle.color);
 

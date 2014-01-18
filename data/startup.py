@@ -1,6 +1,4 @@
 from OpenSR.Engine import Engine, ResourceManager
-from OpenSR.World import WorldManager
-from OpenSR.ORC.StartMenu import StartMenuWidget
 
 import gettext
 
@@ -9,6 +7,8 @@ gettext.textdomain('OpenSR')
 
 engine = Engine.instance()
 resources = ResourceManager.instance()
-world = WorldManager.instance()
 
+engine.loadPlugin('world')
+
+from OpenSR.ORC.StartMenu import StartMenuWidget
 engine.addWidget(StartMenuWidget())

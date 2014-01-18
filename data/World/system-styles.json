@@ -1,5 +1,8 @@
 {
+   "@type": "system-styles",
+   
    "solar" : {
+      "@type": "system-style",
       "star": "DATA/Star/Star00.gai", 
       "star-animated": true,
       "star-color" : "#FFFFFF",

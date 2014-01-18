@@ -1,8 +1,16 @@
 {
-    "NinePatch":
+    "@type": "directory",
+    
+    "font": {"@type": "font", "file": "DroidSans.ttf", "size": 14},
+    "font-bold": {"@type": "font", "file": "DroidSans-Bold.ttf", "size": 14},
+
+    "info-widget":
     {
-        "info-widget":
+        "@type": "info-widget-style",
+        
+        "background": 
         {
+            "@type": "ninepatch",
             "rows": 3,
             "columns": 3,
             "sizeableRows": [1],
@@ -20,23 +28,14 @@
                 {"texture": "DATA/FormNote/2SimpleBottom.gi"},
                 {"texture": "DATA/FormNote/2SimpleBottomRight.gi"}
             ] 
-        }
-    },
-    "Font":
-    {
-        "default-font": {"file": "DroidSans.ttf", "size": 14},
-        "bold-font": {"file": "DroidSans-Bold.ttf", "size": 14}
-    },
-    "InfoWidgetStyle":
-    {
-        "background": "info-widget",
+        },
         "icon-position": {"x": 13, "y": 11},
         "race-icon-position": {"x": 211, "y": 103},
         "icon-size": 40,
         "caption-content-rect": {"x": 58, "y": 10, "width": 150, "height": 42},
         "content-rect": {"x": 13, "y": 65, "width": 195, "height": 55},
-        "font": "default-font",
-        "caption-font": "bold-font",
+        "font": "/world/skin/font",
+        "caption-font": "/world/skin/font-bold",
         "color": "#FFFFFF",
         "caption-color": "#31EFFF",
         "label-color": "#8C8A8C"

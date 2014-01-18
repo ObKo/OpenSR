@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2013 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2013 - 2014 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -75,7 +75,7 @@ void exportEngine()
     .add_property("ticks", &Engine::getTicks)
     .add_property("properties", &Engine::properties)
     .add_property("rootNode", &Engine::rootNode)
-    .add_property("defaultSkin", &Engine::defaultSkin, (void (Engine::*)(const std::wstring&))&Engine::setDefaultSkin)
+    .add_property("defaultSkin", &Engine::defaultSkin, (void (Engine::*)(const std::string&))&Engine::setDefaultSkin)
     .def("loadPlugin", &Engine::loadPlugin)
     .add_property("screenWidth", &Engine::screenWidth)
     .add_property("screenHeight", &Engine::screenHeight)

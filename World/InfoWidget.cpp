@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2013 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2013 - 2014 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -48,30 +48,29 @@ namespace World
 {
 InfoWidget::InfoWidget(const InfoWidgetStyle& style): Widget(), m_type(INFO_NONE)
 {
-    if (style.background.type == ResourceDescriptor::SPRITE)
+    boost::shared_ptr<TextureRegionDescriptor> texture = boost::dynamic_pointer_cast<TextureRegionDescriptor>(style.background);
+    boost::shared_ptr<NinePatchDescriptor> ninepatch = boost::dynamic_pointer_cast<NinePatchDescriptor>(style.background);;
+
+    if (ninepatch)
     {
-        m_bgSprite = boost::shared_ptr<Sprite>(new Sprite(boost::get<TextureRegionDescriptor>(style.background.resource)));
+        m_bgSprite = boost::shared_ptr<Sprite>(new NinePatch(*ninepatch));
         addChild(m_bgSprite);
     }
-    else if (style.background.type == ResourceDescriptor::NINEPATCH)
+    else if (texture)
     {
-        m_bgSprite = boost::shared_ptr<Sprite>(new NinePatch(boost::get<NinePatchDescriptor>(style.background.resource)));
+        m_bgSprite = boost::shared_ptr<Sprite>(new Sprite(*texture));
         addChild(m_bgSprite);
     }
 
-    if (style.font.type == ResourceDescriptor::FONT)
-    {
-        FontDescriptor d = boost::get<FontDescriptor>(style.font.resource);
-        m_font = ResourceManager::instance().loadFont(d.path, d.size);
-    }
+    if (style.font)
+        m_font = ResourceManager::instance().loadFont(style.font->path, style.font->size);
+
     if (!m_font)
         m_font = Engine::instance().coreFont();
 
-    if (style.captionFont.type == ResourceDescriptor::FONT)
-    {
-        FontDescriptor d = boost::get<FontDescriptor>(style.captionFont.resource);
-        m_captionFont = ResourceManager::instance().loadFont(d.path, d.size);
-    }
+    if (style.captionFont)
+        m_captionFont = ResourceManager::instance().loadFont(style.captionFont->path, style.captionFont->size);
+
     if (!m_captionFont)
         m_captionFont = Engine::instance().coreFont();
 
@@ -354,8 +353,11 @@ void InfoWidget::showPlanet(boost::shared_ptr<Planet> planet)
         if (race)
         {
             l = boost::shared_ptr<Label>(new Label(_(race->name, "OpenSR-World"), m_font));
-            m_raceIconSprite = boost::shared_ptr<Sprite>(new Sprite(race->icon));
-            addChild(m_raceIconSprite);
+            if (race->icon)
+            {
+                m_raceIconSprite = boost::shared_ptr<Sprite>(new Sprite(*race->icon));
+                addChild(m_raceIconSprite);
+            }
         }
         else
             l = boost::shared_ptr<Label>(new Label(_("Unknown", "OpenSR-World"), m_font));
@@ -426,11 +428,14 @@ void InfoWidget::showSystem(boost::shared_ptr<PlanetarySystem> system)
 
                 if (race)
                 {
-                    boost::shared_ptr<Sprite> s = boost::shared_ptr<Sprite>(new Sprite(race->icon));
-                    float aspect = std::min(s->height() / SMALL_ICON_SIZE, s->height() / m_font->size());
-                    s->setGeometry(int(s->width() / aspect), int(s->height() / aspect));
-                    m_infoWidget.push_back(s);
-                    addChild(s);
+                    if (race->icon)
+                    {
+                        boost::shared_ptr<Sprite> s = boost::shared_ptr<Sprite>(new Sprite(*race->icon));
+                        float aspect = std::min(s->height() / SMALL_ICON_SIZE, s->height() / m_font->size());
+                        s->setGeometry(int(s->width() / aspect), int(s->height() / aspect));
+                        m_infoWidget.push_back(s);
+                        addChild(s);
+                    }
                 }
             }
 

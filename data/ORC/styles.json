@@ -1,0 +1,19 @@
+{
+    "@type": "directory",
+    
+    "default":
+    {
+        "@type": "directory",
+        
+        "font": {"@type": "font", "file": "DroidSans.ttf", "size": 14},
+        "enter-sound": {"@type": "sound", "file": "Sound/ButtonEnter.wav"},
+        "leave-sound": {"@type": "sound", "file": "Sound/ButtonLeave.WAV"},
+        "click-sound": {"@type": "sound", "file": "Sound/ButtonClick.wav"},
+        
+        "line-edit": ":ORC/styles/line-edit.json",
+        "button": ":ORC/styles/button.json",
+        "check-box": ":ORC/styles/check-box.json",
+        "radio-button": ":ORC/styles/radio-button.json",
+        "scroll-bar": ":ORC/styles/scroll-bar.json"
+    }
+}

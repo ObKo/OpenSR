@@ -11,7 +11,6 @@ SET(ENGINE_HEADERS
     FSAdapter.h
     Font.h
     GAISprite.h
-    JSONHelper.h
     Label.h
     LabelWidget.h
     LineEdit.h
@@ -27,6 +26,7 @@ SET(ENGINE_HEADERS
     RadioButtonGroup.h
     ResourceAdapter.h
     ResourceManager.h
+    ResourceObjectManager.h
     ScriptWidget.h
     ScrollArea.h
     Shader.h

@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 - 2013 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2014 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -40,11 +40,12 @@
 #include "OpenSR/Log.h"
 #include "OpenSR/ResourceManager.h"
 #include "OpenSR/Action.h"
-#include "OpenSR/JSONHelper.h"
 #include "OpenSR/Plugin.h"
 #include "OpenSR/Node.h"
+#include "OpenSR/Styles.h"
 
 #include "OpenSR/private/Engine_p.h"
+#include <OpenSR/ResourceObjectManager.h>
 
 //TODO: Move logic back to separate thred. For now this is impossible
 //      due to boost::python and random boost::shared_ptr destruction
@@ -465,7 +466,10 @@ void Engine::init(int argc, char **argv, int w, int h, bool fullscreen)
         monoFontAA = false;
     d->monospaceFont = ResourceManager::instance().loadFont(fromLocal(monoFontStrings.at(0).c_str()), monoFontSize, monoFontAA);
 
-    setDefaultSkin(fromLocal(d->properties->get<std::string>("graphics.defaultSkin", "skin.json").c_str()));
+    //FIXME: ORC hardcoded.
+    ResourceManager::instance().objectManager().addJSON(fromLocal(d->properties->get<std::string>("data.objects", "ORC/resources.json").c_str()));
+
+    setDefaultSkin(d->properties->get<std::string>("graphics.defaultSkin", "/skins/default").c_str());
 
     d->frames = 0;
 
@@ -697,26 +701,25 @@ boost::shared_ptr<Object> Engine::getObjectPointer(Object *object) const
     boost::shared_ptr<Object>();
 }
 
-Skin Engine::defaultSkin() const
+boost::shared_ptr<Skin> Engine::defaultSkin() const
 {
     RANGERS_D(const Engine);
     return d->skin;
 }
 
-void Engine::setDefaultSkin(const Skin& skin)
+void Engine::setDefaultSkin(boost::shared_ptr<Skin> skin)
 {
     RANGERS_D(Engine);
     d->skin = skin;
 }
 
-void Engine::setDefaultSkin(const std::wstring& skinPath)
+void Engine::setDefaultSkin(const std::string& skinObjectPath)
 {
     RANGERS_D(Engine);
-    boost::shared_ptr<std::istream> json = ResourceManager::instance().getFileStream(skinPath);
-    if (!json)
+    boost::shared_ptr<Skin> s = ResourceManager::instance().objectManager().getObject<Skin>(skinObjectPath);
+    if (!s)
         return;
-    bool error;
-    d->skin = JSONHelper::parseSkin(*json, error);
+    d->skin = s;
 }
 
 void Engine::EnginePrivate::processEvents()

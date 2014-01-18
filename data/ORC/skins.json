@@ -1,0 +1,14 @@
+{
+    "@type": "directory",
+    
+    "default": 
+    {
+        "@type": "skin",
+        
+        "button": "/styles/default/button",
+        "check-box": "/styles/default/check-box",
+        "radio-button": "/styles/default/radio-button",
+        "line-edit": "/styles/default/line-edit",
+        "scroll-bar": "/styles/default/scroll-bar"
+    }
+}

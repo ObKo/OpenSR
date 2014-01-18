@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2014 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,47 +20,4 @@
 
 namespace Rangers
 {
-ResourceDescriptor::ResourceDescriptor(): type(NONE)
-{
-}
-
-ResourceDescriptor::ResourceDescriptor(const NinePatchDescriptor& ninePatch):
-    type(NINEPATCH), resource(ninePatch)
-{
-}
-
-ResourceDescriptor::ResourceDescriptor(const FontDescriptor& font):
-    type(FONT), resource(font)
-{
-}
-
-ResourceDescriptor::ResourceDescriptor(const TextureRegionDescriptor& texture):
-    type(SPRITE), resource(texture)
-{
-}
-
-ResourceDescriptor::ResourceDescriptor(const std::wstring& sound):
-    type(SOUND), resource(sound)
-{
-}
-
-TextureRegionDescriptor ResourceDescriptor::texture() const
-{
-    return boost::get<TextureRegionDescriptor>(resource);
-}
-
-NinePatchDescriptor ResourceDescriptor::ninePatch() const
-{
-    return boost::get<NinePatchDescriptor>(resource);
-}
-
-FontDescriptor ResourceDescriptor::font() const
-{
-    return boost::get<FontDescriptor>(resource);
-}
-
-std::wstring ResourceDescriptor::sound() const
-{
-    return boost::get<std::wstring>(resource);
-}
 }

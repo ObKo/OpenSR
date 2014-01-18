@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2012 - 2013 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2012 - 2014 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -89,10 +89,10 @@ PlanetManager& WorldManager::planetManager()
 
 void WorldManager::generateWorld()
 {
-    std::wstring worldRaces = fromUTF8(Engine::instance().properties()->get<std::string>("world.races", "World/Races.json").c_str());
-    std::wstring worldSystemStyles = fromUTF8(Engine::instance().properties()->get<std::string>("world.systemStyles", "World/SystemStyles.json").c_str());
-    std::wstring worldPlanetStyles = fromUTF8(Engine::instance().properties()->get<std::string>("world.planetStyles", "World/PlanetStyles.json").c_str());
-    std::wstring worldAsteroidStyles = fromUTF8(Engine::instance().properties()->get<std::string>("world.asteroidStyles", "World/AsteroidStyles.json").c_str());
+    std::string worldRaces = Engine::instance().properties()->get<std::string>("world.races", "/world/races");
+    std::string worldSystemStyles = Engine::instance().properties()->get<std::string>("world.systemStyles", "/world/system-styles");
+    std::string worldPlanetStyles = Engine::instance().properties()->get<std::string>("world.planetStyles", "/world/planet-styles");
+    std::string worldAsteroidStyles = Engine::instance().properties()->get<std::string>("world.asteroidStyles", "/world/asteroid-styles");
 
     if (!worldRaces.empty())
         m_raceManager.loadRaces(worldRaces);

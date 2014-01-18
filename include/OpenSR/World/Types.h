@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2012 - 2013 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2012 - 2014 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ struct RANGERS_WORLD_API Trajectory
     std::list<BeizerCurve> nextTurns;
 };
 
-struct RANGERS_WORLD_API PlanetStyle
+struct RANGERS_WORLD_API PlanetStyle: public ResourceObject
 {
     PlanetStyle();
 
@@ -68,7 +68,7 @@ struct RANGERS_WORLD_API PlanetStyle
     bool deserialize(std::istream &stream);
 };
 
-struct RANGERS_WORLD_API SystemStyle
+struct RANGERS_WORLD_API SystemStyle: public ResourceObject
 {
     SystemStyle();
 
@@ -82,7 +82,7 @@ struct RANGERS_WORLD_API SystemStyle
     bool deserialize(std::istream &stream);
 };
 
-struct RANGERS_WORLD_API AsteroidStyle
+struct RANGERS_WORLD_API AsteroidStyle: public ResourceObject
 {
     AsteroidStyle();
 

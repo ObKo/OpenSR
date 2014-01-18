@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2013 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2013 - 2014 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,7 +22,9 @@
 #include <OpenSR/libRanger.h>
 #include <OpenSR/ResourceManager.h>
 #include <OpenSR/Log.h>
-#include <OpenSR/JSONHelper.h>
+#include <json/value.h>
+
+#include <boost/algorithm/string.hpp>
 
 namespace
 {
@@ -34,15 +36,137 @@ namespace Rangers
 {
 namespace World
 {
-RaceManager::RaceManager()
+namespace
 {
+//! Dummy struct for representing information about races as ResourceObject
+struct Races: ResourceObject
+{
+    std::map<std::string, boost::shared_ptr<Race> > races;
+    std::vector<std::tuple<std::string, std::string, float> > relations;
+    std::vector<std::string> invaders;
+};
+
+class RacesFactory: public ResourceObjectManager::ResourceObjectFactory
+{
+    virtual boost::shared_ptr< ResourceObject > operator()(const std::string& currentPath, const Json::Value& object, ResourceObjectManager& manager)
+    {
+        boost::shared_ptr<Races> result = boost::shared_ptr<Races>(new Races());
+
+        Json::Value jsonRaces = object.get("races", Json::Value());
+
+        for (const std::string& s : jsonRaces.getMemberNames())
+        {
+            Json::Value r = jsonRaces.get(s, Json::Value());
+
+            if (!r.isObject())
+                continue;
+
+            boost::shared_ptr<Race> race = boost::shared_ptr<Race>(new Race());
+            race->id = textHash32(s);
+            race->icon = boost::dynamic_pointer_cast<TextureRegionDescriptor>(manager.loadObject(r.get("icon", Json::Value()), "texture"));
+            race->name = r.get("name", "").asString();
+            race->invader = false;
+            race->relations[race->id] = 1.0f;
+
+            result->races[s] = race;
+        }
+
+        for (const std::string& s : object.get("relations", Json::Value()).getMemberNames())
+        {
+            float r;
+            std::vector<std::string> races;
+            try
+            {
+                r = object.get(s, 0).asInt();
+                boost::split(races, s, boost::is_any_of(":"));
+
+                if (races.size() != 2)
+                    throw;
+
+                if ((result->races.find(races[0]) == result->races.end()) || (result->races.find(races[0]) == result->races.end()))
+                    throw;
+            }
+            catch (...)
+            {
+                Log::error() << "Invalid race relation: " << s;
+                continue;
+            }
+
+            result->relations.push_back(std::tuple<std::string, std::string, float>(races[0], races[1], r));
+        }
+
+        for (const Json::Value& v : object.get("invaders", Json::Value()))
+        {
+            result->invaders.push_back(v.asString());
+        }
+
+        return result;
+    }
+};
 
 }
 
-void RaceManager::loadRaces(const std::wstring& file)
+RaceManager::RaceManager()
+{
+    ResourceManager::instance().objectManager().addFactory("races", boost::shared_ptr<ResourceObjectManager::ResourceObjectFactory>(new RacesFactory()));
+}
+
+void RaceManager::loadRaces(const std::string& file)
 {
     m_races.clear();
 
+    boost::shared_ptr<Races> races = ResourceManager::instance().objectManager().getObject<Races>(file);
+
+    if (!races)
+        return;
+
+    std::vector<uint32_t> ids;
+
+    for (const std::pair<std::string, boost::shared_ptr<Race> > &p : races->races)
+    {
+        m_races[textHash32(p.first)] = p.second;
+        ids.push_back(textHash32(p.first));
+    }
+
+    std::sort(ids.begin(), ids.end());
+
+    for (const std::tuple<std::string, std::string, float> &t : races->relations)
+    {
+        uint32_t id1 = textHash32(std::get<0>(t));
+        uint32_t id2 = textHash32(std::get<1>(t));
+
+        if (!std::binary_search(ids.begin(), ids.end(), id1))
+            continue;
+        if (!std::binary_search(ids.begin(), ids.end(), id2))
+            continue;
+
+        m_races[id1]->relations[id2] = std::get<2>(t);
+        m_races[id2]->relations[id1] = std::get<2>(t);
+    }
+
+    //Check relations integrity
+    for (const std::pair<uint32_t, boost::shared_ptr<Race> > &r : m_races)
+    {
+        for (uint32_t id : ids)
+        {
+            if (r.second->relations.find(id) == r.second->relations.end())
+            {
+                Log::error() << "No relation found for races \"" << r.second->name << "\" and \"" << m_races[id]->name << "\", using 0.0f (neutral)";
+                m_races[id]->relations[r.first] = 0.0f;
+                r.second->relations[id] = 0.0f;
+            }
+        }
+    }
+
+    for (const std::string &r : races->invaders)
+    {
+        uint32_t id = textHash32(r);
+        if (!std::binary_search(ids.begin(), ids.end(), id))
+            continue;
+        m_races[id]->invader = true;
+    }
+
+    /*
     //TODO: relations
     boost::shared_ptr<std::istream> json = ResourceManager::instance().getFileStream(file);
 
@@ -119,7 +243,7 @@ void RaceManager::loadRaces(const std::wstring& file)
         }
         first->relations[second->id] = relation;
         second->relations[first->id] = relation;
-    }
+    }*/
 }
 
 bool Race::deserialize(std::istream& stream)
@@ -138,7 +262,8 @@ bool Race::deserialize(std::istream& stream)
     if (!WorldHelper::deserializeString(name, stream))
         return false;
 
-    if (!WorldHelper::deserializeTextureRegion(icon, stream))
+    icon = boost::shared_ptr<TextureRegionDescriptor>(new TextureRegionDescriptor());
+    if (!WorldHelper::deserializeTextureRegion(*icon, stream))
         return false;
 
     stream.read((char *)&invader, sizeof(bool));
@@ -177,8 +302,16 @@ bool Race::serialize(std::ostream& stream) const
     if (!WorldHelper::serializeString(name, stream))
         return false;
 
-    if (!WorldHelper::serializeTextureRegion(icon, stream))
-        return false;
+    if (icon)
+    {
+        if (!WorldHelper::serializeTextureRegion(*icon, stream))
+            return false;
+    }
+    else
+    {
+        if (!WorldHelper::serializeTextureRegion(TextureRegionDescriptor(), stream))
+            return false;
+    }
 
     stream.write((const char *)&invader, sizeof(bool));
 

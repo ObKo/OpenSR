@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2013 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2013 - 2014 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 #include <OpenSR/libRanger.h>
 #include <OpenSR/ResourceManager.h>
 #include <OpenSR/Log.h>
-#include <OpenSR/JSONHelper.h>
+#include <json/value.h>
 
 namespace
 {
@@ -32,8 +32,169 @@ namespace Rangers
 {
 namespace World
 {
+namespace
+{
+struct PlanetStyles: public ResourceObject
+{
+    std::map<std::string, boost::shared_ptr<PlanetStyle> > styles;
+};
+
+struct SystemStyles: public ResourceObject
+{
+    std::map<std::string, boost::shared_ptr<SystemStyle> > styles;
+};
+
+struct AsteroidStyles: public ResourceObject
+{
+    std::map<std::string, boost::shared_ptr<AsteroidStyle> > styles;
+};
+
+class StylesFactory: public ResourceObjectManager::ResourceObjectFactory
+{
+    virtual boost::shared_ptr< ResourceObject > operator()(const std::string& currentPath, const Json::Value& object, ResourceObjectManager& manager)
+    {
+        boost::shared_ptr<PlanetStyles> planetStyles;
+        boost::shared_ptr<AsteroidStyles> asteroidStyles;
+        boost::shared_ptr<SystemStyles> systemStyles;
+        std::string type = object.get("@type", "").asString();
+
+        if (type == "planet-styles")
+            planetStyles = boost::shared_ptr<PlanetStyles>(new PlanetStyles());
+        else if (type == "asteroid-styles")
+            asteroidStyles = boost::shared_ptr<AsteroidStyles>(new AsteroidStyles());
+        else if (type == "system-styles")
+            systemStyles = boost::shared_ptr<SystemStyles>(new SystemStyles());
+
+        for (const std::string& s : object.getMemberNames())
+        {
+            if (s == "@type")
+                continue;
+
+            boost::shared_ptr<ResourceObject> o = manager.loadObject(currentPath + "/" + s, object.get(s, Json::Value()));
+            if (type == "planet-styles")
+            {
+                boost::shared_ptr<PlanetStyle> ps = boost::dynamic_pointer_cast<PlanetStyle>(o);
+                if (ps)
+                {
+                    ps->id = s;
+                    planetStyles->styles[s] = ps;
+                }
+            }
+            else if (type == "asteroid-styles")
+            {
+                boost::shared_ptr<AsteroidStyle> as = boost::dynamic_pointer_cast<AsteroidStyle>(o);
+                if (as)
+                {
+                    as->id = s;
+                    asteroidStyles->styles[s] = as;
+                }
+            }
+            else if (type == "system-styles")
+            {
+                boost::shared_ptr<SystemStyle> ss = boost::dynamic_pointer_cast<SystemStyle>(o);
+                if (ss)
+                {
+                    ss->id = s;
+                    systemStyles->styles[s] = ss;
+                }
+            }
+        }
+        if (type == "planet-styles")
+            return planetStyles;
+        else if (type == "asteroid-styles")
+            return asteroidStyles;
+        else if (type == "system-styles")
+            return systemStyles;
+
+    }
+};
+
+class PlanetStyleFactory: public ResourceObjectManager::ResourceObjectFactory
+{
+    virtual boost::shared_ptr< ResourceObject > operator()(const std::string& currentPath, const Json::Value& object, ResourceObjectManager& manager)
+    {
+        boost::shared_ptr<PlanetStyle> style = boost::shared_ptr<PlanetStyle>(new PlanetStyle());
+
+        try
+        {
+            style->ambientColor = parseColor(object.get("ambientColor", "#FFFFFF"));
+            style->cloud = fromUTF8(object.get("cloud", "").asString().c_str());
+            style->cloudSpeed = object.get("cloudSpeed", 0).asDouble();
+            style->hasCloud = object.get("hasCloud", false).asBool();
+            style->hasRing = object.get("hasRing", false).asBool();
+            style->hasRingBackground = object.get("hasRingBackground", false).asBool();
+            style->ring = fromUTF8(object.get("ring", "").asString().c_str());
+            style->ringBackground = fromUTF8(object.get("ringBackground", "").asString().c_str());
+            style->ringBgOffsetX = object.get("ringBgOffsetX", 0).asDouble();
+            style->ringBgOffsetY = object.get("ringBgOffsetY", 0).asDouble();
+            style->ringOffsetX = object.get("ringOffsetX", 0).asDouble();
+            style->ringOffsetY = object.get("ringOffsetY", 0).asDouble();
+            style->speed = object.get("speed", 0).asDouble();
+            style->texture = fromUTF8(object.get("texture", "").asString().c_str());
+        }
+        catch (...)
+        {
+            Log::error() << "Invalid planet style: " << currentPath;
+            return boost::shared_ptr< ResourceObject >();
+        }
+
+        return style;
+    }
+};
+
+class SystemStyleFactory: public ResourceObjectManager::ResourceObjectFactory
+{
+    virtual boost::shared_ptr< ResourceObject > operator()(const std::string& currentPath, const Json::Value& object, ResourceObjectManager& manager)
+    {
+        boost::shared_ptr<SystemStyle> style = boost::shared_ptr<SystemStyle>(new SystemStyle());
+
+        try
+        {
+            style->star = fromUTF8(object.get("star", "").asString().c_str());
+            style->animated = object.get("star-animated", true).asBool();
+            style->color = parseColor(object.get("star-color", "#FFFFFF"));
+            style->background = fromUTF8(object.get("background", "").asString().c_str());
+        }
+        catch (...)
+        {
+            Log::error() << "Invalid system style: " << currentPath;
+            return boost::shared_ptr< ResourceObject >();
+        }
+
+        return style;
+    }
+};
+
+class AsteroidStyleFactory: public ResourceObjectManager::ResourceObjectFactory
+{
+    virtual boost::shared_ptr< ResourceObject > operator()(const std::string& currentPath, const Json::Value& object, ResourceObjectManager& manager)
+    {
+        boost::shared_ptr<AsteroidStyle> style = boost::shared_ptr<AsteroidStyle>(new AsteroidStyle());
+
+        try
+        {
+            style->sprite = fromUTF8(object.get("sprite", "").asString().c_str());
+            style->animated = object.get("animated", true).asBool();
+        }
+        catch (...)
+        {
+            Log::error() << "Invalid asteroid style: " << currentPath;
+            return boost::shared_ptr< ResourceObject >();
+        }
+
+        return style;
+    }
+};
+}
+
 StyleManager::StyleManager()
 {
+    ResourceManager::instance().objectManager().addFactory("planet-styles", boost::shared_ptr<ResourceObjectManager::ResourceObjectFactory>(new StylesFactory()));
+    ResourceManager::instance().objectManager().addFactory("asteroid-styles", boost::shared_ptr<ResourceObjectManager::ResourceObjectFactory>(new StylesFactory()));
+    ResourceManager::instance().objectManager().addFactory("system-styles", boost::shared_ptr<ResourceObjectManager::ResourceObjectFactory>(new StylesFactory()));
+    ResourceManager::instance().objectManager().addFactory("planet-style", boost::shared_ptr<ResourceObjectManager::ResourceObjectFactory>(new PlanetStyleFactory()));
+    ResourceManager::instance().objectManager().addFactory("asteroid-style", boost::shared_ptr<ResourceObjectManager::ResourceObjectFactory>(new AsteroidStyleFactory()));
+    ResourceManager::instance().objectManager().addFactory("system-style", boost::shared_ptr<ResourceObjectManager::ResourceObjectFactory>(new SystemStyleFactory()));
 }
 
 boost::shared_ptr<PlanetStyle> StyleManager::planetStyle(const std::string& name)
@@ -47,66 +208,19 @@ boost::shared_ptr<PlanetStyle> StyleManager::planetStyle(uint32_t id)
     return m_planetStyles.at(id);
 }
 
-void StyleManager::loadPlanetStyles(const std::wstring& styleFile)
+void StyleManager::loadPlanetStyles(const std::string& styleFile)
 {
     m_planetStyles.clear();
 
-    boost::shared_ptr<std::istream> json = ResourceManager::instance().getFileStream(styleFile);
-    if (!json)
-        return;
-    Json::Reader reader;
-    Json::Value root;
-    if (!reader.parse(*json, root))
-    {
-        Log::error() << "Error parsing planet styles JSON: " << reader.getFormatedErrorMessages();
-        return;
-    }
-    if (!root.isObject())
-    {
-        Log::error() << "Invalid planet styles JSON";
-        return;
-    }
-    Json::Value::Members members = root.getMemberNames();
-    Json::Value::Members::const_iterator end = members.end();
-    for (Json::Value::Members::const_iterator i = members.begin(); i != end; ++i)
-    {
-        Json::Value jsonStyle = root[(*i)];
+    boost::shared_ptr<PlanetStyles> styles = ResourceManager::instance().objectManager().getObject<PlanetStyles>(styleFile);
 
-        if (!jsonStyle.isObject())
-        {
-            Log::error() << "Invalid planet styles JSON";
-            return;
-        }
-        bool error = false;
-        PlanetStyle *style = new PlanetStyle();
-        style->ambientColor = Color::fromString(jsonStyle.get("ambientColor", "#FFFFFF").asString());
-        style->texture = fromUTF8(jsonStyle.get("texture", "").asCString());
-        style->speed = jsonStyle.get("speed", 0.0f).asDouble();
-        style->hasCloud = jsonStyle.get("hasCloud", false).asBool();
-        style->id = (*i);
-        style->hasRing = jsonStyle.get("hasRing", false).asBool();
-        style->hasRingBackground = jsonStyle.get("hasRingBackground", false).asBool();
+    if (!styles)
+        return;
 
-        if (style->hasCloud)
-        {
-            style->cloud = fromUTF8(jsonStyle.get("cloud", "").asCString());
-            style->cloudSpeed = jsonStyle.get("cloudSpeed", 0.0f).asDouble();
-        }
-        if (style->hasRing)
-        {
-            style->ring = fromUTF8(jsonStyle.get("ring", "").asCString());
-            style->ringOffsetX = jsonStyle.get("ringOffsetX", 0.0f).asDouble();
-            style->ringOffsetY = jsonStyle.get("ringOffsetY", 0.0f).asDouble();
-        }
-        if (style->hasRingBackground)
-        {
-            style->ringBackground = fromUTF8(jsonStyle.get("ringBackground", "").asCString());
-            style->ringBgOffsetX = jsonStyle.get("ringBgOffsetX", 0.0f).asDouble();
-            style->ringBgOffsetY = jsonStyle.get("ringBgOffsetY", 0.0f).asDouble();
-        }
-        m_planetStyles[textHash32(style->id)] = boost::shared_ptr<PlanetStyle>(style);
-    }
-    Log::info() << "Loaded " << members.size() << " planet styles";
+    for (const std::pair<std::string, boost::shared_ptr<PlanetStyle> >& p : styles->styles)
+        m_planetStyles[textHash32(p.first)] = p.second;
+
+    Log::info() << "Loaded " << m_planetStyles.size() << " planet styles";
 }
 
 bool StyleManager::serialize(std::ostream &stream) const
@@ -210,86 +324,34 @@ boost::shared_ptr<SystemStyle> StyleManager::systemStyle(uint32_t id)
     return m_systemStyles.at(id);
 }
 
-void StyleManager::loadSystemStyles(const std::wstring& styleFile)
+void StyleManager::loadSystemStyles(const std::string& styleFile)
 {
     m_systemStyles.clear();
 
-    boost::shared_ptr<std::istream> json = ResourceManager::instance().getFileStream(styleFile);
-    if (!json)
-        return;
-    Json::Reader reader;
-    Json::Value root;
-    if (!reader.parse(*json, root))
-    {
-        Log::error() << "Error parsing system styles JSON: " << reader.getFormatedErrorMessages();
-        return;
-    }
-    if (!root.isObject())
-    {
-        Log::error() << "Invalid system styles JSON";
-        return;
-    }
-    Json::Value::Members members = root.getMemberNames();
-    Json::Value::Members::const_iterator end = members.end();
-    for (Json::Value::Members::const_iterator i = members.begin(); i != end; ++i)
-    {
-        Json::Value jsonStyle = root[(*i)];
+    boost::shared_ptr<SystemStyles> styles = ResourceManager::instance().objectManager().getObject<SystemStyles>(styleFile);
 
-        if (!jsonStyle.isObject())
-        {
-            Log::error() << "Invalid system styles JSON";
-            return;
-        }
-        bool error = false;
-        SystemStyle *style = new SystemStyle();
-        style->id = (*i);
-        style->star = fromUTF8(jsonStyle.get("star", "").asCString());
-        style->animated = jsonStyle.get("star-animated", "").asBool();
-        style->color = Color::fromString(jsonStyle.get("star-color", "#FFFFFF").asString());
-        style->background = fromUTF8(jsonStyle.get("background", "").asCString());
-        m_systemStyles[textHash32(style->id)] = boost::shared_ptr<SystemStyle>(style);
-    }
-    Log::info() << "Loaded " << members.size() << " system styles";
+    if (!styles)
+        return;
+
+    for (const std::pair<std::string, boost::shared_ptr<SystemStyle> >& p : styles->styles)
+        m_systemStyles[textHash32(p.first)] = p.second;
+
+    Log::info() << "Loaded " << m_systemStyles.size() << " system styles";
 }
 
-void StyleManager::loadAsteroidStyles(const std::wstring& styleFile)
+void StyleManager::loadAsteroidStyles(const std::string& styleFile)
 {
     m_asteroidStyles.clear();
 
-    boost::shared_ptr<std::istream> json = ResourceManager::instance().getFileStream(styleFile);
-    if (!json)
-        return;
-    Json::Reader reader;
-    Json::Value root;
-    if (!reader.parse(*json, root))
-    {
-        Log::error() << "Error parsing asteroid styles JSON: " << reader.getFormatedErrorMessages();
-        return;
-    }
-    if (!root.isObject())
-    {
-        Log::error() << "Invalid asteroid styles JSON";
-        return;
-    }
-    Json::Value::Members members = root.getMemberNames();
-    Json::Value::Members::const_iterator end = members.end();
-    for (Json::Value::Members::const_iterator i = members.begin(); i != end; ++i)
-    {
-        Json::Value jsonStyle = root[(*i)];
+    boost::shared_ptr<AsteroidStyles> styles = ResourceManager::instance().objectManager().getObject<AsteroidStyles>(styleFile);
 
-        if (!jsonStyle.isObject())
-        {
-            Log::error() << "Invalid asteroid styles JSON";
-            return;
-        }
-        bool error = false;
-        AsteroidStyle *style = new AsteroidStyle();
-        style->id = (*i);
-        style->sprite = fromUTF8(jsonStyle.get("sprite", "").asCString());
-        style->animated = jsonStyle.get("animated", "").asBool();
-        m_asteroidStyles[textHash32(style->id)] = boost::shared_ptr<AsteroidStyle>(style);
-    }
-    Log::info() << "Loaded " << members.size() << " asteroid styles";
+    if (!styles)
+        return;
+
+    for (const std::pair<std::string, boost::shared_ptr<AsteroidStyle> >& p : styles->styles)
+        m_asteroidStyles[textHash32(p.first)] = p.second;
+
+    Log::info() << "Loaded " << m_asteroidStyles.size() << " asteroid styles";
 }
 
 boost::shared_ptr<AsteroidStyle> StyleManager::asteroidStyle(const std::string& name)

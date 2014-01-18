@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2012 - 2013 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2012 - 2014 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,8 +17,10 @@
 */
 
 #include <OpenSR/PluginInterface.h>
+#include <OpenSR/Engine.h>
 #include <OpenSR/ResourceManager.h>
 #include <OpenSR/version.h>
+#include <OpenSR/libRanger.h>
 #include <boost/python.hpp>
 
 #include "Types.h"
@@ -32,6 +34,8 @@ int rangersAPIVersion()
 
 int rangersPluginInit()
 {
+    std::wstring resources = Rangers::fromUTF8(Rangers::Engine::instance().properties()->get<std::string>("world.resources", "World/resources.json").c_str());
+    Rangers::ResourceManager::instance().objectManager().addJSON(resources, "/world");
     return 0;
 }
 

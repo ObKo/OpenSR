@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2013 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2013 - 2014 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ struct RANGERS_WORLD_API Race
 {
     uint32_t id;
     std::string name;
-    TextureRegionDescriptor icon;
+    boost::shared_ptr<TextureRegionDescriptor> icon;
     bool invader;
     std::map<uint32_t, float> relations;
 
@@ -45,7 +45,8 @@ class RANGERS_WORLD_API RaceManager
 public:
     RaceManager();
 
-    void loadRaces(const std::wstring& file);
+    //! Load races from resources
+    void loadRaces(const std::string& path);
 
     boost::shared_ptr<Race> race(uint32_t id) const;
     boost::shared_ptr<Race> race(const std::string& id) const;

@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 - 2013 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2014 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -127,9 +127,6 @@ ResourceManager& ResourceManager::instance()
 SDL_RWops *ResourceManager::getSDLRW(const std::wstring& name)
 {
     wstring realName = name;
-    map<wstring, wstring>::iterator mapIt = m_fileMapping.find(name);
-    if (mapIt != m_fileMapping.end())
-        realName = mapIt->second;
 
     std::map<std::wstring, boost::shared_ptr<ResourceAdapter> >::iterator fileIt = m_files.find(realName);
     if (fileIt == m_files.end())
@@ -162,41 +159,6 @@ void ResourceManager::addRPKG(const std::wstring& path)
     list<wstring> adaptorFiles = a->getFiles();
     for (list<wstring>::const_iterator i = adaptorFiles.begin(); i != adaptorFiles.end(); ++i)
         m_files[(*i)] = a;
-}
-
-void ResourceManager::addMapping(const std::wstring& fileName)
-{
-    boost::shared_ptr<std::istream> s = getFileStream(fileName);
-    if (!s)
-        return;
-
-    istream& iss = *s;
-    char lineBuffer[1024];
-    int i = 1;
-    while (!iss.fail() && !iss.bad() && !iss.eof())
-    {
-        memset(lineBuffer, 0, 1024);
-        iss.getline(lineBuffer, 1024);
-        wstring line = fromUTF8(lineBuffer);
-        if (trim(line) == L"")
-            continue;
-        vector<wstring> strs = split(line, '=');
-        if (strs.size() != 2)
-        {
-            Log::warning() << "Invalid mapping on " << fileName << ":" << i;
-            return;
-        }
-        wstring key = trim(strs[0]);
-        wstring value = trim(strs[1]);
-        if ((key == L"") || (value == L""))
-        {
-            Log::warning() << "Invalid mapping on " << fileName << ":" << i;
-            return;
-        }
-        Log::debug() << "\"" << key << "\" = \"" << value << "\"";
-        m_fileMapping[key] = value;
-        i++;
-    }
 }
 
 void ResourceManager::addDir(const std::wstring& path)
@@ -473,9 +435,6 @@ boost::shared_array<char> ResourceManager::loadData(const std::wstring& name, si
 bool ResourceManager::resourceExists(const std::wstring& path)
 {
     wstring realName = path;
-    map<wstring, wstring>::iterator mapIt = m_fileMapping.find(path);
-    if (mapIt != m_fileMapping.end())
-        realName = mapIt->second;
 
     std::map<std::wstring, boost::shared_ptr<ResourceAdapter> >::iterator fileIt = m_files.find(realName);
     if (fileIt == m_files.end())
@@ -488,9 +447,6 @@ bool ResourceManager::resourceExists(const std::wstring& path)
 boost::shared_ptr<std::istream> ResourceManager::getFileStream(const std::wstring& name)
 {
     wstring realName = name;
-    map<wstring, wstring>::iterator mapIt = m_fileMapping.find(name);
-    if (mapIt != m_fileMapping.end())
-        realName = mapIt->second;
 
     std::map<std::wstring, boost::shared_ptr<ResourceAdapter> >::iterator fileIt = m_files.find(realName);
     if (fileIt == m_files.end())
@@ -626,6 +582,12 @@ void ResourceManager::GAIWorker::cleanFrame(int i)
     delete[] m_animation.frames[i % m_animation.frameCount].data;
     m_animation.frames[i % m_animation.frameCount].data = 0;
 }
+
+ResourceObjectManager& ResourceManager::objectManager()
+{
+    return m_objectManager;
+}
+
 }
 
 

@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 - 2013 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2014 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -145,28 +145,28 @@ ScrollArea::ScrollArea(const ScrollBarStyle& style, boost::shared_ptr<WidgetNode
     d->scrollAreaListener = boost::shared_ptr<ScrollAreaPrivate::ScrollAreaListener>(new ScrollAreaPrivate::ScrollAreaListener(this));
 
     d->scrollDrag = ScrollAreaPrivate::NONE;
-    d->top = boost::shared_ptr<Button>(new Button(style.upButton));
+    d->top = boost::shared_ptr<Button>(new Button(*style.upButton));
     d->top->addListener(d->scrollAreaListener);
     addWidget(d->top);
 
-    d->bottom = boost::shared_ptr<Button>(new Button(style.downButton));
+    d->bottom = boost::shared_ptr<Button>(new Button(*style.downButton));
     d->bottom->addListener(d->scrollAreaListener);
     addWidget(d->bottom);
 
-    d->left = boost::shared_ptr<Button>(new Button(style.upButton));
+    d->left = boost::shared_ptr<Button>(new Button(*style.upButton));
     d->left->setRotation(90);
     d->left->addListener(d->scrollAreaListener);
     addWidget(d->left);
 
-    d->right = boost::shared_ptr<Button>(new Button(style.downButton));
+    d->right = boost::shared_ptr<Button>(new Button(*style.downButton));
     d->right->setRotation(90);
     d->right->addListener(d->scrollAreaListener);
     addWidget(d->right);
 
-    d->vScroll = boost::shared_ptr<Button>(new Button(style.scroll));
+    d->vScroll = boost::shared_ptr<Button>(new Button(*style.scroll));
     addWidget(d->vScroll);
 
-    d->hScroll = boost::shared_ptr<Button>(new Button(style.scroll));
+    d->hScroll = boost::shared_ptr<Button>(new Button(*style.scroll));
     d->hScroll->setRotation(90);
     addWidget(d->hScroll);
 

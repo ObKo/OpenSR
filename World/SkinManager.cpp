@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2013 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2013 - 2014 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,13 +22,37 @@
 #include <OpenSR/ResourceManager.h>
 #include <OpenSR/Engine.h>
 #include <OpenSR/Log.h>
-#include <OpenSR/JSONHelper.h>
-#include <json/reader.h>
+#include <json/value.h>
 
 namespace Rangers
 {
 namespace World
 {
+namespace
+{
+class InfoWidgetStyleFactory: public ResourceObjectManager::ResourceObjectFactory
+{
+    virtual boost::shared_ptr< ResourceObject > operator()(const std::string& currentPath, const Json::Value& object, ResourceObjectManager& manager)
+    {
+        boost::shared_ptr<InfoWidgetStyle> s = boost::shared_ptr<InfoWidgetStyle>(new InfoWidgetStyle());
+
+        s->background = manager.loadObject(object.get("background", Json::Value()), "texture");
+        s->font = boost::dynamic_pointer_cast<FontDescriptor>(manager.loadObject(object.get("font", Json::Value()), "font"));
+        s->captionFont = boost::dynamic_pointer_cast<FontDescriptor>(manager.loadObject(object.get("caption-font", Json::Value()), "font"));
+        s->color = parseColor(object.get("color", "#FFFFFF"));
+        s->captionColor = parseColor(object.get("caption-color", "#FFFFFF"));
+        s->labelColor = parseColor(object.get("label-color", "#FFFFFF"));
+        s->iconPosition = parseVector(object.get("icon-position", Json::Value()));
+        s->raceIconPosition = parseVector(object.get("race-icon-position", Json::Value()));
+        s->iconSize = object.get("icon-size", 0).asInt();
+        s->contentRect = parseRect(object.get("content-rect", Json::Value()));
+        s->captionContentRect = parseRect(object.get("caption-content-rect", Json::Value()));
+
+        return s;
+    }
+};
+}
+
 InfoWidgetStyle::InfoWidgetStyle():
     iconSize(0)
 {
@@ -37,68 +61,17 @@ InfoWidgetStyle::InfoWidgetStyle():
 
 SkinManager::SkinManager()
 {
-
+    ResourceManager::instance().objectManager().addFactory("info-widget-style", boost::shared_ptr<ResourceObjectManager::ResourceObjectFactory>(new InfoWidgetStyleFactory()));
 }
 
 void SkinManager::loadStyles()
 {
-    std::wstring skinFile = fromUTF8(Engine::instance().properties()->get<std::string>("world.skin", "World/Skin.json").c_str());
-    boost::shared_ptr<std::istream> json = ResourceManager::instance().getFileStream(skinFile);
+    std::string skinDir = Engine::instance().properties()->get<std::string>("world.skin", "/world/skin");
 
-    if (!json)
-        return;
+    boost::shared_ptr<InfoWidgetStyle> infoWidget = ResourceManager::instance().objectManager().getObject<InfoWidgetStyle>(skinDir + "/info-widget");
 
-    Json::Value root;
-    Json::Reader reader;
-    if (!reader.parse(*json, root))
-    {
-        Log::error() << "Cannot parse World skin: " << reader.getFormatedErrorMessages();
-    }
-    bool error;
-    std::map<std::wstring, ResourceDescriptor> resources = JSONHelper::parseResources(root, error);
-
-    if (error)
-        return;
-
-    Json::Value::Members members = root.getMemberNames();
-
-    if (std::find(members.begin(), members.end(), "InfoWidgetStyle") != members.end())
-    {
-        Json::Value style = root.get("InfoWidgetStyle", Json::Value());
-        Json::Value::Members styleMembers = style.getMemberNames();
-
-        if (std::find(styleMembers.begin(), styleMembers.end(), "icon-position") != styleMembers.end())
-            m_infoWidgetStyle.iconPosition = JSONHelper::parseVector(style.get("icon-position", ""), error);
-        if (std::find(styleMembers.begin(), styleMembers.end(), "race-icon-position") != styleMembers.end())
-            m_infoWidgetStyle.raceIconPosition = JSONHelper::parseVector(style.get("race-icon-position", ""), error);
-        if (std::find(styleMembers.begin(), styleMembers.end(), "icon-size") != styleMembers.end())
-            m_infoWidgetStyle.iconSize = style.get("icon-size", 0).asInt();
-
-        if (std::find(styleMembers.begin(), styleMembers.end(), "background") != styleMembers.end())
-            m_infoWidgetStyle.background = JSONHelper::getResource(style.get("background", "").asString(), resources, error);
-        if (std::find(styleMembers.begin(), styleMembers.end(), "content-rect") != styleMembers.end())
-            m_infoWidgetStyle.contentRect = JSONHelper::parseRect(style.get("content-rect", ""), error);
-        if (std::find(styleMembers.begin(), styleMembers.end(), "caption-content-rect") != styleMembers.end())
-            m_infoWidgetStyle.captionContentRect = JSONHelper::parseRect(style.get("caption-content-rect", ""), error);
-        if (std::find(styleMembers.begin(), styleMembers.end(), "font") != styleMembers.end())
-            m_infoWidgetStyle.font = JSONHelper::getResource(style.get("font", "").asString(), resources, error);
-        if (std::find(styleMembers.begin(), styleMembers.end(), "caption-font") != styleMembers.end())
-            m_infoWidgetStyle.captionFont = JSONHelper::getResource(style.get("caption-font", "").asString(), resources, error);
-
-        if (std::find(styleMembers.begin(), styleMembers.end(), "color") != styleMembers.end())
-            m_infoWidgetStyle.color = Color::fromString(style.get("color", "#FFFFFFFF").asString());
-        if (std::find(styleMembers.begin(), styleMembers.end(), "caption-color") != styleMembers.end())
-            m_infoWidgetStyle.captionColor = Color::fromString(style.get("caption-color", "#FFFFFFFF").asString());
-        if (std::find(styleMembers.begin(), styleMembers.end(), "label-color") != styleMembers.end())
-            m_infoWidgetStyle.labelColor = Color::fromString(style.get("label-color", "#FFFFFFFF").asString());
-
-        if (error)
-        {
-            m_infoWidgetStyle = InfoWidgetStyle();
-            return;
-        }
-
-    }
+    if (infoWidget)
+        m_infoWidgetStyle = *infoWidget;
 }
 
 InfoWidgetStyle SkinManager::infoWidgetStyle() const
