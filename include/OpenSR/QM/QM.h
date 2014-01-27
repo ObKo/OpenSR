@@ -24,7 +24,6 @@
 #include <iostream>
 #include <vector>
 #include <map>
-#include <boost/concept_check.hpp>
 
 #ifdef QM_LIBRARY
 #ifdef WIN32

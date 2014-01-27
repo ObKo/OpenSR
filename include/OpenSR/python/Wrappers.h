@@ -22,6 +22,7 @@
 #include <boost/python.hpp>
 #include <boost/python/stl_iterator.hpp>
 #include <list>
+#include <vector>
 
 #define RANGERS_PYTHON_WRAP_FUNC(class, func, ...) { \
         Rangers::Python::GILGuard g; \

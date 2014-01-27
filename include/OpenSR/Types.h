@@ -31,7 +31,7 @@ namespace Rangers
 class Texture;
 struct TextureRegionDescriptor;
 
-struct Color
+struct RANGERS_ENGINE_API Color
 {
     Color();
     Color(float red, float greeb, float blue, float alpha = 1.0f);

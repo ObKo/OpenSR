@@ -19,6 +19,8 @@
 #ifndef WORLD_QUESTPLAYER_H
 #define WORLD_QUESTPLAYER_H
 
+#include "OpenSR/World/world-global.h"
+
 #include <OpenSR/QM/QM.h>
 
 #include <list>
@@ -30,7 +32,7 @@ namespace Rangers
 namespace World
 {
 
-class QuestPlayer
+class RANGERS_WORLD_API QuestPlayer
 {
 public:
     QuestPlayer();

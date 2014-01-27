@@ -36,7 +36,7 @@ namespace Rangers
 class RANGERS_ENGINE_API ResourceObjectManager
 {
 public:
-    class ResourceObjectFactory
+    class RANGERS_ENGINE_API ResourceObjectFactory
     {
     public:
         virtual boost::shared_ptr<ResourceObject> operator()(const std::string& currentPath, const Json::Value& object, ResourceObjectManager &manager) = 0;

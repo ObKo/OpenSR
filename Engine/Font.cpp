@@ -482,5 +482,6 @@ int Font::size() const
 
 bool Font::antialiased() const
 {
+    return m_antialiased;
 }
 }

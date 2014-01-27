@@ -31,7 +31,7 @@ namespace Python
 {
 boost::python::object systems(SystemManager &self)
 {
-    Rangers::Python::listToPythonList(self.systems());
+    return Rangers::Python::listToPythonList(self.systems());
 }
 
 void exportSystemManager()
