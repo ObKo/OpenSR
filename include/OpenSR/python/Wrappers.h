@@ -57,6 +57,31 @@
         class::func(__VA_ARGS__); \
     }
 
+#define RANGERS_PYTHON_WRAP_PURE_FUNC(class, func, ret, ...) { \
+        Rangers::Python::GILGuard g; \
+        try \
+        { \
+            return this->get_override(#func)(__VA_ARGS__); \
+        } \
+        catch (const boost::python::error_already_set& e) \
+        { \
+            handlePythonError(); \
+        } \
+        return ret(); \
+    }
+
+#define RANGERS_PYTHON_WRAP_PURE_FUNC_VOID(class, func, ...) { \
+        Rangers::Python::GILGuard g; \
+        try \
+        { \
+            this->get_override(#func)(__VA_ARGS__); \
+        } \
+        catch (const boost::python::error_already_set& e) \
+        { \
+            handlePythonError(); \
+        } \
+    }
+
 namespace Rangers
 {
 void handlePythonError();

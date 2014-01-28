@@ -36,15 +36,7 @@ struct ActionListenerWrap: ActionListener, boost::python::wrapper<ActionListener
 
     void actionPerformed(const Action &action)
     {
-        GILGuard g;
-        try
-        {
-            get_override("actionPerformed")(action);
-        }
-        catch (const boost::python::error_already_set& e)
-        {
-            handlePythonError();
-        }
+        RANGERS_PYTHON_WRAP_PURE_FUNC_VOID(Action, actionPerformed, action);
     }
 };
 

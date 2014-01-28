@@ -36,6 +36,7 @@ void exportResourceManager()
     .def("loadAnimation", &ResourceManager::loadAnimation)
     .def("loadFont", &ResourceManager::loadFont)
     .def("resourceExists", &ResourceManager::resourceExists)
+    .def("objectManager", &ResourceManager::objectManager, return_internal_reference<>())
     .def("instance", &ResourceManager::instance, return_value_policy<reference_existing_object>())
     .staticmethod("instance");
 }

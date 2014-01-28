@@ -60,6 +60,7 @@ void exportTiledPolyline();
 void exportTiledBeizerCurve();
 void exportAnimatedTexture();
 void exportLabelWidget();
+void exportResourceObjectManager();
 
 void pythonError(const std::wstring& text)
 {
@@ -129,6 +130,7 @@ BOOST_PYTHON_MODULE(_Engine)
     Rangers::Python::exportTiledBeizerCurve();
     Rangers::Python::exportAnimatedTexture();
     Rangers::Python::exportLabelWidget();
+    Rangers::Python::exportResourceObjectManager();
 
     boost::python::def("pythonError", &Rangers::Python::pythonError);
     boost::python::def("pythonOut", &Rangers::Python::pythonOut);

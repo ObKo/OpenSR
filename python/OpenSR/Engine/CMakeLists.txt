@@ -35,6 +35,7 @@ SET(PYTHON_ENGINE_SOURCES
     TiledBeizerCurve.cpp
     AnimatedTexture.cpp
     LabelWidget.cpp
+    ResourceObjectManager.cpp
 )
 
 SET(PYTHON_ENGINE_HEADERS 
