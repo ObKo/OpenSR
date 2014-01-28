@@ -45,7 +45,7 @@ struct SpriteWrap : Sprite, boost::python::wrapper<Sprite>
     {
     }
 
-    SpriteWrap(const TextureRegionDescriptor& region)
+    SpriteWrap(boost::shared_ptr<TextureRegionDescriptor> region)
         : Sprite(region)
     {
     }
@@ -122,7 +122,7 @@ void exportSprite()
 
     class_<SpriteWrap, bases<Object>, boost::shared_ptr<SpriteWrap>, boost::noncopyable> c("Sprite", init<const std::wstring&>());
     c.def(init<const TextureRegion&>())
-    .def(init<const TextureRegionDescriptor&>())
+    .def(init<boost::shared_ptr<TextureRegionDescriptor> >())
     .def(init<>())
     .add_property("texture", &Sprite::texture, &SpriteWrap::setTexture)
     .add_property("origin", &SpriteWrap::origin, &SpriteWrap::setOrigin)

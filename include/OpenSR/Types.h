@@ -132,7 +132,7 @@ struct RANGERS_ENGINE_API TextureRegion
 {
     //! Constructs texture region.
     TextureRegion(boost::shared_ptr<Texture> texture, int x, int y, int width, int height);
-    TextureRegion(const TextureRegionDescriptor& desc);
+    TextureRegion(boost::shared_ptr<TextureRegionDescriptor> desc);
     TextureRegion(boost::shared_ptr<Texture> texture);
     TextureRegion();
     boost::shared_ptr<Texture> texture;

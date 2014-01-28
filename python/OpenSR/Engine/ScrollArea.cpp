@@ -29,7 +29,7 @@ namespace Python
 {
 struct ScrollAreaWrap : ScrollArea, boost::python::wrapper<ScrollArea>
 {
-    ScrollAreaWrap(const ScrollBarStyle& style, boost::shared_ptr<WidgetNode> node = boost::shared_ptr<WidgetNode>())
+    ScrollAreaWrap(boost::shared_ptr<ScrollBarStyle> style, boost::shared_ptr<WidgetNode> node = boost::shared_ptr<WidgetNode>())
         : ScrollArea(style, node)
     {
     }
@@ -46,8 +46,8 @@ void exportScrollArea()
 {
     using namespace boost::python;
 
-    class_<ScrollAreaWrap, bases<Widget>, boost::shared_ptr<ScrollAreaWrap>, boost::noncopyable> c("ScrollArea", init<const ScrollBarStyle&, boost::shared_ptr<WidgetNode> >());
-    c.def(init<const ScrollBarStyle&>())
+    class_<ScrollAreaWrap, bases<Widget>, boost::shared_ptr<ScrollAreaWrap>, boost::noncopyable> c("ScrollArea", init<boost::shared_ptr<ScrollBarStyle>, boost::shared_ptr<WidgetNode> >());
+    c.def(init<boost::shared_ptr<ScrollBarStyle> >())
     .def(init<>())
     .add_property("node", &ScrollArea::node, &ScrollArea::setNode);
     RANGERS_PYTHON_WRAP_WIDGET_DEF(ScrollArea, ScrollAreaWrap, c);

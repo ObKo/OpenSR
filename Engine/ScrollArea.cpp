@@ -137,36 +137,49 @@ void ScrollAreaPrivate::ScrollAreaListener::actionPerformed(const Action &action
     }
 }
 
-ScrollArea::ScrollArea(const ScrollBarStyle& style, boost::shared_ptr<WidgetNode> node):
+ScrollArea::ScrollArea(boost::shared_ptr<ScrollBarStyle> style, boost::shared_ptr<WidgetNode> node):
     Widget(*(new ScrollAreaPrivate()))
 {
     RANGERS_D(ScrollArea);
 
     d->scrollAreaListener = boost::shared_ptr<ScrollAreaPrivate::ScrollAreaListener>(new ScrollAreaPrivate::ScrollAreaListener(this));
 
+    if (style)
+    {
+        d->top = boost::shared_ptr<Button>(new Button(style->upButton));
+        d->bottom = boost::shared_ptr<Button>(new Button(style->downButton));
+        d->left = boost::shared_ptr<Button>(new Button(style->upButton));
+        d->right = boost::shared_ptr<Button>(new Button(style->downButton));
+        d->vScroll = boost::shared_ptr<Button>(new Button(style->scroll));
+        d->hScroll = boost::shared_ptr<Button>(new Button(style->scroll));
+    }
+    else
+    {
+        d->top = boost::shared_ptr<Button>(new Button());
+        d->bottom = boost::shared_ptr<Button>(new Button());
+        d->left = boost::shared_ptr<Button>(new Button());
+        d->right = boost::shared_ptr<Button>(new Button());
+        d->vScroll = boost::shared_ptr<Button>(new Button());
+        d->hScroll = boost::shared_ptr<Button>(new Button());
+    }
+
     d->scrollDrag = ScrollAreaPrivate::NONE;
-    d->top = boost::shared_ptr<Button>(new Button(*style.upButton));
     d->top->addListener(d->scrollAreaListener);
     addWidget(d->top);
 
-    d->bottom = boost::shared_ptr<Button>(new Button(*style.downButton));
     d->bottom->addListener(d->scrollAreaListener);
     addWidget(d->bottom);
 
-    d->left = boost::shared_ptr<Button>(new Button(*style.upButton));
     d->left->setRotation(90);
     d->left->addListener(d->scrollAreaListener);
     addWidget(d->left);
 
-    d->right = boost::shared_ptr<Button>(new Button(*style.downButton));
     d->right->setRotation(90);
     d->right->addListener(d->scrollAreaListener);
     addWidget(d->right);
 
-    d->vScroll = boost::shared_ptr<Button>(new Button(*style.scroll));
     addWidget(d->vScroll);
 
-    d->hScroll = boost::shared_ptr<Button>(new Button(*style.scroll));
     d->hScroll->setRotation(90);
     addWidget(d->hScroll);
 

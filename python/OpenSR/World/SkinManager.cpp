@@ -34,7 +34,7 @@ void exportSkinManager()
     c.def("loadStyles", &SkinManager::loadStyles)
     .def("infoWidgetStyle", &SkinManager::infoWidgetStyle);
 
-    class_<InfoWidgetStyle> c2("InfoWidgetStyle", init<>());
+    class_<InfoWidgetStyle, boost::shared_ptr<InfoWidgetStyle>, bases<ResourceObject> > c2("InfoWidgetStyle", init<>());
     c2.def_readwrite("background", &InfoWidgetStyle::background)
     .def_readwrite("font", &InfoWidgetStyle::font)
     .def_readwrite("captionFont", &InfoWidgetStyle::captionFont)

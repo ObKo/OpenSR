@@ -46,47 +46,50 @@ namespace Rangers
 {
 namespace World
 {
-InfoWidget::InfoWidget(const InfoWidgetStyle& style): Widget(), m_type(INFO_NONE)
+InfoWidget::InfoWidget(boost::shared_ptr<InfoWidgetStyle> style): Widget(), m_type(INFO_NONE)
 {
-    boost::shared_ptr<TextureRegionDescriptor> texture = boost::dynamic_pointer_cast<TextureRegionDescriptor>(style.background);
-    boost::shared_ptr<NinePatchDescriptor> ninepatch = boost::dynamic_pointer_cast<NinePatchDescriptor>(style.background);;
-
-    if (ninepatch)
+    if (style)
     {
-        m_bgSprite = boost::shared_ptr<Sprite>(new NinePatch(*ninepatch));
-        addChild(m_bgSprite);
-    }
-    else if (texture)
-    {
-        m_bgSprite = boost::shared_ptr<Sprite>(new Sprite(*texture));
-        addChild(m_bgSprite);
-    }
+        boost::shared_ptr<TextureRegionDescriptor> texture = boost::dynamic_pointer_cast<TextureRegionDescriptor>(style->background);
+        boost::shared_ptr<NinePatchDescriptor> ninepatch = boost::dynamic_pointer_cast<NinePatchDescriptor>(style->background);;
 
-    if (style.font)
-        m_font = ResourceManager::instance().loadFont(style.font->path, style.font->size);
+        if (ninepatch)
+        {
+            m_bgSprite = boost::shared_ptr<Sprite>(new NinePatch(ninepatch));
+            addChild(m_bgSprite);
+        }
+        else if (texture)
+        {
+            m_bgSprite = boost::shared_ptr<Sprite>(new Sprite(texture));
+            addChild(m_bgSprite);
+        }
+
+        if (style->font)
+            m_font = ResourceManager::instance().loadFont(style->font->path, style->font->size);
+
+        if (style->captionFont)
+            m_captionFont = ResourceManager::instance().loadFont(style->captionFont->path, style->captionFont->size);
+
+        m_captionColor = style->captionColor;
+        m_labelColor = style->labelColor;
+        m_color = style->color;
+
+        m_contentRect = style->contentRect;
+        m_captionContentRect = style->captionContentRect;
+        m_iconPosition = style->iconPosition;
+        m_raceIconPosition = style->raceIconPosition;
+        m_iconSize = style->iconSize;
+    }
 
     if (!m_font)
         m_font = Engine::instance().coreFont();
 
-    if (style.captionFont)
-        m_captionFont = ResourceManager::instance().loadFont(style.captionFont->path, style.captionFont->size);
-
     if (!m_captionFont)
         m_captionFont = Engine::instance().coreFont();
-
-    m_captionColor = style.captionColor;
-    m_labelColor = style.labelColor;
-    m_color = style.color;
 
     m_caption = boost::shared_ptr<Label>(new Label(L"", m_captionFont));
     m_caption->setOrigin(POSITION_X_CENTER, POSITION_Y_CENTER);
     m_caption->setColor(m_captionColor);
-
-    m_contentRect = style.contentRect;
-    m_captionContentRect = style.captionContentRect;
-    m_iconPosition = style.iconPosition;
-    m_raceIconPosition = style.raceIconPosition;
-    m_iconSize = style.iconSize;
 
     if (m_bgSprite)
     {
@@ -355,7 +358,7 @@ void InfoWidget::showPlanet(boost::shared_ptr<Planet> planet)
             l = boost::shared_ptr<Label>(new Label(_(race->name, "OpenSR-World"), m_font));
             if (race->icon)
             {
-                m_raceIconSprite = boost::shared_ptr<Sprite>(new Sprite(*race->icon));
+                m_raceIconSprite = boost::shared_ptr<Sprite>(new Sprite(race->icon));
                 addChild(m_raceIconSprite);
             }
         }
@@ -430,7 +433,7 @@ void InfoWidget::showSystem(boost::shared_ptr<PlanetarySystem> system)
                 {
                     if (race->icon)
                     {
-                        boost::shared_ptr<Sprite> s = boost::shared_ptr<Sprite>(new Sprite(*race->icon));
+                        boost::shared_ptr<Sprite> s = boost::shared_ptr<Sprite>(new Sprite(race->icon));
                         float aspect = std::min(s->height() / SMALL_ICON_SIZE, s->height() / m_font->size());
                         s->setGeometry(int(s->width() / aspect), int(s->height() / aspect));
                         m_infoWidget.push_back(s);

@@ -52,10 +52,10 @@ public:
 
     void loadStyles();
 
-    InfoWidgetStyle infoWidgetStyle() const;
+    boost::shared_ptr<InfoWidgetStyle> infoWidgetStyle() const;
 
 private:
-    InfoWidgetStyle m_infoWidgetStyle;
+    boost::shared_ptr<InfoWidgetStyle> m_infoWidgetStyle;
 };
 }
 }

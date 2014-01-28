@@ -83,9 +83,9 @@ boost::shared_ptr<Sprite> ButtonPrivate::spriteFromStyleObject(boost::shared_ptr
     boost::shared_ptr<TextureRegionDescriptor> texture = boost::dynamic_pointer_cast<TextureRegionDescriptor>(o);
     boost::shared_ptr<NinePatchDescriptor> ninepatch = boost::dynamic_pointer_cast<NinePatchDescriptor>(o);
     if (ninepatch)
-        return boost::shared_ptr<Sprite>(new NinePatch(*ninepatch));
+        return boost::shared_ptr<Sprite>(new NinePatch(ninepatch));
     else if (texture)
-        return boost::shared_ptr<Sprite>(new Sprite(*texture));
+        return boost::shared_ptr<Sprite>(new Sprite(texture));
 
     return boost::shared_ptr<Sprite>();
 }
@@ -214,7 +214,7 @@ Button::Button(const std::wstring& texture, const std::wstring& hoverTexture, co
     }
 }
 
-Button::Button(const ButtonStyle& style):
+Button::Button(boost::shared_ptr<ButtonStyle> style):
     Widget(*(new ButtonPrivate()))
 {
     RANGERS_D(Button);
@@ -292,15 +292,22 @@ void ButtonPrivate::calcAutoResize()
         labelWidth = label->font()->calculateStringWidth(text.begin(), text.end());
         labelHeight = label->font()->size();
     }
-    if (!style.contentRect.valid())
+    if (!style)
     {
         q->setGeometry(std::max(labelWidth, q->minWidth()), std::max(labelHeight, q->minHeight()));
     }
     else
     {
-        float width = normalSprite->normalWidth() - style.contentRect.width + labelWidth;
-        float height = normalSprite->normalHeight() - style.contentRect.height + labelHeight;
-        q->setGeometry(std::max(width, normalSprite->normalWidth()), std::max(height, normalSprite->normalHeight()));
+        if (!style->contentRect.valid())
+        {
+            q->setGeometry(std::max(labelWidth, q->minWidth()), std::max(labelHeight, q->minHeight()));
+        }
+        else
+        {
+            float width = normalSprite->normalWidth() - style->contentRect.width + labelWidth;
+            float height = normalSprite->normalHeight() - style->contentRect.height + labelHeight;
+            q->setGeometry(std::max(width, normalSprite->normalWidth()), std::max(height, normalSprite->normalHeight()));
+        }
     }
     q->unlock();
 }
@@ -327,8 +334,8 @@ int Button::preferredHeight() const
     if (!d->normalSprite)
         return Widget::preferredHeight();
 
-    if (d->style.contentRect.valid())
-        return d->normalSprite->normalHeight() + d->label->height() - d->style.contentRect.height;
+    if (d->style && d->style->contentRect.valid())
+        return d->normalSprite->normalHeight() + d->label->height() - d->style->contentRect.height;
 
     return minHeight();
 }
@@ -339,8 +346,8 @@ int Button::preferredWidth() const
     if (!d->normalSprite)
         return Widget::preferredWidth();
 
-    if (d->style.contentRect.valid())
-        return d->normalSprite->normalWidth() + d->label->width() - d->style.contentRect.width;
+    if (d->style && d->style->contentRect.valid())
+        return d->normalSprite->normalWidth() + d->label->width() - d->style->contentRect.width;
 
     return minWidth();
 }
@@ -355,37 +362,45 @@ void ButtonPrivate::initFromStyle()
 {
     RANGERS_Q(Button);
 
-    normalSprite = spriteFromStyleObject(style.normal);
-    if (normalSprite)
-        q->addChild(normalSprite);
-
-    hoverSprite = spriteFromStyleObject(style.hovered);
-    if (hoverSprite)
-        q->addChild(hoverSprite);
-
-    pressedSprite = spriteFromStyleObject(style.pressed);
-    if (pressedSprite)
-        q->addChild(pressedSprite);
-
-    if ((style.font) && (style.font->path != L"") && (style.font->size > 0))
+    if (style)
     {
-        label = boost::shared_ptr<Label>(new Label(text, ResourceManager::instance().loadFont(style.font->path, style.font->size)));
+        normalSprite = spriteFromStyleObject(style->normal);
+        if (normalSprite)
+            q->addChild(normalSprite);
+
+        hoverSprite = spriteFromStyleObject(style->hovered);
+        if (hoverSprite)
+            q->addChild(hoverSprite);
+
+        pressedSprite = spriteFromStyleObject(style->pressed);
+        if (pressedSprite)
+            q->addChild(pressedSprite);
+
+        if ((style->font) && (style->font->path != L"") && (style->font->size > 0))
+        {
+            label = boost::shared_ptr<Label>(new Label(text, ResourceManager::instance().loadFont(style->font->path, style->font->size)));
+        }
+        else
+        {
+            label = boost::shared_ptr<Label>(new Label());
+        }
+        q->setColor(style->color);
+
+        if (style->enterSound != L"")
+            enterSound = SoundManager::instance().loadSound(style->enterSound);
+        if (style->leaveSound != L"")
+            leaveSound = SoundManager::instance().loadSound(style->leaveSound);
+        if (style->clickSound != L"")
+            clickSound = SoundManager::instance().loadSound(style->clickSound);
     }
     else
     {
         label = boost::shared_ptr<Label>(new Label());
     }
+
     label->setOrigin(POSITION_X_LEFT, POSITION_Y_TOP);
     q->addChild(label);
-    q->setColor(style.color);
     sprite = normalSprite;
-
-    if (style.enterSound != L"")
-        enterSound = SoundManager::instance().loadSound(style.enterSound);
-    if (style.leaveSound != L"")
-        leaveSound = SoundManager::instance().loadSound(style.leaveSound);
-    if (style.clickSound != L"")
-        clickSound = SoundManager::instance().loadSound(style.clickSound);
 
     q->addListener(buttonListener);
     q->markToUpdate();
@@ -457,22 +472,29 @@ void Button::processMain()
         d->hoverSprite->setGeometry(d->width, d->height);
     if (d->pressedSprite)
         d->pressedSprite->setGeometry(d->width, d->height);
-    if (!d->style.contentRect.valid() || (!d->normalSprite))
+    if (!d->style)
     {
         d->label->setPosition(int((d->width - d->label->width()) / 2), int((d->height - d->label->height()) / 2));
     }
     else
     {
-        float x, y;
-        if (d->label->width() < d->style.contentRect.width)
-            x = int(d->style.contentRect.width - d->label->width()) / 2 + d->style.contentRect.x;
+        if (!d->style->contentRect.valid() || (!d->normalSprite))
+        {
+            d->label->setPosition(int((d->width - d->label->width()) / 2), int((d->height - d->label->height()) / 2));
+        }
         else
-            x = d->style.contentRect.x;
-        if (d->label->height() < d->style.contentRect.height)
-            y = int(d->style.contentRect.height - d->label->height()) / 2 + d->style.contentRect.y;
-        else
-            y = d->style.contentRect.y;
-        d->label->setPosition(x, y);
+        {
+            float x, y;
+            if (d->label->width() < d->style->contentRect.width)
+                x = int(d->style->contentRect.width - d->label->width()) / 2 + d->style->contentRect.x;
+            else
+                x = d->style->contentRect.x;
+            if (d->label->height() < d->style->contentRect.height)
+                y = int(d->style->contentRect.height - d->label->height()) / 2 + d->style->contentRect.y;
+            else
+                y = d->style->contentRect.y;
+            d->label->setPosition(x, y);
+        }
     }
     unlock();
     Widget::processMain();

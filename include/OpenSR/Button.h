@@ -39,7 +39,7 @@ public:
     Button(const std::wstring& texture);
     Button(const std::wstring& texture, const std::wstring& hoverTexture, const std::wstring& pressTexture);
 
-    Button(const ButtonStyle& style);
+    Button(boost::shared_ptr<ButtonStyle> style);
 
     virtual ~Button();
 

@@ -44,7 +44,7 @@ public:
 
     boost::shared_ptr<Sprite> spriteFromStyleObject(boost::shared_ptr<ResourceObject> o);
 
-    ButtonStyle style;
+    boost::shared_ptr<ButtonStyle> style;
     boost::shared_ptr<Label> label;
     std::wstring text;
     boost::shared_ptr<Sprite> normalSprite;

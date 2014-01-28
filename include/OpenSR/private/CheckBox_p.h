@@ -43,7 +43,7 @@ public:
     boost::shared_ptr<Sprite> checkedHovered;
     boost::shared_ptr<Sprite> uncheckedNormal;
     boost::shared_ptr<Sprite> uncheckedHovered;
-    CheckBoxStyle checkBoxStyle;
+    boost::shared_ptr<CheckBoxStyle> checkBoxStyle;
 
     boost::shared_ptr<CheckBoxListener> checkBoxListener;
 };

@@ -71,6 +71,9 @@ void exportStyles()
     .def_readwrite("lineEditStyle", &Skin::lineEditStyle)
     .def_readwrite("checkBoxStyle", &Skin::checkBoxStyle)
     .def_readwrite("radioButtonStyle", &Skin::radioButtonStyle);
+
+    class_<SoundDescriptor, boost::shared_ptr<SoundDescriptor>, bases<ResourceObject> >("SoundDescriptor")
+    .def_readwrite("path", &SoundDescriptor::path);
 }
 }
 }

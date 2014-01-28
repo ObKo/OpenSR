@@ -68,13 +68,10 @@ void SkinManager::loadStyles()
 {
     std::string skinDir = Engine::instance().properties()->get<std::string>("world.skin", "/world/skin");
 
-    boost::shared_ptr<InfoWidgetStyle> infoWidget = ResourceManager::instance().objectManager().getObject<InfoWidgetStyle>(skinDir + "/info-widget");
-
-    if (infoWidget)
-        m_infoWidgetStyle = *infoWidget;
+    m_infoWidgetStyle = ResourceManager::instance().objectManager().getObject<InfoWidgetStyle>(skinDir + "/info-widget");
 }
 
-InfoWidgetStyle SkinManager::infoWidgetStyle() const
+boost::shared_ptr<InfoWidgetStyle> SkinManager::infoWidgetStyle() const
 {
     return m_infoWidgetStyle;
 }

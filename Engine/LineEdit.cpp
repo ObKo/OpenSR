@@ -79,7 +79,9 @@ void LineEdit::draw() const
     if (isFocused() && d->cursorVisible && d->cursorBuffer)
     {
         glBindTexture(GL_TEXTURE_2D, 0);
-        glColor4f(d->style.color.r, d->style.color.g, d->style.color.b, d->style.color.a);
+
+        if (d->style)
+            glColor4f(d->style->color.r, d->style->color.g, d->style->color.b, d->style->color.a);
 
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_ARRAY_BUFFER);
@@ -116,7 +118,7 @@ LineEdit::LineEdit(): Widget(*(new LineEditPrivate()))
 {
 }
 
-LineEdit::LineEdit(const LineEditStyle& style): Widget(*(new LineEditPrivate()))
+LineEdit::LineEdit(boost::shared_ptr<LineEditStyle> style): Widget(*(new LineEditPrivate()))
 {
     RANGERS_D(LineEdit);
     d->style = style;
@@ -130,22 +132,27 @@ LineEdit::LineEdit(LineEditPrivate &p): Widget(p)
 void LineEditPrivate::init()
 {
     RANGERS_Q(LineEdit);
-    boost::shared_ptr<TextureRegionDescriptor> texture = boost::dynamic_pointer_cast<TextureRegionDescriptor>(style.background);
-    boost::shared_ptr<NinePatchDescriptor> ninepatch = boost::dynamic_pointer_cast<NinePatchDescriptor>(style.background);
+    boost::shared_ptr<TextureRegionDescriptor> texture;
+    boost::shared_ptr<NinePatchDescriptor> ninepatch;
+    if (style)
+    {
+        texture = boost::dynamic_pointer_cast<TextureRegionDescriptor>(style->background);
+        ninepatch = boost::dynamic_pointer_cast<NinePatchDescriptor>(style->background);
+    }
     if (ninepatch)
     {
-        background = boost::shared_ptr<Sprite>(new NinePatch(*ninepatch));
+        background = boost::shared_ptr<Sprite>(new NinePatch(ninepatch));
         q->addChild(background);
     }
     else if (texture)
     {
-        background = boost::shared_ptr<Sprite>(new Sprite(*texture));
+        background = boost::shared_ptr<Sprite>(new Sprite(texture));
         q->addChild(background);
     }
-    if ((style.font) && (style.font->path != L"") && (style.font->size > 0))
+    if ((style) && (style->font) && (style->font->path != L"") && (style->font->size > 0))
     {
-        label = boost::shared_ptr<Label>(new Label(text, ResourceManager::instance().loadFont(style.font->path, style.font->size)));
-        label->setColor(style.color);
+        label = boost::shared_ptr<Label>(new Label(text, ResourceManager::instance().loadFont(style->font->path, style->font->size)));
+        label->setColor(style->color);
         q->addChild(label);
     }
     else
@@ -156,20 +163,20 @@ void LineEditPrivate::init()
             q->addChild(label);
         }
     }
-    if (style.contentRect.valid() && label->font() && background)
+    if (style && style->contentRect.valid() && label->font() && background)
     {
-        height = std::max(background->normalHeight() - style.contentRect.height + label->font()->size(), background->normalHeight());
-        width = std::max(background->normalWidth(), style.contentRect.width);
+        height = std::max(background->normalHeight() - style->contentRect.height + label->font()->size(), background->normalHeight());
+        width = std::max(background->normalWidth(), style->contentRect.width);
     }
     else if (label->font() && background)
     {
         height = std::max(background->normalHeight(), (float)label->font()->size());
         width = background->normalWidth();
     }
-    else if (style.contentRect.valid() && label->font())
+    else if (style && style->contentRect.valid() && label->font())
     {
-        height = std::max(style.contentRect.height, (float)label->font()->size());
-        width = style.contentRect.width;
+        height = std::max(style->contentRect.height, (float)label->font()->size());
+        width = style->contentRect.width;
     }
     label->setOrigin(POSITION_X_LEFT, POSITION_Y_TOP);
     position = 0;
@@ -196,12 +203,12 @@ void LineEditPrivate::updateText()
     q->lock();
 
     Rect realContentRect;
-    if (style.contentRect.valid() && background)
+    if (style && style->contentRect.valid() && background)
     {
-        realContentRect.x = style.contentRect.x;
-        realContentRect.y = style.contentRect.y;
-        realContentRect.width = (width - background->normalWidth() + style.contentRect.width);
-        realContentRect.height = (height - background->normalHeight() + style.contentRect.height);
+        realContentRect.x = style->contentRect.x;
+        realContentRect.y = style->contentRect.y;
+        realContentRect.width = (width - background->normalWidth() + style->contentRect.width);
+        realContentRect.height = (height - background->normalHeight() + style->contentRect.height);
     }
     else
     {
@@ -262,7 +269,7 @@ void LineEdit::processMain()
     glBindBuffer(GL_ARRAY_BUFFER, d->cursorBuffer);
     d->cursorVertices = (Vertex *)glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
 
-    if (!d->style.contentRect.valid())
+    if (!d->style || !d->style->contentRect.valid())
     {
         d->label->setPosition(0, 0);
         d->cursorVertices[0].x = cursorPosition - 0.5f;
@@ -272,11 +279,14 @@ void LineEdit::processMain()
     }
     else
     {
-        d->label->setPosition(d->style.contentRect.x, d->style.contentRect.y);
-        d->cursorVertices[0].x = d->style.contentRect.x + cursorPosition - 0.5f;
-        d->cursorVertices[0].y = d->label->height();
-        d->cursorVertices[1].x = d->style.contentRect.x + cursorPosition - 0.5f;
-        d->cursorVertices[1].y = d->style.contentRect.y;
+        if (d->style)
+        {
+            d->label->setPosition(d->style->contentRect.x, d->style->contentRect.y);
+            d->cursorVertices[0].x = d->style->contentRect.x + cursorPosition - 0.5f;
+            d->cursorVertices[0].y = d->label->height();
+            d->cursorVertices[1].x = d->style->contentRect.x + cursorPosition - 0.5f;
+            d->cursorVertices[1].y = d->style->contentRect.y;
+        }
     }
 
     glUnmapBuffer(GL_ARRAY_BUFFER);
@@ -401,8 +411,8 @@ int LineEdit::minWidth() const
 int LineEdit::preferredHeight() const
 {
     RANGERS_D(const LineEdit);
-    if (d->background && d->label->font() && d->style.contentRect.valid())
-        return d->background->normalHeight() + d->label->font()->size() - d->style.contentRect.height;
+    if (d->style && d->background && d->label->font() && d->style->contentRect.valid())
+        return d->background->normalHeight() + d->label->font()->size() - d->style->contentRect.height;
 
     return minHeight();
 }

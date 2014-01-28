@@ -29,7 +29,7 @@ class RANGERS_ENGINE_API NinePatch: public Sprite
     RANGERS_DECLARE_PRIVATE(NinePatch)
 public:
     NinePatch();
-    NinePatch(const NinePatchDescriptor &desc);
+    NinePatch(boost::shared_ptr<NinePatchDescriptor> desc);
     NinePatch(const std::wstring& name);
 
     virtual void processMain();

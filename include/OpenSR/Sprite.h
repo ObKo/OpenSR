@@ -40,7 +40,7 @@ public:
     Sprite(boost::shared_ptr<Texture> texture);
     Sprite(const std::wstring& texture);
     Sprite(const TextureRegion& region);
-    Sprite(const TextureRegionDescriptor& region);
+    Sprite(boost::shared_ptr<TextureRegionDescriptor> region);
 
     virtual ~Sprite();
 

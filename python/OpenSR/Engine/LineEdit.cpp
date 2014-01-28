@@ -38,7 +38,7 @@ struct LineEditWrap : LineEdit, boost::python::wrapper<LineEdit>
     {
     }
 
-    LineEditWrap(const LineEditStyle& style)
+    LineEditWrap(boost::shared_ptr<LineEditStyle> style)
         : LineEdit(style)
     {
     }
@@ -53,7 +53,7 @@ void exportLineEdit()
     class_<LineEditWrap, bases<Widget>, boost::shared_ptr<LineEditWrap>, boost::noncopyable> c("LineEdit", init<float, float, boost::shared_ptr<Font> >());
     c.def(init<float, float>())
     .def(init<float>())
-    .def(init<const LineEditStyle&>())
+    .def(init<boost::shared_ptr<LineEditStyle> >())
     .def(init<>())
     .add_property("text", &LineEdit::text, &LineEdit::setText);
     RANGERS_PYTHON_WRAP_WIDGET_DEF(LineEdit, LineEditWrap, c);

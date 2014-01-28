@@ -78,7 +78,7 @@ Sprite::Sprite(const TextureRegion& region): Object(*(new SpritePrivate))
     markToUpdate();
 }
 
-Sprite::Sprite(const TextureRegionDescriptor& region): Object(*(new SpritePrivate))
+Sprite::Sprite(boost::shared_ptr<TextureRegionDescriptor> region): Object(*(new SpritePrivate))
 {
     RANGERS_D(Sprite);
     d->region = TextureRegion(region);

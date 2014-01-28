@@ -124,7 +124,7 @@ SystemWidget::SystemWidget(boost::shared_ptr<PlanetarySystem> system): Widget(),
     m_infoWidget->setVisible(false);
     addWidget(m_infoWidget);
 
-    m_turnButton = boost::shared_ptr<Button>(new Button(*Engine::instance().defaultSkin()->buttonStyle));
+    m_turnButton = boost::shared_ptr<Button>(new Button(Engine::instance().defaultSkin()->buttonStyle));
     m_turnButton->setAutoResize(true);
     m_turnButton->setText(L"Turn");
     m_turnButton->addListener(m_actionListener);

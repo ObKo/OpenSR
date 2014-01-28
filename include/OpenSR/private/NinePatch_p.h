@@ -27,7 +27,7 @@ class NinePatchPrivate: public SpritePrivate
 {
     RANGERS_DECLARE_PUBLIC(NinePatch)
 public:
-    void initFromDescriptor(const NinePatchDescriptor& desc);
+    void initFromDescriptor(boost::shared_ptr<NinePatchDescriptor> desc);
 
     int rows;
     int columns;

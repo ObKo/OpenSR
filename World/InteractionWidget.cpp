@@ -101,11 +101,11 @@ InteractionWidget::InteractionWidget(const Rect& textRect, const Rect& selection
     boost::shared_ptr<WidgetNode> textNode = boost::shared_ptr<WidgetNode>(new WidgetNode());
     boost::shared_ptr<WidgetNode> selectionNode = boost::shared_ptr<WidgetNode>(new WidgetNode());
 
-    m_textArea = boost::shared_ptr<ScrollArea>(new ScrollArea(*Engine::instance().defaultSkin()->scrollStyle, textNode));
+    m_textArea = boost::shared_ptr<ScrollArea>(new ScrollArea(Engine::instance().defaultSkin()->scrollStyle, textNode));
     m_textArea->setGeometry(textRect.width, textRect.height);
     m_textArea->setPosition(textRect.x, textRect.y);
 
-    m_selectionArea = boost::shared_ptr<ScrollArea>(new ScrollArea(*Engine::instance().defaultSkin()->scrollStyle, selectionNode));
+    m_selectionArea = boost::shared_ptr<ScrollArea>(new ScrollArea(Engine::instance().defaultSkin()->scrollStyle, selectionNode));
     m_selectionArea->setGeometry(selectionRect.width, selectionRect.height);
     m_selectionArea->setPosition(selectionRect.x, selectionRect.y);
 

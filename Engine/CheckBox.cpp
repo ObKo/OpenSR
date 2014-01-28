@@ -47,32 +47,35 @@ void CheckBoxPrivate::CheckBoxListener::actionPerformed(const Action& action)
     }
 }
 
-CheckBox::CheckBox(const CheckBoxStyle& style, const std::wstring &text): Button(*(new CheckBoxPrivate()))
+CheckBox::CheckBox(boost::shared_ptr<CheckBoxStyle> style, const std::wstring &text): Button(*(new CheckBoxPrivate()))
 {
     RANGERS_D(CheckBox);
     d->checkBoxStyle = style;
 
-    d->uncheckedNormal = d->spriteFromStyleObject(style.normal);
-    if (d->uncheckedNormal)
-        addChild(d->uncheckedNormal);
-
-    d->checkedNormal = d->spriteFromStyleObject(style.checkedNormal);
-    if (d->checkedNormal)
-        addChild(d->checkedNormal);
-
-    d->uncheckedHovered = d->spriteFromStyleObject(style.hovered);
-    if (d->uncheckedHovered)
-        addChild(d->uncheckedHovered);
-
-    d->checkedHovered = d->spriteFromStyleObject(style.checkedHovered);
-    if (d->checkedHovered)
-        addChild(d->checkedHovered);
-
-    if ((d->checkBoxStyle.font) && (d->checkBoxStyle.font->path != L"") && (d->checkBoxStyle.font->size > 0))
+    if (style)
     {
-        d->label->setFont(ResourceManager::instance().loadFont(d->checkBoxStyle.font->path, d->checkBoxStyle.font->size));
+        d->uncheckedNormal = d->spriteFromStyleObject(style->normal);
+        if (d->uncheckedNormal)
+            addChild(d->uncheckedNormal);
+
+        d->checkedNormal = d->spriteFromStyleObject(style->checkedNormal);
+        if (d->checkedNormal)
+            addChild(d->checkedNormal);
+
+        d->uncheckedHovered = d->spriteFromStyleObject(style->hovered);
+        if (d->uncheckedHovered)
+            addChild(d->uncheckedHovered);
+
+        d->checkedHovered = d->spriteFromStyleObject(style->checkedHovered);
+        if (d->checkedHovered)
+            addChild(d->checkedHovered);
+
+        if ((d->checkBoxStyle->font) && (d->checkBoxStyle->font->path != L"") && (d->checkBoxStyle->font->size > 0))
+        {
+            d->label->setFont(ResourceManager::instance().loadFont(d->checkBoxStyle->font->path, d->checkBoxStyle->font->size));
+        }
+        setColor(d->checkBoxStyle->color);
     }
-    setColor(d->checkBoxStyle.color);
 
     d->normalSprite = d->uncheckedNormal;
     d->hoverSprite = d->uncheckedHovered;

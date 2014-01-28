@@ -32,19 +32,22 @@
 
 namespace Rangers
 {
-void NinePatchPrivate::initFromDescriptor(const NinePatchDescriptor& desc)
+void NinePatchPrivate::initFromDescriptor(boost::shared_ptr<NinePatchDescriptor> desc)
 {
-    rows = desc.rows;
-    columns = desc.columns;
-    sizeableColumns = desc.sizeableColumns;
-    sizeableRows = desc.sizeableRows;
-    tiledRegions = desc.tiledRegions;
+    if (!desc)
+        return;
+
+    rows = desc->rows;
+    columns = desc->columns;
+    sizeableColumns = desc->sizeableColumns;
+    sizeableRows = desc->sizeableRows;
+    tiledRegions = desc->tiledRegions;
 
     for (int i = 0; i < rows; i++)
     {
         for (int j = 0; j < columns; j++)
         {
-            regions.push_back(TextureRegion(*desc.regions[i * columns + j]));
+            regions.push_back(TextureRegion(desc->regions[i * columns + j]));
         }
     }
 
@@ -62,7 +65,7 @@ NinePatch::NinePatch(): Sprite(*(new NinePatchPrivate()))
     d->rows = 0;
 }
 
-NinePatch::NinePatch(const NinePatchDescriptor &desc):
+NinePatch::NinePatch(boost::shared_ptr<NinePatchDescriptor> desc):
     Sprite(*(new NinePatchPrivate()))
 {
     RANGERS_D(NinePatch);
@@ -82,7 +85,7 @@ NinePatch::NinePatch(const std::wstring& name):
         boost::shared_ptr<NinePatchDescriptor> desc = boost::dynamic_pointer_cast<NinePatchDescriptor>(
                     ResourceManager::instance().objectManager().loadObject(name, "ninepatch"));
         if (desc)
-            d->initFromDescriptor(*desc);
+            d->initFromDescriptor(desc);
     }
     else
     {

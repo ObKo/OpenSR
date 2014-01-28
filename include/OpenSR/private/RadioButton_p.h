@@ -37,7 +37,7 @@ public:
     boost::shared_ptr<Sprite> selectedHovered;
     boost::shared_ptr<Sprite> deselectedNormal;
     boost::shared_ptr<Sprite> deselectedHovered;
-    RadioButtonStyle radioButtonStyle;
+    boost::shared_ptr<RadioButtonStyle> radioButtonStyle;
 };
 }
 

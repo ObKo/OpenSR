@@ -38,7 +38,7 @@ class Asteroid;
 class RANGERS_WORLD_API InfoWidget: public Widget
 {
 public:
-    InfoWidget(const InfoWidgetStyle& style);
+    InfoWidget(boost::shared_ptr<InfoWidgetStyle> style);
 
     void clear();
 

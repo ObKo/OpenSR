@@ -34,7 +34,7 @@ class RANGERS_ENGINE_API LineEdit: public Widget
 public:
     LineEdit();
     LineEdit(float w, float h = 0, boost::shared_ptr<Font> font = boost::shared_ptr<Font>());
-    LineEdit(const LineEditStyle& style);
+    LineEdit(boost::shared_ptr<LineEditStyle> style);
 
     virtual void draw() const;
     virtual void processMain();

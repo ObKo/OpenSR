@@ -242,21 +242,30 @@ TextureRegion::TextureRegion(boost::shared_ptr<Texture> texture, int x, int y, i
     }
 }
 
-TextureRegion::TextureRegion(const TextureRegionDescriptor& desc)
+TextureRegion::TextureRegion(boost::shared_ptr<TextureRegionDescriptor> desc)
 {
-    texture = ResourceManager::instance().loadTexture(desc.texture);
-    int width = desc.width;
-    int height = desc.height;
+    if (!desc)
+    {
+        this->u1 = 0;
+        this->u2 = 0;
+        this->v1 = 0;
+        this->v2 = 0;
+        return;
+    }
+
+    texture = ResourceManager::instance().loadTexture(desc->texture);
+    int width = desc->width;
+    int height = desc->height;
     if (texture)
     {
         if (width < 0)
             width = texture->width();
         if (height < 0)
             height = texture->height();
-        this->u1 = float(desc.x) / (texture->width() - 1);
-        this->u2 = float(desc.x + width - 1) / (texture->width() - 1);
-        this->v1 = float(desc.y) / (texture->height() - 1);
-        this->v2 = float(desc.y + height - 1) / (texture->height() - 1);
+        this->u1 = float(desc->x) / (texture->width() - 1);
+        this->u2 = float(desc->x + width - 1) / (texture->width() - 1);
+        this->v1 = float(desc->y) / (texture->height() - 1);
+        this->v2 = float(desc->y + height - 1) / (texture->height() - 1);
     }
     else
     {

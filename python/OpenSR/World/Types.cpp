@@ -49,7 +49,7 @@ void exportTypes()
     .def_readwrite("x", &Point::x)
     .def_readwrite("y", &Point::y);
 
-    class_<PlanetStyle> c2("PlanetStyle", init<>());
+    class_<PlanetStyle, boost::shared_ptr<PlanetStyle>, bases<ResourceObject> > c2("PlanetStyle", init<>());
     c2.def_readwrite("id", &PlanetStyle::id)
     .def_readwrite("texture", &PlanetStyle::texture)
     .def_readwrite("cloud", &PlanetStyle::cloud)
@@ -66,13 +66,20 @@ void exportTypes()
     .def_readwrite("ringBgOffsetX", &PlanetStyle::ringBgOffsetX)
     .def_readwrite("ringBgOffsetY", &PlanetStyle::ringBgOffsetY);
 
-    class_<AsteroidStyle> c3("AsteroidStyle", init<>());
+    class_<AsteroidStyle, boost::shared_ptr<AsteroidStyle>, bases<ResourceObject> > c3("AsteroidStyle", init<>());
     c3.def_readwrite("id", &AsteroidStyle::id)
     .def_readwrite("sprite", &AsteroidStyle::sprite)
     .def_readwrite("animated", &AsteroidStyle::animated);
 
-    class_<Trajectory> c4("Trajectory", init<>());
-    c4.add_property("nextTurns", &getNextTurns, &setNextTurns);
+    class_<SystemStyle, boost::shared_ptr<SystemStyle>, bases<ResourceObject> > c4("SystemStyle", init<>());
+    c4.def_readwrite("id", &SystemStyle::id)
+    .def_readwrite("star", &SystemStyle::star)
+    .def_readwrite("animated", &SystemStyle::animated)
+    .def_readwrite("color", &SystemStyle::color)
+    .def_readwrite("background", &SystemStyle::background);
+
+    class_<Trajectory> c5("Trajectory", init<>());
+    c5.add_property("nextTurns", &getNextTurns, &setNextTurns);
 }
 }
 }

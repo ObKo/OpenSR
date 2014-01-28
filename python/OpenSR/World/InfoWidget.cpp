@@ -30,7 +30,7 @@ namespace Python
 {
 struct InfoWidgetWrap : InfoWidget, boost::python::wrapper<InfoWidget>
 {
-    InfoWidgetWrap(const InfoWidgetStyle &style)
+    InfoWidgetWrap(boost::shared_ptr<InfoWidgetStyle> style)
         : InfoWidget(style)
     {
     }
@@ -41,7 +41,7 @@ void exportInfoWidget()
 {
     using namespace boost::python;
 
-    class_<InfoWidgetWrap, bases<Widget>, boost::shared_ptr<InfoWidgetWrap>, boost::noncopyable> c("InfoWidget", init<const InfoWidgetStyle&>());
+    class_<InfoWidgetWrap, bases<Widget>, boost::shared_ptr<InfoWidgetWrap>, boost::noncopyable> c("InfoWidget", init<boost::shared_ptr<InfoWidgetStyle> >());
     c.def("clear", &InfoWidget::clear)
     .def("showPlanet", &InfoWidget::showPlanet)
     .def("showSystem", &InfoWidget::showSystem);

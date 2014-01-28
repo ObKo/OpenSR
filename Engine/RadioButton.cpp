@@ -33,32 +33,35 @@ RadioButtonPrivate::RadioButtonPrivate()
     selected = false;
 }
 
-RadioButton::RadioButton(const RadioButtonStyle& style, const std::wstring &text): Button(*(new RadioButtonPrivate()))
+RadioButton::RadioButton(boost::shared_ptr<RadioButtonStyle> style, const std::wstring &text): Button(*(new RadioButtonPrivate()))
 {
     RANGERS_D(RadioButton);
     d->radioButtonStyle = style;
 
-    d->deselectedNormal = d->spriteFromStyleObject(style.normal);
-    if (d->deselectedNormal)
-        addChild(d->deselectedNormal);
-
-    d->selectedNormal = d->spriteFromStyleObject(style.selectedNormal);
-    if (d->selectedNormal)
-        addChild(d->selectedNormal);
-
-    d->deselectedHovered = d->spriteFromStyleObject(style.hovered);
-    if (d->deselectedHovered)
-        addChild(d->deselectedHovered);
-
-    d->selectedHovered = d->spriteFromStyleObject(style.selectedHovered);
-    if (d->selectedHovered)
-        addChild(d->selectedHovered);
-
-    if ((d->radioButtonStyle.font) && (d->radioButtonStyle.font->path != L"") && (d->radioButtonStyle.font->size > 0))
+    if (style)
     {
-        d->label->setFont(ResourceManager::instance().loadFont(d->radioButtonStyle.font->path, d->radioButtonStyle.font->size));
+        d->deselectedNormal = d->spriteFromStyleObject(style->normal);
+        if (d->deselectedNormal)
+            addChild(d->deselectedNormal);
+
+        d->selectedNormal = d->spriteFromStyleObject(style->selectedNormal);
+        if (d->selectedNormal)
+            addChild(d->selectedNormal);
+
+        d->deselectedHovered = d->spriteFromStyleObject(style->hovered);
+        if (d->deselectedHovered)
+            addChild(d->deselectedHovered);
+
+        d->selectedHovered = d->spriteFromStyleObject(style->selectedHovered);
+        if (d->selectedHovered)
+            addChild(d->selectedHovered);
+
+        if ((d->radioButtonStyle->font) && (d->radioButtonStyle->font->path != L"") && (d->radioButtonStyle->font->size > 0))
+        {
+            d->label->setFont(ResourceManager::instance().loadFont(d->radioButtonStyle->font->path, d->radioButtonStyle->font->size));
+        }
+        setColor(d->radioButtonStyle->color);
     }
-    setColor(d->radioButtonStyle.color);
 
     d->normalSprite = d->deselectedNormal;
     d->hoverSprite = d->deselectedHovered;

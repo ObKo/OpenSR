@@ -49,7 +49,7 @@ public:
     int stringOffset;
 
     boost::shared_ptr<Sprite> background;
-    LineEditStyle style;
+    boost::shared_ptr<LineEditStyle> style;
 
     Vector mousePosition;
 
