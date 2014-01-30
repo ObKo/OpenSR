@@ -53,6 +53,7 @@ OPTION(BUILD_NINEPATCH_EDITOR "Build Ninepatch Editor tool" NO)
 OPTION(BUILD_WORLD_UTILS "Build World Utils tool" NO)
 OPTION(BUILD_PLANET_VIEWER "Build Planet Viewer tool" NO)
 OPTION(BUILD_QUEST_PLAYER "Build Quest Player tool" NO)
+OPTION(BUILD_QT_IMAGEFORMATS_PLUGIN "Build Qt imageformats plugin" NO)
 
 SET(PYTHON_PACKAGE_PATH lib/python${PYTHON_REDUCED_VERSION_STRING}/site-packages/ CACHE STRING "Installation path for python packages")
 
