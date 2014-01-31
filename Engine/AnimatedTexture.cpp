@@ -66,8 +66,8 @@ AnimatedTexture::AnimatedTexture(const HAIAnimation& a): Texture()
  */
 AnimatedTexture::AnimatedTexture(const GAIAnimation& a): Texture()
 {
-    m_waitSeek = a.waitSeek;
-    m_waitSize = a.waitSize;
+    //m_waitSeek = a.waitSeek;
+    //m_waitSize = a.waitSize;
     m_width = a.width;
     m_height = a.height;
     m_frameCount = a.frameCount;
@@ -80,7 +80,10 @@ AnimatedTexture::AnimatedTexture(const GAIAnimation& a): Texture()
     {
         glBindTexture(GL_TEXTURE_2D, m_textures[i]);
 
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, a.frames[i].width, a.frames[i].height, 0, GL_BGRA, GL_UNSIGNED_BYTE, a.frames[i].data);
+        if (a.frames[i].format == GIFrame::Format_ARGB32)
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, a.frames[i].width, a.frames[i].height, 0, GL_BGRA, GL_UNSIGNED_BYTE, a.frames[i].data);
+        else if (a.frames[i].format == GIFrame::Format_RGB16)
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, a.frames[i].width, a.frames[i].height, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, a.frames[i].data);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);

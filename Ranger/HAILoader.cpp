@@ -22,13 +22,13 @@
 
 using namespace Rangers;
 
-extern void blitBGRAItoBGRA(unsigned char *bufdes, unsigned char *bufsrc, unsigned char *pal, int width, int height);
+extern void blitABGRI(uint8_t *dest, int destwidth, int x, int y, int w, int h, const uint8_t *graphbuf, const uint8_t *pal);
 
 /*!
  * \param stream input file
  * \return HAI animation structure
  */
-HAIAnimation Rangers::loadHAI(std::istream& stream)
+HAIAnimation Rangers::loadHAIAnimation(std::istream& stream)
 {
     HAIHeader header;
     stream.read((char *)&header, sizeof(HAIHeader));
@@ -43,7 +43,7 @@ HAIAnimation Rangers::loadHAI(std::istream& stream)
     for (int i = 0; i < header.count; i++)
     {
         stream.read((char *)buffer, header.width * header.height + header.palSize);
-        blitBGRAItoBGRA(outbuf, buffer, buffer + size, header.width, header.height);
+        blitABGRI(outbuf, header.width, 0, 0, header.width, header.height, buffer, buffer + size);
         outbuf += size * 4;
     }
 

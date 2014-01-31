@@ -100,7 +100,7 @@ ResourceManager::ResourceManager(const ResourceManager& other)
 class ResourceManager::GAIWorker
 {
 public:
-    GAIWorker(boost::shared_ptr<std::istream> gai, boost::shared_ptr<std::istream> bg);
+    GAIWorker(const GAIHeader& header, boost::shared_ptr<std::istream> gai, boost::shared_ptr<std::istream> bg);
     ~GAIWorker();
     void run();
 
@@ -115,6 +115,7 @@ private:
     boost::shared_ptr<std::istream> m_bgFrame;
     GAIAnimation m_animation;
     boost::thread *m_thread;
+    GAIHeader m_header;
     bool m_loaded;
 };
 
@@ -185,8 +186,14 @@ boost::shared_ptr<Texture> ResourceManager::loadTexture(const std::wstring& name
         boost::shared_ptr<std::istream> s = getFileStream(name);
         if (!s)
             return boost::shared_ptr<Texture>();
-        GIFrame frame = loadGIFile(*s);
-        Texture *t = new Texture(frame.width, frame.height, Rangers::TEXTURE_B8G8R8A8, frame.data);
+        GIFrame frame = loadGIFrame(*s);
+
+        Texture *t;
+        if (frame.format == GIFrame::Format_RGB16)
+            t = new Texture(frame.width, frame.height, Rangers::TEXTURE_R5G6B5, frame.data);
+        else
+            t = new Texture(frame.width, frame.height, Rangers::TEXTURE_B8G8R8A8, frame.data);
+
         delete[] frame.data;
         m_textures[name] = boost::shared_ptr<Texture>(t);
         return m_textures[name];
@@ -197,7 +204,7 @@ boost::shared_ptr<Texture> ResourceManager::loadTexture(const std::wstring& name
         if (!stream)
             return boost::shared_ptr<Texture>();
         PNGFrame frame = loadPNG(*stream);
-        if (frame.type == PNG_INVALID)
+        if (frame.type == PNGFrame::TYPE_INVALID)
         {
             Log::warning() << "Invalid/unsupported PNG file";
             return boost::shared_ptr<Texture>();
@@ -205,14 +212,14 @@ boost::shared_ptr<Texture> ResourceManager::loadTexture(const std::wstring& name
         TextureType type;
         switch (frame.type)
         {
-        case PNG_GRAY:
+        case PNGFrame::TYPE_GRAY:
             //FIXME: grayscale as alpha
             type = Rangers::TEXTURE_A8;
             break;
-        case PNG_RGB:
+        case PNGFrame::TYPE_RGB:
             type = Rangers::TEXTURE_R8G8B8;
             break;
-        case PNG_RGBA:
+        case PNGFrame::TYPE_RGBA:
             type = Rangers::TEXTURE_R8G8B8A8;
             break;
         }
@@ -290,13 +297,13 @@ boost::shared_ptr<AnimatedTexture> ResourceManager::loadAnimation(const std::wst
                     header.frameCount);
 
             m_animations[name] = boost::shared_ptr<AnimatedTexture>(t);
-            GAIWorker *worker = new GAIWorker(s, bgFrameStream);
+            GAIWorker *worker = new GAIWorker(header, s, bgFrameStream);
             m_gaiQueue[m_animations[name]] = worker;
             worker->run();
         }
         else
         {
-            GAIWorker worker(s, bgFrameStream);
+            GAIWorker worker(header, s, bgFrameStream);
             worker.loadAnimation(&worker);
             m_animations[name] = boost::shared_ptr<AnimatedTexture>(new AnimatedTexture(worker.animation()));
         }
@@ -529,12 +536,13 @@ void ResourceManager::cleanupUnused()
     }
 }
 
-ResourceManager::GAIWorker::GAIWorker(boost::shared_ptr<std::istream> gai, boost::shared_ptr<std::istream> bg)
+ResourceManager::GAIWorker::GAIWorker(const GAIHeader& header, boost::shared_ptr<std::istream> gai, boost::shared_ptr<std::istream> bg)
 {
     m_bgFrame = bg;
     m_gai = gai;
     m_loaded = false;
     m_thread = 0;
+    m_header = header;
 }
 
 void ResourceManager::GAIWorker::run()
@@ -548,7 +556,7 @@ void ResourceManager::GAIWorker::loadAnimation(GAIWorker *w)
     if (w->m_bgFrame)
     {
         bg = new GIFrame();
-        (*bg) = loadGIFile(*(w->m_bgFrame));
+        (*bg) = loadGIFrame(*(w->m_bgFrame), true, 0, 0, w->m_header.startX, w->m_header.startY, w->m_header.finishX, w->m_header.finishY);
     }
 
     w->m_animation = loadGAIAnimation(*(w->m_gai), bg);

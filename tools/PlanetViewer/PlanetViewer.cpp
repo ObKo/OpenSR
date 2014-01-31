@@ -461,7 +461,7 @@ QImage PlanetViewer::loadImage(const QString& file)
         QByteArray data = f.readAll();
         f.close();
         boost::iostreams::stream<boost::iostreams::array_source> stream(boost::iostreams::array_source(data.constData(), data.size()));
-        frame = Rangers::loadGIFile(stream);
+        frame = Rangers::loadGIFrame(stream);
         result = QImage(frame.data, frame.width, frame.height, QImage::Format_ARGB32).mirrored(false, true);
         delete[] frame.data;
     }

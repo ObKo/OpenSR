@@ -24,47 +24,25 @@
 using namespace Rangers;
 using namespace std;
 
-#define B_565(word) ((word & 0x1f) * 8)
-#define G_565(word) (((word>>5) & 0x3f) * 4)
-#define R_565(word) (((word>>11) & 0x1f) * 8)
-
-uint32_t R5G6B5ToB8G8R8(uint16_t color)
+void drawA6ToARGB(uint8_t* dest, int destwidth, int x, int y, const uint8_t *data)
 {
-    uint32_t result = 0;
-    result |= B_565(color) << 0;
-    result |= G_565(color) << 8;
-    result |= R_565(color) << 16;
-    return result;
-}
+    int size, cnt, line = y;
 
-uint16_t R5G6B5(char b, char g, char r)
-{
-    uint16_t result = 0;
-    result |= ((r >> 3) & 0x1F) << 11;
-    result |= ((g >> 2) & 0x3F) << 5;
-    result |= ((b >> 3) & 0x1F);
-    return result;
-}
+    size = *(uint32_t *)data;
+    data += 16;
 
-void drawA6ToBGRA(unsigned char * bufdes, int bufdesll, unsigned char * graphbuf)
-{
-    int size, cnt;
-
-    size = *(uint32_t *)graphbuf;
-    graphbuf += 16;
-
-    unsigned char * bufdesrow = bufdes + 3;
+    unsigned char *row = dest + (line * destwidth + x) * 4 + 3;
 
     while (size > 0)
     {
-        unsigned char byte = *graphbuf;
-        graphbuf++;
+        uint8_t byte = *data;
+        data++;
 
         if ((byte == 0) || (byte == 0x80))
         {
             //goto new scanline
-            bufdes += bufdesll;
-            bufdesrow = bufdes + 3;
+            line++;
+            row = dest + (line * destwidth + x) * 4 + 3;
         }
         else if (byte > 0x80)
         {
@@ -74,9 +52,9 @@ void drawA6ToBGRA(unsigned char * bufdes, int bufdesll, unsigned char * graphbuf
 
             do
             {
-                *(bufdesrow) = 4 * (63 - *graphbuf);
-                bufdesrow += 4;
-                graphbuf++;
+                *row = 4 * (63 - *data);
+                row += 4;
+                data++;
                 cnt--;
             }
             while (cnt > 0);
@@ -84,33 +62,32 @@ void drawA6ToBGRA(unsigned char * bufdes, int bufdesll, unsigned char * graphbuf
         else if (byte < 0x80)
         {
             //shift to right
-            bufdesrow += byte * 4;
+            row += byte * 4;
         }
 
         size--;
     }
 }
 
-void drawR5G6B5ToBGRA(unsigned char * bufdes, int bufdesll, unsigned char * graphbuf)
+void drawR5G6B5ToR5G6B5(uint8_t* dest, int destwidth, int x, int y, const uint8_t *data)
 {
-    int size, cnt;
-    uint16_t j;
+    int size, cnt, line = y;
 
-    size = *(uint32_t *)graphbuf;
-    graphbuf += 16;
+    size = *(uint32_t *)data;
+    data += 16;
 
-    unsigned char * bufdesrow = bufdes;
+    unsigned char *row = dest + (line * destwidth + x) * 2;
 
     while (size > 0)
     {
-        unsigned char byte = *graphbuf;
-        graphbuf++;
+        uint8_t byte = *data;
+        data++;
 
         if ((byte == 0) || (byte == 0x80))
         {
             //goto new scanline
-            bufdes += bufdesll;
-            bufdesrow = bufdes;
+            line++;
+            row = dest + (line * destwidth + x) * 2;
         }
         else if (byte > 0x80)
         {
@@ -120,13 +97,9 @@ void drawR5G6B5ToBGRA(unsigned char * bufdes, int bufdesll, unsigned char * grap
 
             do
             {
-                j = *(uint16_t *)graphbuf;
-                *(bufdesrow + 0) = B_565(j);
-                *(bufdesrow + 1) = G_565(j);
-                *(bufdesrow + 2) = R_565(j);
-                *(bufdesrow + 3) = 0xff;
-                bufdesrow += 4;
-                graphbuf += 2;
+                *((uint16_t *)row) = *((uint16_t *)data);
+                row += 2;
+                data += 2;
                 cnt--;
             }
             while (cnt > 0);
@@ -134,60 +107,104 @@ void drawR5G6B5ToBGRA(unsigned char * bufdes, int bufdesll, unsigned char * grap
         else if (byte < 0x80)
         {
             //shift to right
-            bufdesrow += byte * 4;
+            row += byte * 2;
         }
 
         size--;
     }
 }
 
-void drawAIToBGRA(unsigned char * bufdes, int bufdesll, unsigned char * graphbuf)
+void drawR5G6B5ToARGB(uint8_t* dest, int destwidth, int x, int y, const uint8_t *data)
 {
-    int size, cnt, palsize, i;
-    uint8_t byte, r, g, b, alpha;
-    uint32_t Pal[256];
-    uint16_t j;
+    int size, cnt, line = y;
 
-    size = *(uint32_t *)graphbuf;
-    palsize = *(graphbuf + 12);
+    size = *(uint32_t *)data;
+    data += 16;
+
+    unsigned char *row = dest + (line * destwidth + x) * 4;
+
+    while (size > 0)
+    {
+        uint8_t byte = *data;
+        data++;
+
+        if ((byte == 0) || (byte == 0x80))
+        {
+            //goto new scanline
+            line++;
+            row = dest + (line * destwidth + x) * 4;
+        }
+        else if (byte > 0x80)
+        {
+            //pixels found
+            cnt = byte & 0x7f;
+            size -= cnt * 2;
+
+            do
+            {
+                uint16_t color = *((uint16_t *)data);
+                *((uint32_t *)row) = (0xff000000) | (((color >> 11) & 0x1f) << 19) | (((color >> 5) & 0x3f) << 10) | (((color) & 0x1f) << 3);
+                row += 4;
+                data += 2;
+                cnt--;
+            }
+            while (cnt > 0);
+        }
+        else if (byte < 0x80)
+        {
+            //shift to right
+            row += byte * 4;
+        }
+
+        size--;
+    }
+}
+
+void drawAIToARGB(uint8_t* dest, int destwidth, int x, int y, const uint8_t *data)
+{
+    int size, cnt, palsize, i, line = y;
+    uint32_t pal[256];
+
+    size = *(uint32_t *)data;
+    palsize = *(data + 12);
 
     if (palsize == 0)
         palsize = 256;
 
-    graphbuf += 16;
+    data += 16;
 
     for (i = 0; i < palsize; i++)
     {
-        j = *(uint16_t *)graphbuf;
-        alpha = 4 * (63 - * (graphbuf + 2));
+        uint16_t color = *((uint16_t*)data);
+        uint8_t alpha = 4 * (63 - * (data + 2));
 
         if (alpha > 0)
         {
-            b = B_565(j) * 0xff / alpha;
-            g = G_565(j) * 0xff / alpha;
-            r = R_565(j) * 0xff / alpha;
-            Pal[i] = b | g << 8 | r << 16 | alpha << 24;
+            uint16_t r = ((((color >> 11) & 0x1f) << 3) * 0xff) / alpha;
+            uint16_t g = ((((color >> 5) & 0x3f) << 2) * 0xff) / alpha;
+            uint16_t b = ((((color) & 0x1f) << 3) * 0xff) / alpha;
+            pal[i] = (alpha << 24) | ((r & 0xFF) << 16) | ((g & 0xFF) << 8) | (b & 0xFF);
         }
         else
         {
-            Pal[i] = 0;
+            pal[i] = 0;
         }
 
-        graphbuf += 4;
+        data += 4;
     }
 
-    unsigned char * bufdesrow = bufdes;
+    unsigned char *row = dest + (line * destwidth + x) * 4;
 
     while (size > 0)
     {
-        byte = *graphbuf;
-        graphbuf++;
+        uint8_t byte = *data;
+        data++;
 
         if ((byte == 0) || (byte == 0x80))
         {
             //goto new scanline
-            bufdes += bufdesll;
-            bufdesrow = bufdes;
+            line++;
+            row = dest + (line * destwidth + x) * 4;
         }
         else if (byte > 0x80)
         {
@@ -197,10 +214,10 @@ void drawAIToBGRA(unsigned char * bufdes, int bufdesll, unsigned char * graphbuf
 
             do
             {
-                i = *graphbuf; //index of color in palette
-                *(uint32_t *)bufdesrow = Pal[i];
-                bufdesrow += 4;
-                graphbuf++;
+                uint8_t color = *data;
+                *((uint32_t *)row) = pal[color];
+                row += 4;
+                data++;
                 cnt--;
             }
             while (cnt > 0);
@@ -208,47 +225,44 @@ void drawAIToBGRA(unsigned char * bufdes, int bufdesll, unsigned char * graphbuf
         else if (byte < 0x80)
         {
             //shift to right
-            bufdesrow += byte * 4;
+            row += byte * 4;
         }
 
         size--;
     }
 }
 
-void drawRGBIToBGRA(unsigned char * bufdes, int bufdesll, unsigned char * graphbuf)
+void drawRGBIToARGB(uint8_t* dest, int destwidth, int x, int y, const uint8_t *data)
 {
-    int size, cnt, palsize, i;
-    uint32_t Pal[256];
-    uint16_t j;
-    uint8_t byte;
+    int size, cnt, palsize, i, line = y;
+    uint16_t pal[256];
 
-    size = *(uint32_t *)graphbuf;
-    palsize = *(graphbuf + 12);
+    size = *(uint32_t *)data;
+    palsize = *(data + 12);
 
     if (palsize == 0)
         palsize = 256;
 
-    graphbuf += 16;
+    data += 16;
 
     for (i = 0; i < palsize; i++)
     {
-        j = *(uint16_t *)graphbuf;
-        Pal[i] = R5G6B5ToB8G8R8(j) | 0xff000000;
-        graphbuf += 2;
+        pal[i] = *((uint16_t *)data);
+        data += 2;
     }
 
-    unsigned char * bufdesrow = bufdes;
+    unsigned char *row = dest + (line * destwidth + x) * 4;
 
     while (size > 0)
     {
-        byte = *graphbuf;
-        graphbuf++;
+        uint8_t byte = *data;
+        data++;
 
         if ((byte == 0) || (byte == 0x80))
         {
             //goto new scanline
-            bufdes += bufdesll;
-            bufdesrow = bufdes;
+            line++;
+            row = dest + (line * destwidth + x) * 4;
         }
         else if (byte > 0x80)
         {
@@ -258,10 +272,10 @@ void drawRGBIToBGRA(unsigned char * bufdes, int bufdesll, unsigned char * graphb
 
             do
             {
-                i = *graphbuf; //index of color in palette
-                *(uint32_t *)bufdesrow = Pal[i];
-                bufdesrow += 4;
-                graphbuf++;
+                uint8_t color = *data;
+                *((uint32_t *)row) = (0xff000000) | (((pal[color] >> 11) & 0x1f) << 19) | (((pal[color] >> 5) & 0x3f) << 10) | (((pal[color]) & 0x1f) << 3);
+                row += 4;
+                data++;
                 cnt--;
             }
             while (cnt > 0);
@@ -269,18 +283,19 @@ void drawRGBIToBGRA(unsigned char * bufdes, int bufdesll, unsigned char * graphb
         else if (byte < 0x80)
         {
             //shift to right
-            bufdesrow += byte * 4;
+            row += byte * 4;
         }
 
         size--;
     }
 }
 
-void Rangers::drawF5ToBGRA(unsigned char * bufdes, int bufdesll, const unsigned char * graphbuf)
+void Rangers::decodeGAIDeltaFrame(uint8_t *bufdes, int prevWidth, int x, int y, const uint8_t* graphbuf)
 {
     int i, cnt, cnt2, shlc;
     int shlca[4];
     unsigned char byte;
+    int line = y;
 
     byte = graphbuf[12];
     shlc = shlca[0] = 8 - (byte & 15);
@@ -291,7 +306,7 @@ void Rangers::drawF5ToBGRA(unsigned char * bufdes, int bufdesll, const unsigned 
 
     graphbuf += 16 + (((uint32_t *)graphbuf)[2] << 2);
 
-    unsigned char * bufdesrow = (unsigned char *)bufdes;
+    unsigned char * bufdesrow = bufdes + (prevWidth * line + x) * 4;
 
     uint32_t channel = 0;
     while (true)
@@ -431,13 +446,13 @@ void Rangers::drawF5ToBGRA(unsigned char * bufdes, int bufdesll, const unsigned 
             channel++;
             if (channel < 4)
             {
-                bufdesrow = ((unsigned char *)bufdes) + channel;
+                bufdesrow = bufdes + (prevWidth * line + x) * 4 + channel;
             }
             else
             {
                 channel = 0;
-                bufdes = ((unsigned char *)bufdes) + bufdesll;
-                bufdesrow = (unsigned char *)bufdes;
+                line++;
+                bufdesrow = bufdes + (prevWidth * line + x) * 4;
             }
             shlc = shlca[channel];
         }
@@ -457,47 +472,28 @@ void Rangers::drawF5ToBGRA(unsigned char * bufdes, int bufdesll, const unsigned 
     }
 }
 
-void blitBGRAToBGRA(unsigned char *bufdes, int destwidth, int x, int y, int w, int h, unsigned char *graphbuf)
+void blitARGB(uint8_t *dest, int destwidth, int x, int y, int w, int h, const uint8_t *graphbuf)
 {
-    uint32_t j;
-
-    for (int i = 0; i < w * h; i++)
-    {
-        *(bufdes + (destwidth * (i / w + y) + x + i % w) * 4) = *((graphbuf) + i * 4);
-        *(bufdes + (destwidth * (i / w + y) + x + i % w) * 4 + 1) = *((graphbuf) + i * 4 + 1);
-        *(bufdes + (destwidth * (i / w + y) + x + i % w) * 4 + 2) = *((graphbuf) + i * 4 + 2);
-        *(bufdes + (destwidth * (i / w + y) + x + i % w) * 4 + 3) = *((graphbuf) + i * 4 + 3);
-    }
+    for (int i = y; i < y + h; i++)
+        memcpy(dest + (i * destwidth + x) * 4, graphbuf + (i - y) * w * 4, w * 4);
 }
 
-void blitR5G6B5ToBGRA(unsigned char *bufdes, int destwidth, int x, int y, int w, int h, unsigned char *graphbuf)
+void blitR5G6B5(uint8_t *dest, int destwidth, int x, int y, int w, int h, const uint8_t *graphbuf)
 {
-    uint32_t j;
-    uint32_t *dest = (uint32_t *)bufdes;
-    uint16_t *src = (uint16_t *)graphbuf;
-
-    for (int i = 0; i < w * h; i++)
-    {
-        dest[destwidth * (i / w + y) + x + i % w] = R5G6B5ToB8G8R8(src[i]);
-        dest[destwidth * (i / w + y) + x + i % w] |= 0xff000000;
-    }
+    for (int i = y; i < y + h; i++)
+        memcpy(dest + (i * destwidth + x) * 2, graphbuf + (i - y) * w * 2, w * 2);
 }
 
-void blitBGRAItoBGRA(unsigned char *bufdes, unsigned char *bufsrc, unsigned char *pal, int width, int height)
+void blitABGRI(uint8_t *dest, int destwidth, int x, int y, int w, int h, const uint8_t *graphbuf, const uint8_t *pal)
 {
-    for (int y = 0; y < height; y++)
+    for (int i = y; i < y + h; i++)
     {
-        int p = (height - y - 1) * (width);
-        unsigned char *bits = (unsigned char *) & bufsrc[p];
+        uint8_t *row = dest + (i * destwidth + x) * 4;
 
-        for (int x = 0; x < width; x++)
+        for (int j = 0; j < w; j++)
         {
-            bufdes[0] = pal[bits[0] * 4 + 2];
-            bufdes[1] = pal[bits[0] * 4 + 1];
-            bufdes[2] = pal[bits[0] * 4 + 0];
-            bufdes[3] = pal[bits[0] * 4 + 3];
-            bufdes += 4;
-            bits += 1;
+            uint32_t abgr = ((uint32_t *)pal)[graphbuf[(i - y) * w + j]];
+            row[j] = (abgr & 0xFF000000) | ((abgr >> 16) & 0xFF) | (((abgr >> 8) & 0xFF) << 8) | ((abgr & 0xFF) << 16);
         }
     }
 }
@@ -506,33 +502,33 @@ void blitBGRAItoBGRA(unsigned char *bufdes, unsigned char *bufsrc, unsigned char
  * \param image input image data from GI file.
  * \return loaded frame.
  */
-GIFrame Rangers::loadGIImageData(const GIFrameHeader& image, GIFrame *background)
+GIFrame Rangers::loadGIImageData(const GIFrameHeader& image, const GILayerHeader *layers, std::istream& stream, GIFrame *background, uint32_t offset)
 {
     GIFrame resultFrame;
 
     switch (image.type)
     {
     case 0:
-        resultFrame = loadFrameType0(image);
+        resultFrame = loadFrameType0(image, layers, stream, offset);
         break;
 
     case 1:
-        resultFrame = loadFrameType1(image);
+        resultFrame = loadFrameType1(image, layers, stream, offset);
         break;
 
     case 2:
-        resultFrame = loadFrameType2(image);
+        resultFrame = loadFrameType2(image, layers, stream, offset);
         break;
 
     case 3:
-        resultFrame = loadFrameType3(image);
+        resultFrame = loadFrameType3(image, layers, stream, offset);
         break;
 
     case 4:
-        resultFrame = loadFrameType4(image);
+        resultFrame = loadFrameType4(image, layers, stream, offset);
         break;
     case 5:
-        resultFrame = loadFrameType5(image, background);
+        resultFrame = loadFrameType5(image, layers, stream, background, offset);
         break;
 
     default:
@@ -548,36 +544,57 @@ GIFrame Rangers::loadGIImageData(const GIFrameHeader& image, GIFrame *background
  * \param image input image data from GI file.
  * \return loaded frame.
  */
-GIFrame Rangers::loadFrameType2(const GIFrameHeader& image)
+GIFrame Rangers::loadFrameType2(const GIFrameHeader& image, const GILayerHeader *layers, std::istream& stream, uint32_t offset)
 {
     GIFrame result;
 
-    if (image.type != 2)
+    if (image.type != 2 || image.layerCount < 3 || !layers)
         return result;
 
     int width = image.finishX;
-
     int height = image.finishY;
 
     result.width = width;
-
     result.height = height;
 
-    unsigned char *rgba = new unsigned char[width * height * 4];
+    result.format = GIFrame::Format_ARGB32;
+    result.data = new unsigned char[width * height * 4];
+    memset(result.data, 0, width * height * 4);
 
-    memset(rgba, 0, width * height * 4);
+    uint8_t *layerData = 0;
 
+    if (layers[0].size)
+    {
+        layerData = new uint8_t[layers[0].size];
+        stream.seekg(offset + layers[0].seek, std::ios_base::beg);
+        stream.read((char*)layerData, layers[0].size);
 
-    if (image.layers[0].size)
-        drawR5G6B5ToBGRA(rgba + (image.layers[0].startY * width + image.layers[0].startX) * 4, width * 4, (unsigned char *)image.layers[0].data);
+        drawR5G6B5ToARGB(result.data, width, layers[0].startX, layers[0].startY, layerData);
 
-    if (image.layers[1].size)
-        drawR5G6B5ToBGRA(rgba + (image.layers[1].startY * width + image.layers[1].startX) * 4,  width * 4, (unsigned char *)image.layers[1].data);
+        delete[] layerData;
+    }
 
-    if (image.layers[2].size)
-        drawA6ToBGRA(rgba + (image.layers[2].startY * width + image.layers[2].startX) * 4,  width * 4, (unsigned char *)image.layers[2].data);
+    if (layers[1].size)
+    {
+        layerData = new uint8_t[layers[1].size];
+        stream.seekg(offset + layers[1].seek, std::ios_base::beg);
+        stream.read((char*)layerData, layers[1].size);
 
-    result.data = rgba;
+        drawR5G6B5ToARGB(result.data, width, layers[1].startX, layers[1].startY, layerData);
+
+        delete[] layerData;
+    }
+
+    if (layers[2].size)
+    {
+        layerData = new uint8_t[layers[2].size];
+        stream.seekg(offset + layers[2].seek, std::ios_base::beg);
+        stream.read((char*)layerData, layers[2].size);
+
+        drawA6ToARGB(result.data, width, layers[2].startX, layers[2].startY, layerData);
+
+        delete[] layerData;
+    }
 
     return result;
 }
@@ -586,67 +603,75 @@ GIFrame Rangers::loadFrameType2(const GIFrameHeader& image)
  * \param image input image data from GI file.
  * \return loaded frame.
  */
-GIFrame Rangers::loadFrameType5(const GIFrameHeader& image, GIFrame *background)
+GIFrame Rangers::loadFrameType5(const GIFrameHeader& image, const GILayerHeader *layers, std::istream& stream, GIFrame *background, uint32_t offset)
 {
     GIFrame result;
 
-    if (image.type != 5)
+    if (image.type != 5 || !image.layerCount || !layers)
         return result;
 
-    int width;
-    int height;
+    int width = image.finishX;
+    int height = image.finishY;
 
-    /*if(background)
-    {
-    width = image.finishX > background->width ? width = image.finishX : background->width;
-    height = image.finishY > background->height ? image.finishY : background->height;
-    }
-    else*/
-    {
-        width = image.finishX;
-        height = image.finishY;
-    }
     result.width = width;
     result.height = height;
 
-    unsigned char *rgba = new unsigned char[width * height * 4];
+    result.format = GIFrame::Format_ARGB32;
+    result.data = new unsigned char[width * height * 4];
 
     if (background)
-        memcpy(rgba, background->data, width * height * 4);
+        memcpy(result.data, background->data, width * height * 4);
     else
-        memset(rgba, 0x0, width * height * 4);
+        memset(result.data, 0x0, width * height * 4);
 
-    /*for (int i = 0; i < width * height; i++)
+    uint8_t *layerData = 0;
+
+    if (layers[0].size)
     {
-        unsigned char r = rgba[i * 4];
-        unsigned char g = rgba[i * 4 + 1];
-        unsigned char b = rgba[i * 4 + 2];
-        unsigned char a = rgba[i * 4 + 3];
+        layerData = new uint8_t[layers[0].size];
+        stream.seekg(offset + layers[0].seek, std::ios_base::beg);
+        stream.read((char*)layerData, layers[0].size);
 
-        rgba[i * 4] = b;
-        rgba[i * 4 + 1] = g;
-        rgba[i * 4 + 2] = r;
-        rgba[i * 4 + 3] = a;
-    }*/
+        decodeGAIDeltaFrame(result.data, width, layers[0].startX, layers[0].startY, layerData);
 
+        delete[] layerData;
+    }
 
-    if (image.layers[0].size)
-        drawF5ToBGRA(rgba + (image.layers[0].startY * width + image.layers[0].startX) * 4, width * 4, (unsigned char *)image.layers[0].data);
+    return result;
+}
 
-    /*for (int i = 0; i < width * height; i++)
+/*!
+ * \param image input image data from GI file.
+ * \return loaded frame.
+ */
+GIFrame Rangers::loadFrameType1(const GIFrameHeader& image, const GILayerHeader *layers, std::istream& stream, uint32_t offset)
+{
+    GIFrame result;
+
+    if (image.type != 1 || image.layerCount < 1 || !layers)
+        return result;
+
+    int width = image.finishX;
+    int height = image.finishY;
+
+    result.width = width;
+    result.height = height;
+
+    result.format = GIFrame::Format_RGB16;
+    result.data = new unsigned char[width * height * 2];
+    memset(result.data, 0, width * height * 2);
+
+    uint8_t *layerData = 0;
+    if (layers[0].size)
     {
-    	unsigned char r = rgba[i * 4 + 2];
-        unsigned char g = rgba[i * 4 + 1];
-        unsigned char b = rgba[i * 4];
-        unsigned char a = rgba[i * 4 + 3];
+        layerData = new uint8_t[layers[0].size];
+        stream.seekg(offset + layers[0].seek, std::ios_base::beg);
+        stream.read((char*)layerData, layers[0].size);
 
-        rgba[i * 4] = r;
-        rgba[i * 4 + 1] = g;
-        rgba[i * 4 + 2] = b;
-        rgba[i * 4 + 3] = a;
-    }*/
+        drawR5G6B5ToR5G6B5(result.data, width, layers[0].startX, layers[0].startY, layerData);
 
-    result.data = rgba;
+        delete[] layerData;
+    }
 
     return result;
 }
@@ -655,29 +680,40 @@ GIFrame Rangers::loadFrameType5(const GIFrameHeader& image, GIFrame *background)
  * \param image input image data from GI file.
  * \return loaded frame.
  */
-GIFrame Rangers::loadFrameType1(const GIFrameHeader& image)
+GIFrame Rangers::loadFrameType4(const GIFrameHeader& image, const GILayerHeader *layers, std::istream& stream, uint32_t offset)
 {
     GIFrame result;
 
-    if (image.type != 1)
+    if (image.type != 4 || image.layerCount < 2 || !layers)
         return result;
 
     int width = image.finishX;
-
     int height = image.finishY;
 
     result.width = width;
-
     result.height = height;
 
-    unsigned char *rgba = new unsigned char[width * height * 4];
+    result.format = GIFrame::Format_ARGB32;
+    result.data = new unsigned char[width * height * 2];
+    memset(result.data, 0, width * height * 2);
 
-    memset(rgba, 0, width * height * 4);
+    if (layers[0].size && layers[1].size)
+    {
+        uint8_t *layerData;
+        uint8_t *palData;
+        layerData = new uint8_t[layers[0].size];
+        palData = new uint8_t[layers[1].size];
 
-    if (image.layers[0].size)
-        drawR5G6B5ToBGRA(rgba + (image.layers[0].startY * width + image.layers[0].startX) * 4, width * 4, (unsigned char *)image.layers[0].data);
+        stream.seekg(offset + layers[0].seek, std::ios_base::beg);
+        stream.read((char*)layerData, layers[0].size);
+        stream.seekg(offset + layers[1].seek, std::ios_base::beg);
+        stream.read((char*)palData, layers[1].size);
 
-    result.data = rgba;
+        blitABGRI(result.data, width, layers[0].startX, layers[0].startY, (layers[0].finishX - layers[0].startX), (layers[0].finishY - layers[0].startY), layerData, palData);
+
+        delete[] layerData;
+        delete[] palData;
+    }
 
     return result;
 }
@@ -686,29 +722,46 @@ GIFrame Rangers::loadFrameType1(const GIFrameHeader& image)
  * \param image input image data from GI file.
  * \return loaded frame.
  */
-GIFrame Rangers::loadFrameType4(const GIFrameHeader& image)
+GIFrame Rangers::loadFrameType3(const GIFrameHeader& image, const GILayerHeader *layers, std::istream& stream, uint32_t offset)
 {
     GIFrame result;
 
-    if (image.type != 4)
+    if (image.type != 3 || image.layerCount < 2 || !layers)
         return result;
 
     int width = image.finishX;
-
     int height = image.finishY;
 
     result.width = width;
-
     result.height = height;
 
-    unsigned char *rgba = new unsigned char[width * height * 4];
+    result.format = GIFrame::Format_ARGB32;
+    result.data = new unsigned char[width * height * 4];
+    memset(result.data, 0, width * height * 4);
 
-    memset(rgba, 0, width * height * 4);
+    uint8_t *layerData = 0;
 
-    if (image.layers[0].size)
-        blitBGRAItoBGRA(rgba + (image.layers[0].startY * width + image.layers[0].startX) * 4, (unsigned char *)image.layers[0].data, (unsigned char *)image.layers[1].data, width, height);
+    if (layers[0].size)
+    {
+        layerData = new uint8_t[layers[0].size];
+        stream.seekg(offset + layers[0].seek, std::ios_base::beg);
+        stream.read((char*)layerData, layers[0].size);
 
-    result.data = rgba;
+        drawRGBIToARGB(result.data, width, layers[0].startX, layers[0].startY, layerData);
+
+        delete[] layerData;
+    }
+
+    if (layers[1].size)
+    {
+        layerData = new uint8_t[layers[1].size];
+        stream.seekg(offset + layers[1].seek, std::ios_base::beg);
+        stream.read((char*)layerData, layers[1].size);
+
+        drawAIToARGB(result.data, width, layers[1].startX, layers[1].startY, layerData);
+
+        delete[] layerData;
+    }
 
     return result;
 }
@@ -717,75 +770,47 @@ GIFrame Rangers::loadFrameType4(const GIFrameHeader& image)
  * \param image input image data from GI file.
  * \return loaded frame.
  */
-GIFrame Rangers::loadFrameType3(const GIFrameHeader& image)
+GIFrame Rangers::loadFrameType0(const GIFrameHeader& image, const GILayerHeader *layers, std::istream& stream, uint32_t offset)
 {
     GIFrame result;
 
-    if (image.type != 3)
+    if (image.type != 0 || !image.layerCount || !layers)
         return result;
 
     int width = image.finishX;
-
     int height = image.finishY;
 
     result.width = width;
-
     result.height = height;
 
-    unsigned char *rgba = new unsigned char[width * height * 4];
-
-    memset(rgba, 0, width * height * 4);
-
-    if (image.layers[0].size)
-        drawRGBIToBGRA(rgba + (image.layers[0].startY * width + image.layers[0].startX) * 4, width * 4, (unsigned char *)image.layers[0].data);
-
-    if (image.layers[1].size)
-        drawAIToBGRA(rgba + (image.layers[1].startY * width + image.layers[1].startX) * 4, width * 4, (unsigned char *)image.layers[1].data);
-
-    result.data = rgba;
-
-    return result;
-}
-
-/*!
- * \param image input image data from GI file.
- * \return loaded frame.
- */
-GIFrame Rangers::loadFrameType0(const GIFrameHeader& image)
-{
-    GIFrame result;
-
-    if (image.type != 0)
-        return result;
-
-    int width = image.finishX;
-
-    int height = image.finishY;
-
-    result.width = width;
-
-    result.height = height;
+    uint8_t *layerData = 0;
+    if (layers[0].size)
+    {
+        layerData = new uint8_t[layers[0].size];
+        stream.seekg(layers[0].seek, std::ios_base::beg);
+        stream.read((char*)layerData, layers[0].size);
+    }
 
     if ((image.aBitmask == 0xFF000000) && (image.rBitmask == 0xFF0000) && (image.gBitmask == 0xFF00) && (image.bBitmask == 0xFF))
     {
-        unsigned char *rgba = new unsigned char[width * height * 4];
-        memset(rgba, 0, width * height * 4);
+        result.format = GIFrame::Format_ARGB32;
+        result.data = new unsigned char[width * height * 4];
+        memset(result.data, 0, width * height * 4);
 
-        if (image.layers[0].size)
-            blitBGRAToBGRA(rgba, width, image.layers[0].startX, image.layers[0].startY, (image.layers[0].finishX - image.layers[0].startX), (image.layers[0].finishY - image.layers[0].startY), (unsigned char *)image.layers[0].data);
-
-        result.data = rgba;
+        if (layers[0].size)
+            blitARGB(result.data, width, layers[0].startX, layers[0].startY, (layers[0].finishX - layers[0].startX), (layers[0].finishY - layers[0].startY), layerData);
     }
     else if ((image.rBitmask == 0xF800) && (image.gBitmask == 0x7E0) && (image.bBitmask == 0x1F))
     {
-        unsigned char *rgba = new unsigned char[width * height * 4];
-        memset(rgba, 0, width * height * 4);
+        result.format = GIFrame::Format_RGB16;
+        result.data = new unsigned char[width * height * 2];
+        memset(result.data, 0, width * height * 2);
 
-        if (image.layers[0].size)
-            blitR5G6B5ToBGRA(rgba, width, image.layers[0].startX, image.layers[0].startY, (image.layers[0].finishX - image.layers[0].startX), (image.layers[0].finishY - image.layers[0].startY), (unsigned char *)image.layers[0].data);
-
-        result.data = rgba;
+        if (layers[0].size)
+            blitR5G6B5(result.data, width, layers[0].startX, layers[0].startY, (layers[0].finishX - layers[0].startX), (layers[0].finishY - layers[0].startY), layerData);
     }
+
+    delete[] layerData;
 
     return result;
 }
@@ -798,94 +823,65 @@ GIFrame Rangers::loadFrameType0(const GIFrameHeader& image)
  * \param background background image
  * \return loaded frame.
  */
-GIFrame Rangers::loadGIFrame(std::istream& stream, size_t &offset, GIFrame *background, int startX, int startY, int finishX, int finishY)
+GIFrame Rangers::loadGIFrame(std::istream& stream, bool animation, GIFrame *background, uint32_t offset, int startX, int startY, int finishX, int finishY)
 {
     GIFrameHeader image;
+    GILayerHeader *layers;
 
     stream.read((char*)&image, 64);
-    image.layers = new GILayerHeader[image.layerCount];
 
-    size_t delta = 64;
+    if (image.signature != 0x00006967)
+        return GIFrame();
 
-    if (finishX)
-        image.finishX = finishX;
+    layers = new GILayerHeader[image.layerCount];
 
-    if (finishY)
-        image.finishY = finishY;
-
-    image.startX -= startX;
-    image.startY -= startY;
-    image.finishX -= startX;
-    image.finishY -= startY;
+    //size_t delta = 64;
 
     for (int i = 0; i < image.layerCount; i++)
     {
         stream.seekg(offset + 64 + i * 32, ios_base::beg);
-        stream.read((char*)&image.layers[i], 32);
-        image.layers[i].data = new unsigned char[image.layers[i].size];
-        stream.seekg(offset + image.layers[i].seek, ios_base::beg);
-        stream.read((char*)image.layers[i].data, image.layers[i].size);
-        delta += image.layers[i].size + 32;
+        stream.read((char*)&layers[i], 32);
 
-        image.layers[i].startX -= startX;
-        image.layers[i].startY -= startY;
-        image.layers[i].finishX -= startX;
-        image.layers[i].finishY -= startY;
+        if (animation)
+        {
+            layers[i].startX -= startX;
+            layers[i].startY -= startY;
+            layers[i].finishX -= startX;
+            layers[i].finishY -= startY;
+        }
+        else
+        {
+            layers[i].startX -= image.startX;
+            layers[i].startY -= image.startY;
+            layers[i].finishX -= image.startX;
+            layers[i].finishY -= image.startY;
+        }
     }
 
-    offset += delta;
-
-    GIFrame resultFrame = loadGIImageData(image, background);
-
-    for (int i = 0; i < image.layerCount; i++)
+    if (animation)
     {
-        delete[] image.layers[i].data;
+        if (finishX)
+            image.finishX = finishX;
+
+        if (finishY)
+            image.finishY = finishY;
+
+        image.startX -= startX;
+        image.startY -= startY;
+        image.finishX -= startX;
+        image.finishY -= startY;
     }
-
-    delete[] image.layers;
-
-    return resultFrame;
-}
-
-/*!
- * \param stream input stream
- * \return loaded frame.
- */
-GIFrame Rangers::loadGIFile(std::istream& stream)
-{
-    GIFrameHeader image;
-
-    stream.read((char*)&image, 64);
-    image.layers = new GILayerHeader[image.layerCount];
-
-    for (int i = 0; i < image.layerCount; i++)
+    else
     {
-        stream.seekg(64 + i * 32, ios_base::beg);
-        stream.read((char*)&image.layers[i], 32);
-        image.layers[i].data = new unsigned char[image.layers[i].size];
-        stream.seekg(image.layers[i].seek, ios_base::beg);
-        stream.read((char*)image.layers[i].data, image.layers[i].size);
-
-        image.layers[i].startX -= image.startX;
-        image.layers[i].startY -= image.startY;
-        image.layers[i].finishX -= image.startX;
-        image.layers[i].finishY -= image.startY;
+        image.finishX -= image.startX;
+        image.finishY -= image.startY;
+        image.startX = 0;
+        image.startY = 0;
     }
 
-    image.finishY = image.finishY - image.startY;
+    GIFrame resultFrame = loadGIImageData(image, layers, stream, background, offset);
 
-    image.finishX = image.finishX - image.startX;
-    image.startY = 0;
-    image.startY = 0;
-
-    GIFrame resultFrame = loadGIImageData(image);
-
-    for (int i = 0; i < image.layerCount; i++)
-    {
-        delete[] image.layers[i].data;
-    }
-
-    delete[] image.layers;
+    delete[] layers;
 
     return resultFrame;
 }

@@ -55,8 +55,6 @@ struct GILayerHeader
     uint32_t finishY;  //!< Layer bottom corner
     uint32_t unknown1;
     uint32_t unknown2;
-
-    unsigned char *data; //!< layer data
 };
 
 //! Header of frame in *.gi file
@@ -86,24 +84,24 @@ struct GIFrameHeader
      *   -# Indexed RGB colors
      *   -# Indexed Alpha
      *  -# 4 - One layer, indexed RGBA colors
-     *  -# 5 - Unknown type, used in large animations.
+     *  -# 5 - Delta frame of GAI animation.
      */
     uint32_t layerCount; //!< Number of layers in frame
     uint32_t unknown1;
     uint32_t unknown2;
     uint32_t unknown3;
     uint32_t unknown4;
-
-    GILayerHeader *layers; //!< Layers
 };
 
 //! GI format frame.
 
 struct GIFrame
 {
+    enum Format {Format_ARGB32, Format_RGB16};
+    Format format;
     int width;   //!< Total frame width
     int height;   //!< Total frame height
-    unsigned char *data; //!< Frame data (in RGBA format)
+    uint8_t *data; //!< Frame data
 };
 
 //! Header of *.gai animation file
@@ -122,8 +120,6 @@ struct GAIHeader
     uint32_t waitSize;  //!< Wait size?
     uint32_t unknown1;
     uint32_t unknown2;
-
-    GIFrame *frames;  //!< Animation frames
 };
 
 //! GAI Animation
@@ -133,8 +129,8 @@ struct GAIAnimation
     int width;   //!< Total animation width
     int height;   //!< Total animation height
     int frameCount;  //!< Number of frames in animation
-    int waitSeek;  //!< Wait seek?
-    int waitSize;  //!< Wait size?
+
+    uint32_t *times;  //!< Display time for each frame
     GIFrame *frames;  //!< Animation frames
 };
 
@@ -164,7 +160,7 @@ struct HAIAnimation
     int width;   //!< Animation width
     int height;   //!< Animation height
     int frameCount;  //!< Number of frames in animation
-    unsigned char *frames; //!< Frames data
+    uint8_t *frames; //!< Frames data
 };
 
 //! Compression type of file in RPKG archive
@@ -208,92 +204,38 @@ struct PKGItem
     PKGItem *childs;  //!< Child items
 };
 
-struct DDSPixelFormat
-{
-    uint32_t size;
-    uint32_t flags;
-    uint32_t fourCC;
-    uint32_t rgbBitCount;
-    uint32_t rBitMask;
-    uint32_t gBitMask;
-    uint32_t bBitMask;
-    uint32_t aBitMask;
-};
-
-enum DDSPixelFormatFlags {DDPF_ALPHAPIXELS = 0x1, DDPF_ALPHA = 0x2, DDPF_FOURCC = 0x4,
-                          DDPF_RGB = 0x40, DDPF_YUV = 0x200, DDPF_LUMINANCE = 0x20000
-                         };
-
-struct DDSHeader
-{
-    uint32_t size;
-    uint32_t flags;
-    uint32_t height;
-    uint32_t width;
-    uint32_t pitchOrLinearSize;
-    uint32_t depth;
-    uint32_t mipMapCount;
-    uint32_t reserved1[11];
-    DDSPixelFormat ddspf;
-    uint32_t caps;
-    uint32_t caps2;
-    uint32_t caps3;
-    uint32_t caps4;
-    uint32_t reserved2;
-};
-
-enum DDSHeaderFlags {DDSD_CAPS = 0x1, DDSD_HEIGHT = 0x2, DDSD_WIDTH = 0x4, DDSD_PITCH = 0x8,
-                     DDSD_PIXELFORMAT = 0x1000, DDSD_MIPMAPCOUNT = 0x20000, DDSD_LINEARSIZE = 0x80000,
-                     DDSD_DEPTH = 0x800000
-                    };
-
-enum DDSHeaderCaps {DDSCAPS_COMPLEX = 0x8, DDSCAPS_MIPMAP = 0x400000, DDSCAPS_TEXTURE = 0x1000};
-
-enum DDSHeaderCaps2 {DDSCAPS2_CUBEMAP = 0x200, DDSCAPS2_CUBEMAP_POSITIVEX = 0x400, DDSCAPS2_CUBEMAP_NEGATIVEX = 0x800,
-                     DDSCAPS2_CUBEMAP_POSITIVEY = 0x1000, DDSCAPS2_CUBEMAP_NEGATIVEY = 0x2000,
-                     DDSCAPS2_CUBEMAP_POSITIVEZ = 0x4000, DDSCAPS2_CUBEMAP_NEGATIVEZ = 0x8000,
-                     DDSCAPS2_VOLUME = 0x200000
-                    };
-
-//! Supported PNG color types
-enum PNGType {PNG_INVALID, PNG_GRAY, PNG_RGB, PNG_RGBA};
-
 //! PNG frame
 struct PNGFrame
 {
+    //! Supported PNG color types
+    enum Type {TYPE_INVALID, TYPE_GRAY, TYPE_RGB, TYPE_RGBA};
     int width;  		//!< Frame width
     int height;   		//!< Frame width
-    PNGType type;		//!< Frame color type
+    Type type;		//!< Frame color type
     unsigned char *data;	//!< Frame pixel data
 };
 
 //! Load GI frame type 0
-LIBRANGER_API GIFrame loadFrameType0(const GIFrameHeader& image);
+LIBRANGER_API GIFrame loadFrameType0(const GIFrameHeader& image, const GILayerHeader *layers, std::istream& stream, uint32_t offset = 0);
 //! Load GI frame type 1
-LIBRANGER_API GIFrame loadFrameType1(const GIFrameHeader& image);
+LIBRANGER_API GIFrame loadFrameType1(const GIFrameHeader& image, const GILayerHeader *layers, std::istream& stream, uint32_t offset = 0);
 //! Load GI frame type 2
-LIBRANGER_API GIFrame loadFrameType2(const GIFrameHeader& image);
+LIBRANGER_API GIFrame loadFrameType2(const GIFrameHeader& image, const GILayerHeader *layers, std::istream& stream, uint32_t offset = 0);
 //! Load GI frame type 3
-LIBRANGER_API GIFrame loadFrameType3(const GIFrameHeader& image);
+LIBRANGER_API GIFrame loadFrameType3(const GIFrameHeader& image, const GILayerHeader *layers, std::istream& stream, uint32_t offset = 0);
 //! Load GI frame type 4
-LIBRANGER_API GIFrame loadFrameType4(const GIFrameHeader& image);
-//! Load GI frame type 5 - dummy
-LIBRANGER_API GIFrame loadFrameType5(const GIFrameHeader& image, GIFrame *background = 0);
+LIBRANGER_API GIFrame loadFrameType4(const GIFrameHeader& image, const GILayerHeader *layers, std::istream& stream, uint32_t offset = 0);
+//! Load GI frame type 5
+LIBRANGER_API GIFrame loadFrameType5(const GIFrameHeader& image, const GILayerHeader *layers, std::istream& stream, GIFrame *background = 0, uint32_t offset = 0);
 //! Load GI frame
-LIBRANGER_API GIFrame loadGIImageData(const GIFrameHeader& image, GIFrame *background = 0);
+LIBRANGER_API GIFrame loadGIImageData(const GIFrameHeader& image, const GILayerHeader *layers, std::istream& stream, GIFrame *background = 0, uint32_t offset = 0);
 
-//FIXME: Export other GI functons?
-LIBRANGER_API void drawF5ToBGRA(unsigned char * bufdes, int bufdesll, const unsigned char * graphbuf);
+LIBRANGER_API void decodeGAIDeltaFrame(uint8_t *prevFrame, int prevWidth, int x, int y, const uint8_t* frameData);
 
-//! Load GI frame from file
-LIBRANGER_API GIFrame loadGIFrame(std::istream& stream, size_t &offset, GIFrame *background = 0, int startX = 0, int startY = 0, int finishX = 0, int finishY = 0);
-
-//! Load HAI animation from file
-LIBRANGER_API HAIAnimation loadHAI(std::istream& stream);
-
-//! Load GI file
-LIBRANGER_API GIFrame loadGIFile(std::istream& stream);
-
+//! Load GI frame from stream
+LIBRANGER_API GIFrame loadGIFrame(std::istream& stream, bool animation = false, GIFrame *background = 0, uint32_t offset = 0, int startX = 0, int startY = 0, int finishX = 0, int finishY = 0);
+//! Load HAI animation from stream
+LIBRANGER_API HAIAnimation loadHAIAnimation(std::istream& stream);
 //! Load GAI animation file
 LIBRANGER_API GAIAnimation loadGAIAnimation(std::istream& stream, GIFrame *background = 0);
 //! Load GAI header from file

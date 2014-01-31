@@ -64,7 +64,7 @@ GAISprite::GAISprite(const std::wstring& name): AnimatedSprite(*(new GAISpritePr
                 boost::shared_ptr<std::istream> bgFrameStream = ResourceManager::instance().getFileStream(directory(name) + basename(name) + L".gi");
                 if (bgFrameStream)
                 {
-                    GIFrame bgFrame = loadGIFile(*bgFrameStream);
+                    GIFrame bgFrame = loadGIFrame(*bgFrameStream, true, 0, 0, header.startX, header.startY, header.finishX, header.finishY);
                     d->loadGAI(stream, bgFrame);
                     delete[] bgFrame.data;
                 }
@@ -163,13 +163,13 @@ void GAISprite::processMain()
 
 void GAISpritePrivate::loadGIFrame5(const char * data, unsigned char * background, int startX, int startY, int finishX, int finishY)
 {
-    const char *buffer = data;
+    const uint8_t *buffer = (const uint8_t*)data;
     GIFrameHeader image = *((GIFrameHeader*)data);
 
     if (image.type != 5)
         return;
 
-    image.layers = new GILayerHeader[image.layerCount];
+    GILayerHeader *layers = new GILayerHeader[image.layerCount];
 
     if (finishX)
         image.finishX = finishX;
@@ -184,24 +184,21 @@ void GAISpritePrivate::loadGIFrame5(const char * data, unsigned char * backgroun
 
     for (int i = 0; i < image.layerCount; i++)
     {
-        buffer = data + 64 + i * 32;
-        image.layers[i] = *((GILayerHeader*)buffer);
-        buffer = data + image.layers[i].seek;
-        //FIXME: const unsigned char* -> unsigned char*
-        image.layers[i].data = (unsigned char*)buffer;
+        buffer = (const uint8_t*)data + 64 + i * 32;
+        layers[i] = *((GILayerHeader*)buffer);
 
-        image.layers[i].startX -= startX;
-        image.layers[i].startY -= startY;
-        image.layers[i].finishX -= startX;
-        image.layers[i].finishY -= startY;
+        layers[i].startX -= startX;
+        layers[i].startY -= startY;
+        layers[i].finishX -= startX;
+        layers[i].finishY -= startY;
     }
 
     int width = image.finishX;
 
-    if (image.layers[0].size)
-        drawF5ToBGRA(background + (image.layers[0].startY * width + image.layers[0].startX) * 4, width * 4, (const unsigned char *)image.layers[0].data);
+    if (layers[0].size)
+        decodeGAIDeltaFrame(background, width, layers[0].startX, layers[0].startY, buffer + sizeof(GILayerHeader));
 
-    delete[] image.layers;
+    delete[] layers;
 }
 
 void GAISpritePrivate::drawFrame(int i)
@@ -240,7 +237,7 @@ void GAISpritePrivate::loadGAI(boost::shared_ptr<std::istream> stream, const GIF
         for (int i = 0; i < gaiHeader.frameCount; i++)
         {
             uint32_t giSeek , giSize;
-            (*stream).seekg(sizeof(GAIHeader) - sizeof(GIFrame *) + i * 2 * sizeof(uint32_t), std::ios_base::beg);
+            (*stream).seekg(sizeof(GAIHeader) + i * 2 * sizeof(uint32_t), std::ios_base::beg);
             (*stream).read((char *)&giSeek, 4);
             (*stream).read((char *)&giSize, 4);
 

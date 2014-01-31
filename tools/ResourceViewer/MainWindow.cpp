@@ -118,7 +118,7 @@ void MainWindow::loadGAI(GAIAnimation anim)
         delete[] anim.frames[i].data;
     }
     delete[] anim.frames;
-    animationLoaded(15, anim.waitSeek, anim.waitSize);
+    animationLoaded(15, 0, 0);
 }
 
 void MainWindow::openFile()
@@ -172,7 +172,7 @@ void MainWindow::loadResource(FileNode *node)
     {
         QByteArray data = model.getData(node);
         boost::iostreams::stream<boost::iostreams::array_source> stream(boost::iostreams::array_source(data.constData(), data.size()));
-        Rangers::GIFrame frame = Rangers::loadGIFile(stream);
+        Rangers::GIFrame frame = Rangers::loadGIFrame(stream);
         loadGI(frame);
     }
     else if (fileInfo.suffix().toLower() == "gai")
@@ -194,7 +194,7 @@ void MainWindow::loadResource(FileNode *node)
                 bg = new Rangers::GIFrame;
                 QByteArray bgData = model.getData(bgNode);
                 boost::iostreams::stream<boost::iostreams::array_source> bgStream(boost::iostreams::array_source(bgData.constData(), bgData.size()));
-                *bg = Rangers::loadGIFile(bgStream);
+                *bg = Rangers::loadGIFrame(bgStream, true, 0, 0, h.startX, h.startY, h.finishX, h.finishY);
             }
         }
         boost::iostreams::seek(stream, 0, std::ios_base::beg);
@@ -208,12 +208,8 @@ void MainWindow::loadResource(FileNode *node)
     {
         QByteArray data = model.getData(node);
         boost::iostreams::stream<boost::iostreams::array_source> stream(boost::iostreams::array_source(data.constData(), data.size()));
-        Rangers::HAIAnimation anim = Rangers::loadHAI(stream);
+        Rangers::HAIAnimation anim = Rangers::loadHAIAnimation(stream);
         loadHAI(anim);
-    }
-    else if (fileInfo.suffix().toLower() == "dds")
-    {
-        loadDDS(model.getData(node).data());
     }
 }
 
@@ -226,89 +222,6 @@ void convertRGBAToBGRA(unsigned char *rgba, int width, int height)
         rgba[i * 4 + 2] = tmp;
     }
 }
-
-void MainWindow::loadDDS(const char *data)
-{
-    if (*(uint32_t*)(data) != 0x20534444)
-    {
-        QMessageBox::warning(this, tr("Unsupported file"), tr("Not a DDS file."));
-        return;
-    }
-
-    DDSHeader header = *((DDSHeader*)(data + 4));
-
-    switch (header.ddspf.fourCC)
-    {
-    case 0x31545844:
-    case 0x33545844:
-    case 0x35545844:
-        break;
-    default:
-        QMessageBox::warning(this, tr("Unsupported file"), tr("Unsupported DDS compression."));
-        return;
-
-    }
-
-    if ((header.caps & DDSCAPS_COMPLEX) && (header.caps2 & DDSCAPS2_VOLUME)
-            && (header.flags & DDSD_LINEARSIZE) && (header.flags & DDSD_LINEARSIZE) && (header.ddspf.flags & DDPF_FOURCC))
-    {
-        unsigned char *rgbaData = new unsigned char[header.height * header.width * 4];
-        for (int i = 0; i < header.depth; i++)
-        {
-            unsigned char *dxt = ((unsigned char *)data) + 4 + sizeof(DDSHeader) + header.pitchOrLinearSize * header.height * i;
-            int squishFlags;
-
-            switch (header.ddspf.fourCC)
-            {
-            case 0x31545844:
-                squishFlags = squish::kDxt1;
-                break;
-            case 0x33545844:
-                squishFlags = squish::kDxt3;
-                break;
-            case 0x35545844:
-                squishFlags = squish::kDxt5;
-                break;
-            }
-            squish::DecompressImage(rgbaData, header.width, header.height, dxt, squishFlags);
-            convertRGBAToBGRA(rgbaData, header.width, header.height);
-            frames.append(QPixmap::fromImage(QImage(rgbaData, header.width, header.height, QImage::Format_ARGB32)));
-        }
-        delete rgbaData;
-        animationLoaded(15, header.reserved1[0], header.reserved1[1]);
-
-    }
-    else if (header.ddspf.flags & DDPF_FOURCC)
-    {
-        unsigned char *rgbaData = new unsigned char[header.height * header.width * 4];
-        unsigned char *dxt = ((unsigned char *)data) + 4 + sizeof(DDSHeader);
-        int squishFlags;
-
-        switch (header.ddspf.fourCC)
-        {
-        case 0x31545844:
-            squishFlags = squish::kDxt1;
-            break;
-        case 0x33545844:
-            squishFlags = squish::kDxt3;
-            break;
-        case 0x35545844:
-            squishFlags = squish::kDxt5;
-            break;
-        }
-        squish::DecompressImage(rgbaData, header.width, header.height, dxt, squishFlags);
-        convertRGBAToBGRA(rgbaData, header.width, header.height);
-        item.setPixmap(QPixmap::fromImage(QImage(rgbaData, header.width, header.height, QImage::Format_ARGB32)));
-        delete rgbaData;
-        imageLoaded();
-    }
-    else
-    {
-        QMessageBox::warning(this, tr("Unsupported file"), tr("Unsupported DDS format."));
-        return;
-    }
-}
-
 
 void MainWindow::animationLoaded(int framerate, int waitSeek, int waitSize)
 {

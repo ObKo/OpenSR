@@ -10,7 +10,6 @@ INCLUDE_DIRECTORIES(
 SET(RESOURCE_CONVERTER_SRCS
     main.cpp
     pkg2rpkg.cpp
-    dds.cpp
     gai.cpp
     gi.cpp
     utils.cpp

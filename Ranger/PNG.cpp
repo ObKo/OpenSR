@@ -80,13 +80,13 @@ bool readPNG(PNGFrame &frame, png_structp png_ptr, png_infop info_ptr)
     switch (colorType)
     {
     case PNG_COLOR_TYPE_GRAY:
-        frame.type = PNG_GRAY;
+        frame.type = PNGFrame::TYPE_GRAY;
         break;
     case PNG_COLOR_TYPE_RGB:
-        frame.type = PNG_RGB;
+        frame.type = PNGFrame::TYPE_RGB;
         break;
     case PNG_COLOR_TYPE_RGB_ALPHA:
-        frame.type = PNG_RGBA;
+        frame.type = PNGFrame::TYPE_RGBA;
         break;
     default:
         return false;
@@ -109,7 +109,7 @@ PNGFrame loadPNG(const char *buffer, size_t bufferSize)
     PNGFrame frame;
     frame.width = 0;
     frame.height = 0;
-    frame.type = PNG_INVALID;
+    frame.type = PNGFrame::TYPE_INVALID;
     frame.data = 0;
 
     if (!png_check_sig((png_bytep)buffer, 8))
@@ -138,7 +138,7 @@ PNGFrame loadPNG(const char *buffer, size_t bufferSize)
         png_destroy_read_struct(&png_ptr, &info_ptr, 0);
         frame.width = 0;
         frame.height = 0;
-        frame.type = PNG_INVALID;
+        frame.type = PNGFrame::TYPE_INVALID;
         frame.data = 0;
         return frame;
     }
@@ -151,7 +151,7 @@ PNGFrame loadPNG(std::istream &stream)
     PNGFrame frame;
     frame.width = 0;
     frame.height = 0;
-    frame.type = PNG_INVALID;
+    frame.type = PNGFrame::TYPE_INVALID;
     frame.data = 0;
 
     char buffer[8];
@@ -181,7 +181,7 @@ PNGFrame loadPNG(std::istream &stream)
         png_destroy_read_struct(&png_ptr, &info_ptr, 0);
         frame.width = 0;
         frame.height = 0;
-        frame.type = PNG_INVALID;
+        frame.type = PNGFrame::TYPE_INVALID;
         frame.data = 0;
         return frame;
     }
