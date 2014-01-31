@@ -60,10 +60,29 @@ class StartMenuWidget(ScriptWidget, ActionListener):
         self.caption.layer = 1
         self.addChild(self.caption)
         
-        self.ship = GAISprite('DATA/FormMain3/2Ship1.gai')
-        self.ship.position = (0, engine.screenHeight - self.ship.height)
-        self.ship.layer = 1
-        self.addChild(self.ship)
+        self.ship = [None, None, None]
+        self.ship[0] = GAISprite('DATA/FormMain3/2Ship1.gai')
+        self.ship[0].position = (0, engine.screenHeight - self.ship[0].height)
+        self.ship[0].layer = 1
+        self.ship[0].speed = 1.5
+        self.ship[0].singleShot = True
+        
+        self.ship[1] = GAISprite('DATA/FormMain3/2Ship2.gai')
+        self.ship[1].position = (0, engine.screenHeight - self.ship[1].height)
+        self.ship[1].layer = 1
+        self.ship[1].speed = 1.5
+        self.ship[1].singleShot = True
+        self.ship[1].stop();
+        
+        self.ship[2] = GAISprite('DATA/FormMain3/2Ship3.gai')
+        self.ship[2].position = (0, engine.screenHeight - self.ship[2].height)
+        self.ship[2].layer = 1
+        self.ship[2].speed = 1.5
+        self.ship[2].singleShot = True
+        self.ship[2].stop();
+        
+        self.addChild(self.ship[0])
+        self.currentShip = 0
         
         self.menuNode = WidgetNode()
         self.menuNode.layer = 2
@@ -105,6 +124,13 @@ class StartMenuWidget(ScriptWidget, ActionListener):
             self.background.position = (- self.t * self.BG_SPEED, 0)
         else:
             self.background.position = (- self.background.width + engine.screenWidth +  self.t * self.BG_SPEED, 0)
+ 
+        if not self.ship[self.currentShip].started:
+            self.removeChild(self.ship[self.currentShip])
+            self.currentShip = (self.currentShip + 1) % 3
+            self.addChild(self.ship[self.currentShip])
+            self.ship[self.currentShip].reset()
+            self.ship[self.currentShip].start()
  
         self.t = self.t + dt
         

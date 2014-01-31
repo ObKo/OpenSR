@@ -29,8 +29,7 @@ void exportAnimatedTexture()
 
     //TODO: Do we need constructors?
     class_<AnimatedTexture, bases<Texture>, boost::shared_ptr<AnimatedTexture>, boost::noncopyable>("AnimatedTexture", init<>())
-    .add_property("waitSeek", &AnimatedTexture::waitSeek)
-    .add_property("waitSize", &AnimatedTexture::waitSize)
+    .add_property("time", &AnimatedTexture::time)
     .add_property("frameCount", &AnimatedTexture::frameCount)
     .def("openGLTexture", &AnimatedTexture::openGLTexture);
 }

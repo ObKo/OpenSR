@@ -34,6 +34,7 @@ class GAISpritePrivate: public AnimatedSpritePrivate
 public:
     GAISpritePrivate();
 
+    std::vector<uint32_t> times;
     std::vector< boost::shared_array<char> > gaiFrames;
     bool needNextFrame;
     GAIHeader gaiHeader;

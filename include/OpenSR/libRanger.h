@@ -240,6 +240,8 @@ LIBRANGER_API HAIAnimation loadHAIAnimation(std::istream& stream);
 LIBRANGER_API GAIAnimation loadGAIAnimation(std::istream& stream, GIFrame *background = 0);
 //! Load GAI header from file
 LIBRANGER_API GAIHeader loadGAIHeader(std::istream& stream);
+//! Load GAI frame times from file
+LIBRANGER_API uint32_t* loadGAITimes(std::istream& stream, const GAIHeader& header);
 
 //! Get std::istream of file in package
 LIBRANGER_API std::istream* getRPKGFileStream(const RPKGEntry& e, boost::shared_ptr<std::istream> stream);

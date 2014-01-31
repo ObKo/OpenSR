@@ -69,6 +69,12 @@ GAISprite::GAISprite(const std::wstring& name): AnimatedSprite(*(new GAISpritePr
                     delete[] bgFrame.data;
                 }
             }
+            uint32_t *times = loadGAITimes(*stream, header);
+            d->times.resize(header.frameCount);
+            for (int i = 0; i < header.frameCount; i++)
+                d->times[i] = times[i];
+
+            delete[] times;
         }
     }
     else
@@ -96,13 +102,21 @@ void GAISprite::processLogic(int dt)
         return;
 
     lock();
-    if (d->animationStarted && d->frameDuration)
+    if (d->animationStarted && d->times[d->currentFrame])
     {
-        if ((d->animationTime > d->frameDuration) && (!d->needNextFrame))
+        if ((d->animationTime > (d->times[d->currentFrame] / d->speed)) && (!d->needNextFrame))
         {
-            d->currentFrame = (d->currentFrame + 1) % d->gaiHeader.frameCount;
-            d->animationTime -= d->frameDuration;
-            d->needNextFrame = true;
+            if ((d->currentFrame == d->gaiHeader.frameCount - 1) && d->singleShot)
+            {
+                stop();
+                d->animationTime = 0;
+            }
+            else
+            {
+                d->currentFrame = (d->currentFrame + 1) % d->gaiHeader.frameCount;
+                d->animationTime -= (d->times[d->currentFrame] / d->speed);
+                d->needNextFrame = true;
+            }
             markToUpdate();
         }
 
@@ -265,7 +279,6 @@ void GAISpritePrivate::loadGAI(boost::shared_ptr<std::istream> stream, const GIF
 
         animationStarted = true;
     }
-    q->setFrameRate(15);
     region = TextureRegion(boost::shared_ptr<Texture>(new Texture(width, height)));
 }
 
@@ -278,6 +291,7 @@ void GAISprite::reset()
     d->animationStarted = false;
     d->currentFrame = 0;
     d->animationTime = 0;
+    d->needNextFrame = true;
     markToUpdate();
     unlock();
 }

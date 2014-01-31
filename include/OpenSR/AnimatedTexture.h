@@ -39,9 +39,9 @@ public:
 
     //! Get OpenGL texture id
     GLuint openGLTexture(int i) const;
+    //! Frame display time
+    uint32_t time(int i) const;
 
-    int waitSeek() const;
-    int waitSize() const;
     //! Get frame count
     int frameCount() const;
     //! Number of loaded frames (background loading)
@@ -53,10 +53,10 @@ public:
     void loadFrame(const char *data, int width, int height, TextureType type, int dataSize = 0);
 
 private:
-    int m_waitSeek, m_waitSize;
     int m_frameCount;
     int m_loadedFrames;
     mutable bool m_needFrames;
+    std::vector<uint32_t> m_times;
 
     GLuint *m_textures;
 };

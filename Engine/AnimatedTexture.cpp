@@ -26,8 +26,6 @@ namespace Rangers
 {
 AnimatedTexture::AnimatedTexture(): Texture()
 {
-    m_waitSeek = 0;
-    m_waitSize = 0;
     m_frameCount = 0;
     m_loadedFrames = 0;
     m_needFrames = false;
@@ -38,8 +36,6 @@ AnimatedTexture::AnimatedTexture(): Texture()
  */
 AnimatedTexture::AnimatedTexture(const HAIAnimation& a): Texture()
 {
-    m_waitSeek = 600;
-    m_waitSize = 600;
     m_width = a.width;
     m_height = a.height;
     m_frameCount = a.frameCount;
@@ -59,6 +55,9 @@ AnimatedTexture::AnimatedTexture(const HAIAnimation& a): Texture()
     }
     m_loadedFrames = m_frameCount;
     m_needFrames = false;
+    m_times.resize(m_frameCount);
+    for (int i = 0; i < m_frameCount; i++)
+        m_times[i] = 50;
 }
 
 /*!
@@ -66,8 +65,6 @@ AnimatedTexture::AnimatedTexture(const HAIAnimation& a): Texture()
  */
 AnimatedTexture::AnimatedTexture(const GAIAnimation& a): Texture()
 {
-    //m_waitSeek = a.waitSeek;
-    //m_waitSize = a.waitSize;
     m_width = a.width;
     m_height = a.height;
     m_frameCount = a.frameCount;
@@ -90,6 +87,9 @@ AnimatedTexture::AnimatedTexture(const GAIAnimation& a): Texture()
     }
     m_loadedFrames = m_frameCount;
     m_needFrames = false;
+    m_times.resize(m_frameCount);
+    for (int i = 0; i < m_frameCount; i++)
+        m_times[i] = a.times[i];
 }
 
 AnimatedTexture::~AnimatedTexture()
@@ -119,15 +119,16 @@ GLuint AnimatedTexture::openGLTexture(int i) const
     else
         return m_textures[i];
 }
-
-int AnimatedTexture::waitSeek() const
+/*!
+ * \param i frame index
+ * \return frame display time in ms
+ */
+uint32_t AnimatedTexture::time(int i) const
 {
-    return m_waitSeek;
-}
+    if (i > m_frameCount)
+        return 0;
 
-int AnimatedTexture::waitSize() const
-{
-    return m_waitSize;
+    return m_times[i];
 }
 
 /*!
@@ -140,8 +141,6 @@ int AnimatedTexture::frameCount() const
 
 AnimatedTexture::AnimatedTexture(int width, int height, int seek, int size, int count)
 {
-    m_waitSeek = seek;
-    m_waitSize = size;
     m_width = width;
     m_height = height;
     m_frameCount = count;

@@ -55,8 +55,7 @@ void exportAnimatedSprite()
     .def("stop", &AnimatedSprite::stop)
     .def("reset", &AnimatedSprite::reset)
     .add_property("started", &AnimatedSprite::isStarted)
-    .add_property("frame", &AnimatedSprite::currentFrame, &AnimatedSprite::setFrame)
-    .add_property("frameRate", &AnimatedSprite::frameRate, &AnimatedSprite::setFrameRate)
+    .add_property("speed", &AnimatedSprite::speed, &AnimatedSprite::setSpeed)
     .add_property("frameCount", &AnimatedSprite::frameCount);
     RANGERS_PYTHON_WRAP_SPRITE_DEF(AnimatedSprite, AnimatedSpriteWrap, c);
     register_ptr_to_python<boost::shared_ptr<AnimatedSprite> >();

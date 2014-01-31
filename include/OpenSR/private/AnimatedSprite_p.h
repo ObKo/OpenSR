@@ -31,9 +31,9 @@ public:
 
     int animationTime;
     int currentFrame;
-    int frameDuration;
     bool singleShot;
     bool animationStarted;
+    float speed;
 };
 }
 

@@ -255,6 +255,7 @@ boost::shared_ptr<Texture> ResourceManager::loadTexture(const std::wstring& name
         for (int i = 0; i < animation.frameCount; i++)
             delete[] animation.frames[i].data;
         delete[] animation.frames;
+        delete[] animation.times;
         return m_textures[name];
     }
     else
@@ -573,6 +574,7 @@ ResourceManager::GAIWorker::~GAIWorker()
     for (int i = 0; i < m_animation.frameCount; i++)
         cleanFrame(i);
     delete[] m_animation.frames;
+    delete[] m_animation.times;
 }
 
 GAIAnimation ResourceManager::GAIWorker::animation() const

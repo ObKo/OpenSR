@@ -31,7 +31,7 @@ AnimatedSpritePrivate::AnimatedSpritePrivate(): SpritePrivate()
     currentFrame = 0;
     singleShot = false;
     animationStarted = false;
-    frameDuration = 0;
+    speed = 1.0f;
     region = TextureRegion(boost::shared_ptr<AnimatedTexture>());
 }
 /*!
@@ -52,9 +52,9 @@ AnimatedSprite::AnimatedSprite(boost::shared_ptr<AnimatedTexture> texture):
     d->region = TextureRegion(texture);
     if (texture)
     {
-        d->animationStarted = true;
-//TODO: Find relations between seek/size and FPS.
-        d->frameDuration = texture->waitSeek() > 1000 ? 50 : 100;
+        d->width = texture->width();
+        d->height = texture->height();
+        start();
     }
 }
 
@@ -70,11 +70,9 @@ AnimatedSprite::AnimatedSprite(const std::wstring& animation):
     d->region = TextureRegion(animTexture);
     if (animTexture)
     {
-        d->animationStarted = true;
-        //TODO: Find relations between seek/size and FPS.
-        d->frameDuration = animTexture->waitSeek() > 1000 ? 50 : 100;
         d->width = animTexture->width();
         d->height = animTexture->height();
+        start();
     }
     markToUpdate();
 }
@@ -87,6 +85,7 @@ AnimatedSprite::AnimatedSprite(AnimatedSpritePrivate &p): Sprite(p)
 void AnimatedSprite::processLogic(int dt)
 {
     RANGERS_D(AnimatedSprite);
+
     if (!d->region.texture)
         return;
 
@@ -95,11 +94,18 @@ void AnimatedSprite::processLogic(int dt)
 
     if (d->animationStarted)
     {
-        while (d->animationTime > d->frameDuration)
+        int i = d->currentFrame;
+        while (texture->time(d->currentFrame) && d->animationTime > (texture->time(d->currentFrame) / d->speed))
         {
+            if (d->currentFrame == texture->frameCount() - 1 && d->singleShot)
+            {
+                stop();
+                d->animationTime = 0;
+                break;
+            }
+            d->animationTime -= texture->time(d->currentFrame) / d->speed;
             if ((texture->loadedFrames() == texture->frameCount()) || (d->currentFrame < texture->loadedFrames() - 1))
                 d->currentFrame = (d->currentFrame + 1) % texture->frameCount();
-            d->animationTime -= d->frameDuration;
         }
 
         d->animationTime += dt;
@@ -164,12 +170,12 @@ int AnimatedSprite::currentFrame() const
 }
 
 /*!
- * \returns current animation frame
+ * \returns current animation speed
  */
-float AnimatedSprite::frameRate() const
+float AnimatedSprite::speed() const
 {
     RANGERS_D(const AnimatedSprite);
-    return 1000.0f / d->frameDuration;
+    return d->speed;
 }
 
 /*!
@@ -184,15 +190,13 @@ void AnimatedSprite::setFrame(int f)
 }
 
 /*!
- * \param f new framerate
+ * \param f new speed. 1.0f - original speed, 2.0f - twice faster, etc.
  */
-void AnimatedSprite::setFrameRate(float f)
+void AnimatedSprite::setSpeed(float f)
 {
     lock();
     RANGERS_D(AnimatedSprite);
-    if (f <= 0.0f)
-        d->frameDuration = INT_MAX;
-    d->frameDuration = 1000.0f / f;
+    d->speed = f;
     unlock();
 }
 

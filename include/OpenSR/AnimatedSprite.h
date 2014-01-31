@@ -64,12 +64,12 @@ public:
     int frameCount() const;
     //! Current animation frame
     int currentFrame() const;
-    //! Animation frames per second
-    float frameRate() const;
+    //! Animation speed
+    float speed() const;
     //! Set current frame
     void setFrame(int f);
-    //! Set animation frame rate
-    void setFrameRate(float f);
+    //! Set animation speed
+    void setSpeed(float f);
 
 protected:
     AnimatedSprite(AnimatedSpritePrivate &p);

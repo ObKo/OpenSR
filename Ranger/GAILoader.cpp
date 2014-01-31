@@ -62,6 +62,7 @@ GAIAnimation Rangers::loadGAIAnimation(std::istream& stream, GIFrame *background
     result.frameCount = header.frameCount;
     result.width = width;
     result.height = height;
+    result.times = loadGAITimes(stream, header);
 
     for (int i = 0; i < header.frameCount; i++)
     {
@@ -115,6 +116,38 @@ GAIAnimation Rangers::loadGAIAnimation(std::istream& stream, GIFrame *background
     }
 
     return result;
+}
+
+uint32_t* Rangers::loadGAITimes(std::istream& stream, const GAIHeader& header)
+{
+    uint32_t *times = new uint32_t[header.frameCount];
+    memset(times, 0, header.frameCount * 4);
+
+    if (!header.waitSize)
+        return times;
+
+    uint8_t *waitData = new uint8_t[header.waitSize];
+    stream.seekg(header.waitSeek, std::ios_base::beg);
+    stream.read((char*)waitData, header.waitSize);
+
+    uint32_t timeBlockCount = *((uint32_t*)waitData);
+    uint8_t *p = waitData + 4 + timeBlockCount * 8 + 2;
+
+    for (int i = 0; i < timeBlockCount; i++)
+    {
+        uint32_t blockFrameCount = *((uint32_t *)p);
+        for (int j = 0; j < blockFrameCount; j++)
+        {
+            uint32_t frame = *((uint32_t *)(p + 4 + j * 8));
+            uint32_t time = *((uint32_t *)(p + 4 + j * 8 + 4));
+            if (frame < header.frameCount)
+                times[frame] = time;
+        }
+        p += blockFrameCount * 8 + 4 + 2;
+    }
+
+    delete[] waitData;
+    return times;
 }
 
 GAIHeader Rangers::loadGAIHeader(std::istream& stream)
