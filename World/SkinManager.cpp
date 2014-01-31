@@ -51,17 +51,38 @@ class InfoWidgetStyleFactory: public ResourceObjectManager::ResourceObjectFactor
         return s;
     }
 };
+
+class InteractionWidgetStyleFactory: public ResourceObjectManager::ResourceObjectFactory
+{
+    virtual boost::shared_ptr< ResourceObject > operator()(const std::string& currentPath, const Json::Value& object, ResourceObjectManager& manager)
+    {
+        boost::shared_ptr<InteractionWidgetStyle> s = boost::shared_ptr<InteractionWidgetStyle>(new InteractionWidgetStyle());
+
+        s->background = manager.loadObject(object.get("background", Json::Value()), "texture");
+        s->font = boost::dynamic_pointer_cast<FontDescriptor>(manager.loadObject(object.get("font", Json::Value()), "font"));
+        s->color = parseColor(object.get("color", "#FFFFFF"));
+        s->activeColor = parseColor(object.get("active-color", "#0000FF"));
+        s->scrollStyle = boost::dynamic_pointer_cast<ScrollBarStyle>(manager.loadObject(object.get("scroll-style", Json::Value()), "scroll-bar-style"));
+
+        return s;
+    }
+};
 }
 
 InfoWidgetStyle::InfoWidgetStyle():
     iconSize(0)
 {
+}
 
+InteractionWidgetStyle::InteractionWidgetStyle()
+{
 }
 
 SkinManager::SkinManager()
 {
     ResourceManager::instance().objectManager().addFactory("info-widget-style", boost::shared_ptr<ResourceObjectManager::ResourceObjectFactory>(new InfoWidgetStyleFactory()));
+    ResourceManager::instance().objectManager().addFactory("interaction-widget-style", boost::shared_ptr<ResourceObjectManager::ResourceObjectFactory>(new InteractionWidgetStyleFactory()));
+
 }
 
 void SkinManager::loadStyles()

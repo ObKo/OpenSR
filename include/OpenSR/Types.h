@@ -45,6 +45,8 @@ struct RANGERS_ENGINE_API Color
     uint32_t toRGB() const;
     //! To usigned int in 0xAARRGGBB format
     uint32_t toARGB() const;
+    //! To string in "#AARRGGBB" or "#RRGGBB" format
+    std::string toString(bool alpha = false) const;
 
     //! From unsigned int in 0xAARRGGBB format
     static Color fromUInt(uint32_t color);

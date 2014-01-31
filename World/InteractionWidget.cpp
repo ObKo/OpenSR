@@ -17,6 +17,7 @@
 */
 
 #include "InteractionWidget.h"
+#include "SkinManager.h"
 
 #include <OpenSR/ScrollArea.h>
 #include <OpenSR/Engine.h>
@@ -25,6 +26,9 @@
 #include <OpenSR/LabelWidget.h>
 #include <OpenSR/ActionListener.h>
 #include <OpenSR/Action.h>
+#include <OpenSR/ResourceManager.h>
+#include <OpenSR/Sprite.h>
+#include <OpenSR/NinePatch.h>
 
 namespace
 {
@@ -53,19 +57,11 @@ public:
 
         if (action.type() == Action::MOUSE_ENTER)
         {
-            w->label()->setColor(Color(0.0f, 0.7f, 0.7f));
+            boost::dynamic_pointer_cast<ColorLabel>(w->label())->setTextColor(m_parent->m_style->activeColor);
         }
         else if (action.type() == Action::MOUSE_LEAVE)
         {
-            w->label()->setColor(Color(1.0f, 1.0f, 1.0f));
-        }
-        else if (action.type() == Action::MOUSE_DOWN)
-        {
-            w->label()->setColor(Color(0.0f, 0.0f, 0.7f));
-        }
-        else if (action.type() == Action::MOUSE_UP)
-        {
-            w->label()->setColor(Color(0.0f, 0.7f, 0.7f));
+            boost::dynamic_pointer_cast<ColorLabel>(w->label())->setTextColor(m_parent->m_style->color);
         }
         else if (action.type() == Action::MOUSE_CLICK)
         {
@@ -88,30 +84,75 @@ InteractionWidget::InteractionWidget(): Widget()
     m_actionListener = boost::shared_ptr<InteractionWidgetListener>(new InteractionWidgetListener(this));
 }
 
-InteractionWidget::InteractionWidget(const Rect& textRect, const Rect& selectionRect)
+InteractionWidget::InteractionWidget(const Rect& textRect, const Rect& selectionRect, boost::shared_ptr<InteractionWidgetStyle> style)
 {
     m_actionListener = boost::shared_ptr<InteractionWidgetListener>(new InteractionWidgetListener(this));
+    m_style = style;
+
+    if (!m_style)
+    {
+        m_style = boost::shared_ptr<InteractionWidgetStyle>(new InteractionWidgetStyle);
+        m_style->color = Color(0.0f, 0.0f, 0.0f);
+        m_style->activeColor = Color(0.0f, 0.0f, 1.0f);
+    }
+    if (!m_style->scrollStyle)
+        m_style->scrollStyle = Engine::instance().defaultSkin()->scrollStyle;
+
+    boost::shared_ptr<TextureRegionDescriptor> texture;
+    boost::shared_ptr<NinePatchDescriptor> ninepatch;
+    if (m_style)
+    {
+        texture = boost::dynamic_pointer_cast<TextureRegionDescriptor>(m_style->background);
+        ninepatch = boost::dynamic_pointer_cast<NinePatchDescriptor>(m_style->background);
+    }
+    if (ninepatch)
+    {
+        m_background = boost::shared_ptr<Sprite>(new NinePatch(ninepatch));
+        addChild(m_background);
+    }
+    else if (texture)
+    {
+        m_background = boost::shared_ptr<Sprite>(new Sprite(texture));
+        addChild(m_background);
+    }
 
     m_textRect = textRect;
     m_selectionRect = selectionRect;
     m_normalBoundingRect = textRect + selectionRect;
+    if (m_background)
+    {
+        Rect bgRect;
+        bgRect.x = 0;
+        bgRect.y = 0;
+        bgRect.width = m_background->width();
+        bgRect.height = m_background->height();
+        m_normalBoundingRect = m_normalBoundingRect + bgRect;
+    }
     setWidth(m_normalBoundingRect.x + m_normalBoundingRect.width);
     setHeight(m_normalBoundingRect.y + m_normalBoundingRect.height);
 
     boost::shared_ptr<WidgetNode> textNode = boost::shared_ptr<WidgetNode>(new WidgetNode());
     boost::shared_ptr<WidgetNode> selectionNode = boost::shared_ptr<WidgetNode>(new WidgetNode());
 
-    m_textArea = boost::shared_ptr<ScrollArea>(new ScrollArea(Engine::instance().defaultSkin()->scrollStyle, textNode));
+    m_textArea = boost::shared_ptr<ScrollArea>(new ScrollArea(m_style->scrollStyle, textNode));
     m_textArea->setGeometry(textRect.width, textRect.height);
     m_textArea->setPosition(textRect.x, textRect.y);
 
-    m_selectionArea = boost::shared_ptr<ScrollArea>(new ScrollArea(Engine::instance().defaultSkin()->scrollStyle, selectionNode));
+    m_selectionArea = boost::shared_ptr<ScrollArea>(new ScrollArea(m_style->scrollStyle, selectionNode));
     m_selectionArea->setGeometry(selectionRect.width, selectionRect.height);
     m_selectionArea->setPosition(selectionRect.x, selectionRect.y);
 
-    boost::shared_ptr<ColorLabel> textLabel = boost::shared_ptr<ColorLabel>(new ColorLabel("", Engine::instance().coreFont()));
+    boost::shared_ptr<Font> font;
+    if ((m_style->font) && (m_style->font->path != L"") && (m_style->font->size > 0))
+        font = ResourceManager::instance().loadFont(m_style->font->path, m_style->font->size, m_style->font->antialiasing);
+    else
+        font = Engine::instance().coreFont();
+
+    boost::shared_ptr<ColorLabel> textLabel = boost::shared_ptr<ColorLabel>(new ColorLabel("", font));
     textLabel->setWordWrap(true);
     textLabel->setFixedSize(m_textRect.width, -1);
+    textLabel->setTextColor(m_style->color);
+    textLabel->setSelectionColor(m_style->activeColor);
 
     m_textLabel = boost::shared_ptr<LabelWidget>(new LabelWidget(textLabel));
     textNode->addWidget(m_textLabel);
@@ -127,6 +168,9 @@ void InteractionWidget::draw() const
 
     if (!prepareDraw())
         return;
+
+    if (m_background)
+        m_background->draw();
 
     m_textArea->draw();
     m_selectionArea->draw();
@@ -189,6 +233,8 @@ void InteractionWidget::processMain()
         else
             m_textArea->setPosition((int)(m_textRect.x), (int)(m_textRect.y));
     }
+    if (m_background)
+        m_background->setGeometry(width(), height());
 }
 
 std::vector< std::tuple< std::wstring, bool > > InteractionWidget::selections() const
@@ -209,9 +255,11 @@ void InteractionWidget::setSelections(const std::vector< std::tuple< std::wstrin
 
     for (const std::tuple<std::wstring, bool>& s : m_selections)
     {
-        boost::shared_ptr<Label> l = boost::shared_ptr<Label>(new ColorLabel(std::get<0>(s)));
+        boost::shared_ptr<ColorLabel> l = boost::shared_ptr<ColorLabel>(new ColorLabel(std::get<0>(s)));
         boost::shared_ptr<LabelWidget> w = boost::shared_ptr<LabelWidget>(new LabelWidget(l));
         l->setWordWrap(true);
+        l->setTextColor(m_style->color);
+        l->setSelectionColor(m_style->activeColor);
         w->setVertAlign(LabelWidget::VALIGN_CENTER);
         if (std::get<1>(s))
             w->addListener(m_actionListener);
@@ -234,7 +282,6 @@ void InteractionWidget::setText(const std::wstring& text)
     m_text = text;
     m_textLabel->label()->setText(text);
     markToUpdate();
-
 }
 
 }

@@ -44,7 +44,9 @@ void exportColorLabel()
     using namespace boost::python;
 
     class_<ColorLabelWrap, bases<Label>, boost::shared_ptr<ColorLabelWrap>, boost::noncopyable> c("ColorLabel", init<const std::wstring&>());
-    c.def(init<>());
+    c.def(init<>())
+    .add_property("textColor", &ColorLabel::textColor, &ColorLabel::setTextColor)
+    .add_property("selectionColor", &ColorLabel::selectionColor, &ColorLabel::setSelectionColor);
     RANGERS_PYTHON_WRAP_SPRITE_DEF(ColorLabel, ColorLabelWrap, c);
     register_ptr_to_python<boost::shared_ptr<ColorLabel> >();
 }

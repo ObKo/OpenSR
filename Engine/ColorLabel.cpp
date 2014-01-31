@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 - 2012 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2014 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ namespace Rangers
 /*!
  * This class is used to draw text with different color
  * Color in text is defined as \\cXXXXXX - where XXXXXX - RGB color in hex format
- * \\cR resets color to default sprite color
+ * \\cR resets color to default text color
  */
 
 /*!
@@ -82,6 +82,7 @@ ColorLabel::ColorLabel(const std::wstring& text, boost::shared_ptr< Font > font)
     d->fixedWidth = false;
     d->fixedHeight = false;
     d->scaling = TEXTURE_NO;
+    d->textColor = Color(1.0f, 1.0f, 1.0f);
 }
 
 ColorLabel::ColorLabel(ColorLabelPrivate &p): Label(p)
@@ -94,9 +95,9 @@ void ColorLabel::processMain()
     RANGERS_D(ColorLabel);
 
     if (!d->wordWrap)
-        d->region = TextureRegion(d->font->renderColoredText(d->text, d->color.toRGB()));
+        d->region = TextureRegion(d->font->renderColoredText(d->text, d->textColor.toRGB(), d->selectionColor.toRGB()));
     else
-        d->region = TextureRegion(d->font->renderColoredText(d->text, d->color.toRGB(), d->width));
+        d->region = TextureRegion(d->font->renderColoredText(d->text, d->textColor.toRGB(), d->selectionColor.toRGB(), d->width));
 
     if (!d->fixedWidth)
         d->width = d->region.texture->width();
@@ -106,10 +107,30 @@ void ColorLabel::processMain()
     Sprite::processMain();
 }
 
-void ColorLabel::setColor(const Color& color)
+void ColorLabel::setTextColor(const Color& c)
 {
+    RANGERS_D(ColorLabel);
+    d->textColor = c;
     markToUpdate();
-    Object::setColor(color);
+}
+
+Color ColorLabel::textColor() const
+{
+    RANGERS_D(const ColorLabel);
+    return d->textColor;
+}
+
+void ColorLabel::setSelectionColor(const Color& c)
+{
+    RANGERS_D(ColorLabel);
+    d->selectionColor = c;
+    markToUpdate();
+}
+
+Color ColorLabel::selectionColor() const
+{
+    RANGERS_D(const ColorLabel);
+    return d->selectionColor;
 }
 }
 

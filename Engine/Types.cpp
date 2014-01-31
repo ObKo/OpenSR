@@ -163,6 +163,18 @@ uint32_t Color::toARGB() const
     return (alpha << 24) | (red << 16) | (green << 8) | (blue);
 }
 
+std::string Color::toString(bool alpha) const
+{
+    //FIXME: C-way...
+    uint32_t c = toARGB();
+    char result[10] = "";
+    if (alpha)
+        snprintf(result, 10, "#%08X\0", c);
+    else
+        snprintf(result, 8, "#%06X\0", c & 0xFFFFFF);
+    return std::string(result);
+}
+
 Rect::Rect()
 {
     x = 0;

@@ -39,5 +39,6 @@
         "color": "#FFFFFF",
         "caption-color": "#31EFFF",
         "label-color": "#8C8A8C"
-    }
+    },
+    "quest": ":World/quest-styles.json"
 }

@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 - 2012 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2014 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -36,9 +36,13 @@ public:
     //! Construct from std::wstring
     ColorLabel(const std::wstring& text, boost::shared_ptr<Font> font = boost::shared_ptr<Font>());
 
+    void setTextColor(const Color& c);
+    void setSelectionColor(const Color& c);
+
+    Color selectionColor() const;
+    Color textColor() const;
+
     virtual void processMain();
-    //! Set default text color
-    virtual void setColor(const Color& color);
 
 protected:
     ColorLabel(ColorLabelPrivate &p);

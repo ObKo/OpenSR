@@ -32,14 +32,16 @@ namespace Rangers
 class ColorLabel;
 class LabelWidget;
 class ScrollArea;
+class Sprite;
 namespace World
 {
+struct InteractionWidgetStyle;
 //TODO: Add background
 class RANGERS_WORLD_API InteractionWidget: public Widget
 {
 public:
     InteractionWidget();
-    InteractionWidget(const Rect& textRect, const Rect& selectionRect);
+    InteractionWidget(const Rect& textRect, const Rect& selectionRect, boost::shared_ptr<InteractionWidgetStyle> style = boost::shared_ptr<InteractionWidgetStyle>());
 
     virtual void draw() const;
     virtual void processMain();
@@ -70,6 +72,10 @@ private:
     std::vector<boost::shared_ptr<LabelWidget> > m_selectionsWidget;
     boost::shared_ptr<ScrollArea> m_textArea;
     boost::shared_ptr<ScrollArea> m_selectionArea;
+
+    boost::shared_ptr<InteractionWidgetStyle> m_style;
+
+    boost::shared_ptr<Sprite> m_background;
 };
 }
 }

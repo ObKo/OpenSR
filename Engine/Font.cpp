@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2014 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -124,7 +124,7 @@ boost::shared_ptr<Texture> Font::renderText(const std::string& t, int width) con
     return renderText(ws, width);
 }
 
-boost::shared_ptr<Texture> Font::renderColoredText(const std::string& t, int defaultTextColor, int width) const
+boost::shared_ptr<Texture> Font::renderColoredText(const std::string& t, int defaultTextColor, int selectionTextColor, int width) const
 {
     std::wstring ws(t.length(), L'\0');
     std::copy(t.begin(), t.end(), ws.begin());
@@ -308,7 +308,7 @@ boost::shared_ptr<Texture> Font::renderText(const std::wstring& t, int wrapWidth
     return boost::shared_ptr<Texture>(texture);
 }
 
-boost::shared_ptr<Texture> Font::renderColoredText(const std::wstring& t, int defaultTextColor, int wrapWidth) const
+boost::shared_ptr<Texture> Font::renderColoredText(const std::wstring& t, int defaultTextColor, int selectionTextColor, int wrapWidth) const
 {
     int x = 0;
     int lines = 1;
@@ -341,6 +341,12 @@ boost::shared_ptr<Texture> Font::renderColoredText(const std::wstring& t, int de
         if (text[pos + 2] == L'R')
         {
             colorSelect[pos] = defaultTextColor;
+            text.erase(pos, 3);
+            continue;
+        }
+        if (text[pos + 2] == L'S')
+        {
+            colorSelect[pos] = selectionTextColor;
             text.erase(pos, 3);
             continue;
         }

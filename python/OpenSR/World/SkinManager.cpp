@@ -42,6 +42,13 @@ void exportSkinManager()
     .def_readwrite("captionColor", &InfoWidgetStyle::captionColor)
     .def_readwrite("labelColor", &InfoWidgetStyle::labelColor)
     .def_readwrite("contentRect", &InfoWidgetStyle::contentRect);
+
+    class_<InteractionWidgetStyle, boost::shared_ptr<InteractionWidgetStyle>, bases<ResourceObject> > c3("InteractionWidgetStyle", init<>());
+    c3.def_readwrite("background", &InteractionWidgetStyle::background)
+    .def_readwrite("font", &InteractionWidgetStyle::font)
+    .def_readwrite("color", &InteractionWidgetStyle::color)
+    .def_readwrite("activeColor", &InteractionWidgetStyle::activeColor)
+    .def_readwrite("scrollStyle", &InteractionWidgetStyle::scrollStyle);
 }
 }
 }

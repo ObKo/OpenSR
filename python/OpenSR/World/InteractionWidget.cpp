@@ -34,7 +34,8 @@ struct InteractionWidgetWrap : InteractionWidget, boost::python::wrapper<Interac
     {
     }
 
-    InteractionWidgetWrap(const Rect& textRect, const Rect& selectionRect): InteractionWidget(textRect, selectionRect)
+    InteractionWidgetWrap(const Rect& textRect, const Rect& selectionRect, boost::shared_ptr<InteractionWidgetStyle> style = boost::shared_ptr<InteractionWidgetStyle>()):
+        InteractionWidget(textRect, selectionRect, style)
     {
     }
 
@@ -71,8 +72,9 @@ void exportInteractionWidget()
 {
     using namespace boost::python;
 
-    class_<InteractionWidgetWrap, bases<Widget>, boost::shared_ptr<InteractionWidgetWrap>, boost::noncopyable> c("InteractionWidget", init<const Rect&, const Rect&>());
-    c.def(init<>())
+    class_<InteractionWidgetWrap, bases<Widget>, boost::shared_ptr<InteractionWidgetWrap>, boost::noncopyable> c("InteractionWidget", init<const Rect&, const Rect&, boost::shared_ptr<InteractionWidgetStyle> >());
+    c.def(init<const Rect&, const Rect&>())
+    .def(init<>())
     .add_property("text", &InteractionWidget::text, &InteractionWidget::setText)
     .add_property("selections", &InteractionWidgetWrap::selections, &InteractionWidgetWrap::setSelections);
     RANGERS_PYTHON_WRAP_WIDGET_DEF(InteractionWidget, InteractionWidgetWrap, c);

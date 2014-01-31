@@ -45,6 +45,17 @@ struct RANGERS_WORLD_API InfoWidgetStyle: public ResourceObject
     Rect captionContentRect;
 };
 
+struct RANGERS_WORLD_API InteractionWidgetStyle: public ResourceObject
+{
+    InteractionWidgetStyle();
+
+    boost::shared_ptr<ResourceObject> background;
+    boost::shared_ptr<FontDescriptor> font;
+    Color color;
+    Color activeColor;
+    boost::shared_ptr<ScrollBarStyle> scrollStyle;
+};
+
 class RANGERS_WORLD_API SkinManager
 {
 public:

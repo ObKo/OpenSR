@@ -26,6 +26,8 @@ namespace Rangers
 class ColorLabelPrivate: public LabelPrivate
 {
     RANGERS_DECLARE_PUBLIC(ColorLabel)
+    Color textColor;
+    Color selectionColor;
 };
 }
 

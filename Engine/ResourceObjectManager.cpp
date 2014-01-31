@@ -34,6 +34,7 @@ class ResourceObjectManager::DirectoryFactory: public ResourceObjectManager::Res
 public:
     virtual boost::shared_ptr<ResourceObject> operator()(const std::string& currentPath, const Json::Value& object, ResourceObjectManager &manager)
     {
+        manager.m_directories.push_back(currentPath);
         for (const std::string& s : object.getMemberNames())
         {
             if (s == "@type")
@@ -41,7 +42,6 @@ public:
 
             manager.loadObject(currentPath + "/" + s, object.get(s, Json::Value()));
         }
-        manager.m_directories.push_back(currentPath);
         return boost::shared_ptr< ResourceObject >(new ResourceObject());
     }
 };
