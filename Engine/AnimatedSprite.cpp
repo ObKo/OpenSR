@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 - 2012 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2014 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -79,7 +79,6 @@ AnimatedSprite::AnimatedSprite(const std::wstring& animation):
 
 AnimatedSprite::AnimatedSprite(AnimatedSpritePrivate &p): Sprite(p)
 {
-    RANGERS_D(AnimatedSprite);
 }
 
 void AnimatedSprite::processLogic(int dt)
@@ -94,7 +93,6 @@ void AnimatedSprite::processLogic(int dt)
 
     if (d->animationStarted)
     {
-        int i = d->currentFrame;
         while (texture->time(d->currentFrame) && d->animationTime > (texture->time(d->currentFrame) / d->speed))
         {
             if (d->currentFrame == texture->frameCount() - 1 && d->singleShot)

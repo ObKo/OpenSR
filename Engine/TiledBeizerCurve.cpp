@@ -103,8 +103,6 @@ void TiledBeizerCurvePrivate::findPoints(float t0, float t1, std::list<Vector>& 
 
     if (fabs(leftDirection * rightDirection) < ANGLE_TRESHOLD)
     {
-        int pointsAdded = 0;
-
         findPoints(t0, tMid, points, i);
 
         points.insert(i, pMid);
@@ -126,7 +124,7 @@ void TiledBeizerCurve::calcCurve()
     points.push_back(p1);
 
     std::list<Vector>::iterator i = points.begin();
-    i++;
+    ++i;
 
     d->findPoints(0.0f, 1.0f, points, i);
     d->points = std::vector<Vector>(points.size());

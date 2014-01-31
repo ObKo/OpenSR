@@ -561,11 +561,10 @@ GIFrame Rangers::loadFrameType2(const GIFrameHeader& image, const GILayerHeader 
     result.data = new unsigned char[width * height * 4];
     memset(result.data, 0, width * height * 4);
 
-    uint8_t *layerData = 0;
 
     if (layers[0].size)
     {
-        layerData = new uint8_t[layers[0].size];
+        uint8_t *layerData = new uint8_t[layers[0].size];
         stream.seekg(offset + layers[0].seek, std::ios_base::beg);
         stream.read((char*)layerData, layers[0].size);
 
@@ -576,7 +575,7 @@ GIFrame Rangers::loadFrameType2(const GIFrameHeader& image, const GILayerHeader 
 
     if (layers[1].size)
     {
-        layerData = new uint8_t[layers[1].size];
+        uint8_t *layerData = new uint8_t[layers[1].size];
         stream.seekg(offset + layers[1].seek, std::ios_base::beg);
         stream.read((char*)layerData, layers[1].size);
 
@@ -587,7 +586,7 @@ GIFrame Rangers::loadFrameType2(const GIFrameHeader& image, const GILayerHeader 
 
     if (layers[2].size)
     {
-        layerData = new uint8_t[layers[2].size];
+        uint8_t *layerData = new uint8_t[layers[2].size];
         stream.seekg(offset + layers[2].seek, std::ios_base::beg);
         stream.read((char*)layerData, layers[2].size);
 
@@ -624,11 +623,10 @@ GIFrame Rangers::loadFrameType5(const GIFrameHeader& image, const GILayerHeader 
     else
         memset(result.data, 0x0, width * height * 4);
 
-    uint8_t *layerData = 0;
 
     if (layers[0].size)
     {
-        layerData = new uint8_t[layers[0].size];
+        uint8_t *layerData = new uint8_t[layers[0].size];
         stream.seekg(offset + layers[0].seek, std::ios_base::beg);
         stream.read((char*)layerData, layers[0].size);
 
@@ -661,10 +659,9 @@ GIFrame Rangers::loadFrameType1(const GIFrameHeader& image, const GILayerHeader 
     result.data = new unsigned char[width * height * 2];
     memset(result.data, 0, width * height * 2);
 
-    uint8_t *layerData = 0;
     if (layers[0].size)
     {
-        layerData = new uint8_t[layers[0].size];
+        uint8_t *layerData = new uint8_t[layers[0].size];
         stream.seekg(offset + layers[0].seek, std::ios_base::beg);
         stream.read((char*)layerData, layers[0].size);
 
@@ -699,10 +696,8 @@ GIFrame Rangers::loadFrameType4(const GIFrameHeader& image, const GILayerHeader 
 
     if (layers[0].size && layers[1].size)
     {
-        uint8_t *layerData;
-        uint8_t *palData;
-        layerData = new uint8_t[layers[0].size];
-        palData = new uint8_t[layers[1].size];
+        uint8_t *layerData = new uint8_t[layers[0].size];
+        uint8_t *palData = new uint8_t[layers[1].size];
 
         stream.seekg(offset + layers[0].seek, std::ios_base::beg);
         stream.read((char*)layerData, layers[0].size);
@@ -739,11 +734,10 @@ GIFrame Rangers::loadFrameType3(const GIFrameHeader& image, const GILayerHeader 
     result.data = new unsigned char[width * height * 4];
     memset(result.data, 0, width * height * 4);
 
-    uint8_t *layerData = 0;
 
     if (layers[0].size)
     {
-        layerData = new uint8_t[layers[0].size];
+        uint8_t *layerData = new uint8_t[layers[0].size];
         stream.seekg(offset + layers[0].seek, std::ios_base::beg);
         stream.read((char*)layerData, layers[0].size);
 
@@ -754,7 +748,7 @@ GIFrame Rangers::loadFrameType3(const GIFrameHeader& image, const GILayerHeader 
 
     if (layers[1].size)
     {
-        layerData = new uint8_t[layers[1].size];
+        uint8_t *layerData = new uint8_t[layers[1].size];
         stream.seekg(offset + layers[1].seek, std::ios_base::beg);
         stream.read((char*)layerData, layers[1].size);
 

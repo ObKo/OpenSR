@@ -260,11 +260,6 @@ bool QuestPlayer::checkCondition(const QM::Transition::Condition& c) const
     if ((param < c.rangeFrom) || (param > c.rangeTo))
         return false;
 
-    if (c.param == 2)
-    {
-        param = param;
-    }
-
     if (c.includeValues)
     {
         if ((c.values.size()) && (std::find(c.values.begin(), c.values.end(), param) == c.values.end()))

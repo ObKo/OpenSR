@@ -30,18 +30,6 @@ namespace Python
 void exportStyleManager()
 {
     using namespace boost::python;
-
-    boost::shared_ptr<PlanetStyle> planetStyle(const std::string & name);
-    boost::shared_ptr<PlanetStyle> planetStyle(uint32_t id);
-
-    boost::shared_ptr<SystemStyle> systemStyle(const std::string & name);
-    boost::shared_ptr<SystemStyle> systemStyle(uint32_t id);
-
-    //! Load planet styles from JSON file
-    void loadPlanetStyles(const std::wstring & styleFile);
-    //! Load system styles from JSON file
-    void loadSystemStyles(const std::wstring & styleFile);
-
     class_<StyleManager, boost::noncopyable> c("StyleManager", boost::python::no_init);
     c.def("planetStyle", (boost::shared_ptr<PlanetStyle> (StyleManager::*)(const std::string&))&StyleManager::planetStyle)
     .def("planetStyle", (boost::shared_ptr<PlanetStyle> (StyleManager::*)(uint32_t))&StyleManager::planetStyle)

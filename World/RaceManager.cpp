@@ -83,7 +83,7 @@ class RacesFactory: public ResourceObjectManager::ResourceObjectFactory
                 if (races.size() != 2)
                     throw;
 
-                if ((result->races.find(races[0]) == result->races.end()) || (result->races.find(races[0]) == result->races.end()))
+                if ((result->races.find(races[0]) == result->races.end()) || (result->races.find(races[1]) == result->races.end()))
                     throw;
             }
             catch (...)

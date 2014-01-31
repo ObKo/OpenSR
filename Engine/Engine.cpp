@@ -698,7 +698,7 @@ boost::shared_ptr<Object> Engine::getObjectPointer(Object *object) const
                 return *i;
         }
     }
-    boost::shared_ptr<Object>();
+    return boost::shared_ptr<Object>();
 }
 
 boost::shared_ptr<Skin> Engine::defaultSkin() const

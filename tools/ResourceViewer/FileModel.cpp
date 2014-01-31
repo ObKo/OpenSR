@@ -38,6 +38,7 @@ QVariant FileModel::data(const QModelIndex &index, int role) const
         else
             return iconProvider.icon(QFileInfo(item->name));
     }
+    return QVariant();
 }
 
 Qt::ItemFlags FileModel::flags(const QModelIndex &index) const
@@ -242,7 +243,7 @@ FileNode* FileModel::getSiblingNode(FileNode* node, const QString& name)
         if (!parent)
             return 0;
 
-        for (QList<FileNode*>::const_iterator i = parent->childs.constBegin(); i != parent->childs.constEnd(); i++)
+        for (QList<FileNode*>::const_iterator i = parent->childs.constBegin(); i != parent->childs.constEnd(); ++i)
         {
             if ((*i)->name == name)
                 return *i;
@@ -254,7 +255,7 @@ FileNode* FileModel::getSiblingNode(FileNode* node, const QString& name)
         QFileInfo info = archives[node];
         if (!info.absoluteDir().entryList().contains(name))
             return 0;
-        for (QList<FileNode*>::const_iterator i = rootItem->childs.constBegin(); i != rootItem->childs.constEnd(); i++)
+        for (QList<FileNode*>::const_iterator i = rootItem->childs.constBegin(); i != rootItem->childs.constEnd(); ++i)
         {
             if ((*i)->name == name)
                 return *i;

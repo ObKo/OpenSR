@@ -264,7 +264,6 @@ void Asteroid::calcTurn()
 void Asteroid::finishTurn()
 {
     setTime(m_prevT + 1.0f);
-    float E = solveKepler(m_t);
     calcTrajectory();
     calcSpeed();
 }

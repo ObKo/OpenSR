@@ -69,13 +69,11 @@ int pkg2rpkg(const std::string& inputFile, const std::string& outputFile, Ranger
     //FIXME: OH SHI~
     std::vector<RPKGEntry> files;
     std::vector<PKGItem> pkgfiles;
-    for (std::map<RPKGEntry*, PKGItem*>::iterator i = itemMap.begin(); i != itemMap.end(); i++)
+    for (std::map<RPKGEntry*, PKGItem*>::iterator i = itemMap.begin(); i != itemMap.end(); ++i)
     {
         files.push_back(*(i->first));
         pkgfiles.push_back(*(i->second));
     }
-
-    int c = itemMap.size();
 
     uint32_t headerSize = calculateRPKGHeaderSize(files);
     ofstream outfile(outputFile.c_str(), ios::binary | ios::out);
@@ -97,5 +95,7 @@ int pkg2rpkg(const std::string& inputFile, const std::string& outputFile, Ranger
     delete root;
     outfile.close();
     pkgfile.close();
+    
+    return 0;
 }
 }
