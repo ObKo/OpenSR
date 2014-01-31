@@ -56,6 +56,8 @@ private Q_SLOTS:
     void save();
     void open();
 
+    void showError(const QString& title, const QString& text);
+
 private:
     Ui::MainWindow *ui;
     PlanetModel m_model;

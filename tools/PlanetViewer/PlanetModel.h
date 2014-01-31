@@ -59,6 +59,9 @@ public:
     void saveJSON(const QString& file) const;
     void loadJSON(const QString& file);
 
+Q_SIGNALS:
+    void error(const QString& title, const QString& text);
+
 private:
     QMap<QString, Planet> m_planets;
     QMap<QString, QIcon> m_icons;

@@ -25,7 +25,6 @@
 #include <QPainter>
 #include <math.h>
 #include <limits>
-#include <libRanger.h>
 #include <QFileInfo>
 
 #include <GL/gl.h>
@@ -314,19 +313,19 @@ void PlanetViewer::updateSize()
     vertices[0].x = - m_ringTexture.width() / 2.0f;
     vertices[0].y = - m_ringTexture.height() / 2.0f;
     vertices[0].u = 0.0f;
-    vertices[0].v = 0.0f;
+    vertices[0].v = 1.0f;
     vertices[1].x = m_ringTexture.width() / 2.0f;
     vertices[1].y = - m_ringTexture.height() / 2.0f;
     vertices[1].u = 1.0f;
-    vertices[1].v = 0.0f;
+    vertices[1].v = 1.0f;
     vertices[2].x = m_ringTexture.width() / 2.0f;
     vertices[2].y = m_ringTexture.height() / 2.0f;
     vertices[2].u = 1.0f;
-    vertices[2].v = 1.0f;
+    vertices[2].v = 0.0f;
     vertices[3].x = - m_ringTexture.width() / 2.0f;
     vertices[3].y = m_ringTexture.height() / 2.0f;
     vertices[3].u = 0.0f;
-    vertices[3].v = 1.0f;
+    vertices[3].v = 0.0f;
 
     glUnmapBuffer(GL_ARRAY_BUFFER);
 
@@ -336,19 +335,19 @@ void PlanetViewer::updateSize()
     vertices[0].x = - m_ringBackgroundTexture.width() / 2.0f;
     vertices[0].y = - m_ringBackgroundTexture.height() / 2.0f;
     vertices[0].u = 0.0f;
-    vertices[0].v = 0.0f;
+    vertices[0].v = 1.0f;
     vertices[1].x = m_ringBackgroundTexture.width() / 2.0f;
     vertices[1].y = - m_ringBackgroundTexture.height() / 2.0f;
     vertices[1].u = 1.0f;
-    vertices[1].v = 0.0f;
+    vertices[1].v = 1.0f;
     vertices[2].x = m_ringBackgroundTexture.width() / 2.0f;
     vertices[2].y = m_ringBackgroundTexture.height() / 2.0f;
     vertices[2].u = 1.0f;
-    vertices[2].v = 1.0f;
+    vertices[2].v = 0.0f;
     vertices[3].x = - m_ringBackgroundTexture.width() / 2.0f;
     vertices[3].y = m_ringBackgroundTexture.height() / 2.0f;
     vertices[3].u = 0.0f;
-    vertices[3].v = 1.0f;
+    vertices[3].v = 0.0f;
 
     glUnmapBuffer(GL_ARRAY_BUFFER);
 }
@@ -449,27 +448,7 @@ void PlanetViewer::paintGL()
 
 QImage PlanetViewer::loadImage(const QString& file)
 {
-    QImage result;
-    if (QFileInfo(file).suffix() == "gi")
-    {
-        Rangers::GIFrame frame;
-        QFile f(file);
-        if (!f.open(QIODevice::ReadOnly))
-        {
-            return QImage();
-        }
-        QByteArray data = f.readAll();
-        f.close();
-        boost::iostreams::stream<boost::iostreams::array_source> stream(boost::iostreams::array_source(data.constData(), data.size()));
-        frame = Rangers::loadGIFrame(stream);
-        result = QImage(frame.data, frame.width, frame.height, QImage::Format_ARGB32).mirrored(false, true);
-        delete[] frame.data;
-    }
-    else
-    {
-        result = QImage(file);
-    }
-    return result;
+    return QImage(file);
 }
 
 bool PlanetViewer::bumpMapping() const

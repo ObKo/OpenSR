@@ -54,6 +54,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->planetListView->setModel(&m_model);
 
+    connect(&m_model, SIGNAL(error(QString, QString)), this, SLOT(showError(QString, QString)));
+
     connect(ui->planetSpeed, SIGNAL(valueChanged(double)), this, SLOT(updateParams()));
     connect(ui->cloudSpeed, SIGNAL(valueChanged(double)), this, SLOT(updateParams()));
     connect(ui->planetSize, SIGNAL(valueChanged(int)), this, SLOT(updateParams()));
@@ -88,6 +90,12 @@ void MainWindow::openCloudTexture()
     ui->cloudTexture->setText(QDir(m_settings.value("data/dataDir", "").toString()).relativeFilePath(name));
     ui->planetWidget->setCloudTexture(name);
 }
+
+void MainWindow::showError(const QString& title, const QString& text)
+{
+    QMessageBox::critical(this, title, text);
+}
+
 
 void MainWindow::openRingTexture()
 {

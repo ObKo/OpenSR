@@ -80,12 +80,14 @@ void PlanetModel::saveJSON(const QString& file) const
 {
     Json::Value root;
     Json::StyledWriter writer;
+    root["@type"] = "planet-styles";
     foreach(Planet p, m_planets)
     {
         QString colorText = QString("#%1%2%3").arg((ushort)((p.ambientColor.rgba() >> 16) & 0xff), 2, 16, QChar('0'))
                             .arg((ushort)((p.ambientColor.rgba() >> 8) & 0xff), 2, 16, QChar('0'))
                             .arg((ushort)((p.ambientColor.rgba() >> 0) & 0xff), 2, 16, QChar('0')).toUpper();
         Json::Value planet;
+        planet["@type"] = "planet-style";
         planet["ambientColor"] = colorText.toLatin1().data();
         planet["hasCloud"] = p.hasCloud;
         planet["size"] = p.size;
@@ -140,7 +142,16 @@ void PlanetModel::loadJSON(const QString& file)
     f.close();
 
     if (!root.isObject())
+    {
+        emit(error(tr("Load JSON"), tr("Invalid JSON file")));
         return;
+    }
+
+    if (root.get("@type", "") != "planet-styles")
+    {
+        emit(error(tr("Load JSON"), tr("Invalid JSON file type (check \"@type\" field).")));
+        return;
+    }
 
     Json::Value::iterator end = root.end();
 
@@ -148,8 +159,13 @@ void PlanetModel::loadJSON(const QString& file)
 
     for (Json::Value::iterator i = root.begin(); i != end; ++i)
     {
-        if (!(*i).isObject())
-            return;
+        if ((*i).isString() && (i.key().asString() == "@type"))
+            continue;
+
+        if (!(*i).isObject() || ((*i).get("@type", "").asString() != "planet-style"))
+        {
+            emit(error(tr("Load JSON"), tr("Invalid planet style: \"%1\"").arg(QString::fromLatin1(i.key().asCString()))));
+        }
 
         Planet p;
         QString colorText = QString::fromLatin1((*i).get("ambientColor", "#FFFFFF").asCString());

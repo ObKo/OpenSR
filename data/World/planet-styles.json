@@ -1,8 +1,7 @@
 {
-   "@type": "planet-styles",
-   
+   "@type" : "planet-styles",
    "earth" : {
-      "@type": "planet-style",
+      "@type" : "planet-style",
       "ambientColor" : "#97BFE3",
       "cloud" : "ORC/Planet2/Solar/cloud/c04.png",
       "cloudSpeed" : -20.0,
@@ -14,7 +13,7 @@
       "texture" : "ORC/Planet2/Solar/Earth.png"
    },
    "jupiter" : {
-      "@type": "planet-style",
+      "@type" : "planet-style",
       "ambientColor" : "#B3B58D",
       "cloud" : "ORC/Planet2/Solar/cloud/c02.png",
       "cloudSpeed" : -10.0,
@@ -26,7 +25,7 @@
       "texture" : "ORC/Planet2/Solar/Jupiter.png"
    },
    "mars" : {
-      "@type": "planet-style",
+      "@type" : "planet-style",
       "ambientColor" : "#AB7554",
       "hasCloud" : false,
       "hasRing" : false,
@@ -36,7 +35,7 @@
       "texture" : "ORC/Planet2/Solar/Mars.png"
    },
    "mercur" : {
-      "@type": "planet-style",
+      "@type" : "planet-style",
       "ambientColor" : "#C1A1B4",
       "cloud" : "ORC/Planet2/Solar/cloud/r02.png",
       "cloudSpeed" : -15.0,
@@ -48,7 +47,7 @@
       "texture" : "ORC/Planet2/Solar/Mercur.png"
    },
    "neptune" : {
-      "@type": "planet-style",
+      "@type" : "planet-style",
       "ambientColor" : "#6BABCC",
       "cloud" : "ORC/Planet2/Solar/cloud/c10.png",
       "cloudSpeed" : 10.0,
@@ -60,7 +59,7 @@
       "texture" : "ORC/Planet2/Solar/Neptune.png"
    },
    "saturn" : {
-      "@type": "planet-style",
+      "@type" : "planet-style",
       "ambientColor" : "#8390B6",
       "cloud" : "ORC/Planet2/Solar/cloud/c05.png",
       "cloudSpeed" : 10.0,
@@ -76,7 +75,7 @@
       "texture" : "ORC/Planet2/Solar/Saturn.png"
    },
    "venus" : {
-      "@type": "planet-style",
+      "@type" : "planet-style",
       "ambientColor" : "#89B5C5",
       "cloud" : "ORC/Planet2/Solar/cloud/c07.png",
       "cloudSpeed" : -10.0,
