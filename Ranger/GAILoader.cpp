@@ -41,16 +41,25 @@ void copyImageData(unsigned char *bufdes, int destwidth, int x, int y, int w, in
 
 /*!
  * \param stream input stream
- * \param offset offset in file
+ * \param background background frame, used in large animations
  * \return GAI animation
  */
 GAIAnimation Rangers::loadGAIAnimation(std::istream& stream, GIFrame *background)
 {
+    GAIHeader header = loadGAIHeader(stream);
+    return loadGAIAnimation(stream, header, background);
+}
+
+
+/*!
+ * \param stream input stream
+ * \param header previously loaded GAI header.
+ * \param background background frame, used in large animations
+ * \return GAI animation
+ */
+GAIAnimation Rangers::loadGAIAnimation(std::istream& stream, const GAIHeader& header, GIFrame *background)
+{
     GAIAnimation result;
-
-    GAIHeader header;
-
-    stream.read((char *)&header, sizeof(GAIHeader));
 
     if (header.signature != 0x00696167)
         return result;

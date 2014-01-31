@@ -236,8 +236,11 @@ LIBRANGER_API void decodeGAIDeltaFrame(uint8_t *prevFrame, int prevWidth, int x,
 LIBRANGER_API GIFrame loadGIFrame(std::istream& stream, bool animation = false, GIFrame *background = 0, uint32_t offset = 0, int startX = 0, int startY = 0, int finishX = 0, int finishY = 0);
 //! Load HAI animation from stream
 LIBRANGER_API HAIAnimation loadHAIAnimation(std::istream& stream);
+
 //! Load GAI animation file
 LIBRANGER_API GAIAnimation loadGAIAnimation(std::istream& stream, GIFrame *background = 0);
+//! Load GAI animation file
+LIBRANGER_API GAIAnimation loadGAIAnimation(std::istream& stream, const GAIHeader& header, GIFrame *background = 0);
 //! Load GAI header from file
 LIBRANGER_API GAIHeader loadGAIHeader(std::istream& stream);
 //! Load GAI frame times from file

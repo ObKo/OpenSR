@@ -244,7 +244,7 @@ boost::shared_ptr<Texture> ResourceManager::loadTexture(const std::wstring& name
             return loadTexture(directory(name) + basename(name) + L".gi");
         }
 
-        GAIAnimation animation = loadGAIAnimation(*s);
+        GAIAnimation animation = loadGAIAnimation(*s, header);
         m_textures[name] = boost::shared_ptr<Texture>(
                                new Texture(animation.frames[0].width,
                                            animation.frames[0].height,
@@ -560,7 +560,7 @@ void ResourceManager::GAIWorker::loadAnimation(GAIWorker *w)
         (*bg) = loadGIFrame(*(w->m_bgFrame), true, 0, 0, w->m_header.startX, w->m_header.startY, w->m_header.finishX, w->m_header.finishY);
     }
 
-    w->m_animation = loadGAIAnimation(*(w->m_gai), bg);
+    w->m_animation = loadGAIAnimation(*(w->m_gai), w->m_header, bg);
     w->m_loaded = true;
 }
 
