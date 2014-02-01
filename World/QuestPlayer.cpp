@@ -43,8 +43,45 @@ QuestPlayer::~QuestPlayer()
 
 std::wstring QuestPlayer::substituteValues(const std::wstring &str) const
 {
-    //TODO: Use <regex>
     std::wstring result = str;
+
+    //Okay, <regex> working bad on GCC, work manually
+    int pos = 0;
+    while ((pos = result.find(L"{", pos)) != std::wstring::npos)
+    {
+        int endPos = result.find(L"}", pos);
+        if (endPos == std::wstring::npos)
+            endPos = result.length() - 1;
+
+        std::string exp = toASCII(result.substr(pos + 1, endPos - pos - 1));
+        std::wstring expResult = L"\\cS" + std::to_wstring(int(QM::eval(exp, m_parameters))) + L"\\cR";
+        result.replace(pos, endPos - pos + 1, expResult);
+        pos += expResult.length();
+    }
+
+    pos = 0;
+    while ((pos = result.find(L"[p", pos)) != std::wstring::npos)
+    {
+        int endPos = result.find(L"]", pos);
+        if (endPos == std::wstring::npos)
+            endPos = result.length() - 1;
+        try
+        {
+            uint32_t param = std::stoul(result.substr(pos + 2, endPos - pos));
+
+            std::wstring paramValue;
+            auto i = m_parameters.find(param);
+            if (i != m_parameters.end())
+                paramValue = L"\\cS" + std::to_wstring(int((*i).second)) + L"\\cR";
+            result.replace(pos, endPos - pos + 1, paramValue);
+            pos += paramValue.length();
+        }
+        catch (std::logic_error &e)
+        {
+            pos = endPos;
+        }
+    }
+
     /*QRegularExpression valueExp("\\[p(\\d)+\\]");
     QRegularExpression expExp("\\{(.+?)\\}");
     int deltaPos = 0;

@@ -62,6 +62,7 @@ class InteractionWidgetStyleFactory: public ResourceObjectManager::ResourceObjec
         s->font = boost::dynamic_pointer_cast<FontDescriptor>(manager.loadObject(object.get("font", Json::Value()), "font"));
         s->color = parseColor(object.get("color", "#FFFFFF"));
         s->activeColor = parseColor(object.get("active-color", "#0000FF"));
+        s->inactiveColor = parseColor(object.get("inactive-color", "#808080"));
         s->scrollStyle = boost::dynamic_pointer_cast<ScrollBarStyle>(manager.loadObject(object.get("scroll-style", Json::Value()), "scroll-bar-style"));
 
         return s;

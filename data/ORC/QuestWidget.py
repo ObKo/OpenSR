@@ -21,13 +21,7 @@ class QuestWidget(ScriptWidget, ActionListener):
         self.paramWindow.position = (643, 457)
         self.paramWindow.geometry = (320, 280)
         self.addChild(self.paramWindow)
-        
-        self.paramLabel = ColorLabel("")
-        self.paramLabel.wordWrap = True
-        self.paramLabel.position = (665, 480)
-        self.paramLabel.setFixedSize(320, 280)
-        self.addChild(self.paramLabel)
-        
+                
         self.exitButton = Button("DATA/FormPQuest2/2CloseN.gi", "DATA/FormPQuest2/2CloseA.gi", "DATA/FormPQuest2/2CloseD.gi")
         self.exitButton.position = (953, 725)
         self.addWidget(self.exitButton)
@@ -41,6 +35,14 @@ class QuestWidget(ScriptWidget, ActionListener):
         self.interact.layer = -1;
         self.addWidget(self.interact)
         self.interact.addListener(self)
+        
+        self.paramLabel = ColorLabel("")
+        self.paramLabel.wordWrap = True
+        self.paramLabel.position = (665, 480)
+        self.paramLabel.setFixedSize(320, 280)
+        self.paramLabel.textColor = self.style.color
+        self.paramLabel.selectionColor = self.style.activeColor
+        self.addChild(self.paramLabel)
         
         self.skin1Button = Button("DATA/FormPQuest2/2Skin1N.gi", "DATA/FormPQuest2/2Skin1A.gi", "DATA/FormPQuest2/2Skin1D.gi")
         self.skin1Button.position = (529, 742)

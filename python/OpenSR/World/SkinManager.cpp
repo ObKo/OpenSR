@@ -48,6 +48,7 @@ void exportSkinManager()
     .def_readwrite("font", &InteractionWidgetStyle::font)
     .def_readwrite("color", &InteractionWidgetStyle::color)
     .def_readwrite("activeColor", &InteractionWidgetStyle::activeColor)
+    .def_readwrite("inactiveColor", &InteractionWidgetStyle::inactiveColor)
     .def_readwrite("scrollStyle", &InteractionWidgetStyle::scrollStyle);
 }
 }

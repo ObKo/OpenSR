@@ -264,7 +264,7 @@ void InteractionWidget::setSelections(const std::vector< std::tuple< std::wstrin
         if (std::get<1>(s))
             w->addListener(m_actionListener);
         else
-            w->label()->setColor(Color(0.5f, 0.5f, 0.5f));
+            l->setTextColor(m_style->inactiveColor);
         m_selectionsWidget.push_back(w);
         m_selectionArea->node()->addWidget(w);
     }

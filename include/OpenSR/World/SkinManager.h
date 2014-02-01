@@ -53,6 +53,7 @@ struct RANGERS_WORLD_API InteractionWidgetStyle: public ResourceObject
     boost::shared_ptr<FontDescriptor> font;
     Color color;
     Color activeColor;
+    Color inactiveColor;
     boost::shared_ptr<ScrollBarStyle> scrollStyle;
 };
 
