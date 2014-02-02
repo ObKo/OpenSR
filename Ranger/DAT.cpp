@@ -154,6 +154,7 @@ DATRecord loadDAT(std::istream &stream)
         delete[] data;
         boost::iostreams::stream<boost::iostreams::array_source> datStream(boost::iostreams::array_source((const char*)datData, resultSize));
         readDATTree(datStream, root);
+        delete[] datData;
     }
     else
     {
