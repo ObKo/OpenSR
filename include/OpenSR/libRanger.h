@@ -215,6 +215,33 @@ struct PNGFrame
     unsigned char *data;	//!< Frame pixel data
 };
 
+//! Record in DAT file (from orignal game)
+struct DATRecord
+{
+    /*!
+     * Record type
+     */
+    enum Type
+    {
+        VALUE, //!< key-value pair
+        NODE, //!< node, array of key-value pairs
+        ARRAY //!< array of values
+    };
+
+    Type type;           //!< Type of record
+
+    std::wstring name;   //!< Name of record (key)
+    std::wstring value;  //!< Value of record
+
+    //! Record's children.
+    /*!
+     * In case of \ref ARRAY - array of records w/o names
+     * In case of \ref NODE - array of records sorted by names
+     *   for faster lookup.
+     */
+    std::vector<DATRecord> children;
+};
+
 //! Load GI frame type 0
 LIBRANGER_API GIFrame loadFrameType0(const GIFrameHeader& image, const GILayerHeader *layers, std::istream& stream, uint32_t offset = 0);
 //! Load GI frame type 1
@@ -343,6 +370,11 @@ LIBRANGER_API bool fileExists(const std::wstring& path);
 LIBRANGER_API PNGFrame loadPNG(const char *buffer, size_t bufferSize);
 //! Load PNG file into memory
 LIBRANGER_API PNGFrame loadPNG(std::istream &stream);
+
+//! Read key-value tree from DAT file
+LIBRANGER_API void readDATTree(std::istream &stream, DATRecord& node);
+//! Load DAT file
+LIBRANGER_API DATRecord loadDAT(std::istream &stream);
 }
 
 #endif

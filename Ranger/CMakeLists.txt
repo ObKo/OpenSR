@@ -15,6 +15,7 @@ SET(LIBRANGERS_SOURCES
     PNG.cpp
     LZMA.cpp
     IOStreams.cpp
+    DAT.cpp
 )
 
 INCLUDE_DIRECTORIES(
