@@ -233,13 +233,40 @@ struct DATRecord
     std::wstring name;   //!< Name of record (key)
     std::wstring value;  //!< Value of record
 
+    typedef std::vector<DATRecord>::iterator iterator;
+    typedef std::vector<DATRecord>::const_iterator const_iterator;
+
+    DATRecord(Type type = VALUE, const std::wstring& name = std::wstring(), const std::wstring& value = std::wstring());
+
+    std::vector<DATRecord> children() const;
+
+    std::vector<DATRecord>::size_type size() const;
+    bool empty() const;
+
+    iterator add(const DATRecord& record);
+    void erase(int i);
+    void erase(const std::wstring& key);
+    void clear();
+
+    const DATRecord& at(int i) const;
+    const DATRecord& at(const std::wstring& key) const;
+
+    DATRecord& operator[](int i);
+    DATRecord& operator[](const std::wstring& key);
+
+    iterator begin();
+    const_iterator begin() const;
+    iterator end();
+    const_iterator end() const;
+
+private:
     //! Record's children.
     /*!
      * In case of \ref ARRAY - array of records w/o names
      * In case of \ref NODE - array of records sorted by names
      *   for faster lookup.
      */
-    std::vector<DATRecord> children;
+    std::vector<DATRecord> m_children;
 };
 
 //! Load GI frame type 0

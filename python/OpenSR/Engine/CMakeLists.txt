@@ -36,6 +36,7 @@ SET(PYTHON_ENGINE_SOURCES
     AnimatedTexture.cpp
     LabelWidget.cpp
     ResourceObjectManager.cpp
+    Ranger.cpp
 )
 
 SET(PYTHON_ENGINE_HEADERS 
