@@ -91,6 +91,7 @@ namespace Rangers
 {
 ResourceManager::ResourceManager()
 {
+    m_datRoot = boost::shared_ptr<DATRecord>(new DATRecord(DATRecord::NODE));
 }
 
 ResourceManager::ResourceManager(const ResourceManager& other)
@@ -596,6 +597,27 @@ void ResourceManager::GAIWorker::cleanFrame(int i)
 ResourceObjectManager& ResourceManager::objectManager()
 {
     return m_objectManager;
+}
+
+void ResourceManager::addDATFile(const std::wstring& name)
+{
+    boost::shared_ptr<std::istream> stream = getFileStream(name);
+    if (!stream)
+        return;
+
+    DATRecord r = loadDAT(*stream);
+    for (const DATRecord c : r)
+    {
+        if (m_datRoot->find(c.name) != m_datRoot->end())
+            Log::warning() << "[DAT] Item\"" << c.name << "\" already exists in root.";
+
+        m_datRoot->add(c);
+    }
+}
+
+boost::shared_ptr<DATRecord> ResourceManager::datRoot()
+{
+    return m_datRoot;
 }
 
 }

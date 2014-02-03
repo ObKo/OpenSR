@@ -122,7 +122,7 @@ void exportRanger()
 {
     using namespace boost::python;
     {
-        scope s = class_<DATRecord>("DATRecord", init<DATRecord::Type, std::wstring, std::wstring>())
+        scope s = class_<DATRecord, boost::shared_ptr<DATRecord>>("DATRecord", init<DATRecord::Type, std::wstring, std::wstring>())
                   .def(init<DATRecord::Type, std::wstring>())
                   .def(init<DATRecord::Type>())
                   .def(init<>())
@@ -132,6 +132,7 @@ void exportRanger()
                   .add_property("children", &getChildren)
                   .def("clear", &DATRecord::clear)
                   .def("add", &DATRecord::add)
+                  .def("find", &DATRecord::find)
                   .def("__len__", &DATRecord::size)
                   .def("__iter__", iterator<DATRecord>())
                   .def("__getitem__", &getItem, return_internal_reference<>())

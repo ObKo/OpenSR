@@ -40,6 +40,7 @@ class Object;
 struct GAIAnimation;
 class LuaWidget;
 class Widget;
+struct DATRecord;
 
 class RANGERS_ENGINE_API ResourceManager
 {
@@ -54,6 +55,9 @@ public:
     boost::shared_ptr<Texture> loadTexture(const std::wstring& name);
     boost::shared_ptr<AnimatedTexture> loadAnimation(const std::wstring& name, bool backgroundLoading = false);
     boost::shared_ptr<Font> loadFont(const std::wstring& name, int size, bool antialiased = true);
+
+    void addDATFile(const std::wstring& name);
+    boost::shared_ptr<DATRecord> datRoot();
 
     bool resourceExists(const std::wstring& path);
 
@@ -78,6 +82,7 @@ private:
     std::map<std::wstring, boost::shared_ptr<AnimatedTexture> > m_animations;
     std::map<std::wstring, boost::shared_ptr<Font> > m_fonts;
     std::map<boost::shared_ptr<AnimatedTexture>, GAIWorker *> m_gaiQueue;
+    boost::shared_ptr<DATRecord> m_datRoot;
 
     ResourceObjectManager m_objectManager;
 };

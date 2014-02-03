@@ -20,6 +20,7 @@
 #include <OpenSR/Texture.h>
 #include <OpenSR/AnimatedTexture.h>
 #include <OpenSR/Font.h>
+#include <OpenSR/libRanger.h>
 #include <boost/python.hpp>
 
 namespace Rangers
@@ -38,6 +39,8 @@ void exportResourceManager()
     .def("resourceExists", &ResourceManager::resourceExists)
     .def("objectManager", &ResourceManager::objectManager, return_internal_reference<>())
     .def("instance", &ResourceManager::instance, return_value_policy<reference_existing_object>())
+    .def("addDATFile", &ResourceManager::addDATFile)
+    .def("datRoot", &ResourceManager::datRoot)
     .staticmethod("instance");
 }
 }

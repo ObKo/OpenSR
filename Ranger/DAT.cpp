@@ -278,6 +278,22 @@ DATRecord& DATRecord::operator[](int i)
     return m_children[i];
 }
 
+DATRecord::const_iterator DATRecord::find(const std::wstring& key) const
+{
+    if (type == DATRecord::ARRAY)
+    {
+        return std::find_if(m_children.begin(), m_children.end(), [key](const DATRecord & a)
+        {
+            return a.name == key;
+        });
+    }
+    else if (type == DATRecord::NODE)
+    {
+        return binary_find(m_children, key);
+    }
+    return m_children.end();
+}
+
 DATRecord& DATRecord::operator[](const std::wstring& key)
 {
     DATRecord dummy;
