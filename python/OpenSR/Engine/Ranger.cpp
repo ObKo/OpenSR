@@ -38,7 +38,11 @@ DATRecord& getItem(DATRecord& self, boost::python::object key)
     boost::python::extract<int> i(key);
     if (s.check())
     {
-        return self[s];
+        DATRecord::iterator i = self.find(s);
+        if (i != self.end())
+            return *i;
+        else
+            throw std::out_of_range("DATRecord::getItem");
     }
     else if (i.check())
     {
@@ -132,7 +136,7 @@ void exportRanger()
                   .add_property("children", &getChildren)
                   .def("clear", &DATRecord::clear)
                   .def("add", &DATRecord::add)
-                  .def("find", &DATRecord::find)
+                  .def("find", (DATRecord::iterator(DATRecord::*)(const std::wstring&))&DATRecord::find)
                   .def("__len__", &DATRecord::size)
                   .def("__iter__", iterator<DATRecord>())
                   .def("__getitem__", &getItem, return_internal_reference<>())

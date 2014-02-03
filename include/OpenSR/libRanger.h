@@ -252,6 +252,7 @@ struct DATRecord
     const DATRecord& at(const std::wstring& key) const;
 
     const_iterator find(const std::wstring& key) const;
+    iterator find(const std::wstring& key);
 
     DATRecord& operator[](int i);
     DATRecord& operator[](const std::wstring& key);
