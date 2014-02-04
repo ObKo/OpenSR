@@ -88,6 +88,8 @@ void exportAction()
         .value("MOUSE_DOWN", Action::MOUSE_DOWN)
         .value("MOUSE_UP", Action::MOUSE_UP)
         .value("MOUSE_CLICK", Action::MOUSE_CLICK)
+        .value("DIALOG_ACCEPT", Action::DIALOG_ACCEPT)
+        .value("DIALOG_CANCEL", Action::DIALOG_CANCEL)
         .value("USER", Action::USER);
     }
 }

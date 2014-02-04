@@ -609,7 +609,7 @@ void ResourceManager::addDATFile(const std::wstring& name)
     for (const DATRecord c : r)
     {
         if (m_datRoot->find(c.name) != m_datRoot->end())
-            Log::warning() << "[DAT] Item\"" << c.name << "\" already exists in root.";
+            Log::warning() << "[DAT] Item \"" << c.name << "\" already exists in root.";
 
         m_datRoot->add(c);
     }

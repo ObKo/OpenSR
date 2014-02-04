@@ -109,7 +109,8 @@ void exportObject()
     .def("mapToSceen", (Vector(Object::*)(const Vector&) const)&Object::mapToScreen)
     .def("mapToGlobal", (Rect(Object::*)(const Rect&) const)&Object::mapToGlobal)
     .def("mapToParent", (Rect(Object::*)(const Rect&) const)&Object::mapToParent)
-    .def("mapToSceen", (Rect(Object::*)(const Rect&) const)&Object::mapToScreen);
+    .def("mapToSceen", (Rect(Object::*)(const Rect&) const)&Object::mapToScreen)
+    .def("markToUpdate", &Object::markToUpdate);
     RANGERS_PYTHON_WRAP_OBJECT_DEF(Object, ObjectWrap, c);
     register_ptr_to_python<boost::shared_ptr<Object> >();
 }

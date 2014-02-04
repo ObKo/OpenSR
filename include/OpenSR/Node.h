@@ -31,6 +31,7 @@ public:
     Node();
     virtual void draw() const;
     virtual void processLogic(int dt);
+    virtual void processMain();
 
 protected:
     Node(NodePrivate &p);

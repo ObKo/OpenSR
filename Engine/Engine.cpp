@@ -449,7 +449,7 @@ void Engine::init(int argc, char **argv, int w, int h, bool fullscreen)
     glOrtho(0.0f, d->width, d->height, 0.0f, -1.0f, 1.0f);
 
     std::vector<std::string> coreFontStrings = split(d->properties->get<std::string>("graphics.corefont", "DroidSans.ttf:14"), ':');
-    int coreFontSize = 13;
+    int coreFontSize = 14;
     bool coreFontAA = true;
     if (coreFontStrings.size() > 1)
         coreFontSize = atoi(coreFontStrings.at(1).c_str());
@@ -457,8 +457,8 @@ void Engine::init(int argc, char **argv, int w, int h, bool fullscreen)
         coreFontAA = false;
     d->coreFont = ResourceManager::instance().loadFont(fromLocal(coreFontStrings.at(0).c_str()), coreFontSize, coreFontAA);
 
-    std::vector<std::string> monoFontStrings = split(d->properties->get<std::string>("graphics.monofont", "DroidSansMono.ttf:13"), ':');
-    int monoFontSize = 13;
+    std::vector<std::string> monoFontStrings = split(d->properties->get<std::string>("graphics.monofont", "DroidSansMono.ttf:14"), ':');
+    int monoFontSize = 14;
     bool monoFontAA = true;
     if (monoFontStrings.size() > 1)
         monoFontSize = atoi(monoFontStrings.at(1).c_str());

@@ -161,7 +161,11 @@ Button::Button(const std::wstring& texture):
     RANGERS_D(Button);
     d->initFromStyle();
 
-    boost::shared_ptr<Texture> main = ResourceManager::instance().loadTexture(texture);
+
+    boost::shared_ptr<Texture> main;
+
+    if (!texture.empty())
+        main = ResourceManager::instance().loadTexture(texture);
 
     if (main)
     {
@@ -184,9 +188,16 @@ Button::Button(const std::wstring& texture, const std::wstring& hoverTexture, co
     RANGERS_D(Button);
     d->initFromStyle();
 
-    boost::shared_ptr<Texture> main = ResourceManager::instance().loadTexture(texture);
-    boost::shared_ptr<Texture> hover = ResourceManager::instance().loadTexture(hoverTexture);
-    boost::shared_ptr<Texture> pressed = ResourceManager::instance().loadTexture(pressTexture);
+    boost::shared_ptr<Texture> main, hover, pressed;
+
+    if (!texture.empty())
+        main = ResourceManager::instance().loadTexture(texture);
+
+    if (!hoverTexture.empty())
+        hover = ResourceManager::instance().loadTexture(hoverTexture);
+
+    if (!pressTexture.empty())
+        pressed = ResourceManager::instance().loadTexture(pressTexture);
 
     if (main)
     {
@@ -438,7 +449,14 @@ void Button::setSounds(const std::wstring& clickSound, const std::wstring& enter
 {
     RANGERS_D(Button);
     SoundManager &m = SoundManager::instance();
-    setSounds(m.loadSound(clickSound), m.loadSound(enterSound), m.loadSound(leaveSound));
+    boost::shared_ptr<Sound> click, enter, leave;
+    if (!clickSound.empty())
+        click = m.loadSound(clickSound);
+    if (!enterSound.empty())
+        enter = m.loadSound(enterSound);
+    if (!leaveSound.empty())
+        leave = m.loadSound(leaveSound);
+    setSounds(click, enter, leave);
 }
 
 boost::shared_ptr<Sound> Button::clickSound() const
@@ -464,8 +482,8 @@ void Button::processMain()
     lock();
     RANGERS_D(Button);
     d->calcAutoResize();
-    //if (d->label->needUpdate())
-    //    d->label->processMain();
+    if (d->label->needUpdate())
+        d->label->processMain();
     if (d->normalSprite)
         d->normalSprite->setGeometry(d->width, d->height);
     if (d->hoverSprite)

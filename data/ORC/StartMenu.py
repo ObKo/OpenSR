@@ -4,6 +4,7 @@ from OpenSR.Engine import Engine, ResourceManager, SoundManager, ScriptWidget, A
                           Action, Label, LabelWidget, ColorLabel
 
 from OpenSR.ORC.QuestWidget import QuestWidget
+from OpenSR.ORC.QuestSelectionWidget import QuestSelectionWidget
 
 import OpenSR.ORC.Settings
 from OpenSR.World.DefaultWorldGen import DefaultWorldGen
@@ -89,7 +90,7 @@ class StartMenuWidget(ScriptWidget, ActionListener):
         self.menuNode.position = (engine.screenWidth - 400, 300)
         self.addWidget(self.menuNode)
         
-        sound.playMusic("music/SPECIAL/SpaceIsCalling.dat", False)
+        sound.playMusic("Music/SPECIAL/SpaceIsCalling.dat", False)
         
         self.buttons = {}
         
@@ -113,8 +114,13 @@ class StartMenuWidget(ScriptWidget, ActionListener):
         self.questButton.layer = 2
         self.questButton.sounds = (clickSound, enterSound, leaveSound)
         self.addWidget(self.questButton)
+        
+        self.pause = False
 
     def processLogic(self, dt):
+        if self.pause:
+            return
+
         ScriptWidget.processLogic(self, dt)
         
         if math.fabs(self.t * self.BG_SPEED) >= self.background.width - engine.screenWidth:
@@ -147,29 +153,59 @@ class StartMenuWidget(ScriptWidget, ActionListener):
         engine.addWidget(widget)
         self.dispose()
         
+    def startQuest(self, questFile):
+        widget = QuestWidget(questFile)   
+        engine.addWidget(widget)
+        self.dispose()
+        
     def actionPerformed(self, action):        
-        if action.type != Action.Type.BUTTON_CLICKED:
-            return
-
-        if action.source == self.buttons['exit']:
-            self.dispose()                
-            engine.quit(0)
+        if action.type == Action.Type.BUTTON_CLICKED:
+            if action.source == self.buttons['exit']:
+                self.dispose()                
+                engine.quit(0)
                 
-        elif action.source == self.buttons['settings']:
-            self.dispose()
-            engine.addWidget(OpenSR.ORC.Settings.SettingsWidget())
+            elif action.source == self.buttons['settings']:
+                self.dispose()
+                engine.addWidget(OpenSR.ORC.Settings.SettingsWidget())
                 
-        elif action.source == self.buttons['newGame']:
-            world.addGenHook(DefaultWorldGen())
-            world.generateWorld()
-            world.saveWorld('test.srw')
-            self.openGame()
+            elif action.source == self.buttons['newGame']:
+                world.addGenHook(DefaultWorldGen())
+                world.generateWorld()
+                world.saveWorld('test.srw')
+                self.openGame()
                 
-        elif action.source == self.buttons['loadGame']:
-            world.loadWorld('test.srw')
-            self.openGame()   
+            elif action.source == self.buttons['loadGame']:
+                world.loadWorld('test.srw')
+                self.openGame()   
                 
-        elif action.source == self.questButton:
-            self.dispose()
-            engine.addWidget(OpenSR.ORC.QuestWidget.QuestWidget())
+            elif action.source == self.questButton:
+                self.pause = True
+                self.questDialog = OpenSR.ORC.QuestSelectionWidget.QuestSelectionWidget()
+                self.questDialog.layer = 4
+                self.questDialog.position = (int((engine.screenWidth - self.questDialog.width) / 2), int((engine.screenHeight - self.questDialog.height) / 2))
+                self.questDialog.addListener(self)
+                engine.addWidget(self.questDialog)
+                
+        if action.type == Action.Type.DIALOG_ACCEPT:
+            if action.source == self.questDialog:
+                self.pause = False
+                
+                self.questDialog.dispose()
+                self.questDialog.removeListener(self)
+                engine.removeWidget(self.questDialog)
+                
+                qmFile = self.questDialog.selectedQuest
+                
+                del self.questDialog
+                
+                self.startQuest(qmFile)
+                
+        elif action.type == Action.Type.DIALOG_CANCEL:
+            if action.source == self.questDialog:
+                self.pause = False
+                
+                self.questDialog.dispose()
+                self.questDialog.removeListener(self)
+                engine.removeWidget(self.questDialog)
+                del self.questDialog
         

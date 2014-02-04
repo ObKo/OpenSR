@@ -29,9 +29,10 @@ class RANGERS_ENGINE_API WidgetNode: public Widget
     RANGERS_DECLARE_PRIVATE(WidgetNode)
 public:
     WidgetNode();
-    
+
     virtual void draw() const;
     virtual void processLogic(int dt);
+    virtual void processMain();
 
 protected:
     WidgetNode(WidgetNodePrivate &p);

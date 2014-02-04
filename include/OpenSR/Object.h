@@ -73,6 +73,8 @@ public:
 
     boost::shared_ptr<Object> getChild(Object *ptr) const;
 
+    void markToUpdate();
+
 protected:
     Object(ObjectPrivate &p);
 
@@ -82,7 +84,6 @@ protected:
     virtual void endDraw() const;
     void lock() const;
     void unlock() const;
-    void markToUpdate();
 
     void setParent(Object *parent);
 

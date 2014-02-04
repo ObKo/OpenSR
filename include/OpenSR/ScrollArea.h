@@ -42,7 +42,6 @@ public:
     boost::shared_ptr<WidgetNode> node() const;
 
     virtual void mouseMove(const Vector &p);
-
     virtual void processLogic(int dt);
 
 protected:

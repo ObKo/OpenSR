@@ -75,10 +75,9 @@ bool Object::prepareDraw() const
 {
     lock();
     RANGERS_D(const Object);
-    //if (d->needUpdate)
-    //{
-    //    d->processMain();
-    //}
+    //! FIXME: VERY, VERY, VERY DIRTY HACK!!!
+    if (d->needUpdate)
+        ((Object*)this)->processMain();
     glPushMatrix();
     glTranslatef(d->position.x, d->position.y, 0);
     glRotatef(d->rotation, 0, 0, -1);

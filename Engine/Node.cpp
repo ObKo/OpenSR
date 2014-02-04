@@ -53,4 +53,17 @@ void Node::processLogic(int dt)
     for (std::list<boost::shared_ptr<Object> >::const_iterator i = children.begin(); i != children.end(); ++i)
         (*i)->processLogic(dt);
 }
+
+void Node::processMain()
+{
+    RANGERS_D(Node);
+    lock();
+    std::list<boost::shared_ptr<Object> > children = d->children;
+    unlock();
+    for (std::list<boost::shared_ptr<Object> >::const_iterator i = children.begin(); i != children.end(); ++i)
+    {
+        if ((*i)->needUpdate())
+            (*i)->processMain();
+    }
+}
 }

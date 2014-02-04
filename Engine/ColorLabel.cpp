@@ -37,7 +37,14 @@ namespace Rangers
  */
 ColorLabel::ColorLabel(): Label(*(new ColorLabelPrivate()))
 {
+    RANGERS_D(ColorLabel);
 
+    d->font = Engine::instance().coreFont();
+
+    d->wordWrap = false;
+    d->fixedWidth = false;
+    d->fixedHeight = false;
+    d->scaling = TEXTURE_NO;
 }
 
 /*!

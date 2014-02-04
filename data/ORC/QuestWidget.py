@@ -10,7 +10,7 @@ player = QuestPlayer()
 
 class QuestWidget(ScriptWidget, ActionListener):
     
-    def __init__(self):
+    def __init__(self, questFile):
         ScriptWidget.__init__(self)
         ActionListener.__init__(self)
         
@@ -27,7 +27,7 @@ class QuestWidget(ScriptWidget, ActionListener):
         self.addWidget(self.exitButton)
         self.exitButton.addListener(self)
         
-        player.loadQuest("CFG/Rus/PlanetQuest/Prison.qm")
+        player.loadQuest(questFile)
         
         self.style = resources.objectManager().getResourceObject('/world/skin/quest/grey')
         self.interact = InteractionWidget(Rect(15, 45, 15 + 539, 45 + 363), Rect(15, 482, 15 + 539, 482 + 215), self.style)

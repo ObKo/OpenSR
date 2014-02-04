@@ -263,6 +263,9 @@ void ScrollArea::processMain()
     d->hSize = 0.0f;
     if (d->node)
     {
+        //Force update of contents
+        d->node->processMain();
+
         Rect nodeBB = d->node->boundingRect();
         if (nodeBB.width > d->width)
         {

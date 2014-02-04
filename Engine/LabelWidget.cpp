@@ -62,17 +62,19 @@ void LabelWidget::processMain()
     if (!d->label)
         return;
 
-    if (d->newLabel)
-    {
-        if (d->label->needUpdate())
-            d->label->processMain();
-        d->newLabel = false;
 
-        if (d->width == -1)
-            d->width = d->label->width();
-        if (d->height == -1)
-            d->height = d->label->height();
-    }
+    if (d->label->needUpdate())
+        d->label->processMain();
+
+    //if (d->newLabel)
+    //{
+    //    d->newLabel = false;
+
+    //    if (d->width == -1)
+    d->width = d->label->width();
+    //    if (d->height == -1)
+    d->height = d->label->height();
+    //}
 
     Vector pos;
     switch (d->hAlign)
