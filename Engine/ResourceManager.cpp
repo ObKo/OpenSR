@@ -259,6 +259,33 @@ boost::shared_ptr<Texture> ResourceManager::loadTexture(const std::wstring& name
         delete[] animation.times;
         return m_textures[name];
     }
+    else if (sfx == L"jpg" || sfx == L"jpeg")
+    {
+        boost::shared_ptr<std::istream> stream = getFileStream(name);
+        if (!stream)
+            return boost::shared_ptr<Texture>();
+        JPEGFrame frame = loadJPEG(*stream);
+        if (frame.type == PNGFrame::TYPE_INVALID)
+        {
+            Log::warning() << "Invalid/unsupported PNG file";
+            return boost::shared_ptr<Texture>();
+        }
+        TextureType type;
+        switch (frame.type)
+        {
+        case JPEGFrame::TYPE_GRAY:
+            //FIXME: grayscale as alpha
+            type = Rangers::TEXTURE_A8;
+            break;
+        case JPEGFrame::TYPE_RGB:
+            type = Rangers::TEXTURE_R8G8B8;
+            break;
+        }
+        Texture *t = new Texture(frame.width, frame.height, type, frame.data);
+        delete[] frame.data;
+        m_textures[name] = boost::shared_ptr<Texture>(t);
+        return m_textures[name];
+    }
     else
         Log::error() << "Unknown texture format: " << sfx;
 

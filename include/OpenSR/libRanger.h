@@ -215,6 +215,16 @@ struct PNGFrame
     unsigned char *data;	//!< Frame pixel data
 };
 
+//! JPEG Frame
+struct JPEGFrame
+{
+    enum Type {TYPE_INVALID, TYPE_GRAY, TYPE_RGB};
+    Type type;
+    int width;
+    int height;
+    uint8_t *data;
+};
+
 //! Record in DAT file (from orignal game)
 struct DATRecord
 {
@@ -405,6 +415,9 @@ LIBRANGER_API PNGFrame loadPNG(std::istream &stream);
 LIBRANGER_API void readDATTree(std::istream &stream, DATRecord& node);
 //! Load DAT file
 LIBRANGER_API DATRecord loadDAT(std::istream &stream);
+
+//! Load JPEG file into memory
+LIBRANGER_API JPEGFrame loadJPEG(std::istream &stream);
 }
 
 #endif
