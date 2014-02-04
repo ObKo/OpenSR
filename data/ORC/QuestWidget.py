@@ -39,7 +39,7 @@ class QuestWidget(ScriptWidget, ActionListener):
         self.paramLabel = ColorLabel("")
         self.paramLabel.wordWrap = True
         self.paramLabel.position = (665, 480)
-        self.paramLabel.setFixedSize(320, 280)
+        self.paramLabel.setFixedSize(280, 280)
         self.paramLabel.textColor = self.style.color
         self.paramLabel.selectionColor = self.style.activeColor
         self.addChild(self.paramLabel)
@@ -86,11 +86,11 @@ class QuestWidget(ScriptWidget, ActionListener):
         text = player.currentText.replace("\r\n", "\n")
         
         if player.questCompleted:
-            text = text + "\n\n\\c00FF00Quest completed!\\cR"
+            text = text + "\n\n\\c008000Quest completed!\\cR"
         elif player.questFailed:
-            text = text + "\n\n\\cFF0000Quest failed!\\cR"
+            text = text + "\n\n\\c800000Quest failed!\\cR"
             if player.death:
-                text = text + "\n\n\\cFF0000You're dead!\\cR"
+                text = text + "\n\n\\c800000You're dead!\\cR"
         
         self.interact.text = text
         

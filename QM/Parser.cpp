@@ -22,6 +22,7 @@
 #include <map>
 #include <stack>
 #include <cctype>
+#include <sstream>
 
 namespace Rangers
 {
@@ -29,7 +30,7 @@ namespace QM
 {
 namespace
 {
-const uint8_t PRECEDENCES[22] = {0, 0, 0, 0, 6, 6, 8, 7, 8, 3, 3, 3, 3, 3, 3, 1, 2, 9, 4, 5, 0, 0};
+const uint8_t PRECEDENCES[23] = {0, 0, 0, 0, 6, 6, 8, 7, 8, 3, 3, 3, 3, 3, 3, 1, 2, 9, 4, 5, 0, 0, 8};
 }
 
 Token::Token()
@@ -91,6 +92,8 @@ Token Token::apply(const Token& a, const Token& b, const std::map<uint32_t, floa
         return Token(av - bv);
     case TOKEN_OP_DIV:
         return Token(av / bv);
+    case TOKEN_OP_INT_DIV:
+        return Token((int32_t)av / (int32_t)bv);
     case TOKEN_OP_MULTIPLY:
         return Token(av * bv);
     case TOKEN_OP_MOD:
@@ -159,28 +162,53 @@ Token Token::apply(const Token& a, const Token& b, const std::map<uint32_t, floa
     }
 }
 
-//FIXME: Seems only integers are valid in expressions...
-int32_t getNumber(int &pos, const std::string& exp)
+int32_t getInt(int &pos, const std::string& exp)
 {
     size_t offset = 0;
     try
     {
-        int32_t i = std::stoi(exp.substr(pos), &offset);
+        int32_t f = std::stoi(exp.substr(pos), &offset);
         pos += offset;
-        return i;
+        return f;
     }
     catch (std::invalid_argument & e)
     {
         return 0;
     }
 }
-std::list<Token> tokenize(const std::string& exp)
+
+float getFloat(int &pos, const std::string& exp)
+{
+    size_t offset = 0;
+    try
+    {
+        //FIXME: Better way to read float with point
+        std::locale current;
+        std::locale::global(std::locale::classic());
+
+        float f = std::stof(exp.substr(pos), &offset);
+        pos += offset;
+
+        std::locale::global(current);
+
+        return f;
+    }
+    catch (std::invalid_argument & e)
+    {
+        return 0;
+    }
+}
+
+std::list<Token> tokenize(const std::string& expression)
 {
     int pos = 0;
     Token prev;
     std::list<Token> result;
 
     std::stack<Token> opStack;
+
+    std::string exp = expression;
+    std::replace(exp.begin(), exp.end(), ',', '.');
 
     while (pos < exp.length())
     {
@@ -194,7 +222,7 @@ std::list<Token> tokenize(const std::string& exp)
                 (prev.type != Token::TOKEN_RANGE) && (prev.type != Token::TOKEN_PARAMETER) && (prev.type != Token::TOKEN_LIST) &&
                 (prev.type != Token::TOKEN_OPEN_PAR) && (prev.type != Token::TOKEN_CLOSE_PAR)))
         {
-            t = Token(getNumber(pos, exp));
+            t = Token(getFloat(pos, exp));
         }
         else if (exp[pos] == '-')
         {
@@ -268,7 +296,7 @@ std::list<Token> tokenize(const std::string& exp)
             {
                 pos += 2;
                 t.type = Token::TOKEN_PARAMETER;
-                t.value.id = getNumber(pos, exp);
+                t.value.id = (uint32_t)getInt(pos, exp);
                 if (exp[pos] != ']')
                 {
                     std::cerr << "Unclosed parameter token in \"" << exp << "\"";
@@ -279,8 +307,8 @@ std::list<Token> tokenize(const std::string& exp)
             else if (((exp[pos + 1] >= '0') && (exp[pos + 1] <= '9')) || ((exp[pos + 1] == '-')))
             {
                 pos++;
-                int32_t v1, v2;
-                v1 = getNumber(pos, exp);
+                float v1, v2;
+                v1 = getFloat(pos, exp);
                 if (exp[pos] == ']')
                 {
                     t = Token(v1);
@@ -288,19 +316,11 @@ std::list<Token> tokenize(const std::string& exp)
                 }
                 else if ((exp[pos] == '.') || (exp[pos] == 'h'))
                 {
-                    if ((exp[pos] == '.') && (exp[pos + 1] != '.'))
-                    {
-                        std::cerr << "Invalid range token in \"" << exp << "\"";
-                        return std::list<Token>();
-                    }
-                    if (exp[pos] == 'h')
-                        pos++;
-                    else
-                        pos += 2;
-                    v2 = getNumber(pos, exp);
+                    pos++;
+                    v2 = getFloat(pos, exp);
                     if (exp[pos] != ']')
                     {
-                        std::cerr << "Unclosed range token in \"" << exp << "\"";
+                        std::cerr << "Invalid range token in \"" << exp << "\" at pos = " << pos;
                         return std::list<Token>();
                     }
                     t = Token(v1, v2);
@@ -313,7 +333,7 @@ std::list<Token> tokenize(const std::string& exp)
                     while (exp[pos] == ';')
                     {
                         pos++;
-                        t.list.push_back(getNumber(pos, exp));
+                        t.list.push_back(getFloat(pos, exp));
                     }
                     if (exp[pos] != ']')
                     {
@@ -336,7 +356,7 @@ std::list<Token> tokenize(const std::string& exp)
         }
         else if (exp.substr(pos, 3) == "div")
         {
-            t.type = Token::TOKEN_OP_DIV;
+            t.type = Token::TOKEN_OP_INT_DIV;
             pos += 3;
         }
         else if (exp.substr(pos, 3) == "and")
@@ -366,7 +386,7 @@ std::list<Token> tokenize(const std::string& exp)
         }
         else
         {
-            std::cerr << "Invalid range token in \"" << exp << "\"";
+            std::cerr << "Invalid token in \"" << exp << "\" at pos = " << pos;
             return std::list<Token>();
         }
 

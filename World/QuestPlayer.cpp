@@ -177,7 +177,10 @@ void QuestPlayer::setLocation(uint32_t location)
         if (m_currentLocation.descriptionExpression && !m_currentLocation.expression.empty())
         {
             int32_t t = (int32_t)QM::eval(toASCII(m_currentLocation.expression), m_parameters);
-            if ((t > 10) || (m_currentLocation.descriptions.at(t - 1).empty()))
+            //FIXME: Bug or feature?
+            if (t == 0)
+                t = 1;
+            if ((t < 1) || (t > 10) || (m_currentLocation.descriptions.at(t - 1).empty()))
             {
                 Log::error() << "[Quest] Invalid location description selection in location " << m_currentLocation.id;
                 m_currentText = std::wstring();

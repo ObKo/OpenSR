@@ -37,7 +37,7 @@ public:
                TOKEN_OP_MINUS = 5, TOKEN_OP_DIV = 6, TOKEN_OP_MULTIPLY = 7, TOKEN_OP_MOD = 8, TOKEN_EQUAL = 9,
                TOKEN_MORE = 10, TOKEN_LESS = 11, TOKEN_MORE_EQUAL = 12, TOKEN_LESS_EQUAL = 13, TOKEN_NOT_EQUAL = 14,
                TOKEN_OR = 15, TOKEN_AND = 16, TOKEN_NOT = 17, TOKEN_TO = 18, TOKEN_IN = 19, TOKEN_PARAMETER = 20,
-               TOKEN_LIST = 21
+               TOKEN_LIST = 21, TOKEN_OP_INT_DIV = 22,
               };
     Token();
     Token(float number);
