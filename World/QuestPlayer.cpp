@@ -559,5 +559,19 @@ bool QuestPlayer::questFailed() const
     return m_failed;
 }
 
+uint32_t QuestPlayer::currentLocation() const
+{
+    return m_currentLocation.id;
+}
+
+uint32_t QuestPlayer::currentTransition() const
+{
+    return m_currentTransition.id;
+}
+
+bool QuestPlayer::isTransition() const
+{
+    return m_transition;
+}
 }
 }

@@ -392,6 +392,7 @@ void Object::setLayer(int layer)
     d->layer = layer;
     if (d->parent)
     {
+        Object *p = d->parent;
         boost::shared_ptr<Object> self = d->parent->getChild(this);
         if (!self)
         {
@@ -399,8 +400,8 @@ void Object::setLayer(int layer)
             unlock();
             return;
         }
-        d->parent->removeChild(self);
-        d->parent->addChild(self);
+        p->removeChild(self);
+        p->addChild(self);
     }
     unlock();
 }

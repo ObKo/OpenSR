@@ -10,7 +10,7 @@ player = QuestPlayer()
 
 class QuestWidget(ScriptWidget, ActionListener):
     
-    def __init__(self, questFile):
+    def __init__(self, questID):
         ScriptWidget.__init__(self)
         ActionListener.__init__(self)
         
@@ -27,12 +27,16 @@ class QuestWidget(ScriptWidget, ActionListener):
         self.addWidget(self.exitButton)
         self.exitButton.addListener(self)
         
-        player.loadQuest(questFile)
+        self.image = None
+        self.questID = questID
+        self.questFile = resources.datRoot()['PlanetQuest']['PlanetQuest'][questID].value.replace('\\', '/')
+        player.loadQuest(self.questFile)
+        self.loadImages()
         
         self.style = resources.objectManager().getResourceObject('/world/skin/quest/grey')
         self.interact = InteractionWidget(Rect(15, 45, 15 + 539, 45 + 363), Rect(15, 482, 15 + 539, 482 + 215), self.style)
         self.interact.position = (35, 5)
-        self.interact.layer = -1;
+        self.interact.layer = -2;
         self.addWidget(self.interact)
         self.interact.addListener(self)
         
@@ -71,7 +75,7 @@ class QuestWidget(ScriptWidget, ActionListener):
               
         self.interact = InteractionWidget(Rect(15, 45, 15 + 539, 45 + 363), Rect(15, 482, 15 + 539, 482 + 215), self.style)
         self.interact.position = (35, 5)
-        self.interact.layer = -1;
+        self.interact.layer = -2;
         self.addWidget(self.interact)
         self.interact.addListener(self)
         
@@ -102,7 +106,41 @@ class QuestWidget(ScriptWidget, ActionListener):
             
         self.interact.selections = selections
         
-        self.paramLabel.text = "\n".join(player.visibleParameters)      
+        self.paramLabel.text = "\n".join(player.visibleParameters) 
+        
+        newImage = ""
+                
+        if player.isTransition:
+            if player.currentTransition in self.transImages:
+                newImage = self.transImages[player.currentTransition]
+        else:
+            if player.currentLocation in self.locImages:
+                newImage = self.locImages[player.currentLocation]
+                
+        if newImage != "":
+
+            if self.image:
+                self.removeChild(self.image)
+            self.image = Sprite(newImage)
+            self.image.layer = -1
+            self.image.position = (656, 32)
+            self.addChild(self.image)
+    
+    def loadImages(self):
+        self.locImages = {}
+        self.transImages = {}
+        pqi = resources.datRoot()['Data']['PQI']
+        for r in pqi:
+            v = r.name.split(',')
+            if v[0] != self.questID:
+                continue
+             
+            if v[1] == "P" or v[1] == "PAR":
+                for i in v[2:]:
+                    self.transImages[int(i)] = "DATA/PQI/" + r.value.replace("Bm.PQI.", "") + ".jpg"
+            else:
+                for i in v[2:]:
+                    self.locImages[int(i)] = "DATA/PQI/" + r.value.replace("Bm.PQI.", "") + ".jpg"
         
     def dispose(self):
         engine.removeWidget(self)

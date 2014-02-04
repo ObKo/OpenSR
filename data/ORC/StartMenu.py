@@ -194,11 +194,11 @@ class StartMenuWidget(ScriptWidget, ActionListener):
                 self.questDialog.removeListener(self)
                 engine.removeWidget(self.questDialog)
                 
-                qmFile = self.questDialog.selectedQuest
+                quest = self.questDialog.selectedQuest
                 
                 del self.questDialog
                 
-                self.startQuest(qmFile)
+                self.startQuest(quest)
                 
         elif action.type == Action.Type.DIALOG_CANCEL:
             if action.source == self.questDialog:

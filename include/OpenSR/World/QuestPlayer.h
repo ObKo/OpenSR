@@ -42,6 +42,10 @@ public:
     std::vector<std::wstring> visibleParameters() const;
     std::vector<std::tuple<uint32_t, std::wstring, bool> > visibleTransitions() const;
 
+    uint32_t currentLocation() const;
+    uint32_t currentTransition() const;
+    bool isTransition() const;
+
     void transit(uint32_t num);
 
     void loadQuest(const std::wstring& quest);
