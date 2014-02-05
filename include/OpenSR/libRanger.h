@@ -316,11 +316,13 @@ LIBRANGER_API uint32_t* loadGAITimes(std::istream& stream, const GAIHeader& head
 //! Get std::istream of file in package
 LIBRANGER_API std::istream* getRPKGFileStream(const RPKGEntry& e, boost::shared_ptr<std::istream> stream);
 
-//! Unpack ZL01 - compressed file
+//! Pack data to ZL01
+LIBRANGER_API unsigned char *packZL01(const unsigned char * src, size_t srclen, size_t& destlen);
+//! Unpack ZL01 - compressed data
 LIBRANGER_API unsigned char *unpackZL01(const unsigned char * src, size_t srclen, size_t& destlen);
-//! Unpack ZL02 - compressed file
+//! Unpack ZL02 - compressed data
 LIBRANGER_API unsigned char *unpackZL02(const unsigned char * src, size_t srclen, size_t& destlen);
-//! Unpack ZL02 - compressed file
+//! Unpack ZL02 - compressed data
 LIBRANGER_API void unpackZL02(unsigned char * dst, const unsigned char * src, size_t srclen, size_t& destlen);
 
 //! Load file descriptions from PKG archive

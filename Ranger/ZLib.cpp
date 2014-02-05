@@ -64,6 +64,33 @@ unsigned char *unpackZL01(const unsigned char * src, size_t srclen, size_t& dest
 }
 
 /*!
+ * \param src input data
+ * \param srclen input data size
+ * \param destlen output data size
+ * \return ZL01 - compressed data
+ */
+unsigned char *packZL01(const unsigned char * src, size_t srclen, size_t& destlen)
+{
+    uint32_t estSize = compressBound(srclen);
+
+    unsigned char *result = new unsigned char[estSize + 8];
+    destlen = estSize;
+
+    if (compress(result + 8, &destlen, src, srclen))
+    {
+        delete[] result;
+        destlen = 0;
+        return 0;
+    }
+
+    ((uint32_t*)result)[0] = 0x31304c5a;
+    ((uint32_t*)result)[1] = srclen;
+    result = (unsigned char *)realloc(result, destlen + 8);
+    destlen += 8;
+    return result;
+}
+
+/*!
  * \param dst Unpacked data buffer
  * \param src ZL02 - compressed data
  * \param srclen input data size
