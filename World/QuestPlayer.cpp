@@ -143,6 +143,8 @@ void QuestPlayer::resetQuest()
     m_failed = false;
     m_death = false;
 
+    m_currentImage = 0;
+
     for (const std::pair<uint32_t, QM::Parameter>& p : m_quest.parameters)
     {
         float value = QM::eval(toASCII(p.second.start), std::map<uint32_t, float>());
@@ -212,6 +214,9 @@ void QuestPlayer::setLocation(uint32_t location)
     }
 
     Log::debug() << "[Quest] L" << m_currentLocation.id;
+    auto img = m_locationImages.find(m_currentLocation.id);
+    if (img != m_locationImages.end())
+        m_currentImage = (*img).second;
 
     if ((m_possibleTransitions.size() == 1) && m_currentLocation.transitions[m_possibleTransitions.front()].title.empty() &&
             m_currentTransition.description.empty())
@@ -449,6 +454,9 @@ void QuestPlayer::transit(uint32_t num)
         }
 
         Log::debug() << "[Quest] P" << m_currentTransition.id;
+        auto img = m_transitionImages.find(m_currentTransition.id);
+        if (img != m_transitionImages.end())
+            m_currentImage = (*img).second;
 
         m_currentText = substituteValues(m_currentTransition.description);
 
@@ -572,6 +580,17 @@ uint32_t QuestPlayer::currentTransition() const
 bool QuestPlayer::isTransition() const
 {
     return m_transition;
+}
+
+void QuestPlayer::setImages(std::map<uint32_t, uint32_t> locationImages, std::map<uint32_t, uint32_t> transitionImages)
+{
+    m_transitionImages = transitionImages;
+    m_locationImages = locationImages;
+}
+
+uint32_t QuestPlayer::currentImage() const
+{
+    return m_currentImage;
 }
 }
 }

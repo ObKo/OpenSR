@@ -23,6 +23,7 @@
 #include <boost/python/stl_iterator.hpp>
 #include <list>
 #include <vector>
+#include <map>
 
 #define RANGERS_PYTHON_WRAP_FUNC(class, func, ...) { \
         Rangers::Python::GILGuard g; \
@@ -123,6 +124,17 @@ std::list<T> pythonObjectToList(const boost::python::object &l)
 {
     boost::python::stl_input_iterator<T> begin(l), end;
     return std::list<T>(begin, end);
+}
+
+template<class K, class V>
+std::map<K, V> pythonDictToMap(const boost::python::dict &d)
+{
+    boost::python::list keys = d.keys();
+    std::map<K, V> result;
+    boost::python::stl_input_iterator<K> begin(keys), end;
+    for (auto i = begin; i != end; ++i)
+        result[*i] = boost::python::extract<V>(d[*i]);
+    return result;
 }
 
 class GILGuard

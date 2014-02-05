@@ -35,6 +35,11 @@ boost::python::list visibleParameters(const QuestPlayer& self)
     return Rangers::Python::vectorToPythonList(v);
 }
 
+void setImages(QuestPlayer& self, const boost::python::dict &locImages, const boost::python::dict &transImages)
+{
+    self.setImages(Rangers::Python::pythonDictToMap<uint32_t, uint32_t>(locImages), Rangers::Python::pythonDictToMap<uint32_t, uint32_t>(transImages));
+}
+
 boost::python::list visibleTransitions(const QuestPlayer& self)
 {
     std::vector<std::tuple<uint32_t, std::wstring, bool> > v = self.visibleTransitions();
@@ -58,6 +63,8 @@ void exportQuestPlayer()
     .add_property("currentLocation", &QuestPlayer::currentLocation)
     .add_property("currentTransition", &QuestPlayer::currentTransition)
     .add_property("isTransition", &QuestPlayer::isTransition)
+    .add_property("currentImage", &QuestPlayer::currentImage)
+    .def("setImages", &setImages)
     .def("transit", &QuestPlayer::transit)
     .def("loadQuest", &QuestPlayer::loadQuest)
     .def("resetQuest", &QuestPlayer::resetQuest);

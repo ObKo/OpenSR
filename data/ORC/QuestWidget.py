@@ -30,6 +30,7 @@ class QuestWidget(ScriptWidget, ActionListener):
         self.image = None
         self.questID = questID
         self.questFile = resources.datRoot()['PlanetQuest']['PlanetQuest'][questID].value.replace('\\', '/')
+        
         player.loadQuest(self.questFile)
         self.loadImages()
         
@@ -108,14 +109,7 @@ class QuestWidget(ScriptWidget, ActionListener):
         
         self.paramLabel.text = "\n".join(player.visibleParameters) 
         
-        newImage = ""
-                
-        if player.isTransition:
-            if player.currentTransition in self.transImages:
-                newImage = self.transImages[player.currentTransition]
-        else:
-            if player.currentLocation in self.locImages:
-                newImage = self.locImages[player.currentLocation]
+        newImage = "DATA/PQI/" + self.images[player.currentImage] + ".jpg"
                 
         if newImage != "":
 
@@ -129,18 +123,25 @@ class QuestWidget(ScriptWidget, ActionListener):
     def loadImages(self):
         self.locImages = {}
         self.transImages = {}
+        self.images = []
         pqi = resources.datRoot()['Data']['PQI']
         for r in pqi:
             v = r.name.split(',')
             if v[0] != self.questID:
                 continue
+  
+            img = r.value.replace("Bm.PQI.", "")
+            imgID = len(self.images) 
+            self.images.append(img)                
              
             if v[1] == "P" or v[1] == "PAR":
                 for i in v[2:]:
-                    self.transImages[int(i)] = "DATA/PQI/" + r.value.replace("Bm.PQI.", "") + ".jpg"
+                    self.transImages[int(i)] = imgID
             else:
                 for i in v[2:]:
-                    self.locImages[int(i)] = "DATA/PQI/" + r.value.replace("Bm.PQI.", "") + ".jpg"
+                    self.locImages[int(i)] = imgID
+                    
+        player.setImages(self.locImages, self.transImages)
         
     def dispose(self):
         engine.removeWidget(self)

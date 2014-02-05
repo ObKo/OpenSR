@@ -55,6 +55,10 @@ public:
     bool questFailed() const;
     bool death() const;
 
+    //! Set images for tracking.
+    void setImages(std::map<uint32_t, uint32_t> locationImages, std::map<uint32_t, uint32_t> transitionImages);
+    uint32_t currentImage() const;
+
 private:
     void applyModifier(const QM::Modifier &m);
     bool checkCondition(const QM::Transition::Condition &c) const;
@@ -84,6 +88,10 @@ private:
     std::map<uint32_t, int32_t> m_locationDescriptionsCount;
     std::list<uint32_t> m_possibleTransitions;
     std::list<uint32_t> m_alwaysVisibleTransitions;
+
+    std::map<uint32_t, uint32_t> m_locationImages;
+    std::map<uint32_t, uint32_t> m_transitionImages;
+    uint32_t m_currentImage;
 };
 
 }
