@@ -34,6 +34,7 @@ uint32_t crc32(uint8_t *data, uint32_t size)
 
 void printHelp()
 {
+    std::cout << "OpenSR DAT File Converter" << std::endl;
     std::cout << "Usage: opensr-dat-convert <command> <in_file> <out_file>" << std::endl;
     std::cout << "<command>:" << std::endl;
     std::cout << "  d - decrypt file" << std::endl;
