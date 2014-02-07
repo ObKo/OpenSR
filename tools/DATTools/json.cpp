@@ -20,6 +20,7 @@
 #include <iostream>
 #include <fstream>
 #include <json/writer.h>
+#include <json/reader.h>
 
 #include <OpenSR/libRanger.h>
 
@@ -51,12 +52,43 @@ void record2JSON(const Rangers::DATRecord& record, Json::Value& json)
     }
 }
 
+void JSON2Record(Rangers::DATRecord& record, const Json::Value& json)
+{
+    if (json.isObject())
+    {
+        record.type = Rangers::DATRecord::NODE;
+        for (const std::string& id : json.getMemberNames())
+        {
+            Rangers::DATRecord child;
+            child.name = Rangers::fromUTF8(id.c_str());
+            JSON2Record(child, json[id]);
+            record.add(child);
+        }
+    }
+    else if (json.isArray())
+    {
+        record.type = Rangers::DATRecord::ARRAY;
+        for (const Json::Value& c : json)
+        {
+            Rangers::DATRecord child;
+            JSON2Record(child, c);
+            record.add(child);
+        }
+    }
+    else
+    {
+        record.type = Rangers::DATRecord::VALUE;
+        record.value = Rangers::fromUTF8(json.asString().c_str());
+    }
+}
+
 void printHelp()
 {
     std::cout << "OpenSR DAT<->JSON Tool" << std::endl;
     std::cout << "Usage: opensr-dat-json <command> <in_file> <out_file>" << std::endl;
     std::cout << "<command>:" << std::endl;
-    std::cout << "  d2j - convert (decrypted) dat file to JSON" << std::endl;
+    std::cout << "  d2j - convert (decrypted) DAT file to JSON" << std::endl;
+    std::cout << "  j2d - convert JSON file to DAT file" << std::endl;
 }
 
 int main(int argc, char **argv)
@@ -69,7 +101,7 @@ int main(int argc, char **argv)
 
     std::string  cmd = argv[1];
 
-    if (cmd != "d2j")
+    if (cmd != "d2j" && cmd != "j2d")
     {
         std::cerr << "Invalid command: " << cmd << std::endl;
         printHelp();
@@ -96,6 +128,15 @@ int main(int argc, char **argv)
 
         Json::StyledStreamWriter w;
         w.write(outf, jsonRoot);
+    }
+    else if (cmd == "j2d")
+    {
+        Json::Reader reader;
+        Json::Value root;
+        reader.parse(inf, root);
+        Rangers::DATRecord datRoot;
+        JSON2Record(datRoot, root);
+        Rangers::saveDAT(outf, datRoot);
     }
 
     inf.close();

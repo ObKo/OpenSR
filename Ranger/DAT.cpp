@@ -40,6 +40,18 @@ std::wstring readWideString(std::istream &stream)
     return std::wstring();
 }
 
+void writeWideString(std::ostream &stream, const std::wstring& value)
+{
+    for (wchar_t c : value)
+    {
+        uint16_t ucs2 = c;
+        stream.write((char*)&ucs2, 2);
+    }
+
+    uint16_t nullterm = 0;
+    stream.write((char*)&nullterm, 2);
+}
+
 DATRecord::iterator binary_find(std::vector<DATRecord> &r, const std::wstring& key)
 {
     DATRecord dummy;
@@ -70,6 +82,87 @@ DATRecord::const_iterator binary_find(const std::vector<DATRecord> &r, const std
     else
         return r.end(); // not found
 }
+}
+
+/*!
+ * Write recursively key-value tree to *.dat file.
+ * \param stream output stream
+ * \param node current node
+ */
+void writeDATTree(std::ostream &stream, const DATRecord& node)
+{
+    if (node.type == DATRecord::NODE)
+    {
+        uint32_t count = 0;
+        uint8_t isTree = 0;
+        for (const DATRecord& c : node)
+        {
+            if (c.type != DATRecord::VALUE)
+            {
+                isTree = 1;
+                if (c.type == DATRecord::ARRAY)
+                    count += c.size() - 1;
+            }
+        }
+        count += node.size();
+        stream.write((char*)&isTree, 1);
+        stream.write((char*)&count, 4);
+
+        if (isTree)
+        {
+            for (const DATRecord& c : node)
+            {
+                uint32_t index = 0;
+                uint32_t arrayCount = 1;
+                uint8_t isText = 1;
+                if (c.type != DATRecord::VALUE)
+                    isText = 2;
+                if (c.type != DATRecord::ARRAY)
+                {
+                    stream.write((char*)&index, 4);
+                    stream.write((char*)&arrayCount, 4);
+                    stream.write((char*)&isText, 1);
+                    writeWideString(stream, c.name);
+                }
+                writeDATTree(stream, c);
+            }
+        }
+        else
+        {
+            for (const DATRecord& c : node)
+            {
+                uint8_t isText = 1;
+                stream.write((char*)&isText, 1);
+                writeWideString(stream, c.name);
+                writeDATTree(stream, c);
+            }
+        }
+    }
+    else if (node.type == DATRecord::ARRAY)
+    {
+        uint32_t count = node.size();
+        uint32_t i = 0;
+        for (const DATRecord& c : node)
+        {
+            uint32_t index = i;
+            uint32_t arrayCount = 0;
+            uint8_t isText = 1;
+            if (i == 0)
+                arrayCount = count;
+            if (c.type != DATRecord::VALUE)
+                isText = 2;
+            stream.write((char*)&index, 4);
+            stream.write((char*)&arrayCount, 4);
+            stream.write((char*)&isText, 1);
+            writeWideString(stream, node.name);
+            writeDATTree(stream, c);
+            i++;
+        }
+    }
+    else
+    {
+        writeWideString(stream, node.value);
+    }
 }
 
 /*!
@@ -189,6 +282,16 @@ DATRecord loadDAT(std::istream &stream)
         readDATTree(stream, root);
     }
     return root;
+}
+
+/*!
+ * Save *.dat file.
+ * \param stream - output stream (uncompressed)
+ * \param root root node
+ */
+void saveDAT(std::ostream &stream, const DATRecord& root)
+{
+    writeDATTree(stream, root);
 }
 
 DATRecord::DATRecord(Type type , const std::wstring& name, const std::wstring& value):

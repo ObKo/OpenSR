@@ -418,6 +418,11 @@ LIBRANGER_API void readDATTree(std::istream &stream, DATRecord& node);
 //! Load DAT file
 LIBRANGER_API DATRecord loadDAT(std::istream &stream);
 
+//! Write key-value DAT tree to stream
+LIBRANGER_API void writeDATTree(std::ostream &stream, const DATRecord& node);
+//! Save DAT file
+LIBRANGER_API void saveDAT(std::ostream &stream, const DATRecord& root);
+
 //! Load JPEG file into memory
 LIBRANGER_API JPEGFrame loadJPEG(std::istream &stream);
 }
