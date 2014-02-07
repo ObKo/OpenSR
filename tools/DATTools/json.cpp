@@ -21,6 +21,7 @@
 #include <fstream>
 #include <json/writer.h>
 #include <json/reader.h>
+#include <dirent.h>
 
 #include <OpenSR/libRanger.h>
 
@@ -85,10 +86,12 @@ void JSON2Record(Rangers::DATRecord& record, const Json::Value& json)
 void printHelp()
 {
     std::cout << "OpenSR DAT<->JSON Tool" << std::endl;
-    std::cout << "Usage: opensr-dat-json <command> <in_file> <out_file>" << std::endl;
+    std::cout << "Usage: opensr-dat-json <command> <in> <out>" << std::endl;
     std::cout << "<command>:" << std::endl;
     std::cout << "  d2j - convert (decrypted) DAT file to JSON" << std::endl;
+    std::cout << "  d2jm - convert (decrypted) DAT file to multiple JSON files. out - output dir" << std::endl;
     std::cout << "  j2d - convert JSON file to DAT file" << std::endl;
+    std::cout << "  j2d - convert multiple JSON file to DAT file. in - input dir" << std::endl;
 }
 
 int main(int argc, char **argv)
@@ -100,24 +103,34 @@ int main(int argc, char **argv)
     }
 
     std::string  cmd = argv[1];
+    std::ifstream inf;
+    std::ofstream outf;
 
-    if (cmd != "d2j" && cmd != "j2d")
+    if (cmd != "d2j" && cmd != "d2jm" && cmd != "j2d" && cmd != "j2dm")
     {
         std::cerr << "Invalid command: " << cmd << std::endl;
         printHelp();
         return -1;
     }
-    std::ifstream inf(argv[2], std::ios_base::in | std::ios_base::binary);
-    if (!inf)
+
+    if (cmd != "j2dm")
     {
-        std::cerr << "Cannot open input file" << std::endl;
-        return -1;
+        inf.open(argv[2], std::ios_base::in | std::ios_base::binary);
+        if (!inf)
+        {
+            std::cerr << "Cannot open input file" << std::endl;
+            return -1;
+        }
     }
-    std::ofstream outf(argv[3], std::ios_base::out | std::ios_base::binary);
-    if (!outf)
+
+    if (cmd != "d2jm")
     {
-        std::cerr << "Cannot open output file" << std::endl;
-        return -1;
+        outf.open(argv[3], std::ios_base::out | std::ios_base::binary);
+        if (!outf)
+        {
+            std::cerr << "Cannot open output file" << std::endl;
+            return -1;
+        }
     }
 
     if (cmd == "d2j")
@@ -138,9 +151,69 @@ int main(int argc, char **argv)
         JSON2Record(datRoot, root);
         Rangers::saveDAT(outf, datRoot);
     }
+    else if (cmd == "d2jm")
+    {
+        Rangers::DATRecord datRoot = Rangers::loadDAT(inf);
+        Json::Value jsonRoot;
+        record2JSON(datRoot, jsonRoot);
+        Json::StyledStreamWriter w;
 
-    inf.close();
-    outf.close();
+        for (const std::string& id : jsonRoot.getMemberNames())
+        {
+            outf.open(std::string(argv[3]) + "/" + id + ".json", std::ios_base::out | std::ios_base::binary);
+            if (!outf)
+            {
+                std::cerr << "Cannot open output file: " << std::string(argv[3]) + "/" + id + ".json" << std::endl;
+                return -1;
+            }
+            w.write(outf, jsonRoot[id]);
+            outf.close();
+        }
+    }
+    else if (cmd == "j2dm")
+    {
+        DIR *dp = opendir(argv[2]);
+        dirent *ep;
+
+        if (dp == 0)
+        {
+            std::cerr << "Cannot open input directory" << std::endl;
+            return -1;
+        }
+
+        Json::Value jsonRoot(Json::objectValue);
+        Json::Reader reader;
+
+        while ((ep = readdir(dp)) != 0)
+        {
+            if (ep->d_type != DT_REG)
+                continue;
+
+            if (Rangers::suffix(ep->d_name) != "json")
+                continue;
+
+            std::string id = Rangers::toUTF8(Rangers::fromLocal(Rangers::basename(ep->d_name).c_str()));
+            std::string file = std::string(argv[2]) + "/" + ep->d_name;
+
+            inf.open(file, std::ios_base::in | std::ios_base::binary);
+            if (!inf)
+            {
+                std::cerr << "Cannot open input file: " << file << std::endl;
+                return -1;
+            }
+            reader.parse(inf, jsonRoot[id]);
+            inf.close();
+        }
+        closedir(dp);
+        Rangers::DATRecord datRoot;
+        JSON2Record(datRoot, jsonRoot);
+        Rangers::saveDAT(outf, datRoot);
+    }
+
+    if (inf.is_open())
+        inf.close();
+    if (outf.is_open())
+        outf.close();
 
     return 0;
 }
