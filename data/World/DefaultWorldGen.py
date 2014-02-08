@@ -1,5 +1,6 @@
 from OpenSR.World import WorldManager, WorldGenHook, PlanetarySystem, DesertPlanet, \
                          HabitablePlanet, Point, LandContext, Asteroid
+from OpenSR.Engine import textHash32
 import math
 
 world = WorldManager.instance()
@@ -34,7 +35,7 @@ class DefaultWorldGen(WorldGenHook):
         
         context = LandContext()
         world.addObject(context)
-        context.race = race.id
+        context.race = textHash32(race.id)
         if relation:
             planet.landContext().relation = relation
     
@@ -77,7 +78,7 @@ class DefaultWorldGen(WorldGenHook):
         system = self.genPlanetarySystem('Solar', 2000.0, 'solar', Point(0.0, 0.0))
         
         self.genDesertPlanet(system, 600.0, 50.0, 'Mercur', 0.0, math.pi * 2.0 / 87.0, 'mercur')
-        self.genHabitablePlanet(system, 450.0, 75.0, 'Earth', 1.0, math.pi * 2.0 / 365.0, 'earth', 1000000, races.race('human'))
+        self.genHabitablePlanet(system, 450.0, 75.0, 'Earth', 1.0, math.pi * 2.0 / 365.0, 'earth', 1000000, races.race('People'))
         self.genDesertPlanet(system, 800.0, 100.0, 'Saturn', math.pi, math.pi * 2.0 / 100.0, 'saturn')
         self.genAsteroid(system, 1000.0, 500.0, 20.0, 0.0, 0.0, 100.0, '00')   
         self.genAsteroid(system, 1500.0, 700.0, 10.0, 100.0, 0.0, 100.0, '01')

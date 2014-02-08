@@ -62,11 +62,11 @@ class RacesFactory: public ResourceObjectManager::ResourceObjectFactory
                 continue;
 
             boost::shared_ptr<Race> race = boost::shared_ptr<Race>(new Race());
-            race->id = textHash32(s);
+            race->id = s;
             race->icon = boost::dynamic_pointer_cast<TextureRegionDescriptor>(manager.loadObject(r.get("icon", Json::Value()), "texture"));
             race->name = r.get("name", "").asString();
             race->invader = false;
-            race->relations[race->id] = 1.0f;
+            race->relations[textHash32(race->id)] = 1.0f;
 
             result->races[s] = race;
         }
@@ -254,7 +254,8 @@ bool Race::deserialize(std::istream& stream)
     if (sig != RACE_SIGNATURE)
         return false;
 
-    stream.read((char*)&id, 4);
+    if (!WorldHelper::deserializeString(id, stream))
+        return false;
 
     if (!stream.good())
         return false;
@@ -294,7 +295,9 @@ bool Race::deserialize(std::istream& stream)
 bool Race::serialize(std::ostream& stream) const
 {
     stream.write((const char*)&RACE_SIGNATURE, 4);
-    stream.write((const char*)&id, 4);
+
+    if (!WorldHelper::serializeString(id, stream))
+        return false;
 
     if (!stream.good())
         return false;
@@ -357,7 +360,7 @@ bool RaceManager::deserialize(std::istream& stream)
         if (!r->deserialize(stream))
             return false;
 
-        m_races[r->id] = r;
+        m_races[textHash32(r->id)] = r;
     }
     return true;
 }

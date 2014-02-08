@@ -147,6 +147,7 @@ void exportRanger()
         .value("NODE", DATRecord::NODE)
         .value("ARRAY", DATRecord::ARRAY);
     }
+    boost::python::def("textHash32", (uint32_t (*)(const std::string&))&textHash32);
 }
 }
 }

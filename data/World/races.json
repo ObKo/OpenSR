@@ -3,42 +3,42 @@
     
     "races":
     {
-        "human":
+        "People":
         {
             "name": "Humans",
             "icon": {"texture": "DATA/Race/2EmPeople.png"}
         },
-        "maloq":
+        "Maloc":
         {
             "name": "Maloq",
             "icon": {"texture": "DATA/Race/2EmMaloc.png"}
         },
-        "faeyan":
+        "Fei":
         {
             "name": "Faeyan",
             "icon": {"texture": "DATA/Race/2EmFei.png"}
         },
-        "gaal":
+        "Gaal":
         {
             "name": "Gaal",
             "icon": {"texture": "DATA/Race/2EmGaal.png"}
         },
-        "peleng":
+        "Peleng":
         {
             "name": "Peleng",
             "icon": {"texture": "DATA/Race/2EmPeleng.png"}
         },
-        "blazer":
+        "Blazer":
         {
             "name": "Blazer",
             "icon": {"texture": "DATA/Race/2EmBlazer.png"}
         },
-        "keller":
+        "Keller":
         {
             "name": "Keller",
             "icon": {"texture": "DATA/Race/2EmKeller.png"}
         },
-        "terron":
+        "Terron":
         {
             "name": "Terron",
             "icon": {"texture": "DATA/Race/2EmTerron.png"}
@@ -47,41 +47,41 @@
     
     "relations":
     {
-        "human:maloq": 0.0,
-        "human:faeyan": 0.75,
-        "human:gaal": 0.5,
-        "human:peleng": 0.0,
-        "human:blazer": -1.0,
-        "human:keller": -1.0,
-        "human:terron": -1.0,
+        "People:Maloc": 0.0,
+        "People:Fei": 0.75,
+        "People:Gaal": 0.5,
+        "People:Peleng": 0.0,
+        "People:Blazer": -1.0,
+        "People:Keller": -1.0,
+        "People:Terron": -1.0,
             
-        "maloq:faeyan": 0.0,
-        "maloq:gaal": -0.25,
-        "maloq:peleng": 0.0,
-        "maloq:blazer": -1.0,
-        "maloq:keller": -1.0,
-        "maloq:terron": -1.0,
+        "Maloc:Fei": 0.0,
+        "Maloc:Gaal": -0.25,
+        "Maloc:Peleng": 0.0,
+        "Maloc:Blazer": -1.0,
+        "Maloc:Keller": -1.0,
+        "Maloc:Terron": -1.0,
           
-        "faeyan:gaal": 0.5,
-        "faeyan:peleng": -0.25,
-        "faeyan:blazer": -1.0,
-        "faeyan:keller": -1.0,
-        "faeyan:terron": -1.0,
+        "Fei:Gaal": 0.5,
+        "Fei:Peleng": -0.25,
+        "Fei:Blazer": -1.0,
+        "Fei:Keller": -1.0,
+        "Fei:Terron": -1.0,
             
-        "gaal:peleng": -0.5,
-        "gaal:blazer": -1.0,
-        "gaal:keller": -1.0,
-        "gaal:terron": -1.0,
+        "Gaal:Peleng": -0.5,
+        "Gaal:Blazer": -1.0,
+        "Gaal:Keller": -1.0,
+        "Gaal:Terron": -1.0,
             
-        "peleng:blazer": -1.0,
-        "peleng:keller": -1.0,
-        "peleng:terron": -1.0,
+        "Peleng:Blazer": -1.0,
+        "Peleng:Keller": -1.0,
+        "Peleng:Terron": -1.0,
             
-        "blazer:keller": -1.0,
-        "blazer:terron": -1.0,
+        "Blazer:Keller": -1.0,
+        "Blazer:Terron": -1.0,
             
-        "keller:terron": -1.0
+        "Keller:Terron": -1.0
     },
         
-    "invaders": ["blazer", "keller", "terron"]
+    "invaders": ["Blazer", "Keller", "Terron"]
 }

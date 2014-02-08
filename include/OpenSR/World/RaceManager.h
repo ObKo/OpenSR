@@ -30,7 +30,7 @@ namespace World
 {
 struct RANGERS_WORLD_API Race
 {
-    uint32_t id;
+    std::string id;
     std::string name;
     boost::shared_ptr<TextureRegionDescriptor> icon;
     bool invader;

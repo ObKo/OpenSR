@@ -355,7 +355,7 @@ void InfoWidget::showPlanet(boost::shared_ptr<Planet> planet)
 
         if (race)
         {
-            l = boost::shared_ptr<Label>(new Label(_(race->name, "", "OpenSR-World"), m_font));
+            l = boost::shared_ptr<Label>(new Label(_(race->name, "Race.Name." + race->id, "OpenSR-World"), m_font));
             if (race->icon)
             {
                 m_raceIconSprite = boost::shared_ptr<Sprite>(new Sprite(race->icon));
