@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2014 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2014 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,22 +16,24 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef RANGERS_FONT_H
-#define RANGERS_FONT_H
+#ifndef RANGERS_FT_FONT_H
+#define RANGERS_FT_FONT_H
 
-#include "OpenSR/config.h"
+#include "OpenSR/Font.h"
 
 #include <string>
-#include <boost/shared_ptr.hpp>
+#include <boost/shared_array.hpp>
+#include <ft2build.h>
+#include FT_FREETYPE_H
 
 namespace Rangers
 {
 class Texture;
-class RANGERS_ENGINE_API Font
+class RANGERS_ENGINE_API FTFont: public Font
 {
 public:
-    Font();
-    virtual ~Font();
+    FTFont(const char *data, size_t dataSize, int size, bool antialiased = true);
+    virtual ~FTFont();
 
     virtual boost::shared_ptr<Texture> renderText(const std::string& text, int width = 0) const;
     virtual boost::shared_ptr<Texture> renderText(const std::wstring& text, int width = 0) const;
@@ -41,10 +43,12 @@ public:
     virtual int calculateStringWidth(const std::wstring::const_iterator& first, const std::wstring::const_iterator& last) const;
     virtual int maxChars(const std::wstring::const_iterator& first, const std::wstring::const_iterator& last, int width) const;
 
-    int size() const;
+    bool antialiased() const;
 
-protected:
-    int m_fontSize;
+private:
+    FT_Face m_fontFace;
+    boost::shared_array<char> m_fontData;
+    bool m_antialiased;
 };
 }
 

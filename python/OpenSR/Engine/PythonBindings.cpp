@@ -63,6 +63,7 @@ void exportAnimatedTexture();
 void exportLabelWidget();
 void exportResourceObjectManager();
 void exportRanger();
+void exportFTFont();
 
 void pythonError(const std::wstring& text)
 {
@@ -136,6 +137,7 @@ BOOST_PYTHON_MODULE(_Engine)
     Rangers::Python::exportLabelWidget();
     Rangers::Python::exportResourceObjectManager();
     Rangers::Python::exportRanger();
+    Rangers::Python::exportFTFont();
 
     boost::python::def("pythonError", &Rangers::Python::pythonError);
     boost::python::def("pythonOut", &Rangers::Python::pythonOut);

@@ -10,6 +10,7 @@ SET(ENGINE_HEADERS
     Engine.h
     FSAdapter.h
     Font.h
+    FTFont.h
     GAISprite.h
     Label.h
     LabelWidget.h

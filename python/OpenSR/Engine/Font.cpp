@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2013 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2014 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -27,12 +27,10 @@ namespace Python
 void exportFont()
 {
     using namespace boost::python;
-    class_<Font, boost::shared_ptr<Font> >("Font", init<const std::wstring&, int, bool>())
-    .def(init<const std::wstring&, int>())
+    class_<Font, boost::shared_ptr<Font> >("Font", boost::python::no_init)
     .def("renderText", (boost::shared_ptr<Texture> (Font::*)(const std::wstring&, int) const)&Font::renderText)
     .def("renderColoredText", (boost::shared_ptr<Texture> (Font::*)(const std::wstring&, int, int, int) const)&Font::renderColoredText)
     .add_property("size", &Font::size)
-    .add_property("antialiased", &Font::antialiased)
     .def("calculateStringWidth", &Font::calculateStringWidth)
     .def("maxChars", &Font::maxChars);
 }

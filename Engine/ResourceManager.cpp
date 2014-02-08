@@ -30,7 +30,7 @@
 #include "OpenSR/Texture.h"
 #include "OpenSR/AnimatedTexture.h"
 #include "OpenSR/Log.h"
-#include "OpenSR/Font.h"
+#include "OpenSR/FTFont.h"
 #include "OpenSR/AnimatedSprite.h"
 #include "OpenSR/Object.h"
 #include "OpenSR/GAISprite.h"
@@ -406,6 +406,11 @@ boost::shared_ptr<AnimatedTexture> ResourceManager::loadAnimation(const std::wst
     return boost::shared_ptr<AnimatedTexture>();
 }
 
+boost::shared_ptr< Font > ResourceManager::loadFont(const FontDescriptor& desc)
+{
+    return loadFont(desc.path, desc.size, desc.antialiasing);
+}
+
 boost::shared_ptr< Font > ResourceManager::loadFont(const std::wstring& name, int size, bool antialiased)
 {
     wostringstream s(name);
@@ -433,7 +438,7 @@ boost::shared_ptr< Font > ResourceManager::loadFont(const std::wstring& name, in
         char *data = new char[dataSize];
         s->read(data, dataSize);
 
-        Font *f = new Font(data, dataSize, size, antialiased);
+        Font *f = new FTFont(data, dataSize, size, antialiased);
         delete[] data;
         m_fonts[mapName] = boost::shared_ptr<Font>(f);
         return m_fonts[mapName];

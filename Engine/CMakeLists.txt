@@ -8,6 +8,7 @@ SET(SOURCES
     Label.cpp
     LabelWidget.cpp
     Font.cpp
+    FTFont.cpp
     AnimatedTexture.cpp
     AnimatedSprite.cpp
     Widget.cpp

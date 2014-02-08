@@ -20,6 +20,7 @@ SET(PYTHON_ENGINE_SOURCES
     Action.cpp
     ActionListener.cpp
     Font.cpp
+    FTFont.cpp
     ResourceManager.cpp
     Shader.cpp
     ShaderProgram.cpp
