@@ -1,13 +1,11 @@
 from OpenSR.Engine import Engine, ResourceManager, SoundManager, ScriptWidget, ActionListener, \
                           Sprite, NinePatch, WidgetNode, Button, Label, LineEdit, CheckBox, \
                           ScrollArea, Action, Color
+from OpenSR.Engine import tr as _
 import OpenSR.ORC.StartMenu
-from gettext import gettext
 
 import sys
 import math
-
-_ = gettext
 
 engine = Engine.instance()
 resources = ResourceManager.instance()
@@ -85,7 +83,7 @@ class SettingsWidget(ScriptWidget, ActionListener):
 
         self.graphicsButton = Button("DATA/FormOptions2/2PageN.gi", "DATA/FormOptions2/2PageA.gi", "DATA/FormOptions2/2PageD.gi")
         self.graphicsButton.font = engine.coreFont
-        self.graphicsButton.text = _("Graphics")
+        self.graphicsButton.text = _("Graphics", "FormCfgSettings.GGraph")
         self.graphicsButton.color = Color(0.75, 0.85, 1.0)
         self.graphicsButton.position = (0, 0)
         self.setSoundsDefault(self.graphicsButton)

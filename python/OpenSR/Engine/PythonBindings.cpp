@@ -18,6 +18,7 @@
 
 #include <boost/python.hpp>
 #include <OpenSR/Log.h>
+#include <OpenSR/Utils.h>
 #include <OpenSR/PythonBindings.h>
 #include <OpenSR/libRanger.h>
 
@@ -94,6 +95,8 @@ void pythonOut(const std::wstring& text)
 }
 }
 
+BOOST_PYTHON_FUNCTION_OVERLOADS(trOverloads, Rangers::_, 1, 3)
+
 BOOST_PYTHON_MODULE(_Engine)
 {
     Rangers::Python::exportTypes();
@@ -139,4 +142,5 @@ BOOST_PYTHON_MODULE(_Engine)
     boost::python::def("execPythonScript", (void (*)(const std::wstring&, const boost::python::object&))&Rangers::execPythonScript);
     boost::python::def("execPythonLine", &Rangers::execPythonLine);
     boost::python::def("execPythonModule", &Rangers::execPythonModule);
+    boost::python::def("tr", &Rangers::_, trOverloads(boost::python::args("text", "datName", "gettextDomain")));
 }

@@ -19,19 +19,37 @@
 #include "OpenSR/Utils.h"
 
 #include <OpenSR/libRanger.h>
+#include <OpenSR/ResourceManager.h>
 
 #include <libintl.h>
 #include <string>
 
 namespace Rangers
 {
-std::wstring _(const std::string& text, const std::string& domain)
+std::wstring _(const std::string& text, const std::string& datName, const std::string& gettextDomain)
 {
-    return fromLocal(dgettext(domain.c_str(), text.c_str()));
-}
+    char *gt;
+    if (gettextDomain.empty())
+        gt = gettext(text.c_str());
+    else
+        gt = dgettext(gettextDomain.c_str(), text.c_str());
 
-std::wstring _(const std::string& text)
-{
-    return fromLocal(gettext(text.c_str()));
+    if (text != gt)
+        return fromLocal(text.c_str());
+
+    boost::shared_ptr<DATRecord> root = ResourceManager::instance().datRoot();
+    std::vector<std::wstring> path = split(fromASCII(datName.c_str()), L'.');
+
+    const DATRecord* current = root.get();
+    for (const std::wstring& id : path)
+    {
+        DATRecord::const_iterator i = current->find(id);
+        if (i == current->end())
+            return fromASCII(text.c_str());
+
+        current = i.operator->();
+    }
+
+    return current->value;
 }
 }

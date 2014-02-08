@@ -1,9 +1,5 @@
 from OpenSR.Engine import Engine, ResourceManager
-
-import gettext
-
-_ = gettext.gettext
-gettext.textdomain('OpenSR')
+from OpenSR.Engine import tr as _
 
 engine = Engine.instance()
 resources = ResourceManager.instance()

@@ -24,8 +24,7 @@
 
 namespace Rangers
 {
-RANGERS_ENGINE_API std::wstring _(const std::string& text, const std::string& domain);
-RANGERS_ENGINE_API std::wstring _(const std::string& text);
+RANGERS_ENGINE_API std::wstring _(const std::string& text, const std::string& datName = std::string(), const std::string& gettextDomain = std::string());
 };
 
 #endif

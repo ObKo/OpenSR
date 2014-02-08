@@ -279,11 +279,11 @@ void InfoWidget::showAsteroid(boost::shared_ptr<Asteroid> asteroid)
 {
     clear();
 
-    m_caption->setText(_("Asteroid", "OpenSR-World"));
+    m_caption->setText(_("Asteroid", "Asteroid.Name", "OpenSR-World"));
     m_iconSprite = boost::shared_ptr<Sprite>(new Sprite(WorldManager::instance().styleManager().asteroidStyle(asteroid->style())->sprite));
     addChild(m_iconSprite);
 
-    boost::shared_ptr<Label> l = boost::shared_ptr<Label>(new Label(_("Speed:", "OpenSR-World") + L" ", m_font));
+    boost::shared_ptr<Label> l = boost::shared_ptr<Label>(new Label(_("Speed:", "", "OpenSR-World") + L" ", m_font));
     l->setColor(m_labelColor);
     m_infoWidget.push_back(l);
     addChild(l);
@@ -308,11 +308,11 @@ void InfoWidget::showPlanet(boost::shared_ptr<Planet> planet)
 {
     clear();
 
-    m_caption->setText(_(planet->name(), "OpenSR-World"));
+    m_caption->setText(_("Planet", "Planet.Name", "OpenSR-World") + L" " + _(planet->name(), "", "OpenSR-World"));
     m_iconSprite = boost::shared_ptr<Sprite>(new Sprite(WorldManager::instance().planetManager().getPlanetImage(planet->style(), m_iconSize)));
     addChild(m_iconSprite);
 
-    boost::shared_ptr<Label> l = boost::shared_ptr<Label>(new Label(_("Radius:", "OpenSR-World") + L" ", m_font));
+    boost::shared_ptr<Label> l = boost::shared_ptr<Label>(new Label(_("Radius:", "", "OpenSR-World") + L" ", m_font));
     l->setColor(m_labelColor);
     m_infoWidget.push_back(l);
     addChild(l);
@@ -329,7 +329,7 @@ void InfoWidget::showPlanet(boost::shared_ptr<Planet> planet)
 
     if (boost::shared_ptr<HabitablePlanet> hPlanet = boost::dynamic_pointer_cast<HabitablePlanet>(planet))
     {
-        l = boost::shared_ptr<Label>(new Label(_("Population:", "OpenSR-World") + L" ", m_font));
+        l = boost::shared_ptr<Label>(new Label(_("Population:", "", "OpenSR-World") + L" ", m_font));
         l->setColor(m_labelColor);
         m_infoWidget.push_back(l);
         addChild(l);
@@ -343,7 +343,7 @@ void InfoWidget::showPlanet(boost::shared_ptr<Planet> planet)
         addChild(l);
         labelCount++;
 
-        l = boost::shared_ptr<Label>(new Label(_("Race:", "OpenSR-World") + L" ", m_font));
+        l = boost::shared_ptr<Label>(new Label(_("Race:", "", "OpenSR-World") + L" ", m_font));
         l->setColor(m_labelColor);
         m_infoWidget.push_back(l);
         addChild(l);
@@ -355,7 +355,7 @@ void InfoWidget::showPlanet(boost::shared_ptr<Planet> planet)
 
         if (race)
         {
-            l = boost::shared_ptr<Label>(new Label(_(race->name, "OpenSR-World"), m_font));
+            l = boost::shared_ptr<Label>(new Label(_(race->name, "", "OpenSR-World"), m_font));
             if (race->icon)
             {
                 m_raceIconSprite = boost::shared_ptr<Sprite>(new Sprite(race->icon));
@@ -363,7 +363,7 @@ void InfoWidget::showPlanet(boost::shared_ptr<Planet> planet)
             }
         }
         else
-            l = boost::shared_ptr<Label>(new Label(_("Unknown", "OpenSR-World"), m_font));
+            l = boost::shared_ptr<Label>(new Label(_("Unknown", "", "OpenSR-World"), m_font));
 
         l->setColor(m_color);
         m_infoWidget.push_back(l);
@@ -387,7 +387,7 @@ void InfoWidget::showSystem(boost::shared_ptr<PlanetarySystem> system)
     if (!system)
         return;
 
-    m_caption->setText(_(system->name(), "OpenSR-World"));
+    m_caption->setText(_(system->name(), "", "OpenSR-World"));
 
     //FIXME: AnimatedSprite/Sprite
     boost::shared_ptr<SystemStyle> style = WorldManager::instance().styleManager().systemStyle(system->style());
@@ -407,7 +407,7 @@ void InfoWidget::showSystem(boost::shared_ptr<PlanetarySystem> system)
         boost::shared_ptr<SystemObject> object = *i;
         if (boost::shared_ptr<Planet> planet = boost::dynamic_pointer_cast<Planet>(object))
         {
-            boost::shared_ptr<Label> l = boost::shared_ptr<Label>(new Label(_(planet->name(), "OpenSR-World"), m_font));
+            boost::shared_ptr<Label> l = boost::shared_ptr<Label>(new Label(_(planet->name(), "", "OpenSR-World"), m_font));
             l->setColor(m_color);
             m_infoWidget.push_back(l);
             addChild(l);
