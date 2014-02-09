@@ -127,7 +127,6 @@ AFT loadAFTFont(std::istream &stream)
         result.glyphs[i].height = result.height;
         result.glyphs[i].stride = gHeader.charWidth + gHeader.leftSpace + gHeader.rightSpace;
         result.glyphs[i].width = gHeader.charWidth + gHeader.leftSpace + gHeader.rightSpace;
-        result.glyphs[i].x = gHeader.leftSpace;
         result.glyphs[i].data = 0;
 
         stream.read((char*) & (intLayers[i]), sizeof(AFTLayerHeader));
@@ -138,8 +137,17 @@ AFT loadAFTFont(std::istream &stream)
             intLayers[i].y = 0;
         if (alphaLayers[i].y < 0)
             alphaLayers[i].y = 0;
-        result.glyphs[i].y = std::min(intLayers[i].y, alphaLayers[i].y);
 
+        if (alphaLayers->size)
+        {
+            result.glyphs[i].x = std::min(intLayers[i].x, alphaLayers[i].x);
+            result.glyphs[i].y = std::min(intLayers[i].y, alphaLayers[i].y);
+        }
+        else
+        {
+            result.glyphs[i].x = intLayers[i].x;
+            result.glyphs[i].y = intLayers[i].y;
+        }
     }
 
     for (int i = 0; i < result.glyphCount; i++)

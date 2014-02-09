@@ -21,6 +21,7 @@
 #include "OpenSR/Texture.h"
 
 #include <string.h>
+#include <sstream>
 
 namespace Rangers
 {
@@ -34,6 +35,16 @@ void drawGlyph(const AFTGlyph& glyph, uint32_t x, uint32_t y, uint8_t *target, u
     {
         if (((ry + (i / glyph.width)) * targetWidth + rx + i % glyph.width) < targetWidth * targetHeight)
             target[(ry + (i / glyph.width)) * targetWidth + rx + i % glyph.width] = glyph.data[i];
+    }
+}
+void drawGlyph(const AFTGlyph& glyph, uint32_t x, uint32_t y, uint8_t *target, uint32_t targetWidth, uint32_t targetHeight, uint32_t color)
+{
+    uint32_t rx = x + glyph.x;
+    uint32_t ry = y + glyph.y;
+    for (int i = 0; i < glyph.width * glyph.height; i++)
+    {
+        if (((ry + (i / glyph.width)) * targetWidth + rx + i % glyph.width) < targetWidth * targetHeight)
+            ((uint32_t*)target)[(ry + (i / glyph.width)) * targetWidth + rx + i % glyph.width] = (glyph.data[i] << 24) | (color & 0xFFFFFF);
     }
 }
 }
@@ -94,6 +105,7 @@ int AFTFont::maxChars(const std::wstring::const_iterator& first, const std::wstr
     return last - first;
 }
 
+//TODO: Move common code to Font class
 boost::shared_ptr<Texture> AFTFont::renderText(const std::wstring& t, int wrapWidth) const
 {
     int x = 0;
@@ -203,6 +215,7 @@ boost::shared_ptr<Texture> AFTFont::renderText(const std::wstring& t, int wrapWi
     return boost::shared_ptr<Texture>(texture);
 }
 
+//TODO: Move common code to Font class
 boost::shared_ptr<Texture> AFTFont::renderColoredText(const std::wstring& t, int defaultTextColor, int selectionTextColor, int wrapWidth) const
 {
     int x = 0;
@@ -211,6 +224,9 @@ boost::shared_ptr<Texture> AFTFont::renderColoredText(const std::wstring& t, int
     int width = 0;
     int i;
 
+    std::map<int, unsigned int> colorSelect;
+    unsigned int currentColor = defaultTextColor;
+
     std::wstring text = t;
 
     int pos = 0;
@@ -218,6 +234,35 @@ boost::shared_ptr<Texture> AFTFont::renderColoredText(const std::wstring& t, int
     {
         text.replace(pos, 1, L"    ");
         pos += 4;
+    }
+
+    pos = 0;
+    while ((pos = text.find(L"\\c", pos)) >= 0)
+    {
+        if (text.length() < pos + 3)
+            break;
+
+        if (text[pos + 2] == L'R')
+        {
+            colorSelect[pos] = defaultTextColor;
+            text.erase(pos, 3);
+            continue;
+        }
+        if (text[pos + 2] == L'S')
+        {
+            colorSelect[pos] = selectionTextColor;
+            text.erase(pos, 3);
+            continue;
+        }
+        if (text.length() < pos + 8)
+            break;
+
+        std::wstring colorstring = text.substr(pos + 2, 6);
+        text.erase(pos, 8);
+        std::wistringstream ss(colorstring);
+        int color;
+        ss >> std::hex >> color;
+        colorSelect[pos] = color;
     }
 
     for (i = 0; i < text.length(); i++)
@@ -283,11 +328,15 @@ boost::shared_ptr<Texture> AFTFont::renderColoredText(const std::wstring& t, int
     x = 0;
     int line = 0;
 
-    unsigned char *textureData = new unsigned char[fullWidth * fullHeight];
-    memset(textureData, 0, fullWidth * fullHeight);
+    unsigned char *textureData = new unsigned char[fullWidth * fullHeight * 4];
+    memset(textureData, 0, fullWidth * fullHeight * 4);
 
     for (i = 0; i < text.length(); i++)
     {
+        std::map<int, unsigned int>::const_iterator it;
+        if ((it = colorSelect.find(i)) != colorSelect.end())
+            currentColor = it->second;
+
         if (text.at(i) == '\n')
         {
             x = 0;
@@ -301,12 +350,12 @@ boost::shared_ptr<Texture> AFTFont::renderColoredText(const std::wstring& t, int
 
             AFTGlyph *g = (*charGlyph).second;
 
-            drawGlyph(*g, x, line * m_aft.height, textureData, fullWidth, fullHeight);
+            drawGlyph(*g, x, line * m_aft.height, textureData, fullWidth, fullHeight, currentColor);
 
             x += g->stride;
         }
     }
-    Texture *texture = new Texture(fullWidth, fullHeight, TEXTURE_A8, textureData);
+    Texture *texture = new Texture(fullWidth, fullHeight, TEXTURE_B8G8R8A8, textureData);
     delete[] textureData;
     return boost::shared_ptr<Texture>(texture);
 }

@@ -143,7 +143,7 @@ InteractionWidget::InteractionWidget(const Rect& textRect, const Rect& selection
     m_selectionArea->setPosition(selectionRect.x, selectionRect.y);
 
     boost::shared_ptr<Font> font;
-    if ((m_style->font) && (m_style->font->path != L"") && (m_style->font->size > 0))
+    if ((m_style->font) && (m_style->font->path != L""))
         font = ResourceManager::instance().loadFont(m_style->font->path, m_style->font->size, m_style->font->antialiasing);
     else
         font = Engine::instance().coreFont();
