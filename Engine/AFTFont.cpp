@@ -27,6 +27,32 @@ namespace Rangers
 {
 namespace
 {
+uint32_t blendARGB(uint32_t dst, uint32_t src)
+{
+    uint8_t r, g, b, a;
+
+    uint8_t sa = (src >> 24) & 0xFF;
+    uint8_t sr = (src >> 16) & 0xFF;
+    uint8_t sg = (src >> 8) & 0xFF;
+    uint8_t sb = src & 0xFF;
+
+    uint8_t da = (dst >> 24) & 0xFF;
+    uint8_t dr = (dst >> 16) & 0xFF;
+    uint8_t dg = (dst >> 8) & 0xFF;
+    uint8_t db = dst & 0xFF;
+
+    a = sa + (da * (255 - sa)) / 255;
+
+    if (a == 0)
+        return 0;
+
+    r = ((sr * sa) * 255 + dr * da * (255 - sa)) / a / 255;
+    g = ((sg * sa) * 255 + dg * da * (255 - sa)) / a / 255;
+    b = ((sb * sa) * 255 + db * da * (255 - sa)) / a / 255;
+
+    return (a << 24) | (r << 16) | (g << 8) | b;
+}
+
 void drawGlyph(const AFTGlyph& glyph, uint32_t x, uint32_t y, uint8_t *target, uint32_t targetWidth, uint32_t targetHeight)
 {
     uint32_t rx = x + glyph.x;
@@ -34,7 +60,11 @@ void drawGlyph(const AFTGlyph& glyph, uint32_t x, uint32_t y, uint8_t *target, u
     for (int i = 0; i < glyph.width * glyph.height; i++)
     {
         if (((ry + (i / glyph.width)) * targetWidth + rx + i % glyph.width) < targetWidth * targetHeight)
-            target[(ry + (i / glyph.width)) * targetWidth + rx + i % glyph.width] = glyph.data[i];
+        {
+            uint8_t alpha = target[(ry + (i / glyph.width)) * targetWidth + rx + i % glyph.width];
+            alpha = glyph.data[i] + (alpha * (255 - glyph.data[i])) / 255;
+            target[(ry + (i / glyph.width)) * targetWidth + rx + i % glyph.width] = alpha;
+        }
     }
 }
 void drawGlyph(const AFTGlyph& glyph, uint32_t x, uint32_t y, uint8_t *target, uint32_t targetWidth, uint32_t targetHeight, uint32_t color)
@@ -43,8 +73,9 @@ void drawGlyph(const AFTGlyph& glyph, uint32_t x, uint32_t y, uint8_t *target, u
     uint32_t ry = y + glyph.y;
     for (int i = 0; i < glyph.width * glyph.height; i++)
     {
+        uint32_t bgcolor = ((uint32_t*)target)[(ry + (i / glyph.width)) * targetWidth + rx + i % glyph.width];
         if (((ry + (i / glyph.width)) * targetWidth + rx + i % glyph.width) < targetWidth * targetHeight)
-            ((uint32_t*)target)[(ry + (i / glyph.width)) * targetWidth + rx + i % glyph.width] = (glyph.data[i] << 24) | (color & 0xFFFFFF);
+            ((uint32_t*)target)[(ry + (i / glyph.width)) * targetWidth + rx + i % glyph.width] = blendARGB(bgcolor, (glyph.data[i] << 24) | (color & 0xFFFFFF));
     }
 }
 }

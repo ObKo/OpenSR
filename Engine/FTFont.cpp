@@ -32,6 +32,32 @@ namespace Rangers
 {
 namespace
 {
+uint32_t blendARGB(uint32_t dst, uint32_t src)
+{
+    uint8_t r, g, b, a;
+
+    uint8_t sa = (src >> 24) & 0xFF;
+    uint8_t sr = (src >> 16) & 0xFF;
+    uint8_t sg = (src >> 8) & 0xFF;
+    uint8_t sb = src & 0xFF;
+
+    uint8_t da = (dst >> 24) & 0xFF;
+    uint8_t dr = (dst >> 16) & 0xFF;
+    uint8_t dg = (dst >> 8) & 0xFF;
+    uint8_t db = dst & 0xFF;
+
+    a = sa + (da * (255 - sa)) / 255;
+
+    if (a == 0)
+        return 0;
+
+    r = ((sr * sa) * 255 + dr * da * (255 - sa)) / a / 255;
+    g = ((sg * sa) * 255 + dg * da * (255 - sa)) / a / 255;
+    b = ((sb * sa) * 255 + db * da * (255 - sa)) / a / 255;
+
+    return (a << 24) | (r << 16) | (g << 8) | b;
+}
+
 void drawGlyph(unsigned char *dest, int destwidth, int destheight, int x, int y, int w, int h, int pitch, unsigned char *data, bool antialiased)
 {
     if (antialiased)
@@ -69,10 +95,8 @@ void drawGlyph(unsigned char *dest, int destwidth, int destheight, int x, int y,
             if (((y + i / w) >= destheight) || ((y + i / w) < 0) || (x + i % w < 0) || (x + i % w >= destwidth))
                 continue;
 
-            dest[((y + i / w) * destwidth + x + i % w) * 4 + 0] = (color & 0xff0000) >> 16;
-            dest[((y + i / w) * destwidth + x + i % w) * 4 + 1] = (color & 0xff00) >> 8;
-            dest[((y + i / w) * destwidth + x + i % w) * 4 + 2] = color & 0xff;
-            dest[((y + i / w) * destwidth + x + i % w) * 4 + 3] = data[i] & 0xff;
+            uint32_t bgColor = ((uint32_t*)dest)[((y + i / w) * destwidth + x + i % w)];
+            ((uint32_t*)dest)[((y + i / w) * destwidth + x + i % w)] = blendARGB(bgColor, (data[i] << 24) | (color & 0xFFFFFF));
         }
     }
     else
@@ -83,10 +107,10 @@ void drawGlyph(unsigned char *dest, int destwidth, int destheight, int x, int y,
             if (((y + i / w) >= destheight) || ((y + i / w) < 0) || (x + i % w < 0) || (x + i % w >= destwidth))
                 continue;
 
-            dest[((y + i / w) * destwidth + x + i % w) * 4 + 0] = (color & 0xff0000) >> 16;
-            dest[((y + i / w) * destwidth + x + i % w) * 4 + 1] = (color & 0xff00) >> 8;
-            dest[((y + i / w) * destwidth + x + i % w) * 4 + 2] = color & 0xff;
-            dest[((y + i / w) * destwidth + x + i % w) * 4 + 3] = data[(i / w * pitch) + (i % w) / 8] & (1 << (7 - i % w)) ? 0xff : 0;
+            dest[((y + i / w) * destwidth + x + i % w) * 4 + 1] = (color & 0xff0000) >> 16;
+            dest[((y + i / w) * destwidth + x + i % w) * 4 + 2] = (color & 0xff00) >> 8;
+            dest[((y + i / w) * destwidth + x + i % w) * 4 + 3] = color & 0xff;
+            dest[((y + i / w) * destwidth + x + i % w) * 4 + 0] = data[(i / w * pitch) + (i % w) / 8] & (1 << (7 - i % w)) ? 0xff : 0;
         }
     }
 
@@ -455,7 +479,7 @@ boost::shared_ptr<Texture> FTFont::renderColoredText(const std::wstring& t, int 
             x += m_fontFace->glyph->advance.x >> 6;
         }
     }
-    Texture *texture = new Texture(fullWidth, fullHeight, TEXTURE_R8G8B8A8, textureData);
+    Texture *texture = new Texture(fullWidth, fullHeight, TEXTURE_B8G8R8A8, textureData);
     delete[] textureData;
     return boost::shared_ptr<Texture>(texture);
 }

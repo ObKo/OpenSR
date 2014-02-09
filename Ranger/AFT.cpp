@@ -39,6 +39,44 @@ void drawGlyph(AFTLayerHeader& intLayer, uint8_t *intLayerData, AFTLayerHeader& 
         h = ((uint32_t*)intLayerData)[2];
     }
 
+    if (alphaLayerData)
+    {
+        w = w < ((uint32_t*)alphaLayerData)[1] ? ((uint32_t*)alphaLayerData)[1] : w;
+        h = h < ((uint32_t*)alphaLayerData)[2] ? ((uint32_t*)alphaLayerData)[2] : h;
+    }
+
+    if (alphaLayerData)
+    {
+        uint32_t dx = std::min(intLayer.x, alphaLayer.x);
+        uint32_t dy = std::min(intLayer.y, alphaLayer.y);
+        glyph.x += dx;
+        glyph.y += dy;
+        intLayer.x -= dx;
+        intLayer.y -= dy;
+        alphaLayer.x -= dx;
+        alphaLayer.y -= dy;
+    }
+    else
+    {
+        glyph.x += intLayer.x;
+        glyph.y += intLayer.y;
+        intLayer.x = 0;
+        intLayer.y = 0;
+    }
+
+    if (intLayer.width + intLayer.x > w)
+        w = intLayer.width + intLayer.x;
+
+    if (alphaLayer.width + alphaLayer.x > w)
+        w = alphaLayer.width + alphaLayer.x;
+
+
+    if (intLayer.height + intLayer.y > h)
+        h = intLayer.height + intLayer.y;
+
+    if (alphaLayer.height + alphaLayer.y > h)
+        h = alphaLayer.height + alphaLayer.y;
+
     glyph.data = new uint8_t[w * h];
     memset(glyph.data, 0, w * h);
 
@@ -51,10 +89,10 @@ void drawGlyph(AFTLayerHeader& intLayer, uint8_t *intLayerData, AFTLayerHeader& 
         w = ((uint32_t*)intLayerData)[1];
         h = ((uint32_t*)intLayerData)[2];
         cnt = 0;
-        x = 0;
-        y = 0;
+        x = intLayer.x;
+        y = intLayer.y;
 
-        for (uint32_t i = 0; (i < intLayer.size) && (cnt < count) && (y < h); i++)
+        for (uint32_t i = 0; (i < intLayer.size) && (cnt < count) && ((y - intLayer.y) < h); i++)
         {
             uint8_t b = *(intLayerData + 16 + i);
 
@@ -68,16 +106,16 @@ void drawGlyph(AFTLayerHeader& intLayer, uint8_t *intLayerData, AFTLayerHeader& 
             else if (b & 0x80)
             {
                 uint8_t n = b & 0x7F;
-                for (int j = 0; (j < n) && (i < intLayer.size) && (cnt < count) && (y < h); j++)
+                for (int j = 0; (j < n) && (i < intLayer.size) && (cnt < count) && ((y - intLayer.y) < h); j++)
                 {
                     if ((y * glyph.width + x) < glyph.height * glyph.width)
                         glyph.data[y * glyph.width + x] = 0xFF;
 
                     x++;
-                    if (x >= w)
+                    if (x - intLayer.x >= w)
                     {
                         y++;
-                        x = 0;
+                        x = intLayer.x;
                     }
                 }
             }
@@ -85,10 +123,59 @@ void drawGlyph(AFTLayerHeader& intLayer, uint8_t *intLayerData, AFTLayerHeader& 
             {
                 cnt++;
                 x += b;
-                if (x >= w)
+                if (x - intLayer.x >= w)
                 {
-                    y += x / w;
-                    x = x % w;
+                    y += (x - intLayer.x) / w;
+                    x = (x - intLayer.x) % w + intLayer.x;
+                }
+            }
+        }
+    }
+    if (alphaLayerData)
+    {
+        count = ((uint32_t*)alphaLayerData)[0];
+        w = ((uint32_t*)alphaLayerData)[1];
+        h = ((uint32_t*)alphaLayerData)[2];
+        cnt = 0;
+        x = alphaLayer.x;
+        y = alphaLayer.y;
+
+        for (uint32_t i = 0; (i < alphaLayer.size) && (cnt < count) && ((y - alphaLayer.y) < h); i++)
+        {
+            uint8_t b = *(alphaLayerData + 16 + i);
+
+            if (b == 0)
+                cnt++;
+            else if (b == 0x80)
+            {
+                y++;
+                cnt++;
+            }
+            else if (b & 0x80)
+            {
+                uint8_t n = b & 0x7F;
+                cnt += n;
+                for (int j = 0; (j < n) && (i < alphaLayer.size) && (cnt < count) && ((y - alphaLayer.y) < h); j++)
+                {
+                    if ((y * glyph.width + x) < glyph.height * glyph.width)
+                        glyph.data[y * glyph.width + x] = *(alphaLayerData + 16 + i + 1);
+                    i++;
+                    x++;
+                    if (x - alphaLayer.x >= w)
+                    {
+                        y++;
+                        x = alphaLayer.x;
+                    }
+                }
+            }
+            else
+            {
+                cnt++;
+                x += b;
+                if (x - alphaLayer.x >= w)
+                {
+                    y += (x - alphaLayer.x) / w;
+                    x = alphaLayer.x + (x - alphaLayer.x) % w;
                 }
             }
         }
@@ -131,6 +218,7 @@ AFT loadAFTFont(std::istream &stream)
 
         stream.read((char*) & (intLayers[i]), sizeof(AFTLayerHeader));
         stream.read((char*) & (alphaLayers[i]), sizeof(AFTLayerHeader));
+
         intLayers[i].y = result.height + intLayers[i].y - header.verticalSpace;
         alphaLayers[i].y = result.height + alphaLayers[i].y - header.verticalSpace;
         if (intLayers[i].y < 0)
@@ -138,16 +226,8 @@ AFT loadAFTFont(std::istream &stream)
         if (alphaLayers[i].y < 0)
             alphaLayers[i].y = 0;
 
-        if (alphaLayers->size)
-        {
-            result.glyphs[i].x = std::min(intLayers[i].x, alphaLayers[i].x);
-            result.glyphs[i].y = std::min(intLayers[i].y, alphaLayers[i].y);
-        }
-        else
-        {
-            result.glyphs[i].x = intLayers[i].x;
-            result.glyphs[i].y = intLayers[i].y;
-        }
+        result.glyphs[i].y = 0;
+        result.glyphs[i].x = 0;
     }
 
     for (int i = 0; i < result.glyphCount; i++)
