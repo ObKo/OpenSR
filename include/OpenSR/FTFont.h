@@ -35,9 +35,7 @@ public:
     FTFont(const char *data, size_t dataSize, int size, bool antialiased = true);
     virtual ~FTFont();
 
-    virtual boost::shared_ptr<Texture> renderText(const std::string& text, int width = 0) const;
     virtual boost::shared_ptr<Texture> renderText(const std::wstring& text, int width = 0) const;
-    virtual boost::shared_ptr<Texture> renderColoredText(const std::string& text, int defaultTextColor = 0xFFFFFF, int selectionTextColor = 0xFFFFFF, int width = 0) const;
     virtual boost::shared_ptr<Texture> renderColoredText(const std::wstring& text, int defaultTextColor = 0xFFFFFF, int selectionTextColor = 0xFFFFFF, int width = 0) const;
 
     virtual int calculateStringWidth(const std::wstring::const_iterator& first, const std::wstring::const_iterator& last) const;

@@ -111,20 +111,6 @@ FTFont::~FTFont()
     FT_Done_Face(m_fontFace);
 }
 
-boost::shared_ptr<Texture> FTFont::renderText(const std::string& t, int width) const
-{
-    std::wstring ws(t.length(), L'\0');
-    std::copy(t.begin(), t.end(), ws.begin());
-    return renderText(ws, width);
-}
-
-boost::shared_ptr<Texture> FTFont::renderColoredText(const std::string& t, int defaultTextColor, int selectionTextColor, int width) const
-{
-    std::wstring ws(t.length(), L'\0');
-    std::copy(t.begin(), t.end(), ws.begin());
-    return renderColoredText(ws, defaultTextColor, width);
-}
-
 int FTFont::calculateStringWidth(const std::wstring::const_iterator& first, const std::wstring::const_iterator& last) const
 {
     int width = 0;

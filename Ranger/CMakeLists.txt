@@ -18,6 +18,7 @@ SET(LIBRANGERS_SOURCES
     IOStreams.cpp
     DAT.cpp
     JPEG.cpp
+    AFT.cpp
 )
 
 INCLUDE_DIRECTORIES(

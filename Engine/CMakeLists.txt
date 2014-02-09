@@ -43,6 +43,7 @@ SET(SOURCES
     TiledPolyline.cpp
     TiledBeizerCurve.cpp
     ResourceObjectManager.cpp
+    AFTFont.cpp
 )
 
 INCLUDE_DIRECTORIES(

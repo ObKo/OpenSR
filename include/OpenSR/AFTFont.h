@@ -16,38 +16,30 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef RANGERS_FONT_H
-#define RANGERS_FONT_H
+#ifndef RANGERS_AFT_FONT_H
+#define RANGERS_AFT_FONT_H
 
-#include "OpenSR/config.h"
-
-#include <string>
-#include <boost/shared_ptr.hpp>
+#include "OpenSR/Font.h"
+#include "OpenSR/libRanger.h"
+#include <map>
 
 namespace Rangers
 {
-class Texture;
-class RANGERS_ENGINE_API Font
+class AFTFont: public Font
 {
 public:
-    Font();
-    virtual ~Font();
+    AFTFont(const AFT& font);
+    ~AFTFont();
 
-    boost::shared_ptr<Texture> renderText(const std::string& text, int width = 0) const;
     virtual boost::shared_ptr<Texture> renderText(const std::wstring& text, int width = 0) const;
-    boost::shared_ptr<Texture> renderColoredText(const std::string& text, int defaultTextColor = 0xFFFFFF, int selectionTextColor = 0xFFFFFF, int width = 0) const;
     virtual boost::shared_ptr<Texture> renderColoredText(const std::wstring& text, int defaultTextColor = 0xFFFFFF, int selectionTextColor = 0xFFFFFF, int width = 0) const;
 
     virtual int calculateStringWidth(const std::wstring::const_iterator& first, const std::wstring::const_iterator& last) const;
     virtual int maxChars(const std::wstring::const_iterator& first, const std::wstring::const_iterator& last, int width) const;
 
-    int calculateStringWidth(const std::wstring& str) const;
-    int maxChars(const std::wstring& str, int width) const;
-
-    int size() const;
-
-protected:
-    int m_fontSize;
+private:
+    AFT m_aft;
+    std::map<wchar_t, AFTGlyph*> m_charMap;
 };
 }
 

@@ -31,8 +31,8 @@ void exportFont()
     .def("renderText", (boost::shared_ptr<Texture> (Font::*)(const std::wstring&, int) const)&Font::renderText)
     .def("renderColoredText", (boost::shared_ptr<Texture> (Font::*)(const std::wstring&, int, int, int) const)&Font::renderColoredText)
     .add_property("size", &Font::size)
-    .def("calculateStringWidth", &Font::calculateStringWidth)
-    .def("maxChars", &Font::maxChars);
+    .def("calculateStringWidth", (int (Font::*)(const std::wstring&) const)&Font::calculateStringWidth)
+    .def("maxChars", (int (Font::*)(const std::wstring&, int) const)&Font::maxChars);
 }
 }
 }

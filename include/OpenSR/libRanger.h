@@ -225,6 +225,55 @@ struct JPEGFrame
     uint8_t *data;
 };
 
+struct AFTHeader
+{
+    uint32_t sig;
+    uint32_t version;
+    uint32_t charCount;
+    uint32_t height;
+    uint32_t verticalSpace;
+    uint32_t unknown0;
+    uint32_t unknown1;
+    uint32_t unknown2;
+};
+
+struct AFTLayerHeader
+{
+    int32_t x;
+    int32_t y;
+    uint32_t width;
+    uint32_t height;
+    uint32_t offset;
+    uint32_t size;
+};
+
+struct AFTGlyphHeader
+{
+    uint32_t code;
+    uint32_t leftSpace;
+    uint32_t charWidth;
+    uint32_t rightSpace;
+};
+
+struct AFTGlyph
+{
+    wchar_t code;
+    uint32_t stride;
+    uint32_t x;
+    uint32_t y;
+    uint32_t width;
+    uint32_t height;
+    uint8_t *data;
+};
+
+struct AFT
+{
+    uint32_t size;
+    uint32_t height;
+    uint32_t glyphCount;
+    AFTGlyph *glyphs;
+};
+
 //! Record in DAT file (from orignal game)
 struct DATRecord
 {
@@ -425,6 +474,9 @@ LIBRANGER_API void saveDAT(std::ostream &stream, const DATRecord& root);
 
 //! Load JPEG file into memory
 LIBRANGER_API JPEGFrame loadJPEG(std::istream &stream);
+
+//! Load JPEG file into memory
+LIBRANGER_API AFT loadAFTFont(std::istream &stream);
 }
 
 #endif

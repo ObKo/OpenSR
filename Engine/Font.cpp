@@ -32,12 +32,16 @@ Font::~Font()
 
 boost::shared_ptr<Texture> Font::renderText(const std::string& t, int width) const
 {
-    return boost::shared_ptr<Texture>();
+    std::wstring ws(t.length(), L'\0');
+    std::copy(t.begin(), t.end(), ws.begin());
+    return renderText(ws, width);
 }
 
 boost::shared_ptr<Texture> Font::renderColoredText(const std::string& t, int defaultTextColor, int selectionTextColor, int width) const
 {
-    return boost::shared_ptr<Texture>();
+    std::wstring ws(t.length(), L'\0');
+    std::copy(t.begin(), t.end(), ws.begin());
+    return renderColoredText(ws, defaultTextColor, width);
 }
 
 int Font::calculateStringWidth(const std::wstring::const_iterator& first, const std::wstring::const_iterator& last) const
@@ -63,5 +67,15 @@ boost::shared_ptr<Texture> Font::renderColoredText(const std::wstring& t, int de
 int Font::size() const
 {
     return m_fontSize;
+}
+
+int Font::calculateStringWidth(const std::wstring& str) const
+{
+    return calculateStringWidth(str.begin(), str.end());
+}
+
+int Font::maxChars(const std::wstring& str, int width) const
+{
+    return maxChars(str.begin(), str.end(), width);
 }
 }

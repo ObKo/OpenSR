@@ -88,7 +88,6 @@ InfoWidget::InfoWidget(boost::shared_ptr<InfoWidgetStyle> style): Widget(), m_ty
         m_captionFont = Engine::instance().coreFont();
 
     m_caption = boost::shared_ptr<Label>(new Label(L"", m_captionFont));
-    m_caption->setOrigin(POSITION_X_CENTER, POSITION_Y_CENTER);
     m_caption->setColor(m_captionColor);
 
     if (m_bgSprite)
@@ -137,8 +136,10 @@ void InfoWidget::processMain()
         realCaptionContentRect.width = width();
         realCaptionContentRect.height = height();
     }
-    m_caption->setPosition((int(m_caption->width()) % 2) / 2.0f + int(realCaptionContentRect.width) / 2 + realCaptionContentRect.x,
-                           (int(m_caption->height()) % 2) / 2.0f + int(realCaptionContentRect.height) / 2 + realCaptionContentRect.y);
+    if (m_caption->needUpdate())
+        m_caption->processMain();
+    m_caption->setPosition(int(realCaptionContentRect.x + (realCaptionContentRect.width - m_caption->width()) / 2),
+                           int(realCaptionContentRect.y + (realCaptionContentRect.height - m_caption->height()) / 2));
     if (m_iconSprite)
     {
         m_iconSprite->setPosition(m_iconPosition.x, m_iconPosition.y);

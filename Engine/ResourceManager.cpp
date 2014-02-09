@@ -30,6 +30,7 @@
 #include "OpenSR/Texture.h"
 #include "OpenSR/AnimatedTexture.h"
 #include "OpenSR/Log.h"
+#include "OpenSR/AFTFont.h"
 #include "OpenSR/FTFont.h"
 #include "OpenSR/AnimatedSprite.h"
 #include "OpenSR/Object.h"
@@ -441,6 +442,18 @@ boost::shared_ptr< Font > ResourceManager::loadFont(const std::wstring& name, in
         Font *f = new FTFont(data, dataSize, size, antialiased);
         delete[] data;
         m_fonts[mapName] = boost::shared_ptr<Font>(f);
+        return m_fonts[mapName];
+    }
+    if (sfx == L"aft")
+    {
+        boost::shared_ptr<std::istream> s = getFileStream(name);
+        if (!s)
+            return boost::shared_ptr<Font>();
+        AFT f = loadAFTFont(*s);
+        if ((f.glyphCount == 0) || (f.glyphs == 0))
+            return boost::shared_ptr<Font>();
+
+        m_fonts[mapName] = boost::shared_ptr<Font>(new AFTFont(f));
         return m_fonts[mapName];
     }
     else
