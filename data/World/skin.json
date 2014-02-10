@@ -1,9 +1,6 @@
 {
     "@type": "directory",
     
-    "font": {"@type": "font", "file": "DroidSans.ttf", "size": 14},
-    "font-bold": {"@type": "font", "file": "DroidSans-Bold.ttf", "size": 14},
-
     "info-widget":
     {
         "@type": "info-widget-style",
@@ -34,8 +31,8 @@
         "icon-size": 40,
         "caption-content-rect": {"x": 58, "y": 10, "width": 150, "height": 42},
         "content-rect": {"x": 13, "y": 65, "width": 195, "height": 55},
-        "font": "/world/skin/font",
-        "caption-font": "/world/skin/font-bold",
+        "font": "/fonts/default",
+        "caption-font": "/fonts/ranger-bold",
         "color": "#FFFFFF",
         "caption-color": "#31EFFF",
         "label-color": "#8C8A8C"

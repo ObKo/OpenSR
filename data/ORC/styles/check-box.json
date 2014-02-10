@@ -5,6 +5,6 @@
     "hovered": {"@type": "texture", "texture": "ORC/checkbox_hovered.png"},
     "checked-normal": {"@type": "texture", "texture": "ORC/checkbox_checked_normal.png"},
     "checked-hovered": {"@type": "texture", "texture": "ORC/checkbox_checked_hovered.png"},    
-    "font": "/styles/default/font", 
+    "font": "/fonts/default", 
     "color": "#FFFFFF"
 } 

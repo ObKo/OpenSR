@@ -4,6 +4,6 @@
     "hovered": {"@type": "texture", "texture": "DATA/FormOptions2/2SwitchA.gi"},
     "selected-normal": {"@type": "texture", "texture": "DATA/FormOptions2/2SwitchD.gi"},
     "selected-hovered": {"@type": "texture", "texture": "DATA/FormOptions2/2SwitchD.gi"},
-    "font": "/styles/default/font", 
+    "font": "/fonts/default", 
     "color": "#FFFFFF"
 } 

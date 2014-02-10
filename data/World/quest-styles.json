@@ -5,7 +5,7 @@
         {
             "@type": "interaction-widget-style",
             
-            "font": "/world/skin/font",            
+            "font": "/fonts/default",            
             "background": {"texture": "DATA/FormPQuest2/2S1.gi"},
             "color": "#CECFAD",
             "active-color": "#FFEF63",
@@ -77,7 +77,7 @@
         {
             "@type": "interaction-widget-style",
             
-            "font": "/world/skin/font",
+            "font": "/fonts/default",
             "background": {"texture": "DATA/FormPQuest2/2S2.gi"},
             "color": "#CECFAD",
             "active-color": "#FFEF63",
@@ -149,7 +149,7 @@
         {
             "@type": "interaction-widget-style",
             
-            "font": "/world/skin/font",
+            "font": "/fonts/default",
             "background": {"texture": "DATA/FormPQuest2/2S3.gi"},
             "color": "#000000",
             "active-color": "#0000AD",
@@ -221,7 +221,7 @@
         {
             "@type": "interaction-widget-style",
             
-            "font": "/world/skin/font",
+            "font": "/fonts/default",
             "background": {"texture": "DATA/FormPQuest2/2S4.gi"},
             "color": "#000000",
             "active-color": "#0000AD",

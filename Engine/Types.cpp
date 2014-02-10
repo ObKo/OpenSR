@@ -274,10 +274,10 @@ TextureRegion::TextureRegion(boost::shared_ptr<TextureRegionDescriptor> desc)
             width = texture->width();
         if (height < 0)
             height = texture->height();
-        this->u1 = float(desc->x) / (texture->width() - 1);
-        this->u2 = float(desc->x + width - 1) / (texture->width() - 1);
-        this->v1 = float(desc->y) / (texture->height() - 1);
-        this->v2 = float(desc->y + height - 1) / (texture->height() - 1);
+        this->u1 = float(desc->x) / texture->width();
+        this->u2 = u1 + float(width) / texture->width();
+        this->v1 = float(desc->y) / texture->height();
+        this->v2 = v1 + float(height) / texture->height();
     }
     else
     {

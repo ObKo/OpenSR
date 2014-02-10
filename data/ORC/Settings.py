@@ -53,13 +53,13 @@ class SettingsWidget(ScriptWidget, ActionListener):
         self.addWidget(self.spaceButton)
         
         self.okButton = Button("DATA/FormOptions2/2OkN.gi", "DATA/FormOptions2/2OkA.gi", "DATA/FormOptions2/2OkD.gi")
-        self.okButton.position = (self.formBottom.position.x + 603 + deltaX, self.formBottom.position.y + 22)
+        self.okButton.position = (self.formBottom.position.x + 607 + deltaX, self.formBottom.position.y + 22)
         self.okButton.addListener(self)
         self.setSoundsDefault(self.okButton)
         self.addWidget(self.okButton)
 
         self.cancelButton = Button("DATA/FormOptions2/2CancelN.gi", "DATA/FormOptions2/2CancelA.gi", "DATA/FormOptions2/2CancelD.gi")
-        self.cancelButton.position = (self.formBottom.position.x + 670 + deltaX, self.formBottom.position.y + 22)
+        self.cancelButton.position = (self.formBottom.position.x + 674 + deltaX, self.formBottom.position.y + 22)
         self.cancelButton.addListener(self)
         self.setSoundsDefault(self.cancelButton)       
         self.addWidget(self.cancelButton)

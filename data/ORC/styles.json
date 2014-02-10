@@ -5,7 +5,6 @@
     {
         "@type": "directory",
         
-        "font": {"@type": "font", "file": "DroidSans.ttf", "size": 14},
         "enter-sound": {"@type": "sound", "file": "Sound/ButtonEnter.wav"},
         "leave-sound": {"@type": "sound", "file": "Sound/ButtonLeave.WAV"},
         "click-sound": {"@type": "sound", "file": "Sound/ButtonClick.wav"},

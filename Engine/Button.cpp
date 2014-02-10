@@ -256,7 +256,7 @@ void Button::setAutoResize(bool autoResize)
     lock();
     RANGERS_D(Button);
     d->autoResize = autoResize;
-    d->calcAutoResize();
+    markToUpdate();
     unlock();
 }
 
@@ -266,7 +266,6 @@ void Button::setText(const std::wstring& text)
     RANGERS_D(Button);
     d->text = text;
     d->label->setText(text);
-    d->calcAutoResize();
     markToUpdate();
     unlock();
 }
@@ -276,7 +275,6 @@ void Button::setFont(boost::shared_ptr<Font> font)
     lock();
     RANGERS_D(Button);
     d->label->setFont(font);
-    d->calcAutoResize();
     markToUpdate();
     unlock();
 }
@@ -296,13 +294,9 @@ void ButtonPrivate::calcAutoResize()
         return;
 
     q->lock();
-    int labelWidth = 0;
-    int labelHeight = 0;
-    if (label->font())
-    {
-        labelWidth = label->font()->calculateStringWidth(text.begin(), text.end());
-        labelHeight = label->font()->size();
-    }
+    int labelWidth = label->width();
+    int labelHeight = label->height();
+
     if (!style)
     {
         q->setGeometry(std::max(labelWidth, q->minWidth()), std::max(labelHeight, q->minHeight()));
@@ -387,7 +381,7 @@ void ButtonPrivate::initFromStyle()
         if (pressedSprite)
             q->addChild(pressedSprite);
 
-        if ((style->font) && (style->font->path != L"") && (style->font->size > 0))
+        if ((style->font) && (style->font->path != L""))
         {
             label = boost::shared_ptr<Label>(new Label(text, ResourceManager::instance().loadFont(style->font->path, style->font->size)));
         }
@@ -481,9 +475,11 @@ void Button::processMain()
 {
     lock();
     RANGERS_D(Button);
-    d->calcAutoResize();
     if (d->label->needUpdate())
         d->label->processMain();
+
+    d->calcAutoResize();
+
     if (d->normalSprite)
         d->normalSprite->setGeometry(d->width, d->height);
     if (d->hoverSprite)

@@ -21,7 +21,7 @@
             {"texture": "ORC/LineEdit.png", "x": 5, "y": 11, "width": 4, "height": 10}
         ] 
     },
-    "font": "/styles/default/font", 
+    "font": "/fonts/default", 
     "color": "#000000",
     "content-rect": {"x": 5, "y": 4, "width": 1, "height": 13} 
 }

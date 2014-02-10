@@ -64,9 +64,9 @@
             {"texture": "DATA/FormPlanet2/2QuestButD.gi", "x": 59, "y": 11, "width": 57, "height": 10}
         ] 
     },    
-    "font": "/styles/default/font", 
+    "font": "/fonts/ranger-bold", 
     "color": "#082430",
-    "content-rect": {"x": 4, "y": 4, "width": 108, "height": 13},
+    "content-rect": {"x": 4, "y": 3, "width": 108, "height": 13},
     "enter-sound": "/styles/default/enter-sound",
     "leave-sound": "/styles/default/leave-sound",
     "click-sound" : "/styles/default/click-sound"
