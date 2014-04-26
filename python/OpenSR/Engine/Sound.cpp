@@ -27,7 +27,7 @@ void exportSound()
 {
     using namespace boost::python;
 
-    class_<Sound, boost::shared_ptr<Sound> >("Sound", init<const std::wstring&>())
+    class_<Sound, boost::shared_ptr<Sound> >("Sound", init<const std::string&>())
     .def(init<>())
     .def("play", &Sound::play);
 }

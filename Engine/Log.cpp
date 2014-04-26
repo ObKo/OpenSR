@@ -57,29 +57,29 @@ Log* Log::instance()
 void Log::writeLogEntry(const LogEntry& s)
 {
     m_bufferMutex.lock();
-    std::vector<std::wstring> l = split(s.m_text, L'\n');
-    std::vector<std::wstring>::iterator end = l.end();
-    for (std::vector<std::wstring>::iterator i = l.begin(); i != end; ++i)
+    std::vector<std::string> l = split(s.m_text, L'\n');
+    std::vector<std::string>::iterator end = l.end();
+    for (std::vector<std::string>::iterator i = l.begin(); i != end; ++i)
     {
         LogEntry e = s;
         e.m_text = (*i);
         m_logEntries.push_back(e);
 
-        wstring prefix;
+        string prefix;
 
         switch (e.m_level)
         {
         case LDEBUG:
-            prefix = L"[--] ";
+            prefix = "[--] ";
             break;
         case LINFO:
-            prefix = L"[II] ";
+            prefix = "[II] ";
             break;
         case LWARNING:
-            prefix = L"[WW] ";
+            prefix = "[WW] ";
             break;
         case LERROR:
-            prefix = L"[EE] ";
+            prefix = "[EE] ";
             break;
         }
 
@@ -89,23 +89,23 @@ void Log::writeLogEntry(const LogEntry& s)
             switch (e.m_level)
             {
             case LINFO:
-                prefix = L"\e[0;32m" + prefix;
+                prefix = "\e[0;32m" + prefix;
                 break;
             case LWARNING:
-                prefix = L"\e[0;33m" + prefix;
+                prefix = "\e[0;33m" + prefix;
                 break;
             case LERROR:
-                prefix = L"\e[0;31m" + prefix;
+                prefix = "\e[0;31m" + prefix;
                 break;
             }
-            cout << toLocal(prefix + e.m_text) << "\e[0m" << endl;
+            cout << prefix + e.m_text << "\e[0m" << endl;
         }
         else
-            cout << toLocal(prefix + e.m_text) << endl;
+            cout << prefix + e.m_text << endl;
 #elif _WIN32
-        cout << toLocal(prefix + e.m_text) << endl;
+        cout << prefix + e.m_text << endl;
 #else
-        cout << toLocal(prefix + e.m_text) << endl;
+        cout << prefix + e.m_text << endl;
 #endif
     }
     m_needUpdate = true;
@@ -155,18 +155,18 @@ std::list<LogEntry> Log::getLastLines(int n) const
     return r;
 }
 
-LogEntry::LogEntry(LogLevel l, wstring t, unsigned int ts): m_level(l), m_text(t), m_timestamp(ts)
+LogEntry::LogEntry(LogLevel l, string t, unsigned int ts): m_level(l), m_text(t), m_timestamp(ts)
 {
 }
 
-LogEntry::LogEntry(): m_level(LDEBUG), m_text(L""), m_timestamp(0)
+LogEntry::LogEntry(): m_level(LDEBUG), m_text(""), m_timestamp(0)
 {
 }
 
 Log::Logger::Logger(LogLevel level)
 {
     m_logLevel = level;
-    m_stream = boost::shared_ptr<std::wostringstream>(new std::wostringstream());
+    m_stream = boost::shared_ptr<std::ostringstream>(new std::ostringstream());
 }
 
 Log::Logger::Logger(const Rangers::Log::Logger& other)
@@ -181,7 +181,7 @@ Log::Logger::~Logger()
         Log::instance()->writeLogEntry(LogEntry(m_logLevel, m_stream->str(), time(0)));
 }
 
-Log::Logger& Log::Logger::operator<<(const std::wstring& v)
+Log::Logger& Log::Logger::operator<<(const std::string& v)
 {
     *m_stream << v;
     return *this;
@@ -217,28 +217,9 @@ Log::Logger& Log::Logger::operator<<(bool v)
     return *this;
 }
 
-Log::Logger& Log::Logger::operator<<(const std::string& v)
-{
-    wstring w;
-    w.assign(v.length(), '\0');
-    std::copy(v.begin(), v.end(), w.begin());
-    *m_stream << w;
-    return *this;
-}
-
 Log::Logger& Log::Logger::operator<<(const char *s)
 {
-    wstring w;
-    string v(s);
-    w.assign(v.length(), '\0');
-    std::copy(v.begin(), v.end(), w.begin());
-    *m_stream << w;
-    return *this;
-}
-
-Log::Logger& Log::Logger::operator<<(const wchar_t *v)
-{
-    *m_stream << v;
+    *m_stream << s;
     return *this;
 }
 

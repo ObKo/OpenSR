@@ -41,11 +41,11 @@ struct TiledLineWrap : TiledLine, boost::python::wrapper<TiledLine>
     {
     }
 
-    TiledLineWrap(const std::wstring& texture)
+    TiledLineWrap(const std::string& texture)
         : TiledLine(texture)
     {
     }
-    TiledLineWrap(const std::wstring& texture, const Vector& start, const Vector& end)
+    TiledLineWrap(const std::string& texture, const Vector& start, const Vector& end)
         : TiledLine(texture, start, end)
     {
     }
@@ -73,7 +73,7 @@ struct TiledLineWrap : TiledLine, boost::python::wrapper<TiledLine>
     static void setTexture(TiledLine&  self, boost::python::object g)
     {
         boost::python::extract<boost::shared_ptr<Texture> > t(g);
-        boost::python::extract<std::wstring> s(g);
+        boost::python::extract<std::string> s(g);
         if (t.check())
         {
             self.setTexture(t);
@@ -96,8 +96,8 @@ void exportTiledLine()
 
     class_<TiledLineWrap, bases<Object>, boost::shared_ptr<TiledLineWrap>, boost::noncopyable> c("TiledLine", init<boost::shared_ptr<Texture>, const Vector&, const Vector&>());
     c.def(init<boost::shared_ptr<Texture> >())
-    .def(init<const std::wstring&, const Vector&, const Vector&>())
-    .def(init<const std::wstring&>())
+    .def(init<const std::string&, const Vector&, const Vector&>())
+    .def(init<const std::string&>())
     .def(init<>())
     .add_property("texture", &TiledLine::texture, &TiledLineWrap::setTexture)
     .add_property("line", &TiledLineWrap::line, &TiledLineWrap::setLine);

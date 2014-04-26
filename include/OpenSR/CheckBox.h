@@ -29,7 +29,7 @@ class RANGERS_ENGINE_API CheckBox: public Button
 {
     RANGERS_DECLARE_PRIVATE(CheckBox);
 public:
-    CheckBox(boost::shared_ptr<CheckBoxStyle> style, const std::wstring &text);
+    CheckBox(boost::shared_ptr<CheckBoxStyle> style, const std::string &text);
 
     void setChecked(bool checked);
 

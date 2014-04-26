@@ -50,7 +50,7 @@ struct QM_API Parameter
     {
         int32_t from;
         int32_t to;
-        std::wstring text;
+        std::string text;
     };
 
     uint32_t id;
@@ -65,12 +65,12 @@ struct QM_API Parameter
     bool active;
     bool money;
 
-    std::wstring name;
-    std::wstring critText;
+    std::string name;
+    std::string critText;
 
     std::vector<Range> ranges;
 
-    std::wstring start;
+    std::string start;
 };
 
 struct QM_API Modifier
@@ -83,7 +83,7 @@ struct QM_API Modifier
 
     uint32_t param;
     int32_t value;
-    std::wstring expression;
+    std::string expression;
 };
 
 struct QM_API Transition
@@ -117,9 +117,9 @@ struct QM_API Transition
     std::vector<Modifier> modifiers;
     std::vector<Condition> conditions;
 
-    std::wstring globalCondition;
-    std::wstring title;
-    std::wstring description;
+    std::string globalCondition;
+    std::string title;
+    std::string description;
 };
 
 struct QM_API Location
@@ -139,10 +139,10 @@ struct QM_API Location
 
     //! Description selected by expression
     bool descriptionExpression;
-    std::wstring expression;
+    std::string expression;
 
     std::vector<Modifier> modifiers;
-    std::vector<std::wstring> descriptions;
+    std::vector<std::string> descriptions;
 
     std::vector<Transition> transitions;
 };
@@ -157,8 +157,8 @@ struct QM_API QuestInfo
     int32_t relation;
     uint32_t difficulty;
 
-    std::wstring winnerText;
-    std::wstring descriptionText;
+    std::string winnerText;
+    std::string descriptionText;
 };
 
 struct QM_API Quest
@@ -173,13 +173,13 @@ struct QM_API Quest
 
     QuestInfo info;
 
-    std::wstring toStar;
-    std::wstring toPlanet;
-    std::wstring date;
-    std::wstring money;
-    std::wstring fromPlanet;
-    std::wstring fromStar;
-    std::wstring ranger;
+    std::string toStar;
+    std::string toPlanet;
+    std::string date;
+    std::string money;
+    std::string fromPlanet;
+    std::string fromStar;
+    std::string ranger;
 };
 
 //! Load whole quest.

@@ -38,7 +38,7 @@ struct TiledPolylineWrap : TiledPolyline, boost::python::wrapper<TiledPolyline>
     }
 
 
-    TiledPolylineWrap(const std::wstring& texture)
+    TiledPolylineWrap(const std::string& texture)
         : TiledPolyline(texture)
     {
     }
@@ -48,7 +48,7 @@ struct TiledPolylineWrap : TiledPolyline, boost::python::wrapper<TiledPolyline>
     static void setTexture(TiledPolyline& self, boost::python::object g)
     {
         boost::python::extract<boost::shared_ptr<Texture> > t(g);
-        boost::python::extract<std::wstring> s(g);
+        boost::python::extract<std::string> s(g);
         if (t.check())
         {
             self.setTexture(t);
@@ -92,7 +92,7 @@ void exportTiledPolyline()
     using namespace boost::python;
 
     class_<TiledPolylineWrap, bases<Object>, boost::shared_ptr<TiledPolylineWrap>, boost::noncopyable> c("TiledPolyline", init<boost::shared_ptr<Texture> >());
-    c.def(init<const std::wstring&>())
+    c.def(init<const std::string&>())
     .def(init<>())
     .add_property("texture", &TiledPolyline::texture, &TiledPolylineWrap::setTexture)
     .add_property("polyline", &TiledPolylineWrap::polyline, &TiledPolylineWrap::setPolyline);

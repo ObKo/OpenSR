@@ -65,13 +65,13 @@ void exportResourceObjectManager();
 void exportRanger();
 void exportFTFont();
 
-void pythonError(const std::wstring& text)
+void pythonError(const std::string& text)
 {
     if (text.empty())
         return;
-    std::vector<std::wstring> lines = split(text, L'\n');
-    std::vector<std::wstring>::const_iterator end = lines.end();
-    for (std::vector<std::wstring>::const_iterator i = lines.begin(); i != end; ++i)
+    std::vector<std::string> lines = split(text, L'\n');
+    std::vector<std::string>::const_iterator end = lines.end();
+    for (std::vector<std::string>::const_iterator i = lines.begin(); i != end; ++i)
     {
         if (i->empty())
             continue;
@@ -79,13 +79,13 @@ void pythonError(const std::wstring& text)
     }
 }
 
-void pythonOut(const std::wstring& text)
+void pythonOut(const std::string& text)
 {
     if (text.empty())
         return;
-    std::vector<std::wstring> lines = split(text, L'\n');
-    std::vector<std::wstring>::const_iterator end = lines.end();
-    for (std::vector<std::wstring>::const_iterator i = lines.begin(); i != end; ++i)
+    std::vector<std::string> lines = split(text, L'\n');
+    std::vector<std::string>::const_iterator end = lines.end();
+    for (std::vector<std::string>::const_iterator i = lines.begin(); i != end; ++i)
     {
         if (i->empty())
             continue;
@@ -141,7 +141,7 @@ BOOST_PYTHON_MODULE(_Engine)
 
     boost::python::def("pythonError", &Rangers::Python::pythonError);
     boost::python::def("pythonOut", &Rangers::Python::pythonOut);
-    boost::python::def("execPythonScript", (void (*)(const std::wstring&, const boost::python::object&))&Rangers::execPythonScript);
+    boost::python::def("execPythonScript", (void (*)(const std::string&, const boost::python::object&))&Rangers::execPythonScript);
     boost::python::def("execPythonLine", &Rangers::execPythonLine);
     boost::python::def("execPythonModule", &Rangers::execPythonModule);
     boost::python::def("tr", &Rangers::_, trOverloads(boost::python::args("text", "datName", "gettextDomain")));

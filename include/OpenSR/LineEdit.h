@@ -47,8 +47,8 @@ public:
     virtual int preferredHeight() const;
     virtual int maxHeight() const;
 
-    std::wstring text() const;
-    void setText(const std::wstring &s);
+    std::string text() const;
+    void setText(const std::string &s);
 
 protected:
     LineEdit(LineEditPrivate &p);

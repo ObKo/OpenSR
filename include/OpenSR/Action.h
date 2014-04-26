@@ -40,7 +40,7 @@ public:
                USER = 127
               };
     //! Argument of action
-    typedef boost::variant<std::wstring, Rect, SDL_Keysym, bool, uint8_t> Argument;
+    typedef boost::variant<std::string, Rect, SDL_Keysym, bool, uint8_t> Argument;
 
     //! Constructs empty action
     Action();

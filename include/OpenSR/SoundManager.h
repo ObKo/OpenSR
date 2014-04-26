@@ -33,15 +33,15 @@ class RANGERS_ENGINE_API SoundManager
 public:
     static SoundManager& instance();
 
-    boost::shared_ptr<Sound> loadSound(const std::wstring& path);
-    void playMusic(const std::wstring& path, bool loop);
+    boost::shared_ptr<Sound> loadSound(const std::string& path);
+    void playMusic(const std::string& path, bool loop);
 
 private:
     SoundManager();
     SoundManager(const SoundManager& other);
     virtual ~SoundManager();
 
-    std::map<std::wstring, boost::shared_ptr<Sound> > m_soundCache;
+    std::map<std::string, boost::shared_ptr<Sound> > m_soundCache;
     Mix_Music *m_currentMusic;
 };
 }

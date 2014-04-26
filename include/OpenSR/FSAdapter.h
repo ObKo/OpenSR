@@ -26,11 +26,11 @@ namespace Rangers
 class FSAdapter: public ResourceAdapter
 {
 public:
-    void load(const std::wstring& path);
+    void load(const std::string& path);
     virtual ~FSAdapter();
 
-    std::list<std::wstring> getFiles() const;
-    std::istream* getStream(const std::wstring& name);
+    std::list<std::string> getFiles() const;
+    std::istream* getStream(const std::string& name);
 
 private:
 
@@ -40,8 +40,8 @@ private:
     void scan(const std::string& path);
 #endif
 
-    std::wstring m_dirPath;
-    std::list<std::wstring> m_files;
+    std::string m_dirPath;
+    std::list<std::string> m_files;
 };
 }
 

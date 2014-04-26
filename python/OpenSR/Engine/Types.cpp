@@ -91,7 +91,7 @@ void exportTypes()
     .def("toString", (std::string(Color::*)() const)&Color::toString)
     .def("fromUInt", &Color::fromUInt)
     .staticmethod("fromUInt")
-    .def("fromString", (Color(*)(const std::wstring&))&Color::fromString)
+    .def("fromString", (Color(*)(const std::string&))&Color::fromString)
     .staticmethod("fromString");
 
     class_<Rect>("Rect", init<float, float, float, float>())

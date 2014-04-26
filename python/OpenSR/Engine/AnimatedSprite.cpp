@@ -35,7 +35,7 @@ struct AnimatedSpriteWrap : AnimatedSprite, boost::python::wrapper<AnimatedSprit
         : AnimatedSprite(texture)
     {
     }
-    AnimatedSpriteWrap(const std::wstring& animation)
+    AnimatedSpriteWrap(const std::string& animation)
         : AnimatedSprite(animation)
     {
     }
@@ -46,9 +46,9 @@ void exportAnimatedSprite()
 {
     using namespace boost::python;
 
-    class_<AnimatedSpriteWrap, bases<Sprite>, boost::shared_ptr<AnimatedSpriteWrap>, boost::noncopyable> c("AnimatedSprite", init<const std::wstring&>());
+    class_<AnimatedSpriteWrap, bases<Sprite>, boost::shared_ptr<AnimatedSpriteWrap>, boost::noncopyable> c("AnimatedSprite", init<const std::string&>());
     c.def(init<boost::shared_ptr<AnimatedTexture> >())
-    .def(init<const std::wstring&>())
+    .def(init<const std::string&>())
     .def(init<>())
     .add_property("singleShot", &AnimatedSprite::isSingleShot, &AnimatedSprite::setSingleShot)
     .def("start", &AnimatedSprite::start)

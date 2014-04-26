@@ -30,13 +30,16 @@ using namespace std;
 
 namespace Rangers
 {
-//FIXME: Pass std::wstring to std::ifstream constructor
-void RPKGAdapter::load(const wstring& fileName)
+void RPKGAdapter::load(const string& fileName)
 {
+#ifdef WIN32
     rpkgArchive.open(toLocal(fileName).c_str(), ios::binary | ios::in);
+#else
+    rpkgArchive.open(fileName, ios::binary | ios::in);
+#endif
     if (!rpkgArchive.is_open())
     {
-        Log::error() << "Cannot load RPKG archive " << fileName << ": " << fromLocal(strerror(errno));
+        Log::error() << "Cannot load RPKG archive " << fileName << ": " << strerror(errno);
         return;
     }
     std::list<RPKGEntry> l = loadRPKG(rpkgArchive);
@@ -54,16 +57,16 @@ RPKGAdapter::~RPKGAdapter()
 }
 
 
-list<wstring> RPKGAdapter::getFiles() const
+list<string> RPKGAdapter::getFiles() const
 {
-    list<wstring> result;
-    for (map<wstring, RPKGEntry>::const_iterator i = files.begin(); i != files.end(); ++i)
+    list<string> result;
+    for (map<string, RPKGEntry>::const_iterator i = files.begin(); i != files.end(); ++i)
         result.push_back(i->first);
 
     return result;
 }
 
-std::istream* RPKGAdapter::getStream(const std::wstring& name)
+std::istream* RPKGAdapter::getStream(const std::string& name)
 {
     if (files.find(name) == files.end())
     {
@@ -71,6 +74,10 @@ std::istream* RPKGAdapter::getStream(const std::wstring& name)
         return 0;
     }
     RPKGEntry e = files[name];
-    return getRPKGFileStream(e, boost::shared_ptr<std::istream>(new std::ifstream(toLocal(m_fileName).c_str(), ios::binary | ios::in)));
+#ifdef WIN32
+    return getRPKGFileStream(e, boost::shared_ptr<std::istream>(new std::ifstream(fromUTF8(m_fileName.c_str()), ios::binary | ios::in)));
+#else
+    return getRPKGFileStream(e, boost::shared_ptr<std::istream>(new std::ifstream(m_fileName, ios::binary | ios::in)));
+#endif
 }
 }

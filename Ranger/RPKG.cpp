@@ -41,11 +41,11 @@ std::list<RPKGEntry> Rangers::loadRPKG(std::istream& stream)
     {
         uint32_t fileNameLength = 0;
         stream.read((char *)&fileNameLength, 4);
-        char *asciiFileName = new char[fileNameLength];
-        stream.read(asciiFileName, fileNameLength);
+        char *fileName = new char[fileNameLength];
+        stream.read(fileName, fileNameLength);
         RPKGEntry e;
-        e.name = fromASCII(asciiFileName, fileNameLength);
-        delete[] asciiFileName;
+        e.name = std::string(fileName, fileNameLength);
+        delete[] fileName;
         stream.read((char *)&e.offset, 4);
         stream.read((char *)&e.size, 4);
         r.push_back(e);
@@ -148,10 +148,9 @@ void Rangers::writeRPKGHeader(std::ofstream& out, const std::vector<RPKGEntry>& 
     out.write((const char *)&s, 4);
     for (std::vector<RPKGEntry>::const_iterator i = entryList.begin(); i != entryList.end(); ++i)
     {
-        std::string ascii = toASCII((*i).name);
-        uint32_t l = ascii.length() + 1;
+        uint32_t l = (*i).name.length();
         out.write((const char *)&l, 4);
-        out.write(ascii.c_str(), l);
+        out.write((*i).name.c_str(), l + 1);
         uint32_t offset = (*i).offset;
         out.write((const char *)&offset, 4);
         uint32_t size = (*i).size;

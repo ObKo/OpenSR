@@ -31,7 +31,7 @@ class RANGERS_ENGINE_API Sound
 {
 public:
     Sound();
-    Sound(const std::wstring& path);
+    Sound(const std::string& path);
 
     void play();
 

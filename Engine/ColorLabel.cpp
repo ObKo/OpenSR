@@ -69,29 +69,6 @@ ColorLabel::ColorLabel(const std::string& text, boost::shared_ptr< Font > font):
     d->scaling = TEXTURE_NO;
 }
 
-/*!
- * \param text color text
- * \param parent parent object
- * \param font label font
- * \param xpos sprite x origin
- * \param ypos sprite y origin
- */
-ColorLabel::ColorLabel(const std::wstring& text, boost::shared_ptr< Font > font): Label(*(new ColorLabelPrivate()))
-{
-    RANGERS_D(ColorLabel);
-    if (!font)
-        d->font = Engine::instance().coreFont();
-    else
-        d->font = font;
-
-    setText(text);
-    d->wordWrap = false;
-    d->fixedWidth = false;
-    d->fixedHeight = false;
-    d->scaling = TEXTURE_NO;
-    d->textColor = Color(1.0f, 1.0f, 1.0f);
-}
-
 ColorLabel::ColorLabel(ColorLabelPrivate &p): Label(p)
 {
 }

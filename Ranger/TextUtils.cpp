@@ -219,105 +219,6 @@ std::wstring fromLocal(const char *text, int length)
  * \param c separator
  * \return array of strings
  */
-std::vector<std::wstring> split(const std::wstring& s, wchar_t c)
-{
-    std::vector<std::wstring> array;
-    std::wstring::const_iterator begin = s.begin();
-    for (std::wstring::const_iterator it = s.begin(); it != s.end(); ++it)
-    {
-        if (*it == c)
-        {
-            array.push_back(s.substr(begin - s.begin(), it - begin));
-            begin = it + 1;
-        }
-    }
-    array.push_back(s.substr(begin - s.begin(), s.end() - begin));
-    return array;
-}
-
-/*!
- * \param s file path
- * \return file extension
- */
-std::wstring suffix(const std::wstring& s)
-{
-    int pos;
-    int lastPos, dotPos = std::wstring::npos;
-
-    if ((pos = s.rfind(L'.')) == std::wstring::npos)
-        return std::wstring();
-
-    if ((lastPos = s.rfind(L'/')) == std::wstring::npos)
-        if ((lastPos = s.rfind(L'\\')) == std::wstring::npos)
-            lastPos = -1;
-
-    while ((pos != std::wstring::npos) && (pos > lastPos))
-    {
-        dotPos = pos;
-        if (pos == 0)
-            break;
-        pos = s.rfind(L'.', pos - 1);
-    }
-
-    if (dotPos != std::wstring::npos)
-        return s.substr(dotPos + 1);
-    else
-        return std::wstring();
-}
-
-/*!
- * \param s file path
- * \return file basename
- */
-std::wstring basename(const std::wstring& s)
-{
-    std::wstring suf = suffix(s);
-
-    int endpos;
-
-    if (suf != L"")
-        endpos = s.rfind(suffix(s)) - 1;
-    else
-        endpos = s.rfind(L'.');
-
-    int startpos = s.rfind(L'/');
-
-    if (endpos == std::wstring::npos)
-    {
-        if (startpos == std::wstring::npos)
-            return s;
-        else
-            return s.substr(startpos + 1);
-    }
-    else
-    {
-        if (startpos == std::wstring::npos)
-            return s.substr(0, endpos);
-        else
-            return s.substr(startpos + 1, endpos - startpos - 1);
-    }
-}
-
-/*!
- * \param s file path
- * \return file directory
- */
-std::wstring directory(const std::wstring& s)
-{
-    int pos;
-    if ((pos = s.rfind(L'/')) == std::wstring::npos)
-#ifdef WIN32
-        if ((pos = s.rfind(L'\\')) == std::wstring::npos)
-#endif
-            return std::wstring();
-    return s.substr(0, pos + 1);
-}
-
-/*!
- * \param s string
- * \param c separator
- * \return array of strings
- */
 std::vector<std::string> split(const std::string& s, char c)
 {
     std::vector<std::string> array;
@@ -416,25 +317,6 @@ std::string directory(const std::string& s)
  * \param s input string
  * \return trimmed string
  */
-std::wstring trim(const std::wstring& s)
-{
-    std::wstring result = s;
-    std::wstring::iterator end = result.end();
-    std::wstring::iterator spaceEnd;
-    for (spaceEnd = result.begin(); (spaceEnd != end) && ((*spaceEnd == L' ') || (*spaceEnd == L'\t') || (*spaceEnd == L'\n') || (*spaceEnd == L'\r')); ++spaceEnd);
-    if (spaceEnd != result.begin())
-        result.erase(result.begin(), spaceEnd);
-    end = result.begin();
-    for (spaceEnd = result.end(); (spaceEnd != end) && ((*(spaceEnd - 1) == L' ') || (*(spaceEnd - 1) == L'\t') || (*(spaceEnd - 1) == L'\n') || (*(spaceEnd - 1) == L'\r')); --spaceEnd);
-    if (spaceEnd != result.end())
-        result.erase(spaceEnd, result.end());
-    return result;
-}
-
-/*!
- * \param s input string
- * \return trimmed string
- */
 std::string trim(const std::string& s)
 {
     std::string result = s;
@@ -458,31 +340,6 @@ uint32_t textHash32(const std::string& s)
     {
         hash = hash ^ (*i);
         hash = hash * 16777619;
-    }
-    return hash;
-}
-
-uint32_t textHash32(const std::wstring& s)
-{
-    uint32_t hash = 2166136261;
-    std::wstring::const_iterator end = s.end();
-    for (std::wstring::const_iterator i = s.begin(); i != end; ++i)
-    {
-#ifdef WIN32
-        hash = hash ^ (((*i) >> 8) & 0xff);
-        hash = hash * 16777619;
-        hash = hash ^ (*i) & 0xff;
-        hash = hash * 16777619;
-#else
-        hash = hash ^ (((*i) >> 24) & 0xff);
-        hash = hash * 16777619;
-        hash = hash ^ (((*i) >> 16) & 0xff);
-        hash = hash * 16777619;
-        hash = hash ^ (((*i) >> 8) & 0xff);
-        hash = hash * 16777619;
-        hash = hash ^ (*i) & 0xff;
-        hash = hash * 16777619;
-#endif
     }
     return hash;
 }

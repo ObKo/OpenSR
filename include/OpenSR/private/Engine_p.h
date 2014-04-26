@@ -55,8 +55,8 @@ public:
     //boost::thread *logicThread;
 
     boost::shared_ptr<boost::property_tree::ptree> properties;
-    std::wstring configPath;
-    std::wstring mainDataDir;
+    std::string configPath;
+    std::string mainDataDir;
 
     int exitCode;
     bool gameRunning;

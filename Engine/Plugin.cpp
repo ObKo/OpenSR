@@ -31,7 +31,7 @@
 
 namespace Rangers
 {
-Plugin::Plugin(const std::wstring& path):
+Plugin::Plugin(const std::string& path):
     m_path(path), m_loaded(false), m_handle(0),
     m_rangersPluginInit(0), m_rangersAPIVersion(0),
     m_rangersPluginDeinit(0)
@@ -87,10 +87,10 @@ int Plugin::load()
         return -1;
     }
 #else
-    m_handle = dlopen(toLocal(m_path).c_str(), RTLD_LAZY);
+    m_handle = dlopen(m_path.c_str(), RTLD_LAZY);
     if (!m_handle)
     {
-        Log::error() << "Cannot load plugin \"" << m_path << "\": " << fromLocal(dlerror());
+        Log::error() << "Cannot load plugin \"" << m_path << "\": " << dlerror();
         return -1;
     }
     m_rangersPluginInit = (int (*)())dlsym(m_handle, "rangersPluginInit");

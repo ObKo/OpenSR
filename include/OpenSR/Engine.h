@@ -49,7 +49,7 @@ public:
     //! Main loop
     int run();
     //! Exec command (e.g. from console)
-    void execCommand(const std::wstring& what);
+    void execCommand(const std::string& what);
 
     //! Mark object been updated in main (OpenGL) thread
     void markToUpdate(Object* object);
@@ -98,7 +98,7 @@ public:
     void setDefaultSkin(boost::shared_ptr<Skin> skin);
     void setDefaultSkin(const std::string& skinObjectPath);
 
-    void loadPlugin(const std::wstring &path);
+    void loadPlugin(const std::string &path);
 
 private:
     Engine();

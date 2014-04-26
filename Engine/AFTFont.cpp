@@ -100,19 +100,21 @@ AFTFont::~AFTFont()
 }
 
 //TODO: Move common code to Font class
-int AFTFont::calculateStringWidth(const std::wstring::const_iterator& first, const std::wstring::const_iterator& last) const
+int AFTFont::calculateStringWidth(const std::string& str, int from, int length) const
 {
+    //TODO: Use std::codecvt_utf8
+    std::wstring ws = fromUTF8(str.c_str() + from, length);
     int width = 0;
     int x = 0;
-    for (std::wstring::const_iterator i = first; i != last; ++i)
+    for (const wchar_t& c : ws)
     {
-        if (*i == L'\n')
+        if (c == L'\n')
         {
             width = x > width ? x : width;
             x = 0;
             continue;
         }
-        auto charGlyph = m_charMap.find(*i);
+        auto charGlyph = m_charMap.find(c);
         if (charGlyph != m_charMap.end())
             x += (*charGlyph).second->stride;
     }
@@ -121,23 +123,25 @@ int AFTFont::calculateStringWidth(const std::wstring::const_iterator& first, con
 }
 
 //TODO: Move common code to Font class
-int AFTFont::maxChars(const std::wstring::const_iterator& first, const std::wstring::const_iterator& last, int width) const
+int AFTFont::maxChars(const std::string& str, int from, int length, int width) const
 {
+    //TODO: Use std::codecvt_utf8
+    std::wstring ws = fromUTF8(str.c_str() + from, length);
     int x = 0;
-    for (std::wstring::const_iterator i = first; i < last; ++i)
+    for (int i = 0; i < length; ++i)
     {
-        auto charGlyph = m_charMap.find(*i);
+        auto charGlyph = m_charMap.find(ws[i]);
         if (charGlyph != m_charMap.end())
             x += (*charGlyph).second->stride;
 
         if (x > width)
-            return i - first;
+            return i;
     }
-    return last - first;
+    return length;
 }
 
 //TODO: Move common code to Font class
-boost::shared_ptr<Texture> AFTFont::renderText(const std::wstring& t, int wrapWidth) const
+boost::shared_ptr<Texture> AFTFont::renderText(const std::string& t, int wrapWidth) const
 {
     int x = 0;
     int lines = 1;
@@ -145,7 +149,8 @@ boost::shared_ptr<Texture> AFTFont::renderText(const std::wstring& t, int wrapWi
     int width = 0;
     int i;
 
-    std::wstring text = t;
+    //TODO: Use std::codecvt_utf8
+    std::wstring text = fromUTF8(t.c_str(), t.length());
 
     int pos = 0;
     while ((pos = text.find('\t', pos)) >= 0)
@@ -247,7 +252,7 @@ boost::shared_ptr<Texture> AFTFont::renderText(const std::wstring& t, int wrapWi
 }
 
 //TODO: Move common code to Font class
-boost::shared_ptr<Texture> AFTFont::renderColoredText(const std::wstring& t, int defaultTextColor, int selectionTextColor, int wrapWidth) const
+boost::shared_ptr<Texture> AFTFont::renderColoredText(const std::string& t, int defaultTextColor, int selectionTextColor, int wrapWidth) const
 {
     int x = 0;
     int lines = 1;
@@ -258,7 +263,7 @@ boost::shared_ptr<Texture> AFTFont::renderColoredText(const std::wstring& t, int
     std::map<int, unsigned int> colorSelect;
     unsigned int currentColor = defaultTextColor;
 
-    std::wstring text = t;
+    std::wstring text = fromUTF8(t.c_str(), t.length());
 
     int pos = 0;
     while ((pos = text.find('\t', pos)) >= 0)

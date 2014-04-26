@@ -34,7 +34,7 @@ int rangersAPIVersion()
 
 int rangersPluginInit()
 {
-    std::wstring resources = Rangers::fromUTF8(Rangers::Engine::instance().properties()->get<std::string>("world.resources", "World/resources.json").c_str());
+    std::string resources = Rangers::Engine::instance().properties()->get<std::string>("world.resources", "World/resources.json").c_str();
     Rangers::ResourceManager::instance().objectManager().addJSON(resources, "/world");
     return 0;
 }

@@ -47,7 +47,7 @@ public:
     int consoleLines;
 
     int historyPosition;
-    std::vector<std::wstring> commandHistory;
+    std::vector<std::string> commandHistory;
 
     boost::shared_ptr<ConsoleLineEditListener> listener;
 };

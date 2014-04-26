@@ -143,7 +143,7 @@ InteractionWidget::InteractionWidget(const Rect& textRect, const Rect& selection
     m_selectionArea->setPosition(selectionRect.x, selectionRect.y);
 
     boost::shared_ptr<Font> font;
-    if ((m_style->font) && (m_style->font->path != L""))
+    if ((m_style->font) && (m_style->font->path != ""))
         font = ResourceManager::instance().loadFont(m_style->font->path, m_style->font->size, m_style->font->antialiasing);
     else
         font = Engine::instance().coreFont();
@@ -237,12 +237,12 @@ void InteractionWidget::processMain()
         m_background->setGeometry(width(), height());
 }
 
-std::vector< std::tuple< std::wstring, bool > > InteractionWidget::selections() const
+std::vector< std::tuple< std::string, bool > > InteractionWidget::selections() const
 {
     return m_selections;
 }
 
-void InteractionWidget::setSelections(const std::vector< std::tuple< std::wstring, bool > >& selections)
+void InteractionWidget::setSelections(const std::vector< std::tuple< std::string, bool > >& selections)
 {
     m_selections = selections;
 
@@ -253,7 +253,7 @@ void InteractionWidget::setSelections(const std::vector< std::tuple< std::wstrin
     }
     m_selectionsWidget.clear();
 
-    for (const std::tuple<std::wstring, bool>& s : m_selections)
+    for (const std::tuple<std::string, bool>& s : m_selections)
     {
         boost::shared_ptr<ColorLabel> l = boost::shared_ptr<ColorLabel>(new ColorLabel(std::get<0>(s)));
         boost::shared_ptr<LabelWidget> w = boost::shared_ptr<LabelWidget>(new LabelWidget(l));
@@ -272,12 +272,12 @@ void InteractionWidget::setSelections(const std::vector< std::tuple< std::wstrin
     markToUpdate();
 }
 
-std::wstring InteractionWidget::text() const
+std::string InteractionWidget::text() const
 {
     return m_text;
 }
 
-void InteractionWidget::setText(const std::wstring& text)
+void InteractionWidget::setText(const std::string& text)
 {
     m_text = text;
     m_textLabel->label()->setText(text);

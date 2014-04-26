@@ -31,7 +31,7 @@ namespace
 {
 boost::python::list visibleParameters(const QuestPlayer& self)
 {
-    std::vector<std::wstring> v = self.visibleParameters();
+    std::vector<std::string> v = self.visibleParameters();
     return Rangers::Python::vectorToPythonList(v);
 }
 
@@ -42,9 +42,9 @@ void setImages(QuestPlayer& self, const boost::python::dict &locImages, const bo
 
 boost::python::list visibleTransitions(const QuestPlayer& self)
 {
-    std::vector<std::tuple<uint32_t, std::wstring, bool> > v = self.visibleTransitions();
+    std::vector<std::tuple<uint32_t, std::string, bool> > v = self.visibleTransitions();
     boost::python::list l;
-    for (const std::tuple<uint32_t, std::wstring, bool>& t : v)
+    for (const std::tuple<uint32_t, std::string, bool>& t : v)
         l.append(boost::python::make_tuple(std::get<0>(t), std::get<1>(t), std::get<2>(t)));
     return l;
 }

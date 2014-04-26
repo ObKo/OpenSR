@@ -32,7 +32,7 @@ class RANGERS_ENGINE_API TiledBeizerCurve: public TiledPolyline
 public:
     TiledBeizerCurve();
     TiledBeizerCurve(boost::shared_ptr<Texture> texture);
-    TiledBeizerCurve(const std::wstring& texture);
+    TiledBeizerCurve(const std::string& texture);
 
     virtual ~TiledBeizerCurve();
 

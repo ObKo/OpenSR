@@ -35,10 +35,10 @@ enum LogLevel {LDEBUG, LINFO, LWARNING, LERROR};
 
 struct LogEntry
 {
-    LogEntry(LogLevel l, std::wstring t, unsigned int ts);
+    LogEntry(LogLevel l, std::string t, unsigned int ts);
     LogEntry();
     LogLevel m_level;
-    std::wstring m_text;
+    std::string m_text;
     unsigned int m_timestamp;
 };
 
@@ -78,7 +78,6 @@ public:
 
     Logger& operator <<(LogLevel l);
 
-    Logger& operator <<(const std::wstring& v);
     Logger& operator <<(int v);
     Logger& operator <<(long v);
     Logger& operator <<(long long v);
@@ -89,13 +88,12 @@ public:
     Logger& operator <<(bool v);
     Logger& operator <<(const std::string& v);
     Logger& operator <<(const char *v);
-    Logger& operator <<(const wchar_t *v);
     Logger& operator <<(const Rect& r);
     Logger& operator <<(const Vector& r);
 
 private:
     LogLevel m_logLevel;
-    boost::shared_ptr<std::wostringstream> m_stream;
+    boost::shared_ptr<std::ostringstream> m_stream;
 };
 }
 

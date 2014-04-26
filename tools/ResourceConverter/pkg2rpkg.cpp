@@ -29,16 +29,16 @@ using namespace Rangers;
 
 namespace Rangers
 {
-void countFiles(std::wstring dir, PKGItem *base, std::map<RPKGEntry *, PKGItem*>& itemMap)
+void countFiles(std::string dir, PKGItem *base, std::map<RPKGEntry *, PKGItem*>& itemMap)
 {
     for (int i = 0; i < base->childCount; i++)
     {
         if (base->childs[i].dataType == 3)
-            countFiles(dir + fromASCII(base->childs[i].name) + L"/", &base->childs[i], itemMap);
+            countFiles(dir + base->childs[i].name + "/", &base->childs[i], itemMap);
         else
         {
             RPKGEntry *e = new RPKGEntry;
-            e->name = dir + fromASCII(base->childs[i].name);
+            e->name = dir + base->childs[i].name;
             itemMap[e] = &base->childs[i];
         }
     }
@@ -95,7 +95,7 @@ int pkg2rpkg(const std::string& inputFile, const std::string& outputFile, Ranger
     delete root;
     outfile.close();
     pkgfile.close();
-    
+
     return 0;
 }
 }

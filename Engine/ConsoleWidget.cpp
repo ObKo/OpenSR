@@ -38,17 +38,17 @@ void ConsoleWidgetPrivate::ConsoleLineEditListener::actionPerformed(const Action
             SDL_Keysym key = boost::get<SDL_Keysym>(action.argument());
             if (key.sym == SDLK_RETURN)
             {
-                if (w->d_func()->lineEdit->text() != L"")
+                if (w->d_func()->lineEdit->text() != "")
                 {
                     w->d_func()->commandHistory.push_back(w->d_func()->lineEdit->text());
                     w->d_func()->historyPosition = -1;
                     Engine::instance().execCommand(w->d_func()->lineEdit->text());
-                    w->d_func()->lineEdit->setText(L"");
+                    w->d_func()->lineEdit->setText("");
                 }
             }
             else if (key.sym == SDLK_UP)
             {
-                if (w->d_func()->historyPosition == -1 && w->d_func()->lineEdit->text() != L"")
+                if (w->d_func()->historyPosition == -1 && w->d_func()->lineEdit->text() != "")
                 {
                     w->d_func()->commandHistory.push_back(w->d_func()->lineEdit->text());
                     w->d_func()->historyPosition = w->d_func()->commandHistory.size() - 1;
@@ -75,7 +75,7 @@ void ConsoleWidgetPrivate::ConsoleLineEditListener::actionPerformed(const Action
                 else
                 {
                     w->d_func()->historyPosition = -1;
-                    w->d_func()->lineEdit->setText(L"");
+                    w->d_func()->lineEdit->setText("");
                 }
 
                 //markToUpdate();
@@ -166,7 +166,7 @@ void ConsoleWidget::processLogic(int dt)
     if (Log::instance()->needUpdate())
     {
         std::list<LogEntry> l = Log::instance()->getLastLines(d->consoleLines);
-        std::wstring text;
+        std::string text;
 
         for (std::list<LogEntry>::const_iterator i = l.begin(); i != l.end(); ++i)
         {
@@ -176,23 +176,23 @@ void ConsoleWidget::processLogic(int dt)
             {
 
             case LERROR:
-                text += L"\\cFF0000";
+                text += "\\cFF0000";
                 break;
 
             case LWARNING:
-                text += L"\\cFFFF00";
+                text += "\\cFFFF00";
                 break;
 
             case LINFO:
-                text += L"\\c00FF00";
+                text += "\\c00FF00";
                 break;
 
             case LDEBUG:
-                text += L"\\cFFFFFF";
+                text += "\\cFFFFFF";
                 break;
             }
 
-            text += e.m_text + L"\\cR\n";
+            text += e.m_text + "\\cR\n";
         }
 
         d->logLabel->setText(text);

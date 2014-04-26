@@ -37,7 +37,7 @@ struct TiledBeizerCurveWrap: TiledBeizerCurve, boost::python::wrapper<TiledBeize
     {
     }
 
-    TiledBeizerCurveWrap(const std::wstring& texture)
+    TiledBeizerCurveWrap(const std::string& texture)
         : TiledBeizerCurve(texture)
     {
     }
@@ -50,7 +50,7 @@ void exportTiledBeizerCurve()
     using namespace boost::python;
 
     class_<TiledBeizerCurveWrap, bases<Object>, boost::shared_ptr<TiledBeizerCurveWrap>, boost::noncopyable> c("TiledBeizerCurve", init<boost::shared_ptr<Texture> >());
-    c.def(init<const std::wstring&>())
+    c.def(init<const std::string&>())
     .def(init<>())
     .add_property("curve", &TiledBeizerCurve::curve, &TiledBeizerCurve::setCurve);
     RANGERS_PYTHON_WRAP_OBJECT_DEF(TiledBeizerCurve, TiledBeizerCurveWrap, c);

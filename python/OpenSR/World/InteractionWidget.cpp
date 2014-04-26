@@ -42,8 +42,8 @@ struct InteractionWidgetWrap : InteractionWidget, boost::python::wrapper<Interac
     static boost::python::list selections(const InteractionWidget& self)
     {
         boost::python::list result;
-        std::vector<std::tuple<std::wstring, bool> > selections = self.selections();
-        for (const std::tuple<std::wstring, bool>& t : selections)
+        std::vector<std::tuple<std::string, bool> > selections = self.selections();
+        for (const std::tuple<std::string, bool>& t : selections)
         {
             result.append(boost::python::tuple(t));
         }
@@ -53,13 +53,13 @@ struct InteractionWidgetWrap : InteractionWidget, boost::python::wrapper<Interac
     static void setSelections(InteractionWidget& self, const boost::python::object& value)
     {
         boost::python::list l = boost::python::extract<boost::python::list>(value);
-        std::vector<std::tuple<std::wstring, bool> > result;
+        std::vector<std::tuple<std::string, bool> > result;
 
         boost::python::stl_input_iterator<boost::python::object> begin(l), end;
         for (boost::python::stl_input_iterator<boost::python::object> i  = begin; i != end; ++i)
         {
             boost::python::tuple t = boost::python::extract<boost::python::tuple>(*i);
-            result.push_back(std::tuple<std::wstring, bool>(boost::python::extract<std::wstring>(t[0]),
+            result.push_back(std::tuple<std::string, bool>(boost::python::extract<std::string>(t[0]),
                              boost::python::extract<bool>(t[1])));
         }
         self.setSelections(result);

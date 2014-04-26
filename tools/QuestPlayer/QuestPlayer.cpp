@@ -430,8 +430,8 @@ void QuestPlayer::finishTransition()
 //FIXME: Optimize
 void QuestPlayer::reduceTransitions()
 {
-    std::map<std::wstring, std::list<uint32_t> > transitions;
-    std::map<std::wstring, uint32_t> alwaysVisibleTransitions;
+    std::map<std::string, std::list<uint32_t> > transitions;
+    std::map<std::string, uint32_t> alwaysVisibleTransitions;
 
     for (uint32_t t : m_possibleTransitions)
     {
@@ -449,12 +449,12 @@ void QuestPlayer::reduceTransitions()
     m_possibleTransitions.clear();
     m_alwaysVisibleTransitions.clear();
 
-    for (std::pair<std::wstring, uint32_t> p : alwaysVisibleTransitions)
+    for (std::pair<std::string, uint32_t> p : alwaysVisibleTransitions)
     {
         m_alwaysVisibleTransitions.push_back(p.second);
     }
 
-    for (std::pair<std::wstring, std::list<uint32_t> > p : transitions)
+    for (std::pair<std::string, std::list<uint32_t> > p : transitions)
     {
         if (p.second.size() == 1)
         {

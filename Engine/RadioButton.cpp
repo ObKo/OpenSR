@@ -33,7 +33,7 @@ RadioButtonPrivate::RadioButtonPrivate()
     selected = false;
 }
 
-RadioButton::RadioButton(boost::shared_ptr<RadioButtonStyle> style, const std::wstring &text): Button(*(new RadioButtonPrivate()))
+RadioButton::RadioButton(boost::shared_ptr<RadioButtonStyle> style, const std::string &text): Button(*(new RadioButtonPrivate()))
 {
     RANGERS_D(RadioButton);
     d->radioButtonStyle = style;
@@ -56,7 +56,7 @@ RadioButton::RadioButton(boost::shared_ptr<RadioButtonStyle> style, const std::w
         if (d->selectedHovered)
             addChild(d->selectedHovered);
 
-        if ((d->radioButtonStyle->font) && (d->radioButtonStyle->font->path != L"") && (d->radioButtonStyle->font->size > 0))
+        if ((d->radioButtonStyle->font) && (d->radioButtonStyle->font->path != "") && (d->radioButtonStyle->font->size > 0))
         {
             d->label->setFont(ResourceManager::instance().loadFont(d->radioButtonStyle->font->path, d->radioButtonStyle->font->size));
         }

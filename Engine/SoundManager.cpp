@@ -49,9 +49,9 @@ SoundManager& SoundManager::instance()
     return manager;
 }
 
-boost::shared_ptr<Sound> SoundManager::loadSound(const std::wstring& path)
+boost::shared_ptr<Sound> SoundManager::loadSound(const std::string& path)
 {
-    std::map<std::wstring, boost::shared_ptr<Sound> >::const_iterator it = m_soundCache.find(path);
+    std::map<std::string, boost::shared_ptr<Sound> >::const_iterator it = m_soundCache.find(path);
     if (it != m_soundCache.end())
         return it->second;
 
@@ -60,7 +60,7 @@ boost::shared_ptr<Sound> SoundManager::loadSound(const std::wstring& path)
     return sound;
 }
 
-void SoundManager::playMusic(const std::wstring& path, bool loop)
+void SoundManager::playMusic(const std::string& path, bool loop)
 {
     if (m_currentMusic)
         Mix_FreeMusic(m_currentMusic);

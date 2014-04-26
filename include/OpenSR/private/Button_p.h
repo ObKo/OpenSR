@@ -46,7 +46,7 @@ public:
 
     boost::shared_ptr<ButtonStyle> style;
     boost::shared_ptr<Label> label;
-    std::wstring text;
+    std::string text;
     boost::shared_ptr<Sprite> normalSprite;
     boost::shared_ptr<Sprite> hoverSprite;
     boost::shared_ptr<Sprite> pressedSprite;

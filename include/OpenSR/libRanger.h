@@ -179,7 +179,7 @@ struct RPKGItem
 //! File description in RPKG
 struct RPKGEntry
 {
-    std::wstring name;  //!< File name
+    std::string name;  //!< File name
     uint32_t offset;  //!< File offset in archive
     uint32_t size; //!< File size in archive
 };
@@ -289,13 +289,13 @@ struct DATRecord
 
     Type type;           //!< Type of record
 
-    std::wstring name;   //!< Name of record (key)
-    std::wstring value;  //!< Value of record
+    std::string name;   //!< Name of record (key)
+    std::string value;  //!< Value of record
 
     typedef std::vector<DATRecord>::iterator iterator;
     typedef std::vector<DATRecord>::const_iterator const_iterator;
 
-    DATRecord(Type type = VALUE, const std::wstring& name = std::wstring(), const std::wstring& value = std::wstring());
+    DATRecord(Type type = VALUE, const std::string& name = std::string(), const std::string& value = std::string());
 
     std::vector<DATRecord> children() const;
 
@@ -304,17 +304,17 @@ struct DATRecord
 
     iterator add(const DATRecord& record);
     void erase(int i);
-    void erase(const std::wstring& key);
+    void erase(const std::string& key);
     void clear();
 
     const DATRecord& at(int i) const;
-    const DATRecord& at(const std::wstring& key) const;
+    const DATRecord& at(const std::string& key) const;
 
-    const_iterator find(const std::wstring& key) const;
-    iterator find(const std::wstring& key);
+    const_iterator find(const std::string& key) const;
+    iterator find(const std::string& key);
 
     DATRecord& operator[](int i);
-    DATRecord& operator[](const std::wstring& key);
+    DATRecord& operator[](const std::string& key);
 
     iterator begin();
     const_iterator begin() const;
@@ -424,17 +424,6 @@ LIBRANGER_API std::string toASCII(const std::wstring& text);
 LIBRANGER_API std::string toLocal(const std::wstring& text);
 
 //! Split string
-LIBRANGER_API std::vector<std::wstring> split(const std::wstring& s, wchar_t c);
-//! Remove leading and trailing whitespace/tabs/newlines from a string
-LIBRANGER_API std::wstring trim(const std::wstring& s);
-//! Get file extension
-LIBRANGER_API std::wstring suffix(const std::wstring& s);
-//! Get file basename
-LIBRANGER_API std::wstring basename(const std::wstring& s);
-//! Get file dir
-LIBRANGER_API std::wstring directory(const std::wstring& s);
-
-//! Split string
 LIBRANGER_API std::vector<std::string> split(const std::string& s, char c);
 //! Remove leading and trailing whitespace/tabs/newlines from a string
 LIBRANGER_API std::string trim(const std::string& s);
@@ -447,15 +436,13 @@ LIBRANGER_API std::string directory(const std::string& s);
 
 //! Calculate 32-bit FNV-1a hash of string
 LIBRANGER_API uint32_t textHash32(const std::string& s);
-//! Calculate 32-bit FNV-1a hash of string
-LIBRANGER_API uint32_t textHash32(const std::wstring& s);
 
 //! Create directory path
-LIBRANGER_API bool createDirPath(const std::wstring& path);
+LIBRANGER_API bool createDirPath(const std::string& path);
 //! Check directory writable
-LIBRANGER_API bool checkDirWritable(const std::wstring& path);
+LIBRANGER_API bool checkDirWritable(const std::string& path);
 //! Check file/directory exists
-LIBRANGER_API bool fileExists(const std::wstring& path);
+LIBRANGER_API bool fileExists(const std::string& path);
 
 //! Load PNG file into memory
 LIBRANGER_API PNGFrame loadPNG(const char *buffer, size_t bufferSize);

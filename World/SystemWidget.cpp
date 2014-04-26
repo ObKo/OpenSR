@@ -126,7 +126,7 @@ SystemWidget::SystemWidget(boost::shared_ptr<PlanetarySystem> system): Widget(),
 
     m_turnButton = boost::shared_ptr<Button>(new Button(Engine::instance().defaultSkin()->buttonStyle));
     m_turnButton->setAutoResize(true);
-    m_turnButton->setText(L"Turn");
+    m_turnButton->setText("Turn");
     m_turnButton->addListener(m_actionListener);
     m_turnButton->setPosition(Engine::instance().screenWidth() - m_turnButton->width() - 20, Engine::instance().screenHeight() - m_turnButton->height() - 20);
     m_turnButton->setLayer(1);
@@ -334,7 +334,7 @@ void SystemWidget::showTrajectory(const Trajectory& t)
         hideTrajectory();
     for (const BeizerCurve & c : t.nextTurns)
     {
-        auto o = boost::shared_ptr<TiledBeizerCurve>(new TiledBeizerCurve(L"ORC/UnitPath2.png"));
+        auto o = boost::shared_ptr<TiledBeizerCurve>(new TiledBeizerCurve("ORC/UnitPath2.png"));
         o->setCurve(c);
         o->setLayer(100);
         m_node->addChild(o);

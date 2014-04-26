@@ -29,7 +29,7 @@ class RANGERS_ENGINE_API RadioButton: public Button
 {
     RANGERS_DECLARE_PRIVATE(RadioButton);
 public:
-    RadioButton(boost::shared_ptr<RadioButtonStyle> style, const std::wstring &text);
+    RadioButton(boost::shared_ptr<RadioButtonStyle> style, const std::string &text);
 
     void select();
     void deselect();

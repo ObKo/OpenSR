@@ -41,7 +41,7 @@ public:
     //! Create sprite from animated texture
     AnimatedSprite(boost::shared_ptr<AnimatedTexture> texture);
     //! Create sprite from resource name
-    AnimatedSprite(const std::wstring& animation);
+    AnimatedSprite(const std::string& animation);
 
     virtual void processLogic(int dt);
     virtual void draw() const;

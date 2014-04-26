@@ -39,7 +39,7 @@ struct SoundDeleter
 
 namespace Rangers
 {
-Sound::Sound(const std::wstring& path)
+Sound::Sound(const std::string& path)
 {
     SDL_RWops *wav = ResourceManager::instance().getSDLRW(path);
     if (wav)

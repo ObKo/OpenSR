@@ -32,7 +32,7 @@ struct ColorLabelWrap : ColorLabel, boost::python::wrapper<ColorLabel>
         : ColorLabel()
     {
     }
-    ColorLabelWrap(const std::wstring& text, boost::shared_ptr<Font> font = boost::shared_ptr<Font>())
+    ColorLabelWrap(const std::string& text, boost::shared_ptr<Font> font = boost::shared_ptr<Font>())
         : ColorLabel(text, font)
     {
     }
@@ -43,7 +43,7 @@ void exportColorLabel()
 {
     using namespace boost::python;
 
-    class_<ColorLabelWrap, bases<Label>, boost::shared_ptr<ColorLabelWrap>, boost::noncopyable> c("ColorLabel", init<const std::wstring&>());
+    class_<ColorLabelWrap, bases<Label>, boost::shared_ptr<ColorLabelWrap>, boost::noncopyable> c("ColorLabel", init<const std::string&>());
     c.def(init<>())
     .add_property("textColor", &ColorLabel::textColor, &ColorLabel::setTextColor)
     .add_property("selectionColor", &ColorLabel::selectionColor, &ColorLabel::setSelectionColor);

@@ -26,7 +26,7 @@
 
 namespace Rangers
 {
-std::wstring _(const std::string& text, const std::string& datName, const std::string& gettextDomain)
+std::string _(const std::string& text, const std::string& datName, const std::string& gettextDomain)
 {
     char *gt;
     if (gettextDomain.empty())
@@ -35,17 +35,17 @@ std::wstring _(const std::string& text, const std::string& datName, const std::s
         gt = dgettext(gettextDomain.c_str(), text.c_str());
 
     if (text != gt)
-        return fromLocal(text.c_str());
+        return text;
 
     boost::shared_ptr<DATRecord> root = ResourceManager::instance().datRoot();
-    std::vector<std::wstring> path = split(fromASCII(datName.c_str()), L'.');
+    std::vector<std::string> path = split(datName, L'.');
 
     const DATRecord* current = root.get();
-    for (const std::wstring& id : path)
+    for (const std::string& id : path)
     {
         DATRecord::const_iterator i = current->find(id);
         if (i == current->end())
-            return fromASCII(text.c_str());
+            return text;
 
         current = i.operator->();
     }

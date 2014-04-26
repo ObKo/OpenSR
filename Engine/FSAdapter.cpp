@@ -37,12 +37,12 @@ using namespace std;
 
 namespace Rangers
 {
-list< wstring > FSAdapter::getFiles() const
+list< string > FSAdapter::getFiles() const
 {
     return m_files;
 }
 
-void FSAdapter::load(const std::wstring& path)
+void FSAdapter::load(const std::string& path)
 {
     m_dirPath = path;
     if (m_dirPath.at(path.length() - 1) != '/')
@@ -59,13 +59,13 @@ void FSAdapter::load(const std::wstring& path)
 #ifdef WIN32
 void FSAdapter::scan(const wstring& path)
 {
-    wstring localPath = m_dirPath + path;
+    wstring localPath = fromUTF8(m_dirPath) + path;
     WIN32_FIND_DATAW fd;
     HANDLE fh = FindFirstFileW((LPCWSTR)(localPath + L"*").c_str(), &fd);
 
     if (fh == INVALID_HANDLE_VALUE)
     {
-        Log::error() << "Cannot open directory " << localPath << ": " << fromLocal(strerror(errno));
+        Log::error() << "Cannot open directory " << toUTF8(localPath) << ": " << strerror(errno);
         return;
     }
     do
@@ -80,7 +80,7 @@ void FSAdapter::scan(const wstring& path)
         {
             wstring fileName = path + fd.cFileName;
             std::replace(fileName.begin(), fileName.end(), L'\\', L'/');
-            m_files.push_back(fileName);
+            m_files.push_back(toUTF8(fileName));
         }
     }
     while (FindNextFileW(fh, &fd));
@@ -88,11 +88,11 @@ void FSAdapter::scan(const wstring& path)
 #else
 void FSAdapter::scan(const string& path)
 {
-    string localPath = toLocal(m_dirPath) + path;
+    string localPath = m_dirPath + path;
     DIR* dir = opendir(localPath.c_str());
     if (!dir)
     {
-        Log::error() << "Cannot open directory " << fromLocal(localPath.c_str()) << ": " << fromLocal(strerror(errno));
+        Log::error() << "Cannot open directory " << localPath.c_str() << ": " << strerror(errno);
         return;
     }
     dirent *current;
@@ -113,28 +113,31 @@ void FSAdapter::scan(const string& path)
                 scan(path + current->d_name + '/');
                 break;
             case S_IFREG:
-                m_files.push_back(fromLocal((path + current->d_name).c_str()));
+                m_files.push_back(path + current->d_name);
                 break;
             default:
-                Log::debug() << fromLocal(fullPath.c_str()) << " unknown entry type";
+                Log::debug() << fullPath.c_str() << " unknown entry type";
             }
         }
         else
         {
-            Log::debug() << "Cannot lstat: " << fromLocal(strerror(errno));
+            Log::debug() << "Cannot lstat: " << strerror(errno);
         }
     }
     closedir(dir);
 }
 #endif
 
-//FIXME: std::wstring to std::ifstream constructor
-std::istream* FSAdapter::getStream(const std::wstring& name)
+std::istream* FSAdapter::getStream(const std::string& name)
 {
-    ifstream *s = new ifstream(toLocal(m_dirPath + name).c_str(), ios::in | ios::binary);
+#ifdef WIN32
+    ifstream *s = new ifstream(fromUTF8(m_dirPath + name), ios::in | ios::binary);
+#else
+    ifstream *s = new ifstream(m_dirPath + name, ios::in | ios::binary);
+#endif
     if (!s->is_open())
     {
-        Log::error() << "Cannot open file " << name << " from FS: " << fromLocal(strerror(errno));
+        Log::error() << "Cannot open file " << name << " from FS: " << strerror(errno);
         delete s;
         return 0;
     }

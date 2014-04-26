@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2012 - 2013 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2013 - 2014 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,42 +16,18 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef RANGERS_PLUGIN_H
-#define RANGERS_PLUGIN_H
-
-#include "OpenSR/config.h"
-
-#include <string>
-#ifdef _WIN32
-#include <windows.h>
-#endif
-
-struct lua_State;
+#include <OpenSR/FTFont.h>
+#include <boost/python.hpp>
 
 namespace Rangers
 {
-class RANGERS_ENGINE_API Plugin
+namespace Python
 {
-public:
-    Plugin(const std::string& path);
-
-    int load();
-    bool isLoaded() const;
-
-    ~Plugin();
-
-private:
-    bool m_loaded;
-    std::string m_path;
-    int (*m_rangersPluginInit)();
-    int (*m_rangersAPIVersion)();
-    void (*m_rangersPluginDeinit)();
-#ifdef _WIN32
-    HMODULE m_handle;
-#else
-    void *m_handle;
-#endif
-};
+void exportFTFont()
+{
+    using namespace boost::python;
+    class_<FTFont, boost::shared_ptr<FTFont>, bases<Font> >("FTFont", boost::python::no_init)
+    .add_property("antialiased", &FTFont::antialiased);
 }
-
-#endif // RANGERS_PLUGIN_H
+}
+}

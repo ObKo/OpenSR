@@ -40,7 +40,7 @@ struct RANGERS_WORLD_API InfoWidgetContent
     InfoWidgetContent();
     virtual ~InfoWidgetContent() {};
 
-    std::wstring caption;
+    std::string caption;
     TextureRegion icon;
     uint32_t race;
 
@@ -82,7 +82,7 @@ public:
     virtual void updateContent(boost::shared_ptr<WorldObject> object, boost::shared_ptr<InfoWidgetContent> content, Rect &contentRect) const;
 
 protected:
-    void generateWidgets(boost::shared_ptr<KeyValueContent> content, boost::shared_ptr<InfoWidgetStyle> style, const std::list<std::pair<std::wstring, std::wstring> >& keyValue) const;
+    void generateWidgets(boost::shared_ptr<KeyValueContent> content, boost::shared_ptr<InfoWidgetStyle> style, const std::list<std::pair<std::string, std::string> >& keyValue) const;
 };
 
 class AsteroidInfoWidgetProvider: public KeyValueInfoWidgetProvider

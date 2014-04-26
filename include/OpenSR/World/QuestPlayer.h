@@ -38,9 +38,9 @@ public:
     QuestPlayer();
     ~QuestPlayer();
 
-    std::wstring currentText() const;
-    std::vector<std::wstring> visibleParameters() const;
-    std::vector<std::tuple<uint32_t, std::wstring, bool> > visibleTransitions() const;
+    std::string currentText() const;
+    std::vector<std::string> visibleParameters() const;
+    std::vector<std::tuple<uint32_t, std::string, bool> > visibleTransitions() const;
 
     uint32_t currentLocation() const;
     uint32_t currentTransition() const;
@@ -48,7 +48,7 @@ public:
 
     void transit(uint32_t num);
 
-    void loadQuest(const std::wstring& quest);
+    void loadQuest(const std::string& quest);
     void resetQuest();
 
     bool questCompleted() const;
@@ -68,12 +68,12 @@ private:
     bool checkCriticalParameters();
     void finishTransition();
 
-    std::wstring substituteValues(const std::wstring &str) const;
+    std::string substituteValues(const std::string &str) const;
 
     Rangers::QM::Quest m_quest;
 
     QM::Location m_currentLocation;
-    std::wstring m_currentText;
+    std::string m_currentText;
     QM::Transition m_currentTransition;
 
     bool m_transition;

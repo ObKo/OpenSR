@@ -62,7 +62,7 @@ SystemPlanetWidget::SystemPlanetWidget(boost::shared_ptr<Planet> planet): SpaceO
     m_useShader = Rangers::Engine::instance().properties()->get<bool>("graphics.useShaders", true);
     if (m_useShader && (!m_vertexShader || !m_fragmentShader || !m_shader))
     {
-        std::wstring fragShaderFile = fromUTF8(Engine::instance().properties()->get<std::string>("world.planetShader", "World/Planet.frag").c_str());
+        std::string fragShaderFile = Engine::instance().properties()->get<std::string>("world.planetShader", "World/Planet.frag");
         m_vertexShader = boost::shared_ptr<Shader>(new Shader(Shader::VERTEX_SHADER, PLANET_VERTEX_SHADER));
         m_fragmentShader = boost::shared_ptr<Shader>(new Shader(fragShaderFile));
         m_shader = boost::shared_ptr<ShaderProgram>(new ShaderProgram());

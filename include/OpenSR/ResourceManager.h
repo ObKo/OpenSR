@@ -45,23 +45,23 @@ struct DATRecord;
 class RANGERS_ENGINE_API ResourceManager
 {
 public:
-    void addRPKG(const std::wstring& path);
-    void addDir(const std::wstring& path);
+    void addRPKG(const std::string& path);
+    void addDir(const std::string& path);
 
-    boost::shared_array<char> loadData(const std::wstring& name, size_t &size);
-    boost::shared_ptr<std::istream> getFileStream(const std::wstring& name);
-    SDL_RWops* getSDLRW(const std::wstring& name);
+    boost::shared_array<char> loadData(const std::string& name, size_t &size);
+    boost::shared_ptr<std::istream> getFileStream(const std::string& name);
+    SDL_RWops* getSDLRW(const std::string& name);
 
-    boost::shared_ptr<Texture> loadTexture(const std::wstring& name);
-    boost::shared_ptr<AnimatedTexture> loadAnimation(const std::wstring& name, bool backgroundLoading = false);
+    boost::shared_ptr<Texture> loadTexture(const std::string& name);
+    boost::shared_ptr<AnimatedTexture> loadAnimation(const std::string& name, bool backgroundLoading = false);
 
     boost::shared_ptr<Font> loadFont(const FontDescriptor& desc);
-    boost::shared_ptr<Font> loadFont(const std::wstring& name, int size, bool antialiased = true);
+    boost::shared_ptr<Font> loadFont(const std::string& name, int size, bool antialiased = true);
 
-    void addDATFile(const std::wstring& name);
+    void addDATFile(const std::string& name);
     boost::shared_ptr<DATRecord> datRoot();
 
-    bool resourceExists(const std::wstring& path);
+    bool resourceExists(const std::string& path);
 
     ResourceObjectManager& objectManager();
 
@@ -77,12 +77,12 @@ private:
     void processGAIQueue();
     void cleanupUnused();
 
-    std::map<std::wstring, boost::shared_ptr<ResourceAdapter> > m_files;
+    std::map<std::string, boost::shared_ptr<ResourceAdapter> > m_files;
     std::list<boost::shared_ptr<ResourceAdapter> > m_adapters;
 
-    std::map<std::wstring, boost::shared_ptr<Texture> > m_textures;
-    std::map<std::wstring, boost::shared_ptr<AnimatedTexture> > m_animations;
-    std::map<std::wstring, boost::shared_ptr<Font> > m_fonts;
+    std::map<std::string, boost::shared_ptr<Texture> > m_textures;
+    std::map<std::string, boost::shared_ptr<AnimatedTexture> > m_animations;
+    std::map<std::string, boost::shared_ptr<Font> > m_fonts;
     std::map<boost::shared_ptr<AnimatedTexture>, GAIWorker *> m_gaiQueue;
     boost::shared_ptr<DATRecord> m_datRoot;
 

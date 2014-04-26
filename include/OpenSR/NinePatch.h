@@ -30,7 +30,7 @@ class RANGERS_ENGINE_API NinePatch: public Sprite
 public:
     NinePatch();
     NinePatch(boost::shared_ptr<NinePatchDescriptor> desc);
-    NinePatch(const std::wstring& name);
+    NinePatch(const std::string& name);
 
     virtual void processMain();
     virtual void draw() const;

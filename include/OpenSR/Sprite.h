@@ -38,7 +38,7 @@ class RANGERS_ENGINE_API Sprite: public Object
 public:
     Sprite();
     Sprite(boost::shared_ptr<Texture> texture);
-    Sprite(const std::wstring& texture);
+    Sprite(const std::string& texture);
     Sprite(const TextureRegion& region);
     Sprite(boost::shared_ptr<TextureRegionDescriptor> region);
 
@@ -52,7 +52,7 @@ public:
     void setWidth(float width);
     void setHeight(float height);
     void setTextureScaling(TextureScaling  ts);
-    void setTexture(const std::wstring& texture);
+    void setTexture(const std::string& texture);
     void setTexture(boost::shared_ptr<Texture> texture);
     void setTexture(const TextureRegion& texture);
 

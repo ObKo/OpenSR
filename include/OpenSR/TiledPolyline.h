@@ -32,7 +32,7 @@ class RANGERS_ENGINE_API TiledPolyline: public Object
 public:
     TiledPolyline();
     TiledPolyline(boost::shared_ptr<Texture> texture);
-    TiledPolyline(const std::wstring& texture);
+    TiledPolyline(const std::string& texture);
 
     virtual ~TiledPolyline();
 
@@ -44,7 +44,7 @@ public:
 
     void setPolyline(const std::vector<Vector> points);
     void setTexture(boost::shared_ptr<Texture> texture);
-    void setTexture(const std::wstring& texture);
+    void setTexture(const std::string& texture);
 
 protected:
     TiledPolyline(TiledPolylinePrivate &p);

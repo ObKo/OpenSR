@@ -114,7 +114,7 @@ Engine::~Engine()
 #if defined(WIN32) && defined(_MSC_VER)
     configFile.open(d->configPath, ios_base::out);
 #else
-    configFile.open(toLocal(d->configPath).c_str(), ios_base::out);
+    configFile.open(d->configPath.c_str(), ios_base::out);
 #endif
     if (configFile.is_open())
         boost::property_tree::write_ini(configFile, *d->properties);
@@ -285,7 +285,8 @@ void Engine::init(int argc, char **argv, int w, int h, bool fullscreen)
 #ifdef WIN32
     wchar_t *path = new wchar_t[1024];
     GetModuleFileName(0, path, 1024);
-    d->configPath = (directory(std::wstring(path)) + L"\\OpenSR.ini");
+    //TODO: codecvt_utf8
+    d->configPath = (directory(toUTF8(std::wstring(path))) + "\\OpenSR.ini");
     delete[] path;
 #ifdef _MSC_VER
     configFile.open(d->configPath, ios_base::in);
@@ -299,16 +300,16 @@ void Engine::init(int argc, char **argv, int w, int h, bool fullscreen)
     {
         if ((path = getenv("HOME")) == NULL)
         {
-            d->configPath = fromLocal((directory(std::string(argv[0])) + "/OpenSR.conf").c_str());
+            d->configPath = directory(std::string(argv[0])) + "/OpenSR.conf";
         }
         else
         {
-            d->configPath = fromLocal((std::string(path) + "/.config/OpenSR/OpenSR.conf").c_str());
+            d->configPath = std::string(path) + "/.config/OpenSR/OpenSR.conf";
         }
     }
     else
-        d->configPath = fromLocal((std::string(path) + "/OpenSR/OpenSR.conf").c_str());
-    configFile.open(toLocal(d->configPath).c_str(), ios_base::in);
+        d->configPath = std::string(path) + "/OpenSR/OpenSR.conf";
+    configFile.open(d->configPath, ios_base::in);
 #endif
 
     if (configFile.is_open())
@@ -344,23 +345,23 @@ void Engine::init(int argc, char **argv, int w, int h, bool fullscreen)
     if (SDL_Init(SDL_INIT_VIDEO) != 0)
         throw std::runtime_error("Unable to init SDL");
 
-    d->mainDataDir = fromLocal(d->properties->get<std::string>("data.mainDataDir", "").c_str());
-    if (d->mainDataDir != L"")
+    d->mainDataDir = d->properties->get<std::string>("data.mainDataDir", "");
+    if (d->mainDataDir != "")
     {
         if (!createDirPath(d->mainDataDir) && !checkDirWritable(d->mainDataDir))
         {
             Log::error() << "Cannot create data dir or dir not writable: " << d->mainDataDir;
-            d->mainDataDir = L"";
+            d->mainDataDir = "";
         }
     }
     Log::info() << d->mainDataDir;
 #ifdef WIN32
-    if (d->mainDataDir == L"")
+    if (d->mainDataDir == "")
     {
-        d->mainDataDir = fromLocal((directory(std::string(d->argv[0]))).c_str());
+        d->mainDataDir = directory(std::string(d->argv[0]));
     }
 #else
-    if (d->mainDataDir == L"")
+    if (d->mainDataDir == "")
     {
         char *path;
 #ifdef __linux
@@ -369,28 +370,28 @@ void Engine::init(int argc, char **argv, int w, int h, bool fullscreen)
 #endif
             if ((path = getenv("HOME")) != NULL)
             {
-                d->mainDataDir = fromLocal((std::string(path) + "/.OpenSR/").c_str());
+                d->mainDataDir = std::string(path) + "/.OpenSR/";
                 if (!createDirPath(d->mainDataDir) && !checkDirWritable(d->mainDataDir))
                 {
                     Log::error() << "Cannot create data dir or dir not writable: " << d->mainDataDir;
-                    d->mainDataDir = L"";
+                    d->mainDataDir = "";
                 }
             }
 #ifdef __linux
         }
         else
         {
-            d->mainDataDir = fromLocal((std::string(path) + "/OpenSR/").c_str());
+            d->mainDataDir = std::string(path) + "/OpenSR/";
             if (!createDirPath(d->mainDataDir) && !checkDirWritable(d->mainDataDir))
             {
                 Log::error() << "Cannot create data dir or dir not writable: " << d->mainDataDir;
-                d->mainDataDir = L"";
+                d->mainDataDir = "";
             }
         }
 #endif
     }
 #endif
-    if (d->mainDataDir == L"")
+    if (d->mainDataDir == "")
         throw std::runtime_error("No writable data dir available.");
 
     Log::debug() << "Using data dir: " << d->mainDataDir;
@@ -399,14 +400,14 @@ void Engine::init(int argc, char **argv, int w, int h, bool fullscreen)
     char *pathes;
     if ((pathes = getenv("XDG_DATA_DIRS")) != NULL)
     {
-        std::vector<std::wstring> list = split(fromLocal(pathes), L':');
-        for (std::vector<std::wstring>::const_iterator i = list.begin(); i != list.end(); ++i)
-            ResourceManager::instance().addDir((*i) + L"/OpenSR/");
+        std::vector<std::string> list = split(pathes, ':');
+        for (std::vector<std::string>::const_iterator i = list.begin(); i != list.end(); ++i)
+            ResourceManager::instance().addDir((*i) + "/OpenSR/");
     }
     else
     {
         //FIXME: use install prefix.
-        ResourceManager::instance().addDir(L"/usr/share/OpenSR/");
+        ResourceManager::instance().addDir("/usr/share/OpenSR/");
     }
 #endif
 
@@ -455,7 +456,7 @@ void Engine::init(int argc, char **argv, int w, int h, bool fullscreen)
         coreFontSize = atoi(coreFontStrings.at(1).c_str());
     if (coreFontStrings.size() > 2 && coreFontStrings.at(2) == "false")
         coreFontAA = false;
-    d->coreFont = ResourceManager::instance().loadFont(fromLocal(coreFontStrings.at(0).c_str()), coreFontSize, coreFontAA);
+    d->coreFont = ResourceManager::instance().loadFont(coreFontStrings.at(0), coreFontSize, coreFontAA);
 
     std::vector<std::string> monoFontStrings = split(d->properties->get<std::string>("graphics.monofont", "DroidSansMono.ttf:14"), ':');
     int monoFontSize = 14;
@@ -464,10 +465,10 @@ void Engine::init(int argc, char **argv, int w, int h, bool fullscreen)
         monoFontSize = atoi(monoFontStrings.at(1).c_str());
     if (monoFontStrings.size() > 2 && monoFontStrings.at(2) == "false")
         monoFontAA = false;
-    d->monospaceFont = ResourceManager::instance().loadFont(fromLocal(monoFontStrings.at(0).c_str()), monoFontSize, monoFontAA);
+    d->monospaceFont = ResourceManager::instance().loadFont(monoFontStrings.at(0), monoFontSize, monoFontAA);
 
     //FIXME: ORC hardcoded.
-    ResourceManager::instance().objectManager().addJSON(fromLocal(d->properties->get<std::string>("data.objects", "ORC/resources.json").c_str()));
+    ResourceManager::instance().objectManager().addJSON(d->properties->get<std::string>("data.objects", "ORC/resources.json").c_str());
 
     setDefaultSkin(d->properties->get<std::string>("graphics.defaultSkin", "/skins/default").c_str());
 
@@ -544,7 +545,7 @@ int Engine::run()
     d->gameRunning = true;
     //d->logicThread = new boost::thread(&Engine::logic);
 
-    std::wstring startupScript = fromLocal(d->properties->get<std::string>("engine.startupScript", "startup.py").c_str());
+    std::string startupScript = d->properties->get<std::string>("engine.startupScript", "startup.py").c_str();
 
     execPythonScript(startupScript);
 
@@ -757,8 +758,7 @@ void Engine::EnginePrivate::processEvents()
         case SDL_TEXTINPUT:
             if (boost::shared_ptr<Widget> fw = focusedWidget.lock())
             {
-                std::wstring text = fromUTF8(event.text.text);
-                fw->action(Action(fw, Rangers::Action::TEXT_INPUT, text));
+                fw->action(Action(fw, Rangers::Action::TEXT_INPUT, std::string(event.text.text)));
             }
             break;
         case SDL_QUIT:
@@ -801,43 +801,43 @@ boost::shared_ptr<Node> Engine::rootNode()
     return d->mainNode;
 }
 
-void Engine::loadPlugin(const std::wstring& pluginName)
+void Engine::loadPlugin(const std::string& pluginName)
 {
     RANGERS_D(Engine);
 
-    std::wstring name = basename(pluginName);
+    std::string name = basename(pluginName);
 
-    std::wstring pluginPath = fromUTF8(d->properties->get<std::string>("data.pluginPath", "").c_str());
-    std::vector<std::wstring> searchPaths = split(pluginPath, L':');
-    std::wstring searchSuffix;
+    std::string pluginPath = d->properties->get<std::string>("data.pluginPath", "").c_str();
+    std::vector<std::string> searchPaths = split(pluginPath, L':');
+    std::string searchSuffix;
 
 #ifdef WIN32
-    searchSuffix += L".dll";
+    searchSuffix += ".dll";
 #elif __APPLE__
-    searchSuffix += L".dylib";
+    searchSuffix += ".dylib";
 #else
-    searchSuffix += L".so";
+    searchSuffix += ".so";
 #endif
 
-    std::vector<std::wstring> searchNames;
+    std::vector<std::string> searchNames;
     searchNames.push_back(name + searchSuffix);
-    searchNames.push_back(L"lib" + name + searchSuffix);
+    searchNames.push_back("lib" + name + searchSuffix);
 
-    std::vector<std::wstring>::const_iterator end = searchPaths.end();
-    for (std::vector<std::wstring>::const_iterator i = searchPaths.begin(); i != end; ++i)
+    std::vector<std::string>::const_iterator end = searchPaths.end();
+    for (std::vector<std::string>::const_iterator i = searchPaths.begin(); i != end; ++i)
     {
-        searchNames.push_back((*i) + L"/" + name + searchSuffix);
-        searchNames.push_back((*i) + L"/" + L"lib" + name + searchSuffix);
+        searchNames.push_back((*i) + "/" + name + searchSuffix);
+        searchNames.push_back((*i) + "/" + "lib" + name + searchSuffix);
     }
 
     Log::debug() << "Plugin \"" << pluginName << "\" search names:";
     end = searchNames.end();
-    for (std::vector<std::wstring>::const_iterator i = searchNames.begin(); i != end; ++i)
+    for (std::vector<std::string>::const_iterator i = searchNames.begin(); i != end; ++i)
         Log::debug() << "\t" << (*i);
 
-    std::wstring realName;
+    std::string realName;
     end = searchNames.end();
-    for (std::vector<std::wstring>::const_iterator i = searchNames.begin(); i != end; ++i)
+    for (std::vector<std::string>::const_iterator i = searchNames.begin(); i != end; ++i)
     {
         if (fileExists(*i))
         {
@@ -854,12 +854,12 @@ void Engine::loadPlugin(const std::wstring& pluginName)
     d->plugins.push_back(p);
 }
 
-void Engine::execCommand(const std::wstring& what)
+void Engine::execCommand(const std::string& what)
 {
     RANGERS_D(Engine);
     if (what.empty())
         return;
 
-    execPythonLine(what, L"<engine>");
+    execPythonLine(what, "<engine>");
 }
 }

@@ -35,7 +35,7 @@ struct SpriteWrap : Sprite, boost::python::wrapper<Sprite>
         : Sprite(texture)
     {
     }
-    SpriteWrap(const std::wstring& texture)
+    SpriteWrap(const std::string& texture)
         : Sprite(texture)
     {
     }
@@ -77,7 +77,7 @@ struct SpriteWrap : Sprite, boost::python::wrapper<Sprite>
     {
         boost::python::extract<TextureRegion> r(g);
         boost::python::extract<boost::shared_ptr<Texture> > t(g);
-        boost::python::extract<std::wstring> s(g);
+        boost::python::extract<std::string> s(g);
         if (r.check())
         {
             self.setTexture(r);
@@ -120,7 +120,7 @@ void exportSprite()
     .value("POSITION_Y_BOTTOM", POSITION_Y_BOTTOM)
     .value("POSITION_Y_CENTER", POSITION_Y_CENTER);
 
-    class_<SpriteWrap, bases<Object>, boost::shared_ptr<SpriteWrap>, boost::noncopyable> c("Sprite", init<const std::wstring&>());
+    class_<SpriteWrap, bases<Object>, boost::shared_ptr<SpriteWrap>, boost::noncopyable> c("Sprite", init<const std::string&>());
     c.def(init<const TextureRegion&>())
     .def(init<boost::shared_ptr<TextureRegionDescriptor> >())
     .def(init<>())

@@ -40,13 +40,13 @@ GAISprite::GAISprite(): AnimatedSprite(*(new GAISpritePrivate()))
 {
 }
 
-GAISprite::GAISprite(const std::wstring& name): AnimatedSprite(*(new GAISpritePrivate()))
+GAISprite::GAISprite(const std::string& name): AnimatedSprite(*(new GAISpritePrivate()))
 {
     RANGERS_D(GAISprite);
 
-    std::wstring sfx = suffix(name);
-    std::transform(sfx.begin(), sfx.end(), sfx.begin(), towlower);
-    if (sfx == L"gai")
+    std::string sfx = suffix(name);
+    std::transform(sfx.begin(), sfx.end(), sfx.begin(), tolower);
+    if (sfx == "gai")
     {
         boost::shared_ptr<std::istream> stream = ResourceManager::instance().getFileStream(name);
 
@@ -61,7 +61,7 @@ GAISprite::GAISprite(const std::wstring& name): AnimatedSprite(*(new GAISpritePr
             }
             else
             {
-                boost::shared_ptr<std::istream> bgFrameStream = ResourceManager::instance().getFileStream(directory(name) + basename(name) + L".gi");
+                boost::shared_ptr<std::istream> bgFrameStream = ResourceManager::instance().getFileStream(directory(name) + basename(name) + ".gi");
                 if (bgFrameStream)
                 {
                     GIFrame bgFrame = loadGIFrame(*bgFrameStream, true, 0, 0, header.startX, header.startY, header.finishX, header.finishY);

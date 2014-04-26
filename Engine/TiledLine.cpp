@@ -56,7 +56,7 @@ TiledLine::TiledLine(boost::shared_ptr<Texture> texture, const Vector& start, co
     markToUpdate();
 }
 
-TiledLine::TiledLine(const std::wstring& texture):
+TiledLine::TiledLine(const std::string& texture):
     Object(*(new TiledLinePrivate))
 {
     RANGERS_D(TiledLine);
@@ -65,7 +65,7 @@ TiledLine::TiledLine(const std::wstring& texture):
     markToUpdate();
 }
 
-TiledLine::TiledLine(const std::wstring& texture, const Vector& start, const Vector& end):
+TiledLine::TiledLine(const std::string& texture, const Vector& start, const Vector& end):
     Object(*(new TiledLinePrivate))
 {
     RANGERS_D(TiledLine);
@@ -215,7 +215,7 @@ void TiledLine::setTexture(boost::shared_ptr<Texture> texture)
     TiledLine::markToUpdate();
 }
 
-void TiledLine::setTexture(const std::wstring& texture)
+void TiledLine::setTexture(const std::string& texture)
 {
     setTexture(ResourceManager::instance().loadTexture(texture));
 }

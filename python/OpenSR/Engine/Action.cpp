@@ -27,9 +27,9 @@ namespace Python
 
 namespace
 {
-std::wstring argumentGetString(Action::Argument &self)
+std::string argumentGetString(Action::Argument &self)
 {
-    return boost::get<std::wstring>(self);
+    return boost::get<std::string>(self);
 }
 
 Rect argumentGetRect(Action::Argument &self)
@@ -59,7 +59,7 @@ void exportAction()
 
     class_<Action::Argument>("ActionArgument")
     .def(init<>())
-    .def(init<const std::wstring&>())
+    .def(init<const std::string&>())
     .def(init<const Rect&>())
     .def(init<const SDL_Keysym&>())
     .def(init<bool>())

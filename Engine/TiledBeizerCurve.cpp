@@ -39,7 +39,7 @@ TiledBeizerCurve::TiledBeizerCurve(boost::shared_ptr<Texture> texture): TiledPol
     d->texture = texture;
 }
 
-TiledBeizerCurve::TiledBeizerCurve(const std::wstring& texture): TiledPolyline(*(new TiledBeizerCurvePrivate()))
+TiledBeizerCurve::TiledBeizerCurve(const std::string& texture): TiledPolyline(*(new TiledBeizerCurvePrivate()))
 {
     RANGERS_D(TiledBeizerCurve);
     d->texture = ResourceManager::instance().loadTexture(texture);

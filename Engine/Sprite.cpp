@@ -54,7 +54,7 @@ Sprite::Sprite(boost::shared_ptr<Texture> texture): Object(*(new SpritePrivate))
     markToUpdate();
 }
 
-Sprite::Sprite(const std::wstring& texture): Object(*(new SpritePrivate))
+Sprite::Sprite(const std::string& texture): Object(*(new SpritePrivate))
 {
     RANGERS_D(Sprite);
     d->region = TextureRegion(ResourceManager::instance().loadTexture(texture));
@@ -173,7 +173,7 @@ float Sprite::normalWidth() const
         return 0.0f;
 }
 
-void Sprite::setTexture(const std::wstring& texture)
+void Sprite::setTexture(const std::string& texture)
 {
     setTexture(TextureRegion(ResourceManager::instance().loadTexture(texture)));
 }

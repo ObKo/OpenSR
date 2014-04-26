@@ -113,7 +113,7 @@ void WorldManager::generateWorld()
     }
 }
 
-bool WorldManager::saveWorld(const std::wstring& file) const
+bool WorldManager::saveWorld(const std::string& file) const
 {
     std::map<uint64_t, boost::shared_ptr<WorldObject> > objects = m_objects;
     std::list<boost::shared_ptr<WorldObject> > savingList;
@@ -127,9 +127,9 @@ bool WorldManager::saveWorld(const std::wstring& file) const
     std::ofstream worldFile;
 
 #if defined(WIN32) && defined(_MSC_VER)
-    worldFile.open(file);
+    worldFile.open(fromUTF8(file));
 #else
-    worldFile.open(toLocal(file).c_str());
+    worldFile.open(file);
 #endif
 
     worldFile.write((const char*)&SAVE_FILE_SIGNATURE, 4);
@@ -185,14 +185,14 @@ bool WorldManager::saveWorld(const std::wstring& file) const
 }
 
 
-bool WorldManager::loadWorld(const std::wstring& file)
+bool WorldManager::loadWorld(const std::string& file)
 {
     std::ifstream worldFile;
 
 #if defined(WIN32) && defined(_MSC_VER)
-    worldFile.open(file);
+    worldFile.open(fromUTF8(file));
 #else
-    worldFile.open(toLocal(file).c_str());
+    worldFile.open(file);
 #endif
 
     uint32_t sig;

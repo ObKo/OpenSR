@@ -52,8 +52,6 @@ struct RANGERS_ENGINE_API Color
     static Color fromUInt(uint32_t color);
     //! From string in "#AARRGGBB" or "#RRGGBB" format
     static Color fromString(const std::string& color);
-    //! From wstring in "#AARRGGBB" or "#RRGGBB" format
-    static Color fromString(const std::wstring& color);
 };
 
 struct RANGERS_ENGINE_API Vector
@@ -102,7 +100,7 @@ struct RANGERS_ENGINE_API ResourceObject
 
 struct RANGERS_ENGINE_API TextureRegionDescriptor: public ResourceObject
 {
-    std::wstring texture;
+    std::string texture;
     int x, y, width, height;
 };
 
@@ -119,14 +117,14 @@ struct RANGERS_ENGINE_API NinePatchDescriptor: public ResourceObject
 //TODO: Load font from descriptor
 struct RANGERS_ENGINE_API FontDescriptor: public ResourceObject
 {
-    std::wstring path;
+    std::string path;
     int size;
     bool antialiasing;
 };
 
 struct RANGERS_ENGINE_API SoundDescriptor: public ResourceObject
 {
-    std::wstring path;
+    std::string path;
 };
 
 //! Struct that handles region of texture.

@@ -36,8 +36,8 @@ public:
     Button(boost::shared_ptr<Texture> texture);
     Button(boost::shared_ptr<Texture> texture, boost::shared_ptr<Texture> hoverTexture, boost::shared_ptr<Texture> pressTexture);
 
-    Button(const std::wstring& texture);
-    Button(const std::wstring& texture, const std::wstring& hoverTexture, const std::wstring& pressTexture);
+    Button(const std::string& texture);
+    Button(const std::string& texture, const std::string& hoverTexture, const std::string& pressTexture);
 
     Button(boost::shared_ptr<ButtonStyle> style);
 
@@ -51,14 +51,14 @@ public:
     virtual int preferredWidth() const;
     virtual int preferredHeight() const;
 
-    void setText(const std::wstring& text);
+    void setText(const std::string& text);
     void setFont(boost::shared_ptr<Font> font);
     void setAutoResize(bool autoResize);
 
     void setSounds(boost::shared_ptr<Sound> clickSound, boost::shared_ptr<Sound> enterSound, boost::shared_ptr<Sound> leaveSound);
-    void setSounds(const std::wstring& clickSound, const std::wstring& enterSound, const std::wstring& leaveSound);
+    void setSounds(const std::string& clickSound, const std::string& enterSound, const std::string& leaveSound);
 
-    std::wstring text() const;
+    std::string text() const;
     boost::shared_ptr<Font> font() const;
     bool autoResize() const;
     boost::shared_ptr<Sound> clickSound() const;

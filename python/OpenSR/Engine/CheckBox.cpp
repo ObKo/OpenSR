@@ -28,7 +28,7 @@ namespace Python
 {
 struct CheckBoxWrap : CheckBox, boost::python::wrapper<CheckBox>
 {
-    CheckBoxWrap(boost::shared_ptr<CheckBoxStyle> style, const std::wstring &text)
+    CheckBoxWrap(boost::shared_ptr<CheckBoxStyle> style, const std::string &text)
         : CheckBox(style, text)
     {
     }
@@ -40,7 +40,7 @@ void exportCheckBox()
 {
     using namespace boost::python;
 
-    class_<CheckBoxWrap, bases<Button>, boost::shared_ptr<CheckBoxWrap>, boost::noncopyable> c("CheckBox", init<boost::shared_ptr<CheckBoxStyle>, const std::wstring&>());
+    class_<CheckBoxWrap, bases<Button>, boost::shared_ptr<CheckBoxWrap>, boost::noncopyable> c("CheckBox", init<boost::shared_ptr<CheckBoxStyle>, const std::string&>());
     c.add_property("checked", &CheckBox::checked, &CheckBox::setChecked);
     RANGERS_PYTHON_WRAP_WIDGET_DEF(CheckBox, CheckBoxWrap, c);
     register_ptr_to_python<boost::shared_ptr<CheckBox> >();

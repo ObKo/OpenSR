@@ -47,7 +47,7 @@ void CheckBoxPrivate::CheckBoxListener::actionPerformed(const Action& action)
     }
 }
 
-CheckBox::CheckBox(boost::shared_ptr<CheckBoxStyle> style, const std::wstring &text): Button(*(new CheckBoxPrivate()))
+CheckBox::CheckBox(boost::shared_ptr<CheckBoxStyle> style, const std::string &text): Button(*(new CheckBoxPrivate()))
 {
     RANGERS_D(CheckBox);
     d->checkBoxStyle = style;
@@ -70,7 +70,7 @@ CheckBox::CheckBox(boost::shared_ptr<CheckBoxStyle> style, const std::wstring &t
         if (d->checkedHovered)
             addChild(d->checkedHovered);
 
-        if ((d->checkBoxStyle->font) && (d->checkBoxStyle->font->path != L"") && (d->checkBoxStyle->font->size > 0))
+        if ((d->checkBoxStyle->font) && (d->checkBoxStyle->font->path != "") && (d->checkBoxStyle->font->size > 0))
         {
             d->label->setFont(ResourceManager::instance().loadFont(d->checkBoxStyle->font->path, d->checkBoxStyle->font->size));
         }

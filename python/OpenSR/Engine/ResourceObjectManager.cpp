@@ -53,10 +53,10 @@ void exportResourceObjectManager()
 
     class_<ResourceObjectManager, boost::noncopyable>("ResourceObjectManager", init<>())
     .def("getResourceObject", &ResourceObjectManager::getResourceObject)
-    .def("addJSON", (void (ResourceObjectManager::*)(const std::wstring&, const std::string&))&ResourceObjectManager::addJSON)
-    .def("addJSON", (void (ResourceObjectManager::*)(const std::wstring&))&ResourceObjectManager::addJSON)
+    .def("addJSON", (void (ResourceObjectManager::*)(const std::string&, const std::string&))&ResourceObjectManager::addJSON)
+    .def("addJSON", (void (ResourceObjectManager::*)(const std::string&))&ResourceObjectManager::addJSON)
     .def("addFactory", &ResourceObjectManager::addFactory)
-    .def("loadObject", (boost::shared_ptr<ResourceObject> (ResourceObjectManager::*)(const std::wstring&, const std::string&))&ResourceObjectManager::loadObject);
+    .def("loadObject", (boost::shared_ptr<ResourceObject> (ResourceObjectManager::*)(const std::string&, const std::string&))&ResourceObjectManager::loadObject);
 
     class_<ResourceObjectFactoryWrap, boost::shared_ptr<ResourceObjectFactoryWrap>, boost::noncopyable>("ResourceObjectFactory", init<>())
     .def("__call__", pure_virtual(&ResourceObjectManager::ResourceObjectFactory::operator()))

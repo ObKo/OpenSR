@@ -40,7 +40,7 @@ void LineEditPrivate::LineEditListener::actionPerformed(const Action &action)
     switch (action.type())
     {
     case Action::MOUSE_CLICK:
-        d->position = d->label->font()->maxChars(d->text.begin() + d->stringOffset, d->text.end(),
+        d->position = d->label->font()->maxChars(d->text, d->stringOffset, d->text.length() - d->stringOffset,
                       d->mousePosition.x/* - style.contentRect.x*/);
         d->updateText();
         Engine::instance().focusWidget(q);
@@ -49,7 +49,7 @@ void LineEditPrivate::LineEditListener::actionPerformed(const Action &action)
         d->keyPressed(boost::get<SDL_Keysym>(action.argument()));
         break;
     case Action::TEXT_INPUT:
-        d->textAdded(boost::get<std::wstring>(action.argument()));
+        d->textAdded(boost::get<std::string>(action.argument()));
         break;
     }
 }
@@ -106,7 +106,7 @@ LineEdit::LineEdit(float w, float h, boost::shared_ptr< Font > font):
     if (!font)
         font = Engine::instance().coreFont();
 
-    d->label = boost::shared_ptr<Label>(new Label(L"", font));
+    d->label = boost::shared_ptr<Label>(new Label("", font));
     addChild(d->label);
 
     d->height = h > font->size() + 4 ? h : font->size() + 4;
@@ -149,7 +149,7 @@ void LineEditPrivate::init()
         background = boost::shared_ptr<Sprite>(new Sprite(texture));
         q->addChild(background);
     }
-    if ((style) && (style->font) && (style->font->path != L"") && (style->font->size > 0))
+    if ((style) && (style->font) && (style->font->path != "") && (style->font->size > 0))
     {
         label = boost::shared_ptr<Label>(new Label(text, ResourceManager::instance().loadFont(style->font->path, style->font->size)));
         label->setColor(style->color);
@@ -225,15 +225,12 @@ void LineEditPrivate::updateText()
     }
     else
     {
-        std::wstring::iterator start = text.begin() + stringOffset;
-        std::wstring::iterator end = text.begin() + position;
-        while ((maxChars = label->font()->maxChars(start, end, width)) < end - start)
+        while ((maxChars = label->font()->maxChars(text, stringOffset, position - stringOffset, width)) < position - stringOffset)
         {
-            stringOffset = (end - maxChars) - text.begin();
-            start = text.begin() + stringOffset;
+            stringOffset = (position - maxChars);
         }
     }
-    maxChars = label->font()->maxChars(text.begin() + stringOffset, text.end(), realContentRect.width);
+    maxChars = label->font()->maxChars(text, stringOffset, text.length() - stringOffset, realContentRect.width);
     label->setText(text.substr(stringOffset, maxChars));
     q->markToUpdate();
     q->unlock();
@@ -255,7 +252,7 @@ void LineEdit::processMain()
 
     int cursorPosition = 0;
     if (d->label->font())
-        cursorPosition = d->label->font()->calculateStringWidth(d->text.begin() + d->stringOffset, d->text.begin() + d->position);
+        cursorPosition = d->label->font()->calculateStringWidth(d->text, d->stringOffset, d->position - d->stringOffset);
 
     if (!d->cursorBuffer)
     {
@@ -345,7 +342,7 @@ void LineEditPrivate::keyPressed(const SDL_Keysym& key)
     q->unlock();
 }
 
-void LineEditPrivate::textAdded(const std::wstring& str)
+void LineEditPrivate::textAdded(const std::string& str)
 {
     RANGERS_Q(LineEdit);
     q->lock();
@@ -365,7 +362,7 @@ void LineEditPrivate::textAdded(const std::wstring& str)
     q->unlock();
 }
 
-void LineEdit::setText(const std::wstring& s)
+void LineEdit::setText(const std::string& s)
 {
     lock();
     RANGERS_D(LineEdit);
@@ -377,7 +374,7 @@ void LineEdit::setText(const std::wstring& s)
     unlock();
 }
 
-std::wstring LineEdit::text() const
+std::string LineEdit::text() const
 {
     RANGERS_D(const LineEdit);
     return d->text;
@@ -398,12 +395,12 @@ int LineEdit::minHeight() const
 int LineEdit::minWidth() const
 {
     RANGERS_D(const LineEdit);
-    std::wstring w = L"W";
+    std::string w = "W";
     if (d->background && d->label->font())
-        return std::max(d->label->font()->calculateStringWidth(w.begin(), w.end()), (int)d->background->normalHeight());
+        return std::max(d->label->font()->calculateStringWidth(w, 0, 1), (int)d->background->normalHeight());
 
     if (d->label->font())
-        return d->label->font()->calculateStringWidth(w.begin(), w.end());
+        return d->label->font()->calculateStringWidth(w, 0, 1);
 
     return Widget::minHeight();
 }

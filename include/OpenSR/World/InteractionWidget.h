@@ -47,12 +47,12 @@ public:
     virtual void processMain();
 
     //! Interaction text
-    std::wstring text() const;
+    std::string text() const;
     //! Selections, in (text, enable) tuples
-    std::vector<std::tuple<std::wstring, bool> > selections() const;
+    std::vector<std::tuple<std::string, bool> > selections() const;
 
-    void setText(const std::wstring& text);
-    void setSelections(const std::vector<std::tuple<std::wstring, bool> >& selections);
+    void setText(const std::string& text);
+    void setSelections(const std::vector<std::tuple<std::string, bool> >& selections);
 
 
 private:
@@ -65,8 +65,8 @@ private:
 
     Rect m_normalBoundingRect;
 
-    std::wstring m_text;
-    std::vector<std::tuple<std::wstring, bool> > m_selections;
+    std::string m_text;
+    std::vector<std::tuple<std::string, bool> > m_selections;
 
     boost::shared_ptr<LabelWidget> m_textLabel;
     std::vector<boost::shared_ptr<LabelWidget> > m_selectionsWidget;

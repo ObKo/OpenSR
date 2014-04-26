@@ -55,7 +55,7 @@ boost::shared_ptr<InfoWidgetContent> AsteroidInfoWidgetProvider::createContent(b
         return content;
 
     content->caption = _("Asteroid", "Asteroid.Name", "OpenSR-World");
-    std::wstring sprite = WorldManager::instance().styleManager().asteroidStyle(asteroid->style())->sprite;
+    std::string sprite = WorldManager::instance().styleManager().asteroidStyle(asteroid->style())->sprite;
     if (!sprite.empty())
     {
         boost::shared_ptr<Texture> t = ResourceManager::instance().loadTexture(sprite);
@@ -67,10 +67,10 @@ boost::shared_ptr<InfoWidgetContent> AsteroidInfoWidgetProvider::createContent(b
         }
     }
 
-    std::wostringstream str;
+    std::ostringstream str;
     str << int(round(asteroid->speed()));
 
-    std::list<std::pair<std::wstring, std::wstring> > kv {std::make_pair(_("Speed:", "", "OpenSR-World"), str.str())};
+    std::list<std::pair<std::string, std::string> > kv {std::make_pair(_("Speed:", "", "OpenSR-World"), str.str())};
     generateWidgets(content, style, kv);
 
     return content;
@@ -85,16 +85,16 @@ boost::shared_ptr<InfoWidgetContent> PlanetInfoWidgetProvider::createContent(boo
     if (!planet)
         return content;
 
-    content->caption = _("Planet", "Planet.Name", "OpenSR-World") + L" " + _(planet->name(), "", "OpenSR-World");
+    content->caption = _("Planet", "Planet.Name", "OpenSR-World") + " " + _(planet->name(), "", "OpenSR-World");
     if (style)
     {
         content->icon = WorldManager::instance().planetManager().getPlanetImage(planet->style(), style->iconSize);
         content->hasIcon = true;
     }
 
-    std::wostringstream str;
+    std::ostringstream str;
     str << int(round(planet->radius()));
-    std::list<std::pair<std::wstring, std::wstring> > kv {std::make_pair(_("Radius:", "", "OpenSR-World"), str.str())};
+    std::list<std::pair<std::string, std::string> > kv {std::make_pair(_("Radius:", "", "OpenSR-World"), str.str())};
 
     if (boost::shared_ptr<HabitablePlanet> hPlanet = boost::dynamic_pointer_cast<HabitablePlanet>(planet))
     {
@@ -146,7 +146,7 @@ void KeyValueInfoWidgetProvider::updateContent(boost::shared_ptr<WorldObject> ob
 }
 
 
-void KeyValueInfoWidgetProvider::generateWidgets(boost::shared_ptr<KeyValueContent> content, boost::shared_ptr<InfoWidgetStyle> style, const std::list<std::pair<std::wstring, std::wstring> >& keyValue) const
+void KeyValueInfoWidgetProvider::generateWidgets(boost::shared_ptr<KeyValueContent> content, boost::shared_ptr<InfoWidgetStyle> style, const std::list<std::pair<std::string, std::string> >& keyValue) const
 {
     boost::shared_ptr<Font> f;
     Color kc, vc;
@@ -167,7 +167,7 @@ void KeyValueInfoWidgetProvider::generateWidgets(boost::shared_ptr<KeyValueConte
         vc = Color(1.0f, 1.0f, 1.0f);
     }
 
-    for (const std::pair<std::wstring, std::wstring> &p : keyValue)
+    for (const std::pair<std::string, std::string> &p : keyValue)
     {
 
         boost::shared_ptr<LabelWidget> k = boost::shared_ptr<LabelWidget>(

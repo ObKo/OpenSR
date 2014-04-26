@@ -19,14 +19,15 @@
 #include "OpenSR/libRanger.h"
 #include <boost/iostreams/device/array.hpp>
 #include <boost/iostreams/stream.hpp>
+#include <locale>
 
 namespace Rangers
 {
 namespace
 {
-std::wstring readWideString(std::istream &stream)
+std::string readWideString(std::istream &stream)
 {
-    //TODO: Optimize?
+    //TODO: Use std::codecvt_utf8
     wchar_t c = 0;
     std::wstring result;
 
@@ -34,25 +35,24 @@ std::wstring readWideString(std::istream &stream)
     {
         stream.read((char*)&c, 2);
         if (c == 0)
-            return result;
+            return toUTF8(result);
         result.push_back(c);
     }
-    return std::wstring();
+    return std::string();
 }
 
-void writeWideString(std::ostream &stream, const std::wstring& value)
+void writeWideString(std::ostream &stream, const std::string& value)
 {
-    for (wchar_t c : value)
-    {
-        uint16_t ucs2 = c;
-        stream.write((char*)&ucs2, 2);
-    }
-
+    //TODO: Use std::codecvt_utf8
+    int l;
+    char *utf16 = convertText("UCS-2", "UTF-8", value.c_str(), value.length(), l);
+    stream.write(utf16, l);
+    delete[] utf16;
     uint16_t nullterm = 0;
     stream.write((char*)&nullterm, 2);
 }
 
-DATRecord::iterator binary_find(std::vector<DATRecord> &r, const std::wstring& key)
+DATRecord::iterator binary_find(std::vector<DATRecord> &r, const std::string& key)
 {
     DATRecord dummy;
     dummy.name = key;
@@ -68,7 +68,7 @@ DATRecord::iterator binary_find(std::vector<DATRecord> &r, const std::wstring& k
 }
 
 
-DATRecord::const_iterator binary_find(const std::vector<DATRecord> &r, const std::wstring& key)
+DATRecord::const_iterator binary_find(const std::vector<DATRecord> &r, const std::string& key)
 {
     DATRecord dummy;
     dummy.name = key;
@@ -208,7 +208,7 @@ void readDATTree(std::istream &stream, DATRecord& node)
                 array.type = DATRecord::ARRAY;
                 array.name = r.name;
 
-                r.name = std::wstring();
+                r.name = std::string();
 
                 currentCount = arrayCount;
                 DATRecord::iterator i = currentNode->add(array);
@@ -218,7 +218,7 @@ void readDATTree(std::istream &stream, DATRecord& node)
             }
             else if ((arrayCount == 0) && (index < currentCount - 1))
             {
-                r.name = std::wstring();
+                r.name = std::string();
                 currentNode->add(r);
             }
             else if ((arrayCount == 0) && (index == currentCount - 1))
@@ -294,7 +294,7 @@ void saveDAT(std::ostream &stream, const DATRecord& root)
     writeDATTree(stream, root);
 }
 
-DATRecord::DATRecord(Type type , const std::wstring& name, const std::wstring& value):
+DATRecord::DATRecord(Type type , const std::string& name, const std::string& value):
     type(type), name(name), value(value)
 {
 
@@ -352,7 +352,7 @@ void DATRecord::erase(int i)
     m_children.erase(m_children.begin() + i);
 }
 
-void DATRecord::erase(const std::wstring& key)
+void DATRecord::erase(const std::string& key)
 {
     iterator pos = binary_find(m_children, key);
     m_children.erase(pos);
@@ -368,7 +368,7 @@ const DATRecord& DATRecord::at(int i) const
     return m_children.at(i);
 }
 
-const DATRecord& DATRecord::at(const std::wstring& key) const
+const DATRecord& DATRecord::at(const std::string& key) const
 {
     const_iterator pos = binary_find(m_children, key);
     if (pos == m_children.end())
@@ -381,7 +381,7 @@ DATRecord& DATRecord::operator[](int i)
     return m_children.at(i);
 }
 
-DATRecord::const_iterator DATRecord::find(const std::wstring& key) const
+DATRecord::const_iterator DATRecord::find(const std::string& key) const
 {
     if (type == DATRecord::ARRAY)
     {
@@ -397,7 +397,7 @@ DATRecord::const_iterator DATRecord::find(const std::wstring& key) const
     return m_children.end();
 }
 
-DATRecord::iterator DATRecord::find(const std::wstring& key)
+DATRecord::iterator DATRecord::find(const std::string& key)
 {
     if (type == DATRecord::ARRAY)
     {
@@ -413,7 +413,7 @@ DATRecord::iterator DATRecord::find(const std::wstring& key)
     return m_children.end();
 }
 
-DATRecord& DATRecord::operator[](const std::wstring& key)
+DATRecord& DATRecord::operator[](const std::string& key)
 {
     DATRecord dummy;
     dummy.name = key;

@@ -32,16 +32,16 @@ namespace Rangers
 class RPKGAdapter: public ResourceAdapter
 {
 public:
-    void load(const std::wstring& fileName);
+    void load(const std::string& fileName);
     ~RPKGAdapter();
 
-    std::list<std::wstring> getFiles() const;
-    std::istream* getStream(const std::wstring& name);
+    std::list<std::string> getFiles() const;
+    std::istream* getStream(const std::string& name);
 
 private:
     std::ifstream rpkgArchive;
-    std::map<std::wstring, RPKGEntry> files;
-    std::wstring m_fileName;
+    std::map<std::string, RPKGEntry> files;
+    std::string m_fileName;
 };
 }
 

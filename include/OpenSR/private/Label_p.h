@@ -30,7 +30,7 @@ public:
     LabelPrivate();
 
     boost::shared_ptr<Font> font;
-    std::wstring text;
+    std::string text;
     bool wordWrap;
     bool fixedWidth;
     bool fixedHeight;

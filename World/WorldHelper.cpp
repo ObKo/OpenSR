@@ -180,12 +180,6 @@ boost::shared_ptr<WorldObject> WorldHelper::createObjectByType(uint32_t type)
     return boost::shared_ptr<WorldObject>(object);
 }
 
-bool WorldHelper::serializeString(const std::wstring& str, std::ostream& stream)
-{
-    std::string str_ = toUTF8(str);
-    return serializeString(str_, stream);
-}
-
 bool WorldHelper::serializeString(const std::string& str, std::ostream& stream)
 {
     uint32_t l = str.length();
@@ -196,27 +190,6 @@ bool WorldHelper::serializeString(const std::string& str, std::ostream& stream)
     if (!stream.good())
         return false;
 
-    return true;
-}
-
-bool WorldHelper::deserializeString(std::wstring& str, std::istream& stream)
-{
-    uint32_t l;
-    char *s;
-
-    stream.read((char *)&l, 4);
-    if (!stream.good())
-        return false;
-    s = new char[l + 1];
-    stream.read(s, l);
-    if (!stream.good())
-    {
-        delete[] s;
-        return false;
-    }
-    s[l] = '\0';
-    str = fromUTF8(s, l);
-    delete[] s;
     return true;
 }
 

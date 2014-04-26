@@ -31,8 +31,8 @@ class RANGERS_ENGINE_API GAISprite: public AnimatedSprite
 public:
     GAISprite();
     GAISprite(const char *data, int size, const GIFrame& baseFrame);
-    GAISprite(const std::wstring& name);
-    
+    GAISprite(const std::string& name);
+
     virtual ~GAISprite();
 
     virtual void draw() const;

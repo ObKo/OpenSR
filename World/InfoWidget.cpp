@@ -83,7 +83,7 @@ InfoWidget::InfoWidget(boost::shared_ptr<InfoWidgetStyle> style): Widget()
     if (!m_captionFont)
         m_captionFont = Engine::instance().coreFont();
 
-    m_caption = boost::shared_ptr<Label>(new Label(L"", m_captionFont));
+    m_caption = boost::shared_ptr<Label>(new Label("", m_captionFont));
     m_caption->setColor(m_captionColor);
 
     if (m_bgSprite)
@@ -195,7 +195,7 @@ void InfoWidget::draw() const
 
 void InfoWidget::clear()
 {
-    m_caption->setText(L"");
+    m_caption->setText("");
     if (m_iconSprite)
     {
         removeChild(m_iconSprite);

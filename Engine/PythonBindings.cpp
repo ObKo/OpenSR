@@ -51,7 +51,7 @@ void handlePythonError()
     boost::python::handle<> hType(ptype);
     boost::python::object extype(hType);
 
-    std::wstring tracebackString;
+    std::string tracebackString;
     //long lineno = 0;
     if (ptraceback)
     {
@@ -64,22 +64,22 @@ void handlePythonError()
             boost::python::object fmt_tb(tb.attr("format_tb"));
             boost::python::object tb_list(fmt_tb(hTraceback));
             boost::python::object tb_str(boost::python::str("\n").join(tb_list));
-            tracebackString = boost::python::extract<std::wstring>(tb_str);
+            tracebackString = boost::python::extract<std::string>(tb_str);
         }
         catch (const boost::python::error_already_set& e)
         {
         }
     }
 
-    std::wstring strErrorMessage = boost::python::extract<std::wstring>(errorTextObject);
-    std::wstring exceptionType = boost::python::extract<std::wstring>(extype.attr("__name__"));
+    std::string strErrorMessage = boost::python::extract<std::string>(errorTextObject);
+    std::string exceptionType = boost::python::extract<std::string>(extype.attr("__name__"));
     Log::error() << "[Python] " << exceptionType << ": " << strErrorMessage;
 
     if (!tracebackString.empty())
     {
-        std::vector<std::wstring> lines = split(tracebackString, L'\n');
-        std::vector<std::wstring>::const_iterator end = lines.end();
-        for (std::vector<std::wstring>::const_iterator i = lines.begin(); i != end; ++i)
+        std::vector<std::string> lines = split(tracebackString, L'\n');
+        std::vector<std::string>::const_iterator end = lines.end();
+        for (std::vector<std::string>::const_iterator i = lines.begin(); i != end; ++i)
         {
             if (i->empty())
                 continue;
@@ -88,7 +88,7 @@ void handlePythonError()
     }
 }
 
-void execPythonScript(const char *data, size_t size, const std::wstring& name, const boost::python::object& dict)
+void execPythonScript(const char *data, size_t size, const std::string& name, const boost::python::object& dict)
 {
     if (!data || !size)
         return;
@@ -111,7 +111,7 @@ void execPythonScript(const char *data, size_t size, const std::wstring& name, c
     PyGILState_Release(s);
 }
 
-void execPythonLine(const std::wstring& line, const std::wstring& name, const boost::python::object& dict)
+void execPythonLine(const std::string& line, const std::string& name, const boost::python::object& dict)
 {
     boost::python::object execNamespace;
     if (dict.is_none())
@@ -122,7 +122,7 @@ void execPythonLine(const std::wstring& line, const std::wstring& name, const bo
     PyGILState_STATE s = PyGILState_Ensure();
     try
     {
-        boost::python::exec(toUTF8(line).c_str(), execNamespace);
+        boost::python::exec(line.c_str(), execNamespace);
     }
     catch (const boost::python::error_already_set& e)
     {
@@ -131,7 +131,7 @@ void execPythonLine(const std::wstring& line, const std::wstring& name, const bo
     PyGILState_Release(s);
 }
 
-void execPythonScript(const std::wstring& fileName, const boost::python::object& dict)
+void execPythonScript(const std::string& fileName, const boost::python::object& dict)
 {
     size_t scriptSize;
     boost::shared_array<char> script = ResourceManager::instance().loadData(fileName, scriptSize);
@@ -140,7 +140,7 @@ void execPythonScript(const std::wstring& fileName, const boost::python::object&
     execPythonScript(script.get(), scriptSize, fileName, dict);
 }
 
-void execPythonModule(const std::wstring& fileName, boost::python::object& moduleObject)
+void execPythonModule(const std::string& fileName, boost::python::object& moduleObject)
 {
     size_t scriptSize;
     boost::shared_array<char> script = ResourceManager::instance().loadData(fileName, scriptSize);

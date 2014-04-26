@@ -34,7 +34,7 @@ boost::python::list getChildren(DATRecord& self)
 
 DATRecord& getItem(DATRecord& self, boost::python::object key)
 {
-    boost::python::extract<std::wstring> s(key);
+    boost::python::extract<std::string> s(key);
     boost::python::extract<int> i(key);
     if (s.check())
     {
@@ -57,9 +57,9 @@ DATRecord& getItem(DATRecord& self, boost::python::object key)
 
 void setItem(DATRecord& self, boost::python::object key, boost::python::object value)
 {
-    boost::python::extract<std::wstring> s(key);
+    boost::python::extract<std::string> s(key);
     boost::python::extract<int> i(key);
-    boost::python::extract<std::wstring> vs(value);
+    boost::python::extract<std::string> vs(value);
     boost::python::extract<DATRecord&> r(value);
     if (s.check())
     {
@@ -126,8 +126,8 @@ void exportRanger()
 {
     using namespace boost::python;
     {
-        scope s = class_<DATRecord, boost::shared_ptr<DATRecord>>("DATRecord", init<DATRecord::Type, std::wstring, std::wstring>())
-                  .def(init<DATRecord::Type, std::wstring>())
+        scope s = class_<DATRecord, boost::shared_ptr<DATRecord>>("DATRecord", init<DATRecord::Type, std::string, std::string>())
+                  .def(init<DATRecord::Type, std::string>())
                   .def(init<DATRecord::Type>())
                   .def(init<>())
                   .def_readwrite("type", &DATRecord::type)
@@ -136,7 +136,7 @@ void exportRanger()
                   .add_property("children", &getChildren)
                   .def("clear", &DATRecord::clear)
                   .def("add", &DATRecord::add)
-                  .def("find", (DATRecord::iterator(DATRecord::*)(const std::wstring&))&DATRecord::find)
+                  .def("find", (DATRecord::iterator(DATRecord::*)(const std::string&))&DATRecord::find)
                   .def("__len__", &DATRecord::size)
                   .def("__iter__", iterator<DATRecord>())
                   .def("__getitem__", &getItem, return_internal_reference<>())

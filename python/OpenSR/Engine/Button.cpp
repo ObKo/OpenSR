@@ -41,11 +41,11 @@ struct ButtonWrap : Button, boost::python::wrapper<Button>
         : Button(texture, hoverTexture, pressTexture)
     {
     }
-    ButtonWrap(const std::wstring& texture)
+    ButtonWrap(const std::string& texture)
         : Button(texture)
     {
     }
-    ButtonWrap(const std::wstring& texture, const std::wstring& hoverTexture, const std::wstring& pressTexture)
+    ButtonWrap(const std::string& texture, const std::string& hoverTexture, const std::string& pressTexture)
         : Button(texture, hoverTexture, pressTexture)
     {
     }
@@ -53,12 +53,12 @@ struct ButtonWrap : Button, boost::python::wrapper<Button>
 
     static void setSounds(Button &b, boost::python::tuple sounds)
     {
-        boost::python::extract<std::wstring> str(sounds[0]);
+        boost::python::extract<std::string> str(sounds[0]);
         if (str.check())
         {
-            std::wstring click = boost::python::extract<std::wstring >(sounds[0]);
-            std::wstring enter = boost::python::extract<std::wstring >(sounds[1]);
-            std::wstring leave = boost::python::extract<std::wstring >(sounds[2]);
+            std::string click = boost::python::extract<std::string >(sounds[0]);
+            std::string enter = boost::python::extract<std::string >(sounds[1]);
+            std::string leave = boost::python::extract<std::string >(sounds[2]);
             b.setSounds(click, enter, leave);
         }
         else
@@ -84,8 +84,8 @@ void exportButton()
 
     class_<ButtonWrap, bases<Widget>, boost::shared_ptr<ButtonWrap>, boost::noncopyable> c("Button", init<boost::shared_ptr<Texture>, boost::shared_ptr<Texture>, boost::shared_ptr<Texture> >());
     c.def(init<boost::shared_ptr<Texture> >())
-    .def(init<const std::wstring&, const std::wstring&, const std::wstring&>())
-    .def(init<const std::wstring&>())
+    .def(init<const std::string&, const std::string&, const std::string&>())
+    .def(init<const std::string&>())
     .def(init<>())
     .add_property("text", &Button::text, &Button::setText)
     .add_property("font", &Button::font, &Button::setFont)

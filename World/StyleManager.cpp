@@ -118,19 +118,19 @@ class PlanetStyleFactory: public ResourceObjectManager::ResourceObjectFactory
         try
         {
             style->ambientColor = parseColor(object.get("ambientColor", "#FFFFFF"));
-            style->cloud = fromUTF8(object.get("cloud", "").asString().c_str());
+            style->cloud = object.get("cloud", "").asString();
             style->cloudSpeed = object.get("cloudSpeed", 0).asDouble();
             style->hasCloud = object.get("hasCloud", false).asBool();
             style->hasRing = object.get("hasRing", false).asBool();
             style->hasRingBackground = object.get("hasRingBackground", false).asBool();
-            style->ring = fromUTF8(object.get("ring", "").asString().c_str());
-            style->ringBackground = fromUTF8(object.get("ringBackground", "").asString().c_str());
+            style->ring = object.get("ring", "").asString();
+            style->ringBackground = object.get("ringBackground", "").asString();
             style->ringBgOffsetX = object.get("ringBgOffsetX", 0).asDouble();
             style->ringBgOffsetY = object.get("ringBgOffsetY", 0).asDouble();
             style->ringOffsetX = object.get("ringOffsetX", 0).asDouble();
             style->ringOffsetY = object.get("ringOffsetY", 0).asDouble();
             style->speed = object.get("speed", 0).asDouble();
-            style->texture = fromUTF8(object.get("texture", "").asString().c_str());
+            style->texture = object.get("texture", "").asString();
         }
         catch (...)
         {
@@ -150,10 +150,10 @@ class SystemStyleFactory: public ResourceObjectManager::ResourceObjectFactory
 
         try
         {
-            style->star = fromUTF8(object.get("star", "").asString().c_str());
+            style->star = object.get("star", "").asString();
             style->animated = object.get("star-animated", true).asBool();
             style->color = parseColor(object.get("star-color", "#FFFFFF"));
-            style->background = fromUTF8(object.get("background", "").asString().c_str());
+            style->background = object.get("background", "").asString();
         }
         catch (...)
         {
@@ -173,7 +173,7 @@ class AsteroidStyleFactory: public ResourceObjectManager::ResourceObjectFactory
 
         try
         {
-            style->sprite = fromUTF8(object.get("sprite", "").asString().c_str());
+            style->sprite = object.get("sprite", "").asString();
             style->animated = object.get("animated", true).asBool();
         }
         catch (...)

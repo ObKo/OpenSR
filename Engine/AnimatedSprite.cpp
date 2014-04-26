@@ -62,7 +62,7 @@ AnimatedSprite::AnimatedSprite(boost::shared_ptr<AnimatedTexture> texture):
  * \param animation animation resource name
  * \param parent object parent
  */
-AnimatedSprite::AnimatedSprite(const std::wstring& animation):
+AnimatedSprite::AnimatedSprite(const std::string& animation):
     Sprite(*(new AnimatedSpritePrivate()))
 {
     RANGERS_D(AnimatedSprite);

@@ -55,7 +55,7 @@ public:
     {
         TextureRegionDescriptor *d = new TextureRegionDescriptor();
 
-        d->texture = fromUTF8(object.get("texture", "").asString().c_str());
+        d->texture = object.get("texture", "").asString();
         d->x = object.get("x", 0).asInt();
         d->y = object.get("y", 0).asInt();
         d->width = object.get("width", -1).asInt();
@@ -72,7 +72,7 @@ public:
     {
         FontDescriptor *d = new FontDescriptor();
 
-        d->path = fromUTF8(object.get("file", "").asString().c_str());
+        d->path = object.get("file", "").asString();
         d->size = object.get("size", 0).asInt();
         d->antialiasing = object.get("antialiasing", true).asBool();
 
@@ -86,7 +86,7 @@ public:
     virtual boost::shared_ptr<ResourceObject> operator()(const std::string& currentPath, const Json::Value& object, ResourceObjectManager &manager)
     {
         SoundDescriptor *d = new SoundDescriptor();
-        d->path = fromUTF8(object.get("file", "").asString().c_str());
+        d->path = object.get("file", "").asString();
         return boost::shared_ptr< ResourceObject >(d);
     }
 };
@@ -290,7 +290,7 @@ void ResourceObjectManager::registerDefaultFactories()
     addFactory("skin", boost::shared_ptr<ResourceObjectFactory>(new SkinFactory()));
 }
 
-void ResourceObjectManager::addJSON(const std::wstring& jsonFile, const std::string& prefix)
+void ResourceObjectManager::addJSON(const std::string& jsonFile, const std::string& prefix)
 {
     boost::shared_ptr<std::istream> f = ResourceManager::instance().getFileStream(jsonFile);
     if (!f)
@@ -371,7 +371,7 @@ boost::shared_ptr< ResourceObject > ResourceObjectManager::loadObject(const std:
         std::string path = object.asString();
         if (path[0] == ':')
         {
-            m_objectFiles[currentPath] = fromUTF8(path.substr(1).c_str());
+            m_objectFiles[currentPath] = path.substr(1);
             return boost::shared_ptr< ResourceObject >();
         }
         else
@@ -426,7 +426,7 @@ boost::shared_ptr< ResourceObject > ResourceObjectManager::loadObject(const Json
     return (*(fi->second))("", object, *this);
 }
 
-boost::shared_ptr< ResourceObject > ResourceObjectManager::loadObject(const std::wstring& jsonFile, const std::string& type)
+boost::shared_ptr< ResourceObject > ResourceObjectManager::loadObject(const std::string& jsonFile, const std::string& type)
 {
     boost::shared_ptr<std::istream> f = ResourceManager::instance().getFileStream(jsonFile);
     if (!f)

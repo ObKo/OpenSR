@@ -41,9 +41,9 @@ struct RANGERS_ENGINE_API ButtonStyle: public ResourceObject
     Color color;
     boost::shared_ptr<FontDescriptor> font;
     Rect contentRect;
-    std::wstring clickSound;
-    std::wstring leaveSound;
-    std::wstring enterSound;
+    std::string clickSound;
+    std::string leaveSound;
+    std::string enterSound;
 };
 
 struct RANGERS_ENGINE_API CheckBoxStyle: public ResourceObject

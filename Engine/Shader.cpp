@@ -37,12 +37,12 @@ Shader::Shader(ShaderType type): m_handle(0), m_compiled(false), m_type(type), m
 /*!
  * Shader type determined by extension (*.frag or *.vert)
  */
-Shader::Shader(const std::wstring& shader): m_handle(0), m_compiled(false), m_type(NONE), m_invalid(true)
+Shader::Shader(const std::string& shader): m_handle(0), m_compiled(false), m_type(NONE), m_invalid(true)
 {
-    std::wstring extension = suffix(shader);
-    if (extension == L"frag")
+    std::string extension = suffix(shader);
+    if (extension == "frag")
         m_type = FRAGMENT_SHADER;
-    else if (extension == L"vert")
+    else if (extension == "vert")
         m_type = VERTEX_SHADER;
     else
     {

@@ -120,32 +120,6 @@ Color Color::fromString(const std::string& color)
     return c;
 }
 
-Color Color::fromString(const std::wstring& color)
-{
-    if (color.at(0) != L'#')
-    {
-        Log::warning() << "Invalid color string: " << color;
-        return Color();
-    }
-
-    Color c;
-    try
-    {
-        if (color.length() == 7)
-            c = fromUInt(std::stoul(color.substr(1), 0, 16) | 0xFF000000);
-        else if (color.length() == 9)
-            c = fromUInt(std::stoul(color.substr(1), 0, 16));
-        else
-            Log::warning() << "Invalid color string: " << color;
-
-    }
-    catch (std::invalid_argument &e)
-    {
-        Log::warning() << "Invalid color string: " << color;
-    }
-    return c;
-}
-
 uint32_t Color::toRGB() const
 {
     uint8_t red = uint8_t(std::min(std::max(r, 0.0f), 1.0f) * 255.0f);

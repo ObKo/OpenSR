@@ -31,7 +31,7 @@ struct GAISpriteWrap : GAISprite, boost::python::wrapper<GAISprite>
     {
     }
 
-    GAISpriteWrap(const std::wstring& name)
+    GAISpriteWrap(const std::string& name)
         : GAISprite(name)
     {
     }
@@ -43,7 +43,7 @@ void exportGAISprite()
 {
     using namespace boost::python;
 
-    class_<GAISpriteWrap, bases<AnimatedSprite>, boost::shared_ptr<GAISpriteWrap>, boost::noncopyable> c("GAISprite", init<const std::wstring&>());
+    class_<GAISpriteWrap, bases<AnimatedSprite>, boost::shared_ptr<GAISpriteWrap>, boost::noncopyable> c("GAISprite", init<const std::string&>());
     c.def(init<>())
     .def("reset", &GAISprite::reset)
     .def("setFrame", &GAISprite::setFrame);

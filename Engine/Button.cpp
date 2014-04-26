@@ -155,7 +155,7 @@ Button::Button(boost::shared_ptr<Texture> texture, boost::shared_ptr<Texture> ho
     }
 }
 
-Button::Button(const std::wstring& texture):
+Button::Button(const std::string& texture):
     Widget(*(new ButtonPrivate()))
 {
     RANGERS_D(Button);
@@ -182,7 +182,7 @@ Button::Button(const std::wstring& texture):
     }
 }
 
-Button::Button(const std::wstring& texture, const std::wstring& hoverTexture, const std::wstring& pressTexture):
+Button::Button(const std::string& texture, const std::string& hoverTexture, const std::string& pressTexture):
     Widget(*(new ButtonPrivate()))
 {
     RANGERS_D(Button);
@@ -260,7 +260,7 @@ void Button::setAutoResize(bool autoResize)
     unlock();
 }
 
-void Button::setText(const std::wstring& text)
+void Button::setText(const std::string& text)
 {
     lock();
     RANGERS_D(Button);
@@ -279,7 +279,7 @@ void Button::setFont(boost::shared_ptr<Font> font)
     unlock();
 }
 
-std::wstring Button::text() const
+std::string Button::text() const
 {
     RANGERS_D(const Button);
     return d->text;
@@ -381,7 +381,7 @@ void ButtonPrivate::initFromStyle()
         if (pressedSprite)
             q->addChild(pressedSprite);
 
-        if ((style->font) && (style->font->path != L""))
+        if ((style->font) && (style->font->path != ""))
         {
             label = boost::shared_ptr<Label>(new Label(text, ResourceManager::instance().loadFont(style->font->path, style->font->size)));
         }
@@ -391,11 +391,11 @@ void ButtonPrivate::initFromStyle()
         }
         q->setColor(style->color);
 
-        if (style->enterSound != L"")
+        if (style->enterSound != "")
             enterSound = SoundManager::instance().loadSound(style->enterSound);
-        if (style->leaveSound != L"")
+        if (style->leaveSound != "")
             leaveSound = SoundManager::instance().loadSound(style->leaveSound);
-        if (style->clickSound != L"")
+        if (style->clickSound != "")
             clickSound = SoundManager::instance().loadSound(style->clickSound);
     }
     else
@@ -439,7 +439,7 @@ void Button::setSounds(boost::shared_ptr<Sound> clickSound, boost::shared_ptr<So
     d->leaveSound = leaveSound;
 }
 
-void Button::setSounds(const std::wstring& clickSound, const std::wstring& enterSound, const std::wstring& leaveSound)
+void Button::setSounds(const std::string& clickSound, const std::string& enterSound, const std::string& leaveSound)
 {
     RANGERS_D(Button);
     SoundManager &m = SoundManager::instance();

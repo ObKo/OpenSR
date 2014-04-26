@@ -51,8 +51,8 @@ public:
     void removeObject(uint64_t id);
 
     void generateWorld();
-    bool saveWorld(const std::wstring& file) const;
-    bool loadWorld(const std::wstring& file);
+    bool saveWorld(const std::string& file) const;
+    bool loadWorld(const std::string& file);
 
     void calcTurn();
     void finishTurn();

@@ -33,8 +33,6 @@ public:
     ColorLabel();
     //! Construct from std::string
     ColorLabel(const std::string& text, boost::shared_ptr<Font> font = boost::shared_ptr<Font>());
-    //! Construct from std::wstring
-    ColorLabel(const std::wstring& text, boost::shared_ptr<Font> font = boost::shared_ptr<Font>());
 
     void setTextColor(const Color& c);
     void setSelectionColor(const Color& c);

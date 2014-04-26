@@ -28,11 +28,11 @@ void exportFont()
 {
     using namespace boost::python;
     class_<Font, boost::shared_ptr<Font> >("Font", boost::python::no_init)
-    .def("renderText", (boost::shared_ptr<Texture> (Font::*)(const std::wstring&, int) const)&Font::renderText)
-    .def("renderColoredText", (boost::shared_ptr<Texture> (Font::*)(const std::wstring&, int, int, int) const)&Font::renderColoredText)
+    .def("renderText", (boost::shared_ptr<Texture> (Font::*)(const std::string&, int) const)&Font::renderText)
+    .def("renderColoredText", (boost::shared_ptr<Texture> (Font::*)(const std::string&, int, int, int) const)&Font::renderColoredText)
     .add_property("size", &Font::size)
-    .def("calculateStringWidth", (int (Font::*)(const std::wstring&) const)&Font::calculateStringWidth)
-    .def("maxChars", (int (Font::*)(const std::wstring&, int) const)&Font::maxChars);
+    .def("calculateStringWidth", (int (Font::*)(const std::string&) const)&Font::calculateStringWidth)
+    .def("maxChars", (int (Font::*)(const std::string&, int) const)&Font::maxChars);
 }
 }
 }

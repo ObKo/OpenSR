@@ -32,8 +32,8 @@ class RANGERS_ENGINE_API ResourceAdapter
 public:
     virtual ~ResourceAdapter();
 
-    virtual std::list<std::wstring> getFiles() const = 0;
-    virtual std::istream* getStream(const std::wstring& name) = 0;
+    virtual std::list<std::string> getFiles() const = 0;
+    virtual std::istream* getStream(const std::string& name) = 0;
 };
 }
 

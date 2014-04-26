@@ -16,11 +16,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*
-LIBRANGER_API std::wstring directory(const std::wstring& s);
-
-LIBRANGER_API std::string directory(const std::string& s);*/
-
 #include <libRanger.h>
 #include <string>
 #include <iostream>

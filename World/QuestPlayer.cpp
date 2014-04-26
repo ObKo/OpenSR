@@ -41,38 +41,38 @@ QuestPlayer::~QuestPlayer()
 
 }
 
-std::wstring QuestPlayer::substituteValues(const std::wstring &str) const
+std::string QuestPlayer::substituteValues(const std::string &str) const
 {
-    std::wstring result = str;
+    std::string result = str;
 
     //Okay, <regex> working bad on GCC, work manually
     int pos = 0;
-    while ((pos = result.find(L"{", pos)) != std::wstring::npos)
+    while ((pos = result.find("{", pos)) != std::string::npos)
     {
-        int endPos = result.find(L"}", pos);
-        if (endPos == std::wstring::npos)
+        int endPos = result.find("}", pos);
+        if (endPos == std::string::npos)
             endPos = result.length() - 1;
 
-        std::string exp = toASCII(result.substr(pos + 1, endPos - pos - 1));
-        std::wstring expResult = L"\\cS" + std::to_wstring(int(QM::eval(exp, m_parameters))) + L"\\cR";
+        std::string exp = result.substr(pos + 1, endPos - pos - 1);
+        std::string expResult = "\\cS" + std::to_string(int(QM::eval(exp, m_parameters))) + "\\cR";
         result.replace(pos, endPos - pos + 1, expResult);
         pos += expResult.length();
     }
 
     pos = 0;
-    while ((pos = result.find(L"[p", pos)) != std::wstring::npos)
+    while ((pos = result.find("[p", pos)) != std::string::npos)
     {
-        int endPos = result.find(L"]", pos);
-        if (endPos == std::wstring::npos)
+        int endPos = result.find("]", pos);
+        if (endPos == std::string::npos)
             endPos = result.length() - 1;
         try
         {
             uint32_t param = std::stoul(result.substr(pos + 2, endPos - pos));
 
-            std::wstring paramValue;
+            std::string paramValue;
             auto i = m_parameters.find(param);
             if (i != m_parameters.end())
-                paramValue = L"\\cS" + std::to_wstring(int((*i).second)) + L"\\cR";
+                paramValue = "\\cS" + std::to_string(int((*i).second)) + "\\cR";
             result.replace(pos, endPos - pos + 1, paramValue);
             pos += paramValue.length();
         }
@@ -105,21 +105,21 @@ std::wstring QuestPlayer::substituteValues(const std::wstring &str) const
         deltaPos += value.length() - match.capturedLength();
     }*/
 
-    boost::algorithm::replace_all(result, L"<ToStar>", L"\\cS" + m_quest.toStar + L"\\cR");
-    boost::algorithm::replace_all(result, L"<ToPlanet>", L"\\cS" + m_quest.toPlanet + L"\\cR");
-    boost::algorithm::replace_all(result, L"<FromStar>", L"\\cS" + m_quest.fromStar + L"\\cR");
-    boost::algorithm::replace_all(result, L"<FromPlanet>", L"\\cS" + m_quest.fromPlanet + L"\\cR");
-    boost::algorithm::replace_all(result, L"<Date>", L"\\cS" + m_quest.date + L"\\cR");
-    boost::algorithm::replace_all(result, L"<Money>", L"\\cS" + m_quest.money + L"\\cR");
-    boost::algorithm::replace_all(result, L"<Ranger>", L"\\cS" + m_quest.ranger + L"\\cR");
+    boost::algorithm::replace_all(result, "<ToStar>", "\\cS" + m_quest.toStar + "\\cR");
+    boost::algorithm::replace_all(result, "<ToPlanet>", "\\cS" + m_quest.toPlanet + "\\cR");
+    boost::algorithm::replace_all(result, "<FromStar>", "\\cS" + m_quest.fromStar + "\\cR");
+    boost::algorithm::replace_all(result, "<FromPlanet>", "\\cS" + m_quest.fromPlanet + "\\cR");
+    boost::algorithm::replace_all(result, "<Date>", "\\cS" + m_quest.date + "\\cR");
+    boost::algorithm::replace_all(result, "<Money>", "\\cS" + m_quest.money + "\\cR");
+    boost::algorithm::replace_all(result, "<Ranger>", "\\cS" + m_quest.ranger + "\\cR");
 
-    boost::algorithm::replace_all(result, L"<clr>", L"\\cS");
-    boost::algorithm::replace_all(result, L"<clrEnd>", L"\\cR");
+    boost::algorithm::replace_all(result, "<clr>", "\\cS");
+    boost::algorithm::replace_all(result, "<clrEnd>", "\\cR");
 
     return result;
 }
 
-void QuestPlayer::loadQuest(const std::wstring& file)
+void QuestPlayer::loadQuest(const std::string& file)
 {
     boost::shared_ptr<std::istream> s = ResourceManager::instance().getFileStream(file);
 
@@ -147,7 +147,7 @@ void QuestPlayer::resetQuest()
 
     for (const std::pair<uint32_t, QM::Parameter>& p : m_quest.parameters)
     {
-        float value = QM::eval(toASCII(p.second.start), std::map<uint32_t, float>());
+        float value = QM::eval(p.second.start, std::map<uint32_t, float>());
         m_parameters[p.first] = value;
         m_parametersVisibility[p.first] = true;
     }
@@ -178,14 +178,14 @@ void QuestPlayer::setLocation(uint32_t location)
     {
         if (m_currentLocation.descriptionExpression && !m_currentLocation.expression.empty())
         {
-            int32_t t = (int32_t)QM::eval(toASCII(m_currentLocation.expression), m_parameters);
+            int32_t t = (int32_t)QM::eval(m_currentLocation.expression, m_parameters);
             //FIXME: Bug or feature?
             if (t == 0)
                 t = 1;
             if ((t < 1) || (t > 10) || (m_currentLocation.descriptions.at(t - 1).empty()))
             {
                 Log::error() << "[Quest] Invalid location description selection in location " << m_currentLocation.id;
-                m_currentText = std::wstring();
+                m_currentText = std::string();
             }
             else
                 m_currentText = substituteValues(m_currentLocation.descriptions.at(t - 1));
@@ -268,19 +268,19 @@ bool QuestPlayer::checkCriticalParameters()
     return true;
 }
 
-std::wstring QuestPlayer::currentText() const
+std::string QuestPlayer::currentText() const
 {
     return m_currentText;
 }
 
-std::vector<std::wstring> QuestPlayer::visibleParameters() const
+std::vector<std::string> QuestPlayer::visibleParameters() const
 {
-    std::vector<std::wstring> params;
+    std::vector<std::string> params;
     for (const std::pair<uint32_t, float>& p : m_parameters)
     {
         if ((p.second != 0 || m_quest.parameters.at(p.first).showOnZero) && m_parametersVisibility.at(p.first))
         {
-            std::wstring value;
+            std::string value;
             for (const Rangers::QM::Parameter::Range & r : m_quest.parameters.at(p.first).ranges)
             {
                 int32_t v = (int32_t)round(p.second);
@@ -349,7 +349,7 @@ void QuestPlayer::checkTransitions()
             cond = cond && checkCondition(c);
         }
         bool passed = (t.passCount == 0) || !((m_transitionCounts.find(t.id) != m_transitionCounts.end()) && (m_transitionCounts.at(t.id) >= t.passCount));
-        if (passed && cond && (t.globalCondition.empty() || QM::eval(toASCII(t.globalCondition), m_parameters)))
+        if (passed && cond && (t.globalCondition.empty() || QM::eval(t.globalCondition, m_parameters)))
         {
             m_possibleTransitions.push_back(i);
         }
@@ -359,9 +359,9 @@ void QuestPlayer::checkTransitions()
     }
 }
 
-std::vector<std::tuple<uint32_t, std::wstring, bool> > QuestPlayer::visibleTransitions() const
+std::vector<std::tuple<uint32_t, std::string, bool> > QuestPlayer::visibleTransitions() const
 {
-    std::vector<std::tuple<uint32_t, std::wstring, bool > > r;
+    std::vector<std::tuple<uint32_t, std::string, bool > > r;
 
     if (!m_transition)
     {
@@ -370,25 +370,25 @@ std::vector<std::tuple<uint32_t, std::wstring, bool> > QuestPlayer::visibleTrans
             const QM::Transition &trans = m_currentLocation.transitions.at(t);
 
             if (!trans.title.empty())
-                r.push_back(std::tuple<uint32_t, std::wstring, bool>(t, substituteValues(trans.title), true));
+                r.push_back(std::tuple<uint32_t, std::string, bool>(t, substituteValues(trans.title), true));
             else
-                r.push_back(std::tuple<uint32_t, std::wstring, bool>(t, L"Next", true));
+                r.push_back(std::tuple<uint32_t, std::string, bool>(t, "Next", true));
         }
 
         for (uint32_t t : m_alwaysVisibleTransitions)
         {
-            r.push_back(std::tuple<uint32_t, std::wstring, bool>(t, substituteValues(m_currentLocation.transitions.at(t).title), false));
+            r.push_back(std::tuple<uint32_t, std::string, bool>(t, substituteValues(m_currentLocation.transitions.at(t).title), false));
         }
 
         std::sort(r.begin(), r.end(),
-                  [&](const std::tuple<uint32_t, std::wstring, bool>& a, const std::tuple<uint32_t, std::wstring, bool>& b) -> bool
+                  [&](const std::tuple<uint32_t, std::string, bool>& a, const std::tuple<uint32_t, std::string, bool>& b) -> bool
         {
             return m_currentLocation.transitions.at(std::get<0>(a)).position < m_currentLocation.transitions.at(std::get<0>(b)).position;
         });
     }
     else
     {
-        r.push_back(std::tuple<uint32_t, std::wstring, bool>(0, L"Next", true));
+        r.push_back(std::tuple<uint32_t, std::string, bool>(0, "Next", true));
     }
 
     return r;
@@ -423,7 +423,7 @@ void QuestPlayer::applyModifier(const QM::Modifier& m)
         break;
     case QM::Modifier::OPERATION_EXPRESSION:
         if (!m.expression.empty())
-            value = QM::eval(toASCII(m.expression), m_oldParameters);
+            value = QM::eval(m.expression, m_oldParameters);
         else
             value = m_oldParameters[m.param];
         break;
@@ -491,8 +491,8 @@ void QuestPlayer::finishTransition()
 //FIXME: Optimize
 void QuestPlayer::reduceTransitions()
 {
-    std::map<std::wstring, std::list<uint32_t> > transitions;
-    std::map<std::wstring, uint32_t> alwaysVisibleTransitions;
+    std::map<std::string, std::list<uint32_t> > transitions;
+    std::map<std::string, uint32_t> alwaysVisibleTransitions;
 
     for (uint32_t t : m_possibleTransitions)
     {
@@ -510,12 +510,12 @@ void QuestPlayer::reduceTransitions()
     m_possibleTransitions.clear();
     m_alwaysVisibleTransitions.clear();
 
-    for (std::pair<std::wstring, uint32_t> p : alwaysVisibleTransitions)
+    for (std::pair<std::string, uint32_t> p : alwaysVisibleTransitions)
     {
         m_alwaysVisibleTransitions.push_back(p.second);
     }
 
-    for (std::pair<std::wstring, std::list<uint32_t> > p : transitions)
+    for (std::pair<std::string, std::list<uint32_t> > p : transitions)
     {
         if (p.second.size() == 1)
         {

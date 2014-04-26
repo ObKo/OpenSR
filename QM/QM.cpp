@@ -18,12 +18,13 @@
 
 #include "OpenSR/QM/QM.h"
 #include <vector>
+#include <iconv.h>
 
 namespace Rangers
 {
 namespace QM
 {
-std::wstring readString(std::istream& s)
+std::string readString(std::istream& s)
 {
     uint16_t *str;
     uint32_t len;
@@ -31,15 +32,23 @@ std::wstring readString(std::istream& s)
     str = new uint16_t[len];
     s.read((char*)str, len * 2);
 
-    std::wstring result(len, 0);
-    for (int i = 0; i < len; i++)
-    {
-        //FIXME: Assume that string is in UCS-2 (wchar_t on windows)
-        result[i] = str[i];
-    }
-    delete[] str;
+    iconv_t codec = iconv_open("UTF-8", "UCS-2");
+    if (codec == (iconv_t) - 1)
+        return std::string();
 
-    return result;
+    char *result = new char[len * 4];
+
+    size_t inbuflength = len * 2;
+    size_t outbuflength = 4 * len;
+    char *pointer = result;
+    char **inp = (char**)&str;
+    iconv(codec, inp, &inbuflength, &pointer, &outbuflength);
+    size_t l = 4 * len - outbuflength;
+
+    std::string utf8(result, l);
+    delete[] result;
+
+    return utf8;
 }
 
 void skipString(std::istream& s)
@@ -212,7 +221,7 @@ Transition readTransition(std::istream& s, const Quest &q, uint32_t totalParamCo
         skipString(s);
 
         if ((q.parameters.find(i) != q.parameters.end()) && ((show != 0) || (m.value != 0) || (percent) || (assign) ||
-                (expression && (m.expression != L"")) || c.values.size() || c.multiples.size() || inRange))
+                (expression && (m.expression != "")) || c.values.size() || c.multiples.size() || inRange))
         {
             t.modifiers.push_back(m);
             t.conditions.push_back(c);
@@ -299,14 +308,14 @@ Location readLocation(std::istream& s, const Quest &q, uint32_t totalParamCount)
         skipString(s);
 
         if ((q.parameters.find(i) != q.parameters.end()) && ((show != 0) || (m.value != 0) || (percent) || (assign) ||
-                (expression && (m.expression != L""))))
+                (expression && (m.expression != ""))))
             l.modifiers.push_back(m);
     }
 
     for (int i = 0; i < 10; i++)
     {
         s.seekg(4, std::ios_base::cur);
-        std::wstring str = readString(s);
+        std::string str = readString(s);
         l.descriptions.push_back(str);
     }
     l.descriptionExpression = readByte(s) == 1;

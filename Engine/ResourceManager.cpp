@@ -127,11 +127,11 @@ ResourceManager& ResourceManager::instance()
     return manager;
 }
 
-SDL_RWops *ResourceManager::getSDLRW(const std::wstring& name)
+SDL_RWops *ResourceManager::getSDLRW(const std::string& name)
 {
-    wstring realName = name;
+    string realName = name;
 
-    std::map<std::wstring, boost::shared_ptr<ResourceAdapter> >::iterator fileIt = m_files.find(realName);
+    std::map<std::string, boost::shared_ptr<ResourceAdapter> >::iterator fileIt = m_files.find(realName);
     if (fileIt == m_files.end())
     {
         Log::error() << "No such file: " << realName;
@@ -154,36 +154,36 @@ SDL_RWops *ResourceManager::getSDLRW(const std::wstring& name)
     return rwops;
 }
 
-void ResourceManager::addRPKG(const std::wstring& path)
+void ResourceManager::addRPKG(const std::string& path)
 {
     boost::shared_ptr<RPKGAdapter> a = boost::shared_ptr<RPKGAdapter>(new RPKGAdapter());
     a->load(path);
     m_adapters.push_back(a);
-    list<wstring> adaptorFiles = a->getFiles();
-    for (list<wstring>::const_iterator i = adaptorFiles.begin(); i != adaptorFiles.end(); ++i)
+    list<string> adapterFiles = a->getFiles();
+    for (list<string>::const_iterator i = adapterFiles.begin(); i != adapterFiles.end(); ++i)
         m_files[(*i)] = a;
 }
 
-void ResourceManager::addDir(const std::wstring& path)
+void ResourceManager::addDir(const std::string& path)
 {
     boost::shared_ptr<FSAdapter> a = boost::shared_ptr<FSAdapter>(new FSAdapter());
     a->load(path);
     m_adapters.push_back(a);
-    list<wstring> adaptorFiles = a->getFiles();
-    for (list<wstring>::const_iterator i = adaptorFiles.begin(); i != adaptorFiles.end(); ++i)
+    list<string> adaptorFiles = a->getFiles();
+    for (list<string>::const_iterator i = adaptorFiles.begin(); i != adaptorFiles.end(); ++i)
         m_files[(*i)] = a;
 }
 
 
-boost::shared_ptr<Texture> ResourceManager::loadTexture(const std::wstring& name)
+boost::shared_ptr<Texture> ResourceManager::loadTexture(const std::string& name)
 {
-    map<wstring, boost::shared_ptr<Texture> >::const_iterator it = m_textures.find(name);
+    map<string, boost::shared_ptr<Texture> >::const_iterator it = m_textures.find(name);
     if (it != m_textures.end())
         return it->second;
 
-    wstring sfx = suffix(name);
+    string sfx = suffix(name);
     transform(sfx.begin(), sfx.end(), sfx.begin(), towlower);
-    if (sfx == L"gi")
+    if (sfx == "gi")
     {
         boost::shared_ptr<std::istream> s = getFileStream(name);
         if (!s)
@@ -200,7 +200,7 @@ boost::shared_ptr<Texture> ResourceManager::loadTexture(const std::wstring& name
         m_textures[name] = boost::shared_ptr<Texture>(t);
         return m_textures[name];
     }
-    else if (sfx == L"png")
+    else if (sfx == "png")
     {
         boost::shared_ptr<std::istream> stream = getFileStream(name);
         if (!stream)
@@ -230,7 +230,7 @@ boost::shared_ptr<Texture> ResourceManager::loadTexture(const std::wstring& name
         m_textures[name] = boost::shared_ptr<Texture>(t);
         return m_textures[name];
     }
-    else if (sfx == L"gai")
+    else if (sfx == "gai")
     {
         auto it = m_animations.find(name);
         if (it != m_animations.end())
@@ -247,7 +247,7 @@ boost::shared_ptr<Texture> ResourceManager::loadTexture(const std::wstring& name
 
         if (header.haveBackground)
         {
-            return loadTexture(directory(name) + basename(name) + L".gi");
+            return loadTexture(directory(name) + basename(name) + ".gi");
         }
 
         GAIAnimation animation = loadGAIAnimation(*s, header);
@@ -264,13 +264,13 @@ boost::shared_ptr<Texture> ResourceManager::loadTexture(const std::wstring& name
         delete[] animation.times;
         return m_textures[name];
     }
-    else if (sfx == L"jpg" || sfx == L"jpeg")
+    else if (sfx == "jpg" || sfx == "jpeg")
     {
         boost::shared_ptr<std::istream> stream = getFileStream(name);
         if (!stream)
             return boost::shared_ptr<Texture>();
         JPEGFrame frame = loadJPEG(*stream);
-        if (frame.type == PNGFrame::TYPE_INVALID)
+        if (frame.type == JPEGFrame::TYPE_INVALID)
         {
             Log::warning() << "Invalid/unsupported PNG file";
             return boost::shared_ptr<Texture>();
@@ -297,15 +297,15 @@ boost::shared_ptr<Texture> ResourceManager::loadTexture(const std::wstring& name
     return boost::shared_ptr<Texture>();
 }
 
-boost::shared_ptr<AnimatedTexture> ResourceManager::loadAnimation(const std::wstring& name, bool backgroundLoading)
+boost::shared_ptr<AnimatedTexture> ResourceManager::loadAnimation(const std::string& name, bool backgroundLoading)
 {
-    map<wstring, boost::shared_ptr<AnimatedTexture> >::const_iterator it = m_animations.find(name);
+    map<string, boost::shared_ptr<AnimatedTexture> >::const_iterator it = m_animations.find(name);
     if (it != m_animations.end())
         return it->second;
 
-    wstring sfx = suffix(name);
+    string sfx = suffix(name);
     transform(sfx.begin(), sfx.end(), sfx.begin(), towlower);
-    if (sfx == L"gai")
+    if (sfx == "gai")
     {
         boost::shared_ptr<std::istream> s = getFileStream(name);
         if (!s)
@@ -318,7 +318,7 @@ boost::shared_ptr<AnimatedTexture> ResourceManager::loadAnimation(const std::wst
 
         if (header.haveBackground)
         {
-            bgFrameStream = getFileStream(directory(name) + basename(name) + L".gi");
+            bgFrameStream = getFileStream(directory(name) + basename(name) + ".gi");
             if (!bgFrameStream)
                 return boost::shared_ptr<AnimatedTexture>();
         }
@@ -416,21 +416,21 @@ boost::shared_ptr< Font > ResourceManager::loadFont(const FontDescriptor& desc)
     return loadFont(desc.path, desc.size, desc.antialiasing);
 }
 
-boost::shared_ptr< Font > ResourceManager::loadFont(const std::wstring& name, int size, bool antialiased)
+boost::shared_ptr< Font > ResourceManager::loadFont(const std::string& name, int size, bool antialiased)
 {
-    wostringstream s(name);
+    ostringstream s(name);
     s.seekp(0, ios_base::end);
     s << L":" << size << L":" << antialiased;
-    wstring mapName = s.str();
+    string mapName = s.str();
 
-    map<wstring, boost::shared_ptr<Font> >::const_iterator it = m_fonts.find(mapName);
+    map<string, boost::shared_ptr<Font> >::const_iterator it = m_fonts.find(mapName);
     if (it != m_fonts.end())
         return it->second;
 
-    wstring sfx = suffix(name);
+    string sfx = suffix(name);
     transform(sfx.begin(), sfx.end(), sfx.begin(), towlower);
 
-    if (sfx == L"ttf")
+    if (sfx == "ttf")
     {
         boost::shared_ptr<std::istream> s = getFileStream(name);
         if (!s)
@@ -448,7 +448,7 @@ boost::shared_ptr< Font > ResourceManager::loadFont(const std::wstring& name, in
         m_fonts[mapName] = boost::shared_ptr<Font>(f);
         return m_fonts[mapName];
     }
-    if (sfx == L"aft")
+    if (sfx == "aft")
     {
         boost::shared_ptr<std::istream> s = getFileStream(name);
         if (!s)
@@ -472,7 +472,7 @@ void ResourceManager::processMain()
     processGAIQueue();
 }
 
-boost::shared_array<char> ResourceManager::loadData(const std::wstring& name, size_t &size)
+boost::shared_array<char> ResourceManager::loadData(const std::string& name, size_t &size)
 {
     boost::shared_ptr<std::istream> s = ResourceManager::instance().getFileStream(name);
     if (!s)
@@ -490,11 +490,11 @@ boost::shared_array<char> ResourceManager::loadData(const std::wstring& name, si
     return boost::shared_array<char>(data);
 }
 
-bool ResourceManager::resourceExists(const std::wstring& path)
+bool ResourceManager::resourceExists(const std::string& path)
 {
-    wstring realName = path;
+    string realName = path;
 
-    std::map<std::wstring, boost::shared_ptr<ResourceAdapter> >::iterator fileIt = m_files.find(realName);
+    std::map<std::string, boost::shared_ptr<ResourceAdapter> >::iterator fileIt = m_files.find(realName);
     if (fileIt == m_files.end())
         return false;
     else
@@ -502,11 +502,11 @@ bool ResourceManager::resourceExists(const std::wstring& path)
 }
 
 
-boost::shared_ptr<std::istream> ResourceManager::getFileStream(const std::wstring& name)
+boost::shared_ptr<std::istream> ResourceManager::getFileStream(const std::string& name)
 {
-    wstring realName = name;
+    string realName = name;
 
-    std::map<std::wstring, boost::shared_ptr<ResourceAdapter> >::iterator fileIt = m_files.find(realName);
+    std::map<std::string, boost::shared_ptr<ResourceAdapter> >::iterator fileIt = m_files.find(realName);
     if (fileIt == m_files.end())
     {
         Log::error() << "No such file: " << realName;
@@ -547,40 +547,40 @@ void ResourceManager::processGAIQueue()
 
 void ResourceManager::cleanupUnused()
 {
-    std::list<std::wstring> animationsToRemove;
-    std::list<std::wstring> texturesToRemove;
-    std::list<std::wstring> fontsToRemove;
+    std::list<std::string> animationsToRemove;
+    std::list<std::string> texturesToRemove;
+    std::list<std::string> fontsToRemove;
 
-    map<std::wstring, boost::shared_ptr<Texture> >::iterator texturesEnd = m_textures.end();
-    for (map<std::wstring, boost::shared_ptr<Texture> >::iterator i = m_textures.begin(); i != texturesEnd; ++i)
+    map<std::string, boost::shared_ptr<Texture> >::iterator texturesEnd = m_textures.end();
+    for (map<std::string, boost::shared_ptr<Texture> >::iterator i = m_textures.begin(); i != texturesEnd; ++i)
         if ((*i).second.use_count() < 2)
             texturesToRemove.push_back(i->first);
 
-    map<std::wstring, boost::shared_ptr<AnimatedTexture> >::iterator animEnd = m_animations.end();
-    for (map<std::wstring, boost::shared_ptr<AnimatedTexture> >::iterator i = m_animations.begin(); i != animEnd; ++i)
+    map<std::string, boost::shared_ptr<AnimatedTexture> >::iterator animEnd = m_animations.end();
+    for (map<std::string, boost::shared_ptr<AnimatedTexture> >::iterator i = m_animations.begin(); i != animEnd; ++i)
         if ((*i).second.use_count() < 2)
             animationsToRemove.push_back(i->first);
 
-    std::map<std::wstring, boost::shared_ptr<Font> >::iterator fontEnd = m_fonts.end();
-    for (map<std::wstring, boost::shared_ptr<Font> >::iterator i = m_fonts.begin(); i != fontEnd; ++i)
+    std::map<std::string, boost::shared_ptr<Font> >::iterator fontEnd = m_fonts.end();
+    for (map<std::string, boost::shared_ptr<Font> >::iterator i = m_fonts.begin(); i != fontEnd; ++i)
         if ((*i).second.use_count() < 2)
             fontsToRemove.push_back(i->first);
 
 
-    std::list<std::wstring>::const_iterator end = animationsToRemove.end();
-    for (std::list<std::wstring>::const_iterator i = animationsToRemove.begin(); i != end; ++i)
+    std::list<std::string>::const_iterator end = animationsToRemove.end();
+    for (std::list<std::string>::const_iterator i = animationsToRemove.begin(); i != end; ++i)
     {
         Log::debug() << "Cleanup " << *i;
         m_animations.erase(*i);
     }
     end = texturesToRemove.end();
-    for (std::list<std::wstring>::const_iterator i = texturesToRemove.begin(); i != end; ++i)
+    for (std::list<std::string>::const_iterator i = texturesToRemove.begin(); i != end; ++i)
     {
         Log::debug() << "Cleanup " << *i;
         m_textures.erase(*i);
     }
     end = fontsToRemove.end();
-    for (std::list<std::wstring>::const_iterator i = fontsToRemove.begin(); i != end; ++i)
+    for (std::list<std::string>::const_iterator i = fontsToRemove.begin(); i != end; ++i)
     {
         Log::debug() << "Cleanup " << *i;
         m_fonts.erase(*i);
@@ -648,7 +648,7 @@ ResourceObjectManager& ResourceManager::objectManager()
     return m_objectManager;
 }
 
-void ResourceManager::addDATFile(const std::wstring& name)
+void ResourceManager::addDATFile(const std::string& name)
 {
     boost::shared_ptr<std::istream> stream = getFileStream(name);
     if (!stream)

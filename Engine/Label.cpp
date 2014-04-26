@@ -45,16 +45,6 @@ Label::Label(const std::string& text, boost::shared_ptr<Font> font): Sprite(*(ne
         d->font = Engine::instance().coreFont();
     else
         d->font = font;
-    setText(text);
-}
-
-Label::Label(const std::wstring& text, boost::shared_ptr<Font> font): Sprite(*(new LabelPrivate()))
-{
-    RANGERS_D(Label);
-    if (!font)
-        d->font = Engine::instance().coreFont();
-    else
-        d->font = font;
 
     setText(text);
 }
@@ -69,18 +59,7 @@ boost::shared_ptr< Font > Label::font() const
     return d->font;
 }
 
-
 void Label::setText(const std::string& text)
-{
-    lock();
-    RANGERS_D(Label);
-    d->text.assign(text.length(), '\0');
-    std::copy(text.begin(), text.end(), d->text.begin());
-    markToUpdate();
-    unlock();
-}
-
-void Label::setText(const std::wstring& text)
 {
     lock();
     RANGERS_D(Label);
@@ -119,7 +98,7 @@ void Label::processMain()
     Sprite::processMain();
 }
 
-std::wstring Label::text() const
+std::string Label::text() const
 {
     RANGERS_D(const Label);
     return d->text;

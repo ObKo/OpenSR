@@ -56,7 +56,7 @@ public:
         return boost::dynamic_pointer_cast<T>(getResourceObject(id));
     }
 
-    void addJSON(const std::wstring& jsonFile, const std::string& prefix = std::string());
+    void addJSON(const std::string& jsonFile, const std::string& prefix = std::string());
     void addFactory(const std::string& type, boost::shared_ptr<ResourceObjectFactory> factory);
 
     boost::shared_ptr<ResourceObject> loadObject(const std::string& currentPath, const Json::Value& object);
@@ -64,12 +64,12 @@ public:
     //! Load object without id or type
     boost::shared_ptr<ResourceObject> loadObject(const Json::Value& object, const std::string& type = std::string());
     //! Load object without id or type from file
-    boost::shared_ptr<ResourceObject> loadObject(const std::wstring& jsonFile, const std::string& type = std::string());
+    boost::shared_ptr<ResourceObject> loadObject(const std::string& jsonFile, const std::string& type = std::string());
 
 private:
     std::list<std::string> m_directories;
     std::map<std::string, boost::shared_ptr<ResourceObject> > m_objects;
-    std::map<std::string, std::wstring> m_objectFiles;
+    std::map<std::string, std::string> m_objectFiles;
 
     std::map<std::string, boost::shared_ptr<ResourceObjectFactory> > m_objectFactories;
 

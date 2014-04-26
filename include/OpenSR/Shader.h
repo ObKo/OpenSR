@@ -31,7 +31,7 @@ public:
     Shader();
     Shader(ShaderType type);
     //! Load shader from file.
-    Shader(const std::wstring& shader);
+    Shader(const std::string& shader);
     //! Create shader from source
     Shader(ShaderType type, const std::string& shaderSource);
     virtual ~Shader();

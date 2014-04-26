@@ -32,14 +32,12 @@ class RANGERS_ENGINE_API Label: public Sprite
 public:
     Label();
     Label(const std::string& text, boost::shared_ptr<Font> font = boost::shared_ptr<Font>());
-    Label(const std::wstring& text, boost::shared_ptr<Font> font = boost::shared_ptr<Font>());
 
     void setText(const std::string& text);
-    void setText(const std::wstring& text);
     void setFont(boost::shared_ptr<Font> font);
     void setWordWrap(bool wordWrap);
 
-    std::wstring text() const;
+    std::string text() const;
     boost::shared_ptr<Font> font() const;
     bool wordWrap() const;
 

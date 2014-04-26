@@ -42,7 +42,7 @@ TiledPolyline::TiledPolyline(boost::shared_ptr<Texture> texture): Object(*(new T
     d->texture = texture;
 }
 
-TiledPolyline::TiledPolyline(const std::wstring& texture): Object(*(new TiledPolylinePrivate()))
+TiledPolyline::TiledPolyline(const std::string& texture): Object(*(new TiledPolylinePrivate()))
 {
     RANGERS_D(TiledPolyline);
     d->texture = ResourceManager::instance().loadTexture(texture);
@@ -267,7 +267,7 @@ void TiledPolyline::setTexture(boost::shared_ptr<Texture> texture)
     markToUpdate();
 }
 
-void TiledPolyline::setTexture(const std::wstring& texture)
+void TiledPolyline::setTexture(const std::string& texture)
 {
     RANGERS_D(TiledPolyline);
     d->texture = ResourceManager::instance().loadTexture(texture);

@@ -33,8 +33,8 @@ public:
     TiledLine();
     TiledLine(boost::shared_ptr<Texture> texture);
     TiledLine(boost::shared_ptr<Texture> texture, const Vector& start, const Vector& end);
-    TiledLine(const std::wstring& texture);
-    TiledLine(const std::wstring& texture, const Vector& start, const Vector& end);
+    TiledLine(const std::string& texture);
+    TiledLine(const std::string& texture, const Vector& start, const Vector& end);
 
     virtual ~TiledLine();
 
@@ -47,7 +47,7 @@ public:
 
     void setLine(const Vector& start, const Vector& end);
     void setTexture(boost::shared_ptr<Texture> texture);
-    void setTexture(const std::wstring& texture);
+    void setTexture(const std::string& texture);
 
 protected:
     TiledLine(TiledLinePrivate &p);

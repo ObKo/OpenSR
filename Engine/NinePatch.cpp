@@ -73,14 +73,14 @@ NinePatch::NinePatch(boost::shared_ptr<NinePatchDescriptor> desc):
     markToUpdate();
 }
 
-NinePatch::NinePatch(const std::wstring& name):
+NinePatch::NinePatch(const std::string& name):
     Sprite(*(new NinePatchPrivate()))
 {
     RANGERS_D(NinePatch);
     d->rows = 0;
     d->columns = 0;
-    std::wstring s = suffix(name);
-    if (s == L"9.json")
+    std::string s = suffix(name);
+    if (s == "9.json")
     {
         boost::shared_ptr<NinePatchDescriptor> desc = boost::dynamic_pointer_cast<NinePatchDescriptor>(
                     ResourceManager::instance().objectManager().loadObject(name, "ninepatch"));
