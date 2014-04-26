@@ -83,20 +83,20 @@ public:
                 {
                     if (boost::shared_ptr<Asteroid> a = boost::dynamic_pointer_cast<Asteroid>(w->object()))
                     {
-                        m_parent->m_infoWidget->showAsteroid(a);
+                        m_parent->m_infoWidget->show(a);
                         m_parent->m_infoWidget->setVisible(true);
                         Trajectory t = w->object()->trajectory();
                         m_parent->showTrajectory(t);
                     }
                     else if (boost::shared_ptr<Planet> p = boost::dynamic_pointer_cast<Planet>(w->object()))
                     {
-                        m_parent->m_infoWidget->showPlanet(p);
+                        m_parent->m_infoWidget->show(p);
                         m_parent->m_infoWidget->setVisible(true);
                     }
                 }
                 else if (action.source() == m_parent->m_starWidget)
                 {
-                    m_parent->m_infoWidget->showSystem(m_parent->m_system);
+                    m_parent->m_infoWidget->show(m_parent->m_system);
                     m_parent->m_infoWidget->setVisible(true);
                 }
             }

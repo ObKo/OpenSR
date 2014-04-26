@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2012 - 2013 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2012 - 2014 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -34,33 +34,33 @@ class WorldObject;
 class RANGERS_WORLD_API WorldHelper
 {
 public:
-    static const uint32_t TYPE_ARTIFACT = 0x17436ae1;
-    static const uint32_t TYPE_CARGOHOOK = 0x928ea67;
-    static const uint32_t TYPE_DEFENCEGENERATOR = 0x29ba7a36;
-    static const uint32_t TYPE_DESERTPLANET = 0x116adcbb;
-    static const uint32_t TYPE_DROID = 0x7c48b92c;
-    static const uint32_t TYPE_ENGINE = 0x756eea2f;
-    static const uint32_t TYPE_EQUIPMENT = 0x3209e044;
-    static const uint32_t TYPE_GOODS = 0x6d261f94;
-    static const uint32_t TYPE_HABITABLEPLANET = 0x79f89bfa;
-    static const uint32_t TYPE_HULL = 0x3938e105;
-    static const uint32_t TYPE_ITEM = 0x4b74e518;
-    static const uint32_t TYPE_INTERACTION_CONTEXT = 0xf62886ad;
-    static const uint32_t TYPE_LAND_CONTEXT = 0x9b5430be;
-    static const uint32_t TYPE_ASTEROID = 0x71691dfd;
-    static const uint32_t TYPE_MICROMODULUS = 0x6921522f;
-    static const uint32_t TYPE_PLANET = 0x79105c84;
-    static const uint32_t TYPE_RADAR = 0x5fcf4370;
-    static const uint32_t TYPE_SCANNER = 0x28ff1510;
-    static const uint32_t TYPE_SHIP = 0x2b9a8c11;
-    static const uint32_t TYPE_SHIP_CONTEXT = 0x3e572751;
-    static const uint32_t TYPE_PLANETARYSYSTEM = 0x1c832836;
-    static const uint32_t TYPE_SPACEBASE = 0x606e1534;
-    static const uint32_t TYPE_SPACEOBJECT = 0x44357eaf;
-    static const uint32_t TYPE_SYSTEMOBJECT = 0x127dbfab;
-    static const uint32_t TYPE_TANK = 0x22980928;
-    static const uint32_t TYPE_WEAPON = 0x2ff422f6;
-    static const uint32_t TYPE_WORLDOBJECT = 0x1b90a69f;
+    static const uint32_t TYPE_ARTIFACT;
+    static const uint32_t TYPE_CARGOHOOK;
+    static const uint32_t TYPE_DEFENCEGENERATOR;
+    static const uint32_t TYPE_DESERTPLANET;
+    static const uint32_t TYPE_DROID;
+    static const uint32_t TYPE_ENGINE;
+    static const uint32_t TYPE_EQUIPMENT;
+    static const uint32_t TYPE_GOODS;
+    static const uint32_t TYPE_HABITABLEPLANET;
+    static const uint32_t TYPE_HULL;
+    static const uint32_t TYPE_ITEM;
+    static const uint32_t TYPE_INTERACTION_CONTEXT;
+    static const uint32_t TYPE_LAND_CONTEXT;
+    static const uint32_t TYPE_ASTEROID;
+    static const uint32_t TYPE_MICROMODULUS;
+    static const uint32_t TYPE_PLANET;
+    static const uint32_t TYPE_RADAR;
+    static const uint32_t TYPE_SCANNER;
+    static const uint32_t TYPE_SHIP;
+    static const uint32_t TYPE_SHIP_CONTEXT;
+    static const uint32_t TYPE_PLANETARYSYSTEM;
+    static const uint32_t TYPE_SPACEBASE;
+    static const uint32_t TYPE_SPACEOBJECT;
+    static const uint32_t TYPE_SYSTEMOBJECT;
+    static const uint32_t TYPE_TANK;
+    static const uint32_t TYPE_WEAPON;
+    static const uint32_t TYPE_WORLDOBJECT;
 
     static boost::shared_ptr<WorldObject> createObjectByType(uint32_t type);
 

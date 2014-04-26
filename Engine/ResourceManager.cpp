@@ -232,6 +232,10 @@ boost::shared_ptr<Texture> ResourceManager::loadTexture(const std::wstring& name
     }
     else if (sfx == L"gai")
     {
+        auto it = m_animations.find(name);
+        if (it != m_animations.end())
+            return it->second;
+
         boost::shared_ptr<std::istream> s = getFileStream(name);
         if (!s)
             return boost::shared_ptr<Texture>();

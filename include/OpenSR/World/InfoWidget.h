@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2013 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2013 - 2014 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -24,27 +24,28 @@
 #include <OpenSR/Widget.h>
 #include <OpenSR/Types.h>
 
+#include <map>
+
 namespace Rangers
 {
-class Sprite;
-class Label;
 class Font;
+class Label;
+class Sprite;
 namespace World
 {
 struct InfoWidgetStyle;
-class Planet;
-class PlanetarySystem;
-class Asteroid;
+class InfoWidgetProvider;
+struct InfoWidgetContent;
+class WorldObject;
 class RANGERS_WORLD_API InfoWidget: public Widget
 {
 public:
     InfoWidget(boost::shared_ptr<InfoWidgetStyle> style);
 
     void clear();
+    void show(boost::shared_ptr<WorldObject> object);
 
-    void showPlanet(boost::shared_ptr<Planet> planet);
-    void showSystem(boost::shared_ptr<PlanetarySystem> system);
-    void showAsteroid(boost::shared_ptr<Asteroid> asteroid);
+    void addContentProvider(uint32_t typeID, boost::shared_ptr<InfoWidgetProvider> provider);
 
     virtual void processMain();
     virtual void draw() const;
@@ -52,8 +53,7 @@ public:
     virtual bool containsPoint(const Vector &p) const;
 
 private:
-    enum InfoType {INFO_NONE, INFO_SYSTEM, INFO_PLANET, INFO_ASTEROID};
-
+    boost::shared_ptr<InfoWidgetStyle> m_style;
     boost::shared_ptr<Font> m_font;
     boost::shared_ptr<Font> m_captionFont;
     boost::shared_ptr<Label> m_caption;
@@ -65,11 +65,13 @@ private:
     Color m_color;
     Color m_captionColor;
     Color m_labelColor;
-    std::vector<boost::shared_ptr<Object> > m_infoWidget;
-    InfoType m_type;
+    boost::shared_ptr<InfoWidgetContent> m_content;
     int m_iconSize;
     Vector m_iconPosition;
     Vector m_raceIconPosition;
+    std::map<uint32_t, boost::shared_ptr<InfoWidgetProvider> > m_providers;
+    boost::shared_ptr<InfoWidgetProvider> m_currentProvider;
+    boost::shared_ptr<WorldObject> m_currentObject;
 };
 }
 }

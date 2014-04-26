@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2013 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2013 - 2014 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -43,8 +43,8 @@ void exportInfoWidget()
 
     class_<InfoWidgetWrap, bases<Widget>, boost::shared_ptr<InfoWidgetWrap>, boost::noncopyable> c("InfoWidget", init<boost::shared_ptr<InfoWidgetStyle> >());
     c.def("clear", &InfoWidget::clear)
-    .def("showPlanet", &InfoWidget::showPlanet)
-    .def("showSystem", &InfoWidget::showSystem);
+    .def("show", &InfoWidget::show)
+    .def("addContentProvider", &InfoWidget::addContentProvider);
     RANGERS_PYTHON_WRAP_WIDGET_DEF(InfoWidget, InfoWidgetWrap, c);
     register_ptr_to_python<boost::shared_ptr<InfoWidget> >();
 }

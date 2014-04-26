@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2012 - 2013 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2012 - 2014 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -62,6 +62,34 @@ namespace Rangers
 {
 namespace World
 {
+const uint32_t WorldHelper::TYPE_ARTIFACT = 0x17436ae1;
+const uint32_t WorldHelper::TYPE_CARGOHOOK = 0x928ea67;
+const uint32_t WorldHelper::TYPE_DEFENCEGENERATOR = 0x29ba7a36;
+const uint32_t WorldHelper::TYPE_DESERTPLANET = 0x116adcbb;
+const uint32_t WorldHelper::TYPE_DROID = 0x7c48b92c;
+const uint32_t WorldHelper::TYPE_ENGINE = 0x756eea2f;
+const uint32_t WorldHelper::TYPE_EQUIPMENT = 0x3209e044;
+const uint32_t WorldHelper::TYPE_GOODS = 0x6d261f94;
+const uint32_t WorldHelper::TYPE_HABITABLEPLANET = 0x79f89bfa;
+const uint32_t WorldHelper::TYPE_HULL = 0x3938e105;
+const uint32_t WorldHelper::TYPE_ITEM = 0x4b74e518;
+const uint32_t WorldHelper::TYPE_INTERACTION_CONTEXT = 0xf62886ad;
+const uint32_t WorldHelper::TYPE_LAND_CONTEXT = 0x9b5430be;
+const uint32_t WorldHelper::TYPE_ASTEROID = 0x71691dfd;
+const uint32_t WorldHelper::TYPE_MICROMODULUS = 0x6921522f;
+const uint32_t WorldHelper::TYPE_PLANET = 0x79105c84;
+const uint32_t WorldHelper::TYPE_RADAR = 0x5fcf4370;
+const uint32_t WorldHelper::TYPE_SCANNER = 0x28ff1510;
+const uint32_t WorldHelper::TYPE_SHIP = 0x2b9a8c11;
+const uint32_t WorldHelper::TYPE_SHIP_CONTEXT = 0x3e572751;
+const uint32_t WorldHelper::TYPE_PLANETARYSYSTEM = 0x1c832836;
+const uint32_t WorldHelper::TYPE_SPACEBASE = 0x606e1534;
+const uint32_t WorldHelper::TYPE_SPACEOBJECT = 0x44357eaf;
+const uint32_t WorldHelper::TYPE_SYSTEMOBJECT = 0x127dbfab;
+const uint32_t WorldHelper::TYPE_TANK = 0x22980928;
+const uint32_t WorldHelper::TYPE_WEAPON = 0x2ff422f6;
+const uint32_t WorldHelper::TYPE_WORLDOBJECT = 0x1b90a69f;
+
 boost::shared_ptr<WorldObject> WorldHelper::createObjectByType(uint32_t type)
 {
     WorldObject *object = 0;
