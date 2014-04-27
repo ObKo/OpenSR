@@ -22,6 +22,7 @@
 #include "OpenSR/Engine.h"
 
 #include "OpenSR/private/ColorLabel_p.h"
+#include <OpenSR/libRanger.h>
 
 using namespace std;
 namespace Rangers
@@ -79,9 +80,9 @@ void ColorLabel::processMain()
     RANGERS_D(ColorLabel);
 
     if (!d->wordWrap)
-        d->region = TextureRegion(d->font->renderColoredText(d->text, d->textColor.toRGB(), d->selectionColor.toRGB()));
+        d->region = TextureRegion(d->font->renderColoredText(fromUTF8(d->text.c_str()), d->textColor.toRGB(), d->selectionColor.toRGB()));
     else
-        d->region = TextureRegion(d->font->renderColoredText(d->text, d->textColor.toRGB(), d->selectionColor.toRGB(), d->width));
+        d->region = TextureRegion(d->font->renderColoredText(fromUTF8(d->text.c_str()), d->textColor.toRGB(), d->selectionColor.toRGB(), d->width));
 
     if (!d->fixedWidth)
         d->width = d->region.texture->width();

@@ -28,6 +28,7 @@
 #include "OpenSR/NinePatch.h"
 
 #include "OpenSR/private/LineEdit_p.h"
+#include <OpenSR/libRanger.h>
 
 namespace Rangers
 {
@@ -49,7 +50,7 @@ void LineEditPrivate::LineEditListener::actionPerformed(const Action &action)
         d->keyPressed(boost::get<SDL_Keysym>(action.argument()));
         break;
     case Action::TEXT_INPUT:
-        d->textAdded(boost::get<std::string>(action.argument()));
+        d->textAdded(fromUTF8(boost::get<std::string>(action.argument()).c_str()));
         break;
     }
 }
@@ -151,7 +152,7 @@ void LineEditPrivate::init()
     }
     if ((style) && (style->font) && (style->font->path != "") && (style->font->size > 0))
     {
-        label = boost::shared_ptr<Label>(new Label(text, ResourceManager::instance().loadFont(style->font->path, style->font->size)));
+        label = boost::shared_ptr<Label>(new Label(toUTF8(text), ResourceManager::instance().loadFont(style->font->path, style->font->size)));
         label->setColor(style->color);
         q->addChild(label);
     }
@@ -231,7 +232,7 @@ void LineEditPrivate::updateText()
         }
     }
     maxChars = label->font()->maxChars(text, stringOffset, text.length() - stringOffset, realContentRect.width);
-    label->setText(text.substr(stringOffset, maxChars));
+    label->setText(toUTF8(text.substr(stringOffset, maxChars)));
     q->markToUpdate();
     q->unlock();
 }
@@ -342,7 +343,7 @@ void LineEditPrivate::keyPressed(const SDL_Keysym& key)
     q->unlock();
 }
 
-void LineEditPrivate::textAdded(const std::string& str)
+void LineEditPrivate::textAdded(const std::wstring& str)
 {
     RANGERS_Q(LineEdit);
     q->lock();
@@ -366,7 +367,7 @@ void LineEdit::setText(const std::string& s)
 {
     lock();
     RANGERS_D(LineEdit);
-    d->text = s;
+    d->text = fromUTF8(s.c_str());
     d->position = 0;
     d->stringOffset = 0;
     d->updateText();
@@ -377,7 +378,7 @@ void LineEdit::setText(const std::string& s)
 std::string LineEdit::text() const
 {
     RANGERS_D(const LineEdit);
-    return d->text;
+    return toUTF8(d->text);
 }
 
 int LineEdit::minHeight() const
@@ -395,7 +396,7 @@ int LineEdit::minHeight() const
 int LineEdit::minWidth() const
 {
     RANGERS_D(const LineEdit);
-    std::string w = "W";
+    std::wstring w = L"W";
     if (d->background && d->label->font())
         return std::max(d->label->font()->calculateStringWidth(w, 0, 1), (int)d->background->normalHeight());
 

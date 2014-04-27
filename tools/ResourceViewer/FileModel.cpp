@@ -127,7 +127,7 @@ void convertPKGNode(PKGItem *node, FileNode *fileNode, FileNode *parent, QString
 
 void convertRPKGEntry(const RPKGEntry *entry, FileNode *root, FileNode *fileNode)
 {
-    QString name = QString::fromStdWString(entry->name);
+    QString name = QString::fromUtf8(entry->name.c_str());
     QFileInfo fileInfo(name);
     fileNode->name = fileInfo.fileName();
     fileNode->fullName = name;

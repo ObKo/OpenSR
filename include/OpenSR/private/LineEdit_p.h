@@ -40,7 +40,7 @@ public:
     };
 
     boost::shared_ptr<Label> label;
-    std::string text;
+    std::wstring text;
     Vertex *cursorVertices;
     GLuint cursorBuffer;
     int position;
@@ -56,7 +56,7 @@ public:
     void init();
     void updateText();
     void keyPressed(const SDL_Keysym& key);
-    void textAdded(const std::string& str);
+    void textAdded(const std::wstring& str);
 
     boost::shared_ptr<LineEditListener> lineEditListener;
 };

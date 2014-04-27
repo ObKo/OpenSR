@@ -64,7 +64,7 @@ int pkg2rpkg(const std::string& inputFile, const std::string& outputFile, Ranger
         std::cout << "Incorrect input file" << endl;
         return -1;
     }
-    countFiles(L"", root, itemMap);
+    countFiles("", root, itemMap);
 
     //FIXME: OH SHI~
     std::vector<RPKGEntry> files;
@@ -83,7 +83,7 @@ int pkg2rpkg(const std::string& inputFile, const std::string& outputFile, Ranger
 
     for (int i = 0; i < files.size(); i++)
     {
-        wcout << files[i].name << endl;
+        cout << files[i].name << endl;
         unsigned char *data = extractFile(pkgfiles[i], pkgfile);
         appendRPKGFile(outfile, files[i], (const char*)data, pkgfiles[i].size, compression);
         delete data;

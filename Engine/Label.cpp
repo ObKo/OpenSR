@@ -22,6 +22,7 @@
 #include "OpenSR/Texture.h"
 
 #include "OpenSR/private/Label_p.h"
+#include <OpenSR/libRanger.h>
 
 namespace Rangers
 {
@@ -85,9 +86,9 @@ void Label::processMain()
     lock();
 
     if (!d->wordWrap)
-        d->region = TextureRegion(d->font->renderText(d->text));
+        d->region = TextureRegion(d->font->renderText(fromUTF8(d->text.c_str())));
     else
-        d->region = TextureRegion(d->font->renderText(d->text, d->width));
+        d->region = TextureRegion(d->font->renderText(fromUTF8(d->text.c_str()), d->width));
 
     if (!d->fixedWidth)
         d->width = d->region.texture->width();

@@ -72,13 +72,13 @@ QString QuestPlayer::substituteValues(const QString &str) const
         deltaPos += value.length() - match.capturedLength();
     }
 
-    result.replace("<ToStar>", "<font color=\"blue\">" + QString::fromStdWString(m_quest.toStar) + "</font>");
-    result.replace("<ToPlanet>", "<font color=\"blue\">" + QString::fromStdWString(m_quest.toPlanet) + "</font>");
-    result.replace("<FromStar>", "<font color=\"blue\">" + QString::fromStdWString(m_quest.fromStar) + "</font>");
-    result.replace("<FromPlanet>", "<font color=\"blue\">" + QString::fromStdWString(m_quest.fromPlanet) + "</font>");
-    result.replace("<Date>", "<font color=\"blue\">" + QString::fromStdWString(m_quest.date) + "</font>");
-    result.replace("<Money>", "<font color=\"blue\">" + QString::fromStdWString(m_quest.money) + "</font>");
-    result.replace("<Ranger>", "<font color=\"blue\">" + QString::fromStdWString(m_quest.ranger) + "</font>");
+    result.replace("<ToStar>", "<font color=\"blue\">" + QString::fromUtf8(m_quest.toStar.c_str()) + "</font>");
+    result.replace("<ToPlanet>", "<font color=\"blue\">" + QString::fromUtf8(m_quest.toPlanet.c_str()) + "</font>");
+    result.replace("<FromStar>", "<font color=\"blue\">" + QString::fromUtf8(m_quest.fromStar.c_str()) + "</font>");
+    result.replace("<FromPlanet>", "<font color=\"blue\">" + QString::fromUtf8(m_quest.fromPlanet.c_str()) + "</font>");
+    result.replace("<Date>", "<font color=\"blue\">" + QString::fromUtf8(m_quest.date.c_str()) + "</font>");
+    result.replace("<Money>", "<font color=\"blue\">" + QString::fromUtf8(m_quest.money.c_str()) + "</font>");
+    result.replace("<Ranger>", "<font color=\"blue\">" + QString::fromUtf8(m_quest.ranger.c_str()) + "</font>");
 
     result.replace("<clr>", "<font color=\"blue\">");
     result.replace("<clrEnd>", "</font>");
@@ -103,7 +103,7 @@ void QuestPlayer::resetQuest()
 
     for (const std::pair<uint32_t, QM::Parameter>& p : m_quest.parameters)
     {
-        QString start = QString::fromStdWString(p.second.start);
+        QString start = QString::fromUtf8(p.second.start.c_str());
         float value = QM::eval(start.toStdString(), std::map<uint32_t, float>());
         m_parameters[p.first] = value;
         m_parametersVisibility[p.first] = true;
@@ -135,7 +135,7 @@ void QuestPlayer::setLocation(uint32_t location)
     {
         if (m_currentLocation.descriptionExpression && !m_currentLocation.expression.empty())
         {
-            int32_t t = (int32_t)QM::eval(QString::fromStdWString(m_currentLocation.expression).toStdString(), m_parameters);
+            int32_t t = (int32_t)QM::eval(m_currentLocation.expression, m_parameters);
             //FIXME: Bug or feature?
             if (t == 0)
                 t = 1;
@@ -145,7 +145,7 @@ void QuestPlayer::setLocation(uint32_t location)
                 m_locationText = "";
             }
             else
-                m_locationText = substituteValues(QString::fromStdWString(m_currentLocation.descriptions.at(t - 1)));
+                m_locationText = substituteValues(QString::fromUtf8(m_currentLocation.descriptions.at(t - 1).c_str()));
         }
         else
         {
@@ -166,7 +166,7 @@ void QuestPlayer::setLocation(uint32_t location)
 
             m_locationDescriptionsCount[m_currentLocation.id] = value;
 
-            m_locationText = substituteValues(QString::fromStdWString(m_currentLocation.descriptions.at(value)));
+            m_locationText = substituteValues(QString::fromUtf8(m_currentLocation.descriptions.at(value).c_str()));
         }
     }
 
@@ -204,13 +204,13 @@ bool QuestPlayer::checkCriticalParameters()
             switch (pr.type)
             {
             case QM::Parameter::PARAMETER_DEATH:
-                emit(questFailed(substituteValues(QString::fromStdWString(pr.critText)), true));
+                emit(questFailed(substituteValues(QString::fromUtf8(pr.critText.c_str())), true));
                 break;
             case QM::Parameter::PARAMETER_FAIL:
-                emit(questFailed(substituteValues(QString::fromStdWString(pr.critText)), false));
+                emit(questFailed(substituteValues(QString::fromUtf8(pr.critText.c_str())), false));
                 break;
             case QM::Parameter::PARAMETER_SUCCESS:
-                emit(questCompleted(substituteValues(QString::fromStdWString(pr.critText))));
+                emit(questCompleted(substituteValues(QString::fromUtf8(pr.critText.c_str()))));
                 break;
             }
             return false;
@@ -237,7 +237,7 @@ QStringList QuestPlayer::visibleParameters() const
                 int32_t v = (int32_t)round(p.second);
                 if ((v >= r.from) && (v <= r.to))
                 {
-                    value = QString::fromStdWString(r.text).replace("<>", QString::number(v));
+                    value = QString::fromUtf8(r.text.c_str()).replace("<>", QString::number(v));
                     break;
                 }
             }
@@ -298,7 +298,7 @@ void QuestPlayer::checkTransitions()
             cond = cond && checkCondition(c);
         }
         bool passed = (t.passCount == 0) || !((m_transitionCounts.find(t.id) != m_transitionCounts.end()) && (m_transitionCounts.at(t.id) >= t.passCount));
-        if (passed && cond && (t.globalCondition.empty() || QM::eval(QString::fromStdWString(t.globalCondition).toStdString(), m_parameters)))
+        if (passed && cond && (t.globalCondition.empty() || QM::eval(t.globalCondition, m_parameters)))
         {
             m_possibleTransitions.push_back(i);
         }
@@ -318,7 +318,7 @@ std::vector<std::pair<uint32_t, std::pair<QString, bool> > > QuestPlayer::visibl
         if (!trans.title.empty())
         {
             r.push_back(std::pair<uint32_t, std::pair<QString, bool> >(t,
-                        std::pair<QString, bool>(substituteValues(QString::fromStdWString(trans.title)),
+                        std::pair<QString, bool>(substituteValues(QString::fromUtf8(trans.title.c_str())),
                                                  true)));
         }
         else
@@ -330,7 +330,7 @@ std::vector<std::pair<uint32_t, std::pair<QString, bool> > > QuestPlayer::visibl
     for (uint32_t t : m_alwaysVisibleTransitions)
     {
         r.push_back(std::pair<uint32_t, std::pair<QString, bool> >(t,
-                    std::pair<QString, bool>(substituteValues(QString::fromStdWString(m_currentLocation.transitions.at(t).title)),
+                    std::pair<QString, bool>(substituteValues(QString::fromUtf8(m_currentLocation.transitions.at(t).title.c_str())),
                                              false)));
     }
 
@@ -372,7 +372,7 @@ void QuestPlayer::applyModifier(const QM::Modifier& m)
         break;
     case QM::Modifier::OPERATION_EXPRESSION:
         if (!m.expression.empty())
-            value = QM::eval(QString::fromStdWString(m.expression).toStdString(), m_oldParameters);
+            value = QM::eval(m.expression, m_oldParameters);
         else
             value = m_oldParameters[m.param];
         break;
@@ -398,7 +398,7 @@ void QuestPlayer::startTransition(uint32_t num)
 
     qDebug() << "P" << m_currentTransition.id;
 
-    m_locationText = substituteValues(QString::fromStdWString(m_currentTransition.description));
+    m_locationText = substituteValues(QString::fromUtf8(m_currentTransition.description.c_str()));
 
     if (m_quest.locations.at(m_currentTransition.to).empty)
     {
@@ -410,7 +410,7 @@ void QuestPlayer::startTransition(uint32_t num)
     }
     else
     {
-        emit(transitionText(substituteValues(QString::fromStdWString(m_currentTransition.description))));
+        emit(transitionText(substituteValues(QString::fromUtf8(m_currentTransition.description.c_str()))));
     }
 }
 

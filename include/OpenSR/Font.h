@@ -33,14 +33,14 @@ public:
     Font();
     virtual ~Font();
 
-    virtual boost::shared_ptr<Texture> renderText(const std::string& text, int width = 0) const;
-    virtual boost::shared_ptr<Texture> renderColoredText(const std::string& text, int defaultTextColor = 0xFFFFFF, int selectionTextColor = 0xFFFFFF, int width = 0) const;
+    virtual boost::shared_ptr<Texture> renderText(const std::wstring& text, int width = 0) const;
+    virtual boost::shared_ptr<Texture> renderColoredText(const std::wstring& text, int defaultTextColor = 0xFFFFFF, int selectionTextColor = 0xFFFFFF, int width = 0) const;
 
-    virtual int calculateStringWidth(const std::string& string, int from, int length) const;
-    virtual int maxChars(const std::string& string, int from, int length, int width) const;
+    virtual int calculateStringWidth(const std::wstring& string, int from, int length) const;
+    virtual int maxChars(const std::wstring& string, int from, int length, int width) const;
 
-    int calculateStringWidth(const std::string& str) const;
-    int maxChars(const std::string& str, int width) const;
+    int calculateStringWidth(const std::wstring& str) const;
+    int maxChars(const std::wstring& str, int width) const;
 
     int size() const;
 

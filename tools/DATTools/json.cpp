@@ -44,12 +44,12 @@ void record2JSON(const Rangers::DATRecord& record, Json::Value& json)
         {
             Json::Value child;
             record2JSON(c, child);
-            json[Rangers::toUTF8(c.name)] = child;
+            json[c.name] = child;
         }
     }
     else if (record.type == Rangers::DATRecord::VALUE)
     {
-        json = Rangers::toUTF8(record.value);
+        json = record.value;
     }
 }
 
@@ -61,7 +61,7 @@ void JSON2Record(Rangers::DATRecord& record, const Json::Value& json)
         for (const std::string& id : json.getMemberNames())
         {
             Rangers::DATRecord child;
-            child.name = Rangers::fromUTF8(id.c_str());
+            child.name = id;
             JSON2Record(child, json[id]);
             record.add(child);
         }
@@ -79,7 +79,7 @@ void JSON2Record(Rangers::DATRecord& record, const Json::Value& json)
     else
     {
         record.type = Rangers::DATRecord::VALUE;
-        record.value = Rangers::fromUTF8(json.asString().c_str());
+        record.value = json.asString();
     }
 }
 

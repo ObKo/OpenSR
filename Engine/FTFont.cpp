@@ -135,22 +135,20 @@ FTFont::~FTFont()
     FT_Done_Face(m_fontFace);
 }
 
-int FTFont::calculateStringWidth(const std::string& str, int from, int length) const
+int FTFont::calculateStringWidth(const std::wstring& str, int from, int length) const
 {
     int width = 0;
     int x = 0;
-    //TODO: codecvt_utf8
-    std::wstring ws = fromUTF8(str.c_str() + from, length);
-    for (const wchar_t &c : ws)
+    for (int i = from; i < from + length; i++)
     {
-        if (c == L'\n')
+        if (str[i] == L'\n')
         {
             width = x > width ? x : width;
             x = 0;
             continue;
         }
         FT_UInt glyph_index;
-        glyph_index = FT_Get_Char_Index(m_fontFace, c);
+        glyph_index = FT_Get_Char_Index(m_fontFace, str[i]);
         FT_Load_Glyph(m_fontFace, glyph_index, FT_LOAD_DEFAULT);
         //bearingY = bearingY < fontFace->glyph->metrics.horiBearingY >> 6 ? fontFace->glyph->metrics.horiBearingY >> 6 : bearingY;
 
@@ -160,26 +158,24 @@ int FTFont::calculateStringWidth(const std::string& str, int from, int length) c
     return width;
 }
 
-int FTFont::maxChars(const std::string& str, int from, int length, int width) const
+int FTFont::maxChars(const std::wstring& str, int from, int length, int width) const
 {
     int x = 0;
-    //TODO: codecvt_utf8
-    std::wstring ws = fromUTF8(str.c_str() + from, length);
-    for (int i = 0; i < length; i++)
+    for (int i = from; i < from + length; i++)
     {
         FT_UInt glyph_index;
-        glyph_index = FT_Get_Char_Index(m_fontFace, ws[i]);
+        glyph_index = FT_Get_Char_Index(m_fontFace, str[i]);
         FT_Load_Glyph(m_fontFace, glyph_index, FT_LOAD_DEFAULT);
         //bearingY = bearingY < fontFace->glyph->metrics.horiBearingY >> 6 ? fontFace->glyph->metrics.horiBearingY >> 6 : bearingY;
 
         x += m_fontFace->glyph->advance.x >> 6;
         if (x > width)
-            return i;
+            return i - from;
     }
     return length;
 }
 
-boost::shared_ptr<Texture> FTFont::renderText(const std::string& t, int wrapWidth) const
+boost::shared_ptr<Texture> FTFont::renderText(const std::wstring& t, int wrapWidth) const
 {
     int x = 0;
     int lines = 1;
@@ -187,7 +183,7 @@ boost::shared_ptr<Texture> FTFont::renderText(const std::string& t, int wrapWidt
     int width = 0;
     int i;
 
-    std::wstring text = fromUTF8(t.c_str());
+    std::wstring text = t;
 
     if ((wrapWidth) && (wrapWidth < (m_fontFace->max_advance_width >> 6)))
         return boost::shared_ptr<Texture>();
@@ -316,7 +312,7 @@ boost::shared_ptr<Texture> FTFont::renderText(const std::string& t, int wrapWidt
     return boost::shared_ptr<Texture>(texture);
 }
 
-boost::shared_ptr<Texture> FTFont::renderColoredText(const std::string& t, int defaultTextColor, int selectionTextColor, int wrapWidth) const
+boost::shared_ptr<Texture> FTFont::renderColoredText(const std::wstring& t, int defaultTextColor, int selectionTextColor, int wrapWidth) const
 {
     int x = 0;
     int lines = 1;
@@ -327,7 +323,7 @@ boost::shared_ptr<Texture> FTFont::renderColoredText(const std::string& t, int d
     std::map<int, unsigned int> colorSelect;
     unsigned int currentColor = defaultTextColor;
 
-    std::wstring text = fromUTF8(t.c_str());
+    std::wstring text = t;
 
     if ((wrapWidth) && (wrapWidth < (m_fontFace->max_advance_width >> 6)))
         return boost::shared_ptr<Texture>();
