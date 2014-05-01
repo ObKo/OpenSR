@@ -170,12 +170,13 @@ void writeDATTree(std::ostream &stream, const DATRecord& node)
  * \param stream input stream (uncompressed DAT!)
  * \param node current node
  */
-void readDATTree(std::istream &stream, DATRecord& node)
+void readDATTree(std::istream &stream, DATRecord& node, bool isCache)
 {
-    uint8_t isTree;
+    uint8_t isTree = 0;
     uint32_t count;
 
-    stream.read((char*)&isTree, 1);
+    if (!isCache)
+        stream.read((char*)&isTree, 1);
     stream.read((char*)&count, 4);
 
     node.type = DATRecord::NODE;
@@ -198,7 +199,7 @@ void readDATTree(std::istream &stream, DATRecord& node)
             r.name = readWideString(stream);
 
             if (isText == 2)
-                readDATTree(stream, r);
+                readDATTree(stream, r, isCache);
             else
                 r.value = readWideString(stream);
 
@@ -237,13 +238,21 @@ void readDATTree(std::istream &stream, DATRecord& node)
     {
         for (int i = 0; i < count; i++)
         {
-            DATRecord r;
-            r.type = DATRecord::VALUE;
             uint8_t isText;
-
             stream.read((char*)&isText, 1);
+
+            DATRecord r;
             r.name = readWideString(stream);
-            r.value = readWideString(stream);
+
+            if (isText == 2)
+            {
+                readDATTree(stream, r, isCache);
+            }
+            else
+            {
+                r.type = DATRecord::VALUE;
+                r.value = readWideString(stream);
+            }
 
             node.add(r);
         }
@@ -253,9 +262,10 @@ void readDATTree(std::istream &stream, DATRecord& node)
 /*!
  * Load whole *.dat file.
  * \param stream - input stream (uncompressed DAT!)
+ * \param isCache - is CacheData.dat format
  * \return root node
  */
-DATRecord loadDAT(std::istream &stream)
+DATRecord loadDAT(std::istream &stream, bool isCache)
 {
     DATRecord root;
     std::streampos start = stream.tellg();
@@ -273,13 +283,13 @@ DATRecord loadDAT(std::istream &stream)
         uint8_t *datData = unpackZL01(data, size, resultSize);
         delete[] data;
         boost::iostreams::stream<boost::iostreams::array_source> datStream(boost::iostreams::array_source((const char*)datData, resultSize));
-        readDATTree(datStream, root);
+        readDATTree(datStream, root, isCache);
         delete[] datData;
     }
     else
     {
         stream.seekg(start, std::ios_base::beg);
-        readDATTree(stream, root);
+        readDATTree(stream, root, isCache);
     }
     return root;
 }

@@ -27,6 +27,7 @@ namespace DAT
 {
 namespace
 {
+const uint32_t RANGERS_KEY_RELOAD_CACHE = 0xF2FDE658;
 const uint32_t RANGERS_KEY_RELOAD = 0xBE970BF1;
 }
 
@@ -44,9 +45,14 @@ uint32_t getNextKey(int32_t key)
     return k;
 }
 
-void decrypt(uint8_t *data, uint32_t size, int32_t key)
+void decrypt(uint8_t *data, uint32_t size, int32_t key, bool isCache)
 {
-    int32_t k = key ^ RANGERS_KEY_RELOAD;
+    int32_t k;
+
+    if (!isCache)
+        k = key ^ RANGERS_KEY_RELOAD;
+    else
+        k = key ^ RANGERS_KEY_RELOAD_CACHE;
 
     for (uint32_t i = 0; i < size; i++)
     {
@@ -55,9 +61,14 @@ void decrypt(uint8_t *data, uint32_t size, int32_t key)
     }
 }
 
-void encrypt(uint8_t *data, uint32_t size, int32_t key)
+void encrypt(uint8_t *data, uint32_t size, int32_t key, bool isCache)
 {
-    int32_t k = key ^ RANGERS_KEY_RELOAD;
+    int32_t k;
+
+    if (!isCache)
+        k = key ^ RANGERS_KEY_RELOAD;
+    else
+        k = key ^ RANGERS_KEY_RELOAD_CACHE;
 
     for (uint32_t i = 0; i < size; i++)
     {

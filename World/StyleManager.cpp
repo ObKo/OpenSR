@@ -106,6 +106,8 @@ class StylesFactory: public ResourceObjectManager::ResourceObjectFactory
         else if (type == "system-styles")
             return systemStyles;
 
+        return boost::shared_ptr< ResourceObject >();
+
     }
 };
 
@@ -363,6 +365,24 @@ boost::shared_ptr<AsteroidStyle> StyleManager::asteroidStyle(const std::string& 
 boost::shared_ptr<AsteroidStyle> StyleManager::asteroidStyle(uint32_t id)
 {
     return m_asteroidStyles.at(id);
+}
+
+void StyleManager::addPlanetStyle(boost::shared_ptr<PlanetStyle> style)
+{
+    uint32_t hash = textHash32(style->id);
+    m_planetStyles[hash] = style;
+}
+
+void StyleManager::addSystemStyle(boost::shared_ptr<SystemStyle> style)
+{
+    uint32_t hash = textHash32(style->id);
+    m_systemStyles[hash] = style;
+}
+
+void StyleManager::addAsteroidStyle(boost::shared_ptr<AsteroidStyle> style)
+{
+    uint32_t hash = textHash32(style->id);
+    m_asteroidStyles[hash] = style;
 }
 
 StyleManager::StyleManager(const StyleManager& other)

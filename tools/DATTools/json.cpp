@@ -89,9 +89,10 @@ void printHelp()
     std::cout << "Usage: opensr-dat-json <command> <in> <out>" << std::endl;
     std::cout << "<command>:" << std::endl;
     std::cout << "  d2j - convert (decrypted) DAT file to JSON" << std::endl;
+    std::cout << "  d2jc - convert (decrypted) CacheData.dat file to JSON" << std::endl;
     std::cout << "  d2jm - convert (decrypted) DAT file to multiple JSON files. out - output dir" << std::endl;
     std::cout << "  j2d - convert JSON file to DAT file" << std::endl;
-    std::cout << "  j2d - convert multiple JSON file to DAT file. in - input dir" << std::endl;
+    std::cout << "  j2dm - convert multiple JSON file to DAT file. in - input dir" << std::endl;
 }
 
 int main(int argc, char **argv)
@@ -106,7 +107,7 @@ int main(int argc, char **argv)
     std::ifstream inf;
     std::ofstream outf;
 
-    if (cmd != "d2j" && cmd != "d2jm" && cmd != "j2d" && cmd != "j2dm")
+    if (cmd != "d2j" && cmd != "d2jm" && cmd != "j2d" && cmd != "j2dm" && cmd != "d2jc")
     {
         std::cerr << "Invalid command: " << cmd << std::endl;
         printHelp();
@@ -136,6 +137,15 @@ int main(int argc, char **argv)
     if (cmd == "d2j")
     {
         Rangers::DATRecord datRoot = Rangers::loadDAT(inf);
+        Json::Value jsonRoot;
+        record2JSON(datRoot, jsonRoot);
+
+        Json::StyledStreamWriter w;
+        w.write(outf, jsonRoot);
+    }
+    else if (cmd == "d2jc")
+    {
+        Rangers::DATRecord datRoot = Rangers::loadDAT(inf, true);
         Json::Value jsonRoot;
         record2JSON(datRoot, jsonRoot);
 

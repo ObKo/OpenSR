@@ -26,8 +26,8 @@ namespace Rangers
 namespace DAT
 {
 int32_t genKey();
-void decrypt(uint8_t *data, uint32_t size, int32_t key);
-void encrypt(uint8_t *data, uint32_t size, int32_t key);
+void decrypt(uint8_t *data, uint32_t size, int32_t key, bool isCache = false);
+void encrypt(uint8_t *data, uint32_t size, int32_t key, bool isCache = false);
 }
 }
 

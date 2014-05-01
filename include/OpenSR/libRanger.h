@@ -450,9 +450,9 @@ LIBRANGER_API PNGFrame loadPNG(const char *buffer, size_t bufferSize);
 LIBRANGER_API PNGFrame loadPNG(std::istream &stream);
 
 //! Read key-value tree from DAT file
-LIBRANGER_API void readDATTree(std::istream &stream, DATRecord& node);
+LIBRANGER_API void readDATTree(std::istream &stream, DATRecord& node, bool isCache);
 //! Load DAT file
-LIBRANGER_API DATRecord loadDAT(std::istream &stream);
+LIBRANGER_API DATRecord loadDAT(std::istream &stream, bool isCache = false);
 
 //! Write key-value DAT tree to stream
 LIBRANGER_API void writeDATTree(std::ostream &stream, const DATRecord& node);

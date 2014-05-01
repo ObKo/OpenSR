@@ -39,7 +39,10 @@ void exportStyleManager()
     .def("asteroidStyle", (boost::shared_ptr<AsteroidStyle> (StyleManager::*)(uint32_t))&StyleManager::asteroidStyle)
     .def("loadPlanetStyles", &StyleManager::loadPlanetStyles)
     .def("loadSystemStyles", &StyleManager::loadSystemStyles)
-    .def("loadAsteroidStyles", &StyleManager::loadAsteroidStyles);
+    .def("loadAsteroidStyles", &StyleManager::loadAsteroidStyles)
+    .def("addPlanetStyle", &StyleManager::addPlanetStyle)
+    .def("addSystemStyle", &StyleManager::addSystemStyle)
+    .def("addAsteroidStyle", &StyleManager::addAsteroidStyle);
 }
 }
 }

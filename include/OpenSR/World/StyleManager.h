@@ -55,6 +55,9 @@ public:
     //! Load asteroid styles from resource object
     void loadAsteroidStyles(const std::string& path);
 
+    void addPlanetStyle(boost::shared_ptr<PlanetStyle> style);
+    void addSystemStyle(boost::shared_ptr<SystemStyle> style);
+    void addAsteroidStyle(boost::shared_ptr<AsteroidStyle> style);
 
     bool serialize(std::ostream &stream) const;
     bool deserialize(std::istream &stream);

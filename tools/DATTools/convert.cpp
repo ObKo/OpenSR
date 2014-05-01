@@ -43,6 +43,7 @@ void printHelp()
     std::cout << "  e - encrypt file" << std::endl;
     std::cout << "  c - compress file" << std::endl;
     std::cout << "  ce - compress & encrypt file" << std::endl;
+    std::cout << "  h<command> - assume that input file is CacheData.dat" << std::endl;
 }
 
 int main(int argc, char **argv)
@@ -54,6 +55,10 @@ int main(int argc, char **argv)
     }
 
     std::string  cmd = argv[1];
+
+    bool isCache = cmd[0] == 'h';
+    if (isCache)
+        cmd.erase(0, 1);
 
     if (cmd != "d" && cmd != "x" && cmd != "dx" &&
             cmd != "c" && cmd != "e" && cmd != "ce")
@@ -91,7 +96,7 @@ int main(int argc, char **argv)
     {
         uint32_t crc = *((uint32_t*)data);
         uint32_t key = *(((uint32_t*)data) + 1);
-        Rangers::DAT::decrypt(data + 8, size - 8, key);
+        Rangers::DAT::decrypt(data + 8, size - 8, key, isCache);
         if (crc != crc32(data + 8, size - 8))
         {
             std::cerr << "CRC Error" << std::endl;
@@ -120,7 +125,7 @@ int main(int argc, char **argv)
     {
         uint32_t crc = *((uint32_t*)data);
         uint32_t key = *(((uint32_t*)data) + 1);
-        Rangers::DAT::decrypt(data + 8, size - 8, key);
+        Rangers::DAT::decrypt(data + 8, size - 8, key, isCache);
         if (crc != crc32(data + 8, size - 8))
         {
             std::cerr << "CRC Error" << std::endl;
@@ -145,7 +150,7 @@ int main(int argc, char **argv)
     {
         uint32_t crc = crc32(data, size);
         uint32_t key = Rangers::DAT::genKey();
-        Rangers::DAT::encrypt(data, size, key);
+        Rangers::DAT::encrypt(data, size, key, isCache);
         outf.write((char*)&crc, 4);
         outf.write((char*)&key, 4);
         outf.write((char*)(data), size);
@@ -173,7 +178,7 @@ int main(int argc, char **argv)
         }
         uint32_t crc = crc32(result, resSize);
         uint32_t key = Rangers::DAT::genKey();
-        Rangers::DAT::encrypt(result, resSize, key);
+        Rangers::DAT::encrypt(result, resSize, key, isCache);
         outf.write((char*)&crc, 4);
         outf.write((char*)&key, 4);
         outf.write((char*)(result), resSize);
