@@ -586,13 +586,13 @@ ResourceObjectManager& ResourceManager::objectManager()
     return m_objectManager;
 }
 
-void ResourceManager::addDATFile(const std::string& name)
+void ResourceManager::addDATFile(const std::string& name, bool isCache)
 {
     boost::shared_ptr<std::istream> stream = getFileStream(name);
     if (!stream)
         return;
 
-    DATRecord r = loadDAT(*stream);
+    DATRecord r = loadDAT(*stream, isCache);
     for (const DATRecord c : r)
     {
         if (m_datRoot->find(c.name) != m_datRoot->end())
@@ -605,6 +605,24 @@ void ResourceManager::addDATFile(const std::string& name)
 boost::shared_ptr<DATRecord> ResourceManager::datRoot()
 {
     return m_datRoot;
+}
+
+
+std::string ResourceManager::datValue(const std::string& path) const
+{
+    std::vector<std::string> nodes = split(path, L'.');
+
+    const DATRecord* current = m_datRoot.get();
+    for (const std::string& id : nodes)
+    {
+        DATRecord::const_iterator i = current->find(id);
+        if (i == current->end())
+            return std::string();
+
+        current = i.operator->();
+    }
+
+    return current->value;
 }
 
 }

@@ -40,8 +40,10 @@ void exportResourceManager()
     .def("resourceExists", &ResourceManager::resourceExists)
     .def("objectManager", &ResourceManager::objectManager, return_internal_reference<>())
     .def("instance", &ResourceManager::instance, return_value_policy<reference_existing_object>())
-    .def("addDATFile", &ResourceManager::addDATFile)
+    .def("addDATFile", (void (ResourceManager::*)(const std::string&, bool))&ResourceManager::addDATFile)
+    .def("addDATFile", (void (ResourceManager::*)(const std::string&))&ResourceManager::addDATFile)
     .def("datRoot", &ResourceManager::datRoot)
+    .def("datValue", &ResourceManager::datValue)
     .staticmethod("instance");
 }
 }

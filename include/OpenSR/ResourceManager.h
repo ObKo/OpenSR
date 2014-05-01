@@ -58,8 +58,9 @@ public:
     boost::shared_ptr<Font> loadFont(const FontDescriptor& desc);
     boost::shared_ptr<Font> loadFont(const std::string& name, int size, bool antialiased = true);
 
-    void addDATFile(const std::string& name);
+    void addDATFile(const std::string& name, bool isCache = false);
     boost::shared_ptr<DATRecord> datRoot();
+    std::string datValue(const std::string& path) const;
 
     bool resourceExists(const std::string& path);
 

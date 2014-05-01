@@ -35,21 +35,12 @@ std::string _(const std::string& text, const std::string& datName, const std::st
         gt = dgettext(gettextDomain.c_str(), text.c_str());
 
     if (text != gt)
-        return text;
+        return gt;
 
-    boost::shared_ptr<DATRecord> root = ResourceManager::instance().datRoot();
-    std::vector<std::string> path = split(datName, L'.');
+    std::string datValue = ResourceManager::instance().datValue(datName);
+    if (!datValue.empty())
+        return datValue;
 
-    const DATRecord* current = root.get();
-    for (const std::string& id : path)
-    {
-        DATRecord::const_iterator i = current->find(id);
-        if (i == current->end())
-            return text;
-
-        current = i.operator->();
-    }
-
-    return current->value;
+    return text;
 }
 }
