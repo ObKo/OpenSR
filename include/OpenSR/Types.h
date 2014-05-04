@@ -34,7 +34,7 @@ struct TextureRegionDescriptor;
 struct RANGERS_ENGINE_API Color
 {
     Color();
-    Color(float red, float greeb, float blue, float alpha = 1.0f);
+    Color(float red, float green, float blue, float alpha = 1.0f);
 
     float r;
     float g;

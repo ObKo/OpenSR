@@ -235,7 +235,6 @@ PLANET_FILES=(
   'Planet2/160/12x160.psd' \
   'Planet2/Solar/Venus.psd' \
   'Planet2/Solar/Neptune.psd' \
-  'Planet2/Solar/cloud' \
   'Planet2/Solar/cloud/r02.psd' \
   'Planet2/Solar/cloud/c07.psd' \
   'Planet2/Solar/cloud/c10.psd' \
@@ -315,6 +314,10 @@ convert_planets ()
       filename="${name%.*}"
       echo "$INPUT_DIR/DATA/$planet -> $OUTPUT_DIR/$dir/$filename.png"
       $PSD_PARSE -d $TEMP_DIR -w -q -n $INPUT_DIR/DATA/$planet
+      if [ ! -e "$TEMP_DIR/$name.png" ]; then
+         echo "psdparse failed, trying imagemagick"
+         $CONVERT "$INPUT_DIR/DATA/$planet" "$TEMP_DIR/$name.png"
+      fi
       if [ -e "$TEMP_DIR/$name.png" ]
       then
         mkdir -p $OUTPUT_DIR/$dir

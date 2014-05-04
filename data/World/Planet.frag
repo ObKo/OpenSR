@@ -83,12 +83,12 @@ void calcColor(out vec4 color)
 
     getPosition(0.5, pos);
     calcLight(texture, vec2(0.0, 0.0), pos, false, ambientColor.rgb, light);
+    vec3 atmColor = ambientColor.rgb * light;
 
     //TODO: Move atmosphere to uniforms.
     if ((tr > planetRadius - 2.0 * pixelSize) && tr <= 0.5)
     {
         float atmAlpha = clamp(1.0 - abs((tr - planetRadius) / (pixelSize * 4.0)), 0.0, 1.0);
-        vec3 atmColor = light;
         planetColor = blend(planetColor, vec4(atmColor, 0.6 * atmAlpha));
     }
 
@@ -96,7 +96,7 @@ void calcColor(out vec4 color)
     {
         mapTexture(pos, cloudPhase, coord);
         vec4 texColor = texture2D(cloud, coord);
-        vec4 cloudColor = vec4(texColor.rgb * light, texColor.a);
+        vec4 cloudColor = vec4(texColor.rgb * atmColor * light, texColor.a);
         color = blend(planetColor, cloudColor);
     }
     else

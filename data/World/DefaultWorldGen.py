@@ -1,6 +1,7 @@
 from OpenSR.World import WorldManager, WorldGenHook, PlanetarySystem, DesertPlanet, \
                          HabitablePlanet, Point, LandContext, Asteroid
 from OpenSR.Engine import textHash32
+from OpenSR.ORC.Utils import loadPlanetStylesFromDAT
 import math
 
 world = WorldManager.instance()
@@ -73,6 +74,8 @@ class DefaultWorldGen(WorldGenHook):
         return system
       
     def generate(self):
+        loadPlanetStylesFromDAT()
+        
         races = world.raceManager()
        
         system = self.genPlanetarySystem('Solar', 2000.0, 'solar', Point(0.0, 0.0))
@@ -82,5 +85,5 @@ class DefaultWorldGen(WorldGenHook):
         self.genDesertPlanet(system, 800.0, 100.0, 'Saturn', math.pi, math.pi * 2.0 / 100.0, 'saturn')
         self.genAsteroid(system, 1000.0, 500.0, 20.0, 0.0, 0.0, 100.0, '00')   
         self.genAsteroid(system, 1500.0, 700.0, 10.0, 100.0, 0.0, 100.0, '01')
-                
+                       
         systemManager.currentSystem = system

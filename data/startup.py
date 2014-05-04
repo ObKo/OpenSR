@@ -7,8 +7,9 @@ resources = ResourceManager.instance()
 engine.loadPlugin('world')
 
 from OpenSR.ORC.StartMenu import StartMenuWidget
-engine.addWidget(StartMenuWidget())
 
 resources.addDATFile('CacheData.dat', True)
 resources.addDATFile('Main.dat')
 resources.addDATFile('Rus.dat')
+
+engine.addWidget(StartMenuWidget())

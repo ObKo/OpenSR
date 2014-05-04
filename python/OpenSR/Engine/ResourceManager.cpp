@@ -27,6 +27,7 @@ namespace Rangers
 {
 namespace Python
 {
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(addDATFile, ResourceManager::addDATFile, 1, 2)
 void exportResourceManager()
 {
     using namespace boost::python;
@@ -40,8 +41,7 @@ void exportResourceManager()
     .def("resourceExists", &ResourceManager::resourceExists)
     .def("objectManager", &ResourceManager::objectManager, return_internal_reference<>())
     .def("instance", &ResourceManager::instance, return_value_policy<reference_existing_object>())
-    .def("addDATFile", (void (ResourceManager::*)(const std::string&, bool))&ResourceManager::addDATFile)
-    .def("addDATFile", (void (ResourceManager::*)(const std::string&))&ResourceManager::addDATFile)
+    .def("addDATFile", &ResourceManager::addDATFile, addDATFile())
     .def("datRoot", &ResourceManager::datRoot)
     .def("datValue", &ResourceManager::datValue)
     .staticmethod("instance");

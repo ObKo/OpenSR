@@ -238,7 +238,7 @@ void readDATTree(std::istream &stream, DATRecord& node, bool isCache)
     {
         for (int i = 0; i < count; i++)
         {
-            uint8_t isText;
+            uint8_t isText = 0;
             stream.read((char*)&isText, 1);
 
             DATRecord r;
