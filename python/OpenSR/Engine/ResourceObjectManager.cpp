@@ -47,14 +47,14 @@ struct ResourceObjectFactoryWrap: ResourceObjectManager::ResourceObjectFactory, 
     }
 };
 
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(addJSON, ResourceObjectManager::addJSON, 1, 2)
 void exportResourceObjectManager()
 {
     using namespace boost::python;
 
     class_<ResourceObjectManager, boost::noncopyable>("ResourceObjectManager", init<>())
     .def("getResourceObject", &ResourceObjectManager::getResourceObject)
-    .def("addJSON", (void (ResourceObjectManager::*)(const std::string&, const std::string&))&ResourceObjectManager::addJSON)
-    .def("addJSON", (void (ResourceObjectManager::*)(const std::string&))&ResourceObjectManager::addJSON)
+    .def("addJSON", &ResourceObjectManager::addJSON, addJSON())
     .def("addFactory", &ResourceObjectManager::addFactory)
     .def("loadObject", (boost::shared_ptr<ResourceObject> (ResourceObjectManager::*)(const std::string&, const std::string&))&ResourceObjectManager::loadObject);
 

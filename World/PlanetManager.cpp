@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2013 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2013 - 2014 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,20 +22,38 @@
 #include <OpenSR/libRanger.h>
 #include <OpenSR/ResourceManager.h>
 #include <OpenSR/Texture.h>
+#include <OpenSR/Shader.h>
+#include <OpenSR/ShaderProgram.h>
+#include <OpenSR/Engine.h>
 #include <cmath>
 
 namespace
 {
 const uint32_t PLANET_MANAGER_SIGNATURE = *((uint32_t*)"SRPM");
+static const std::string PLANET_VERTEX_SHADER = " \
+varying vec2 texCoord; \
+void main() \
+{ \
+    gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex; \
+    texCoord = vec2(gl_MultiTexCoord0); \
+}";
 }
 
 namespace Rangers
 {
 namespace World
 {
-PlanetManager::PlanetManager()
+PlanetManager::PlanetManager(): m_vertexBuffer(0), m_framebuffer(0)
 {
+    m_useShader = Rangers::Engine::instance().properties()->get<bool>("graphics.useShaders", true);
+}
 
+PlanetManager::~PlanetManager()
+{
+    if (m_vertexBuffer)
+        glDeleteBuffers(1, &m_vertexBuffer);
+    if (m_framebuffer)
+        glDeleteFramebuffers(1, &m_framebuffer);
 }
 
 PlanetManager::PlanetManager(const PlanetManager& other)
@@ -64,18 +82,71 @@ boost::shared_ptr< Texture > PlanetManager::getPlanetImage(uint32_t style, int s
     return getPlanetImage(s, size);
 }
 
-//TODO: Planet rings
-/*! This function must be run in OpenGL thread (main thread) !*/
-boost::shared_ptr<Texture> PlanetManager::getPlanetImage(boost::shared_ptr<PlanetStyle> style, int size)
+
+boost::shared_ptr<Texture> PlanetManager::renderHardware(int size, boost::shared_ptr<PlanetStyle> style)
 {
     if (!style)
         return boost::shared_ptr<Texture>();
 
-    uint64_t cacheID = (uint64_t(textHash32(style->id)) << 32) | (size & 0xffffffff);
+    if (!m_vertexShader || !m_fragmentShader || !m_shader ||
+            (!m_shader->isLinked() && !m_shader->isInvalid()))
+    {
+        std::string fragShaderFile = Engine::instance().properties()->get<std::string>("world.planetShader", "World/Planet.frag");
+        m_vertexShader = boost::shared_ptr<Shader>(new Shader(Shader::VERTEX_SHADER, PLANET_VERTEX_SHADER));
+        m_fragmentShader = boost::shared_ptr<Shader>(new Shader(fragShaderFile));
+        m_shader = boost::shared_ptr<ShaderProgram>(new ShaderProgram());
 
-    std::map<uint64_t, boost::shared_ptr<Texture> >::const_iterator cache = m_imageCache.find(cacheID);
-    if (cache != m_imageCache.end())
-        return cache->second;
+        m_shader->addShader(m_vertexShader);
+        m_shader->addShader(m_fragmentShader);
+        m_shader->link();
+
+        if (m_shader->isInvalid())
+        {
+            m_useShader = false;
+        }
+        else
+        {
+            m_phaseLocation = m_shader->getUniformLocation("phase");
+            m_cloudPhaseLocation = m_shader->getUniformLocation("cloudPhase");
+            m_cloudEnabledLocation = m_shader->getUniformLocation("cloudEnabled");
+            m_solarAngleLocation = m_shader->getUniformLocation("solarAngle");
+            m_ambientColorLocation = m_shader->getUniformLocation("ambientColor");
+            m_textureLocation = m_shader->getUniformLocation("texture");
+            m_cloudLocation = m_shader->getUniformLocation("cloud");
+            m_texPixelSizeLocation = m_shader->getUniformLocation("texPixelSize");
+            m_pixelSizeLocation = m_shader->getUniformLocation("pixelSize");
+        }
+    }
+    Vertex *vertices;
+    if (!m_vertexBuffer)
+    {
+        vertices = new Vertex[4];
+        vertices[0].u = 0.0f;
+        vertices[0].v = 1.0f;
+        vertices[0].x = 0.0;
+        vertices[0].y = 0.0;
+        vertices[1].u = 1.0f;
+        vertices[1].v = 1.0f;
+        vertices[1].x = 1.0;
+        vertices[1].y = 0.0;
+        vertices[2].u = 1.0f;
+        vertices[2].v = 0.0f;
+        vertices[2].x = 1.0;
+        vertices[2].y = 1.0;
+        vertices[3].u = 0.0f;
+        vertices[3].v = 0.0f;
+        vertices[3].x = 0.0;
+        vertices[3].y = 1.0;
+        glGenBuffers(1, &m_vertexBuffer);
+        glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * 4, vertices, GL_STATIC_DRAW);
+        delete[] vertices;
+    }
+
+    if (!m_framebuffer)
+    {
+        glGenFramebuffers(1, &m_framebuffer);
+    }
 
     boost::shared_ptr<Texture> texture;
     boost::shared_ptr<Texture> cloud;
@@ -87,6 +158,100 @@ boost::shared_ptr<Texture> PlanetManager::getPlanetImage(boost::shared_ptr<Plane
 
     if (style->hasCloud)
         cloud = ResourceManager::instance().loadTexture(style->cloud);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, m_framebuffer);
+    boost::shared_ptr<Texture> result = boost::shared_ptr<Texture>(new Texture(size, size, TEXTURE_R8G8B8A8, 0));
+
+    glBindTexture(GL_TEXTURE_2D, result->openGLTexture());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, result->openGLTexture(), 0);
+
+    GLenum DrawBuffers[1] = {GL_COLOR_ATTACHMENT0};
+    glDrawBuffers(1, DrawBuffers);
+
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+        return boost::shared_ptr<Texture>();
+
+    glPushAttrib(GL_VIEWPORT_BIT);
+    glViewport(0, 0, size, size);
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+    glOrtho(0.0f, 1.0, 1.0, 0.0f, -1.0f, 1.0f);
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    glEnableClientState(GL_ARRAY_BUFFER);
+
+    if (texture)
+    {
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texture->openGLTexture());
+    }
+
+    if (cloud)
+    {
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, cloud->openGLTexture());
+    }
+    glUseProgram(m_shader->handle());
+    m_shader->setUniform(m_textureLocation, 0);
+    m_shader->setUniform(m_cloudLocation, 1);
+    m_shader->setUniform(m_phaseLocation, 0);
+    m_shader->setUniform(m_cloudPhaseLocation, 0);
+    m_shader->setUniform(m_solarAngleLocation, (float)M_PI);
+    m_shader->setUniform(m_ambientColorLocation, style->ambientColor);
+    m_shader->setUniform(m_texPixelSizeLocation, Vector(1.0f / texture->width(), 1.0f / texture->height()));
+    m_shader->setUniform(m_pixelSizeLocation, 1.0f / size);
+
+    glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer);
+
+    glVertexPointer(2, GL_FLOAT, sizeof(Vertex), 0);
+    glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), OPENGL_BUFFER_OFFSET(sizeof(float) * 2));
+
+    glDrawArrays(GL_QUADS, 0, 4);
+
+    glUseProgram(0);
+    glActiveTexture(GL_TEXTURE0);
+
+    glDisableClientState(GL_ARRAY_BUFFER);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    glDisableClientState(GL_VERTEX_ARRAY);
+
+
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+    glMatrixMode(GL_MODELVIEW);
+    glPopMatrix();
+    glPopAttrib();
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    return result;
+}
+
+boost::shared_ptr<Texture> PlanetManager::renderSoftware(int size, boost::shared_ptr<PlanetStyle> style)
+{
+    if (!style)
+        return boost::shared_ptr<Texture>();
+
+    boost::shared_ptr<Texture> texture;
+    boost::shared_ptr<Texture> cloud;
+
+    texture = ResourceManager::instance().loadTexture(style->texture);
+
+    if (!texture)
+        return boost::shared_ptr<Texture>();
+
+    if (style->hasCloud)
+        cloud = ResourceManager::instance().loadTexture(style->cloud);
+
 
     unsigned char *tex = new unsigned char[texture->width() * texture->height() * 4];
     unsigned char *cld = 0;
@@ -178,6 +343,29 @@ boost::shared_ptr<Texture> PlanetManager::getPlanetImage(boost::shared_ptr<Plane
     delete[] tex;
     if (cld)
         delete[] cld;
+
+    return result;
+}
+
+//TODO: Planet rings
+/*! This function must be run in OpenGL thread (main thread) !*/
+boost::shared_ptr<Texture> PlanetManager::getPlanetImage(boost::shared_ptr<PlanetStyle> style, int size)
+{
+    if (!style)
+        return boost::shared_ptr<Texture>();
+
+    uint64_t cacheID = (uint64_t(textHash32(style->id)) << 32) | (size & 0xffffffff);
+
+    std::map<uint64_t, boost::shared_ptr<Texture> >::const_iterator cache = m_imageCache.find(cacheID);
+    if (cache != m_imageCache.end())
+        return cache->second;
+
+    boost::shared_ptr<Texture> result;
+
+    if (m_useShader)
+        result = renderHardware(size, style);
+    else
+        result = renderSoftware(size, style);
 
     m_imageCache[cacheID] = result;
 

@@ -59,6 +59,9 @@ void setSizeableColumns(NinePatchDescriptor& self, const boost::python::object& 
     self.sizeableColumns = pythonObjectToVector<int>(c);
 }
 }
+
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(toString, Color::toString, 0, 1)
+
 void exportTypes()
 {
     using namespace boost::python;
@@ -87,8 +90,7 @@ void exportTypes()
     .def_readwrite("a", &Color::a)
     .def("toRGB", &Color::toRGB)
     .def("toARGB", &Color::toARGB)
-    .def("toString", (std::string(Color::*)(bool) const)&Color::toString)
-    .def("toString", (std::string(Color::*)() const)&Color::toString)
+    .def("toString", &Color::toString, toString())
     .def("fromUInt", &Color::fromUInt)
     .staticmethod("fromUInt")
     .def("fromString", (Color(*)(const std::string&))&Color::fromString)

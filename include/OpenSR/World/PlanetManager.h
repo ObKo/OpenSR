@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2013 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2013 - 2014 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 
 #include "OpenSR/World/world-global.h"
 
+#include <OpenSR/Types.h>
 #include <map>
 #include <boost/shared_ptr.hpp>
 #include <stdint.h>
@@ -29,6 +30,8 @@
 namespace Rangers
 {
 class Texture;
+class Shader;
+class ShaderProgram;
 namespace World
 {
 struct PlanetStyle;
@@ -36,6 +39,7 @@ class RANGERS_WORLD_API PlanetManager
 {
 public:
     PlanetManager();
+    virtual ~PlanetManager();
 
     //! Get static planet image from planet style
     boost::shared_ptr<Texture> getPlanetImage(boost::shared_ptr<PlanetStyle> style, int size);
@@ -51,7 +55,26 @@ public:
 private:
     PlanetManager(const PlanetManager& other);
 
+    boost::shared_ptr<Texture> renderHardware(int size, boost::shared_ptr<PlanetStyle> style);
+    boost::shared_ptr<Texture> renderSoftware(int size, boost::shared_ptr<PlanetStyle> style);
+
     std::map<uint64_t, boost::shared_ptr<Texture> > m_imageCache;
+    boost::shared_ptr<Shader> m_vertexShader;
+    boost::shared_ptr<Shader> m_fragmentShader;
+    boost::shared_ptr<ShaderProgram> m_shader;
+    bool m_useShader;
+    GLuint m_vertexBuffer;
+    GLuint m_framebuffer;
+
+    GLint m_phaseLocation;
+    GLint m_cloudPhaseLocation;
+    GLint m_solarAngleLocation;
+    GLint m_ambientColorLocation;
+    GLint m_cloudEnabledLocation;
+    GLint m_textureLocation;
+    GLint m_cloudLocation;
+    GLint m_texPixelSizeLocation;
+    GLint m_pixelSizeLocation;
 };
 }
 }
