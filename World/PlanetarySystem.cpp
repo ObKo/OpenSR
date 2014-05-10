@@ -32,6 +32,8 @@ PlanetarySystem::PlanetarySystem(uint64_t id) : WorldObject(id)
     m_position.x = 0.0f;
     m_position.y = 0.0f;
     m_size = 0.0f;
+    m_background = 0;
+    m_style = 0;
 }
 
 bool PlanetarySystem::deserialize(std::istream& stream)
@@ -48,6 +50,7 @@ bool PlanetarySystem::deserialize(std::istream& stream)
 
     stream.read((char *)&m_size, sizeof(float));
     stream.read((char *)&m_style, sizeof(uint32_t));
+    stream.read((char *)&m_background, sizeof(uint32_t));
 
     stream.read((char *)&objectCount, sizeof(uint32_t));
     if (!stream.good())
@@ -96,6 +99,7 @@ bool PlanetarySystem::serialize(std::ostream& stream) const
 
     stream.write((const char *)&m_size, sizeof(float));
     stream.write((const char *)&m_style, sizeof(uint32_t));
+    stream.write((const char *)&m_background, sizeof(uint32_t));
 
     stream.write((const char *)&objectCount, sizeof(uint32_t));
 
@@ -186,5 +190,21 @@ uint32_t PlanetarySystem::style() const
 {
     return m_style;
 }
+
+uint32_t PlanetarySystem::background() const
+{
+    return m_background;
+}
+
+void PlanetarySystem::setBackground(const std::string& bg)
+{
+    m_background = textHash32(bg);
+}
+
+void PlanetarySystem::setBackground(uint32_t bg)
+{
+    m_background = bg;
+}
+
 }
 }

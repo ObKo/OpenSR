@@ -63,9 +63,6 @@ struct RANGERS_WORLD_API PlanetStyle: public ResourceObject
     Color ambientColor;
     float ringOffsetX, ringOffsetY;
     float ringBgOffsetX, ringBgOffsetY;
-
-    bool serialize(std::ostream &stream) const;
-    bool deserialize(std::istream &stream);
 };
 
 struct RANGERS_WORLD_API SystemStyle: public ResourceObject
@@ -73,13 +70,10 @@ struct RANGERS_WORLD_API SystemStyle: public ResourceObject
     SystemStyle();
 
     std::string id;
-    std::string star;
-    bool animated;
-    Color color;
-    std::string background;
+    std::string starImage;
+    std::string starAnimation;
 
-    bool serialize(std::ostream &stream) const;
-    bool deserialize(std::istream &stream);
+    Color color;
 };
 
 struct RANGERS_WORLD_API AsteroidStyle: public ResourceObject
@@ -89,9 +83,6 @@ struct RANGERS_WORLD_API AsteroidStyle: public ResourceObject
     std::string id;
     std::string sprite;
     bool animated;
-
-    bool serialize(std::ostream &stream) const;
-    bool deserialize(std::istream &stream);
 };
 }
 }

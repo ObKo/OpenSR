@@ -3,9 +3,8 @@
    
    "solar" : {
       "@type": "system-style",
-      "star": "DATA/Star/Star00.gai", 
-      "star-animated": true,
-      "star-color" : "#FFFFFF",
-      "background" : "DATA/BGObj/bg00.gai"
+      "star-animation": "DATA/Star/Star00.gai", 
+      "star-image": "DATA/Star/Star00.gi",
+      "star-color" : "#FFFFFF"
    }
 }

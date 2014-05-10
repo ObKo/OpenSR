@@ -73,10 +73,9 @@ void exportTypes()
 
     class_<SystemStyle, boost::shared_ptr<SystemStyle>, bases<ResourceObject> > c4("SystemStyle", init<>());
     c4.def_readwrite("id", &SystemStyle::id)
-    .def_readwrite("star", &SystemStyle::star)
-    .def_readwrite("animated", &SystemStyle::animated)
-    .def_readwrite("color", &SystemStyle::color)
-    .def_readwrite("background", &SystemStyle::background);
+    .def_readwrite("starImage", &SystemStyle::starImage)
+    .def_readwrite("starAnimation", &SystemStyle::starAnimation)
+    .def_readwrite("color", &SystemStyle::color);
 
     class_<Trajectory> c5("Trajectory", init<>());
     c5.add_property("nextTurns", &getNextTurns, &setNextTurns);

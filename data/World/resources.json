@@ -5,5 +5,6 @@
     "races": ":World/races.json",
     "planet-styles": ":World/planet-styles.json",
     "system-styles": ":World/system-styles.json",
-    "asteroid-styles": ":World/asteroid-styles.json"
+    "asteroid-styles": ":World/asteroid-styles.json",
+    "system-backgrounds": ":World/system-backgrounds.json"
 }

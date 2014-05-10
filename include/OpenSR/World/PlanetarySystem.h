@@ -38,6 +38,7 @@ public:
     std::list< boost::shared_ptr<SystemObject> > systemObjects() const;
     float size() const;
     uint32_t style() const;
+    uint32_t background() const;
 
     void addObject(boost::shared_ptr<SystemObject> object);
     void removeObject(boost::shared_ptr<SystemObject> object);
@@ -47,6 +48,8 @@ public:
     void setSize(float size);
     void setStyle(uint32_t style);
     void setStyle(const std::string& style);
+    void setBackground(uint32_t bg);
+    void setBackground(const std::string& bg);
 
     virtual uint32_t type() const;
     virtual bool serialize(std::ostream &stream) const;
@@ -60,6 +63,7 @@ protected:
     std::list< boost::shared_ptr<SystemObject> > m_systemObjects;
     float m_size;
     uint32_t m_style;
+    uint32_t m_background;
 };
 }
 }

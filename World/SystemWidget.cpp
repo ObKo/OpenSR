@@ -249,10 +249,10 @@ void SystemWidget::setSystem(boost::shared_ptr< PlanetarySystem > system)
     if (style)
     {
         Sprite *s;
-        if (style->animated)
-            s = new AnimatedSprite(style->star);
+        if (!style->starAnimation.empty())
+            s = new AnimatedSprite(style->starAnimation);
         else
-            s = new Sprite(style->star);
+            s = new Sprite(style->starImage);
 
         s->setColor(style->color);
         m_starWidget = boost::shared_ptr<SpriteWidget>(new SpriteWidget(boost::shared_ptr<Sprite>(s)));
@@ -262,12 +262,21 @@ void SystemWidget::setSystem(boost::shared_ptr< PlanetarySystem > system)
         m_starWidget->setShape(SpriteWidget::SHAPE_CIRCLE);
         m_starWidget->setLayer(-1);
         m_node->addWidget(m_starWidget);
+    }
 
-        //FIXME: AnimatedSprite/Sprite
-        m_bgSprite = boost::shared_ptr<Sprite>(new AnimatedSprite(style->background));
+    try
+    {
+        std::string bg = WorldManager::instance().styleManager().systemBackground(m_system->background());
+        m_bgSprite = boost::shared_ptr<Sprite>(new Sprite(bg));
         m_bgSprite->setPosition(m_xOffset / 10 - (m_bgSprite->width() - width()) / 2, m_yOffset / 10 - (m_bgSprite->height() - height()) / 2);
         m_bgSprite->setLayer(-2);
         addChild(m_bgSprite);
+    }
+    catch (const std::exception &e) // No background
+    {
+        if (m_bgSprite)
+            removeChild(m_bgSprite);
+        m_bgSprite =  boost::shared_ptr<Sprite>();
     }
 }
 

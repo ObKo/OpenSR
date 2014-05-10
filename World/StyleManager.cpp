@@ -49,6 +49,11 @@ struct AsteroidStyles: public ResourceObject
     std::map<std::string, boost::shared_ptr<AsteroidStyle> > styles;
 };
 
+struct SystemBackgrounds: public ResourceObject
+{
+    std::map<std::string, std::string > backgrounds;
+};
+
 class StylesFactory: public ResourceObjectManager::ResourceObjectFactory
 {
     virtual boost::shared_ptr< ResourceObject > operator()(const std::string& currentPath, const Json::Value& object, ResourceObjectManager& manager)
@@ -152,10 +157,9 @@ class SystemStyleFactory: public ResourceObjectManager::ResourceObjectFactory
 
         try
         {
-            style->star = object.get("star", "").asString();
-            style->animated = object.get("star-animated", true).asBool();
+            style->starImage = object.get("star-image", "").asString();
+            style->starAnimation = object.get("star-animation", "").asString();
             style->color = parseColor(object.get("star-color", "#FFFFFF"));
-            style->background = object.get("background", "").asString();
         }
         catch (...)
         {
@@ -166,6 +170,23 @@ class SystemStyleFactory: public ResourceObjectManager::ResourceObjectFactory
         return style;
     }
 };
+
+class SystemBackgroundsFactory: public ResourceObjectManager::ResourceObjectFactory
+{
+    virtual boost::shared_ptr< ResourceObject > operator()(const std::string& currentPath, const Json::Value& object, ResourceObjectManager& manager)
+    {
+        boost::shared_ptr<SystemBackgrounds> bgs(new SystemBackgrounds());
+        for (const std::string& s : object.getMemberNames())
+        {
+            if (s == "@type")
+                continue;
+            bgs->backgrounds[s] = object.get(s, "").asString();
+        }
+
+        return bgs;
+    }
+};
+
 
 class AsteroidStyleFactory: public ResourceObjectManager::ResourceObjectFactory
 {
@@ -194,6 +215,7 @@ StyleManager::StyleManager()
     ResourceManager::instance().objectManager().addFactory("planet-styles", boost::shared_ptr<ResourceObjectManager::ResourceObjectFactory>(new StylesFactory()));
     ResourceManager::instance().objectManager().addFactory("asteroid-styles", boost::shared_ptr<ResourceObjectManager::ResourceObjectFactory>(new StylesFactory()));
     ResourceManager::instance().objectManager().addFactory("system-styles", boost::shared_ptr<ResourceObjectManager::ResourceObjectFactory>(new StylesFactory()));
+    ResourceManager::instance().objectManager().addFactory("system-backgrounds", boost::shared_ptr<ResourceObjectManager::ResourceObjectFactory>(new SystemBackgroundsFactory()));
     ResourceManager::instance().objectManager().addFactory("planet-style", boost::shared_ptr<ResourceObjectManager::ResourceObjectFactory>(new PlanetStyleFactory()));
     ResourceManager::instance().objectManager().addFactory("asteroid-style", boost::shared_ptr<ResourceObjectManager::ResourceObjectFactory>(new AsteroidStyleFactory()));
     ResourceManager::instance().objectManager().addFactory("system-style", boost::shared_ptr<ResourceObjectManager::ResourceObjectFactory>(new SystemStyleFactory()));
@@ -223,96 +245,6 @@ void StyleManager::loadPlanetStyles(const std::string& styleFile)
         m_planetStyles[textHash32(p.first)] = p.second;
 
     Log::info() << "Loaded " << m_planetStyles.size() << " planet styles";
-}
-
-bool StyleManager::serialize(std::ostream &stream) const
-{
-    stream.write((const char*)&STYLE_MANAGER_SIGNATURE, 4);
-
-    uint32_t count = m_planetStyles.size();
-    stream.write((const char*)&count, 4);
-
-    if (!stream.good())
-        return false;
-
-    std::map<uint32_t, boost::shared_ptr<PlanetStyle> >::const_iterator end = m_planetStyles.end();
-    for (std::map<uint32_t, boost::shared_ptr<PlanetStyle> >::const_iterator i = m_planetStyles.begin(); i != end; ++i)
-    {
-        if (!((*i).second)->serialize(stream))
-            return false;
-    }
-
-    count = m_systemStyles.size();
-    stream.write((const char*)&count, 4);
-
-    if (!stream.good())
-        return false;
-
-    std::map<uint32_t, boost::shared_ptr<SystemStyle> >::const_iterator send = m_systemStyles.end();
-    for (std::map<uint32_t, boost::shared_ptr<SystemStyle> >::const_iterator i = m_systemStyles.begin(); i != send; ++i)
-    {
-        if (!((*i).second)->serialize(stream))
-            return false;
-    }
-
-    count = m_asteroidStyles.size();
-    stream.write((const char*)&count, 4);
-
-    if (!stream.good())
-        return false;
-
-    std::map<uint32_t, boost::shared_ptr<AsteroidStyle> >::const_iterator aend = m_asteroidStyles.end();
-    for (std::map<uint32_t, boost::shared_ptr<AsteroidStyle> >::const_iterator i = m_asteroidStyles.begin(); i != aend; ++i)
-    {
-        if (!((*i).second)->serialize(stream))
-            return false;
-    }
-
-    return true;
-}
-
-bool StyleManager::deserialize(std::istream &stream)
-{
-    m_planetStyles.clear();
-
-    uint32_t sig;
-    stream.read((char*)&sig, 4);
-
-    if (sig != STYLE_MANAGER_SIGNATURE)
-        return false;
-
-    uint32_t count;
-    stream.read((char*)&count, 4);
-
-    for (int i = 0; i < count; i++)
-    {
-        boost::shared_ptr<PlanetStyle> style = boost::shared_ptr<PlanetStyle>(new PlanetStyle());
-        if (!style->deserialize(stream))
-            return false;
-
-        m_planetStyles[textHash32(style->id)] = style;
-    }
-
-    stream.read((char*)&count, 4);
-
-    for (int i = 0; i < count; i++)
-    {
-        boost::shared_ptr<SystemStyle> style = boost::shared_ptr<SystemStyle>(new SystemStyle());
-        if (!style->deserialize(stream))
-            return false;
-        m_systemStyles[textHash32(style->id)] = style;
-    }
-
-    stream.read((char*)&count, 4);
-
-    for (int i = 0; i < count; i++)
-    {
-        boost::shared_ptr<AsteroidStyle> style = boost::shared_ptr<AsteroidStyle>(new AsteroidStyle());
-        if (!style->deserialize(stream))
-            return false;
-        m_asteroidStyles[textHash32(style->id)] = style;
-    }
-    return true;
 }
 
 boost::shared_ptr<SystemStyle> StyleManager::systemStyle(const std::string& name)
@@ -388,5 +320,36 @@ void StyleManager::addAsteroidStyle(boost::shared_ptr<AsteroidStyle> style)
 StyleManager::StyleManager(const StyleManager& other)
 {
 }
+
+void StyleManager::addSystemBackground(uint32_t id, const std::string& path)
+{
+    m_systemBackgrounds[id] = path;
+}
+
+void StyleManager::loadSystemBackgrounds(const std::string& path)
+{
+    m_systemBackgrounds.clear();
+
+    boost::shared_ptr<SystemBackgrounds> bgs = ResourceManager::instance().objectManager().getObject<SystemBackgrounds>(path);
+
+    if (!bgs)
+        return;
+
+    for (const std::pair<std::string, std::string >& p : bgs->backgrounds)
+        m_systemBackgrounds[textHash32(p.first)] = p.second;
+
+    Log::info() << "Loaded " << m_systemBackgrounds.size() << " system backgrounds";
+}
+
+std::string StyleManager::systemBackground(uint32_t id)
+{
+    return m_systemBackgrounds.at(id);
+}
+
+std::string StyleManager::systemBackground(const std::string& name)
+{
+    return m_systemBackgrounds.at(textHash32(name));
+}
+
 }
 }

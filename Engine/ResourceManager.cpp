@@ -251,12 +251,12 @@ boost::shared_ptr<Texture> ResourceManager::loadTexture(const std::string& name)
         }
 
         GAIAnimation animation = loadGAIAnimation(*s, header);
-        m_textures[name] = boost::shared_ptr<Texture>(
-                               new Texture(animation.frames[0].width,
-                                           animation.frames[0].height,
-                                           Rangers::TEXTURE_B8G8R8A8,
-                                           animation.frames[0].data)
-                           );
+        Texture *t;
+        if (animation.frames[0].format == GIFrame::Format_RGB16)
+            t = new Texture(animation.frames[0].width, animation.frames[0].height, Rangers::TEXTURE_R5G6B5, animation.frames[0].data);
+        else
+            t = new Texture(animation.frames[0].width, animation.frames[0].height, Rangers::TEXTURE_B8G8R8A8, animation.frames[0].data);
+        m_textures[name] = boost::shared_ptr<Texture>(t);
 
         for (int i = 0; i < animation.frameCount; i++)
             delete[] animation.frames[i].data;

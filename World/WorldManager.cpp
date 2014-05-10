@@ -93,6 +93,7 @@ void WorldManager::generateWorld()
     std::string worldSystemStyles = Engine::instance().properties()->get<std::string>("world.systemStyles", "/world/system-styles");
     std::string worldPlanetStyles = Engine::instance().properties()->get<std::string>("world.planetStyles", "/world/planet-styles");
     std::string worldAsteroidStyles = Engine::instance().properties()->get<std::string>("world.asteroidStyles", "/world/asteroid-styles");
+    std::string worldSystemBackgrounds = Engine::instance().properties()->get<std::string>("world.worldSystemBackgrounds", "/world/system-backgrounds");
 
     if (!worldRaces.empty())
         m_raceManager.loadRaces(worldRaces);
@@ -105,6 +106,9 @@ void WorldManager::generateWorld()
 
     if (!worldAsteroidStyles.empty())
         m_styleManager.loadAsteroidStyles(worldAsteroidStyles);
+
+    if (!worldSystemBackgrounds.empty())
+        m_styleManager.loadSystemBackgrounds(worldSystemBackgrounds);
 
     std::list<boost::shared_ptr<WorldGenHook> >::const_iterator end = m_genHooks.end();
     for (std::list<boost::shared_ptr<WorldGenHook> >::const_iterator i = m_genHooks.begin(); i != end; ++i)
@@ -162,13 +166,6 @@ bool WorldManager::saveWorld(const std::string& file) const
         return false;
     }
 
-    if (!m_styleManager.serialize(worldFile))
-    {
-        Log::error() << "Cannot save StyleManager";
-        worldFile.close();
-        return false;
-    }
-
     std::list<boost::shared_ptr<WorldObject> >::const_iterator end = savingList.end();
     for (std::list<boost::shared_ptr<WorldObject> >::const_iterator i = savingList.begin(); i != end; ++i)
     {
@@ -222,13 +219,6 @@ bool WorldManager::loadWorld(const std::string& file)
     if (!m_raceManager.deserialize(worldFile))
     {
         Log::error() << "Cannot load RaceManager";
-        worldFile.close();
-        return false;
-    }
-
-    if (!m_styleManager.deserialize(worldFile))
-    {
-        Log::error() << "Cannot load StyleManager";
         worldFile.close();
         return false;
     }

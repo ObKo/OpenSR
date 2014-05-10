@@ -37,12 +37,16 @@ void exportStyleManager()
     .def("systemStyle", (boost::shared_ptr<SystemStyle> (StyleManager::*)(uint32_t))&StyleManager::systemStyle)
     .def("asteroidStyle", (boost::shared_ptr<AsteroidStyle> (StyleManager::*)(const std::string&))&StyleManager::asteroidStyle)
     .def("asteroidStyle", (boost::shared_ptr<AsteroidStyle> (StyleManager::*)(uint32_t))&StyleManager::asteroidStyle)
+    .def("systemBackground", (std::string(StyleManager::*)(const std::string&))&StyleManager::systemBackground)
+    .def("systemBackground", (std::string(StyleManager::*)(uint32_t))&StyleManager::systemBackground)
     .def("loadPlanetStyles", &StyleManager::loadPlanetStyles)
     .def("loadSystemStyles", &StyleManager::loadSystemStyles)
     .def("loadAsteroidStyles", &StyleManager::loadAsteroidStyles)
+    .def("loadSystemBackgrounds", &StyleManager::loadSystemBackgrounds)
     .def("addPlanetStyle", &StyleManager::addPlanetStyle)
     .def("addSystemStyle", &StyleManager::addSystemStyle)
-    .def("addAsteroidStyle", &StyleManager::addAsteroidStyle);
+    .def("addAsteroidStyle", &StyleManager::addAsteroidStyle)
+    .def("addSystemBackground", &StyleManager::addSystemBackground);
 }
 }
 }

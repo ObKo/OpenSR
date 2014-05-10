@@ -48,6 +48,19 @@ struct PlanetarySystemWrap: PlanetarySystem, boost::python::wrapper<PlanetarySys
         }
     }
 
+    static void setBackground(PlanetarySystem &self, boost::python::object o)
+    {
+        boost::python::extract<uint32_t> i(o);
+        if (i.check())
+        {
+            self.setBackground(boost::python::extract<uint32_t>(o));
+        }
+        else
+        {
+            self.setBackground(boost::python::extract<std::string>(o));
+        }
+    }
+
     static void setPosition(PlanetarySystem &self, boost::python::object o)
     {
         boost::python::extract<Point> p(o);
@@ -79,6 +92,7 @@ void exportPlanetarySystem()
     .add_property("systemObjects", &PlanetarySystemWrap::systemObjects)
     .add_property("size", &PlanetarySystem::size, &PlanetarySystem::setSize)
     .add_property("style", &PlanetarySystem::style, &PlanetarySystemWrap::setStyle)
+    .add_property("background", &PlanetarySystem::background, &PlanetarySystemWrap::setBackground)
     .def("addObject", &PlanetarySystem::addObject)
     .def("removeObject", &PlanetarySystem::removeObject);
     WORLD_PYTHON_WRAP_WORLD_OBJECT_DEF(PlanetarySystem, PlanetarySystemWrap, c);

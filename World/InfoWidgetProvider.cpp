@@ -217,7 +217,7 @@ boost::shared_ptr<InfoWidgetContent> SystemInfoWidgetProvider::createContent(boo
 
     if (sstyle)
     {
-        boost::shared_ptr<Texture> t = ResourceManager::instance().loadTexture(sstyle->star);
+        boost::shared_ptr<Texture> t = ResourceManager::instance().loadTexture(sstyle->starImage);
 
         if (t)
         {
