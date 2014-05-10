@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 - 2013 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2014 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -45,7 +45,11 @@ void RPKGAdapter::load(const string& fileName)
     std::list<RPKGEntry> l = loadRPKG(rpkgArchive);
 
     for (std::list<RPKGEntry>::const_iterator i = l.begin(); i != l.end(); ++i)
-        files[i->name] = *i;
+    {
+        std::string path = i->name;
+        std::transform(i->name.begin(), i->name.end(), path.begin(), ::tolower);
+        files[path] = *i;
+    }
 
     Log::info() << "Loaded " << files.size() << " files from RPKG archive " << fileName;
     m_fileName = fileName;

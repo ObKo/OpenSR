@@ -129,12 +129,16 @@ ResourceManager& ResourceManager::instance()
 
 SDL_RWops *ResourceManager::getSDLRW(const std::string& name)
 {
+    if (name.empty())
+        return 0;
+
     string realName = name;
+    std::transform(name.begin(), name.end(), realName.begin(), ::tolower);
 
     std::map<std::string, boost::shared_ptr<ResourceAdapter> >::iterator fileIt = m_files.find(realName);
     if (fileIt == m_files.end())
     {
-        Log::error() << "No such file: " << realName;
+        Log::error() << "No such file: " << name;
         return 0;
     }
 
@@ -182,12 +186,20 @@ boost::shared_ptr<Texture> ResourceManager::loadTexture(const std::string& name)
         return it->second;
 
     string sfx = suffix(name);
+    std::transform(sfx.begin(), sfx.end(), sfx.begin(), ::tolower);
+
+    boost::shared_ptr<std::istream> s;
+
+    if (sfx != "gai")
+    {
+        s = getFileStream(name);
+        if (!s)
+            return boost::shared_ptr<Texture>();
+    }
+
     transform(sfx.begin(), sfx.end(), sfx.begin(), towlower);
     if (sfx == "gi")
     {
-        boost::shared_ptr<std::istream> s = getFileStream(name);
-        if (!s)
-            return boost::shared_ptr<Texture>();
         GIFrame frame = loadGIFrame(*s);
 
         Texture *t;
@@ -202,10 +214,7 @@ boost::shared_ptr<Texture> ResourceManager::loadTexture(const std::string& name)
     }
     else if (sfx == "png")
     {
-        boost::shared_ptr<std::istream> stream = getFileStream(name);
-        if (!stream)
-            return boost::shared_ptr<Texture>();
-        PNGFrame frame = loadPNG(*stream);
+        PNGFrame frame = loadPNG(*s);
         if (frame.type == PNGFrame::TYPE_INVALID)
         {
             Log::warning() << "Invalid/unsupported PNG file";
@@ -236,7 +245,7 @@ boost::shared_ptr<Texture> ResourceManager::loadTexture(const std::string& name)
         if (it != m_animations.end())
             return it->second;
 
-        boost::shared_ptr<std::istream> s = getFileStream(name);
+        s = getFileStream(name);
         if (!s)
             return boost::shared_ptr<Texture>();
 
@@ -266,10 +275,7 @@ boost::shared_ptr<Texture> ResourceManager::loadTexture(const std::string& name)
     }
     else if (sfx == "jpg" || sfx == "jpeg")
     {
-        boost::shared_ptr<std::istream> stream = getFileStream(name);
-        if (!stream)
-            return boost::shared_ptr<Texture>();
-        JPEGFrame frame = loadJPEG(*stream);
+        JPEGFrame frame = loadJPEG(*s);
         if (frame.type == JPEGFrame::TYPE_INVALID)
         {
             Log::warning() << "Invalid/unsupported PNG file";
@@ -303,14 +309,14 @@ boost::shared_ptr<AnimatedTexture> ResourceManager::loadAnimation(const std::str
     if (it != m_animations.end())
         return it->second;
 
+    boost::shared_ptr<std::istream> s = getFileStream(name);
+    if (!s)
+        return boost::shared_ptr<AnimatedTexture>();
+
     string sfx = suffix(name);
-    transform(sfx.begin(), sfx.end(), sfx.begin(), towlower);
+    std::transform(sfx.begin(), sfx.end(), sfx.begin(), ::tolower);
     if (sfx == "gai")
     {
-        boost::shared_ptr<std::istream> s = getFileStream(name);
-        if (!s)
-            return boost::shared_ptr<AnimatedTexture>();
-
         boost::shared_ptr<std::istream> bgFrameStream;
         GAIHeader header = loadGAIHeader(*s);
 
@@ -365,21 +371,22 @@ boost::shared_ptr< Font > ResourceManager::loadFont(const std::string& name, int
     if (it != m_fonts.end())
         return it->second;
 
+
+    boost::shared_ptr<std::istream> stream = getFileStream(name);
+    if (!stream)
+        return boost::shared_ptr<Font>();
+
     string sfx = suffix(name);
-    transform(sfx.begin(), sfx.end(), sfx.begin(), towlower);
+    transform(sfx.begin(), sfx.end(), sfx.begin(), ::tolower);
 
     if (sfx == "ttf")
     {
-        boost::shared_ptr<std::istream> s = getFileStream(name);
-        if (!s)
-            return boost::shared_ptr<Font>();
-
-        s->seekg(0, std::ios_base::end);
-        uint32_t dataSize = s->tellg();
-        s->seekg(0, std::ios_base::beg);
+        stream->seekg(0, std::ios_base::end);
+        uint32_t dataSize = stream->tellg();
+        stream->seekg(0, std::ios_base::beg);
 
         char *data = new char[dataSize];
-        s->read(data, dataSize);
+        stream->read(data, dataSize);
 
         Font *f = new FTFont(data, dataSize, size, antialiased);
         delete[] data;
@@ -388,10 +395,7 @@ boost::shared_ptr< Font > ResourceManager::loadFont(const std::string& name, int
     }
     if (sfx == "aft")
     {
-        boost::shared_ptr<std::istream> s = getFileStream(name);
-        if (!s)
-            return boost::shared_ptr<Font>();
-        AFT f = loadAFTFont(*s);
+        AFT f = loadAFTFont(*stream);
         if ((f.glyphCount == 0) || (f.glyphs == 0))
             return boost::shared_ptr<Font>();
 
@@ -430,7 +434,11 @@ boost::shared_array<char> ResourceManager::loadData(const std::string& name, siz
 
 bool ResourceManager::resourceExists(const std::string& path)
 {
+    if (path.empty())
+        return false;
+
     string realName = path;
+    std::transform(path.begin(), path.end(), realName.begin(), ::tolower);
 
     std::map<std::string, boost::shared_ptr<ResourceAdapter> >::iterator fileIt = m_files.find(realName);
     if (fileIt == m_files.end())
@@ -442,12 +450,17 @@ bool ResourceManager::resourceExists(const std::string& path)
 
 boost::shared_ptr<std::istream> ResourceManager::getFileStream(const std::string& name)
 {
+    if (name.empty())
+        return boost::shared_ptr<std::istream>();
+
+
     string realName = name;
+    std::transform(name.begin(), name.end(), realName.begin(), ::tolower);
 
     std::map<std::string, boost::shared_ptr<ResourceAdapter> >::iterator fileIt = m_files.find(realName);
     if (fileIt == m_files.end())
     {
-        Log::error() << "No such file: " << realName;
+        Log::error() << "No such file: " << name;
         return boost::shared_ptr<std::istream>();
     }
     return boost::shared_ptr<std::istream>(fileIt->second->getStream(realName));

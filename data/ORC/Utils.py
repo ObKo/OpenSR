@@ -4,11 +4,8 @@ from OpenSR.Engine import ResourceManager, Color
 world = WorldManager.instance()
 resources = ResourceManager.instance()
 
-def getDatPath(name):
-    path = resources.datValue(name).replace('\\', '/')
-    if path[0:4] == 'data':
-        path = 'DATA' + path[4:]
-    return path
+def getCacheDATPath(name):
+    return resources.datValue(name).replace('\\', '/')
 
 def loadPlanetStylesFromDAT():    
     datRoot = resources.datRoot()
@@ -16,11 +13,11 @@ def loadPlanetStylesFromDAT():
         style = PlanetStyle()
     
         style.id = p.name
-        style.texture = getDatPath(p['Image'].value).replace('psd', 'png').replace('data', 'ORC')
+        style.texture = getCacheDATPath(p['Image'].value).replace('psd', 'png').replace('data', 'ORC')
         try:
             cloud = p['Cloud0'].value.split(',')
             style.cloudSpeed = - float(cloud[0]) * 20
-            style.cloud = getDatPath(cloud[1]).replace('.psd', '.png').replace('data', 'ORC')
+            style.cloud = getCacheDATPath(cloud[1]).replace('.psd', '.png').replace('data', 'ORC')
             style.hasCloud = True
         except:
             style.hasCloud = False
@@ -42,8 +39,8 @@ def loadSystemStylesFromDAT():
         style = SystemStyle()
             
         style.id = p.name
-        style.starImage = getDatPath(p['Image'].value.split(',')[1])
-        style.starAnimation = getDatPath(p['Anim'].value)
+        style.starImage = getCacheDATPath(p['Image'].value.split(',')[1])
+        style.starAnimation = getCacheDATPath(p['Anim'].value)
         style.color = Color(1.0, 1.0, 1.0)
         
         print(style.id + ' ' + style.starImage + ' ' + style.starAnimation)

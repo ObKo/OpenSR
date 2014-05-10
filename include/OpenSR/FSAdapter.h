@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 - 2013 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2014 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 #define RANGERS_FSADAPTER_H
 
 #include "OpenSR/ResourceAdapter.h"
+#include <map>
 
 namespace Rangers
 {
@@ -41,7 +42,7 @@ private:
 #endif
 
     std::string m_dirPath;
-    std::list<std::string> m_files;
+    std::map<std::string, std::string> m_files;
 };
 }
 

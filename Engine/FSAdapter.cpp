@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 - 2013 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2011 - 2014 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -39,7 +39,12 @@ namespace Rangers
 {
 list< string > FSAdapter::getFiles() const
 {
-    return m_files;
+    list< string > keys;
+    for (const std::pair<std::string, std::string> &kv : m_files)
+    {
+        keys.push_back(kv.first);
+    }
+    return keys;
 }
 
 void FSAdapter::load(const std::string& path)
@@ -80,7 +85,9 @@ void FSAdapter::scan(const wstring& path)
         {
             wstring fileName = path + fd.cFileName;
             std::replace(fileName.begin(), fileName.end(), L'\\', L'/');
-            m_files.push_back(toUTF8(fileName));
+            std::wstring lcPath = fileName;
+            std::transform(fileName.begin(), fileName.end(), lcPath.begin(), ::towlower);
+            m_files[toUTF8(lcPath)] = toUTF8(fileName);
         }
     }
     while (FindNextFileW(fh, &fd));
@@ -113,8 +120,13 @@ void FSAdapter::scan(const string& path)
                 scan(path + current->d_name + '/');
                 break;
             case S_IFREG:
-                m_files.push_back(path + current->d_name);
+            {
+                std::string p = path + current->d_name;
+                std::string lp = p;
+                std::transform(p.begin(), p.end(), lp.begin(), ::tolower);
+                m_files[lp] = p;
                 break;
+            }
             default:
                 Log::debug() << fullPath.c_str() << " unknown entry type";
             }
@@ -130,10 +142,11 @@ void FSAdapter::scan(const string& path)
 
 std::istream* FSAdapter::getStream(const std::string& name)
 {
+    std::string realPath = m_files.at(name);
 #ifdef WIN32
-    ifstream *s = new ifstream(fromUTF8(m_dirPath + name), ios::in | ios::binary);
+    ifstream *s = new ifstream(fromUTF8(m_dirPath + realPath), ios::in | ios::binary);
 #else
-    ifstream *s = new ifstream(m_dirPath + name, ios::in | ios::binary);
+    ifstream *s = new ifstream(m_dirPath + realPath, ios::in | ios::binary);
 #endif
     if (!s->is_open())
     {
