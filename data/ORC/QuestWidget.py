@@ -1,6 +1,7 @@
 from OpenSR.Engine import Engine, ResourceManager, ScriptWidget, ActionListener, Sprite, \
-                          Rect, Action, NinePatch, ColorLabel, Button
+                          Rect, Action, NinePatch, ColorLabel, Button, tr as _
 from OpenSR.World import InteractionWidget, QuestPlayer
+from OpenSR.ORC.Utils import getCacheDATPath
 
 import OpenSR.ORC.StartMenu
 
@@ -91,11 +92,11 @@ class QuestWidget(ScriptWidget, ActionListener):
         text = player.currentText.replace("\r\n", "\n")
         
         if player.questCompleted:
-            text = text + "\n\n\\c008000Quest completed!\\cR"
+            text = text + "\n\n\\c008000" + _("Quest completed!", "Planet.NotCivil.QuestPlay.MsgSuccess") + "\\cR"
         elif player.questFailed:
-            text = text + "\n\n\\c800000Quest failed!\\cR"
+            text = text + "\n\n\\c800000" + _("Quest failed!", "Planet.NotCivil.QuestPlay.MsgFail") + "\\cR"
             if player.death:
-                text = text + "\n\n\\c800000You're dead!\\cR"
+                text = text + "\n\n\\c800000" + _("You're dead!", "Planet.NotCivil.QuestPlay.MsgDeath") + "\\cR"
         
         self.interact.text = text
         
@@ -109,7 +110,7 @@ class QuestWidget(ScriptWidget, ActionListener):
         
         self.paramLabel.text = "\n".join(player.visibleParameters) 
         
-        newImage = "DATA/PQI/" + self.images[player.currentImage] + ".jpg"
+        newImage = getCacheDATPath(self.images[player.currentImage])
                 
         if newImage != "":
 
@@ -130,7 +131,7 @@ class QuestWidget(ScriptWidget, ActionListener):
             if v[0] != self.questID:
                 continue
   
-            img = r.value.replace("Bm.PQI.", "")
+            img = r.value
             imgID = len(self.images) 
             self.images.append(img)                
              

@@ -22,6 +22,7 @@
 #include <OpenSR/ResourceManager.h>
 #include <OpenSR/Log.h>
 #include <OpenSR/libRanger.h>
+#include <OpenSR/Utils.h>
 
 #include <boost/algorithm/string.hpp>
 
@@ -372,7 +373,7 @@ std::vector<std::tuple<uint32_t, std::string, bool> > QuestPlayer::visibleTransi
             if (!trans.title.empty())
                 r.push_back(std::tuple<uint32_t, std::string, bool>(t, substituteValues(trans.title), true));
             else
-                r.push_back(std::tuple<uint32_t, std::string, bool>(t, "Next", true));
+                r.push_back(std::tuple<uint32_t, std::string, bool>(t, _("Continue", "Planet.NotCivil.QuestPlay.MsgContinue"), true));
         }
 
         for (uint32_t t : m_alwaysVisibleTransitions)
@@ -388,7 +389,7 @@ std::vector<std::tuple<uint32_t, std::string, bool> > QuestPlayer::visibleTransi
     }
     else
     {
-        r.push_back(std::tuple<uint32_t, std::string, bool>(0, "Next", true));
+        r.push_back(std::tuple<uint32_t, std::string, bool>(0, _("Continue", "Planet.NotCivil.QuestPlay.MsgContinue"), true));
     }
 
     return r;
