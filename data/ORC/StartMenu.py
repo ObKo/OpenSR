@@ -7,7 +7,7 @@ from OpenSR.ORC.QuestWidget import QuestWidget
 from OpenSR.ORC.QuestSelectionWidget import QuestSelectionWidget
 
 import OpenSR.ORC.Settings
-from OpenSR.World.DefaultWorldGen import DefaultWorldGen
+from OpenSR.ORC.WorldGen import WorldGen
 import sys
 import math
 
@@ -169,7 +169,7 @@ class StartMenuWidget(ScriptWidget, ActionListener):
                 engine.addWidget(OpenSR.ORC.Settings.SettingsWidget())
                 
             elif action.source == self.buttons['newGame']:
-                world.addGenHook(DefaultWorldGen())
+                world.addGenHook(WorldGen())
                 world.generateWorld()
                 world.saveWorld('test.srw')
                 self.openGame()

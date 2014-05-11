@@ -1,5 +1,5 @@
 from OpenSR.World import PlanetStyle, SystemStyle, AsteroidStyle, WorldManager, StyleManager
-from OpenSR.Engine import ResourceManager, Color
+from OpenSR.Engine import ResourceManager, Color, textHash32
 
 world = WorldManager.instance()
 resources = ResourceManager.instance()
@@ -55,3 +55,20 @@ def loadAsteroidStylesFromDAT():
         style.animated = True
                 
         world.styleManager().addAsteroidStyle(style)
+        
+def loadBackgrounds():
+    bgs = ['00', '01', '02', '03', '04', \
+           '05', '06', '07', '08', '09', \
+           '10', '11', '12', '13', '14', \
+           '15', '50', '51', '52', '53', \
+           '54', '55', '70', '71']    
+    for b in bgs:
+        id = 'bg' + b
+        world.styleManager().addSystemBackground(textHash32(id), 'DATA/BGObj/' + id + '.gai')
+        
+def loadStylesFromDAT():    
+    loadPlanetStylesFromDAT()
+    loadSystemStylesFromDAT()
+    loadAsteroidStylesFromDAT()
+    loadBackgrounds()
+        

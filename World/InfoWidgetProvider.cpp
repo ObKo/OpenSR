@@ -31,6 +31,7 @@
 #include <OpenSR/SpriteWidget.h>
 #include <OpenSR/Utils.h>
 #include <OpenSR/Engine.h>
+#include <OpenSR/libRanger.h>
 
 #include <sstream>
 
@@ -85,7 +86,8 @@ boost::shared_ptr<InfoWidgetContent> PlanetInfoWidgetProvider::createContent(boo
     if (!planet)
         return content;
 
-    content->caption = _("Planet", "Planet.Name", "OpenSR-World") + " " + _(planet->name(), "", "OpenSR-World");
+    content->caption = _("Planet", "Planet.Name", "OpenSR-World") + " "
+                       + _(planet->name(), "PlanetName." + planet->name(), "OpenSR-World");
     if (style)
     {
         content->icon = WorldManager::instance().planetManager().getPlanetImage(planet->style(), style->iconSize);
@@ -210,8 +212,11 @@ boost::shared_ptr<InfoWidgetContent> SystemInfoWidgetProvider::createContent(boo
         f = Engine::instance().coreFont();
         c = Color(1.0f, 1.0f, 1.0f);
     }
-
-    content->caption = _(system->name(), "", "OpenSR-World");
+    std::string sname = _(system->name(), "Star." + system->name(), "OpenSR-World");
+    //FIXME: Assuming, that name has no commas.
+    //FIXME: ORC-stuff
+    sname = split(sname, ',')[0];
+    content->caption = sname;
 
     boost::shared_ptr<SystemStyle> sstyle = WorldManager::instance().styleManager().systemStyle(system->style());
 
@@ -234,7 +239,8 @@ boost::shared_ptr<InfoWidgetContent> SystemInfoWidgetProvider::createContent(boo
             SystemContent::SystemObjectLine objectLine;
 
             boost::shared_ptr<LabelWidget> n = boost::shared_ptr<LabelWidget>(
-                                                   new LabelWidget(boost::shared_ptr<Label>(new Label(_(planet->name(), "", "OpenSR-World"), f)))
+                                                   new LabelWidget(boost::shared_ptr<Label>(
+                                                           new Label(_(planet->name(), "PlanetName." + planet->name(), "OpenSR-World"), f)))
                                                );
             n->setColor(c);
             content->widgets.push_back(n);
