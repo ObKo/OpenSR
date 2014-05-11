@@ -1,4 +1,4 @@
-from OpenSR.World import PlanetStyle, SystemStyle, WorldManager, StyleManager
+from OpenSR.World import PlanetStyle, SystemStyle, AsteroidStyle, WorldManager, StyleManager
 from OpenSR.Engine import ResourceManager, Color
 
 world = WorldManager.instance()
@@ -42,7 +42,16 @@ def loadSystemStylesFromDAT():
         style.starImage = getCacheDATPath(p['Image'].value.split(',')[1])
         style.starAnimation = getCacheDATPath(p['Anim'].value)
         style.color = Color(1.0, 1.0, 1.0)
-        
-        print(style.id + ' ' + style.starImage + ' ' + style.starAnimation)
-        
+                
         world.styleManager().addSystemStyle(style)
+
+def loadAsteroidStylesFromDAT():    
+    datRoot = resources.datRoot()
+    for p in datRoot['Data']['SE']['Asteroid']:
+        style = AsteroidStyle()
+            
+        style.id = p.name
+        style.sprite = getCacheDATPath(p['Image'].value)
+        style.animated = True
+                
+        world.styleManager().addAsteroidStyle(style)
