@@ -7,7 +7,6 @@
 #include <QMessageBox>
 #include <fstream>
 #include <libRanger.h>
-#include <squish.h>
 #include <QProgressDialog>
 
 #include <boost/iostreams/device/array.hpp>
@@ -124,7 +123,7 @@ void MainWindow::loadGAI(GAIAnimation anim)
 void MainWindow::openFile()
 {
     QStringList fileNames = QFileDialog::getOpenFileNames(this, tr("Open file"), QString(),
-                            tr("All suported files (*.gai *.hai *.gi *.pkg *.dds *.rpkg)"));
+                            tr("All suported files (*.gai *.hai *.gi *.pkg *.rpkg)"));
     if (fileNames.isEmpty())
         return;
 

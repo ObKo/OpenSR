@@ -1,6 +1,7 @@
 INCLUDE_DIRECTORIES(
     ${CMAKE_SOURCE_DIR}/include/OpenSR/World
     ${CMAKE_SOURCE_DIR}/include
+    ${CMAKE_BINARY_DIR}/include
 )
 
 ADD_EXECUTABLE(opensr-worldid WorldID.cpp)
