@@ -98,7 +98,7 @@ PKGItem *loadItems(std::istream& stream, PKGItem *previous)
  * \param pkgfile archive file
  * \return loaded data
  */
-unsigned char *Rangers::extractFile(PKGItem item, std::istream& pkgfile)
+unsigned char *Rangers::extractFile(const PKGItem &item, std::istream& pkgfile)
 {
     if (item.dataType == 3)
         return 0;

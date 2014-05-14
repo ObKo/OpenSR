@@ -377,7 +377,7 @@ LIBRANGER_API void unpackZL02(unsigned char * dst, const unsigned char * src, si
 //! Load file descriptions from PKG archive
 LIBRANGER_API PKGItem *loadPKG(std::istream& stream);
 //! Extract file from PKG archive
-LIBRANGER_API unsigned char *extractFile(PKGItem item, std::istream& pkgfile);
+LIBRANGER_API unsigned char *extractFile(const PKGItem &item, std::istream& pkgfile);
 
 //! Pack data into RPKG using LZMA compression
 LIBRANGER_API bool packRSXZ(const char * src, size_t srclen, RPKGItem &item);

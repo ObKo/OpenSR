@@ -16,6 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "pkg.h"
 #include "pkg2rpkg.h"
 #include "gai.h"
 #include "gi.h"
@@ -29,6 +30,7 @@ void showHelp()
 {
     std::cout << "Usage: rangersresconv command [arguments]" << std::endl;
     std::cout << "Commands: " << std::endl;
+    std::cout << "\tpkgx pkg_file output_dir - extract pkg file from original game to output_dir." << std::endl;
     std::cout << "\tpkg2rpkg compression pkg_file rpkg_file - convert pkg file from original game to rpkg format." << std::endl;
     std::cout << "\t\tSupported compressions: NONE ZLIB LZMA" << std::endl;
     std::cout << "\t\tSupported types: RGB16, RGB24, RGBA, DXT1, DXT3, DXT5" << std::endl;
@@ -47,7 +49,16 @@ int main(int argc, char **argv)
     }
     ilInit();
     iluInit();
-    if (std::string(argv[1]) == "pkg2rpkg")
+    if (std::string(argv[1]) == "pkgx")
+    {
+        if (argc < 4)
+        {
+            showHelp();
+            return 0;
+        }
+        Rangers::extractPKG(argv[2], argv[3]);
+    }
+    else if (std::string(argv[1]) == "pkg2rpkg")
     {
         if (argc < 5)
         {

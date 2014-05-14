@@ -61,6 +61,8 @@ bool createDirPath(const std::string& path)
             return false;
         startPos = endPos + 1;
     }
+    if (createDir(path.c_str(), 0777))
+        return false;
 #endif
     return true;
 }

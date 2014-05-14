@@ -3,15 +3,32 @@
 # This script extracts and converts resources from original game.
 # Tools needed:
 #  - opensr-resourceconverter tool
+#  - opensr-dat-convert tool
 #  - psdparse (http://www.telegraphics.com.au/svn/psdparse/)
 #  - ImageMagick (http://www.imagemagick.org/)
 
 RESOURCE_CONVETER=opensr-resourceconverter
+DAT_CONVETER=opensr-dat-convert
 CONVERT=convert
 PSD_PARSE=psdparse
-INPUT_DIR=data
-OUTPUT_DIR=data/ORC
 TEMP_DIR=/tmp
+
+PKG_ARCHIVES=(
+  '2main.pkg' \
+  '2Items.pkg' \
+  '2captain.pkg' \
+  '2gov.pkg' \
+  'common.pkg' \
+  'ShipFull.pkg' \
+  'ShipSmall.pkg' \
+  'sound.pkg' \
+  'Star.pkg'
+)
+
+DAT_FILES=(
+  'main.dat' \
+  'rus.dat'
+)
 
 PLANET_FILES=(
   'Planet2/180/04x180.psd' \
@@ -302,32 +319,63 @@ PLANET_FILES=(
   'Planet2/120/20x120.psd'
 )
 
+extract_pkg () 
+{ 
+  for pkg in "${PKG_ARCHIVES[@]}"
+  do
+    if [ -e "$INPUT_DIR/data/$pkg" ]
+    then
+      echo "Extracting $INPUT_DIR/data/$pkg ..."
+      $RESOURCE_CONVETER pkgx "$INPUT_DIR/data/$pkg" "$OUTPUT_DIR"
+    else
+      echo "PKG file not found: $INPUT_DIR/data/$pkg"
+    fi
+  done
+}
+
+decode_dat () 
+{ 
+  for dat in "${DAT_FILES[@]}"
+  do
+    if [ -e "$INPUT_DIR/cfg/$dat" ]
+    then
+      name=$(basename $dat)
+      echo "Decoding $INPUT_DIR/cfg/$dat ..."
+      $DAT_CONVETER d "$INPUT_DIR/cfg/$dat" "$OUTPUT_DIR/$name"
+    else
+      echo "DAT file not found: $INPUT_DIR/cfg/$dat"
+    fi
+  done
+  echo "Decoding $INPUT_DIR/cfg/CacheData.dat ..."
+  $DAT_CONVETER hd "$INPUT_DIR/cfg/CacheData.dat" "$OUTPUT_DIR/CacheData.dat"
+}
+
 convert_planets () 
 { 
   for planet in "${PLANET_FILES[@]}"
   do
-    if [ -e "$INPUT_DIR/DATA/$planet" ]
+    if [ -e "$OUTPUT_DIR/DATA/$planet" ]
     then
       name=$(basename $planet)
       dir=$(dirname $planet)
       extension="${name##*.}"
       filename="${name%.*}"
-      echo "$INPUT_DIR/DATA/$planet -> $OUTPUT_DIR/$dir/$filename.png"
-      $PSD_PARSE -d $TEMP_DIR -w -q -n $INPUT_DIR/DATA/$planet
+      echo "$OUTPUT_DIR/DATA/$planet -> $OUTPUT_DIR/ORC/$dir/$filename.png"
+      $PSD_PARSE -d "$TEMP_DIR" -w -q -n "$OUTPUT_DIR/DATA/$planet"
       if [ ! -e "$TEMP_DIR/$name.png" ]; then
          echo "psdparse failed, trying imagemagick"
-         $CONVERT "$INPUT_DIR/DATA/$planet" "$TEMP_DIR/$name.png"
+         $CONVERT "$OUTPUT_DIR/DATA/$planet" "$TEMP_DIR/$name.png"
       fi
       if [ -e "$TEMP_DIR/$name.png" ]
       then
-        mkdir -p $OUTPUT_DIR/$dir
+        mkdir -p "$OUTPUT_DIR/ORC/$dir"
         if [ -e "$TEMP_DIR/$name.1.png" ]
         then
-          $RESOURCE_CONVETER create_planet $TEMP_DIR/$name.png $TEMP_DIR/$name.1.png $OUTPUT_DIR/$dir/$filename.png
-          rm $TEMP_DIR/$name.png $TEMP_DIR/$name.1.png
+          $RESOURCE_CONVETER create_planet "$TEMP_DIR/$name.png" "$TEMP_DIR/$name.1.png" "$OUTPUT_DIR/ORC/$dir/$filename.png"
+          rm "$TEMP_DIR/$name.png" "$TEMP_DIR/$name.1.png"
         else
-          cp $TEMP_DIR/$name.png $OUTPUT_DIR/$dir/$filename.png
-          rm $TEMP_DIR/$name.png
+          cp "$TEMP_DIR/$name.png" "$OUTPUT_DIR/ORC/$dir/$filename.png"
+          rm "$TEMP_DIR/$name.png"
         fi
       fi
     fi
@@ -337,15 +385,37 @@ convert_planets ()
 convert_stuff ()
 {
   echo "$INPUT_DIR/DATA/PI/UnitPath1.gi -> $OUTPUT_DIR/UnitPath1.png"
-  $RESOURCE_CONVETER gi2png $INPUT_DIR/DATA/PI/UnitPath1.gi $TEMP_DIR/UnitPath1.png
-  $CONVERT $TEMP_DIR/UnitPath1.png -bordercolor none -border 5x0 $OUTPUT_DIR/UnitPath1.png
-  rm $TEMP_DIR/UnitPath1.png
+  $RESOURCE_CONVETER gi2png "$INPUT_DIR/DATA/PI/UnitPath1.gi" "$TEMP_DIR/UnitPath1.png"
+  $CONVERT "$TEMP_DIR/UnitPath1.png" -bordercolor none -border 5x0 "$OUTPUT_DIR/UnitPath1.png"
+  rm "$TEMP_DIR/UnitPath1.png"
 
   echo "$INPUT_DIR/DATA/PI/UnitPath2.gi -> $OUTPUT_DIR/UnitPath2.png"
-  $RESOURCE_CONVETER gi2png $INPUT_DIR/DATA/PI/UnitPath2.gi $TEMP_DIR/UnitPath2.png
-  $CONVERT $TEMP_DIR/UnitPath2.png -bordercolor none -border 5x0 $OUTPUT_DIR/UnitPath2.png
-  rm $TEMP_DIR/UnitPath2.png
+  $RESOURCE_CONVETER gi2png "$INPUT_DIR/DATA/PI/UnitPath2.gi" "$TEMP_DIR/UnitPath2.png"
+  $CONVERT "$TEMP_DIR/UnitPath2.png" -bordercolor none -border 5x0 "$OUTPUT_DIR/UnitPath2.png"
+  rm "$TEMP_DIR/UnitPath2.png"
 }
 
+if [ "$#" -ne 2 ]; then
+    echo "Usage: convertResources.sh <game_path> <output_data_path>"
+    exit 0
+fi
+
+INPUT_DIR="$1"
+OUTPUT_DIR="$2"
+
+if [ ! -d "$INPUT_DIR" ]; then
+    echo "Game directory doesn't exists."
+    exit 0
+fi
+
+if [ ! -w "$OUTPUT_DIR" ]; then
+    echo "Output directory isn't writable."
+    exit 0
+fi
+
+extract_pkg
+decode_dat
 convert_planets
 convert_stuff
+
+echo "Done!"

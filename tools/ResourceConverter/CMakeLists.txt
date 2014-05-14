@@ -10,6 +10,7 @@ SET(RESOURCE_CONVERTER_SRCS
     pkg2rpkg.cpp
     gai.cpp
     gi.cpp
+    pkg.cpp
     utils.cpp
     planet.cpp
 )

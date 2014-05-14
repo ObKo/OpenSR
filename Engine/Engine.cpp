@@ -107,7 +107,7 @@ Engine::~Engine()
 {
     RANGERS_D(Engine);
     removeWidget(d->consoleWidget);
-    if (!createDirPath(d->configPath))
+    if (!createDirPath(directory(d->configPath)))
         Log::error() << "Cannot create dir for config: " << d->configPath;
 
     std::ofstream configFile;
