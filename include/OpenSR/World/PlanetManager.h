@@ -66,9 +66,6 @@ private:
     GLuint m_vertexBuffer;
     GLuint m_framebuffer;
 
-    GLint m_phaseLocation;
-    GLint m_cloudPhaseLocation;
-    GLint m_solarAngleLocation;
     GLint m_ambientColorLocation;
     GLint m_cloudEnabledLocation;
     GLint m_textureLocation;

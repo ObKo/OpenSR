@@ -2,10 +2,7 @@ varying vec2 texCoord;
 
 uniform sampler2D cloud;
 uniform sampler2D texture;
-uniform float phase;
-uniform float cloudPhase;
 uniform bool cloudEnabled;
-uniform float solarAngle;
 uniform vec4 ambientColor;
 uniform vec2 texPixelSize;
 uniform float pixelSize;
@@ -38,7 +35,7 @@ void calcLight(in sampler2D tex, in vec2 coord, in vec3 pos, in bool bump, out f
 {
     float k;
 
-    vec3 l = normalize(vec3(cos(solarAngle), -sin(solarAngle), 0.5));
+    vec3 l = normalize(vec3(-1.0, 0.0, 0.5));
     vec3 n = normalize(pos);
 
     if(bump)
@@ -78,9 +75,9 @@ void calcColor(out vec4 color)
     vec2 coord;
     float light;
 
-    float planetRadius = 0.5 - pixelSize * 3.0;
+    float planetRadius = 0.5 - pixelSize;
     getPosition(planetRadius, pos);
-    mapTexture(pos, phase, coord);
+    mapTexture(pos, 0.0, coord);
     
     vec3 planetTexColor = texture2D(texture, coord).rgb;
     calcLight(texture, coord, pos, true, light);
@@ -88,7 +85,7 @@ void calcColor(out vec4 color)
     
     if (cloudEnabled)
     {
-        mapTexture(pos, cloudPhase, coord);
+        mapTexture(pos, 0.0, coord);
         vec4 texColor = texture2D(cloud, coord);
         vec4 cloudColor = vec4(texColor.rgb * ambientColor.rgb * (light + 0.3), texColor.a);
         color = blend(color, cloudColor);
@@ -99,16 +96,16 @@ void calcColor(out vec4 color)
     vec3 atmColor = ambientColor.rgb;
 
     //TODO: Move atmosphere to uniforms.
-    if ((tr > planetRadius - 5.0 * pixelSize) && tr <= planetRadius)
+    if ((tr > planetRadius - 2.0 * pixelSize) && tr <= planetRadius)
     {
         float aaAlpha = clamp((planetRadius - tr) / pixelSize, 0.0, 1.0);
         color.a *= aaAlpha;
-        float atmAlpha = clamp((1.0 - (planetRadius - tr) / (5.0 * pixelSize)) * (light + 0.2), 0.0, 0.8);
+        float atmAlpha = clamp((1.0 - (planetRadius - tr) / (2.0 * pixelSize)) * (light + 0.2), 0.0, 0.8);
         color = blend(color, vec4(atmColor, atmAlpha));
     }
     else if (tr > planetRadius && tr <= 0.5)
     {
-        float atmAlpha = clamp((0.5 - tr) / (3.0 * pixelSize) * (light + 0.2), 0.0, 0.8);
+        float atmAlpha = clamp((0.5 - tr) / (1.0 * pixelSize) * (light + 0.2), 0.0, 0.8);
         color = vec4(atmColor, atmAlpha);
     }
     

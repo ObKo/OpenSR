@@ -91,7 +91,7 @@ boost::shared_ptr<Texture> PlanetManager::renderHardware(int size, boost::shared
     if (!m_vertexShader || !m_fragmentShader || !m_shader ||
             (!m_shader->isLinked() && !m_shader->isInvalid()))
     {
-        std::string fragShaderFile = Engine::instance().properties()->get<std::string>("world.planetShader", "World/Planet.frag");
+        std::string fragShaderFile = Engine::instance().properties()->get<std::string>("world.planetShader", "World/Planet-simple.frag");
         m_vertexShader = boost::shared_ptr<Shader>(new Shader(Shader::VERTEX_SHADER, PLANET_VERTEX_SHADER));
         m_fragmentShader = boost::shared_ptr<Shader>(new Shader(fragShaderFile));
         m_shader = boost::shared_ptr<ShaderProgram>(new ShaderProgram());
@@ -106,10 +106,7 @@ boost::shared_ptr<Texture> PlanetManager::renderHardware(int size, boost::shared
         }
         else
         {
-            m_phaseLocation = m_shader->getUniformLocation("phase");
-            m_cloudPhaseLocation = m_shader->getUniformLocation("cloudPhase");
             m_cloudEnabledLocation = m_shader->getUniformLocation("cloudEnabled");
-            m_solarAngleLocation = m_shader->getUniformLocation("solarAngle");
             m_ambientColorLocation = m_shader->getUniformLocation("ambientColor");
             m_textureLocation = m_shader->getUniformLocation("texture");
             m_cloudLocation = m_shader->getUniformLocation("cloud");
@@ -204,9 +201,6 @@ boost::shared_ptr<Texture> PlanetManager::renderHardware(int size, boost::shared
     glUseProgram(m_shader->handle());
     m_shader->setUniform(m_textureLocation, 0);
     m_shader->setUniform(m_cloudLocation, 1);
-    m_shader->setUniform(m_phaseLocation, 0);
-    m_shader->setUniform(m_cloudPhaseLocation, 0);
-    m_shader->setUniform(m_solarAngleLocation, (float)M_PI);
     m_shader->setUniform(m_ambientColorLocation, style->ambientColor);
     m_shader->setUniform(m_texPixelSizeLocation, Vector(1.0f / texture->width(), 1.0f / texture->height()));
     m_shader->setUniform(m_pixelSizeLocation, 1.0f / size);
