@@ -30,7 +30,7 @@ public:
     TiledBeizerCurvePrivate();
 
     void findPoints(float t0, float t1, std::list<Vector>& points, std::list<Vector>::iterator& i);
-    Vector calcBezierPoint(float t);
+    Vector calcBezierPoint(float t, Vector& d);
 
     BeizerCurve curve;
 };

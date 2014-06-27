@@ -24,7 +24,7 @@
 
 namespace
 {
-const float ANGLE_TRESHOLD = 0.999f;
+const float ANGLE_TRESHOLD = 0.9999f;
 }
 
 namespace Rangers
@@ -70,18 +70,19 @@ BeizerCurve TiledBeizerCurve::curve() const
     return d->curve;
 }
 
-Vector TiledBeizerCurvePrivate::calcBezierPoint(float t)
+Vector TiledBeizerCurvePrivate::calcBezierPoint(float t, Vector& d)
 {
     float u = 1 - t;
     float tt = t * t;
     float uu = u * u;
     float uuu = uu * u;
     float ttt = tt * t;
-
-    Vector p = uuu * curve.p0;
-    p += 3 * uu * t * curve.p1;
-    p += 3 * u * tt * curve.p2;
-    p += ttt * curve.p3;
+    
+    //d = 
+    // (1-t)^3 * p0 + 3 * (1-t)^2 * t * p1 + 3 * (1-t) * t^2 * p2 + t^3 * p3
+    // c +3 d t^2++
+    d = (- 3 * tt + 6 * t - 3) * curve.p0 + (9 * tt - 12 * t + 3) * curve.p1 + (-9 * tt + 6 * t) * curve.p2 + 3 * tt * curve.p3;
+    Vector p = uuu * curve.p0 + 3 * uu * t * curve.p1 + 3 * u * tt * curve.p2 + ttt * curve.p3;
 
     return p;
 }
@@ -89,27 +90,28 @@ Vector TiledBeizerCurvePrivate::calcBezierPoint(float t)
 void TiledBeizerCurvePrivate::findPoints(float t0, float t1, std::list<Vector>& points, std::list<Vector>::iterator& i)
 {
     float tMid = (t0 + t1) / 2;
-    Vector p0 = calcBezierPoint(t0);
-    Vector p1 = calcBezierPoint(t1);
+    Vector dl, dr, dc;
+    Vector p0 = calcBezierPoint(t0, dl);
+    Vector p1 = calcBezierPoint(t1, dr);
 
     if (texture && ((p0 - p1).length() < texture->width()))
     {
         return;
     }
+    //Vector leftDirection = (p0 - pMid).norm();
+    //Vector rightDirection = (p1 - pMid).norm();
+    Vector pMid = calcBezierPoint(tMid, dc);
+    dl = dl.norm();
+    dr = dr.norm();
+    dc = dc.norm();
 
-    Vector pMid = calcBezierPoint(tMid);
-    Vector leftDirection = (p0 - pMid).norm();
-    Vector rightDirection = (p1 - pMid).norm();
-
-    if (fabs(leftDirection * rightDirection) < ANGLE_TRESHOLD)
-    {
+    if (fabs(dl * dc) < ANGLE_TRESHOLD)
         findPoints(t0, tMid, points, i);
-
-        points.insert(i, pMid);
-
+    
+    points.insert(i, pMid);
+    
+    if (fabs(dr * dc) < ANGLE_TRESHOLD)
         findPoints(tMid, t1, points, i);
-        return;
-    }
 }
 
 void TiledBeizerCurve::calcCurve()
@@ -117,9 +119,10 @@ void TiledBeizerCurve::calcCurve()
     RANGERS_D(TiledBeizerCurve);
 
     std::list<Vector> points;
-
-    Vector p0 = d->calcBezierPoint(0.0f);
-    Vector p1 = d->calcBezierPoint(1.0f);
+    
+    Vector dir;
+    Vector p0 = d->calcBezierPoint(0.0f, dir);
+    Vector p1 = d->calcBezierPoint(1.0f, dir);
     points.push_back(p0);
     points.push_back(p1);
 

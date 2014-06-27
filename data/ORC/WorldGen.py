@@ -40,6 +40,7 @@ class WorldGen(WorldGenHook):
                 wg.genDesertPlanet(system, SOLAR_PLANET_ORBITS[i], int(dat['Data']['SE']['Planet'][SOLAR_PLANET_STYLES[i]]['Radius'].value), \
                                    SOLAR_PLANET_NAMES[i], 0.0, math.pi * 2.0 / SOLAR_PLANET_PERIODS[i], SOLAR_PLANET_STYLES[i])
             i = i + 1
+        #wg.genAsteroid(system, 10000, 3000, 400, 0, 0, 100, '01')
         return system
         
     def generate(self):        

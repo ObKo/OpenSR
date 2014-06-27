@@ -149,9 +149,6 @@ int RadioButton::minHeight() const
 
 void RadioButton::processMain()
 {
-    Button::processMain();
-
-    lock();
     RANGERS_D(RadioButton);
 
     if (!d->sprite)
@@ -160,7 +157,6 @@ void RadioButton::processMain()
     d->label->setPosition(d->sprite->width() + 5, int(d->sprite->height() - d->label->height()) / 2);
     d->width = minWidth();
     d->height = minHeight();
-    unlock();
 }
 }
 

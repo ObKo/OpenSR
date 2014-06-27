@@ -36,7 +36,7 @@ public:
     //! Type of action
     enum Type {NONE = 0, BUTTON_CLICKED = 1, KEY_PRESSED = 2, CHECKBOX_TOGGLED = 3, MOUSE_ENTER = 4,
                MOUSE_LEAVE = 5, MOUSE_DOWN = 6, MOUSE_UP = 7, MOUSE_CLICK = 8, TEXT_INPUT = 9,
-               DIALOG_ACCEPT = 10, DIALOG_CANCEL = 11,
+               DIALOG_ACCEPT = 10, DIALOG_CANCEL = 11, RADIOBUTTON_SWITCHED = 12,
                USER = 127
               };
     //! Argument of action

@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2013 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2013 - 2014 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -32,17 +32,23 @@ RadioButtonGroupPrivate::RadioButtonGroupPrivate()
 
 void RadioButtonGroupPrivate::RadioButtonGroupListener::actionPerformed(const Action& action)
 {
+    if(action.type() != Action::BUTTON_CLICKED)
+        return;
+    
     boost::shared_ptr<RadioButton> button = boost::dynamic_pointer_cast<RadioButton>(action.source());
-
     if (!button)
         return;
+    
+    //FIXME: Ugly
+    //auto index = std::find(d->radioButtons.begin(), d->radioButtons.end(), button);
+    //if(index == d->radioButtons.end())
+    //    return;
+    
+    if(button->isSelected())
+        return;
 
-    switch (action.type())
-    {
-    case Action::BUTTON_CLICKED:
-        d->q_func()->selectRadioButton(button);
-        break;
-    }
+    d->q_func()->selectRadioButton(button);
+    button->action(Action(button, Action::RADIOBUTTON_SWITCHED));
 }
 
 RadioButtonGroup::RadioButtonGroup(): WidgetNode(*(new RadioButtonGroupPrivate()))

@@ -68,7 +68,7 @@ void TiledPolyline::draw() const
 
     if (!prepareDraw())
         return;
-
+        
     glBindTexture(GL_TEXTURE_2D, d->texture->openGLTexture());
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);

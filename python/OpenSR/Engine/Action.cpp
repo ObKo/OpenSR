@@ -90,6 +90,7 @@ void exportAction()
         .value("MOUSE_CLICK", Action::MOUSE_CLICK)
         .value("DIALOG_ACCEPT", Action::DIALOG_ACCEPT)
         .value("DIALOG_CANCEL", Action::DIALOG_CANCEL)
+        .value("RADIOBUTTON_SWITCHED", Action::RADIOBUTTON_SWITCHED)
         .value("USER", Action::USER);
     }
 }
