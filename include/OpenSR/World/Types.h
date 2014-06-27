@@ -43,7 +43,7 @@ struct RANGERS_WORLD_API Trajectory
 {
     Trajectory();
 
-    std::list<BeizerCurve> nextTurns;
+    std::list<BezierCurve> nextTurns;
 };
 
 struct RANGERS_WORLD_API PlanetStyle: public ResourceObject

@@ -107,12 +107,12 @@ void exportTypes()
     .def_readwrite("width", &Rect::width)
     .def_readwrite("height", &Rect::height);
 
-    class_<BeizerCurve>("BeizerCurve", init<const Vector&, const Vector&, const Vector&, const Vector&>())
+    class_<BezierCurve>("BezierCurve", init<const Vector&, const Vector&, const Vector&, const Vector&>())
     .def(init<>())
-    .def_readwrite("p0", &BeizerCurve::p0)
-    .def_readwrite("p1", &BeizerCurve::p1)
-    .def_readwrite("p2", &BeizerCurve::p2)
-    .def_readwrite("p3", &BeizerCurve::p3);
+    .def_readwrite("p0", &BezierCurve::p0)
+    .def_readwrite("p1", &BezierCurve::p1)
+    .def_readwrite("p2", &BezierCurve::p2)
+    .def_readwrite("p3", &BezierCurve::p3);
 
     class_<TextureRegion>("TextureRegion", init<boost::shared_ptr<Texture>, int, int, int, int>())
     .def(init<boost::shared_ptr<TextureRegionDescriptor> >())

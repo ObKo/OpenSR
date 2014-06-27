@@ -61,11 +61,11 @@ Vector& Vector::operator+=(const Vector& other)
     return *this;
 }
 
-BeizerCurve::BeizerCurve()
+BezierCurve::BezierCurve()
 {
 }
 
-BeizerCurve::BeizerCurve(const Vector& p0, const Vector& p1, const Vector& p2, const Vector& p3):
+BezierCurve::BezierCurve(const Vector& p0, const Vector& p1, const Vector& p2, const Vector& p3):
     p0(p0), p1(p1), p2(p2), p3(p3)
 {
 }

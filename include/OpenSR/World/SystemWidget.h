@@ -27,7 +27,7 @@
 namespace Rangers
 {
 
-class TiledBeizerCurve;
+class TiledBezierCurve;
 class Sprite;
 class WidgetNode;
 class SpriteWidget;
@@ -80,7 +80,7 @@ private:
     boost::shared_ptr<InfoWidget> m_infoWidget;
     boost::shared_ptr<SystemWidgetListener> m_actionListener;
     boost::shared_ptr<WidgetNode> m_node;
-    std::list<boost::shared_ptr<TiledBeizerCurve> > m_trajectory;
+    std::list<boost::shared_ptr<TiledBezierCurve> > m_trajectory;
 
     bool m_turn;
     int m_turnTime;

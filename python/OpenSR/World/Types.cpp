@@ -36,7 +36,7 @@ boost::python::list getNextTurns(Trajectory& self)
 
 void setNextTurns(Trajectory& self, const boost::python::object& r)
 {
-    self.nextTurns = Rangers::Python::pythonObjectToList<BeizerCurve>(r);
+    self.nextTurns = Rangers::Python::pythonObjectToList<BezierCurve>(r);
 }
 }
 

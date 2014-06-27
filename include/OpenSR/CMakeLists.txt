@@ -38,7 +38,7 @@ SET(ENGINE_HEADERS
     SpriteWidget.h
     Styles.h
     Texture.h
-    TiledBeizerCurve.h
+    TiledBezierCurve.h
     TiledLine.h
     TiledPolyline.h
     Types.h

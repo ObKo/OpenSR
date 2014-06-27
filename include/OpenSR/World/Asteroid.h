@@ -84,7 +84,7 @@ protected:
     float m_prevT;
     float m_speed;
 
-    std::list<BeizerCurve> fullTrajectory;
+    std::list<BezierCurve> fullTrajectory;
 };
 }
 }

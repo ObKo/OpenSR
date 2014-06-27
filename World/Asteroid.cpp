@@ -243,7 +243,7 @@ void Asteroid::calcTrajectory()
         p = Ederiv(eta);
         p3 = p4 - k * Vector(p.x, p.y);
 
-        BeizerCurve c = BeizerCurve(p1, p2, p3, p4);
+        BezierCurve c = BezierCurve(p1, p2, p3, p4);
 
         m_trajectory.nextTurns.push_back(c);
 

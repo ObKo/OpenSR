@@ -1,5 +1,5 @@
-from OpenSR.Engine import ScriptWidget, Engine, ResourceManager, TiledPolyline, TiledBeizerCurve, \
-                          BeizerCurve, Vector, Sprite
+from OpenSR.Engine import ScriptWidget, Engine, ResourceManager, TiledPolyline, TiledBezierCurve, \
+                          BezierCurve, Vector, Sprite
 from OpenSR.World import WorldManager
 
 engine = Engine.instance()
@@ -11,23 +11,23 @@ class PolyTestWidget(ScriptWidget):
     def __init__(self):
         ScriptWidget.__init__(self)
         
-        self.curve1 = BeizerCurve(Vector(100, 500), Vector(0, 100), Vector(600, 200), Vector(500, 500))
-        self.line1 = TiledBeizerCurve('ORC/UnitPath2.png')
+        self.curve1 = BezierCurve(Vector(100, 500), Vector(0, 100), Vector(600, 200), Vector(500, 500))
+        self.line1 = TiledBezierCurve('ORC/UnitPath2.png')
         self.line1.curve = self.curve1
         self.addChild(self.line1)
         
-        self.curve2 = BeizerCurve(Vector(250, 250), Vector(500, 100), Vector(0, 100), Vector(500, 250))
-        self.line2 = TiledBeizerCurve('ORC/UnitPath2.png')
+        self.curve2 = BezierCurve(Vector(250, 250), Vector(500, 100), Vector(0, 100), Vector(500, 250))
+        self.line2 = TiledBezierCurve('ORC/UnitPath2.png')
         self.line2.curve = self.curve2
         self.addChild(self.line2)
         
-        self.curve3 = BeizerCurve(Vector(100, 500), Vector(200, 400), Vector(300, 600), Vector(400, 500))
-        self.line3 = TiledBeizerCurve('ORC/UnitPath2.png')
+        self.curve3 = BezierCurve(Vector(100, 500), Vector(200, 400), Vector(300, 600), Vector(400, 500))
+        self.line3 = TiledBezierCurve('ORC/UnitPath2.png')
         self.line3.curve = self.curve3
         self.addChild(self.line3)
         
-        self.curve3 = BeizerCurve(Vector(0, 500), Vector(400, 600), Vector(600, 600), Vector(1000, 500))
-        self.line3 = TiledBeizerCurve('ORC/UnitPath2.png')
+        self.curve3 = BezierCurve(Vector(0, 500), Vector(400, 600), Vector(600, 600), Vector(1000, 500))
+        self.line3 = TiledBezierCurve('ORC/UnitPath2.png')
         self.line3.curve = self.curve3
         self.addChild(self.line3)
         

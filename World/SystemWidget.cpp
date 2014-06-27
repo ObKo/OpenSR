@@ -37,7 +37,7 @@
 #include <OpenSR/ResourceManager.h>
 #include <OpenSR/SpriteWidget.h>
 #include <OpenSR/Button.h>
-#include <OpenSR/TiledBeizerCurve.h>
+#include <OpenSR/TiledBezierCurve.h>
 
 namespace
 {
@@ -341,9 +341,9 @@ void SystemWidget::showTrajectory(const Trajectory& t)
 {
     if (m_trajectory.size())
         hideTrajectory();
-    for (const BeizerCurve & c : t.nextTurns)
+    for (const BezierCurve & c : t.nextTurns)
     {
-        auto o = boost::shared_ptr<TiledBeizerCurve>(new TiledBeizerCurve("ORC/UnitPath2.png"));
+        auto o = boost::shared_ptr<TiledBezierCurve>(new TiledBezierCurve("ORC/UnitPath2.png"));
         o->setCurve(c);
         o->setLayer(100);
         m_node->addChild(o);
@@ -353,7 +353,7 @@ void SystemWidget::showTrajectory(const Trajectory& t)
 
 void SystemWidget::hideTrajectory()
 {
-    for (boost::shared_ptr<TiledBeizerCurve> c : m_trajectory)
+    for (boost::shared_ptr<TiledBezierCurve> c : m_trajectory)
     {
         m_node->removeChild(c);
     }

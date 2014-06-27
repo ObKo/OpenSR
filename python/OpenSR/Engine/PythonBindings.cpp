@@ -58,7 +58,7 @@ void exportRadioButtonGroup();
 void exportTiledLine();
 void exportSpriteWidget();
 void exportTiledPolyline();
-void exportTiledBeizerCurve();
+void exportTiledBezierCurve();
 void exportAnimatedTexture();
 void exportLabelWidget();
 void exportResourceObjectManager();
@@ -132,7 +132,7 @@ BOOST_PYTHON_MODULE(_Engine)
     Rangers::Python::exportTiledLine();
     Rangers::Python::exportSpriteWidget();
     Rangers::Python::exportTiledPolyline();
-    Rangers::Python::exportTiledBeizerCurve();
+    Rangers::Python::exportTiledBezierCurve();
     Rangers::Python::exportAnimatedTexture();
     Rangers::Python::exportLabelWidget();
     Rangers::Python::exportResourceObjectManager();

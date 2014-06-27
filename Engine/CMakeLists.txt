@@ -41,7 +41,7 @@ SET(SOURCES
     RadioButtonGroup.cpp
     TiledLine.cpp
     TiledPolyline.cpp
-    TiledBeizerCurve.cpp
+    TiledBezierCurve.cpp
     ResourceObjectManager.cpp
     AFTFont.cpp
 )

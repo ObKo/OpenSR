@@ -33,7 +33,7 @@ SET(PYTHON_ENGINE_SOURCES
     TiledLine.cpp
     SpriteWidget.cpp
     TiledPolyline.cpp
-    TiledBeizerCurve.cpp
+    TiledBezierCurve.cpp
     AnimatedTexture.cpp
     LabelWidget.cpp
     ResourceObjectManager.cpp
