@@ -37,5 +37,13 @@
         "caption-color": "#31EFFF",
         "label-color": "#8C8A8C"
     },
+    "trajectory": 
+    {
+        "@type": "trajectory-style",
+        "current-turn-line": "ORC/UnitPath1.png",
+        "turn-line": "ORC/UnitPath2.png",
+        "current-turn-point": "DATA/PI/UnitPath4.gi",
+        "turn-point": "DATA/PI/UnitPath3.gi"
+    },
     "quest": ":World/quest-styles.json"
 }

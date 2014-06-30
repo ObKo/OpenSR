@@ -77,10 +77,7 @@ Vector TiledBeizerCurvePrivate::calcBezierPoint(float t, Vector& d)
     float uu = u * u;
     float uuu = uu * u;
     float ttt = tt * t;
-    
-    //d = 
-    // (1-t)^3 * p0 + 3 * (1-t)^2 * t * p1 + 3 * (1-t) * t^2 * p2 + t^3 * p3
-    // c +3 d t^2++
+
     d = (- 3 * tt + 6 * t - 3) * curve.p0 + (9 * tt - 12 * t + 3) * curve.p1 + (-9 * tt + 6 * t) * curve.p2 + 3 * tt * curve.p3;
     Vector p = uuu * curve.p0 + 3 * uu * t * curve.p1 + 3 * u * tt * curve.p2 + ttt * curve.p3;
 
@@ -107,9 +104,9 @@ void TiledBeizerCurvePrivate::findPoints(float t0, float t1, std::list<Vector>& 
 
     if (fabs(dl * dc) < ANGLE_TRESHOLD)
         findPoints(t0, tMid, points, i);
-    
+
     points.insert(i, pMid);
-    
+
     if (fabs(dr * dc) < ANGLE_TRESHOLD)
         findPoints(tMid, t1, points, i);
 }
@@ -119,7 +116,7 @@ void TiledBeizerCurve::calcCurve()
     RANGERS_D(TiledBeizerCurve);
 
     std::list<Vector> points;
-    
+
     Vector dir;
     Vector p0 = d->calcBezierPoint(0.0f, dir);
     Vector p1 = d->calcBezierPoint(1.0f, dir);

@@ -57,6 +57,17 @@ struct RANGERS_WORLD_API InteractionWidgetStyle: public ResourceObject
     boost::shared_ptr<ScrollBarStyle> scrollStyle;
 };
 
+struct RANGERS_WORLD_API TrajectoryStyle: public ResourceObject
+{
+    TrajectoryStyle();
+
+    //Only plain textures supported
+    std::string currentTurnLine;
+    std::string turnLine;
+    std::string currentTurnPoint;
+    std::string turnPoint;
+};
+
 class RANGERS_WORLD_API SkinManager
 {
 public:
@@ -65,9 +76,11 @@ public:
     void loadStyles();
 
     boost::shared_ptr<InfoWidgetStyle> infoWidgetStyle() const;
+    boost::shared_ptr<TrajectoryStyle> trajectoryStyle() const;
 
 private:
     boost::shared_ptr<InfoWidgetStyle> m_infoWidgetStyle;
+    boost::shared_ptr<TrajectoryStyle> m_trajectoryStyle;
 };
 }
 }

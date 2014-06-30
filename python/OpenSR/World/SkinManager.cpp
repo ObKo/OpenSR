@@ -32,7 +32,8 @@ void exportSkinManager()
 
     class_<SkinManager, boost::noncopyable> c("SkinManager", boost::python::no_init);
     c.def("loadStyles", &SkinManager::loadStyles)
-    .def("infoWidgetStyle", &SkinManager::infoWidgetStyle);
+    .def("infoWidgetStyle", &SkinManager::infoWidgetStyle)
+    .def("trajectoryStyle", &SkinManager::trajectoryStyle);
 
     class_<InfoWidgetStyle, boost::shared_ptr<InfoWidgetStyle>, bases<ResourceObject> > c2("InfoWidgetStyle", init<>());
     c2.def_readwrite("background", &InfoWidgetStyle::background)
@@ -50,6 +51,12 @@ void exportSkinManager()
     .def_readwrite("activeColor", &InteractionWidgetStyle::activeColor)
     .def_readwrite("inactiveColor", &InteractionWidgetStyle::inactiveColor)
     .def_readwrite("scrollStyle", &InteractionWidgetStyle::scrollStyle);
+
+    class_<TrajectoryStyle, boost::shared_ptr<TrajectoryStyle>, bases<ResourceObject> > c4("TrajectoryStyle", init<>());
+    c4.def_readwrite("currentTurnLine", &TrajectoryStyle::currentTurnLine)
+    .def_readwrite("turnLine", &TrajectoryStyle::turnLine)
+    .def_readwrite("currentTurnPoint", &TrajectoryStyle::currentTurnPoint)
+    .def_readwrite("turnPoint", &TrajectoryStyle::turnPoint);
 }
 }
 }

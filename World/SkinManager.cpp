@@ -68,6 +68,20 @@ class InteractionWidgetStyleFactory: public ResourceObjectManager::ResourceObjec
         return s;
     }
 };
+
+class TrajectoryStyleFactory: public ResourceObjectManager::ResourceObjectFactory
+{
+    virtual boost::shared_ptr< ResourceObject > operator()(const std::string& currentPath, const Json::Value& object, ResourceObjectManager& manager)
+    {
+        boost::shared_ptr<TrajectoryStyle> s = boost::shared_ptr<TrajectoryStyle>(new TrajectoryStyle());
+
+        s->currentTurnLine = object.get("current-turn-line", Json::Value()).asString();
+        s->turnLine = object.get("turn-line", Json::Value()).asString();
+        s->currentTurnPoint = object.get("current-turn-point", Json::Value()).asString();
+        s->turnPoint = object.get("turn-point", Json::Value()).asString();
+        return s;
+    }
+};
 }
 
 InfoWidgetStyle::InfoWidgetStyle():
@@ -79,11 +93,16 @@ InteractionWidgetStyle::InteractionWidgetStyle()
 {
 }
 
+TrajectoryStyle::TrajectoryStyle()
+{
+
+}
+
 SkinManager::SkinManager()
 {
     ResourceManager::instance().objectManager().addFactory("info-widget-style", boost::shared_ptr<ResourceObjectManager::ResourceObjectFactory>(new InfoWidgetStyleFactory()));
     ResourceManager::instance().objectManager().addFactory("interaction-widget-style", boost::shared_ptr<ResourceObjectManager::ResourceObjectFactory>(new InteractionWidgetStyleFactory()));
-
+    ResourceManager::instance().objectManager().addFactory("trajectory-style", boost::shared_ptr<ResourceObjectManager::ResourceObjectFactory>(new TrajectoryStyleFactory()));
 }
 
 void SkinManager::loadStyles()
@@ -91,11 +110,17 @@ void SkinManager::loadStyles()
     std::string skinDir = Engine::instance().properties()->get<std::string>("world.skin", "/world/skin");
 
     m_infoWidgetStyle = ResourceManager::instance().objectManager().getObject<InfoWidgetStyle>(skinDir + "/info-widget");
+    m_trajectoryStyle = ResourceManager::instance().objectManager().getObject<TrajectoryStyle>(skinDir + "/trajectory");
 }
 
 boost::shared_ptr<InfoWidgetStyle> SkinManager::infoWidgetStyle() const
 {
     return m_infoWidgetStyle;
+}
+
+boost::shared_ptr<TrajectoryStyle> SkinManager::trajectoryStyle() const
+{
+    return m_trajectoryStyle;
 }
 
 }

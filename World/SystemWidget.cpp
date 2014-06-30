@@ -341,19 +341,45 @@ void SystemWidget::showTrajectory(const Trajectory& t)
 {
     if (m_trajectory.size())
         hideTrajectory();
+
+    if (!t.nextTurns.size())
+        return;
+
+    auto trajStyle = WorldManager::instance().skinManager().trajectoryStyle();
+    if (!trajStyle)
+        return;
+
+    bool first = true;
     for (const BezierCurve & c : t.nextTurns)
     {
-        auto o = boost::shared_ptr<TiledBezierCurve>(new TiledBezierCurve("ORC/UnitPath2.png"));
-        o->setCurve(c);
-        o->setLayer(100);
-        m_node->addChild(o);
-        m_trajectory.push_back(o);
+        boost::shared_ptr<TiledBezierCurve> l;
+        boost::shared_ptr<Sprite> p;
+        if (first)
+        {
+            l = boost::shared_ptr<TiledBezierCurve>(new TiledBezierCurve(trajStyle->currentTurnLine));
+            p = boost::shared_ptr<Sprite>(new Sprite(trajStyle->currentTurnPoint));
+            first = false;
+        }
+        else
+        {
+            l = boost::shared_ptr<TiledBezierCurve>(new TiledBezierCurve(trajStyle->turnLine));
+            p = boost::shared_ptr<Sprite>(new Sprite(trajStyle->turnPoint));
+        }
+        l->setCurve(c);
+        l->setLayer(100);
+        p->setPosition(c.p3);
+        p->setOrigin(POSITION_X_CENTER, POSITION_Y_CENTER);
+        p->setLayer(101);
+        m_node->addChild(l);
+        m_node->addChild(p);
+        m_trajectory.push_back(l);
+        m_trajectory.push_back(p);
     }
 }
 
 void SystemWidget::hideTrajectory()
 {
-    for (boost::shared_ptr<TiledBezierCurve> c : m_trajectory)
+    for (boost::shared_ptr<Object> c : m_trajectory)
     {
         m_node->removeChild(c);
     }
