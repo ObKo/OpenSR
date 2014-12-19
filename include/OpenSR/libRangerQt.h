@@ -4,11 +4,20 @@
 #include <stdint.h>
 
 #include <QImage>
+#include <QByteArray>
 
 class QIODevice;
 
 namespace OpenSR
 {
+const uint32_t GI_FRAME_SIGNATURE = 0x00006967;
+const uint32_t GAI_SIGNATURE = 0x00696167;
+const uint32_t HAI_SIGNATURE = 0x04210420;
+const uint32_t ZL02_SIGNATURE = 0x32304c5a;
+const uint32_t ZL01_SIGNATURE = 0x31304c5a;
+//FIXME: Check this
+const int HAI_FRAME_TIME = 50;
+
 //! Header of layer in *.gi files
 struct GILayerHeader
 {
@@ -56,7 +65,6 @@ struct GIFrameHeader
     uint32_t unknown3;
     uint32_t unknown4;
 };
-const uint32_t GI_FRAME_SIGNATURE = 0x00006967;
 
 //! Header of animation in *.gai file
 struct GAIHeader
@@ -74,7 +82,6 @@ struct GAIHeader
     uint32_t unknown1;
     uint32_t unknown2;
 };
-const uint32_t GAI_SIGNATURE = 0x00696167;
 
 struct HAIHeader
 {
@@ -92,9 +99,26 @@ struct HAIHeader
     uint32_t unknown6;
     uint32_t palSize;  //!< Size of pallete
 };
-const uint32_t HAI_SIGNATURE = 0x04210420;
-//FIXME: Check this
-const int HAI_FRAME_TIME = 50;
+
+//! PKG archive item
+struct PKGItem
+{
+    uint32_t sizeInArc;  //!< Compressed data size
+    uint32_t size;  //!< Uncompressed data size
+    char fullName[63];  //!< File name in upper case
+    char name[63];  //!< File name
+    uint32_t dataType;  //!< Data type
+    /*!<
+     * Variants:
+     *  -# 1 - RAW data
+     *  -# 2 - ZLIB compressed file
+     *  -# 3 - Directory
+     */
+    uint32_t offset;  //!< Fille offset in archive
+    uint32_t childCount; //!< Number of childs
+    PKGItem *parent;  //!< Parent item
+    PKGItem *childs;  //!< Child items
+};
 
 struct Animation
 {
@@ -125,6 +149,11 @@ GIFrameHeader peekGIHeader(QIODevice *dev);
 GIFrameHeader readGIHeader(QIODevice *dev);
 
 QImage loadGIFrame(QIODevice *dev, bool animation = false, const QImage &background = QImage(), int startX = 0, int startY = 0, int finishX = 0, int finishY = 0);
+
+PKGItem *loadPKG(QIODevice *dev);
+QByteArray extractFile(const PKGItem &item, QIODevice *dev);
+
+QByteArray unpackZL(QByteArray &src);
 }
 
 #endif

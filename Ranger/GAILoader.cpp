@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2011 - 2014 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2014 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -21,11 +21,6 @@
 
 namespace OpenSR
 {
-namespace
-{
-const uint32_t ZLIB_SIGNATURE = 0x31304C5A;
-}
-
 bool checkGAIHeader(QIODevice *dev)
 {
     quint32 sig;
@@ -86,19 +81,12 @@ QImage loadGAIFrame(QIODevice *dev, const GAIHeader& header, int i, const QImage
         dev->seek(giOffset);
         dev->peek((char*)&signature, sizeof(uint32_t));
 
-        if (signature == ZLIB_SIGNATURE)
+        if (signature == ZL01_SIGNATURE || signature == ZL02_SIGNATURE)
         {
-            char *buffer = new char[giSize];
-            dev->read((char *)buffer, giSize);
+            QByteArray zlibData = dev->read(giSize);
+            QByteArray data = unpackZL(zlibData);
 
-            uint32_t beSize = (((uint8_t *)buffer)[4] << 24) | (((uint8_t *)buffer)[5] << 16) |
-                              (((uint8_t *)buffer)[6] << 8) | (((uint8_t *)buffer)[7]);
-            ((uint32_t *)buffer)[1] = beSize;
-            QByteArray gi = qUncompress(QByteArray::fromRawData(buffer + 4, giSize - 4));
-
-            delete[] buffer;
-
-            QBuffer bufdev(&gi);
+            QBuffer bufdev(&data);
             bufdev.open(QIODevice::ReadOnly);
             result = loadGIFrame(&bufdev, true, background, header.startX, header.startY, header.finishX, header.finishY);
         }

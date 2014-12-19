@@ -1,7 +1,9 @@
 SET(RANGER_QT_SOURCES
     GAILoader.cpp
     GILoader.cpp
-    HAILoader.cpp    
+    HAILoader.cpp
+    PKG.cpp
+    ZLib.cpp
 )
 
 SET(RANGER_QT_HEADERS
@@ -16,4 +18,4 @@ INCLUDE_DIRECTORIES(
 
 ADD_LIBRARY(RangerQt SHARED ${RANGER_QT_SOURCES})
 
-TARGET_LINK_LIBRARIES(RangerQt Qt5::Core Qt5::Gui) 
+TARGET_LINK_LIBRARIES(RangerQt Qt5::Core Qt5::Gui)
