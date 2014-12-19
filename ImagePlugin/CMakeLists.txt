@@ -1,0 +1,15 @@
+SET(IMAGE_PLUGIN_SOURCES
+    GAIAnimationIO.cpp
+    GIImageIO.cpp
+    QtOpenSRImagePlugin.cpp
+)
+
+INCLUDE_DIRECTORIES(
+  ${CMAKE_SOURCE_DIR}/include
+  ${Qt5Gui_INCLUDE_DIRS}
+  ${Qt5Core_INCLUDE_DIRS}
+)
+
+ADD_LIBRARY(QtOpenSRImagePlugin SHARED ${IMAGE_PLUGIN_SOURCES})
+
+TARGET_LINK_LIBRARIES(QtOpenSRImagePlugin RangerQt)

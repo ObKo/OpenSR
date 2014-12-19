@@ -16,128 +16,38 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "OpenSR/libRanger.h"
+#include <OpenSR/libRangerQt.h>
+#include <QBuffer>
 
-#include <zlib.h>
-#include <cstring>
-#include <boost/iostreams/device/array.hpp>
-#include <boost/iostreams/stream.hpp>
-
-using namespace Rangers;
-using namespace std;
-
-void copyImageData(unsigned char *bufdes, int destwidth, int x, int y, int w, int h, unsigned char *graphbuf)
+namespace OpenSR
 {
-    uint32_t j;
-
-    for (int i = 0; i < w * h; i++)
-    {
-        *(bufdes + (destwidth * (i / w + y) + x + i % w) * 4) = *((graphbuf) + i * 4);
-        *(bufdes + (destwidth * (i / w + y) + x + i % w) * 4 + 1) = *((graphbuf) + i * 4 + 1);
-        *(bufdes + (destwidth * (i / w + y) + x + i % w) * 4 + 2) = *((graphbuf) + i * 4 + 2);
-        *(bufdes + (destwidth * (i / w + y) + x + i % w) * 4 + 3) = *((graphbuf) + i * 4 + 3);
-    }
+namespace
+{
+const uint32_t GAI_SIGNATURE = 0x00696167;
+const uint32_t ZLIB_SIGNATURE = 0x31304C5A;
 }
 
-/*!
- * \param stream input stream
- * \param background background frame, used in large animations
- * \return GAI animation
- */
-GAIAnimation Rangers::loadGAIAnimation(std::istream& stream, GIFrame *background)
+bool checkGAIHeader(QIODevice *dev)
 {
-    GAIHeader header = loadGAIHeader(stream);
-    return loadGAIAnimation(stream, header, background);
+    quint32 sig;
+    qint64 size = dev->peek((char*)&sig, sizeof(quint32));
+
+    if (size != sizeof(quint32) || sig != GAI_SIGNATURE)
+        return false;
+
+    return true;
 }
 
-
-/*!
- * \param stream input stream
- * \param header previously loaded GAI header.
- * \param background background frame, used in large animations
- * \return GAI animation
- */
-GAIAnimation Rangers::loadGAIAnimation(std::istream& stream, const GAIHeader& header, GIFrame *background)
+QVector<int> loadGAITimes(QIODevice *dev, const GAIHeader& header)
 {
-    GAIAnimation result;
-
-    if (header.signature != 0x00696167)
-        return result;
-
-    int width = header.finishX - header.startX;
-    int height = header.finishY - header.startY;
-
-    result.frames = new GIFrame[header.frameCount];
-    result.frameCount = header.frameCount;
-    result.width = width;
-    result.height = height;
-    result.times = loadGAITimes(stream, header);
-
-    for (int i = 0; i < header.frameCount; i++)
-    {
-        uint32_t giSeek, giSize;
-        stream.seekg(sizeof(GAIHeader) + i * 2 * sizeof(uint32_t), ios_base::beg);
-        stream.read((char*)&giSeek, sizeof(uint32_t));
-        stream.read((char*)&giSize, sizeof(uint32_t));
-
-        if (giSeek && giSize)
-        {
-            size_t giOffset = giSeek;
-            uint32_t signature;
-            stream.seekg(giOffset, ios_base::beg);
-            stream.read((char*)&signature, sizeof(uint32_t));
-
-            if (signature == 0x31304c5a)
-            {
-                stream.seekg(giOffset, ios_base::beg);
-                size_t outsize;
-                char *buffer = new char[giSize];
-                stream.read((char *)buffer, giSize);
-                unsigned char *gi = unpackZL01((unsigned char *)buffer, giSize, outsize);
-                delete[] buffer;
-                boost::iostreams::stream<boost::iostreams::array_source> giStream(boost::iostreams::array_source((const char*)gi, outsize));
-                result.frames[i] = loadGIFrame(giStream, true, background, 0, header.startX, header.startY, header.finishX, header.finishY);
-                delete[] gi;
-            }
-            else
-            {
-                stream.seekg(giOffset, ios_base::beg);
-                result.frames[i] = loadGIFrame(stream, true, background, giOffset, header.startX, header.startY, header.finishX, header.finishY);
-            }
-            if (background)
-                background = &(result.frames[i]);
-        }
-        else
-        {
-            GIFrame frame;
-            frame.width = width;
-            frame.height = height;
-            frame.data = new unsigned char[frame.width * frame.height * 4];
-            frame.format = GIFrame::Format_ARGB32;
-            memset(frame.data, 0, frame.width * frame.height * 4);
-
-            if (background)
-                copyImageData(frame.data, frame.width, 0, 0, background->width, background->height, background->data);
-
-            result.frames[i] = frame;
-            background = &(result.frames[i]);
-        }
-    }
-
-    return result;
-}
-
-uint32_t* Rangers::loadGAITimes(std::istream& stream, const GAIHeader& header)
-{
-    uint32_t *times = new uint32_t[header.frameCount];
-    memset(times, 0, header.frameCount * 4);
+    QVector<int> times(header.frameCount);
 
     if (!header.waitSize)
         return times;
 
     uint8_t *waitData = new uint8_t[header.waitSize];
-    stream.seekg(header.waitSeek, std::ios_base::beg);
-    stream.read((char*)waitData, header.waitSize);
+    dev->seek(header.waitSeek);
+    dev->read((char*)waitData, header.waitSize);
 
     uint32_t timeBlockCount = *((uint32_t*)waitData);
     uint8_t *p = waitData + 4 + timeBlockCount * 8 + 2;
@@ -159,9 +69,88 @@ uint32_t* Rangers::loadGAITimes(std::istream& stream, const GAIHeader& header)
     return times;
 }
 
-GAIHeader Rangers::loadGAIHeader(std::istream& stream)
+QImage loadGAIFrame(QIODevice *dev, const GAIHeader& header, int i, const QImage &background)
 {
-    GAIHeader header;
-    stream.read((char *)&header, 48);
-    return header;
+    if (i >= header.frameCount)
+        return QImage();
+
+    QImage result;
+    uint32_t giSeek, giSize;
+    dev->seek(sizeof(GAIHeader) + i * 2 * sizeof(uint32_t));
+    dev->read((char*)&giSeek, sizeof(uint32_t));
+    dev->read((char*)&giSize, sizeof(uint32_t));
+
+    if (giSeek && giSize)
+    {
+        qint64 giOffset = giSeek;
+        uint32_t signature;
+        dev->seek(giOffset);
+        dev->peek((char*)&signature, sizeof(uint32_t));
+
+        if (signature == ZLIB_SIGNATURE)
+        {
+            char *buffer = new char[giSize];
+            dev->read((char *)buffer, giSize);
+
+            uint32_t beSize = (((uint8_t *)buffer)[4] << 24) | (((uint8_t *)buffer)[5] << 16) |
+                              (((uint8_t *)buffer)[6] << 8) | (((uint8_t *)buffer)[7]);
+            ((uint32_t *)buffer)[1] = beSize;
+            QByteArray gi = qUncompress(QByteArray::fromRawData(buffer + 4, giSize - 4));
+
+            delete[] buffer;
+
+            QBuffer bufdev(&gi);
+            bufdev.open(QIODevice::ReadOnly);
+            result = loadGIFrame(&bufdev, true, background, header.startX, header.startY, header.finishX, header.finishY);
+        }
+        else
+        {
+            result = loadGIFrame(dev, true, background, header.startX, header.startY, header.finishX, header.finishY);
+        }
+    }
+    else
+    {
+        if (!background.isNull())
+            result = background;
+        else
+            result = QImage(header.finishX - header.startX, header.finishY - header.startY, QImage::Format_ARGB32);
+    }
+    return result;
+}
+
+Animation loadGAIAnimation(QIODevice *dev, const QImage &background)
+{
+    if (!checkGAIHeader(dev))
+        return Animation();
+
+    GAIHeader header = readGAIHeader(dev);
+    QImage bg = background;
+
+    Animation result;
+    result.images = QVector<QImage>(header.frameCount);
+    result.times = loadGAITimes(dev, header);
+
+    for (int i = 0; i < header.frameCount; i++)
+    {
+        result.images[i] = loadGAIFrame(dev, header, i, bg);
+        bg = result.images[i];
+    }
+
+    return result;
+}
+
+GAIHeader peekGAIHeader(QIODevice *dev)
+{
+    GAIHeader result;
+    dev->peek((char*)&result, sizeof(GAIHeader));
+    return result;
+}
+
+GAIHeader readGAIHeader(QIODevice *dev)
+{
+    GAIHeader result;
+    dev->read((char*)&result, sizeof(GAIHeader));
+    return result;
+}
+
 }
