@@ -21,4 +21,5 @@
 namespace Rangers
 {
 void extractPKG(const std::string &pkgFile, const std::string &outDir);
+void extractPKGToQRC(const std::string &pkgFile, const std::string &outDir);
 }

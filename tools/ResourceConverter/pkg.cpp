@@ -27,7 +27,7 @@ namespace Rangers
 {
 namespace
 {
-void extract(const PKGItem *item, std::istream &file, const std::string& currentPath)
+void extract(const PKGItem *item, std::istream &file, const std::string& currentPath, std::list<std::string> &fileNames)
 {
     if (item->dataType == 3)
     {
@@ -49,13 +49,65 @@ void extract(const PKGItem *item, std::istream &file, const std::string& current
         }
         for (int i = 0; i < item->childCount; i++)
         {
-            extract(&item->childs[i], file, newPath);
+            extract(&item->childs[i], file, newPath, fileNames);
         }
     }
     else
     {
         std::string fileName = currentPath + '/' + item->name;
         std::cout << fileName << std::endl;
+        fileNames.push_back(fileName);
+        std::ofstream outf(fileName);
+        if (!outf.is_open())
+        {
+            std::cerr << "Cannot open output file " << fileName << ": " << strerror(errno) << std::endl;
+            return;
+        }
+        char *data = (char*)extractFile(*item, file);
+        if (!data)
+        {
+            std::cerr << "Cannot extract file " << fileName << std::endl;
+            return;
+        }
+        outf.write(data, item->size);
+        delete[] data;
+        outf.close();
+    }
+}
+
+void extractQRC(const PKGItem *item, std::istream &file, const std::string& dir, const std::string& currentPath, std::ostream &qrcFile)
+{
+    if (item->dataType == 3)
+    {
+        std::string newPath;
+        if (std::string(item->name) == "")
+        {
+            newPath = currentPath;
+        }
+        else
+        {
+            if (currentPath.empty())
+                newPath = item->name;
+            else
+                newPath = currentPath + '/' + item->name;
+            std::cout << newPath << std::endl;
+        }
+
+        if (!createDirPath(dir + "/" + newPath))
+        {
+            std::cerr << "Cannot create dir " << dir + "/" + newPath << std::endl;
+            return;
+        }
+        for (int i = 0; i < item->childCount; i++)
+        {
+            extractQRC(&item->childs[i], file, dir, newPath, qrcFile);
+        }
+    }
+    else
+    {
+        std::string fileName = dir + '/' + currentPath + '/' + item->name;
+        std::cout << fileName << std::endl;
+        qrcFile << "<file>" << currentPath + '/' + item->name << "</file>" << std::endl;
         std::ofstream outf(fileName);
         if (!outf.is_open())
         {
@@ -89,6 +141,28 @@ void extractPKG(const std::string &pkgFile, const std::string &outDir)
         std::cerr << "Cannot load pkg archive " << pkgFile << ": " << strerror(errno) << std::endl;
         return;
     }
-    extract(root, pkg, outDir);
+    std::list<std::string> fnames;
+    extract(root, pkg, outDir, fnames);
+}
+
+void extractPKGToQRC(const std::string &pkgFile, const std::string &outDir)
+{
+    std::ifstream pkg(pkgFile);
+    if (!pkg.is_open())
+    {
+        std::cerr << "Cannot open pkg archive " << pkgFile << ": " << strerror(errno) << std::endl;
+        return;
+    }
+    PKGItem *root = loadPKG(pkg);
+    if (!root)
+    {
+        std::cerr << "Cannot load pkg archive " << pkgFile << ": " << strerror(errno) << std::endl;
+        return;
+    }
+    std::ofstream qrc(outDir + "/" + basename(pkgFile) + ".qrc");
+    qrc << "<!DOCTYPE RCC><RCC version=\"1.0\"><qresource>" << std::endl;
+    extractQRC(root, pkg, outDir, "", qrc);
+    qrc << "</qresource></RCC>" << std::endl;
+    qrc.close();
 }
 }

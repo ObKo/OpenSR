@@ -31,6 +31,7 @@ void showHelp()
     std::cout << "Usage: rangersresconv command [arguments]" << std::endl;
     std::cout << "Commands: " << std::endl;
     std::cout << "\tpkgx pkg_file output_dir - extract pkg file from original game to output_dir." << std::endl;
+    std::cout << "\tpkg2qrc pkg_file output_dir - extract pkg file from original game to output_dir and create Qt Resource file description (qrc file)." << std::endl;
     std::cout << "\tpkg2rpkg compression pkg_file rpkg_file - convert pkg file from original game to rpkg format." << std::endl;
     std::cout << "\t\tSupported compressions: NONE ZLIB LZMA" << std::endl;
     std::cout << "\t\tSupported types: RGB16, RGB24, RGBA, DXT1, DXT3, DXT5" << std::endl;
@@ -95,6 +96,15 @@ int main(int argc, char **argv)
             return 0;
         }
         Rangers::gi2png(argv[2], argv[3]);
+    }
+    else if (std::string(argv[1]) == "pkg2qrc")
+    {
+        if (argc < 4)
+        {
+            showHelp();
+            return 0;
+        }
+        Rangers::extractPKGToQRC(argv[2], argv[3]);
     }
     else if (std::string(argv[1]) == "create_planet")
     {
