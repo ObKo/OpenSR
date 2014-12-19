@@ -23,7 +23,6 @@ namespace OpenSR
 {
 namespace
 {
-const uint32_t GAI_SIGNATURE = 0x00696167;
 const uint32_t ZLIB_SIGNATURE = 0x31304C5A;
 }
 

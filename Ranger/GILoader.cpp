@@ -24,11 +24,6 @@
 
 namespace OpenSR
 {
-namespace
-{
-const uint32_t GI_FRAME_SIGNATURE = 0x00006967;
-}
-
 bool checkGIHeader(QIODevice *dev)
 {
     quint32 sig;
@@ -55,7 +50,7 @@ void blitR5G6B5(QImage &result, int x, int y, int w, int h, QIODevice *dev)
 void blitARGBI(QImage &result, int x, int y, int w, int h, QIODevice *dev)
 {
     for (int i = y; i < y + h; i++)
-        dev->read((char *)((quint16*)result.scanLine(i)) + x, w);
+        dev->read((char *)(result.scanLine(i) + x), w);
 }
 
 void drawR5G6B5(QImage &result, int x, int y, QIODevice *dev)
@@ -626,12 +621,12 @@ QImage loadFrameType4(const GIFrameHeader& image, const GILayerHeader *layers, Q
 
         dev->seek(offset + layers[1].seek);
         QVector<QRgb> pal(layers[1].size / 4);
+        dev->read((char*)pal.data(), layers[1].size);
+
+        //FIXME: Does color table really requires a premultiply?
         for (int i = 0; i < layers[1].size / 4; i++)
-        {
-            uint32_t color;
-            dev->read((char*)&color, 4);
-            pal[i] = color;
-        }
+            pal[i] = qPremultiply(qRgba(pal[i] & 0xFF, ((pal[i] >> 8) & 0xFF), ((pal[i] >> 16) & 0xFF), (pal[i] >> 24) & 0xFF));
+
         result.setColorTable(pal);
     }
 

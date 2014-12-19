@@ -23,7 +23,6 @@ struct GILayerHeader
 };
 
 //! Header of frame in *.gi file
-
 struct GIFrameHeader
 {
     uint32_t signature;  //!< Signature
@@ -57,7 +56,9 @@ struct GIFrameHeader
     uint32_t unknown3;
     uint32_t unknown4;
 };
+const uint32_t GI_FRAME_SIGNATURE = 0x00006967;
 
+//! Header of animation in *.gai file
 struct GAIHeader
 {
     uint32_t signature;  //!< File signature
@@ -73,6 +74,27 @@ struct GAIHeader
     uint32_t unknown1;
     uint32_t unknown2;
 };
+const uint32_t GAI_SIGNATURE = 0x00696167;
+
+struct HAIHeader
+{
+    uint32_t signature;  //!< Signature
+    uint32_t width;  //!< Animation width
+    uint32_t height;  //!< Animation height
+    uint32_t rowBytes;  //!< Bytes in one line
+    uint32_t count;  //!< Number of frames in animation
+    uint32_t frameSize;  //!< Size of one frame
+    uint32_t unknown1;
+    uint32_t unknown2;
+    uint32_t unknown3;
+    uint32_t unknown4;
+    uint32_t unknown5;
+    uint32_t unknown6;
+    uint32_t palSize;  //!< Size of pallete
+};
+const uint32_t HAI_SIGNATURE = 0x04210420;
+//FIXME: Check this
+const int HAI_FRAME_TIME = 50;
 
 struct Animation
 {
@@ -80,19 +102,29 @@ struct Animation
     QVector<int> times;
 };
 
-bool checkGAIHeader(QIODevice *dev);
-bool checkGIHeader(QIODevice *dev);
+bool checkHAIHeader(QIODevice *dev);
+HAIHeader peekHAIHeader(QIODevice *dev);
+HAIHeader readHAIHeader(QIODevice *dev);
 
-GIFrameHeader peekGIHeader(QIODevice *dev);
-GIFrameHeader readGIHeader(QIODevice *dev);
+QVector<int> loadHAITimes(QIODevice *dev, const HAIHeader& header);
+QImage loadHAIFrame(QIODevice *dev, const HAIHeader& header, int i);
+
+Animation loadHAIAnimation(QIODevice *dev);
+
+bool checkGAIHeader(QIODevice *dev);
 GAIHeader peekGAIHeader(QIODevice *dev);
 GAIHeader readGAIHeader(QIODevice *dev);
 
-QImage loadGIFrame(QIODevice *dev, bool animation = false, const QImage &background = QImage(), int startX = 0, int startY = 0, int finishX = 0, int finishY = 0);
+QVector<int> loadGAITimes(QIODevice *dev, const GAIHeader& header);
+QImage loadGAIFrame(QIODevice *dev, const GAIHeader& header, int i, const QImage &background);
 
 Animation loadGAIAnimation(QIODevice *dev, const QImage &background = QImage());
-QImage loadGAIFrame(QIODevice *dev, const GAIHeader& header, int i, const QImage &background);
-QVector<int> loadGAITimes(QIODevice *dev, const GAIHeader& header);
+
+bool checkGIHeader(QIODevice *dev);
+GIFrameHeader peekGIHeader(QIODevice *dev);
+GIFrameHeader readGIHeader(QIODevice *dev);
+
+QImage loadGIFrame(QIODevice *dev, bool animation = false, const QImage &background = QImage(), int startX = 0, int startY = 0, int finishX = 0, int finishY = 0);
 }
 
 #endif
