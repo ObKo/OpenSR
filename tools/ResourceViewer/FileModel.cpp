@@ -1,10 +1,30 @@
+/*
+    OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
+    Copyright (C) 2014 Kosyak <ObKo@mail.ru>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include "FileModel.h"
+
+#include <OpenSR/libRangerQt.h>
 #include <QtGui>
 #include <QDebug>
 #include <QFile>
 
-using namespace Rangers;
-
+namespace OpenSR
+{
 FileModel::FileModel(QObject *parent)
     : QAbstractItemModel(parent)
 {
@@ -36,7 +56,7 @@ QVariant FileModel::data(const QModelIndex &index, int role) const
         if (item->childs.count())
             return iconProvider.icon(QFileIconProvider::Folder);
         else
-            return iconProvider.icon(QFileInfo(item->name));
+            return iconProvider.icon(QFileIconProvider::File);
     }
     return QVariant();
 }
@@ -125,91 +145,16 @@ void convertPKGNode(PKGItem *node, FileNode *fileNode, FileNode *parent, QString
     }
 }
 
-void convertRPKGEntry(const RPKGEntry *entry, FileNode *root, FileNode *fileNode)
-{
-    QString name = QString::fromUtf8(entry->name.c_str());
-    QFileInfo fileInfo(name);
-    fileNode->name = fileInfo.fileName();
-    fileNode->fullName = name;
-
-    QString dir = fileInfo.dir().path();
-    QStringList dirs = dir.split("/");
-
-    FileNode *currentNode = root;
-    QString fullDirName;
-    foreach(QString dir, dirs)
-    {
-        fullDirName += dir + "/";
-        bool hasChild = false;
-        foreach(FileNode * child, currentNode->childs)
-        {
-            if (child->name == dir)
-            {
-                hasChild = true;
-                currentNode = child;
-                break;
-            }
-        }
-        if (!hasChild)
-        {
-            FileNode *newNode = new FileNode();
-            currentNode->childs.append(newNode);
-            newNode->parent = currentNode;
-            newNode->fullName = fullDirName;
-            newNode->fullName.chop(1);
-            newNode->name = dir;
-            newNode->type = NODE_RPKG;
-            newNode->userData = 0;
-            currentNode = newNode;
-        }
-    }
-
-    fileNode->parent = currentNode;
-    currentNode->childs.append(fileNode);
-    fileNode->userData = new RPKGEntry(*entry);
-    fileNode->type = NODE_RPKG;
-}
-
 FileNode* FileModel::addPKG(const QFileInfo& file)
 {
-#ifdef Q_OS_WIN32
-    std::ifstream f((wchar_t *)file.filePath().utf16(), std::ios::binary);
-#else
-    std::ifstream f(QFile::encodeName(file.filePath()).data(), std::ios::binary);
-#endif
-    PKGItem *root = Rangers::loadPKG(f);
+    QFile f(file.absoluteFilePath());
+    f.open(QIODevice::ReadOnly);
+    PKGItem *root = loadPKG(&f);
     f.close();
 
     beginResetModel();
     FileNode *node = new FileNode;
     convertPKGNode(root, node, rootItem, "");
-    node->name = file.fileName();
-    node->fullName = file.filePath();
-    rootItem->childs.append(node);
-    archives[node] = file;
-    endResetModel();
-    return node;
-}
-
-FileNode* FileModel::addRPKG(const QFileInfo& file)
-{
-#ifdef Q_OS_WIN32
-    std::ifstream f((wchar_t *)file.filePath().utf16(), std::ios::binary);
-#else
-    std::ifstream f(QFile::encodeName(file.filePath()).data(), std::ios::binary);
-#endif
-    std::list<RPKGEntry> entries = Rangers::loadRPKG(f);
-    f.close();
-
-    beginResetModel();
-    FileNode *node = new FileNode;
-    std::list<RPKGEntry>::const_iterator end = entries.end();
-    for (std::list<RPKGEntry>::const_iterator i = entries.begin(); i != end; ++i)
-    {
-        FileNode *n = new FileNode();
-        convertRPKGEntry(&(*i), node, n);
-    }
-    node->parent = rootItem;
     node->name = file.fileName();
     node->fullName = file.filePath();
     rootItem->childs.append(node);
@@ -237,7 +182,6 @@ FileNode* FileModel::getSiblingNode(FileNode* node, const QString& name)
     switch (node->type)
     {
     case NODE_PKG:
-    case NODE_RPKG:
     {
         FileNode *parent = node->parent;
         if (!parent)
@@ -281,35 +225,9 @@ QByteArray FileModel::getData(FileNode *node)
         while (static_cast<PKGItem*>(root->userData)->parent)
             root = root->parent;
 
-#ifdef Q_OS_WIN32
-        std::ifstream f((wchar_t *)archives[root].filePath().utf16(), std::ios::binary);
-#else
-        std::ifstream f(QFile::encodeName(archives[root].filePath()).data(), std::ios::binary);
-#endif
-        unsigned char *data = extractFile(*pkg, f);
-        result = QByteArray((const char*)data, pkg->size);
-        delete data;
-        f.close();
-        break;
-    }
-    case NODE_RPKG:
-    {
-        RPKGEntry *pkg = static_cast<RPKGEntry*>(node->userData);
-        FileNode *root = node;
-        //FIXME: Possible errors
-        while (root && root->parent && root->parent->parent)
-            root = root->parent;
-
-#ifdef Q_OS_WIN32
-        std::ifstream f((wchar_t *)archives[root].filePath().utf16(), std::ios::binary);
-#else
-        std::ifstream f(QFile::encodeName(archives[root].filePath()).data(), std::ios::binary);
-#endif
-        size_t size = 0;
-        char *data = extractFile(*pkg, f, size);
-        result = QByteArray(data, size);
-        delete data;
-        f.close();
+        QFile f(archives[root].filePath());
+        f.open(QIODevice::ReadOnly);
+        result = extractFile(*pkg, &f);
         break;
     }
     case NODE_FILE:
@@ -318,6 +236,7 @@ QByteArray FileModel::getData(FileNode *node)
         f.open(QIODevice::ReadOnly);
         result = f.readAll();
         f.close();
+        break;
     }
     }
     return result;
@@ -327,4 +246,5 @@ QByteArray FileModel::getData(const QModelIndex &index)
 {
     FileNode *node = static_cast<FileNode*>(index.internalPointer());
     return getData(node);
+}
 }

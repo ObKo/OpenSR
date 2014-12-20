@@ -1,18 +1,35 @@
-#ifndef PKGMODEL_H
-#define PKGMODEL_H
+/*
+    OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
+    Copyright (C) 2014 Kosyak <ObKo@mail.ru>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#ifndef OPENSR_RV_FILEMODEL_H
+#define OPENSR_RV_FILEMODEL_H
 
 #include <QAbstractItemModel>
 #include <QModelIndex>
 #include <QVariant>
-#include <libRanger.h>
 #include <QList>
 #include <QFileInfo>
 #include <QMap>
 #include <QFileIconProvider>
 
-namespace Rangers
+namespace OpenSR
 {
-enum NodeType {NODE_FILE, NODE_PKG, NODE_RPKG};
+enum NodeType {NODE_FILE, NODE_PKG};
 struct FileNode
 {
     QString name;
@@ -29,7 +46,6 @@ public:
     FileModel(QObject *parent = 0);
 
     FileNode* addPKG(const QFileInfo& file);
-    FileNode* addRPKG(const QFileInfo& file);
     FileNode* addFile(const QFileInfo& file);
 
     QVariant data(const QModelIndex &index, int role) const;
@@ -53,6 +69,6 @@ private:
     QMap<FileNode*, QFileInfo> archives;
     QFileIconProvider iconProvider;
 };
-};
+}
 
-#endif // PKGMODEL_H
+#endif // OPENSR_RV_FILEMODEL_H

@@ -1,3 +1,21 @@
+/*
+    OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
+    Copyright (C) 2014 Kosyak <ObKo@mail.ru>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
 #include <QFileDialog>
@@ -6,17 +24,21 @@
 #include <QDebug>
 #include <QMessageBox>
 #include <fstream>
-#include <libRanger.h>
+#include <OpenSR/libRangerQt.h>
 #include <QProgressDialog>
+#include <QBuffer>
+#include <QMovie>
+#include <QGraphicsProxyWidget>
 
-#include <boost/iostreams/device/array.hpp>
-#include <boost/iostreams/stream.hpp>
-
-using namespace Rangers;
-
+namespace OpenSR
+{
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    animLoaded(false),
+    currentFrame(0),
+    animStarted(false),
+    speed(1.0)
 {
     ui->setupUi(this);
     ui->graphicsView->setScene(&scene);
@@ -26,11 +48,13 @@ MainWindow::MainWindow(QWidget *parent) :
     scene.addItem(&item);
 
     ui->fileTreeView->setModel(&model);
+    ui->fileTreeView->setHeaderHidden(true);
+
+    timer.setSingleShot(true);
 
     connect(ui->actionOpen, SIGNAL(triggered()), this, SLOT(openFile()));
-    connect(&animationTimer, SIGNAL(timeout()), this, SLOT(nextFrame()));
-    connect(ui->framerateSpinBox, SIGNAL(valueChanged(double)), this, SLOT(framerateChanged(double)));
-    connect(ui->durationSpinBox, SIGNAL(valueChanged(double)), this, SLOT(durationChanged(double)));
+    connect(&timer, SIGNAL(timeout()), this, SLOT(nextFrame()));
+    connect(ui->speedSpinBox, SIGNAL(valueChanged(double)), this, SLOT(speedChanged(double)));
     connect(ui->fileTreeView, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(openContextMenu(const QPoint&)));
     connect(ui->fileTreeView, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(treeDoubleClicked(const QModelIndex&)));
     connect(ui->startButton, SIGNAL(clicked()), this, SLOT(startAnimation()));
@@ -58,7 +82,14 @@ MainWindow::~MainWindow()
 
 void MainWindow::nextFrame()
 {
-    setFrame((currentFrame + 1) % frames.count());
+    if (!animLoaded || !animStarted)
+        return;
+
+    currentFrame = (currentFrame + 1) % frames.size();
+
+    setFrame(currentFrame);
+    timer.setInterval(times[currentFrame] / speed);
+    timer.start();
 }
 
 void MainWindow::setFrame(int frame)
@@ -67,9 +98,9 @@ void MainWindow::setFrame(int frame)
         return;
 
     currentFrame = frame;
-    item.setPixmap(frames.at(currentFrame));
-    ui->frameLabel->setText(QString::number(currentFrame + 1) + "/" + QString::number(frames.count()));
-    ui->frameSlider->setValue(currentFrame);
+    item.setPixmap(frames.at(frame));
+    ui->frameLabel->setText(QString::number(frame + 1) + "/" + QString::number(frames.count()));
+    ui->frameSlider->setValue(frame);
 }
 
 void MainWindow::loadFile(const QString& fileName)
@@ -82,48 +113,16 @@ void MainWindow::loadFile(const QString& fileName)
     {
         model.addPKG(fileInfo);
     }
-    else if (fileInfo.suffix().toLower() == "rpkg")
-    {
-        model.addRPKG(fileInfo);
-    }
     else
     {
         loadResource(model.addFile(fileInfo));
     }
 }
 
-void MainWindow::loadHAI(HAIAnimation anim)
-{
-    for (int i = 0; i < anim.frameCount; i++)
-    {
-        frames.append(QPixmap::fromImage(QImage(anim.frames + i * anim.width * anim.height * 4, anim.width, anim.height, QImage::Format_ARGB32)));
-    }
-    delete anim.frames;
-    animationLoaded(15, 0, 0);
-}
-
-void MainWindow::loadGI(GIFrame frame)
-{
-    item.setPixmap(QPixmap::fromImage(QImage(frame.data, frame.width, frame.height, QImage::Format_ARGB32)));
-    delete frame.data;
-    imageLoaded();
-}
-
-void MainWindow::loadGAI(GAIAnimation anim)
-{
-    for (int i = 0; i < anim.frameCount; i++)
-    {
-        frames.append(QPixmap::fromImage(QImage(anim.frames[i].data, anim.frames[i].width, anim.frames[i].height, QImage::Format_ARGB32)));
-        delete[] anim.frames[i].data;
-    }
-    delete[] anim.frames;
-    animationLoaded(15, 0, 0);
-}
-
 void MainWindow::openFile()
 {
     QStringList fileNames = QFileDialog::getOpenFileNames(this, tr("Open file"), QString(),
-                            tr("All suported files (*.gai *.hai *.gi *.pkg *.rpkg)"));
+                            tr("All suported files (*.gai *.hai *.gi *.pkg)"));
     if (fileNames.isEmpty())
         return;
 
@@ -145,97 +144,65 @@ void MainWindow::closeEvent(QCloseEvent *event)
     QMainWindow::closeEvent(event);
 }
 
-void MainWindow::framerateChanged(double value)
+void MainWindow::speedChanged(double value)
 {
-    animationTimer.setInterval(int(1000 / value));
-    ui->durationSpinBox->setValue(1000.0 / value);
-}
+    if (speed < 0.01)
+        return;
 
-void MainWindow::durationChanged(double value)
-{
-    animationTimer.setInterval(int(value));
-    ui->framerateSpinBox->setValue(1000.0 / value);
+    speed = value;
 }
 
 void MainWindow::loadResource(FileNode *node)
 {
-    if (!frames.isEmpty())
-    {
-        frames.clear();
-        animationTimer.stop();
-    }
-
     QString fileName = node->name;
+    QByteArray resData = model.getData(node);
     QFileInfo fileInfo(fileName);
-    if (fileInfo.suffix().toLower() == "gi")
+    QBuffer dev(&resData);
+    dev.open(QIODevice::ReadOnly);
+    QImageReader reader(&dev, fileInfo.suffix().toLower().toLatin1());
+
+    if (!reader.canRead())
+        return;
+
+    int frameCount = reader.imageCount();
+
+    animLoaded = false;
+    animStarted = true;
+    frames.clear();
+    times.clear();
+    currentFrame = 0;
+    timer.stop();
+    speed = 1.0;
+
+    if (frameCount > 1)
     {
-        QByteArray data = model.getData(node);
-        boost::iostreams::stream<boost::iostreams::array_source> stream(boost::iostreams::array_source(data.constData(), data.size()));
-        Rangers::GIFrame frame = Rangers::loadGIFrame(stream);
-        loadGI(frame);
-    }
-    else if (fileInfo.suffix().toLower() == "gai")
-    {
-        QByteArray data = model.getData(node);
-        boost::iostreams::stream<boost::iostreams::array_source> stream(boost::iostreams::array_source(data.constData(), data.size()));
-        Rangers::GAIHeader h = Rangers::loadGAIHeader(stream);
-        Rangers::GIFrame *bg = 0;
-        if (h.haveBackground)
+        frames.resize(frameCount);
+        times.resize(frameCount);
+
+        for (int i = 0; i < frameCount; i++)
         {
-            FileNode *bgNode = model.getSiblingNode(node, fileInfo.completeBaseName() + ".gi");
-            if (!bgNode)
-                bgNode = model.getSiblingNode(node, fileInfo.completeBaseName() + ".GI");
-
-            if (!bgNode)
-                qCritical() << "Could not found background frame!";
-            else
-            {
-                bg = new Rangers::GIFrame;
-                QByteArray bgData = model.getData(bgNode);
-                boost::iostreams::stream<boost::iostreams::array_source> bgStream(boost::iostreams::array_source(bgData.constData(), bgData.size()));
-                *bg = Rangers::loadGIFrame(bgStream, true, 0, 0, h.startX, h.startY, h.finishX, h.finishY);
-            }
+            frames[i] = QPixmap::fromImage(reader.read());
+            times[i] = reader.nextImageDelay();
         }
-        boost::iostreams::seek(stream, 0, std::ios_base::beg);
-        Rangers::GAIAnimation anim = Rangers::loadGAIAnimation(stream, bg);
-        loadGAI(anim);
-        /*if (bg)
-            delete bg->data;
-        delete bg;*/
+        animationLoaded();
     }
-    else if (fileInfo.suffix().toLower() == "hai")
+    else
     {
-        QByteArray data = model.getData(node);
-        boost::iostreams::stream<boost::iostreams::array_source> stream(boost::iostreams::array_source(data.constData(), data.size()));
-        Rangers::HAIAnimation anim = Rangers::loadHAIAnimation(stream);
-        loadHAI(anim);
+        item.setPixmap(QPixmap::fromImageReader(&reader));
+        imageLoaded();
     }
 }
 
-void convertRGBAToBGRA(unsigned char *rgba, int width, int height)
-{
-    for (int i = 0; i < width * height; i++)
-    {
-        unsigned char tmp = rgba[i * 4];
-        rgba[i * 4] = rgba[i * 4 + 2];
-        rgba[i * 4 + 2] = tmp;
-    }
-}
-
-void MainWindow::animationLoaded(int framerate, int waitSeek, int waitSize)
+void MainWindow::animationLoaded()
 {
     if (!frames.count())
         return;
 
-    item.setPixmap(frames.at(0));
-    animationTimer.setInterval(1000 / framerate);
+    animLoaded = true;
+
     scene.setSceneRect(0, 0, item.pixmap().width(), item.pixmap().height());
     scene.invalidate();
 
-    ui->seekLabel->setText(QString::number(waitSeek));
-    ui->waitLabel->setText(QString::number(waitSize));
-    ui->framerateSpinBox->setValue(framerate);
-    ui->durationSpinBox->setValue(1000 / framerate);
     ui->frameSlider->setMaximum(frames.count() - 1);
     ui->frameSlider->setMinimum(0);
     ui->frameSlider->setSingleStep(1);
@@ -249,14 +216,8 @@ void MainWindow::animationLoaded(int framerate, int waitSeek, int waitSize)
 
 void MainWindow::imageLoaded()
 {
-    animationTimer.stop();
     scene.setSceneRect(0, 0, item.pixmap().width(), item.pixmap().height());
     scene.invalidate();
-
-    ui->seekLabel->setText("");
-    ui->waitLabel->setText("");
-    ui->framerateSpinBox->setValue(15.0);
-    ui->durationSpinBox->setValue(1000.0 / 15.0);
 
     ui->paramGroupBox->setEnabled(false);
     ui->stopButton->setEnabled(false);
@@ -294,7 +255,7 @@ void MainWindow::openContextMenu(const QPoint & pos)
     FileNode *node = static_cast<FileNode *>(ui->fileTreeView->indexAt(pos).internalPointer());
     if (!node)
         return;
-    if (node->type == NODE_RPKG || node->type == NODE_PKG)
+    if (node->type == NODE_PKG)
     {
         QMenu menu(ui->fileTreeView);
         menu.addAction(tr("Extract..."));
@@ -355,27 +316,27 @@ void MainWindow::openContextMenu(const QPoint & pos)
 
 void MainWindow::startAnimation()
 {
-    if (animationTimer.isActive())
-        return;
-    if (!frames.count())
+    if (!animLoaded || !frames.count())
         return;
 
+    animStarted = true;
     ui->startButton->setEnabled(false);
     ui->stopButton->setEnabled(true);
     ui->resetButton->setEnabled(true);
-    animationTimer.setSingleShot(false);
-    animationTimer.start();
+
+    timer.setInterval(times[currentFrame] / speed);
+    timer.start();
 }
 
 void MainWindow::stopAnimation()
 {
-    if (!animationTimer.isActive())
-        return;
+    animStarted = false;
 
     ui->startButton->setEnabled(true);
     ui->stopButton->setEnabled(false);
     ui->resetButton->setEnabled(true);
-    animationTimer.stop();
+
+    timer.stop();
 }
 
 void MainWindow::resetAnimation()
@@ -385,7 +346,9 @@ void MainWindow::resetAnimation()
 
     stopAnimation();
     setFrame(0);
+
     ui->startButton->setEnabled(true);
     ui->stopButton->setEnabled(false);
     ui->resetButton->setEnabled(true);
+}
 }
