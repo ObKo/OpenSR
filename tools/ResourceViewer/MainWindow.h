@@ -33,6 +33,7 @@ class MainWindow;
 
 namespace OpenSR
 {
+class ExtractDialog;
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -58,6 +59,8 @@ private:
 
     void loadFile(const QString& fileName);
     FileModel model;
+
+    ExtractDialog *extractDialog;
 
     void loadResource(FileNode *node);
 

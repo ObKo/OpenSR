@@ -7,10 +7,12 @@ SET(RV_SOURCES
     main.cpp
     MainWindow.cpp
     FileModel.cpp
+    ExtractDialog.cpp
 )
 
 SET(RV_UI
     MainWindow.ui
+    ExtractDialog.ui
 )
 
 INCLUDE_DIRECTORIES(

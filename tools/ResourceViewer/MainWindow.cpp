@@ -29,6 +29,7 @@
 #include <QBuffer>
 #include <QMovie>
 #include <QGraphicsProxyWidget>
+#include "ExtractDialog.h"
 
 namespace OpenSR
 {
@@ -43,6 +44,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     ui->graphicsView->setScene(&scene);
     ui->graphicsView->setInteractive(true);
+
+    extractDialog = new ExtractDialog(this);
 
     scene.setBackgroundBrush(QBrush(Qt::black));
     scene.addItem(&item);
@@ -78,6 +81,7 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+    delete extractDialog;
 }
 
 void MainWindow::nextFrame()
@@ -265,12 +269,30 @@ void MainWindow::openContextMenu(const QPoint & pos)
         QList<FileNode*> files;
         addFileToList(files, node);
         QString baseDir = QFileInfo(node->fullName).dir().path();
-        qDebug() << "Base dir: " << baseDir;
-        QString outDirectory = QFileDialog::getExistingDirectory(this, tr("Select folder to extract"));
-        if (outDirectory.isNull())
+
+        if (extractDialog->exec() != QDialog::Accepted)
             return;
-        qDebug() << "Output dir: " << outDirectory;
-        QDir outDir(outDirectory);
+        QDir outDir(extractDialog->directory());
+        if (!outDir.exists())
+            QMessageBox::critical(this, tr("Error extracting"), tr("Invalid extraction directory"));
+        bool createQRC = extractDialog->createQRC();
+        QFileInfo qrcFileInfo;
+        QFile *qrcFile = 0;
+        if (createQRC)
+        {
+            QString fn = extractDialog->qrcName();
+            if (!fn.isEmpty())
+                fn = "resources.qrc";
+            qrcFileInfo = QFileInfo(outDir.canonicalPath() + '/' + extractDialog->qrcName());
+            if (qrcFileInfo.suffix().isEmpty())
+                qrcFileInfo = QFileInfo(outDir.canonicalPath() + '/' + extractDialog->qrcName() + ".qrc");
+            qrcFile = new QFile(qrcFileInfo.absoluteFilePath());
+            qrcFile->open(QIODevice::WriteOnly);
+        }
+        QTextStream qrc(qrcFile);
+        if (createQRC)
+            qrc << "<!DOCTYPE RCC><RCC version=\"1.0\"><qresource>\n";
+
         QProgressDialog progress(tr("Extracting files..."), tr("Cancel"), 0, files.count(), this);
         progress.setWindowModality(Qt::WindowModal);
         int value = 0;
@@ -282,7 +304,6 @@ void MainWindow::openContextMenu(const QPoint & pos)
             QString fullNameWithoutBase = fullName;
             if ((!baseDir.isNull()) && (baseDir != ".") && (fullName.startsWith(baseDir)))
                 fullNameWithoutBase = fullName.right(fullName.length() - baseDir.length() - 1);
-            qDebug() << "Name:" << fullName << "name w/o base: " << fullNameWithoutBase;
             progress.setValue(value);
             progress.setLabelText(fullNameWithoutBase);
             if (child->childs.count())
@@ -296,7 +317,6 @@ void MainWindow::openContextMenu(const QPoint & pos)
             }
             else
             {
-                qDebug() << "Saving to " << outDir.canonicalPath() + "/" + fullNameWithoutBase;
                 QFile out(outDir.canonicalPath() + "/" + fullNameWithoutBase);
                 if (!out.open(QIODevice::WriteOnly))
                 {
@@ -307,8 +327,19 @@ void MainWindow::openContextMenu(const QPoint & pos)
                 }
                 out.write(model.getData(child));
                 out.close();
+                if (createQRC)
+                    qrc << "<file>" << fullNameWithoutBase << "</file>\n";
             }
             value++;
+        }
+        if (createQRC)
+        {
+            qrc << "</qresource></RCC>\n";
+            if (qrcFile)
+            {
+                qrcFile->close();
+                delete qrcFile;
+            }
         }
         progress.setValue(files.count());
     }
