@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2012 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2014 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef OPENSR_PV_MAINWINDOW_H
+#define OPENSR_PV_MAINWINDOW_H
 
 #include <QMainWindow>
 #include <QSettings>
@@ -28,6 +28,8 @@ namespace Ui
 class MainWindow;
 }
 
+namespace OpenSR
+{
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -63,5 +65,6 @@ private:
     PlanetModel m_model;
     QSettings m_settings;
 };
+}
 
-#endif // MAINWINDOW_H
+#endif // OPENSR_PV_MAINWINDOW_H

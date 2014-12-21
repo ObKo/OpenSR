@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2012 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2014 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,14 +19,14 @@
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
 
-#define _USE_MATH_DEFINES
-#include <math.h>
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QColorDialog>
 #include <QMessageBox>
 #include <QDebug>
 
+namespace OpenSR
+{
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -189,6 +189,9 @@ void MainWindow::save()
     if (file.isEmpty())
         return;
 
+    if (QFileInfo(file).suffix().isEmpty())
+        file += ".json";
+
     m_model.saveJSON(file);
 }
 
@@ -271,4 +274,5 @@ void MainWindow::closeEvent(QCloseEvent* event)
     m_settings.setValue("gui/windowGeometry", saveGeometry());
     m_settings.setValue("gui/windowState", saveState());
     QWidget::closeEvent(event);
+}
 }

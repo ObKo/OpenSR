@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2012 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2014 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,8 +18,6 @@
 
 #include "PlanetViewer.h"
 
-#define _USE_MATH_DEFINES
-
 #include <QDebug>
 #include <QPixmap>
 #include <QPainter>
@@ -30,9 +28,8 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 
-#include <boost/iostreams/device/array.hpp>
-#include <boost/iostreams/stream.hpp>
-
+namespace OpenSR
+{
 struct Vertex
 {
     float x, y;
@@ -555,3 +552,4 @@ void PlanetViewer::setPlanetSize(int size)
     painter.setRenderHint(QPainter::Antialiasing, true);
     painter.drawImage(0, 0, m_rendered);
 }*/
+}

@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2012 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2014 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,10 +19,12 @@
 #include "PlanetModel.h"
 #include "PlanetViewer.h"
 #include <QDir>
-#include <json/reader.h>
-#include <json/writer.h>
-#include <locale.h>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonParseError>
 
+namespace OpenSR
+{
 Planet::Planet()
 {
     hasCloud = false;
@@ -78,33 +80,30 @@ void PlanetModel::removePlanets(const QModelIndexList& list)
 
 void PlanetModel::saveJSON(const QString& file) const
 {
-    Json::Value root;
-    Json::StyledWriter writer;
-    root["@type"] = "planet-styles";
+    QJsonObject root;
     foreach(Planet p, m_planets)
     {
         QString colorText = QString("#%1%2%3").arg((ushort)((p.ambientColor.rgba() >> 16) & 0xff), 2, 16, QChar('0'))
                             .arg((ushort)((p.ambientColor.rgba() >> 8) & 0xff), 2, 16, QChar('0'))
                             .arg((ushort)((p.ambientColor.rgba() >> 0) & 0xff), 2, 16, QChar('0')).toUpper();
-        Json::Value planet;
-        planet["@type"] = "planet-style";
-        planet["ambientColor"] = colorText.toLatin1().data();
+        QJsonObject planet;
+        planet["ambientColor"] = colorText;
         planet["hasCloud"] = p.hasCloud;
         planet["size"] = p.size;
         planet["speed"] = p.speed;
-        planet["texture"] = p.texture.toUtf8().data();
+        planet["texture"] = p.texture;
         planet["hasRing"] = p.hasRing;
         planet["hasRingBackground"] = p.hasRingBackground;
 
         if (p.hasCloud)
         {
-            planet["cloud"] = p.cloud.toUtf8().data();
+            planet["cloud"] = p.cloud;
             planet["cloudSpeed"] = p.cloudSpeed;
         }
 
         if (p.hasRing)
         {
-            planet["ring"] = p.ring.toUtf8().data();
+            planet["ring"] = p.ring;
             if (p.ringOffsetX != 0.0f)
                 planet["ringOffsetX"] = p.ringOffsetX;
             if (p.ringOffsetY != 0.0f)
@@ -113,76 +112,65 @@ void PlanetModel::saveJSON(const QString& file) const
 
         if (p.hasRingBackground)
         {
-            planet["ringBackground"] = p.ringBackground.toUtf8().data();
+            planet["ringBackground"] = p.ringBackground;
             if (p.ringBgOffsetX != 0.0f)
                 planet["ringBgOffsetX"] = p.ringBgOffsetX;
             if (p.ringBgOffsetY != 0.0f)
                 planet["ringBgOffsetY"] = p.ringBgOffsetY;
         }
 
-        root[p.id.toLatin1().data()] = planet;
+        root[p.id] = planet;
     }
+    QJsonDocument doc(root);
     QFile f(file);
     f.open(QIODevice::WriteOnly);
-    setlocale(LC_NUMERIC, "C");
-    f.write(QString::fromUtf8(writer.write(root).c_str()).toUtf8());
-    setlocale(LC_NUMERIC, "");
+    f.write(doc.toJson());
     f.close();
 }
 
 void PlanetModel::loadJSON(const QString& file)
 {
-    Json::Value root;
-    Json::Reader reader;
-
+    QJsonParseError err;
     QFile f(file);
     f.open(QIODevice::ReadOnly);
-    if (!reader.parse(f.readAll().data(), root))
-        return;
+    QJsonDocument doc = QJsonDocument::fromJson(f.readAll(), &err);
     f.close();
 
-    if (!root.isObject())
+    if (err.error != QJsonParseError::NoError)
     {
-        emit(error(tr("Load JSON"), tr("Invalid JSON file")));
+        emit(error(tr("Load JSON"), tr("Cannot parse JSON file: %1").arg(err.errorString())));
         return;
     }
 
-    if (root.get("@type", "") != "planet-styles")
-    {
-        emit(error(tr("Load JSON"), tr("Invalid JSON file type (check \"@type\" field).")));
-        return;
-    }
-
-    Json::Value::iterator end = root.end();
-
+    QJsonObject root = doc.object();
     QList<Planet> planets;
 
-    for (Json::Value::iterator i = root.begin(); i != end; ++i)
+    QJsonObject::const_iterator end = root.end();
+    for (QJsonObject::const_iterator i = root.begin(); i != end; ++i)
     {
-        if ((*i).isString() && (i.key().asString() == "@type"))
-            continue;
-
-        if (!(*i).isObject() || ((*i).get("@type", "").asString() != "planet-style"))
+        if (!i.value().isObject())
         {
-            emit(error(tr("Load JSON"), tr("Invalid planet style: \"%1\"").arg(QString::fromLatin1(i.key().asCString()))));
+            emit(error(tr("Load JSON"), tr("Invalid planet style: \"%1\"").arg(i.key())));
+            continue;
         }
 
+        QVariantMap jsonPlanet = i.value().toObject().toVariantMap();
         Planet p;
-        QString colorText = QString::fromLatin1((*i).get("ambientColor", "#FFFFFF").asCString());
+        QString colorText = jsonPlanet.value("ambientColor", "#FFFFFF").toString();
         p.ambientColor = qRgb(colorText.mid(1, 2).toUShort(0, 16), colorText.mid(3, 2).toUShort(0, 16),
                               colorText.mid(5, 2).toUShort(0, 16));
-        p.texture = QString::fromUtf8((*i).get("texture", "").asCString());
-        p.speed = (*i).get("speed", 0.0f).asDouble();
-        p.hasCloud = (*i).get("hasCloud", false).asBool();
-        p.id = QString::fromLatin1(i.key().asCString());
-        p.size = (*i).get("size", 32).asInt();
-        p.hasRing = (*i).get("hasRing", false).asBool();
-        p.hasRingBackground = (*i).get("hasRingBackground", false).asBool();
+        p.texture = jsonPlanet.value("texture", "").toString();
+        p.speed = jsonPlanet.value("speed", 0.0f).toDouble();
+        p.hasCloud = jsonPlanet.value("hasCloud", false).toBool();
+        p.id = i.key();
+        p.size = jsonPlanet.value("size", 120).toInt();
+        p.hasRing = jsonPlanet.value("hasRing", false).toBool();
+        p.hasRingBackground = jsonPlanet.value("hasRingBackground", false).toBool();
 
         if (p.hasCloud)
         {
-            p.cloud = QString::fromUtf8((*i).get("cloud", "").asCString());
-            p.cloudSpeed = (*i).get("cloudSpeed", 0.0f).asDouble();
+            p.cloud = jsonPlanet.value("cloud", "").toString();
+            p.cloudSpeed = jsonPlanet.value("cloudSpeed", 0.0f).toDouble();
         }
         else
         {
@@ -190,15 +178,15 @@ void PlanetModel::loadJSON(const QString& file)
         }
         if (p.hasRing)
         {
-            p.ring = QString::fromUtf8((*i).get("ring", "").asCString());
-            p.ringOffsetX = (*i).get("ringOffsetX", 0.0f).asDouble();
-            p.ringOffsetY = (*i).get("ringOffsetY", 0.0f).asDouble();
+            p.ring = jsonPlanet.value("ring", "").toString();
+            p.ringOffsetX = jsonPlanet.value("ringOffsetX", 0.0f).toDouble();
+            p.ringOffsetY = jsonPlanet.value("ringOffsetY", 0.0f).toDouble();
         }
         if (p.hasRingBackground)
         {
-            p.ringBackground = QString::fromUtf8((*i).get("ringBackground", "").asCString());
-            p.ringBgOffsetX = (*i).get("ringBgOffsetX", 0.0f).asDouble();
-            p.ringBgOffsetY = (*i).get("ringBgOffsetY", 0.0f).asDouble();
+            p.ringBackground = jsonPlanet.value("ringBackground", "").toString();
+            p.ringBgOffsetX = jsonPlanet.value("ringBgOffsetX", 0.0f).toDouble();
+            p.ringBgOffsetY = jsonPlanet.value("ringBgOffsetY", 0.0f).toDouble();
         }
         planets.append(p);
     }
@@ -236,4 +224,5 @@ int PlanetModel::rowCount(const QModelIndex& parent) const
 Planet PlanetModel::getPlanet(const QModelIndex& i) const
 {
     return m_planets.value(m_planets.keys().at(i.row()));
+}
 }

@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2012 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2014 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     QApplication::setOrganizationName("OpenSR");
     QApplication::setApplicationName("PlanetViewer");
-    MainWindow w;
+    OpenSR::MainWindow w;
     w.show();
 
     return a.exec();

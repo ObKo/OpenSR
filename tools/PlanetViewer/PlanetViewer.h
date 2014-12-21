@@ -16,8 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef PLANETVIEWER_H
-#define PLANETVIEWER_H
+#ifndef OPENSR_PV_PLANETVIEWER_H
+#define OPENSR_PV_PLANETVIEWER_H
 
 #include <QPaintEvent>
 #include <QImage>
@@ -32,6 +32,8 @@
 #endif
 #include <QGLWidget>
 
+namespace OpenSR
+{
 class PlanetViewer : public QGLWidget
 {
     Q_OBJECT
@@ -122,5 +124,6 @@ private:
 private Q_SLOTS:
     void rotatePlanet();
 };
+}
 
-#endif // PLANETVIEWER_H
+#endif // OPENSR_PV_PLANETVIEWER_H

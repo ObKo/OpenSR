@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2012 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2014 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,14 +16,16 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef PLANETMODEL_H
-#define PLANETMODEL_H
+#ifndef OPENSR_PV_PLANETMODEL_H
+#define OPENSR_PV_PLANETMODEL_H
 
 #include <QAbstractListModel>
 #include <QMap>
 #include <QSettings>
 #include <QIcon>
 
+namespace OpenSR
+{
 struct Planet
 {
     Planet();
@@ -67,5 +69,6 @@ private:
     QMap<QString, QIcon> m_icons;
     QSettings m_settings;
 };
+}
 
-#endif // PLANETMODEL_H
+#endif // OPENSR_PV_PLANETMODEL_H
