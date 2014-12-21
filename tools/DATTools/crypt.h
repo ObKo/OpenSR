@@ -16,18 +16,19 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef RANGERS_DAT_CRYPT_H
-#define RANGERS_DAT_CRYPT_H
+#ifndef OPENSR_DAT_CRYPT_H
+#define OPENSR_DAT_CRYPT_H
 
-#include <stdint.h>
+#include <QByteArray>
 
-namespace Rangers
+namespace OpenSR
 {
 namespace DAT
 {
 int32_t genKey();
-void decrypt(uint8_t *data, uint32_t size, int32_t key, bool isCache = false);
-void encrypt(uint8_t *data, uint32_t size, int32_t key, bool isCache = false);
+void decrypt(QByteArray& data, int32_t key, bool isCache = false);
+void encrypt(QByteArray& data, int32_t key, bool isCache = false);
+quint32 crc32(const QByteArray &data);
 }
 }
 

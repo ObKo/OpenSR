@@ -4,6 +4,7 @@ SET(RANGER_QT_SOURCES
     HAILoader.cpp
     PKG.cpp
     ZLib.cpp
+    DAT.cpp
 )
 
 SET(RANGER_QT_HEADERS

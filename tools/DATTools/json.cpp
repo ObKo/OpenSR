@@ -16,72 +16,17 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <stdint.h>
+#include <OpenSR/libRangerQt.h>
+
+#include <QCoreApplication>
+#include <QStringList>
+#include <QFile>
+#include <QDebug>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonParseError>
+#include <QDirIterator>
 #include <iostream>
-#include <fstream>
-#include <json/writer.h>
-#include <json/reader.h>
-#include <dirent.h>
-
-#include <OpenSR/libRanger.h>
-
-void record2JSON(const Rangers::DATRecord& record, Json::Value& json)
-{
-    if (record.type == Rangers::DATRecord::ARRAY)
-    {
-        json = Json::Value(Json::arrayValue);
-        for (const Rangers::DATRecord& c : record)
-        {
-            Json::Value child;
-            record2JSON(c, child);
-            json.append(child);
-        }
-    }
-    else if (record.type == Rangers::DATRecord::NODE)
-    {
-        json = Json::Value(Json::objectValue);
-        for (const Rangers::DATRecord& c : record)
-        {
-            Json::Value child;
-            record2JSON(c, child);
-            json[c.name] = child;
-        }
-    }
-    else if (record.type == Rangers::DATRecord::VALUE)
-    {
-        json = record.value;
-    }
-}
-
-void JSON2Record(Rangers::DATRecord& record, const Json::Value& json)
-{
-    if (json.isObject())
-    {
-        record.type = Rangers::DATRecord::NODE;
-        for (const std::string& id : json.getMemberNames())
-        {
-            Rangers::DATRecord child;
-            child.name = id;
-            JSON2Record(child, json[id]);
-            record.add(child);
-        }
-    }
-    else if (json.isArray())
-    {
-        record.type = Rangers::DATRecord::ARRAY;
-        for (const Json::Value& c : json)
-        {
-            Rangers::DATRecord child;
-            JSON2Record(child, c);
-            record.add(child);
-        }
-    }
-    else
-    {
-        record.type = Rangers::DATRecord::VALUE;
-        record.value = json.asString();
-    }
-}
 
 void printHelp()
 {
@@ -97,132 +42,118 @@ void printHelp()
 
 int main(int argc, char **argv)
 {
-    if (argc != 4)
+    QCoreApplication app(argc, argv);
+    if (app.arguments().count() != 4)
     {
         printHelp();
         return 0;
     }
 
-    std::string  cmd = argv[1];
-    std::ifstream inf;
-    std::ofstream outf;
+    QString cmd = app.arguments()[1];
+    QFile inf(app.arguments()[2]);
+    QFile outf(app.arguments()[3]);
 
     if (cmd != "d2j" && cmd != "d2jm" && cmd != "j2d" && cmd != "j2dm" && cmd != "d2jc")
     {
-        std::cerr << "Invalid command: " << cmd << std::endl;
+        qCritical() << "Invalid command: " << cmd;
         printHelp();
         return -1;
     }
 
     if (cmd != "j2dm")
     {
-        inf.open(argv[2], std::ios_base::in | std::ios_base::binary);
-        if (!inf)
+        inf.open(QIODevice::ReadOnly);
+        if (!inf.isOpen())
         {
-            std::cerr << "Cannot open input file" << std::endl;
+            qCritical() << "Cannot open input file";
             return -1;
         }
     }
 
     if (cmd != "d2jm")
     {
-        outf.open(argv[3], std::ios_base::out | std::ios_base::binary);
-        if (!outf)
+        outf.open(QIODevice::WriteOnly);
+        if (!outf.isOpen())
         {
-            std::cerr << "Cannot open output file" << std::endl;
+            qCritical() << "Cannot open output file";
             return -1;
         }
     }
 
     if (cmd == "d2j")
     {
-        Rangers::DATRecord datRoot = Rangers::loadDAT(inf);
-        Json::Value jsonRoot;
-        record2JSON(datRoot, jsonRoot);
-
-        Json::StyledStreamWriter w;
-        w.write(outf, jsonRoot);
+        QVariantMap root = OpenSR::loadDAT(&inf, false);
+        QJsonDocument doc;
+        doc.setObject(QJsonObject::fromVariantMap(root));
+        outf.write(doc.toJson());
     }
     else if (cmd == "d2jc")
     {
-        Rangers::DATRecord datRoot = Rangers::loadDAT(inf, true);
-        Json::Value jsonRoot;
-        record2JSON(datRoot, jsonRoot);
-
-        Json::StyledStreamWriter w;
-        w.write(outf, jsonRoot);
+        QVariantMap root = OpenSR::loadDAT(&inf, true);
+        QJsonDocument doc;
+        doc.setObject(QJsonObject::fromVariantMap(root));
+        outf.write(doc.toJson());
     }
     else if (cmd == "j2d")
     {
-        Json::Reader reader;
-        Json::Value root;
-        reader.parse(inf, root);
-        Rangers::DATRecord datRoot;
-        JSON2Record(datRoot, root);
-        Rangers::saveDAT(outf, datRoot);
+        QJsonParseError err;
+        QVariant root = QJsonDocument::fromJson(inf.readAll(), &err).object().toVariantMap();
+        if (err.error)
+        {
+            qCritical() << "Cannot parse JSON";
+            return -1;
+        }
+        OpenSR::saveDAT(&outf, root);
     }
     else if (cmd == "d2jm")
     {
-        Rangers::DATRecord datRoot = Rangers::loadDAT(inf);
-        Json::Value jsonRoot;
-        record2JSON(datRoot, jsonRoot);
-        Json::StyledStreamWriter w;
+        QVariantMap root = OpenSR::loadDAT(&inf, false);
 
-        for (const std::string& id : jsonRoot.getMemberNames())
+        QVariantMap::const_iterator end = root.end();
+        for (QVariantMap::const_iterator i = root.begin(); i != end; ++i)
         {
-            outf.open(std::string(argv[3]) + "/" + id + ".json", std::ios_base::out | std::ios_base::binary);
-            if (!outf)
+            QJsonDocument doc;
+            QFile of(QString("%1/%2.json").arg(app.arguments()[3], i.key()));
+            of.open(QIODevice::WriteOnly);
+            if (!of.isOpen())
             {
-                std::cerr << "Cannot open output file: " << std::string(argv[3]) + "/" + id + ".json" << std::endl;
+                qCritical() << "Cannot open output file: " << of.fileName();
                 return -1;
             }
-            w.write(outf, jsonRoot[id]);
-            outf.close();
+            doc.setObject(QJsonObject::fromVariantMap(i.value().toMap()));
+            of.write(doc.toJson());
+            of.close();
         }
     }
     else if (cmd == "j2dm")
     {
-        DIR *dp = opendir(argv[2]);
-        dirent *ep;
+        QDirIterator dir(app.arguments()[2]);
+        QVariantMap root;
 
-        if (dp == 0)
+        while (dir.hasNext())
         {
-            std::cerr << "Cannot open input directory" << std::endl;
-            return -1;
-        }
-
-        Json::Value jsonRoot(Json::objectValue);
-        Json::Reader reader;
-
-        while ((ep = readdir(dp)) != 0)
-        {
-            if (ep->d_type != DT_REG)
+            QFileInfo f(dir.next());
+            if (f.suffix() != "json")
                 continue;
 
-            if (Rangers::suffix(ep->d_name) != "json")
-                continue;
+            QFile jf(f.canonicalPath());
+            jf.open(QIODevice::ReadOnly);
 
-            std::string id = Rangers::toUTF8(Rangers::fromLocal(Rangers::basename(ep->d_name).c_str()));
-            std::string file = std::string(argv[2]) + "/" + ep->d_name;
-
-            inf.open(file, std::ios_base::in | std::ios_base::binary);
-            if (!inf)
+            QJsonParseError err;
+            QVariantMap fdata = QJsonDocument::fromJson(jf.readAll(), &err).object().toVariantMap();
+            if (err.error)
             {
-                std::cerr << "Cannot open input file: " << file << std::endl;
-                return -1;
+                qCritical() << "Cannot parse JSON file " << f.canonicalPath() << ":" << err.errorString();
+                continue;
             }
-            reader.parse(inf, jsonRoot[id]);
-            inf.close();
+            root.insert(f.baseName(), fdata);
         }
-        closedir(dp);
-        Rangers::DATRecord datRoot;
-        JSON2Record(datRoot, jsonRoot);
-        Rangers::saveDAT(outf, datRoot);
+        OpenSR::saveDAT(&outf, root);
     }
 
-    if (inf.is_open())
+    if (inf.isOpen())
         inf.close();
-    if (outf.is_open())
+    if (outf.isOpen())
         outf.close();
 
     return 0;

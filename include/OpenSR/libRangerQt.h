@@ -154,6 +154,14 @@ PKGItem *loadPKG(QIODevice *dev);
 QByteArray extractFile(const PKGItem &item, QIODevice *dev);
 
 QByteArray unpackZL(QByteArray &src);
+QByteArray packZL01(const QByteArray &src);
+QByteArray packZL02(const QByteArray &src);
+
+void readDATTree(QIODevice *dev, QVariantMap *parent, bool isCache = false);
+QVariantMap loadDAT(QIODevice *dev, bool isCache = false);
+
+void writeDATTree(QIODevice *dev, const QVariant& node, const QString& name);
+void saveDAT(QIODevice *dev, const QVariant& root);
 }
 
 #endif

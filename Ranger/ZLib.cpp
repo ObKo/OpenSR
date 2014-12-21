@@ -41,4 +41,28 @@ QByteArray unpackZL(QByteArray &src)
 
     return qUncompress((const uchar*)(src.constData() + 4), src.size() - 4);
 }
+
+QByteArray packZL01(const QByteArray &src)
+{
+    //TODO: Optimize
+    QByteArray compressed = qCompress(src);
+    QByteArray sigArr(4, 0);
+
+    *((uint32_t *)sigArr.data()) = ZL01_SIGNATURE;
+    *((uint32_t *)compressed.data()) = qToLittleEndian((uint32_t)src.size());
+    compressed.prepend(sigArr);
+    return compressed;
+}
+
+QByteArray packZL02(const QByteArray &src)
+{
+    //TODO: Optimize
+    QByteArray compressed = qCompress(src);
+    QByteArray sigArr(4, 0);
+
+    *((uint32_t *)sigArr.data()) = ZL02_SIGNATURE;
+    *((uint32_t *)compressed.data()) = qToLittleEndian((uint32_t)src.size());
+    compressed.prepend(sigArr);
+    return compressed;
+}
 }

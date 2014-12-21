@@ -21,7 +21,7 @@
 #include <ctime>
 #include <cstdlib>
 
-namespace Rangers
+namespace OpenSR
 {
 namespace DAT
 {
@@ -45,32 +45,36 @@ uint32_t getNextKey(int32_t key)
     return k;
 }
 
-void decrypt(uint8_t *data, uint32_t size, int32_t key, bool isCache)
+void decrypt(QByteArray& d, int32_t key, bool isCache)
 {
     int32_t k;
+
+    uint8_t *data = (uint8_t*)d.data();
 
     if (!isCache)
         k = key ^ RANGERS_KEY_RELOAD;
     else
         k = key ^ RANGERS_KEY_RELOAD_CACHE;
 
-    for (uint32_t i = 0; i < size; i++)
+    for (uint32_t i = 0; i < d.size(); i++)
     {
         k = getNextKey(k);
         data[i] = data[i] ^ ((k - 1) & 0xFF);
     }
 }
 
-void encrypt(uint8_t *data, uint32_t size, int32_t key, bool isCache)
+void encrypt(QByteArray& d, int32_t key, bool isCache)
 {
     int32_t k;
+
+    uint8_t *data = (uint8_t*)d.data();
 
     if (!isCache)
         k = key ^ RANGERS_KEY_RELOAD;
     else
         k = key ^ RANGERS_KEY_RELOAD_CACHE;
 
-    for (uint32_t i = 0; i < size; i++)
+    for (uint32_t i = 0; i < d.size(); i++)
     {
         k = getNextKey(k);
         data[i] = data[i] ^ ((k - 1) & 0xFF);

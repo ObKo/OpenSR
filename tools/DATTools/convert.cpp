@@ -16,21 +16,14 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <stdint.h>
-#include <iostream>
-#include <fstream>
-
-#include <boost/crc.hpp>
-
-#include <OpenSR/libRanger.h>
 #include "crypt.h"
 
-uint32_t crc32(uint8_t *data, uint32_t size)
-{
-    boost::crc_32_type crc;
-    crc.process_bytes(data, size);
-    return crc.checksum();
-}
+#include <iostream>
+#include <OpenSR/libRangerQt.h>
+#include <QCoreApplication>
+#include <QStringList>
+#include <QDebug>
+#include <QFile>
 
 void printHelp()
 {
@@ -48,144 +41,142 @@ void printHelp()
 
 int main(int argc, char **argv)
 {
-    if (argc != 4)
+    QCoreApplication app(argc, argv);
+    if (app.arguments().count() != 4)
     {
         printHelp();
         return 0;
     }
 
-    std::string  cmd = argv[1];
+    QString cmd = app.arguments()[1];
 
     bool isCache = cmd[0] == 'h';
     if (isCache)
-        cmd.erase(0, 1);
+        cmd.remove(0, 1);
 
     if (cmd != "d" && cmd != "x" && cmd != "dx" &&
             cmd != "c" && cmd != "e" && cmd != "ce")
     {
-        std::cerr << "Invalid command: " << cmd << std::endl;
+        qCritical() << "Invalid command: " << cmd;
         printHelp();
         return -1;
     }
-    std::ifstream inf(argv[2], std::ios_base::in | std::ios_base::binary);
-    if (!inf)
+    QFile inf(app.arguments()[2]);
+    inf.open(QIODevice::ReadOnly);
+    if (!inf.isOpen())
     {
-        std::cerr << "Cannot open input file" << std::endl;
+        qCritical() << "Cannot open input file";
         return -1;
     }
-    std::ofstream outf(argv[3], std::ios_base::out | std::ios_base::binary);
-    if (!outf)
+    QFile outf(app.arguments()[3]);
+    outf.open(QIODevice::WriteOnly);
+    if (!outf.isOpen())
     {
-        std::cerr << "Cannot open output file" << std::endl;
-        return -1;
-    }
-    inf.seekg(0, std::ios_base::end);
-    uint32_t size = inf.tellg();
-    inf.seekg(0, std::ios_base::beg);
-
-    uint8_t *data = new uint8_t[size];
-    inf.read((char*)data, size);
-
-    if (inf.gcount() != size)
-    {
-        std::cerr << "Cannot read input file" << std::endl;
+        qCritical() << "Cannot open output file";
         return -1;
     }
 
     if (cmd == "d")
     {
-        uint32_t crc = *((uint32_t*)data);
-        uint32_t key = *(((uint32_t*)data) + 1);
-        Rangers::DAT::decrypt(data + 8, size - 8, key, isCache);
-        if (crc != crc32(data + 8, size - 8))
+        uint32_t crc;
+        uint32_t key;
+
+        inf.read((char*)&crc, 4);
+        inf.read((char*)&key, 4);
+
+        QByteArray dat = inf.readAll();
+
+        OpenSR::DAT::decrypt(dat, key, isCache);
+        if (crc != OpenSR::DAT::crc32(dat))
         {
-            std::cerr << "CRC Error" << std::endl;
+            qCritical() << "CRC Error";
             return -1;
         }
-        outf.write((char*)(data + 8), size - 8);
+        outf.write(dat);
     }
     else if (cmd == "x")
     {
-        if (*((uint32_t*)data) != 0x31304c5a)
+        uint32_t sig;
+        inf.peek((char*)&sig, 4);
+        if (sig != OpenSR::ZL01_SIGNATURE)
         {
-            std::cerr << "Invalid input file" << std::endl;
+            qCritical() << "Invalid input file";
             return -1;
         }
-        size_t resSize;
-        uint8_t *result = (uint8_t*)Rangers::unpackZL01(data, size, resSize);
-        if (!result)
+        QByteArray input = inf.readAll();
+        QByteArray dat = OpenSR::unpackZL(input);
+        if (dat.isEmpty())
         {
-            std::cerr << "Cannot unpack data" << std::endl;
+            qCritical() << "Cannot unpack data";
             return -1;
         }
-        outf.write((char*)result, resSize);
-        delete[] result;
+        outf.write(dat);
     }
     else if (cmd == "dx")
     {
-        uint32_t crc = *((uint32_t*)data);
-        uint32_t key = *(((uint32_t*)data) + 1);
-        Rangers::DAT::decrypt(data + 8, size - 8, key, isCache);
-        if (crc != crc32(data + 8, size - 8))
+        uint32_t crc;
+        uint32_t key;
+
+        inf.read((char*)&crc, 4);
+        inf.read((char*)&key, 4);
+
+        QByteArray dat = inf.readAll();
+
+        OpenSR::DAT::decrypt(dat, key, isCache);
+        if (crc != OpenSR::DAT::crc32(dat))
         {
-            std::cerr << "CRC Error" << std::endl;
+            qCritical() << "CRC Error";
             return -1;
         }
-        if (*((uint32_t*)(data + 8)) != 0x31304c5a)
+        if (*((const uint32_t*)dat.constData()) != OpenSR::ZL01_SIGNATURE)
         {
-            std::cerr << "Invalid input file" << std::endl;
+            qCritical() << "Invalid input file";
             return -1;
         }
-        size_t resSize;
-        uint8_t *result = (uint8_t*)Rangers::unpackZL01(data + 8, size - 8, resSize);
-        if (!result)
+        dat = OpenSR::unpackZL(dat);
+        if (dat.isEmpty())
         {
-            std::cerr << "Cannot unpack data" << std::endl;
+            qCritical() << "Cannot unpack data";
             return -1;
         }
-        outf.write((char*)result, resSize);
-        delete[] result;
+        outf.write(dat);
     }
     else if (cmd == "e")
     {
-        uint32_t crc = crc32(data, size);
-        uint32_t key = Rangers::DAT::genKey();
-        Rangers::DAT::encrypt(data, size, key, isCache);
+        QByteArray dat = inf.readAll();
+        uint32_t crc = OpenSR::DAT::crc32(dat);
+        uint32_t key = OpenSR::DAT::genKey();
+        OpenSR::DAT::encrypt(dat, key, isCache);
         outf.write((char*)&crc, 4);
         outf.write((char*)&key, 4);
-        outf.write((char*)(data), size);
+        outf.write(dat);
     }
     else if (cmd == "c")
     {
-        size_t resSize;
-        uint8_t *result = (uint8_t*)Rangers::packZL01(data, size, resSize);
-        if (!result)
+        QByteArray result = OpenSR::packZL01(inf.readAll());
+        if (result.isEmpty())
         {
-            std::cerr << "Cannot pack data" << std::endl;
+            qCritical() << "Cannot pack data";
             return -1;
         }
-        outf.write((char*)result, resSize);
-        delete[] result;
+        outf.write(result);
     }
     else if (cmd == "ce")
     {
-        size_t resSize;
-        uint8_t *result = (uint8_t*)Rangers::packZL01(data, size, resSize);
-        if (!result)
+        QByteArray dat = OpenSR::packZL01(inf.readAll());
+        if (dat.isEmpty())
         {
-            std::cerr << "Cannot pack data" << std::endl;
+            qCritical() << "Cannot pack data";
             return -1;
         }
-        uint32_t crc = crc32(result, resSize);
-        uint32_t key = Rangers::DAT::genKey();
-        Rangers::DAT::encrypt(result, resSize, key, isCache);
+        uint32_t crc = OpenSR::DAT::crc32(dat);
+        uint32_t key = OpenSR::DAT::genKey();
+        OpenSR::DAT::encrypt(dat, key, isCache);
         outf.write((char*)&crc, 4);
         outf.write((char*)&key, 4);
-        outf.write((char*)(result), resSize);
-        delete[] result;
+        outf.write(dat);
     }
 
-    delete[] data;
     inf.close();
     outf.close();
 
