@@ -16,11 +16,34 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <OpenSR/Engine.h>
+#ifndef OPENSR_ENGINE_H
+#define OPENSR_ENGINE_H
 
-int main(int argc, char **argv)
+#include <QApplication>
+
+class QQuickView;
+class QQmlEngine;
+class QJSEngine;
+
+namespace OpenSR
 {
-    OpenSR::Engine engine(argc, argv);
+class Engine: public QApplication
+{
+    Q_OBJECT
+public:
+    Engine(int argc, char **argv);
+    virtual ~Engine();
 
-    return engine.run();
+    int run();
+
+public Q_SLOTS:
+    void addRCCArchive(const QString& path);
+
+private:
+    QQuickView *m_qmlView;
+    QQmlEngine *m_qmlEngine;
+    QJSEngine *m_scriptEngine;
+};
 }
+
+#endif
