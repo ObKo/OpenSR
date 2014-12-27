@@ -35,7 +35,7 @@ Engine::Engine(int argc, char** argv): QApplication(argc, argv)
     m_qmlEngine = m_qmlView->engine();
     m_qmlEngine->addImportPath(":/");
 
-    m_scriptEngine = new QJSEngine();
+    m_scriptEngine = new QJSEngine(this);
     m_scriptEngine->globalObject().setProperty("engine", m_scriptEngine->newQObject(this));
 }
 

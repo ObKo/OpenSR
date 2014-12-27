@@ -14,9 +14,6 @@ FIND_PACKAGE(Qt5Gui REQUIRED)
 # Enable C++11 support.
 ADD_DEFINITIONS(-std=c++11)
 
-# Enable automoc
-SET(CMAKE_AUTOMOC ON)
-
 #OPTION(BUILD_RESOURCE_VIEWER "Build Resource Viewer tool" NO)
 #OPTION(BUILD_RESOURCE_CONVERTER "Build Resource Converter tool" NO)
 #OPTION(BUILD_NINEPATCH_EDITOR "Build Ninepatch Editor tool" NO)
