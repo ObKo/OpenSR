@@ -18,6 +18,8 @@
 
 #include "OpenSR/Engine.h"
 
+#include <OpenSR/SoundManager.h>
+
 #include <QQuickView>
 #include <QBoxLayout>
 #include <QQmlEngine>
@@ -34,6 +36,8 @@ Engine::Engine(int argc, char** argv): QApplication(argc, argv)
     m_qmlView = new QQuickView();
     m_qmlEngine = m_qmlView->engine();
     m_qmlEngine->addImportPath(":/");
+
+    m_sound = new SoundManager(this);
 
     m_scriptEngine = new QJSEngine(this);
     m_scriptEngine->globalObject().setProperty("engine", m_scriptEngine->newQObject(this));
@@ -62,11 +66,19 @@ int Engine::run()
     m_qmlView->setHeight(height);
 
     m_qmlView->show();
+
+    m_sound->start();
+
     return exec();
 }
 
 void Engine::addRCCArchive(const QString& path)
 {
     QResource::registerResource(path);
+}
+
+SoundManager* Engine::sound() const
+{
+    return m_sound;
 }
 }

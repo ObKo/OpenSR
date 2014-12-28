@@ -27,6 +27,7 @@ class QJSEngine;
 
 namespace OpenSR
 {
+class SoundManager;
 class Engine: public QApplication
 {
     Q_OBJECT
@@ -36,6 +37,8 @@ public:
 
     int run();
 
+    SoundManager *sound() const;
+
 public Q_SLOTS:
     void addRCCArchive(const QString& path);
 
@@ -43,6 +46,7 @@ private:
     QQuickView *m_qmlView;
     QQmlEngine *m_qmlEngine;
     QJSEngine *m_scriptEngine;
+    SoundManager *m_sound;
 };
 }
 
