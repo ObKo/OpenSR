@@ -19,6 +19,7 @@
 #include "OpenSR/Engine.h"
 
 #include <OpenSR/SoundManager.h>
+#include <OpenSR/Sound.h>
 
 #include <QQuickView>
 #include <QBoxLayout>
@@ -31,11 +32,14 @@
 
 namespace OpenSR
 {
+extern void registerQMLTypes();
+
 Engine::Engine(int argc, char** argv): QApplication(argc, argv)
 {
     m_qmlView = new QQuickView();
     m_qmlEngine = m_qmlView->engine();
     m_qmlEngine->addImportPath(":/");
+    registerQMLTypes();
 
     m_sound = new SoundManager(this);
 
@@ -49,7 +53,6 @@ Engine::~Engine()
 
 int Engine::run()
 {
-
     QSettings settings;
     QString scriptPath = settings.value("engine/startupScript", "data/startup.qs").toString();
     QFile sf(scriptPath);

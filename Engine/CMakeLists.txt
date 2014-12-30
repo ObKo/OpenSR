@@ -7,12 +7,15 @@ FIND_PACKAGE(Qt5Quick REQUIRED)
 SET(SOURCES
     Engine.cpp
     SoundManager.cpp
+    Sound.cpp
+    QMLTypesExport.cpp
     main.cpp
 )
 
 SET(HEADERS 
     ${CMAKE_SOURCE_DIR}/include/OpenSR/Engine.h
     ${CMAKE_SOURCE_DIR}/include/OpenSR/SoundManager.h
+    ${CMAKE_SOURCE_DIR}/include/OpenSR/Sound.h
 )
 
 INCLUDE_DIRECTORIES(

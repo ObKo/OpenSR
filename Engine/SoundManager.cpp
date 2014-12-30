@@ -22,6 +22,7 @@
 #include <QtEndian>
 #include <QBuffer>
 #include <QDebug>
+#include <QFileInfo>
 
 #ifdef OPENSR_USE_SRC
 #include <samplerate.h>
@@ -46,11 +47,11 @@ const int SAMPLE_RATE = 48000;
 const int SAMPLE_SIZE = 4;
 const int CHANNEL_COUNT = 2;
 
-const int DEV_BUFFER_MS_SIZE = 100;
+const int DEV_BUFFER_MS_SIZE = 50;
 const int DEV_BUFFER_SAMPLE_COUNT = SAMPLE_RATE / 1000 * DEV_BUFFER_MS_SIZE;
 const int DEV_BUFFER_SIZE = DEV_BUFFER_SAMPLE_COUNT * CHANNEL_COUNT * SAMPLE_SIZE;
 
-const int BUFFER_MS_SIZE = 50;
+const int BUFFER_MS_SIZE = 20;
 const int BUFFER_SAMPLE_COUNT = SAMPLE_RATE / 1000 * BUFFER_MS_SIZE;
 const int BUFFER_SIZE = BUFFER_SAMPLE_COUNT * CHANNEL_COUNT * SAMPLE_SIZE;
 }
@@ -124,14 +125,16 @@ void SoundManager::start()
     m_outputDevice->start(m_bufferDev);
 }
 
-void SoundManager::addSound(QSharedPointer<SoundData> sound)
+void SoundManager::playSample(const Sample& sample)
 {
-    mix(sound, 0);
+    if (!sample.data())
+        return;
 
-    if (sound->sampleCount > BUFFER_SAMPLE_COUNT)
-    {
-        m_currentSounds.append(qMakePair(sound, BUFFER_SAMPLE_COUNT));
-    }
+    Sample s = sample;
+    mixSample(s);
+
+    if (!s.done())
+        m_currentSamples.append(s);
 }
 
 QSharedPointer<SoundData> SoundManager::loadWAVFile(QIODevice* d)
@@ -261,45 +264,122 @@ void SoundManager::refreshBuffer()
 {
     memset(m_bufferDev->buffer, 0, BUFFER_SIZE);
 
-    auto m_currentSoundsCopy = m_currentSounds;
-    m_currentSounds.clear();
+    QList<Sample>::iterator end = m_currentSamples.end();
 
-    for (const QPair<QSharedPointer<SoundData>, int> &p : m_currentSoundsCopy)
+    for (QList<Sample>::iterator i = m_currentSamples.begin(); i != m_currentSamples.end();)
     {
-        mix(p.first, p.second);
+        mixSample(*i);
 
-        if ((p.first->sampleCount - p.second) > BUFFER_SAMPLE_COUNT)
-        {
-            m_currentSounds.append(qMakePair(p.first, p.second + BUFFER_SAMPLE_COUNT));
-        }
+        if (i->done())
+            i = m_currentSamples.erase(i);
+        else
+            ++i;
     }
 }
 
-void SoundManager::mix(QSharedPointer< SoundData > sound, int from)
+void SoundManager::mixSample(Sample &s)
 {
+    if (!s.data())
+        return;
+
     float *inBuf = 0;
-    const float *samples = (const float *)sound->samples.constData() + from;
-    int sCount = qMin(sound->sampleCount - from, BUFFER_SAMPLE_COUNT);
+    QSharedPointer<SoundData> sound = s.data();
+    const float *samples = (const float *)sound->samples.constData() + s.processed();
+    int sCount = qMin(sound->sampleCount - s.processed(), BUFFER_SAMPLE_COUNT);
+    float vol = s.volume();
 
     if (sound->channelCount == 1)
     {
         for (int i = 0; i < sCount; i++)
         {
-            m_bufferDev->buffer[i * 2] += samples[i];
-            m_bufferDev->buffer[i * 2 + 1] += samples[i];
+            m_bufferDev->buffer[i * 2] += samples[i] * vol;
+            m_bufferDev->buffer[i * 2 + 1] += samples[i] * vol;
         }
     }
     else if (sound->channelCount == 2)
     {
         for (int i = 0; i < sCount; i++)
         {
-            m_bufferDev->buffer[i * 2] += samples[i * 2];
-            m_bufferDev->buffer[i * 2 + 1] += samples[i * 2 + 1];
+            m_bufferDev->buffer[i * 2] += samples[i * 2] * vol;
+            m_bufferDev->buffer[i * 2 + 1] += samples[i * 2 + 1] * vol;
         }
 
     }
+    s.processSamples(sCount);
+}
+
+QSharedPointer<SoundData> SoundManager::loadSound(const QString& name)
+{
+    QMap<QString, QSharedPointer<SoundData> >::const_iterator it = m_soundCache.find(name);
+    if (it != m_soundCache.end())
+        return it.value();
+
+    QFileInfo fi(name);
+    if (fi.suffix().toLower() != "wav")
+    {
+        qCritical() << "Unsupported sound format: " << fi.suffix();
+        return QSharedPointer<SoundData>();
+    }
+
+    QFile f(name);
+    f.open(QIODevice::ReadOnly);
+
+    if (!f.isOpen())
+        return QSharedPointer<SoundData>();
+
+    QSharedPointer<SoundData> data = loadWAVFile(&f);
+
+    if (!data)
+        return QSharedPointer<SoundData>();
+
+    m_soundCache[name] = data;
+    return data;
+}
+
+SampleData::SampleData(): processed(0), volume(1.0f)
+{
 
 }
 
+Sample::Sample(const QString& name, SoundManager *manager)
+{
+    d = new SampleData();
+    d->samples = manager->loadSound(name);
+}
+
+int Sample::processed() const
+{
+    return d->processed;
+}
+
+QSharedPointer< SoundData > Sample::data() const
+{
+    return d->samples;
+}
+
+float Sample::volume() const
+{
+    return d->volume;
+}
+
+bool Sample::done() const
+{
+    if (!d->samples)
+        return true;
+
+    return d->processed >= d->samples->sampleCount;
+}
+
+void Sample::processSamples(int count)
+{
+    d->processed += count;
+    if (d->processed > d->samples->sampleCount)
+        d->processed = d->samples->sampleCount;
+}
+
+float Sample::setVolume(float volume)
+{
+    d->volume = volume;
+}
 }
 

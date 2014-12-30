@@ -1,11 +1,14 @@
 import QtQuick 2.3
-import QtMultimedia 5.4
+import OpenSR 1.0
 
 Item {
     property string text
     property string normalImage: "qrc:/DATA/FormPlanet2/QuestButN.sci"
     property string hoveredImage: "qrc:/DATA/FormPlanet2/QuestButA.sci"
     property string downImage: "qrc:/DATA/FormPlanet2/QuestButD.sci"
+    property string enterSound: "qrc:/Sound/ButtonEnter.wav"
+    property string leaveSound: "qrc:/Sound/ButtonLeave.WAV"
+    property string clickSound: "qrc:/Sound/ButtonClick.wav"
     signal clicked
 
     implicitWidth: Math.max(bg.implicitWidth, (label.implicitWidth + 10))
@@ -27,25 +30,25 @@ Item {
         verticalAlignment: Text.AlignVCenter
         renderType: Text.NativeRendering
     }
-//    SoundEffect {
-//        id: clickSound
-//        source: "qrc:/Sound/ButtonClick.wav"
-//    }
-//    SoundEffect {
-//        id: enterSound
-//        source: "qrc:/Sound/ButtonEnter.wav"
-//    }
-//    SoundEffect {
-//        id: leaveSound
-//        source: "qrc:/Sound/ButtonLeave.WAV"
-//    }
+    Sound {
+        id: cSnd
+        source: clickSound
+    }
+    Sound {
+        id: eSnd
+        source: enterSound
+    }
+    Sound {
+        id: lSnd
+        source: leaveSound
+    }
     MouseArea {
         id: hoverArea
         anchors.fill: parent
         hoverEnabled: true
         onClicked: { parent.clicked() }
-        onPressed: { /*clickSound.play()*/ }
-        onEntered: { /*enterSound.play()*/ }
-        onExited: { /*leaveSound.play()*/ }
+        onPressed: { cSnd.play() }
+        onEntered: { eSnd.play() }
+        onExited: { lSnd.play() }
     }
 } 

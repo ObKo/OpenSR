@@ -24,6 +24,8 @@
 #include <QAudioOutput>
 #include <QSharedPointer>
 #include <QList>
+#include <QMap>
+#include <QString>
 
 namespace OpenSR
 {
@@ -32,6 +34,34 @@ struct SoundData
     int channelCount;
     int sampleCount;
     QByteArray samples;
+};
+
+struct SampleData: public QSharedData
+{
+public:
+    SampleData();
+
+    QSharedPointer<SoundData> samples;
+    int processed;
+    float volume;
+};
+
+class SoundManager;
+class Sample
+{
+public:
+    Sample(const QString &name, SoundManager *manager);
+
+    QSharedPointer<SoundData> data() const;
+    int processed() const;
+    float volume() const;
+    bool done() const;
+
+    void processSamples(int count);
+    float setVolume(float volume);
+
+private:
+    QSharedDataPointer<SampleData> d;
 };
 
 class SoundManager : public QObject
@@ -44,19 +74,20 @@ public:
     virtual ~SoundManager();
 
     void start();
-    void addSound(QSharedPointer<SoundData> sound);
-
-    QSharedPointer<SoundData> loadWAVFile(QIODevice *d);
+    QSharedPointer<SoundData> loadSound(const QString& name);
+    void playSample(const Sample& sample);
 
 private:
     void refreshBuffer();
-    void mix(QSharedPointer<SoundData> sound, int from);
+    void mixSample(Sample& sound);
     QByteArray resample(const QByteArray& floatData, int &sampleCount, int srcRate, int destRate, int channels);
+    QSharedPointer<SoundData> loadWAVFile(QIODevice *d);
 
     QAudioOutput *m_outputDevice;
     DataIODev *m_bufferDev;
 
-    QList<QPair<QSharedPointer<SoundData>, int> > m_currentSounds;
+    QList<Sample> m_currentSamples;
+    QMap<QString, QSharedPointer<SoundData> > m_soundCache;
 };
 }
 
