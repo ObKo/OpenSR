@@ -19,16 +19,18 @@
 #ifndef OPENSR_SOUNDMANAGER_H
 #define OPENSR_SOUNDMANAGER_H
 
+#include <OpenSR/OpenSR.h>
+
 #include <QObject>
-#include <QAudioFormat>
-#include <QAudioOutput>
+#include <QByteArray>
 #include <QSharedPointer>
-#include <QList>
-#include <QMap>
-#include <QString>
 
 namespace OpenSR
 {
+class SoundManagerPrivate;
+class SoundManager;
+class SampleData;
+
 struct SoundData
 {
     int channelCount;
@@ -36,21 +38,11 @@ struct SoundData
     QByteArray samples;
 };
 
-struct SampleData: public QSharedData
-{
-public:
-    SampleData();
-
-    QSharedPointer<SoundData> samples;
-    int processed;
-    float volume;
-};
-
-class SoundManager;
 class Sample
 {
 public:
     Sample(const QString &name, SoundManager *manager);
+    virtual ~Sample();
 
     QSharedPointer<SoundData> data() const;
     int processed() const;
@@ -67,6 +59,8 @@ private:
 class SoundManager : public QObject
 {
     Q_OBJECT
+    OPENSR_DECLARE_PRIVATE(SoundManager)
+
 public:
     class DataIODev;
 
@@ -77,17 +71,11 @@ public:
     QSharedPointer<SoundData> loadSound(const QString& name);
     void playSample(const Sample& sample);
 
+protected:
+    OPENSR_DECLARE_DPOINTER(SoundManager)
+
 private:
-    void refreshBuffer();
-    void mixSample(Sample& sound);
-    QByteArray resample(const QByteArray& floatData, int &sampleCount, int srcRate, int destRate, int channels);
-    QSharedPointer<SoundData> loadWAVFile(QIODevice *d);
-
-    QAudioOutput *m_outputDevice;
-    DataIODev *m_bufferDev;
-
-    QList<Sample> m_currentSamples;
-    QMap<QString, QSharedPointer<SoundData> > m_soundCache;
+    Q_DISABLE_COPY(SoundManager)
 };
 }
 

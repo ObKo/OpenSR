@@ -17,6 +17,7 @@
 */
 
 #include "OpenSR/SoundManager.h"
+#include "SoundManager_p.h"
 
 #include <QIODevice>
 #include <QtEndian>
@@ -56,64 +57,56 @@ const int BUFFER_SAMPLE_COUNT = SAMPLE_RATE / 1000 * BUFFER_MS_SIZE;
 const int BUFFER_SIZE = BUFFER_SAMPLE_COUNT * CHANNEL_COUNT * SAMPLE_SIZE;
 }
 
-class SoundManager::DataIODev: public QIODevice
+SoundManagerPrivate::DataIODev::DataIODev(SoundManagerPrivate *p, SoundManager *parent): QIODevice(parent)
 {
-public:
-    DataIODev(SoundManager *parent): QIODevice(parent)
-    {
-        buffer = new float[BUFFER_SAMPLE_COUNT * CHANNEL_COUNT];
-        size = BUFFER_SIZE;
-        offset = 0;
-        manager = parent;
-    }
+    buffer = new float[BUFFER_SAMPLE_COUNT * CHANNEL_COUNT];
+    size = BUFFER_SIZE;
+    offset = 0;
+    manager = p;
+}
 
-    int size;
-    int offset;
-    float *buffer;
-    SoundManager *manager;
-
-protected:
-    virtual qint64 readData(char *data, qint64 maxSize)
+qint64 SoundManagerPrivate::DataIODev::readData(char *data, qint64 maxSize)
+{
+    qint64 readed = 0;
+    while (readed < maxSize)
     {
-        qint64 readed = 0;
-        while (readed < maxSize)
+        int curSize = size - offset;
+        if (curSize > maxSize - readed)
         {
-            int curSize = size - offset;
-            if (curSize > maxSize - readed)
-            {
-                memcpy(data + readed, ((char *)buffer) + offset, maxSize - readed);
-                offset += maxSize - readed;
-                readed = maxSize;
-            }
-            else
-            {
-                memcpy(data + readed, ((char *)buffer) + offset, curSize);
-                readed += curSize;
-                manager->refreshBuffer();
-                offset = 0;
-            }
+            memcpy(data + readed, ((char *)buffer) + offset, maxSize - readed);
+            offset += maxSize - readed;
+            readed = maxSize;
+        }
+        else
+        {
+            memcpy(data + readed, ((char *)buffer) + offset, curSize);
+            readed += curSize;
+            manager->refreshBuffer();
+            offset = 0;
         }
     }
+}
 
-    virtual qint64 writeData(const char *data, qint64 maxSize)
-    {
-        return -1;
-    }
-};
-
-SoundManager::SoundManager(QObject *parent): QObject(parent)
+qint64 SoundManagerPrivate::DataIODev::writeData(const char *data, qint64 maxSize)
 {
+    return -1;
+}
+
+SoundManager::SoundManager(QObject *parent): QObject(parent), d_osr_ptr(new SoundManagerPrivate())
+{
+    Q_D(SoundManager);
+
     QAudioFormat f;
     f.setByteOrder(QAudioFormat::LittleEndian);
     f.setChannelCount(CHANNEL_COUNT);
     f.setSampleRate(SAMPLE_RATE);
     f.setSampleSize(SAMPLE_SIZE * 8);
     f.setSampleType(QAudioFormat::Float);
-    m_outputDevice = new QAudioOutput(f, this);
-    m_outputDevice->setBufferSize(DEV_BUFFER_SIZE);
+    d->m_outputDevice = new QAudioOutput(f, this);
+    d->m_outputDevice->setBufferSize(DEV_BUFFER_SIZE);
 
-    m_bufferDev = new DataIODev(this);
-    m_bufferDev->open(QIODevice::ReadOnly);
+    d->m_bufferDev = new SoundManagerPrivate::DataIODev(d, this);
+    d->m_bufferDev->open(QIODevice::ReadOnly);
 }
 
 SoundManager::~SoundManager()
@@ -122,22 +115,25 @@ SoundManager::~SoundManager()
 
 void SoundManager::start()
 {
-    m_outputDevice->start(m_bufferDev);
+    Q_D(SoundManager);
+    d->m_outputDevice->start(d->m_bufferDev);
 }
 
 void SoundManager::playSample(const Sample& sample)
 {
+    Q_D(SoundManager);
+
     if (!sample.data())
         return;
 
     Sample s = sample;
-    mixSample(s);
+    d->mixSample(s);
 
     if (!s.done())
-        m_currentSamples.append(s);
+        d->m_currentSamples.append(s);
 }
 
-QSharedPointer<SoundData> SoundManager::loadWAVFile(QIODevice* d)
+QSharedPointer<SoundData> SoundManagerPrivate::loadWAVFile(QIODevice* d)
 {
     quint32 header[3];
     d->read((char *)header, 3 * 4);
@@ -209,7 +205,7 @@ QSharedPointer<SoundData> SoundManager::loadWAVFile(QIODevice* d)
 }
 
 #ifdef OPENSR_USE_SRC
-QByteArray SoundManager::resample(const QByteArray& floatData, int &sampleCount, int srcRate, int destRate, int channels)
+QByteArray SoundManagerPrivate::resample(const QByteArray& floatData, int &sampleCount, int srcRate, int destRate, int channels)
 {
     if (srcRate == destRate)
         return floatData;
@@ -232,7 +228,7 @@ QByteArray SoundManager::resample(const QByteArray& floatData, int &sampleCount,
 }
 #else
 //Using simple linear resampler
-QByteArray SoundManager::resample(const QByteArray& floatData, int &sampleCount, int srcRate, int destRate, int channels)
+QByteArray SoundManagerPrivate::resample(const QByteArray& floatData, int &sampleCount, int srcRate, int destRate, int channels)
 {
     if (srcRate == destRate)
         return floatData;
@@ -260,7 +256,7 @@ QByteArray SoundManager::resample(const QByteArray& floatData, int &sampleCount,
 }
 #endif
 
-void SoundManager::refreshBuffer()
+void SoundManagerPrivate::refreshBuffer()
 {
     memset(m_bufferDev->buffer, 0, BUFFER_SIZE);
 
@@ -277,7 +273,7 @@ void SoundManager::refreshBuffer()
     }
 }
 
-void SoundManager::mixSample(Sample &s)
+void SoundManagerPrivate::mixSample(Sample &s)
 {
     if (!s.data())
         return;
@@ -310,8 +306,10 @@ void SoundManager::mixSample(Sample &s)
 
 QSharedPointer<SoundData> SoundManager::loadSound(const QString& name)
 {
-    QMap<QString, QSharedPointer<SoundData> >::const_iterator it = m_soundCache.find(name);
-    if (it != m_soundCache.end())
+    Q_D(SoundManager);
+
+    QMap<QString, QSharedPointer<SoundData> >::const_iterator it = d->m_soundCache.find(name);
+    if (it != d->m_soundCache.end())
         return it.value();
 
     QFileInfo fi(name);
@@ -327,12 +325,12 @@ QSharedPointer<SoundData> SoundManager::loadSound(const QString& name)
     if (!f.isOpen())
         return QSharedPointer<SoundData>();
 
-    QSharedPointer<SoundData> data = loadWAVFile(&f);
+    QSharedPointer<SoundData> data = d->loadWAVFile(&f);
 
     if (!data)
         return QSharedPointer<SoundData>();
 
-    m_soundCache[name] = data;
+    d->m_soundCache[name] = data;
     return data;
 }
 
@@ -345,6 +343,11 @@ Sample::Sample(const QString& name, SoundManager *manager)
 {
     d = new SampleData();
     d->samples = manager->loadSound(name);
+}
+
+Sample::~Sample()
+{
+
 }
 
 int Sample::processed() const
