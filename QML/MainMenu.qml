@@ -24,21 +24,21 @@ Item {
             PropertyAnimation { id: bgFromAnim; duration: 50000; to: 0 }
         }
     }
-//     AnimatedImage {
-//         source: "qrc:/DATA/FormMain2/2AnimMain.gai"
-//         fillMode: Image.Tile
-//         anchors.fill: parent
-//     }
+    AnimatedImage {
+        source: "qrc:/DATA/FormMain2/2AnimMain.gai"
+        fillMode: Image.Tile
+        anchors.fill: parent
+    }
     Image {
         source: "qrc:/DATA/FormMain3/2Planet.gi"
         anchors.left: parent.left
         anchors.bottom: parent.bottom
     }
-//     AnimatedImage {
-//         source: "qrc:/DATA/FormMain2/2AnimLine.gai"
-//         anchors.right: parent.right
-//         anchors.top: parent.top
-//     }
+    AnimatedImage {
+        source: "qrc:/DATA/FormMain2/2AnimLine.gai"
+        anchors.right: parent.right
+        anchors.top: parent.top
+    }
     Image {
         source: "qrc:/DATA/FormMain3/2caption.gi"
         anchors.top: parent.top
@@ -100,9 +100,9 @@ Item {
         anchors.right: parent.right
         anchors.rightMargin: 100
     }
-//     AnimatedImage {
-//         source: "qrc:/DATA/FormMain3/2Ship1.gai"
-//         anchors.left: parent.left
-//         anchors.bottom: parent.bottom
-//     }
+    AnimatedImage {
+        source: "qrc:/DATA/FormMain3/2Ship1.gai"
+        anchors.left: parent.left
+        anchors.bottom: parent.bottom
+    }
 }

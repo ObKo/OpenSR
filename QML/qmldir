@@ -1,3 +1,4 @@
 module OpenSR
+plugin QMLOpenSR
 Button 1.0 Button.qml
 MainMenu 1.0 MainMenu.qml

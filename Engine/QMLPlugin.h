@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2014 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2015 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,11 +16,18 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace OpenSR
+#ifndef OPENSR_QMLPLUGIN_H
+#define OPENSR_QMLPLUGIN_H
+
+#include <QQmlExtensionPlugin>
+
+class OpenSRPlugin : public QQmlExtensionPlugin
 {
-extern void qmlRegisterSoundType();
-void registerQMLTypes()
-{
-    qmlRegisterSoundType();
-}
-}
+    Q_OBJECT
+    Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QQmlExtensionInterface")
+
+public:
+    void registerTypes(const char *uri);
+};
+
+#endif // OPENSR_QMLPLUGIN_H

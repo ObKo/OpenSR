@@ -71,10 +71,5 @@ float Sound::volume() const
 {
     return m_volume;
 }
-
-void qmlRegisterSoundType()
-{
-    qmlRegisterType<Sound>("OpenSR", 1, 0, "Sound");
-}
 }
 
