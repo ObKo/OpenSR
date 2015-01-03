@@ -37,6 +37,7 @@ Engine::Engine(int argc, char** argv): QApplication(argc, argv)
     m_qmlView = new QQuickView();
     m_qmlEngine = m_qmlView->engine();
     m_qmlEngine->addImportPath(":/");
+    m_qmlEngine->rootContext()->setContextProperty("engine", this);
 
     m_sound = new SoundManager(this);
 
@@ -61,7 +62,6 @@ int Engine::run()
     int width = settings.value("graphics/width", 1024).toInt();
     int height = settings.value("graphics/height", 768).toInt();
 
-    m_qmlView->setSource(QUrl("qrc:/OpenSR/main.qml"));
     m_qmlView->setWidth(width);
     m_qmlView->setHeight(height);
 
@@ -75,6 +75,11 @@ int Engine::run()
 void Engine::addRCCArchive(const QString& path)
 {
     QResource::registerResource(path);
+}
+
+void Engine::showQMLComponent(const QUrl& source)
+{
+    m_qmlView->setSource(source);
 }
 
 SoundManager* Engine::sound() const

@@ -41,6 +41,7 @@ public:
 
 public Q_SLOTS:
     void addRCCArchive(const QString& path);
+    void showQMLComponent(const QUrl& source);
 
 private:
     QQuickView *m_qmlView;

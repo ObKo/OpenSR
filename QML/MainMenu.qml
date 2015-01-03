@@ -3,6 +3,7 @@ import OpenSR 1.0
 
 Item {
     id: menu
+    anchors.fill: parent
 
     Connections {
         onHeightChanged: {
@@ -112,6 +113,9 @@ Item {
             downImage: "qrc:/DATA/FormMain2/2ButExitD.gi"
             anchors.top: aboutButton.bottom
             anchors.topMargin: 10
+            onClicked: {
+                engine.quit()
+            }
         }
         anchors.verticalCenter: parent.verticalCenter
         anchors.verticalCenterOffset: 100

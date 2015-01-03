@@ -132,9 +132,9 @@ class GAIAnimatedImagePrivate
 {
     GAIAnimatedImage *q_ptr;
     Q_DECLARE_PUBLIC(GAIAnimatedImage)
-    
+
     GAIAnimatedImagePrivate(GAIAnimatedImage *q);
-    
+
     void loadGAI(const QUrl& source);
     void loadGIFrame(QIODevice* dev, int i, const GAIHeader &header, QVector<QByteArray>& frames, QVector<QPoint>& offsets);
 
@@ -163,11 +163,11 @@ class GAIAnimatedImagePrivate
 GAIAnimatedImagePrivate::GAIAnimatedImagePrivate(GAIAnimatedImage *q):
     m_sourceChanged(false), m_loaded(false), m_currentFrame(0), m_currentFile(0),
     m_fileChanged(false), m_playing(true), m_speed(1.0f)
-    {
-        q_ptr = q;
-    }
+{
+    q_ptr = q;
+}
 
-GAIAnimatedImage::GAIAnimatedImage(QQuickItem* parent): QQuickItem(parent), 
+GAIAnimatedImage::GAIAnimatedImage(QQuickItem* parent): QQuickItem(parent),
     d_osr_ptr(new GAIAnimatedImagePrivate(this))
 {
     Q_D(GAIAnimatedImage);
@@ -185,7 +185,7 @@ GAIAnimatedImage::~GAIAnimatedImage()
 void GAIAnimatedImage::setSources(const QList<QUrl>& url)
 {
     Q_D(GAIAnimatedImage);
-    
+
     d->m_sourceChanged = true;
     d->m_fileChanged = true;
     d->m_currentFile = 0;
@@ -223,7 +223,7 @@ QList<QUrl> GAIAnimatedImage::sources() const
 QSGNode* GAIAnimatedImage::updatePaintNode(QSGNode* oldNode, QQuickItem::UpdatePaintNodeData* updatePaintNodeData)
 {
     Q_D(GAIAnimatedImage);
-    
+
     GAINode *n = dynamic_cast<GAINode*>(oldNode);
 
     if (!n)
@@ -262,7 +262,7 @@ QSGNode* GAIAnimatedImage::updatePaintNode(QSGNode* oldNode, QQuickItem::UpdateP
 }
 
 void GAIAnimatedImagePrivate::loadGAI(const QUrl& source)
-{    
+{
     if (!source.isLocalFile() && source.scheme() != "qrc")
     {
         qWarning() << "GAIAnimatedImage: Non-local files is unsupported.";
@@ -347,7 +347,7 @@ void GAIAnimatedImagePrivate::loadGAI(const QUrl& source)
 }
 
 void GAIAnimatedImagePrivate::loadGIFrame(QIODevice* dev, int i, const GAIHeader &header,
-                                   QVector<QByteArray>& frames, QVector<QPoint>& offsets)
+        QVector<QByteArray>& frames, QVector<QPoint>& offsets)
 {
     GIFrameHeader image;
 
@@ -472,7 +472,7 @@ float GAIAnimatedImage::speed() const
 void GAIAnimatedImage::nextFrame()
 {
     Q_D(GAIAnimatedImage);
-    
+
     if (!d->m_loaded)
         return;
 
