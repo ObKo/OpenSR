@@ -19,14 +19,13 @@
 #ifndef OPENSR_GAIANIMATEDIMAGE_H
 #define OPENSR_GAIANIMATEDIMAGE_H
 
+#include <OpenSR/OpenSR.h>
 #include <QQuickItem>
-#include <OpenSR/libRangerQt.h>
-#include <QTimer>
 #include <QList>
 
 namespace OpenSR
 {
-class GAITexture;
+class GAIAnimatedImagePrivate;
 class GAIAnimatedImage: public QQuickItem
 {
     Q_OBJECT
@@ -36,8 +35,12 @@ class GAIAnimatedImage: public QQuickItem
     Q_PROPERTY(bool paused READ paused WRITE setPaused NOTIFY pausedChanged)
     Q_PROPERTY(bool playing READ playing WRITE setPlaying NOTIFY playingChanged)
     Q_PROPERTY(float speed READ speed WRITE setSpeed NOTIFY speedChanged)
+    
+    OPENSR_DECLARE_PRIVATE(GAIAnimatedImage)
+    
 public:
     GAIAnimatedImage(QQuickItem * parent = 0);
+    virtual ~GAIAnimatedImage();
 
     QList<QUrl> sources() const;
     int framesCount() const;
@@ -57,39 +60,14 @@ Q_SIGNALS:
     void currentFrameChanged();
     void pausedChanged();
     void playingChanged();
-    void speedChanged();
+    void speedChanged();    
 
 protected:
+    OPENSR_DECLARE_DPOINTER(GAIAnimatedImage);    
     virtual QSGNode *updatePaintNode(QSGNode * oldNode, UpdatePaintNodeData * updatePaintNodeData);
 
-private Q_SLOTS:
+public Q_SLOTS:
     void nextFrame();
-
-private:
-    void loadGAI(const QUrl& source);
-    void loadGIFrame(QIODevice* dev, int i, const GAIHeader &header,
-                     QVector<QByteArray>& frames, QVector<QPoint>& offsets);
-
-    QList<QUrl> m_sources;
-    bool m_sourceChanged;
-
-    int m_currentFrame;
-
-    bool m_loaded;
-
-    QList<QImage> m_bgs;
-    QList<GAIHeader> m_headers;
-
-    QList<QVector<int> > m_gaiTimes;
-    QList<QVector<QByteArray> > m_gaiFrames;
-    QList<QVector<QPoint> > m_gaiOffsets;
-    QTimer m_timer;
-
-    QList<GAITexture*> m_textures;
-    int m_currentFile;
-    bool m_fileChanged;
-    bool m_playing;
-    float m_speed;
 };
 }
 

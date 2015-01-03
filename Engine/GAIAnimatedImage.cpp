@@ -24,6 +24,8 @@
 #include <QDebug>
 #include <QBuffer>
 #include <QSGSimpleRectNode>
+#include <QTimer>
+#include <OpenSR/libRangerQt.h>
 
 namespace OpenSR
 {
@@ -124,41 +126,88 @@ public:
 
     QSGGeometry m_geometry;
 };
-
 }
 
-GAIAnimatedImage::GAIAnimatedImage(QQuickItem* parent): QQuickItem(parent),
+class GAIAnimatedImagePrivate
+{
+    GAIAnimatedImage *q_ptr;
+    Q_DECLARE_PUBLIC(GAIAnimatedImage)
+    
+    GAIAnimatedImagePrivate(GAIAnimatedImage *q);
+    
+    void loadGAI(const QUrl& source);
+    void loadGIFrame(QIODevice* dev, int i, const GAIHeader &header, QVector<QByteArray>& frames, QVector<QPoint>& offsets);
+
+    QList<QUrl> m_sources;
+    bool m_sourceChanged;
+
+    int m_currentFrame;
+
+    bool m_loaded;
+
+    QList<QImage> m_bgs;
+    QList<GAIHeader> m_headers;
+
+    QList<QVector<int> > m_gaiTimes;
+    QList<QVector<QByteArray> > m_gaiFrames;
+    QList<QVector<QPoint> > m_gaiOffsets;
+    QTimer m_timer;
+
+    QList<GAITexture*> m_textures;
+    int m_currentFile;
+    bool m_fileChanged;
+    bool m_playing;
+    float m_speed;
+};
+
+GAIAnimatedImagePrivate::GAIAnimatedImagePrivate(GAIAnimatedImage *q):
     m_sourceChanged(false), m_loaded(false), m_currentFrame(0), m_currentFile(0),
     m_fileChanged(false), m_playing(true), m_speed(1.0f)
+    {
+        q_ptr = q;
+    }
+
+GAIAnimatedImage::GAIAnimatedImage(QQuickItem* parent): QQuickItem(parent), 
+    d_osr_ptr(new GAIAnimatedImagePrivate(this))
 {
+    Q_D(GAIAnimatedImage);
     setFlag(QQuickItem::ItemHasContents);
-    connect(&m_timer, SIGNAL(timeout()), this, SLOT(nextFrame()));
+    connect(&d->m_timer, SIGNAL(timeout()), this, SLOT(nextFrame()));
+}
+
+GAIAnimatedImage::~GAIAnimatedImage()
+{
+    Q_D(GAIAnimatedImage);
+    for (QSGTexture *t : d->m_textures)
+        delete t;
 }
 
 void GAIAnimatedImage::setSources(const QList<QUrl>& url)
 {
-    m_sourceChanged = true;
-    m_fileChanged = true;
-    m_currentFile = 0;
-    m_currentFrame = 0;
+    Q_D(GAIAnimatedImage);
+    
+    d->m_sourceChanged = true;
+    d->m_fileChanged = true;
+    d->m_currentFile = 0;
+    d->m_currentFrame = 0;
 
-    m_gaiFrames.clear();
-    m_gaiTimes.clear();
-    m_gaiOffsets.clear();
-    m_bgs.clear();
-    m_headers.clear();
-    m_timer.stop();
-    m_loaded = false;
+    d->m_gaiFrames.clear();
+    d->m_gaiTimes.clear();
+    d->m_gaiOffsets.clear();
+    d->m_bgs.clear();
+    d->m_headers.clear();
+    d->m_timer.stop();
+    d->m_loaded = false;
 
-    m_sources = url;
+    d->m_sources = url;
 
-    for (const QUrl& u : m_sources)
-        loadGAI(u);
+    for (const QUrl& u : d->m_sources)
+        d->loadGAI(u);
 
-    if (!m_headers.isEmpty())
+    if (!d->m_headers.isEmpty())
     {
-        setImplicitWidth(m_headers[0].finishX - m_headers[0].startX);
-        setImplicitHeight(m_headers[0].finishY - m_headers[0].startY);
+        setImplicitWidth(d->m_headers[0].finishX - d->m_headers[0].startX);
+        setImplicitHeight(d->m_headers[0].finishY - d->m_headers[0].startY);
     }
     emit(sourcesChanged());
     emit(currentFrameChanged());
@@ -167,53 +216,53 @@ void GAIAnimatedImage::setSources(const QList<QUrl>& url)
 
 QList<QUrl> GAIAnimatedImage::sources() const
 {
-    return m_sources;
+    Q_D(const GAIAnimatedImage);
+    return d->m_sources;
 }
 
 QSGNode* GAIAnimatedImage::updatePaintNode(QSGNode* oldNode, QQuickItem::UpdatePaintNodeData* updatePaintNodeData)
 {
+    Q_D(GAIAnimatedImage);
+    
     GAINode *n = dynamic_cast<GAINode*>(oldNode);
 
     if (!n)
         n = new GAINode();
 
-    if (m_sourceChanged)
+    if (d->m_sourceChanged)
     {
-        if (!m_loaded)
+        if (!d->m_loaded)
         {
-            m_sourceChanged = false;
+            d->m_sourceChanged = false;
             return 0;
         }
 
-        for (QSGTexture *t : m_textures)
-        {
+        for (QSGTexture *t : d->m_textures)
             delete t;
-        }
-        m_textures.clear();
+        d->m_textures.clear();
 
-        for (int i = 0; i < m_headers.size(); i++)
+        for (int i = 0; i < d->m_headers.size(); i++)
         {
-            GAITexture *texture = new GAITexture(m_headers[i], m_bgs[i]);
+            GAITexture *texture = new GAITexture(d->m_headers[i], d->m_bgs[i]);
             texture->setFiltering(QSGTexture::Linear);
-            m_textures.push_back(texture);
+            d->m_textures.push_back(texture);
         }
     }
 
-    if (m_fileChanged)
-        static_cast<QSGSimpleMaterial<GAIShaderState>*>(n->material())->state()->t = m_textures[m_currentFile];
+    if (d->m_fileChanged)
+        static_cast<QSGSimpleMaterial<GAIShaderState>*>(n->material())->state()->t = d->m_textures[d->m_currentFile];
 
     QSGGeometry::updateTexturedRectGeometry(n->geometry(), boundingRect(), QRectF(0, 0, 1, 1));
     n->markDirty(QSGNode::DirtyGeometry | QSGNode::DirtyMaterial);
 
-    m_sourceChanged = false;
-    m_fileChanged = false;
+    d->m_sourceChanged = false;
+    d->m_fileChanged = false;
 
     return n;
 }
 
-void GAIAnimatedImage::loadGAI(const QUrl& source)
-{
-
+void GAIAnimatedImagePrivate::loadGAI(const QUrl& source)
+{    
     if (!source.isLocalFile() && source.scheme() != "qrc")
     {
         qWarning() << "GAIAnimatedImage: Non-local files is unsupported.";
@@ -297,7 +346,7 @@ void GAIAnimatedImage::loadGAI(const QUrl& source)
     m_loaded = true;
 }
 
-void GAIAnimatedImage::loadGIFrame(QIODevice* dev, int i, const GAIHeader &header,
+void GAIAnimatedImagePrivate::loadGIFrame(QIODevice* dev, int i, const GAIHeader &header,
                                    QVector<QByteArray>& frames, QVector<QPoint>& offsets)
 {
     GIFrameHeader image;
@@ -346,20 +395,22 @@ void GAIAnimatedImage::loadGIFrame(QIODevice* dev, int i, const GAIHeader &heade
 
 int GAIAnimatedImage::currentFrame() const
 {
+    Q_D(const GAIAnimatedImage);
     //FIXME: Quite ugly
     int f = 0;
-    for (int i = 0; i < m_currentFile; i++)
-        f += m_headers[i].frameCount;
+    for (int i = 0; i < d->m_currentFile; i++)
+        f += d->m_headers[i].frameCount;
 
-    return f + m_currentFrame;
+    return f + d->m_currentFrame;
 }
 
 int GAIAnimatedImage::framesCount() const
 {
+    Q_D(const GAIAnimatedImage);
     //FIXME: Quite ugly
     int f = 0;
-    for (int i = 0; i < m_headers.count(); i++)
-        f += m_headers[i].frameCount;
+    for (int i = 0; i < d->m_headers.count(); i++)
+        f += d->m_headers[i].frameCount;
 
     return f;
 
@@ -367,83 +418,91 @@ int GAIAnimatedImage::framesCount() const
 
 bool GAIAnimatedImage::paused() const
 {
-    return !m_playing;
+    Q_D(const GAIAnimatedImage);
+    return !d->m_playing;
 }
 
 bool GAIAnimatedImage::playing() const
 {
-    return m_playing;
+    Q_D(const GAIAnimatedImage);
+    return d->m_playing;
 }
 
 void GAIAnimatedImage::setPlaying(bool playing)
 {
-    if (!m_playing && playing)
-        m_timer.start();
+    Q_D(GAIAnimatedImage);
+    if (!d->m_playing && playing)
+        d->m_timer.start();
 
-    if (m_playing && !playing)
-        m_timer.stop();
+    if (d->m_playing && !playing)
+        d->m_timer.stop();
 
-    m_playing = playing;
+    d->m_playing = playing;
     emit(playingChanged());
     emit(pausedChanged());
 }
 
 void GAIAnimatedImage::setPaused(bool paused)
 {
-    if (m_playing && paused)
-        m_timer.stop();
+    Q_D(GAIAnimatedImage);
+    if (d->m_playing && paused)
+        d->m_timer.stop();
 
-    if (!m_playing && !paused)
-        m_timer.start();
+    if (!d->m_playing && !paused)
+        d->m_timer.start();
 
-    m_playing = !paused;
+    d->m_playing = !paused;
     emit(playingChanged());
     emit(pausedChanged());
 }
 
 void GAIAnimatedImage::setSpeed(float speed)
 {
-    m_speed = speed;
+    Q_D(GAIAnimatedImage);
+    d->m_speed = speed;
     emit(speedChanged());
 }
 
 float GAIAnimatedImage::speed() const
 {
-    return m_speed;
+    Q_D(const GAIAnimatedImage);
+    return d->m_speed;
 }
 
 void GAIAnimatedImage::nextFrame()
 {
-    if (!m_loaded)
+    Q_D(GAIAnimatedImage);
+    
+    if (!d->m_loaded)
         return;
 
-    if (m_currentFile >= m_headers.count())
+    if (d->m_currentFile >= d->m_headers.count())
         return;
 
-    if ((m_currentFile >= m_textures.count()) || (!m_textures[m_currentFile]))
+    if ((d->m_currentFile >= d->m_textures.count()) || (!d->m_textures[d->m_currentFile]))
     {
-        m_timer.setInterval(m_gaiTimes[m_currentFile][m_currentFrame] / m_speed);
-        m_timer.start();
+        d->m_timer.setInterval(d->m_gaiTimes[d->m_currentFile][d->m_currentFrame] / d->m_speed);
+        d->m_timer.start();
         return;
     }
 
-    m_currentFrame = m_currentFrame + 1;
-    if (m_currentFrame >= m_headers[m_currentFile].frameCount)
+    d->m_currentFrame = d->m_currentFrame + 1;
+    if (d->m_currentFrame >= d->m_headers[d->m_currentFile].frameCount)
     {
-        m_currentFrame = 0;
-        m_currentFile = (m_currentFile + 1) % m_headers.count();
-        setImplicitWidth(m_headers[m_currentFile].finishX - m_headers[m_currentFile].startX);
-        setImplicitHeight(m_headers[m_currentFile].finishY - m_headers[m_currentFile].startY);
-        m_fileChanged = true;
+        d->m_currentFrame = 0;
+        d->m_currentFile = (d->m_currentFile + 1) % d->m_headers.count();
+        setImplicitWidth(d->m_headers[d->m_currentFile].finishX - d->m_headers[d->m_currentFile].startX);
+        setImplicitHeight(d->m_headers[d->m_currentFile].finishY - d->m_headers[d->m_currentFile].startY);
+        d->m_fileChanged = true;
     }
 
-    m_timer.setInterval(m_gaiTimes[m_currentFile][m_currentFrame] / m_speed);
+    d->m_timer.setInterval(d->m_gaiTimes[d->m_currentFile][d->m_currentFrame] / d->m_speed);
 
-    if (m_textures[m_currentFile])
-        m_textures[m_currentFile]->drawNextFrame(m_gaiFrames[m_currentFile][m_currentFrame],
-                m_gaiOffsets[m_currentFile][m_currentFrame]);
+    if (d->m_textures[d->m_currentFile])
+        d->m_textures[d->m_currentFile]->drawNextFrame(d->m_gaiFrames[d->m_currentFile][d->m_currentFrame],
+                d->m_gaiOffsets[d->m_currentFile][d->m_currentFrame]);
 
-    m_timer.start();
+    d->m_timer.start();
     emit(currentFrameChanged());
 }
 }
