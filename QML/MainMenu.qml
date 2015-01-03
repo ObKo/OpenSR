@@ -24,26 +24,44 @@ Item {
             PropertyAnimation { id: bgFromAnim; duration: 50000; to: 0 }
         }
     }
-    AnimatedImage {
-        source: "qrc:/DATA/FormMain2/2AnimMain.gai"
-        fillMode: Image.Tile
+    GAIAnimatedImage {
+        id: grid
+        
+        sources: ["qrc:/DATA/FormMain2/2AnimMain.gai"]
+        speed: 0.75
         anchors.fill: parent
+        
+        onCurrentFrameChanged: {
+            if(currentFrame == 0)
+                gridPauseAnim.restart();
+        }
+        SequentialAnimation {
+            id: gridPauseAnim
+            
+            PropertyAction { target: grid; property: "playing"; value: false }
+            PauseAnimation { duration: 10000 }
+            PropertyAction { target: grid; property: "playing"; value: true }
+        }
     }
     Image {
         source: "qrc:/DATA/FormMain3/2Planet.gi"
         anchors.left: parent.left
         anchors.bottom: parent.bottom
     }
-    AnimatedImage {
-        source: "qrc:/DATA/FormMain2/2AnimLine.gai"
+    GAIAnimatedImage {
+        id: animLine
+        sources: ["qrc:/DATA/FormMain2/2AnimLine.gai"]
+        speed: 0.5
+        width: parent.width
         anchors.right: parent.right
         anchors.top: parent.top
     }
     Image {
         source: "qrc:/DATA/FormMain3/2caption.gi"
         anchors.top: parent.top
-        anchors.right: parent.right
+        anchors.horizontalCenter: animLine.right
         anchors.topMargin: 20;
+        anchors.horizontalCenterOffset: -310 * animLine.width / animLine.implicitWidth
     }
     Item {
         width: childrenRect.width
@@ -100,8 +118,11 @@ Item {
         anchors.right: parent.right
         anchors.rightMargin: 100
     }
-    AnimatedImage {
-        source: "qrc:/DATA/FormMain3/2Ship1.gai"
+    GAIAnimatedImage {
+        id: animation
+        sources: ["qrc:/DATA/FormMain3/2Ship1.gai", 
+                  "qrc:/DATA/FormMain3/2Ship2.gai", 
+                  "qrc:/DATA/FormMain3/2Ship3.gai"]
         anchors.left: parent.left
         anchors.bottom: parent.bottom
     }

@@ -8,12 +8,16 @@ SET(SOURCES
     Engine.cpp
     SoundManager.cpp
     Sound.cpp
+    GAIAnimatedImage.cpp
+    GAITexture.cpp
 )
 
 SET(HEADERS 
     ${CMAKE_SOURCE_DIR}/include/OpenSR/Engine.h
     ${CMAKE_SOURCE_DIR}/include/OpenSR/SoundManager.h
     ${CMAKE_SOURCE_DIR}/include/OpenSR/Sound.h
+    ${CMAKE_SOURCE_DIR}/include/OpenSR/GAIAnimatedImage.h
+    ${CMAKE_SOURCE_DIR}/include/OpenSR/GAITexture.h
 )
 
 INCLUDE_DIRECTORIES(

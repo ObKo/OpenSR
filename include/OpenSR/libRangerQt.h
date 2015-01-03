@@ -149,6 +149,7 @@ GIFrameHeader peekGIHeader(QIODevice *dev);
 GIFrameHeader readGIHeader(QIODevice *dev);
 
 QImage loadGIFrame(QIODevice *dev, bool animation = false, const QImage &background = QImage(), int startX = 0, int startY = 0, int finishX = 0, int finishY = 0);
+void decodeGAIDeltaFrame(QImage &dest, int x, int y, QIODevice *dev);
 
 PKGItem *loadPKG(QIODevice *dev);
 QByteArray extractFile(const PKGItem &item, QIODevice *dev);
