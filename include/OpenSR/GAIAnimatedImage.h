@@ -26,7 +26,7 @@
 namespace OpenSR
 {
 class GAIAnimatedImagePrivate;
-class GAIAnimatedImage: public QQuickItem
+class ENGINE_API GAIAnimatedImage: public QQuickItem
 {
     Q_OBJECT
     Q_PROPERTY(QList<QUrl> sources READ sources WRITE setSources NOTIFY sourcesChanged)

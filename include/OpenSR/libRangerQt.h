@@ -1,5 +1,39 @@
+/*
+    OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
+    Copyright (C) 2014 - 2015 Kosyak <ObKo@mail.ru>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #ifndef LIBRANGER_QT_H
 #define LIBRANGER_QT_H
+
+#include <QtGlobal>
+
+#ifdef LIBRANGER_LIBRARY
+# ifdef Q_OS_WIN32
+#  define LIBRANGER_API __declspec(dllexport)
+# else
+#  define LIBRANGER_API
+# endif
+#else
+# ifdef Q_OS_WIN32
+#  define LIBRANGER_API __declspec(dllimport)
+# else
+#  define LIBRANGER_API
+# endif
+#endif
 
 #include <stdint.h>
 
@@ -126,43 +160,43 @@ struct Animation
     QVector<int> times;
 };
 
-bool checkHAIHeader(QIODevice *dev);
-HAIHeader peekHAIHeader(QIODevice *dev);
-HAIHeader readHAIHeader(QIODevice *dev);
+LIBRANGER_API bool checkHAIHeader(QIODevice *dev);
+LIBRANGER_API HAIHeader peekHAIHeader(QIODevice *dev);
+LIBRANGER_API HAIHeader readHAIHeader(QIODevice *dev);
 
-QVector<int> loadHAITimes(QIODevice *dev, const HAIHeader& header);
-QImage loadHAIFrame(QIODevice *dev, const HAIHeader& header, int i);
+LIBRANGER_API QVector<int> loadHAITimes(QIODevice *dev, const HAIHeader& header);
+LIBRANGER_API QImage loadHAIFrame(QIODevice *dev, const HAIHeader& header, int i);
 
-Animation loadHAIAnimation(QIODevice *dev);
+LIBRANGER_API Animation loadHAIAnimation(QIODevice *dev);
 
-bool checkGAIHeader(QIODevice *dev);
-GAIHeader peekGAIHeader(QIODevice *dev);
-GAIHeader readGAIHeader(QIODevice *dev);
+LIBRANGER_API bool checkGAIHeader(QIODevice *dev);
+LIBRANGER_API GAIHeader peekGAIHeader(QIODevice *dev);
+LIBRANGER_API GAIHeader readGAIHeader(QIODevice *dev);
 
-QVector<int> loadGAITimes(QIODevice *dev, const GAIHeader& header);
-QImage loadGAIFrame(QIODevice *dev, const GAIHeader& header, int i, const QImage &background);
+LIBRANGER_API QVector<int> loadGAITimes(QIODevice *dev, const GAIHeader& header);
+LIBRANGER_API QImage loadGAIFrame(QIODevice *dev, const GAIHeader& header, int i, const QImage &background);
 
-Animation loadGAIAnimation(QIODevice *dev, const QImage &background = QImage());
+LIBRANGER_API Animation loadGAIAnimation(QIODevice *dev, const QImage &background = QImage());
 
-bool checkGIHeader(QIODevice *dev);
-GIFrameHeader peekGIHeader(QIODevice *dev);
-GIFrameHeader readGIHeader(QIODevice *dev);
+LIBRANGER_API bool checkGIHeader(QIODevice *dev);
+LIBRANGER_API GIFrameHeader peekGIHeader(QIODevice *dev);
+LIBRANGER_API GIFrameHeader readGIHeader(QIODevice *dev);
 
-QImage loadGIFrame(QIODevice *dev, bool animation = false, const QImage &background = QImage(), int startX = 0, int startY = 0, int finishX = 0, int finishY = 0);
-void decodeGAIDeltaFrame(QImage &dest, int x, int y, QIODevice *dev);
+LIBRANGER_API QImage loadGIFrame(QIODevice *dev, bool animation = false, const QImage &background = QImage(), int startX = 0, int startY = 0, int finishX = 0, int finishY = 0);
+LIBRANGER_API void decodeGAIDeltaFrame(QImage &dest, int x, int y, QIODevice *dev);
 
-PKGItem *loadPKG(QIODevice *dev);
-QByteArray extractFile(const PKGItem &item, QIODevice *dev);
+LIBRANGER_API PKGItem *loadPKG(QIODevice *dev);
+LIBRANGER_API QByteArray extractFile(const PKGItem &item, QIODevice *dev);
 
-QByteArray unpackZL(QByteArray &src);
-QByteArray packZL01(const QByteArray &src);
-QByteArray packZL02(const QByteArray &src);
+LIBRANGER_API QByteArray unpackZL(QByteArray &src);
+LIBRANGER_API QByteArray packZL01(const QByteArray &src);
+LIBRANGER_API QByteArray packZL02(const QByteArray &src);
 
-void readDATTree(QIODevice *dev, QVariantMap *parent, bool isCache = false);
-QVariantMap loadDAT(QIODevice *dev, bool isCache = false);
+LIBRANGER_API void readDATTree(QIODevice *dev, QVariantMap *parent, bool isCache = false);
+LIBRANGER_API QVariantMap loadDAT(QIODevice *dev, bool isCache = false);
 
-void writeDATTree(QIODevice *dev, const QVariant& node, const QString& name);
-void saveDAT(QIODevice *dev, const QVariant& root);
+LIBRANGER_API void writeDATTree(QIODevice *dev, const QVariant& node, const QString& name);
+LIBRANGER_API void saveDAT(QIODevice *dev, const QVariant& root);
 }
 
 #endif

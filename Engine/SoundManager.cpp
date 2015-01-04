@@ -85,6 +85,7 @@ qint64 SoundManagerPrivate::DataIODev::readData(char *data, qint64 maxSize)
             offset = 0;
         }
     }
+    return readed;
 }
 
 qint64 SoundManagerPrivate::DataIODev::writeData(const char *data, qint64 maxSize)
@@ -339,6 +340,10 @@ SampleData::SampleData(): processed(0), volume(1.0f)
 
 }
 
+SampleData::~SampleData()
+{
+}
+
 Sample::Sample(const QString& name, SoundManager *manager)
 {
     d = new SampleData();
@@ -347,7 +352,10 @@ Sample::Sample(const QString& name, SoundManager *manager)
 
 Sample::~Sample()
 {
+}
 
+Sample::Sample(const Sample& other)
+{
 }
 
 int Sample::processed() const
@@ -380,7 +388,7 @@ void Sample::processSamples(int count)
         d->processed = d->samples->sampleCount;
 }
 
-float Sample::setVolume(float volume)
+void Sample::setVolume(float volume)
 {
     d->volume = volume;
 }

@@ -298,7 +298,7 @@ void GAIAnimatedImagePrivate::loadGAI(const QUrl& source)
     QVector<QByteArray> frames(header.frameCount);
     QVector<QPoint> offsets(header.frameCount);
 
-    quint32 seekSizes[header.frameCount * 2];
+    quint32 *seekSizes = new quint32[header.frameCount * 2];
 
     gaiDev.seek(sizeof(GAIHeader));
     gaiDev.read((char*)seekSizes, header.frameCount * 2 * sizeof(uint32_t));
@@ -332,6 +332,8 @@ void GAIAnimatedImagePrivate::loadGAI(const QUrl& source)
             offsets[i] = QPoint();
         }
     }
+
+    delete seekSizes;
 
     m_headers.push_back(header);
     m_gaiTimes.push_back(times);
@@ -368,7 +370,7 @@ void GAIAnimatedImagePrivate::loadGIFrame(QIODevice* dev, int i, const GAIHeader
         return;
     }
 
-    GILayerHeader layers[image.layerCount];
+    GILayerHeader *layers = new GILayerHeader[image.layerCount];
 
     for (int i = 0; i < image.layerCount; i++)
     {
@@ -391,6 +393,7 @@ void GAIAnimatedImagePrivate::loadGIFrame(QIODevice* dev, int i, const GAIHeader
     {
         frames[i] = QByteArray();
     }
+    delete layers;
 }
 
 int GAIAnimatedImage::currentFrame() const

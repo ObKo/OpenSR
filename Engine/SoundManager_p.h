@@ -30,10 +30,11 @@
 
 namespace OpenSR
 {
-struct SampleData: public QSharedData
+class SampleData: public QSharedData
 {
 public:
     SampleData();
+    virtual ~SampleData();
 
     QSharedPointer<SoundData> samples;
     int processed;

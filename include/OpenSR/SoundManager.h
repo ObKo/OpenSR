@@ -43,6 +43,8 @@ class Sample
 public:
     Sample(const QString &name, SoundManager *manager);
     virtual ~Sample();
+    //Argh, M$VC is so M$VC, it can't handle QSHDP without explicit copy constructor..
+    Sample(const Sample& other);
 
     QSharedPointer<SoundData> data() const;
     int processed() const;
@@ -50,7 +52,7 @@ public:
     bool done() const;
 
     void processSamples(int count);
-    float setVolume(float volume);
+    void setVolume(float volume);
 
 private:
     QSharedDataPointer<SampleData> d;

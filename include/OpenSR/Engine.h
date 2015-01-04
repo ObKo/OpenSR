@@ -20,6 +20,7 @@
 #define OPENSR_ENGINE_H
 
 #include <QApplication>
+#include <OpenSR/OpenSR.h>
 
 class QQuickView;
 class QQmlEngine;
@@ -28,7 +29,7 @@ class QJSEngine;
 namespace OpenSR
 {
 class SoundManager;
-class Engine: public QApplication
+class ENGINE_API Engine: public QApplication
 {
     Q_OBJECT
 public:

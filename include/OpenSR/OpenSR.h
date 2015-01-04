@@ -15,8 +15,25 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 #ifndef OPENSR_H
 #define OPENSR_H
+
+#include <QtGlobal>
+
+#ifdef OPENSR_ENGINE_BUILD
+# ifdef Q_OS_WIN32
+#  define ENGINE_API __declspec(dllexport)
+# else
+#  define ENGINE_API
+# endif
+#else
+# ifdef Q_OS_WIN32
+#  define ENGINE_API __declspec(dllimport)
+# else
+#  define ENGINE_API
+# endif
+#endif
 
 #define OPENSR_DECLARE_PRIVATE(Class) \
     inline Class##Private* d_func() { return reinterpret_cast<Class##Private *>(qGetPtrHelper(d_osr_ptr)); } \

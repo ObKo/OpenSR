@@ -19,12 +19,13 @@
 #ifndef OPENSR_SOUND_H
 #define OPENSR_SOUND_H
 
+#include <OpenSR/OpenSR.h>
 #include <QObject>
 #include <QUrl>
 
 namespace OpenSR
 {
-class Sound: public QObject
+class ENGINE_API Sound: public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QUrl source READ source WRITE setSource NOTIFY sourceChanged)

@@ -19,6 +19,7 @@
 #ifndef OPENSR_GAITEXTURE_H
 #define OPENSR_GAITEXTURE_H
 
+#include <OpenSR/OpenSR.h>
 #include <QSGTexture>
 #include <OpenSR/libRangerQt.h>
 
@@ -27,7 +28,7 @@ class QOpenGLFunctions;
 
 namespace OpenSR
 {
-class GAITexture: public QSGTexture
+class ENGINE_API GAITexture: public QSGTexture
 {
 public:
     GAITexture(const GAIHeader& header, const QImage& background);
