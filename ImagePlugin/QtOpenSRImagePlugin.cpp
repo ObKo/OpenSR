@@ -50,17 +50,42 @@ QImageIOPlugin::Capabilities QtOpenSRImagePlugin::capabilities(QIODevice * devic
 QImageIOHandler* QtOpenSRImagePlugin::create(QIODevice * device, const QByteArray & format) const
 {
     QImageIOHandler* result = 0;
+    QByteArray rFormat = format;
+    quint32 sig;
+    
     if (format == "gi")
         result = new GIImageIO();
     else if (format == "gai")
         result = new GAIAnimationIO();
     else if (format == "hai")
         result = new HAIAnimationIO();
+    
+    if(!result)
+    {
+        if (device && device->peek((char*)&sig, 4) == 4)
+        {
+            if(sig == GI_FRAME_SIGNATURE)
+            {
+                result = new GIImageIO();
+                rFormat = "gi";
+            }
+            else if(sig == GAI_SIGNATURE)
+            {
+                result = new GAIAnimationIO();
+                rFormat = "gai";
+            }
+            else if(sig == HAI_SIGNATURE)
+            {
+                result = new HAIAnimationIO();
+                rFormat = "hai";
+            }
+        }
+    }
 
     if (result)
     {
         result->setDevice(device);
-        result->setFormat(format);
+        result->setFormat(rFormat);
     }
 
     return result;

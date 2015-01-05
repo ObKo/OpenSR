@@ -354,7 +354,7 @@ Sample::~Sample()
 {
 }
 
-Sample::Sample(const Sample& other)
+Sample::Sample(const Sample& other): d(other.d)
 {
 }
 
