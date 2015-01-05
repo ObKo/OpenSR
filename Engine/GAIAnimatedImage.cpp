@@ -25,12 +25,16 @@
 #include <QBuffer>
 #include <QSGSimpleRectNode>
 #include <QTimer>
+#include <OpenSR/Engine.h>
+#include <OpenSR/ResourceManager.h>
 #include <OpenSR/libRangerQt.h>
+#include <QImageReader>
 
 namespace OpenSR
 {
 namespace
 {
+//TODO: Make loading async.
 static const char gaiFragmentShader[] =
     "varying highp vec2 qt_TexCoord; \n"
     "uniform sampler2D qt_Texture; \n"
@@ -263,45 +267,69 @@ QSGNode* GAIAnimatedImage::updatePaintNode(QSGNode* oldNode, QQuickItem::UpdateP
 
 void GAIAnimatedImagePrivate::loadGAI(const QUrl& source)
 {
-    if (!source.isLocalFile() && source.scheme() != "qrc")
+    if (!source.isLocalFile() && source.scheme() != "qrc" && source.scheme() != "res")
     {
         qWarning() << "GAIAnimatedImage: Non-local files is unsupported.";
         return;
     }
 
     QString path;
-    if (source.scheme() == "qrc")
+    if (source.scheme() == "res")
+        path = source.path();
+    else if (source.scheme() == "qrc")
         path = ":/" + source.path();
     else
         path = source.toLocalFile();
 
+    QIODevice *dev = 0;
 
-    QFile gaiDev(path);
-    gaiDev.open(QIODevice::ReadOnly);
-    if (!checkGAIHeader(&gaiDev))
+    if (source.isLocalFile() || source.scheme() == "qrc")
     {
-        gaiDev.close();
+        dev = new QFile(path);
+        dev->open(QIODevice::ReadOnly);
+    }
+    else
+    {
+        dev = ((Engine*)qApp)->resources()->getIODevice(path);
+    }
+    if (!dev)
+        return;
+
+    if (!checkGAIHeader(dev))
+    {
+        dev->close();
         return;
     }
 
-    GAIHeader header = readGAIHeader(&gaiDev);
+    GAIHeader header = readGAIHeader(dev);
 
-    QVector<int> times = loadGAITimes(&gaiDev, header);
+    QVector<int> times = loadGAITimes(dev, header);
 
     QFileInfo gaiFile(path);
     QString bgPath = gaiFile.dir().canonicalPath() + QDir::separator() + gaiFile.baseName() + ".gi";
     if (!QFileInfo(bgPath).exists())
         bgPath = gaiFile.dir().canonicalPath() + QDir::separator() + gaiFile.baseName() + ".GI";
 
-    QImage background = QImage(bgPath);
+    QImage background;
+    if (source.isLocalFile() || source.scheme() == "qrc")
+        background = QImage(bgPath);
+    else
+    {
+        QIODevice *bgDev = ((Engine*)qApp)->resources()->getIODevice(path);
+        if (bgDev)
+        {
+            background = QImageReader(bgDev).read();
+            bgDev->close();
+        }
+    }
 
     QVector<QByteArray> frames(header.frameCount);
     QVector<QPoint> offsets(header.frameCount);
 
     quint32 *seekSizes = new quint32[header.frameCount * 2];
 
-    gaiDev.seek(sizeof(GAIHeader));
-    gaiDev.read((char*)seekSizes, header.frameCount * 2 * sizeof(uint32_t));
+    dev->seek(sizeof(GAIHeader));
+    dev->read((char*)seekSizes, header.frameCount * 2 * sizeof(uint32_t));
 
     for (int i = 0; i < header.frameCount; i++)
     {
@@ -310,12 +338,12 @@ void GAIAnimatedImagePrivate::loadGAI(const QUrl& source)
         {
             qint64 giOffset = giSeek;
             uint32_t signature;
-            gaiDev.seek(giOffset);
-            gaiDev.peek((char*)&signature, sizeof(uint32_t));
+            dev->seek(giOffset);
+            dev->peek((char*)&signature, sizeof(uint32_t));
 
             if (signature == ZL01_SIGNATURE || signature == ZL02_SIGNATURE)
             {
-                QByteArray zlibData = gaiDev.read(giSize);
+                QByteArray zlibData = dev->read(giSize);
                 QByteArray data = unpackZL(zlibData);
                 QBuffer bf(&data);
                 bf.open(QIODevice::ReadOnly);
@@ -323,7 +351,7 @@ void GAIAnimatedImagePrivate::loadGAI(const QUrl& source)
             }
             else
             {
-                loadGIFrame(&gaiDev, i, header, frames, offsets);
+                loadGIFrame(dev, i, header, frames, offsets);
             }
         }
         else
@@ -334,6 +362,7 @@ void GAIAnimatedImagePrivate::loadGAI(const QUrl& source)
     }
 
     delete seekSizes;
+    delete dev;
 
     m_headers.push_back(header);
     m_gaiTimes.push_back(times);

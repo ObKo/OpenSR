@@ -4,19 +4,24 @@ import OpenSR 1.0
 Item {
     id: menu
     anchors.fill: parent
+    
+    function updateBackgroundAnim()
+    {
+        bgToAnim.to = - background.width + menu.width
+        bgFromAnim.from = - background.width + menu.width
+        bgAnim.restart()
+    }
 
     Connections {
         onHeightChanged: {
             background.height = menu.height
-            bgToAnim.to = - background.width + menu.width
-            bgFromAnim.from = - background.width + menu.width
-            bgAnim.restart()
+            updateBackgroundAnim()
         }
     }
 
     Image {
         id: background
-        source: "qrc:/DATA/FormMain3/2bg.gi"
+        source: "res:/DATA/FormMain3/2bg.gi"
         fillMode: Image.PreserveAspectCrop
         SequentialAnimation on x {
             id: bgAnim
@@ -24,11 +29,15 @@ Item {
             PropertyAnimation { id: bgToAnim; duration: 50000; from: 0 }
             PropertyAnimation { id: bgFromAnim; duration: 50000; to: 0 }
         }
+        onStatusChanged: {
+            if (status == Image.Ready)
+                updateBackgroundAnim()
+        }
     }
     GAIAnimatedImage {
         id: grid
         
-        sources: ["qrc:/DATA/FormMain2/2AnimMain.gai"]
+        sources: ["res:/DATA/FormMain2/2AnimMain.gai"]
         speed: 0.75
         anchors.fill: parent
         
@@ -45,20 +54,20 @@ Item {
         }
     }
     Image {
-        source: "qrc:/DATA/FormMain3/2Planet.gi"
+        source: "res:/DATA/FormMain3/2Planet.gi"
         anchors.left: parent.left
         anchors.bottom: parent.bottom
     }
     GAIAnimatedImage {
         id: animLine
-        sources: ["qrc:/DATA/FormMain2/2AnimLine.gai"]
+        sources: ["res:/DATA/FormMain2/2AnimLine.gai"]
         speed: 0.5
         width: parent.width
         anchors.right: parent.right
         anchors.top: parent.top
     }
     Image {
-        source: "qrc:/DATA/FormMain3/2caption.gi"
+        source: "res:/DATA/FormMain3/2caption.gi"
         anchors.top: parent.top
         anchors.horizontalCenter: animLine.right
         anchors.topMargin: 20;
@@ -70,47 +79,47 @@ Item {
 
         Button {
             id: newButton
-            normalImage: "qrc:/DATA/FormMain2/2ButNewN.gi"
-            hoveredImage: "qrc:/DATA/FormMain2/2ButNewA.gi"
-            downImage: "qrc:/DATA/FormMain2/2ButNewD.gi"
+            normalImage: "res:/DATA/FormMain2/2ButNewN.gi"
+            hoveredImage: "res:/DATA/FormMain2/2ButNewA.gi"
+            downImage: "res:/DATA/FormMain2/2ButNewD.gi"
         }
         Button {
             id: loadButton
-            normalImage: "qrc:/DATA/FormMain2/2ButLoadN.gi"
-            hoveredImage: "qrc:/DATA/FormMain2/2ButLoadA.gi"
-            downImage: "qrc:/DATA/FormMain2/2ButLoadD.gi"
+            normalImage: "res:/DATA/FormMain2/2ButLoadN.gi"
+            hoveredImage: "res:/DATA/FormMain2/2ButLoadA.gi"
+            downImage: "res:/DATA/FormMain2/2ButLoadD.gi"
             anchors.top: newButton.bottom
             anchors.topMargin: 10
         }
         Button {
             id: settingsButton
-            normalImage: "qrc:/DATA/FormMain2/2ButSettingsN.gi"
-            hoveredImage: "qrc:/DATA/FormMain2/2ButSettingsA.gi"
-            downImage: "qrc:/DATA/FormMain2/2ButSettingsD.gi"
+            normalImage: "res:/DATA/FormMain2/2ButSettingsN.gi"
+            hoveredImage: "res:/DATA/FormMain2/2ButSettingsA.gi"
+            downImage: "res:/DATA/FormMain2/2ButSettingsD.gi"
             anchors.top: loadButton.bottom
             anchors.topMargin: 10
         }
         Button {
             id: recordsButton
-            normalImage: "qrc:/DATA/FormMain2/2ButRecordsN.gi"
-            hoveredImage: "qrc:/DATA/FormMain2/2ButRecordsA.gi"
-            downImage: "qrc:/DATA/FormMain2/2ButRecordsD.gi"
+            normalImage: "res:/DATA/FormMain2/2ButRecordsN.gi"
+            hoveredImage: "res:/DATA/FormMain2/2ButRecordsA.gi"
+            downImage: "res:/DATA/FormMain2/2ButRecordsD.gi"
             anchors.top: settingsButton.bottom
             anchors.topMargin: 10
         }
         Button {
             id: aboutButton
-            normalImage: "qrc:/DATA/FormMain2/2ButAboutN.gi"
-            hoveredImage: "qrc:/DATA/FormMain2/2ButAboutA.gi"
-            downImage: "qrc:/DATA/FormMain2/2ButAboutD.gi"
+            normalImage: "res:/DATA/FormMain2/2ButAboutN.gi"
+            hoveredImage: "res:/DATA/FormMain2/2ButAboutA.gi"
+            downImage: "res:/DATA/FormMain2/2ButAboutD.gi"
             anchors.top: recordsButton.bottom
             anchors.topMargin: 10
         }
         Button {
             id: exitButton
-            normalImage: "qrc:/DATA/FormMain2/2ButExitN.gi"
-            hoveredImage: "qrc:/DATA/FormMain2/2ButExitA.gi"
-            downImage: "qrc:/DATA/FormMain2/2ButExitD.gi"
+            normalImage: "res:/DATA/FormMain2/2ButExitN.gi"
+            hoveredImage: "res:/DATA/FormMain2/2ButExitA.gi"
+            downImage: "res:/DATA/FormMain2/2ButExitD.gi"
             anchors.top: aboutButton.bottom
             anchors.topMargin: 10
             onClicked: {
@@ -124,9 +133,9 @@ Item {
     }
     GAIAnimatedImage {
         id: animation
-        sources: ["qrc:/DATA/FormMain3/2Ship1.gai", 
-                  "qrc:/DATA/FormMain3/2Ship2.gai", 
-                  "qrc:/DATA/FormMain3/2Ship3.gai"]
+        sources: ["res:/DATA/FormMain3/2Ship1.gai", 
+                  "res:/DATA/FormMain3/2Ship2.gai", 
+                  "res:/DATA/FormMain3/2Ship3.gai"]
         anchors.left: parent.left
         anchors.bottom: parent.bottom
     }

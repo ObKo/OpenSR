@@ -35,9 +35,9 @@ class ENGINE_API GAIAnimatedImage: public QQuickItem
     Q_PROPERTY(bool paused READ paused WRITE setPaused NOTIFY pausedChanged)
     Q_PROPERTY(bool playing READ playing WRITE setPlaying NOTIFY playingChanged)
     Q_PROPERTY(float speed READ speed WRITE setSpeed NOTIFY speedChanged)
-    
+
     OPENSR_DECLARE_PRIVATE(GAIAnimatedImage)
-    
+
 public:
     GAIAnimatedImage(QQuickItem * parent = 0);
     virtual ~GAIAnimatedImage();
@@ -60,10 +60,10 @@ Q_SIGNALS:
     void currentFrameChanged();
     void pausedChanged();
     void playingChanged();
-    void speedChanged();    
+    void speedChanged();
 
 protected:
-    OPENSR_DECLARE_DPOINTER(GAIAnimatedImage);    
+    OPENSR_DECLARE_DPOINTER(GAIAnimatedImage);
     virtual QSGNode *updatePaintNode(QSGNode * oldNode, UpdatePaintNodeData * updatePaintNodeData);
 
 public Q_SLOTS:

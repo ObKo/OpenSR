@@ -19,6 +19,7 @@
 #include "OpenSR/Engine.h"
 
 #include <OpenSR/SoundManager.h>
+#include <OpenSR/ResourceManager.h>
 #include <OpenSR/Sound.h>
 
 #include <QQuickView>
@@ -29,20 +30,25 @@
 #include <QSettings>
 #include <QResource>
 #include <QDebug>
+#include <QDir>
 
 namespace OpenSR
 {
 Engine::Engine(int argc, char** argv): QApplication(argc, argv)
 {
+    m_sound = new SoundManager(this);
+    m_resources = new ResourceManager(this);
+
     m_qmlView = new QQuickView();
     m_qmlEngine = m_qmlView->engine();
     m_qmlEngine->addImportPath(":/");
     m_qmlEngine->rootContext()->setContextProperty("engine", this);
 
-    m_sound = new SoundManager(this);
+    m_qmlEngine->setNetworkAccessManagerFactory(m_resources->qmlNAMFactory());
 
     m_scriptEngine = new QJSEngine(this);
     m_scriptEngine->globalObject().setProperty("engine", m_scriptEngine->newQObject(this));
+    m_scriptEngine->globalObject().setProperty("resources", m_scriptEngine->newQObject(m_resources));
 }
 
 Engine::~Engine()
@@ -52,6 +58,9 @@ Engine::~Engine()
 int Engine::run()
 {
     QSettings settings;
+
+    m_resources->addFileSystemPath(settings.value("engine/mainDataDir", QDir::current().absolutePath() + "/data").toString());
+
     QString scriptPath = settings.value("engine/startupScript", "data/startup.qs").toString();
     QFile sf(scriptPath);
     sf.open(QIODevice::ReadOnly);
@@ -85,5 +94,10 @@ void Engine::showQMLComponent(const QUrl& source)
 SoundManager* Engine::sound() const
 {
     return m_sound;
+}
+
+ResourceManager* Engine::resources() const
+{
+    return m_resources;
 }
 }

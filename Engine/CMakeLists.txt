@@ -10,6 +10,7 @@ SET(SOURCES
     Sound.cpp
     GAIAnimatedImage.cpp
     GAITexture.cpp
+    ResourceManager.cpp
 )
 
 SET(HEADERS 
@@ -18,6 +19,12 @@ SET(HEADERS
     ${CMAKE_SOURCE_DIR}/include/OpenSR/Sound.h
     ${CMAKE_SOURCE_DIR}/include/OpenSR/GAIAnimatedImage.h
     ${CMAKE_SOURCE_DIR}/include/OpenSR/GAITexture.h
+    ${CMAKE_SOURCE_DIR}/include/OpenSR/ResourceManager.h
+)
+
+SET(PRIVATE_HEADERS 
+    ResourceManager_p.h
+    SoundManager_p.h
 )
 
 INCLUDE_DIRECTORIES(
@@ -36,7 +43,7 @@ IF(${ENGINE_USE_SRC_RESAMPLER})
   INCLUDE_DIRECTORIES(${SRC_INCLUDE_DIRS})
 ENDIF()
 
-QT5_WRAP_CPP(MOC_SOURCES ${HEADERS})
+QT5_WRAP_CPP(MOC_SOURCES ${HEADERS} ${PRIVATE_HEADERS})
 QT5_ADD_RESOURCES(QRC_QML_SOURCES ${CMAKE_SOURCE_DIR}/QML/qml.qrc)
 
 ADD_LIBRARY(engine SHARED ${SOURCES} ${MOC_SOURCES})
