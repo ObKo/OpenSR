@@ -21,9 +21,11 @@
 
 #include "OpenSR/ResourceManager.h"
 
+#include <OpenSR/libRangerQt.h>
 #include <QNetworkReply>
 
 class QFile;
+class QBuffer;
 
 namespace OpenSR
 {
@@ -37,7 +39,8 @@ protected:
     virtual qint64 bytesAvailable() const;
     virtual bool canReadLine() const;
     virtual bool isSequential() const;
-    virtual qint64  size() const;
+    virtual qint64 size() const;
+    virtual bool seek(qint64 pos);
 
     virtual void close();
 
@@ -45,7 +48,7 @@ public Q_SLOTS:
     virtual void abort();
 
 protected:
-    qint64 readData(char * data, qint64 maxSize);
+    virtual qint64 readData(char * data, qint64 maxSize);
 
 private:
     QIODevice *m_device;
@@ -64,6 +67,55 @@ public:
 private:
     void load(ResourceNode& current, const QDir& dir);
     QString m_dir;
+};
+
+class PGKResourceInfo: public ResourceInfo
+{
+public:
+    PGKResourceInfo(PKGItem *item);
+    virtual ~PGKResourceInfo();
+
+    PKGItem *item;
+};
+
+class PKGIODevice: public QIODevice
+{
+public:
+    PKGIODevice(const PKGItem& item, QIODevice *archiveDev, QObject *parent = 0);
+    virtual ~PKGIODevice();
+
+    virtual qint64 bytesAvailable() const;
+    virtual bool canReadLine() const;
+    virtual bool isSequential() const;
+    virtual qint64 size() const;
+    virtual bool seek(qint64 pos);
+
+    virtual void close();
+
+protected:
+    virtual qint64 readData(char * data, qint64 maxSize);
+    virtual qint64 writeData(const char * data, qint64 maxSize);
+
+private:
+    QByteArray m_data;
+    QBuffer *m_buffer;
+};
+
+class PKGProvider: public ResourceProvider
+{
+public:
+    PKGProvider(const QString& file);
+    virtual ~PKGProvider();
+
+    virtual void load(ResourceNode& root);
+    virtual QIODevice *getDevice(const ResourceNode& node, QObject *parent = 0);
+
+private:
+    void load(ResourceNode& current, PKGItem* item);
+    void cleanup(PKGItem *item);
+
+    PKGItem *m_root;
+    QString m_path;
 };
 
 }

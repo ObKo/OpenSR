@@ -28,6 +28,7 @@
 #include <QUrl>
 #include <QMetaObject>
 #include <QDirIterator>
+#include <QBuffer>
 
 #include <QDebug>
 
@@ -49,6 +50,7 @@ ResourceReply::ResourceReply(const QUrl& url, QIODevice *device, QObject *parent
 
 ResourceReply::~ResourceReply()
 {
+    close();
 }
 
 void ResourceReply::abort()
@@ -91,6 +93,14 @@ qint64 ResourceReply::size() const
         return -1;
     qint64 size = m_device->size();
     return size;
+}
+
+bool ResourceReply::seek(qint64 pos)
+{
+    if (!m_device)
+        return false;
+    QIODevice::seek(pos);
+    return m_device->seek(pos);
 }
 
 qint64 ResourceReply::readData(char * data, qint64 maxSize)
@@ -262,9 +272,24 @@ QQmlNetworkAccessManagerFactory *ResourceManager::qmlNAMFactory() const
     return m_namFactory;
 }
 
+bool ResourceManager::fileExists(const QString& path) const
+{
+    QStringList p = path.split('/', QString::SkipEmptyParts);
+
+    const ResourceNode *current = &m_root;
+
+    for (const QString node : p)
+    {
+        auto it = current->children.find(node);
+        if (it == current->children.end())
+            return false;
+        current = &(it.value());
+    }
+    return true;
+}
+
 QIODevice *ResourceManager::getIODevice(const QString& path, QObject *parent)
 {
-    QFileInfo fi(path);
     QStringList p = path.split('/', QString::SkipEmptyParts);
 
     ResourceNode *current = &m_root;
@@ -287,10 +312,196 @@ void ResourceManager::addFileSystemPath(const QString& path)
     addProvider(prov);
 }
 
+void ResourceManager::addPKGArchive(const QString& path)
+{
+    PKGProvider *prov = new PKGProvider(path);
+    addProvider(prov);
+}
+
 void ResourceManager::addProvider(ResourceProvider *provider)
 {
     provider->load(m_root);
     m_dataProviders.append(provider);
+}
+
+
+PGKResourceInfo::PGKResourceInfo(PKGItem *item_): ResourceInfo(),
+    item(item_)
+{
+}
+
+PGKResourceInfo::~PGKResourceInfo()
+{
+}
+
+PKGIODevice::PKGIODevice(const PKGItem& item, QIODevice *archiveDev, QObject *parent): QIODevice(parent),
+    m_buffer(0)
+{
+    m_data = extractFile(item, archiveDev);
+    if (!m_data.isEmpty())
+    {
+        m_buffer = new QBuffer(&m_data);
+        m_buffer->open(QIODevice::ReadOnly);
+    }
+}
+
+PKGIODevice::~PKGIODevice()
+{
+    if (m_buffer)
+    {
+        m_buffer->close();
+        delete m_buffer;
+        m_buffer = 0;
+    }
+}
+
+qint64 PKGIODevice::bytesAvailable() const
+{
+    if (!m_buffer)
+        return -1;
+    return QIODevice::bytesAvailable() + m_buffer->bytesAvailable();
+}
+
+bool PKGIODevice::canReadLine() const
+{
+    if (!m_buffer)
+        return false;
+    return QIODevice::canReadLine() || m_buffer->canReadLine();
+}
+
+bool PKGIODevice::isSequential() const
+{
+    return false;
+}
+
+qint64 PKGIODevice::size() const
+{
+    return m_data.size();
+}
+
+void PKGIODevice::close()
+{
+    if (m_buffer)
+    {
+        m_buffer->close();
+        delete m_buffer;
+        m_buffer = 0;
+    }
+    m_data = QByteArray();
+}
+
+
+bool PKGIODevice::seek(qint64 pos)
+{
+    if (!m_buffer)
+        return false;
+    QIODevice::seek(pos);
+    return m_buffer->seek(pos);
+}
+
+qint64 PKGIODevice::readData(char * data, qint64 maxSize)
+{
+    if (!m_buffer)
+        return -1;
+    return m_buffer->read(data, maxSize);
+}
+
+qint64 PKGIODevice::writeData(const char * data, qint64 maxSize)
+{
+    return -1;
+}
+
+PKGProvider::PKGProvider(const QString& file): m_root(0)
+{
+    QFileInfo fi(file);
+    if (fi.exists())
+    {
+        m_path = fi.absoluteFilePath();
+    }
+}
+
+PKGProvider::~PKGProvider()
+{
+    if (m_root)
+        cleanup(m_root);
+}
+
+void PKGProvider::load(ResourceNode& root)
+{
+    if (m_path.isEmpty())
+        return;
+
+    QFile archive(m_path);
+    archive.open(QIODevice::ReadOnly);
+    if (!archive.isOpen())
+        return;
+
+    m_root = loadPKG(&archive);
+
+    if (!m_root)
+        return;
+
+    archive.close();
+
+    load(root, m_root);
+}
+
+QIODevice *PKGProvider::getDevice(const ResourceNode& node, QObject *parent)
+{
+    if (m_path.isEmpty())
+        return 0;
+
+
+    QFile archive(m_path);
+    archive.open(QIODevice::ReadOnly);
+    if (!archive.isOpen())
+        return 0;
+
+    PGKResourceInfo *info = static_cast<PGKResourceInfo*>(node.info.data());
+
+    PKGIODevice *dev = new PKGIODevice(*info->item, &archive, parent);
+    archive.close();
+    dev->open(QIODevice::ReadOnly);
+    return dev;
+}
+
+void PKGProvider::load(ResourceNode& current, PKGItem* item)
+{
+    for (int i = 0; i < item->childCount; i++)
+    {
+        PKGItem* child = &item->childs[i];
+        if (child->dataType == 3)
+        {
+            ResourceNode node(child->name, ResourceNode::DIRECTORY, &current);
+
+            auto it = current.children.find(child->name);
+            if (it == current.children.end())
+                it = current.children.insert(child->name, node);
+
+            load(*it, child);
+        }
+        else
+        {
+            ResourceNode node(child->name, ResourceNode::FILE, &current,
+                              QSharedPointer<ResourceInfo>(new PGKResourceInfo(child)));
+            node.info->provider = this;
+            auto it = current.children.find(child->name);
+            if (it != current.children.end())
+            {
+                if (it->type == ResourceNode::FILE)
+                    *it = node;
+            }
+            else
+                current.children.insert(child->name, node);
+        }
+    }
+}
+
+void PKGProvider::cleanup(PKGItem *item)
+{
+    for (int i = 0; i < item->childCount; i++)
+        cleanup(&item->childs[i]);
+    delete[] item->childs;
 }
 }
 

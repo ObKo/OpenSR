@@ -75,10 +75,12 @@ public:
 
     QQmlNetworkAccessManagerFactory *qmlNAMFactory() const;
 
+    bool fileExists(const QString& path) const;
     QIODevice *getIODevice(const QString& path, QObject *parent = 0);
 
 public Q_SLOTS:
     void addFileSystemPath(const QString& path);
+    void addPKGArchive(const QString& path);
     void addProvider(ResourceProvider* provider);
 
 private:

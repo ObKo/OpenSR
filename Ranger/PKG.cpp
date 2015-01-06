@@ -90,7 +90,7 @@ PKGItem *loadItems(QIODevice *dev, PKGItem *previous)
 QByteArray extractFile(const PKGItem &item, QIODevice *dev)
 {
     if (item.dataType == 3)
-        return 0;
+        return QByteArray();
 
     QByteArray result;
 
@@ -120,7 +120,7 @@ QByteArray extractFile(const PKGItem &item, QIODevice *dev)
         return dev->read(item.size);
     }
 
-    return 0;
+    return QByteArray();
 }
 
 /*!

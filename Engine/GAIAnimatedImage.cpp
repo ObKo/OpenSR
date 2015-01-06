@@ -306,20 +306,21 @@ void GAIAnimatedImagePrivate::loadGAI(const QUrl& source)
     QVector<int> times = loadGAITimes(dev, header);
 
     QFileInfo gaiFile(path);
-    QString bgPath = gaiFile.dir().canonicalPath() + QDir::separator() + gaiFile.baseName() + ".gi";
-    if (!QFileInfo(bgPath).exists())
-        bgPath = gaiFile.dir().canonicalPath() + QDir::separator() + gaiFile.baseName() + ".GI";
+    QString bgPath = gaiFile.dir().path() + QDir::separator() + gaiFile.baseName() + ".gi";
+    if (!((Engine*)qApp)->resources()->fileExists(bgPath))
+        bgPath = gaiFile.dir().path() + QDir::separator() + gaiFile.baseName() + ".GI";
 
     QImage background;
     if (source.isLocalFile() || source.scheme() == "qrc")
         background = QImage(bgPath);
     else
     {
-        QIODevice *bgDev = ((Engine*)qApp)->resources()->getIODevice(path);
+        QIODevice *bgDev = ((Engine*)qApp)->resources()->getIODevice(bgPath);
         if (bgDev)
         {
             background = QImageReader(bgDev).read();
             bgDev->close();
+            delete bgDev;
         }
     }
 
