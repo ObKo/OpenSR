@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2013 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2013 - 2015 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,147 +17,128 @@
 */
 
 #include "OpenSR/QM/QM.h"
-#include <vector>
-#include <iconv.h>
+#include <QIODevice>
+#include <QString>
 
-namespace Rangers
+namespace OpenSR
 {
 namespace QM
 {
-std::string readString(std::istream& s)
-{
-    uint16_t *str;
-    uint32_t len;
-    s.read((char*)&len, 4);
-    str = new uint16_t[len];
-    s.read((char*)str, len * 2);
-
-    iconv_t codec = iconv_open("UTF-8", "UCS-2");
-    if (codec == (iconv_t) - 1)
-        return std::string();
-
-    char *result = new char[len * 4];
-
-    size_t inbuflength = len * 2;
-    size_t outbuflength = 4 * len;
-    char *pointer = result;
-    char **inp = (char**)&str;
-    iconv(codec, inp, &inbuflength, &pointer, &outbuflength);
-    size_t l = 4 * len - outbuflength;
-
-    std::string utf8(result, l);
-    delete[] result;
-
-    return utf8;
-}
-
-void skipString(std::istream& s)
+QString readString(QIODevice *dev)
 {
     uint32_t len;
-    s.read((char*)&len, 4);
-    s.seekg(len * 2, std::ios_base::cur);
+    dev->read((char*)&len, 4);
+    return QString::fromUtf16((ushort*)dev->read(len * 2).constData(), len);
 }
 
-uint8_t readByte(std::istream& s)
+void skipString(QIODevice *dev)
+{
+    uint32_t len;
+    dev->read((char*)&len, 4);
+    //FIXME: Dummy read?
+    dev->seek(dev->pos() + len * 2);
+}
+
+uint8_t readByte(QIODevice *dev)
 {
     uint8_t r;
-    s.read((char*)&r, 1);
+    dev->read((char*)&r, 1);
     return r;
 }
 
-uint32_t readUInt(std::istream& s)
+uint32_t readUInt(QIODevice *dev)
 {
     uint32_t r;
-    s.read((char*)&r, 4);
+    dev->read((char*)&r, 4);
     return r;
 }
 
-int32_t readInt(std::istream& s)
+int32_t readInt(QIODevice *dev)
 {
     int32_t r;
-    s.read((char*)&r, 4);
+    dev->read((char*)&r, 4);
     return r;
 }
 
-double readDouble(std::istream& s)
+double readDouble(QIODevice *dev)
 {
     double r;
-    s.read((char*)&r, 8);
+    dev->read((char*)&r, 8);
     return r;
 }
 
-Parameter readParameter(std::istream& s)
+Parameter readParameter(QIODevice *dev)
 {
     Parameter p;
 
     uint8_t rangesNum;
 
-    p.min = readInt(s);
-    p.max = readInt(s);
-    p.mid = readInt(s);
-    p.type = (Parameter::Type)readByte(s);
-    s.seekg(4, std::ios_base::cur);
-    p.showOnZero = readByte(s) == 1;
-    p.minCritical = readByte(s) == 1;
-    p.active = readByte(s) == 1;
-    rangesNum = readByte(s);
-    s.seekg(3, std::ios_base::cur);
-    p.money = readByte(s) == 1;
-    s.seekg(4, std::ios_base::cur);
-    p.name = readString(s);
+    p.min = readInt(dev);
+    p.max = readInt(dev);
+    p.mid = readInt(dev);
+    p.type = (Parameter::Type)readByte(dev);
+    dev->seek(dev->pos() + 4);
+    p.showOnZero = readByte(dev) == 1;
+    p.minCritical = readByte(dev) == 1;
+    p.active = readByte(dev) == 1;
+    rangesNum = readByte(dev);
+    dev->seek(dev->pos() + 3);
+    p.money = readByte(dev) == 1;
+    dev->seek(dev->pos() + 4);
+    p.name = readString(dev);
 
     for (uint8_t i = 0; i < rangesNum; i++)
     {
         Parameter::Range r;
-        r.from = readInt(s);
-        r.to = readInt(s);
-        s.seekg(4, std::ios_base::cur);
-        r.text = readString(s);
-        p.ranges.push_back(r);
+        r.from = readInt(dev);
+        r.to = readInt(dev);
+        dev->seek(dev->pos() + 4);
+        r.text = readString(dev);
+        p.ranges.append(r);
     }
-    s.seekg(4, std::ios_base::cur);
-    p.critText = readString(s);
-    s.seekg(4, std::ios_base::cur);
-    p.start = readString(s);
+    dev->seek(dev->pos() + 4);
+    p.critText = readString(dev);
+    dev->seek(dev->pos() + 4);
+    p.start = readString(dev);
 
     return p;
 }
 
-void skipParameter(std::istream& s)
+void skipParameter(QIODevice *dev)
 {
     uint8_t rangesNum;
 
-    s.seekg(20, std::ios_base::cur);
-    rangesNum = readByte(s);
-    s.seekg(8, std::ios_base::cur);
-    skipString(s);
+    dev->seek(dev->pos() + 20);
+    rangesNum = readByte(dev);
+    dev->seek(dev->pos() + 8);
+    skipString(dev);
 
     for (uint8_t i = 0; i < rangesNum; i++)
     {
-        s.seekg(12, std::ios_base::cur);
-        skipString(s);
+        dev->seek(dev->pos() + 12);
+        skipString(dev);
     }
 
-    s.seekg(4, std::ios_base::cur);
-    skipString(s);
-    s.seekg(4, std::ios_base::cur);
-    skipString(s);
+    dev->seek(dev->pos() + 4);
+    skipString(dev);
+    dev->seek(dev->pos() + 4);
+    skipString(dev);
 }
 
-Transition readTransition(std::istream& s, const Quest &q, uint32_t totalParamCount)
+Transition readTransition(QIODevice *dev, const Quest &q, uint32_t totalParamCount)
 {
     Transition t;
 
-    t.priority = readDouble(s);
-    t.day = readUInt(s) == 1;
-    t.id = readUInt(s);
-    t.from = readUInt(s);
-    t.to = readUInt(s);
+    t.priority = readDouble(dev);
+    t.day = readUInt(dev) == 1;
+    t.id = readUInt(dev);
+    t.from = readUInt(dev);
+    t.to = readUInt(dev);
     //Color?
-    readByte(s);
-    t.alwaysVisible = readByte(s) == 1;
-    t.passCount = readUInt(s);
-    t.position = readUInt(s);
+    readByte(dev);
+    t.alwaysVisible = readByte(dev) == 1;
+    t.passCount = readUInt(dev);
+    t.position = readUInt(dev);
 
     for (uint32_t i = 1; i < totalParamCount + 1; i++)
     {
@@ -166,21 +147,22 @@ Transition readTransition(std::istream& s, const Quest &q, uint32_t totalParamCo
         m.param = i;
         c.param = i;
 
-        s.seekg(4, std::ios_base::cur);
-        c.rangeFrom = readInt(s);
-        c.rangeTo = readInt(s);
+        dev->seek(dev->pos() + 4);
+        c.rangeFrom = readInt(dev);
+        c.rangeTo = readInt(dev);
 
         bool inRange = false;
 
-        if (q.parameters.find(i) != q.parameters.end())
+        auto it = q.parameters.find(i);
+        if (it != q.parameters.end())
         {
-            if ((c.rangeFrom > q.parameters.at(i).min) || (c.rangeTo < q.parameters.at(i).max))
+            if ((c.rangeFrom > it->min) || (c.rangeTo < it->max))
                 inRange = true;
         }
 
-        m.value = readInt(s);
+        m.value = readInt(dev);
 
-        uint8_t show = readUInt(s);
+        uint8_t show = readUInt(dev);
         if (show == 1)
             m.visibility = Modifier::VISIBILITY_SHOW;
         else if (show == 2)
@@ -188,12 +170,12 @@ Transition readTransition(std::istream& s, const Quest &q, uint32_t totalParamCo
         else
             m.visibility = Modifier::VISIBILITY_NO_CHANGE;
 
-        readByte(s);
+        readByte(dev);
 
         bool percent, assign, expression;
-        percent = readByte(s) == 1;
-        assign = readByte(s) == 1;
-        expression = readByte(s) == 1;
+        percent = readByte(dev) == 1;
+        assign = readByte(dev) == 1;
+        expression = readByte(dev) == 1;
 
         if (percent)
             m.operation = Modifier::OPERATION_PERCENT;
@@ -204,52 +186,52 @@ Transition readTransition(std::istream& s, const Quest &q, uint32_t totalParamCo
         else
             m.operation = Modifier::OPERATION_CHANGE;
 
-        s.seekg(4, std::ios_base::cur);
-        m.expression = readString(s);
+        dev->seek(dev->pos() + 4);
+        m.expression = readString(dev);
 
-        uint32_t count = readUInt(s);
-        c.includeValues = readByte(s) == 1;
+        uint32_t count = readUInt(dev);
+        c.includeValues = readByte(dev) == 1;
         for (uint32_t j = 0; j < count; j++)
-            c.values.push_back(readInt(s));
+            c.values.append(readInt(dev));
 
-        count = readUInt(s);
-        c.includeMultiples = readByte(s) == 1;
+        count = readUInt(dev);
+        c.includeMultiples = readByte(dev) == 1;
         for (uint32_t j = 0; j < count; j++)
-            c.multiples.push_back(readUInt(s));
+            c.multiples.append(readUInt(dev));
 
-        s.seekg(4, std::ios_base::cur);
-        skipString(s);
+        dev->seek(dev->pos() + 4);
+        skipString(dev);
 
-        if ((q.parameters.find(i) != q.parameters.end()) && ((show != 0) || (m.value != 0) || (percent) || (assign) ||
-                (expression && (m.expression != "")) || c.values.size() || c.multiples.size() || inRange))
+        if ((it != q.parameters.end()) && ((show != 0) || (m.value != 0) || (percent) || (assign) ||
+                                           (expression && (m.expression != "")) || c.values.size() || c.multiples.size() || inRange))
         {
-            t.modifiers.push_back(m);
-            t.conditions.push_back(c);
+            t.modifiers.append(m);
+            t.conditions.append(c);
         }
     }
-    s.seekg(4, std::ios_base::cur);
-    t.globalCondition = readString(s);
-    s.seekg(4, std::ios_base::cur);
-    t.title = readString(s);
-    s.seekg(4, std::ios_base::cur);
-    t.description = readString(s);
+    dev->seek(dev->pos() + 4);
+    t.globalCondition = readString(dev);
+    dev->seek(dev->pos() + 4);
+    t.title = readString(dev);
+    dev->seek(dev->pos() + 4);
+    t.description = readString(dev);
 
     return t;
 }
 
-Location readLocation(std::istream& s, const Quest &q, uint32_t totalParamCount)
+Location readLocation(QIODevice *dev, const Quest &q, uint32_t totalParamCount)
 {
     Location l;
 
-    l.day = readUInt(s) == 1;
-    l.x = readInt(s);
-    l.y = readInt(s);
-    l.id = readUInt(s);
+    l.day = readUInt(dev) == 1;
+    l.x = readInt(dev);
+    l.y = readInt(dev);
+    l.id = readUInt(dev);
 
     bool start, success, fail;
-    start = readByte(s) == 1;
-    success = readByte(s) == 1;
-    fail = readByte(s) == 1;
+    start = readByte(dev) == 1;
+    success = readByte(dev) == 1;
+    fail = readByte(dev) == 1;
 
     if ((start && success) || (start && fail) || (success && fail))
         l.type = Location::LOCATION_NORMAL;
@@ -262,12 +244,12 @@ Location readLocation(std::istream& s, const Quest &q, uint32_t totalParamCount)
     else if (fail)
         l.type = Location::LOCATION_FAIL;
 
-    l.death = readByte(s) == 1;
+    l.death = readByte(dev) == 1;
 
     if (l.death)
         l.type = Location::LOCATION_FAIL;
 
-    l.empty = readByte(s) == 1;
+    l.empty = readByte(dev) == 1;
 
     for (uint32_t i = 1; i < totalParamCount + 1; i++)
     {
@@ -275,10 +257,10 @@ Location readLocation(std::istream& s, const Quest &q, uint32_t totalParamCount)
 
         m.param = i;
 
-        s.seekg(12, std::ios_base::cur);
-        m.value = readInt(s);
+        dev->seek(dev->pos() + 12);
+        m.value = readInt(dev);
 
-        uint8_t show = readByte(s);
+        uint8_t show = readByte(dev);
         if (show == 1)
             m.visibility = Modifier::VISIBILITY_SHOW;
         else if (show == 2)
@@ -286,11 +268,11 @@ Location readLocation(std::istream& s, const Quest &q, uint32_t totalParamCount)
         else
             m.visibility = Modifier::VISIBILITY_NO_CHANGE;
 
-        s.seekg(4, std::ios_base::cur);
+        dev->seek(dev->pos() + 4);
         bool percent, assign, expression;
-        percent = readByte(s) == 1;
-        assign = readByte(s) == 1;
-        expression = readByte(s) == 1;
+        percent = readByte(dev) == 1;
+        assign = readByte(dev) == 1;
+        expression = readByte(dev) == 1;
 
         if (percent)
             m.operation = Modifier::OPERATION_PERCENT;
@@ -301,38 +283,39 @@ Location readLocation(std::istream& s, const Quest &q, uint32_t totalParamCount)
         else
             m.operation = Modifier::OPERATION_CHANGE;
 
-        s.seekg(4, std::ios_base::cur);
-        m.expression = readString(s);
+        dev->seek(dev->pos() + 4);
+        m.expression = readString(dev);
 
-        s.seekg(14, std::ios_base::cur);
-        skipString(s);
+        dev->seek(dev->pos() + 14);
+        skipString(dev);
 
-        if ((q.parameters.find(i) != q.parameters.end()) && ((show != 0) || (m.value != 0) || (percent) || (assign) ||
-                (expression && (m.expression != ""))))
-            l.modifiers.push_back(m);
+        auto it = q.parameters.find(i);
+        if ((it != q.parameters.end()) && ((show != 0) || (m.value != 0) || (percent) || (assign) ||
+                                           (expression && (m.expression != ""))))
+            l.modifiers.append(m);
     }
 
     for (int i = 0; i < 10; i++)
     {
-        s.seekg(4, std::ios_base::cur);
-        std::string str = readString(s);
-        l.descriptions.push_back(str);
+        dev->seek(dev->pos() + 4);
+        QString str = readString(dev);
+        l.descriptions.append(str);
     }
-    l.descriptionExpression = readByte(s) == 1;
+    l.descriptionExpression = readByte(dev) == 1;
 
-    s.seekg(8, std::ios_base::cur);
-    skipString(s);
+    dev->seek(dev->pos() + 8);
+    skipString(dev);
 
-    s.seekg(4, std::ios_base::cur);
-    skipString(s);
+    dev->seek(dev->pos() + 4);
+    skipString(dev);
 
-    s.seekg(4, std::ios_base::cur);
-    l.expression = readString(s);
+    dev->seek(dev->pos() + 4);
+    l.expression = readString(dev);
 
     return l;
 }
 
-Quest readQuest(std::istream& s)
+Quest readQuest(QIODevice *dev)
 {
     uint32_t sig;
     Quest q;
@@ -341,7 +324,7 @@ Quest readQuest(std::istream& s)
     uint8_t paramsCount;
     uint32_t pathCount;
 
-    s.read((char*)&sig, 4);
+    dev->read((char*)&sig, 4);
     if (sig == 0x423a35d4)
         paramsCount = 96;
     else if (sig == 0x423a35d3)
@@ -351,68 +334,68 @@ Quest readQuest(std::istream& s)
     else
         return Quest();
 
-    s.seekg(4, std::ios_base::cur);
+    dev->seek(dev->pos() + 4);
 
-    q.info.races = readByte(s);
-    q.info.doneImmediately = readByte(s) == 1;
-    q.info.planetRaces = readByte(s);
+    q.info.races = readByte(dev);
+    q.info.doneImmediately = readByte(dev) == 1;
+    q.info.planetRaces = readByte(dev);
 
-    s.seekg(4, std::ios_base::cur);
-    q.info.playerTypes = readByte(s);
+    dev->seek(dev->pos() + 4);
+    q.info.playerTypes = readByte(dev);
 
-    s.seekg(4, std::ios_base::cur);
-    q.info.playerRaces = readByte(s);
+    dev->seek(dev->pos() + 4);
+    q.info.playerRaces = readByte(dev);
 
-    s.seekg(4, std::ios_base::cur);
-    q.info.relation = readInt(s);
+    dev->seek(dev->pos() + 4);
+    q.info.relation = readInt(dev);
 
-    s.seekg(20, std::ios_base::cur);
-    pathCount = readUInt(s);
-    q.info.difficulty = readUInt(s);
+    dev->seek(dev->pos() + 20);
+    pathCount = readUInt(dev);
+    q.info.difficulty = readUInt(dev);
 
     for (uint8_t i = 1; i < paramsCount + 1; i++)
     {
-        Parameter p = readParameter(s);
+        Parameter p = readParameter(dev);
         p.id = i;
 
         if (p.active)
             q.parameters[i] = p;
     }
 
-    s.seekg(4, std::ios_base::cur);
-    q.toStar = readString(s);
+    dev->seek(dev->pos() + 4);
+    q.toStar = readString(dev);
 
     //FIXME: Other substitutions?
-    s.seekg(4, std::ios_base::cur);
-    skipString(s);
-    s.seekg(4, std::ios_base::cur);
-    skipString(s);
+    dev->seek(dev->pos() + 4);
+    skipString(dev);
+    dev->seek(dev->pos() + 4);
+    skipString(dev);
 
-    s.seekg(4, std::ios_base::cur);
-    q.toPlanet = readString(s);
-    s.seekg(4, std::ios_base::cur);
-    q.date = readString(s);
-    s.seekg(4, std::ios_base::cur);
-    q.money = readString(s);
-    s.seekg(4, std::ios_base::cur);
-    q.fromPlanet = readString(s);
-    s.seekg(4, std::ios_base::cur);
-    q.fromStar = readString(s);
-    s.seekg(4, std::ios_base::cur);
-    q.ranger = readString(s);
+    dev->seek(dev->pos() + 4);
+    q.toPlanet = readString(dev);
+    dev->seek(dev->pos() + 4);
+    q.date = readString(dev);
+    dev->seek(dev->pos() + 4);
+    q.money = readString(dev);
+    dev->seek(dev->pos() + 4);
+    q.fromPlanet = readString(dev);
+    dev->seek(dev->pos() + 4);
+    q.fromStar = readString(dev);
+    dev->seek(dev->pos() + 4);
+    q.ranger = readString(dev);
 
-    uint32_t locationCount = readUInt(s);
-    pathCount = readUInt(s);
+    uint32_t locationCount = readUInt(dev);
+    pathCount = readUInt(dev);
 
-    s.seekg(4, std::ios_base::cur);
-    q.info.winnerText = readString(s);
-    s.seekg(4, std::ios_base::cur);
-    q.info.descriptionText = readString(s);
-    s.seekg(8, std::ios_base::cur);
+    dev->seek(dev->pos() + 4);
+    q.info.winnerText = readString(dev);
+    dev->seek(dev->pos() + 4);
+    q.info.descriptionText = readString(dev);
+    dev->seek(dev->pos() + 8);
 
     for (uint32_t i = 0; i < locationCount; i++)
     {
-        Location l = readLocation(s, q, paramsCount);
+        Location l = readLocation(dev, q, paramsCount);
         q.locations[l.id] = l;
         if (l.type == Location::LOCATION_START)
             q.startLocation = l.id;
@@ -420,14 +403,14 @@ Quest readQuest(std::istream& s)
 
     for (uint32_t i = 0; i < pathCount; i++)
     {
-        Transition t = readTransition(s, q, paramsCount);
-        q.locations[t.from].transitions.push_back(t);
+        Transition t = readTransition(dev, q, paramsCount);
+        q.locations[t.from].transitions.append(t);
     }
 
     return q;
 }
 
-QuestInfo readQuestInfo(std::istream& s)
+QuestInfo readQuestInfo(QIODevice *dev)
 {
     uint32_t sig;
     QuestInfo info;
@@ -436,7 +419,7 @@ QuestInfo readQuestInfo(std::istream& s)
     uint8_t paramsCount;
     uint32_t pathCount;
 
-    s.read((char*)&sig, 4);
+    dev->read((char*)&sig, 4);
     if (sig == 0x423a35d4)
         paramsCount = 96;
     else if (sig == 0x423a35d3)
@@ -446,51 +429,51 @@ QuestInfo readQuestInfo(std::istream& s)
     else
         return QuestInfo();
 
-    s.seekg(4, std::ios_base::cur);
+    dev->seek(dev->pos() + 4);
 
-    info.races = readByte(s);
-    info.doneImmediately = readByte(s) == 1;
-    info.planetRaces = readByte(s);
+    info.races = readByte(dev);
+    info.doneImmediately = readByte(dev) == 1;
+    info.planetRaces = readByte(dev);
 
-    s.seekg(4, std::ios_base::cur);
-    info.playerTypes = readByte(s);
+    dev->seek(dev->pos() + 4);
+    info.playerTypes = readByte(dev);
 
-    s.seekg(4, std::ios_base::cur);
-    info.playerRaces = readByte(s);
+    dev->seek(dev->pos() + 4);
+    info.playerRaces = readByte(dev);
 
-    s.seekg(4, std::ios_base::cur);
-    info.relation = readInt(s);
+    dev->seek(dev->pos() + 4);
+    info.relation = readInt(dev);
 
-    s.seekg(20, std::ios_base::cur);
-    pathCount = readUInt(s);
-    info.difficulty = readUInt(s);
+    dev->seek(dev->pos() + 20);
+    pathCount = readUInt(dev);
+    info.difficulty = readUInt(dev);
 
     for (uint8_t i = 0; i < paramsCount; i++)
-        skipParameter(s);
+        skipParameter(dev);
 
-    s.seekg(4, std::ios_base::cur);
-    skipString(s);
-    s.seekg(4, std::ios_base::cur);
-    skipString(s);
-    s.seekg(4, std::ios_base::cur);
-    skipString(s);
-    s.seekg(4, std::ios_base::cur);
-    skipString(s);
-    s.seekg(4, std::ios_base::cur);
-    skipString(s);
-    s.seekg(4, std::ios_base::cur);
-    skipString(s);
-    s.seekg(4, std::ios_base::cur);
-    skipString(s);
-    s.seekg(4, std::ios_base::cur);
-    skipString(s);
-    s.seekg(4, std::ios_base::cur);
-    skipString(s);
+    dev->seek(dev->pos() + 4);
+    skipString(dev);
+    dev->seek(dev->pos() + 4);
+    skipString(dev);
+    dev->seek(dev->pos() + 4);
+    skipString(dev);
+    dev->seek(dev->pos() + 4);
+    skipString(dev);
+    dev->seek(dev->pos() + 4);
+    skipString(dev);
+    dev->seek(dev->pos() + 4);
+    skipString(dev);
+    dev->seek(dev->pos() + 4);
+    skipString(dev);
+    dev->seek(dev->pos() + 4);
+    skipString(dev);
+    dev->seek(dev->pos() + 4);
+    skipString(dev);
 
-    s.seekg(12, std::ios_base::cur);
-    info.winnerText = readString(s);
-    s.seekg(4, std::ios_base::cur);
-    info.descriptionText = readString(s);
+    dev->seek(dev->pos() + 12);
+    info.winnerText = readString(dev);
+    dev->seek(dev->pos() + 4);
+    info.descriptionText = readString(dev);
 
     return info;
 }

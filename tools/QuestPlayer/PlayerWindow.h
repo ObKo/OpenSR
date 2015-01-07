@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2013 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2013 - 2015 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,14 +22,14 @@
 #include <QMainWindow>
 #include <QMap>
 
-#include "QuestPlayer.h"
+#include <OpenSR/QM/QuestPlayer.h>
 
 namespace Ui
 {
 class PlayerWindow;
 }
 class QLabel;
-namespace Rangers
+namespace OpenSR
 {
 namespace QuestPlayer
 {
@@ -46,7 +46,7 @@ protected:
 
 private:
     Ui::PlayerWindow *m_ui;
-    QuestPlayer m_player;
+    QM::QuestPlayer m_player;
     bool m_transition;
 
     QMap<QLabel*, uint32_t> m_transitionButtons;

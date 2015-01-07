@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2013 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2013 - 2015 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 */
 
 #include "PlayerWindow.h"
-#include "QuestPlayer.h"
+#include <OpenSR/QM/QuestPlayer.h>
 #include "ui_PlayerWindow.h"
 
 #include <QtWidgets/QAction>
@@ -27,7 +27,7 @@
 #include <QtCore/QDebug>
 #include <QtCore/QtGlobal>
 
-namespace Rangers
+namespace OpenSR
 {
 namespace QuestPlayer
 {
@@ -54,8 +54,14 @@ PlayerWindow::~PlayerWindow()
 void PlayerWindow::loadQuest()
 {
     QString file = QFileDialog::getOpenFileName(this, tr("Open quest"));
+    m_transition = false;
     if (!file.isEmpty())
-        m_player.loadQuest(file);
+    {
+        QFile f(file);
+        f.open(QIODevice::ReadOnly);
+        m_player.loadQuest(&f);
+        f.close();
+    }
 }
 
 void PlayerWindow::updateQuest()
@@ -71,12 +77,17 @@ void PlayerWindow::updateQuest()
     m_ui->variableLabel->setText(ps.join("<br>"));
     m_ui->textLabel->setText("<p>" + m_player.locationText().replace("\r\n", "</p><p>") + "</p>");
 
-    std::vector<std::pair<uint32_t, std::pair<QString, bool> > > newButtons = m_player.visibleTransitions();
-    for (const std::pair<uint32_t, std::pair<QString, bool> > &p : newButtons)
+    QList<QM::QuestPlayer::TransitionItem> newButtons = m_player.visibleTransitions();
+    for (QM::QuestPlayer::TransitionItem &p : newButtons)
     {
-        QLabel *b = new QLabel(p.second.first, this);
+        QLabel *b;
+        if (p.title.isEmpty())
+            b = new QLabel(tr("Next"), this);
+        else
+            b = new QLabel(p.title, this);
+
         b->setWordWrap(true);
-        if (p.second.second)
+        if (p.enabled)
         {
             b->setCursor(QCursor(Qt::PointingHandCursor));
             b->setStyleSheet("QLabel {color: blue} QLabel:hover {color: darkblue}");
@@ -88,7 +99,7 @@ void PlayerWindow::updateQuest()
         }
 
         m_ui->buttonLayout->addWidget(b);
-        m_transitionButtons[b] = p.first;
+        m_transitionButtons[b] = p.id;
     }
 }
 

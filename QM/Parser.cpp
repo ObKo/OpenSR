@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2013 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2013 - 2015 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,13 +18,10 @@
 
 #include "OpenSR/QM/Parser.h"
 
-#include <algorithm>
-#include <map>
-#include <stack>
-#include <cctype>
-#include <sstream>
+#include <QDebug>
+#include <QStack>
 
-namespace Rangers
+namespace OpenSR
 {
 namespace QM
 {
@@ -54,7 +51,7 @@ Token::Token(float from, float to)
     value.to = to;
 }
 
-Token Token::apply(const Token& a, const Token& b, const std::map<uint32_t, float> &parameters) const
+Token Token::apply(const Token& a, const Token& b, const QMap<uint32_t, float> &parameters) const
 {
     float av, bv;
 
@@ -63,7 +60,7 @@ Token Token::apply(const Token& a, const Token& b, const std::map<uint32_t, floa
     else if (a.type == TOKEN_LIST)
         av = a.list.at(rand() % a.list.size());
     else if (a.type == TOKEN_PARAMETER)
-        av = parameters.at(a.value.id);
+        av = parameters.value(a.value.id);
     else
         av = a.value.number;
 
@@ -72,7 +69,7 @@ Token Token::apply(const Token& a, const Token& b, const std::map<uint32_t, floa
     else if (b.type == TOKEN_LIST)
         bv = b.list.at(rand() % b.list.size());
     else if (b.type == TOKEN_PARAMETER)
-        bv = parameters.at(b.value.id);
+        bv = parameters.value(b.value.id);
     else
         bv = b.value.number;
 
@@ -162,65 +159,61 @@ Token Token::apply(const Token& a, const Token& b, const std::map<uint32_t, floa
     }
 }
 
-int32_t getInt(int &pos, const std::string& exp)
+int32_t getInt(int &pos, QString& exp)
 {
     size_t offset = 0;
-    try
+    const QChar *s = exp.constData() + pos;
+    while (*s != '\0' && (s->isDigit() || *s == '-'))
     {
-        int32_t f = std::stoi(exp.substr(pos), &offset);
-        pos += offset;
-        return f;
+        s++;
+        offset++;
     }
-    catch (std::invalid_argument & e)
-    {
-        return 0;
-    }
+    int32_t res = exp.midRef(pos, offset).toInt();
+    pos += offset;
+    qDebug() << exp << ": " << res;
+    return res;
 }
 
-float getFloat(int &pos, const std::string& exp)
+float getFloat(int &pos, const QString& exp)
 {
     size_t offset = 0;
-    try
+    const QChar *s = exp.constData() + pos;
+    bool wasPoint = false;
+    while (*s != '\0' && (s->isDigit() || *s == '-' || (*s == '.' && !wasPoint)))
     {
-        //FIXME: Better way to read float with point
-        std::locale current;
-        std::locale::global(std::locale::classic());
-
-        float f = std::stof(exp.substr(pos), &offset);
-        pos += offset;
-
-        std::locale::global(current);
-
-        return f;
+        if (*s == '.')
+            wasPoint = true;
+        s++;
+        offset++;
     }
-    catch (std::invalid_argument & e)
-    {
-        return 0;
-    }
+    int32_t res = exp.midRef(pos, offset).toFloat();
+    pos += offset;
+    qDebug() << exp << ": " << res;
+    return res;
 }
 
-std::list<Token> tokenize(const std::string& expression)
+QList<Token> tokenize(const QString& expression)
 {
     int pos = 0;
     Token prev;
-    std::list<Token> result;
+    QList<Token> result;
 
-    std::stack<Token> opStack;
+    QStack<Token> opStack;
 
-    std::string exp = expression;
-    std::replace(exp.begin(), exp.end(), ',', '.');
+    QString exp = expression;
+    exp.replace(',', '.');
 
     while (pos < exp.length())
     {
-        while ((pos < exp.length()) && (std::isspace(exp[pos]))) pos++;
+        while ((pos < exp.length()) && (exp[pos].isSpace())) pos++;
         if (pos == exp.length())
             break;
 
         Token t;
         //FIXME: Ugly unary minus detection.
-        if (((exp[pos] >= '0') && (exp[pos] <= '9')) || ((exp[pos] == '-') && (prev.type != Token::TOKEN_NUMBER) &&
-                (prev.type != Token::TOKEN_RANGE) && (prev.type != Token::TOKEN_PARAMETER) && (prev.type != Token::TOKEN_LIST) &&
-                (prev.type != Token::TOKEN_OPEN_PAR) && (prev.type != Token::TOKEN_CLOSE_PAR)))
+        if ((exp[pos].isDigit()) || ((exp[pos] == '-') && (prev.type != Token::TOKEN_NUMBER) &&
+                                     (prev.type != Token::TOKEN_RANGE) && (prev.type != Token::TOKEN_PARAMETER) && (prev.type != Token::TOKEN_LIST) &&
+                                     (prev.type != Token::TOKEN_OPEN_PAR) && (prev.type != Token::TOKEN_CLOSE_PAR)))
         {
             t = Token(getFloat(pos, exp));
         }
@@ -299,12 +292,12 @@ std::list<Token> tokenize(const std::string& expression)
                 t.value.id = (uint32_t)getInt(pos, exp);
                 if (exp[pos] != ']')
                 {
-                    std::cerr << "Unclosed parameter token in \"" << exp << "\"";
-                    return std::list<Token>();
+                    qWarning() << "Unclosed parameter token in \"" << exp << "\"";
+                    return QList<Token>();
                 }
                 pos++;
             }
-            else if (((exp[pos + 1] >= '0') && (exp[pos + 1] <= '9')) || ((exp[pos + 1] == '-')))
+            else if ((exp[pos + 1].isDigit()) || ((exp[pos + 1] == '-')))
             {
                 pos++;
                 float v1, v2;
@@ -320,8 +313,8 @@ std::list<Token> tokenize(const std::string& expression)
                     v2 = getFloat(pos, exp);
                     if (exp[pos] != ']')
                     {
-                        std::cerr << "Invalid range token in \"" << exp << "\" at pos = " << pos;
-                        return std::list<Token>();
+                        qWarning() << "Invalid range token in \"" << exp << "\" at pos = " << pos;
+                        return QList<Token>();
                     }
                     t = Token(v1, v2);
                     pos++;
@@ -337,63 +330,63 @@ std::list<Token> tokenize(const std::string& expression)
                     }
                     if (exp[pos] != ']')
                     {
-                        std::cerr << "Unclosed list token in \"" << exp << "\"";
-                        return std::list<Token>();
+                        qWarning() << "Unclosed list token in \"" << exp << "\"";
+                        return QList<Token>();
                     }
                     pos++;
                 }
             }
             else
             {
-                std::cerr << "Invalid token in \"" << exp << "\"";
-                return std::list<Token>();
+                qWarning() << "Invalid token in \"" << exp << "\"";
+                return QList<Token>();
             }
         }
-        else if (exp.substr(pos, 3) == "mod")
+        else if (exp.midRef(pos, 3) == "mod")
         {
             t.type = Token::TOKEN_OP_MOD;
             pos += 3;
         }
-        else if (exp.substr(pos, 3) == "div")
+        else if (exp.midRef(pos, 3) == "div")
         {
             t.type = Token::TOKEN_OP_INT_DIV;
             pos += 3;
         }
-        else if (exp.substr(pos, 3) == "and")
+        else if (exp.midRef(pos, 3) == "and")
         {
             t.type = Token::TOKEN_AND;
             pos += 3;
         }
-        else if (exp.substr(pos, 3) == "not")
+        else if (exp.midRef(pos, 3) == "not")
         {
             t.type = Token::TOKEN_NOT;
             pos += 3;
         }
-        else if (exp.substr(pos, 2) == "or")
+        else if (exp.midRef(pos, 2) == "or")
         {
             t.type = Token::TOKEN_OR;
             pos += 2;
         }
-        else if (exp.substr(pos, 2) == "to")
+        else if (exp.midRef(pos, 2) == "to")
         {
             t.type = Token::TOKEN_TO;
             pos += 2;
         }
-        else if (exp.substr(pos, 2) == "in")
+        else if (exp.midRef(pos, 2) == "in")
         {
             t.type = Token::TOKEN_IN;
             pos += 2;
         }
         else
         {
-            std::cerr << "Invalid token in \"" << exp << "\" at pos = " << pos;
-            return std::list<Token>();
+            qWarning() << "Invalid token in \"" << exp << "\" at pos = " << pos;
+            return QList<Token>();
         }
 
         if ((t.type == Token::TOKEN_NUMBER) || (t.type == Token::TOKEN_RANGE) ||
                 (t.type == Token::TOKEN_PARAMETER) || (t.type == Token::TOKEN_LIST))
         {
-            result.push_back(t);
+            result.append(t);
         }
         else if (t.type == Token::TOKEN_OPEN_PAR)
         {
@@ -406,13 +399,13 @@ std::list<Token> tokenize(const std::string& expression)
             {
                 if (opStack.empty())
                 {
-                    std::cerr << "Parenthesis error in \"" << exp << "\"";
-                    return std::list<Token>();
+                    qWarning() << "Parenthesis error in \"" << exp << "\"";
+                    return QList<Token>();
                 }
                 t2 = opStack.top();
                 opStack.pop();
                 if (t2.type != Token::TOKEN_OPEN_PAR)
-                    result.push_back(t2);
+                    result.append(t2);
             }
             while (t2.type != Token::TOKEN_OPEN_PAR && !opStack.empty());
         }
@@ -424,7 +417,7 @@ std::list<Token> tokenize(const std::string& expression)
                 while ((!opStack.empty()) && (o2.type != Token::TOKEN_OPEN_PAR) && (o2.type != Token::TOKEN_CLOSE_PAR) &&
                         (PRECEDENCES[t.type] <= PRECEDENCES[o2.type]))
                 {
-                    result.push_back(o2);
+                    result.append(o2);
                     opStack.pop();
                     if (!opStack.empty())
                         o2 = opStack.top();
@@ -441,20 +434,20 @@ std::list<Token> tokenize(const std::string& expression)
         opStack.pop();
         if (t.type == Token::TOKEN_OPEN_PAR)
         {
-            std::cerr << "Parenthesis error in \"" << exp << "\"";
-            return std::list<Token>();
+            qWarning() << "Parenthesis error in \"" << exp << "\"";
+            return QList<Token>();
         }
-        result.push_back(t);
+        result.append(t);
     }
     return result;
 }
 
-float eval(const std::list< Token >& exp, const std::map<uint32_t, float>& parameters)
+float eval(const QList< Token >& exp, const QMap<uint32_t, float>& parameters)
 {
     if (exp.empty())
         return 0;
 
-    std::stack<Token> opStack;
+    QStack<Token> opStack;
     for (const Token & t : exp)
     {
         if ((t.type == Token::TOKEN_NUMBER) || (t.type == Token::TOKEN_RANGE) ||
@@ -474,16 +467,16 @@ float eval(const std::list< Token >& exp, const std::map<uint32_t, float>& param
     Token r = opStack.top();
 
     if (r.type == Token::TOKEN_PARAMETER)
-        return parameters.at(r.value.id);
+        return parameters.value(r.value.id);
     else if (r.type == Token::TOKEN_RANGE)
         return r.value.from + (rand() % (uint32_t)(r.value.to - r.value.from + 1));
     else if (r.type == Token::TOKEN_LIST)
-        return r.list.at(rand() % r.list.size());
+        return r.list.value(rand() % r.list.count());
     else
         return r.value.number;
 }
 
-float eval(const std::string& exp, const std::map<uint32_t, float>& parameters)
+float eval(const QString& exp, const QMap<uint32_t, float>& parameters)
 {
     return eval(tokenize(exp), parameters);
 }
