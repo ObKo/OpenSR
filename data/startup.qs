@@ -1,1 +1,1 @@
-engine.showQMLComponent("qrc:/OpenSR/main.qml")
+engine.showQMLComponent("qrc:/OpenSR/MainMenu.qml")

@@ -1,4 +1,6 @@
 module OpenSR
 plugin QMLOpenSR
+ScreenLoader 1.0 ScreenLoader.qml
+ScreenLoaderScript 1.0 ScreenLoader.js
 Button 1.0 Button.qml
 MainMenu 1.0 MainMenu.qml

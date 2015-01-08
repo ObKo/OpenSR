@@ -6,9 +6,10 @@ Item {
     property string normalImage: "qrc:/DATA/FormPlanet2/QuestButN.sci"
     property string hoveredImage: "qrc:/DATA/FormPlanet2/QuestButA.sci"
     property string downImage: "qrc:/DATA/FormPlanet2/QuestButD.sci"
-    property string enterSound: "qrc:/Sound/ButtonEnter.wav"
-    property string leaveSound: "qrc:/Sound/ButtonLeave.WAV"
-    property string clickSound: "qrc:/Sound/ButtonClick.wav"
+    property string enterSound: "res:/Sound/ButtonEnter.wav"
+    property string leaveSound: "res:/Sound/ButtonLeave.WAV"
+    property string clickSound: "res:/Sound/ButtonClick.wav"
+    property bool sounded: true
     signal clicked
 
     implicitWidth: Math.max(bg.implicitWidth, (label.implicitWidth + 10))
@@ -48,7 +49,7 @@ Item {
         hoverEnabled: true
         onClicked: { parent.clicked() }
         onPressed: { cSnd.play() }
-        onEntered: { eSnd.play() }
+        onEntered: {  eSnd.play() }
         onExited: { lSnd.play() }
     }
 } 

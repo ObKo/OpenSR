@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2014 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2014 - 2015 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ struct SoundData
 class Sample
 {
 public:
-    Sample(const QString &name, SoundManager *manager);
+    Sample(const QUrl &url, SoundManager *manager);
     virtual ~Sample();
     //Argh, M$VC is so M$VC, it can't handle QSHDP without explicit copy constructor..
     Sample(const Sample& other);
@@ -70,7 +70,7 @@ public:
     virtual ~SoundManager();
 
     void start();
-    QSharedPointer<SoundData> loadSound(const QString& name);
+    QSharedPointer<SoundData> loadSound(const QUrl& url);
     void playSample(const Sample& sample);
 
 protected:

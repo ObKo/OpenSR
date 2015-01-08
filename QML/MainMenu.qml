@@ -34,6 +34,11 @@ Item {
                 updateBackgroundAnim()
         }
     }
+    Image {
+        source: "res:/DATA/FormMain3/2Planet.gi"
+        anchors.left: parent.left
+        anchors.bottom: parent.bottom
+    }
     GAIAnimatedImage {
         id: grid
         
@@ -52,11 +57,6 @@ Item {
             PauseAnimation { duration: 10000 }
             PropertyAction { target: grid; property: "playing"; value: true }
         }
-    }
-    Image {
-        source: "res:/DATA/FormMain3/2Planet.gi"
-        anchors.left: parent.left
-        anchors.bottom: parent.bottom
     }
     GAIAnimatedImage {
         id: animLine
@@ -138,5 +138,34 @@ Item {
                   "res:/DATA/FormMain3/2Ship3.gai"]
         anchors.left: parent.left
         anchors.bottom: parent.bottom
+    }
+    Button {
+        id: questButton
+        normalImage: "res:/DATA/FormLoadRobot/2LoadQuestN.gi"
+        hoveredImage: "res:/DATA/FormLoadRobot/2LoadQuestA.gi"
+        downImage: "res:/DATA/FormLoadRobot/2LoadQuestD.gi"
+        Text {
+            id: questButtonText
+            text: qsTr("Planetary Quests")
+            color: "#FFC710"
+            anchors.top: questButton.bottom
+            anchors.horizontalCenter: questButton.horizontalCenter
+        }
+        anchors.bottom: parent.bottom
+        anchors.left: parent.left
+        anchors.bottomMargin: questButtonText.height + 10
+        anchors.leftMargin: 200
+        onClicked: {
+            screen.createObjectFromURL("qrc:/OpenSR/QuestSelectionMenu.qml", menu, "questSelectionRequest")
+        }
+    }
+    
+    function componentObjectCreated(object, id)
+    {
+        if(id == "questSelectionRequest")
+        {
+            object.anchors.horizontalCenter = menu.horizontalCenter
+            object.anchors.verticalCenter = menu.verticalCenter
+        }
     }
 }

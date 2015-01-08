@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2014 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2014 - 2015 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -24,6 +24,9 @@
 #include <QBuffer>
 #include <QDebug>
 #include <QFileInfo>
+#include <QUrl>
+#include <OpenSR/Engine.h>
+#include <OpenSR/ResourceManager.h>
 
 #ifdef OPENSR_USE_SRC
 #include <samplerate.h>
@@ -305,9 +308,11 @@ void SoundManagerPrivate::mixSample(Sample &s)
     s.processSamples(sCount);
 }
 
-QSharedPointer<SoundData> SoundManager::loadSound(const QString& name)
+QSharedPointer<SoundData> SoundManager::loadSound(const QUrl& url)
 {
     Q_D(SoundManager);
+
+    QString name = url.path();
 
     QMap<QString, QSharedPointer<SoundData> >::const_iterator it = d->m_soundCache.find(name);
     if (it != d->m_soundCache.end())
@@ -320,13 +325,21 @@ QSharedPointer<SoundData> SoundManager::loadSound(const QString& name)
         return QSharedPointer<SoundData>();
     }
 
-    QFile f(name);
-    f.open(QIODevice::ReadOnly);
+    QIODevice *f = ((Engine *)qApp)->resources()->getIODevice(url, this);
 
-    if (!f.isOpen())
+    if (!f)
         return QSharedPointer<SoundData>();
 
-    QSharedPointer<SoundData> data = d->loadWAVFile(&f);
+    if (!f->isOpen())
+    {
+        delete f;
+        return QSharedPointer<SoundData>();
+    }
+
+    QSharedPointer<SoundData> data = d->loadWAVFile(f);
+
+    f->close();
+    delete f;
 
     if (!data)
         return QSharedPointer<SoundData>();
@@ -344,10 +357,10 @@ SampleData::~SampleData()
 {
 }
 
-Sample::Sample(const QString& name, SoundManager *manager)
+Sample::Sample(const QUrl& url, SoundManager *manager)
 {
     d = new SampleData();
-    d->samples = manager->loadSound(name);
+    d->samples = manager->loadSound(url);
 }
 
 Sample::~Sample()

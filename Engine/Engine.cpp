@@ -30,6 +30,7 @@
 #include <QSettings>
 #include <QResource>
 #include <QDebug>
+#include <QQuickItem>
 #include <QDir>
 
 namespace OpenSR
@@ -61,6 +62,9 @@ int Engine::run()
 
     m_resources->addFileSystemPath(settings.value("engine/mainDataDir", QDir::current().absolutePath() + "/data").toString());
 
+    QUrl qmlMainUrl(settings.value("engine/mainQML", "qrc:/OpenSR/ScreenLoader.qml").toString());
+    m_qmlView->setSource(qmlMainUrl);
+
     QString scriptPath = settings.value("engine/startupScript", "data/startup.qs").toString();
     QFile sf(scriptPath);
     sf.open(QIODevice::ReadOnly);
@@ -88,7 +92,10 @@ void Engine::addRCCArchive(const QString& path)
 
 void Engine::showQMLComponent(const QUrl& source)
 {
-    m_qmlView->setSource(source);
+    if (!m_qmlView->rootObject())
+        return;
+
+    QMetaObject::invokeMethod(m_qmlView->rootObject(), "changeScreen", Q_ARG(QVariant, source));
 }
 
 SoundManager* Engine::sound() const

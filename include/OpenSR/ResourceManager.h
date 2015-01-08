@@ -77,6 +77,7 @@ public:
 
     bool fileExists(const QString& path) const;
     QIODevice *getIODevice(const QString& path, QObject *parent = 0);
+    QIODevice *getIODevice(const QUrl& path, QObject *parent = 0);
 
 public Q_SLOTS:
     void addFileSystemPath(const QString& path);

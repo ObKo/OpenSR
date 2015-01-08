@@ -31,17 +31,8 @@ Sound::Sound(QObject *parent): QObject(parent), m_volume(1.0)
 
 void Sound::play()
 {
-    if (!m_source.isLocalFile() && m_source.scheme() != "qrc")
-        return;
-
-    QString path;
-    if (m_source.scheme() == "qrc")
-        path = ":/" + m_source.path();
-    else
-        path = m_source.toLocalFile();
-
     Engine *e = static_cast<Engine*>(qApp);
-    Sample sample(path, e->sound());
+    Sample sample(m_source, e->sound());
     sample.setVolume(m_volume);
     e->sound()->playSample(sample);
 }
@@ -50,7 +41,8 @@ void Sound::setSource(const QUrl& source)
 {
     m_source = source;
 
-    if (!m_source.isLocalFile() && m_source.scheme() != "qrc")
+    if (!m_source.isLocalFile() && m_source.scheme().compare("qrc", Qt::CaseInsensitive) &&
+            m_source.scheme().compare("res", Qt::CaseInsensitive))
         qWarning() << "Non-local sound is not supported";
 
     emit(sourceChanged());

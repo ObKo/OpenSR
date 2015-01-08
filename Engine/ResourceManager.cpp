@@ -306,6 +306,13 @@ QIODevice *ResourceManager::getIODevice(const QString& path, QObject *parent)
     return current->info->provider->getDevice(*current, parent);
 }
 
+QIODevice *ResourceManager::getIODevice(const QUrl& path, QObject *parent)
+{
+    if (path.scheme().compare("res", Qt::CaseInsensitive))
+        return 0;
+    return getIODevice(path.path(), parent);
+}
+
 void ResourceManager::addFileSystemPath(const QString& path)
 {
     FSProvider *prov = new FSProvider(path);
