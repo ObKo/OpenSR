@@ -34,7 +34,7 @@
 
 namespace OpenSR
 {
-ResourceReply::ResourceReply(const QUrl& url, QIODevice *device, QObject *parent)
+ResourceReply::ResourceReply(const QUrl& url, QIODevice *device, QObject *parent): QNetworkReply(parent)
 {
     m_device = device;
     if (!m_device || !m_device->isOpen())
@@ -44,8 +44,14 @@ ResourceReply::ResourceReply(const QUrl& url, QIODevice *device, QObject *parent
     }
     if (m_device)
         m_device->setParent(this);
+
+    QMetaObject::invokeMethod(this, "emitFinished", Qt::QueuedConnection);
+}
+
+void ResourceReply::emitFinished()
+{
     setFinished(true);
-    QMetaObject::invokeMethod(this, "finished", Qt::QueuedConnection);
+    emit(finished());
 }
 
 ResourceReply::~ResourceReply()
@@ -74,7 +80,7 @@ bool ResourceReply::canReadLine() const
 
 void ResourceReply::close()
 {
-    QIODevice::close();
+    QNetworkReply::close();
 
     if (!m_device)
         return;
@@ -112,40 +118,39 @@ qint64 ResourceReply::readData(char * data, qint64 maxSize)
     return m_device->read(data, maxSize);
 }
 
-class ResourceManagerNAM: public QNetworkAccessManager
+ResourceManagerNAM::ResourceManagerNAM(ResourceManager *manager, QObject *parent): QNetworkAccessManager(parent),
+    m_manger(manager)
 {
-public:
-    ResourceManagerNAM(ResourceManager *manager, QObject *parent): QNetworkAccessManager(parent),
-        m_manger(manager)
-    {
-    }
+}
 
-    virtual ~ResourceManagerNAM()
-    {
-    }
+ResourceManagerNAM::~ResourceManagerNAM()
+{
+}
 
-    virtual QNetworkReply * createRequest(Operation op, const QNetworkRequest & req, QIODevice *outgoingData)
+QNetworkReply* ResourceManagerNAM::createRequest(Operation op, const QNetworkRequest & req, QIODevice *outgoingData)
+{
+    qDebug() << op << req.url();
+    if ((req.url().scheme().compare("res", Qt::CaseInsensitive) == 0) && (op == QNetworkAccessManager::GetOperation))
     {
-        qDebug() << op << req.url();
-        if ((req.url().scheme().compare("res", Qt::CaseInsensitive) == 0) && (op == QNetworkAccessManager::GetOperation))
-        {
-            QString path = req.url().adjusted(QUrl::NormalizePathSegments).path();
-            QIODevice *dev = m_manger->getIODevice(path);
-            ResourceReply *reply = new ResourceReply(req.url(), dev, this);
-            reply->setOperation(op);
-            reply->setRequest(req);
-            reply->setUrl(req.url());
-            reply->open(QIODevice::ReadOnly);
-            emit(finished(reply));
-            return reply;
-        }
-        else
-            return QNetworkAccessManager::createRequest(op, req, outgoingData);
+        QString path = req.url().adjusted(QUrl::NormalizePathSegments).path();
+        QIODevice *dev = m_manger->getIODevice(path);
+        ResourceReply *reply = new ResourceReply(req.url(), dev, this);
+        connect(reply, SIGNAL(finished()), this, SLOT(emitReplyFinished()));
+        reply->setOperation(op);
+        reply->setRequest(req);
+        reply->setUrl(req.url());
+        reply->open(QIODevice::ReadOnly);
+        return reply;
     }
+    else
+        return QNetworkAccessManager::createRequest(op, req, outgoingData);
+}
 
-private:
-    ResourceManager *m_manger;
-};
+void ResourceManagerNAM::emitReplyFinished()
+{
+    QNetworkReply *r = static_cast<QNetworkReply*>(sender());
+    emit(finished(r));
+}
 
 class ResourceManagerNAMFactory: public QQmlNetworkAccessManagerFactory
 {

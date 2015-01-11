@@ -29,6 +29,22 @@ class QBuffer;
 
 namespace OpenSR
 {
+class ResourceManagerNAM: public QNetworkAccessManager
+{
+    Q_OBJECT
+public:
+    ResourceManagerNAM(ResourceManager *manager, QObject *parent);
+    virtual ~ResourceManagerNAM();
+
+    virtual QNetworkReply * createRequest(Operation op, const QNetworkRequest & req, QIODevice *outgoingData);
+
+private:
+    ResourceManager *m_manger;
+
+private Q_SLOTS:
+    void emitReplyFinished();
+};
+
 class ResourceReply: public QNetworkReply
 {
     Q_OBJECT
@@ -53,6 +69,9 @@ protected:
 private:
     QIODevice *m_device;
     friend class ResourceManagerNAM;
+
+private Q_SLOTS:
+    void emitFinished();
 };
 
 class FSProvider: public ResourceProvider

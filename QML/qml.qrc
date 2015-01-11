@@ -6,5 +6,6 @@
         <file>ScreenLoader.qml</file>
         <file>QuestSelectionMenu.qml</file>
         <file>ScreenLoader.js</file>
+        <file>QuestPlayer.qml</file>
     </qresource>
 </RCC>

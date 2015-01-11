@@ -170,7 +170,6 @@ int32_t getInt(int &pos, QString& exp)
     }
     int32_t res = exp.midRef(pos, offset).toInt();
     pos += offset;
-    qDebug() << exp << ": " << res;
     return res;
 }
 
@@ -188,7 +187,6 @@ float getFloat(int &pos, const QString& exp)
     }
     int32_t res = exp.midRef(pos, offset).toFloat();
     pos += offset;
-    qDebug() << exp << ": " << res;
     return res;
 }
 

@@ -44,6 +44,7 @@ public:
     QString substituteValues(const QString &str) const;
 
     QM::Quest m_quest;
+    bool m_questLoaded;
 
     QM::Location m_currentLocation;
     QString m_locationText;
@@ -68,6 +69,7 @@ QuestPlayer::QuestPlayer(QObject *parent): QObject(parent),
 QuestPlayerPrivate::QuestPlayerPrivate(QuestPlayer *q_)
 {
     q = q_;
+    m_questLoaded = false;
 }
 
 QuestPlayer::~QuestPlayer()
@@ -95,7 +97,7 @@ QString QuestPlayerPrivate::substituteValues(const QString &str) const
     while (i.hasNext())
     {
         QRegularExpressionMatch match = i.next();
-        QString value = "<font color=\"blue\">" + QString::number((int32_t)round(QM::eval(match.captured(1), m_parameters))) + "</font>";
+        QString value = "<font class=\"selected\">" + QString::number((int32_t)round(QM::eval(match.captured(1), m_parameters))) + "</font>";
         result.replace(match.capturedStart() + deltaPos, match.capturedLength(), value);
         deltaPos += value.length() - match.capturedLength();
     }
@@ -105,20 +107,20 @@ QString QuestPlayerPrivate::substituteValues(const QString &str) const
     while (i.hasNext())
     {
         QRegularExpressionMatch match = i.next();
-        QString value = "<font color=\"blue\">" + QString::number((int32_t)round(QM::eval(match.captured(0), m_parameters))) + "</font>";
+        QString value = "<font class=\"selected\">" + QString::number((int32_t)round(QM::eval(match.captured(0), m_parameters))) + "</font>";
         result.replace(match.capturedStart() + deltaPos, match.capturedLength(), value);
         deltaPos += value.length() - match.capturedLength();
     }
 
-    result.replace("<ToStar>", "<font color=\"blue\">" + m_quest.toStar + "</font>");
-    result.replace("<ToPlanet>", "<font color=\"blue\">" + m_quest.toPlanet + "</font>");
-    result.replace("<FromStar>", "<font color=\"blue\">" + m_quest.fromStar + "</font>");
-    result.replace("<FromPlanet>", "<font color=\"blue\">" + m_quest.fromPlanet + "</font>");
-    result.replace("<Date>", "<font color=\"blue\">" + m_quest.date + "</font>");
-    result.replace("<Money>", "<font color=\"blue\">" + m_quest.money + "</font>");
-    result.replace("<Ranger>", "<font color=\"blue\">" + m_quest.ranger + "</font>");
+    result.replace("<ToStar>", "<font class=\"selected\">" + m_quest.toStar + "</font>");
+    result.replace("<ToPlanet>", "<font class=\"selected\">" + m_quest.toPlanet + "</font>");
+    result.replace("<FromStar>", "<font class=\"selected\">" + m_quest.fromStar + "</font>");
+    result.replace("<FromPlanet>", "<font class=\"selected\">" + m_quest.fromPlanet + "</font>");
+    result.replace("<Date>", "<font class=\"selected\">" + m_quest.date + "</font>");
+    result.replace("<Money>", "<font class=\"selected\">" + m_quest.money + "</font>");
+    result.replace("<Ranger>", "<font class=\"selected\">" + m_quest.ranger + "</font>");
 
-    result.replace("<clr>", "<font color=\"blue\">");
+    result.replace("<clr>", "<font class=\"selected\">");
     result.replace("<clrEnd>", "</font>");
 
     return result;
@@ -128,10 +130,13 @@ void QuestPlayer::loadQuest(QIODevice *dev)
 {
     Q_D(QuestPlayer);
 
+    d->m_questLoaded = false;
+
     if (!dev || !dev->isOpen())
         return;
 
     d->m_quest = QM::readQuest(dev);
+    d->m_questLoaded = true;
 
     resetQuest();
 }
@@ -144,6 +149,9 @@ void QuestPlayer::resetQuest()
     d->m_parameters.clear();
     d->m_transitionCounts.clear();
     d->m_locationDescriptionsCount.clear();
+
+    if (!d->m_questLoaded)
+        return;
 
     auto end = d->m_quest.parameters.end();
     for (auto i = d->m_quest.parameters.begin(); i != end; ++i)
@@ -217,7 +225,7 @@ void QuestPlayerPrivate::setLocation(uint32_t location)
         }
     }
 
-    qDebug() << "L" << m_currentLocation.id;
+    qDebug() << "QuestPlayer: L" << m_currentLocation.id;
 
     if ((m_possibleTransitions.count() == 1) && m_currentLocation.transitions[m_possibleTransitions.front()].title.isEmpty() &&
             m_currentTransition.description.isEmpty())
@@ -293,7 +301,8 @@ QStringList QuestPlayer::visibleParameters() const
                     break;
                 }
             }
-            params.append(d->substituteValues(value));
+            if (!value.isEmpty())
+                params.append(d->substituteValues(value));
         }
     }
     return params;
@@ -448,7 +457,7 @@ void QuestPlayer::startTransition(uint32_t num)
         d->applyModifier(m);
     }
 
-    qDebug() << "P" << d->m_currentTransition.id;
+    qDebug() << "QuestPlayer: P" << d->m_currentTransition.id;
 
     d->m_locationText = d->substituteValues(d->m_currentTransition.description);
 

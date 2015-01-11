@@ -18,6 +18,8 @@
 
 #include "OpenSR/Engine.h"
 
+#include <OpenSR/libRangerQt.h>
+
 #include <OpenSR/SoundManager.h>
 #include <OpenSR/ResourceManager.h>
 #include <OpenSR/Sound.h>
@@ -35,6 +37,21 @@
 
 namespace OpenSR
 {
+namespace
+{
+void mergeMap(QVariantMap &source, const QVariantMap &append)
+{
+    auto end = append.end();
+    for (auto i = append.begin(); i != end; ++i)
+    {
+        auto target = source.find(i.key());
+        if (target == source.end())
+            source.insert(i.key(), i.value());
+        else
+            *target = append;
+    }
+}
+}
 Engine::Engine(int argc, char** argv): QApplication(argc, argv)
 {
     m_sound = new SoundManager(this);
@@ -44,6 +61,11 @@ Engine::Engine(int argc, char** argv): QApplication(argc, argv)
     m_qmlEngine = m_qmlView->engine();
     m_qmlEngine->addImportPath(":/");
     m_qmlEngine->rootContext()->setContextProperty("engine", this);
+    m_qmlEngine->rootContext()->setContextProperty("QM", new QMLQMExporter(this));
+
+    // "QQmlContext does not take ownership of value." they said....
+    // QTBUG-18732
+    m_qmlEngine->setObjectOwnership(this, QQmlEngine::CppOwnership);
 
     m_qmlEngine->setNetworkAccessManagerFactory(m_resources->qmlNAMFactory());
 
@@ -54,6 +76,7 @@ Engine::Engine(int argc, char** argv): QApplication(argc, argv)
 
 Engine::~Engine()
 {
+    qDebug() << "~Engine";
 }
 
 int Engine::run()
@@ -95,7 +118,7 @@ void Engine::showQMLComponent(const QUrl& source)
     if (!m_qmlView->rootObject())
         return;
 
-    QMetaObject::invokeMethod(m_qmlView->rootObject(), "changeScreen", Q_ARG(QVariant, source));
+    QMetaObject::invokeMethod(m_qmlView->rootObject(), "changeScreen", Q_ARG(QVariant, source), Q_ARG(QVariant, QVariantMap()));
 }
 
 SoundManager* Engine::sound() const
@@ -107,4 +130,76 @@ ResourceManager* Engine::resources() const
 {
     return m_resources;
 }
+
+void Engine::addDATFile(const QUrl& source)
+{
+    QIODevice *dev = m_resources->getIODevice(source);
+    if (!dev || !dev->isOpen())
+        return;
+    QVariantMap dat = loadDAT(dev);
+    mergeMap(m_datRoot, dat);
+}
+
+QVariantMap Engine::datRoot() const
+{
+    return m_datRoot;
+}
+
+QVariant Engine::datValue(const QString& path) const
+{
+    QList<QString> pathes = path.split('.', QString::SkipEmptyParts);
+    QVariantMap current = m_datRoot;
+    QVariant result;
+
+    for (const QString& p : pathes)
+    {
+        auto it = current.find(p);
+        if (it == current.end())
+        {
+            qWarning() << "No such DAT record: " << path;
+            return QVariant();
+        }
+        result = it.value();
+        if (result.type() != QVariant::Map)
+            break;
+        current = result.toMap();
+    }
+    return result;
+}
+
+QMLQMExporter::QMLQMExporter(QObject* parent): QObject(parent)
+{
+
+}
+
+QVariant QMLQMExporter::loadQuestInfo(const QUrl& url)
+{
+    QIODevice *d = ((Engine *)qApp)->resources()->getIODevice(url);
+    if (!d || !d->isOpen())
+        return QVariant();
+
+    QVariant result = convertQuestInfoToJS(QM::readQuestInfo(d));
+
+    delete d;
+
+    return result;
+}
+
+QVariant QMLQMExporter::convertQuestInfoToJS(const QM::QuestInfo& info)
+{
+    QVariantMap map;
+
+    map["races"] = info.races;
+    map["doneImmediately"] = info.doneImmediately;
+    map["planetRaces"] = info.planetRaces;
+    map["playerTypes"] = info.playerTypes;
+    map["playerRaces"] = info.playerRaces;
+    map["relation"] = info.relation;
+    map["difficulty"] = info.difficulty;
+    map["winnerText"] = info.winnerText;
+    map["descriptionText"] = info.descriptionText;
+
+    return map;
+}
+
 }

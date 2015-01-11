@@ -6,12 +6,15 @@ Item
     id: screen
     anchors.fill: parent
     
-    function createObjectFromURL(url, parent, id) {
-        ScreenLoaderScript.createObjectFromURL(url, parent, id);
+    
+    function createObjectFromURL(url, parent, id, properties) {
+        properties = (typeof properties === 'undefined') ? {} : properties;
+        ScreenLoaderScript.createObjectFromURL(url, parent, id, properties);
     }
     
-    function changeScreen(url) {
-        createObjectFromURL(url, screen);
+    function changeScreen(url, properties) {
+        properties = (typeof properties === 'undefined') ? {} : properties;
+        createObjectFromURL(url, screen, "screenRequest", properties);
     }
     
     function componentObjectCreated(){

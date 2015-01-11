@@ -19,7 +19,7 @@ function processObjectRequests() {
         var req = objectRequests[i];
         console.log("object request " + i + ": " + req);
         if (req[0] in components) {
-            var obj = components[req[0]].createObject(req[1], {"id": req[2]});
+            var obj = components[req[0]].createObject(req[1], req[3]);
             req[1].componentObjectCreated(obj, req[2]);
         }
         else if (req[0] in failedComponents) {
@@ -49,8 +49,8 @@ function finishComponentLoad() {
     processObjectRequests();
 }
 
-function createObjectFromURL(url, parent, id) {
+function createObjectFromURL(url, parent, id, properties) {
     loadComponent(url)
-    objectRequests.push([url, parent, id]);
+    objectRequests.push([url, parent, id, properties]);
     processObjectRequests();
 }

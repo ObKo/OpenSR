@@ -22,6 +22,9 @@
 #include <QApplication>
 #include <OpenSR/OpenSR.h>
 
+#include <OpenSR/QM/QM.h>
+#include <QJSValue>
+
 class QQuickView;
 class QQmlEngine;
 class QJSEngine;
@@ -42,9 +45,13 @@ public:
     SoundManager *sound() const;
     ResourceManager *resources() const;
 
+    Q_INVOKABLE QVariantMap datRoot() const;
+    Q_INVOKABLE QVariant datValue(const QString& path) const;
+
 public Q_SLOTS:
     void addRCCArchive(const QString& path);
     void showQMLComponent(const QUrl& source);
+    void addDATFile(const QUrl& source);
 
 private:
     QQuickView *m_qmlView;
@@ -52,6 +59,22 @@ private:
     QJSEngine *m_scriptEngine;
     SoundManager *m_sound;
     ResourceManager *m_resources;
+    QVariantMap m_datRoot;
+
+    Q_DISABLE_COPY(Engine);
+};
+
+
+class QMLQMExporter: public QObject
+{
+    Q_OBJECT
+public:
+    QMLQMExporter(QObject *parent = 0);
+
+    Q_INVOKABLE QVariant loadQuestInfo(const QUrl& url);
+
+private:
+    QVariant convertQuestInfoToJS(const QM::QuestInfo& info);
 };
 }
 

@@ -3,9 +3,15 @@ import OpenSR 1.0
 
 Item {
     property string text
-    property string normalImage: "qrc:/DATA/FormPlanet2/QuestButN.sci"
-    property string hoveredImage: "qrc:/DATA/FormPlanet2/QuestButA.sci"
-    property string downImage: "qrc:/DATA/FormPlanet2/QuestButD.sci"
+    
+    property color textColor: "black"
+    property int textStyle: Text.Normal
+    property color textStyleColor: "black"
+    property font textFont
+    
+    property string normalImage: "res:/DATA/FormPlanet2/QuestButN.sci"
+    property string hoveredImage: "res:/DATA/FormPlanet2/QuestButA.sci"
+    property string downImage: "res:/DATA/FormPlanet2/QuestButD.sci"
     property string enterSound: "res:/Sound/ButtonEnter.wav"
     property string leaveSound: "res:/Sound/ButtonLeave.WAV"
     property string clickSound: "res:/Sound/ButtonClick.wav"
@@ -18,10 +24,10 @@ Item {
     BorderImage {
         id: bg
         anchors.fill: parent
-        source: hoverArea.pressed ?
-            parent.downImage : (hoverArea.containsMouse ?
-            parent.hoveredImage :
-            parent.normalImage)
+        source: (hoverArea.pressed && downImage != "") ?
+            parent.downImage : 
+                ((hoverArea.containsMouse && hoveredImage != "") ?
+                parent.hoveredImage : parent.normalImage)
     }
     Text {
         id: label
@@ -30,6 +36,11 @@ Item {
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
         renderType: Text.NativeRendering
+        
+        color: parent.textColor
+        style: parent.textStyle
+        styleColor: parent.textStyleColor
+        font: parent.textFont
     }
     Sound {
         id: cSnd
@@ -48,8 +59,8 @@ Item {
         anchors.fill: parent
         hoverEnabled: true
         onClicked: { parent.clicked() }
-        onPressed: { cSnd.play() }
-        onEntered: {  eSnd.play() }
-        onExited: { lSnd.play() }
+        onPressed: { if(sounded) cSnd.play() }
+        onEntered: { if(sounded) eSnd.play() }
+        onExited: { if(sounded) lSnd.play() }
     }
 } 

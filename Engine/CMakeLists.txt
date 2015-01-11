@@ -11,6 +11,7 @@ SET(SOURCES
     GAIAnimatedImage.cpp
     GAITexture.cpp
     ResourceManager.cpp
+    QMLQuestPlayer.cpp
 )
 
 SET(HEADERS 
@@ -20,6 +21,7 @@ SET(HEADERS
     ${CMAKE_SOURCE_DIR}/include/OpenSR/GAIAnimatedImage.h
     ${CMAKE_SOURCE_DIR}/include/OpenSR/GAITexture.h
     ${CMAKE_SOURCE_DIR}/include/OpenSR/ResourceManager.h
+    ${CMAKE_SOURCE_DIR}/include/OpenSR/QMLQuestPlayer.h
 )
 
 SET(PRIVATE_HEADERS 
@@ -47,7 +49,7 @@ QT5_WRAP_CPP(MOC_SOURCES ${HEADERS} ${PRIVATE_HEADERS})
 QT5_ADD_RESOURCES(QRC_QML_SOURCES ${CMAKE_SOURCE_DIR}/QML/qml.qrc)
 
 ADD_LIBRARY(engine SHARED ${SOURCES} ${MOC_SOURCES})
-TARGET_LINK_LIBRARIES(engine RangerQt Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Quick Qt5::Multimedia)
+TARGET_LINK_LIBRARIES(engine RangerQt QM Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Quick Qt5::Multimedia)
 SET_TARGET_PROPERTIES(engine PROPERTIES COMPILE_DEFINITIONS "OPENSR_ENGINE_BUILD")
 
 ADD_EXECUTABLE(opensr main.cpp ${QRC_QML_SOURCES})

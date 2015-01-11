@@ -123,6 +123,7 @@ Item {
             anchors.top: aboutButton.bottom
             anchors.topMargin: 10
             onClicked: {
+                menu.destroy()
                 engine.quit()
             }
         }
@@ -160,12 +161,17 @@ Item {
         }
     }
     
+    function startQuest(url){
+        changeScreen("qrc:/OpenSR/QuestPlayer.qml", {"source": url});
+        menu.destroy()
+    }
+    
     function componentObjectCreated(object, id)
     {
-        if(id == "questSelectionRequest")
-        {
+        if(id == "questSelectionRequest"){
             object.anchors.horizontalCenter = menu.horizontalCenter
             object.anchors.verticalCenter = menu.verticalCenter
+            object.questSelected.connect(startQuest)
         }
     }
 }
