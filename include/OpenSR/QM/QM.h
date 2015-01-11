@@ -19,6 +19,7 @@
 #ifndef OPENSR_QM_H
 #define OPENSR_QM_H
 
+#include <cstdint>
 #include <QString>
 #include <QMap>
 #include <QList>

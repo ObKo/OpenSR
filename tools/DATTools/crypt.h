@@ -19,6 +19,7 @@
 #ifndef OPENSR_DAT_CRYPT_H
 #define OPENSR_DAT_CRYPT_H
 
+#include <cstdint>
 #include <QByteArray>
 
 namespace OpenSR

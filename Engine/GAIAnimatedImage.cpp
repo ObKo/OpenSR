@@ -306,9 +306,7 @@ void GAIAnimatedImagePrivate::loadGAI(const QUrl& source)
     QVector<int> times = loadGAITimes(dev, header);
 
     QFileInfo gaiFile(path);
-    QString bgPath = gaiFile.dir().path() + QDir::separator() + gaiFile.baseName() + ".gi";
-    if (!((Engine*)qApp)->resources()->fileExists(bgPath))
-        bgPath = gaiFile.dir().path() + QDir::separator() + gaiFile.baseName() + ".GI";
+    QString bgPath = gaiFile.dir().path() + '/' + gaiFile.baseName() + ".gi";
 
     QImage background;
     if (source.isLocalFile() || source.scheme() == "qrc")

@@ -190,27 +190,28 @@ void FSProvider::load(ResourceNode& current, const QDir& dir)
 
     for (const QFileInfo& child : sub)
     {
+        QString lowerName = child.fileName().toLower();
         if (child.isFile())
         {
             ResourceNode node(child.fileName(), ResourceNode::FILE, &current,
                               QSharedPointer<ResourceInfo>(new ResourceInfo()));
             node.info->provider = this;
-            auto it = current.children.find(child.fileName());
+            auto it = current.children.find(lowerName);
             if (it != current.children.end())
             {
                 if (it->type == ResourceNode::FILE)
                     *it = node;
             }
             else
-                current.children.insert(child.fileName(), node);
+                current.children.insert(lowerName, node);
         }
         else if (child.isDir())
         {
-            ResourceNode node(child.fileName(), ResourceNode::DIRECTORY, &current);
+            ResourceNode node(lowerName, ResourceNode::DIRECTORY, &current);
 
-            auto it = current.children.find(child.fileName());
+            auto it = current.children.find(lowerName);
             if (it == current.children.end())
-                it = current.children.insert(child.fileName(), node);
+                it = current.children.insert(lowerName, node);
 
             load(*it, QDir(child.absoluteFilePath()));
         }
@@ -285,7 +286,7 @@ bool ResourceManager::fileExists(const QString& path) const
 
     for (const QString node : p)
     {
-        auto it = current->children.find(node);
+        auto it = current->children.find(node.toLower());
         if (it == current->children.end())
             return false;
         current = &(it.value());
@@ -301,7 +302,7 @@ QIODevice *ResourceManager::getIODevice(const QString& path, QObject *parent)
 
     for (const QString node : p)
     {
-        auto it = current->children.find(node);
+        auto it = current->children.find(node.toLower());
         if (it == current->children.end())
             return 0;
         current = &(it.value());
@@ -482,13 +483,14 @@ void PKGProvider::load(ResourceNode& current, PKGItem* item)
     for (int i = 0; i < item->childCount; i++)
     {
         PKGItem* child = &item->childs[i];
+        QString lowerName = QString(child->name).toLower();
         if (child->dataType == 3)
         {
             ResourceNode node(child->name, ResourceNode::DIRECTORY, &current);
 
-            auto it = current.children.find(child->name);
+            auto it = current.children.find(lowerName);
             if (it == current.children.end())
-                it = current.children.insert(child->name, node);
+                it = current.children.insert(lowerName, node);
 
             load(*it, child);
         }
@@ -497,14 +499,14 @@ void PKGProvider::load(ResourceNode& current, PKGItem* item)
             ResourceNode node(child->name, ResourceNode::FILE, &current,
                               QSharedPointer<ResourceInfo>(new PGKResourceInfo(child)));
             node.info->provider = this;
-            auto it = current.children.find(child->name);
+            auto it = current.children.find(lowerName);
             if (it != current.children.end())
             {
                 if (it->type == ResourceNode::FILE)
                     *it = node;
             }
             else
-                current.children.insert(child->name, node);
+                current.children.insert(lowerName, node);
         }
     }
 }

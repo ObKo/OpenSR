@@ -31,7 +31,7 @@ namespace OpenSR
 namespace QM
 {
 class QuestPlayerPrivate;
-class QuestPlayer: public QObject
+class QM_API QuestPlayer: public QObject
 {
     Q_OBJECT
     OPENSR_DECLARE_PRIVATE(QuestPlayer)
