@@ -211,7 +211,7 @@ QList<Token> tokenize(const QString& expression)
         //FIXME: Ugly unary minus detection.
         if ((exp[pos].isDigit()) || ((exp[pos] == '-') && (prev.type != Token::TOKEN_NUMBER) &&
                                      (prev.type != Token::TOKEN_RANGE) && (prev.type != Token::TOKEN_PARAMETER) && (prev.type != Token::TOKEN_LIST) &&
-                                     (prev.type != Token::TOKEN_OPEN_PAR) && (prev.type != Token::TOKEN_CLOSE_PAR)))
+                                     (prev.type != Token::TOKEN_CLOSE_PAR)))
         {
             t = Token(getFloat(pos, exp));
         }
@@ -444,6 +444,84 @@ float eval(const QList< Token >& exp, const QMap<uint32_t, float>& parameters)
 {
     if (exp.empty())
         return 0;
+    
+    /*QString dump;
+    for(const Token& t: exp)
+    {
+        switch(t.type)
+        {
+        case Token::TOKEN_NUMBER:
+            dump += "N";
+            break;
+        case Token::TOKEN_RANGE:
+            dump += "R";
+            break;
+        case Token::TOKEN_OPEN_PAR:
+            dump += "(";
+            break;
+        case Token::TOKEN_CLOSE_PAR:
+            dump += ")";
+            break;
+        case Token::TOKEN_OP_PLUS:
+            dump += "+";
+            break;
+        case Token::TOKEN_OP_MINUS:
+            dump += "-";
+            break;
+        case Token::TOKEN_OP_DIV:
+            dump += "/";
+            break;
+        case Token::TOKEN_OP_MULTIPLY:
+            dump += "*";
+            break;
+        case Token::TOKEN_OP_MOD:
+            dump += "%";
+            break;
+        case Token::TOKEN_EQUAL:
+            dump += "=";
+            break;
+        case Token::TOKEN_MORE:
+            dump += ">";
+            break;
+        case Token::TOKEN_LESS:
+            dump += "<";
+            break;
+        case Token::TOKEN_MORE_EQUAL:
+            dump += ">=";
+            break;
+        case Token::TOKEN_LESS_EQUAL:
+            dump += "<=";
+            break;
+        case Token::TOKEN_NOT_EQUAL:
+            dump += "!=";
+            break;
+        case Token::TOKEN_OR:
+            dump += "||";
+            break;
+        case Token::TOKEN_AND:
+            dump += "&&";
+            break;
+        case Token::TOKEN_NOT:
+            dump += "!";
+            break;
+        case Token::TOKEN_TO:
+            dump += "T";
+            break;
+        case Token::TOKEN_IN:
+            dump += "I";
+            break;
+        case Token::TOKEN_PARAMETER:
+            dump += "P";
+            break;
+        case Token::TOKEN_LIST:
+            dump += "L";
+            break;
+        case Token::TOKEN_OP_INT_DIV:
+            dump += "i/";
+            break;
+        }
+    }
+    qDebug() << dump;*/
 
     QStack<Token> opStack;
     for (const Token & t : exp)

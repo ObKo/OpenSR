@@ -16,7 +16,7 @@ Item {
             parametersView.text = "<style>.selected{color: #FFEF63}</style>" + parameters.join("<br>");
         }
         onCurrentTextChanged: {
-            textView.text = "<style>.selected{color: #FFEF63} .win{color:green} .fail{color: red}</style>" + 
+            textView.text = "<style>.selected{color: " + d.skinSelectionColor + "} .win{color:green} .fail{color: red}</style>" + 
                 "<p>" + currentText.split("\r\n").join("</p><p>") + "</p>"
         }
         onQuestLocation: {
@@ -34,14 +34,14 @@ Item {
             transitonsModel.append({"id": -1, "title": qsTr("Next"), "enabled": true});
         }
         onQuestCompleted: {
-            textView.text = textView.text + "<p color=\"win\">" + qsTr("Quest completed!") + "</p>"
+            textView.text = textView.text + "<p class=\"win\">" + qsTr("Quest completed!") + "</p>"
             transitonsModel.clear();
             transitonsModel.append({"id": -2, "title": qsTr("Exit"), "enabled": true});
         }        
         onQuestFailed: {
             textView.text = textView.text + "<p class=\"fail\">" + qsTr("Quest failed!") + "</p>"
             if(death)
-                textView.text = textView.text + "<p color=\"fail\">" + qsTr("You're dead!") + "</p>"
+                textView.text = textView.text + "<p class=\"fail\">" + qsTr("You're dead!") + "</p>"
             transitonsModel.clear();
             transitonsModel.append({"id": -2, "title": qsTr("Exit"), "enabled": true});
         }
@@ -51,8 +51,15 @@ Item {
         id: transitonsModel
     }
     
-    Image {
-        source: "res:/DATA/FormPQuest2/2S1.gi"
+    BorderImage {
+        source: "res:/DATA/FormPQuest2/2S" + d.currentSkin + ".gi"
+        width: implicitWidth + background.width - background.implicitWidth
+        height: implicitHeight + background.height - background.implicitHeight
+        
+        border.left: 30
+        border.top: 505
+        border.bottom: 35
+        border.right: 30
         
         anchors.left: parent.left
         anchors.top: parent.top
@@ -60,8 +67,16 @@ Item {
         anchors.topMargin: 5
     }
     
-    Image {
+    BorderImage {
+        id: background
         source: "res:/DATA/FormPQuest2/2BG.gi"
+        
+        border.top: 490
+        border.bottom: 60
+        border.right: 540
+        border.left: 145
+
+        anchors.fill: parent
     }
     
     Item {
@@ -111,25 +126,29 @@ Item {
         y: 460
     }
     ScrollView {    
-        implicitWidth: 550
-        implicitHeight: 375
+        id: textScroll
+        width: 550 + background.width - background.implicitWidth
+        height: 365
+        style: Qt.createComponent("res:/ORC/PlanetQuest/ScrollBarS1.qml")
         
         Text {
             id: textView
-            color: "#CECFAD"
+            color: d.skinTextColor
             textFormat: Text.RichText
-            width: 512
+            width: 512 + background.width - background.implicitWidth
             wrapMode: TextEdit.WordWrap            
         }
         anchors.left: parent.left
         anchors.top: parent.top
-        anchors.leftMargin: 60
-        anchors.topMargin: 50
+        anchors.leftMargin: 62
+        anchors.topMargin: 49
     }
     
     ScrollView {    
-        implicitWidth: 550
-        implicitHeight: 375
+        id: answersScroll
+        width: 567 + background.width - background.implicitWidth
+        height: 217 + background.height - background.implicitHeight
+        style: Qt.createComponent("res:/ORC/PlanetQuest/ScrollBarS1.qml")
         
         ListView {
             id: transitonsList
@@ -137,25 +156,34 @@ Item {
             model: transitonsModel
             delegate: Component {
                 Item {
-                    width: childrenRect.width
-                    height: childrenRect.height
+                    width: transitonsBG.width
+                    height: transitonsBG.height
                     Rectangle {
                         id: transitonsBG
-                        width: transTitle.width + 20
+                        width: answerImg.width + 5 + transTitle.width + 20
                         height: transTitle.height + 5
                         color: "#80000000"
                         visible: transitonsListDelegateMouse.containsMouse
                     }
+                    Image {
+                        id: answerImg
+                        source: model.enabled ? "res:/DATA/FormPQuest2/2S" + ((d.currentSkin == 4) ? "4" : "1") + "Answer.gi" : 
+                            "res:/DATA/FormPQuest2/2S" + ((d.currentSkin == 4) ? "4" : "1") + "AnswerH.gi"
+                        
+                        anchors.left: transitonsBG.left
+                        anchors.leftMargin: transitonsListDelegateMouse.pressed ? 13 : 10
+                        anchors.verticalCenter: transitonsBG.verticalCenter
+                    }
                     Text { 
                         id: transTitle
-                        width: 490
+                        width: 500 + background.width - background.implicitWidth
                         text: title 
-                        color: enabled ? "#CECFAD" : "#808080"
+                        color: model.enabled ? d.skinTextColor : "#808080"
                         textFormat: Text.RichText
                         wrapMode: TextEdit.WordWrap  
                         
-                        anchors.left: transitonsBG.left
-                        anchors.leftMargin: 10
+                        anchors.left: answerImg.right
+                        anchors.leftMargin: 5
                         anchors.verticalCenter: transitonsBG.verticalCenter
                     }
                     MouseArea {
@@ -163,7 +191,7 @@ Item {
                         hoverEnabled: true
                         anchors.fill: parent
                         onClicked: {
-                            if(!enabled)
+                            if(!model.enabled)
                                 return;
                             if(id == -2) {
                                 questExit();
@@ -181,17 +209,111 @@ Item {
             
             anchors.fill: parent
         }
-        x: 60
-        y: 485
+        x: 45
+        y: 486
+    }
+    
+    Button {
+        normalImage: "res:/DATA/FormPQuest2/2CloseN.gi"
+        hoveredImage: "res:/DATA/FormPQuest2/2CloseA.gi"
+        downImage: "res:/DATA/FormPQuest2/2CloseD.gi"
+        
+        onClicked: questExit()
+        
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+    }
+    
+    Item {
+        width: childrenRect.width
+        height: childrenRect.height
+        
+        Image {
+            id: skinB1
+            source: (d.currentSkin == 1) ? 
+                "res:/DATA/FormPQuest2/2Skin1D.gi" :
+                "res:/DATA/FormPQuest2/2Skin1N.gi"
+                
+            MouseArea {
+                anchors.fill: parent
+                onClicked: changeSkin(1)
+            }
+            anchors.left: parent.left
+        }
+        Image {
+            id: skinB2
+            source: (d.currentSkin == 2) ? 
+                "res:/DATA/FormPQuest2/2Skin2D.gi" :
+                "res:/DATA/FormPQuest2/2Skin2N.gi"
+                
+            MouseArea {
+                anchors.fill: parent
+                onClicked: changeSkin(2)
+            }
+            anchors.left: skinB1.right
+            anchors.leftMargin: 3
+        }
+        Image {
+            id: skinB3
+            source: (d.currentSkin == 3) ? 
+                "res:/DATA/FormPQuest2/2Skin3D.gi" :
+                "res:/DATA/FormPQuest2/2Skin3N.gi"
+                
+            MouseArea {
+                anchors.fill: parent
+                onClicked: changeSkin(3)
+            }
+            anchors.left: skinB2.right
+            anchors.leftMargin: 3
+        }
+        Image {
+            id: skinB4
+            source: (d.currentSkin == 4) ? 
+                "res:/DATA/FormPQuest2/2Skin4D.gi" :
+                "res:/DATA/FormPQuest2/2Skin4N.gi"
+                
+            MouseArea {
+                anchors.fill: parent
+                onClicked: changeSkin(4)
+            }
+            anchors.left: skinB3.right
+            anchors.leftMargin: 3
+        }
+        
+        anchors.bottom: parent.bottom
+        anchors.right: parent.right
+        anchors.bottomMargin: 11
+        anchors.rightMargin: 425
     }
     
     Component.onCompleted: {
         player.source = source;
     }
     
-    function questExit()
-    {
+    function changeSkin(number) {
+        d.currentSkin = number
+        if(number == 1 || number == 2) {
+            d.skinTextColor = "#CECFAD";
+            d.skinSelectionColor = "#FFEF63";
+        }
+        else if(number == 3 || number == 4) {
+            d.skinTextColor = "#000000";
+            d.skinSelectionColor = "#0000AD";
+        }
+        textScroll.style = Qt.createComponent("res:/ORC/PlanetQuest/ScrollBarS" + number + ".qml")
+        answersScroll.style = Qt.createComponent("res:/ORC/PlanetQuest/ScrollBarS" + number + ".qml")
+        player.onCurrentTextChanged()
+    }
+    
+    function questExit() {
         questPlayerView.destroy()
         changeScreen("qrc:/OpenSR/MainMenu.qml");
+    }
+    
+    QtObject {
+         id: d
+         property int currentSkin: 1
+         property string skinTextColor: "#CECFAD"
+         property string skinSelectionColor: "#FFEF63"
     }
 }

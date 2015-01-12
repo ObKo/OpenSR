@@ -207,7 +207,7 @@ void FSProvider::load(ResourceNode& current, const QDir& dir)
         }
         else if (child.isDir())
         {
-            ResourceNode node(lowerName, ResourceNode::DIRECTORY, &current);
+            ResourceNode node(child.fileName(), ResourceNode::DIRECTORY, &current);
 
             auto it = current.children.find(lowerName);
             if (it == current.children.end())

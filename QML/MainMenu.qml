@@ -137,6 +137,7 @@ Item {
         sources: ["res:/DATA/FormMain3/2Ship1.gai", 
                   "res:/DATA/FormMain3/2Ship2.gai", 
                   "res:/DATA/FormMain3/2Ship3.gai"]
+        speed: 1.5
         anchors.left: parent.left
         anchors.bottom: parent.bottom
     }

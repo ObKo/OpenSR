@@ -85,6 +85,7 @@ QM::Location QuestPlayer::currentLocation() const
 
 QString QuestPlayerPrivate::substituteValues(const QString &str) const
 {
+    //TODO: Better tags handling (<format>, <fix>, etc)
     if (str.isEmpty())
         return str;
 

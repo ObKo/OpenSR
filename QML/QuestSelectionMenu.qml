@@ -104,8 +104,10 @@ Item {
     }
     
     ScrollView {    
-        implicitWidth: 545
+        implicitWidth: 546
         implicitHeight: 460
+        
+        style: Qt.createComponent("res:/ORC/PlanetQuest/ScrollBarS1.qml")
         
         ListView {
             id: questList
@@ -126,12 +128,32 @@ Item {
                                 ("res:/DATA/FormLoadQuest/2SlotNormal.gi")
                     }
                     Text { 
+                        id: nameText
                         text: name 
                         color: "#A5B68C"
                         
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.left: parent.left
                         anchors.leftMargin: 20
+                    }
+                    Image {
+                        id: difImage
+                        source: (difficulty < 6 && difficulty > 0) ? 
+                            "res:/DATA/FormLoadQuest/2D" + difficulty + ".gi" :
+                            ""
+                        anchors.verticalCenter: questDelegateImage.verticalCenter
+                        anchors.horizontalCenter: questDelegateImage.horizontalCenter
+                    }
+                    Text { 
+                        text: genre 
+                        color: "#A5B68C"                        
+                        font.pointSize: nameText.font.pointSize - 1;
+                        
+                        x: 280
+                        width: 230        
+                        wrapMode: Text.WordWrap
+                        
+                        anchors.verticalCenter: parent.verticalCenter
                     }
                     MouseArea {
                         id: questListDelegateMouse
@@ -158,7 +180,9 @@ Item {
     
     ScrollView {    
         implicitWidth: 300
-        implicitHeight: 260
+        implicitHeight: 240
+        
+        style: Qt.createComponent("res:/ORC/PlanetQuest/ScrollBarS4.qml")
         
         Text {
             id: questDescription
@@ -169,8 +193,8 @@ Item {
         
         anchors.right: parent.right
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 150
-        anchors.rightMargin: 40
+        anchors.bottomMargin: 170
+        anchors.rightMargin: 39
     }
     
     Component.onCompleted: {
@@ -178,7 +202,10 @@ Item {
         for(var key in questList)
         {
             var q = questList[key]
-            questListModel.append({"name": q["Name"], "id": key});
+            questListModel.append({"name": q["Name"], 
+                                   "id": key, 
+                                   "difficulty": Math.min(5, Math.floor((q["Dif"] - 1) / 10) + 1),
+                                   "genre": q["Genre"]});
         }
     }
     
