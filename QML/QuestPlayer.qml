@@ -3,7 +3,7 @@ import QtQuick.Controls 1.3
 import OpenSR 1.0
 
 Item {
-    property string source
+    property string questID
     
     id: questPlayerView
     
@@ -49,6 +49,14 @@ Item {
     
     ListModel {
         id: transitonsModel
+    }
+    
+    Image {
+        source: player.image
+        anchors.top: parent.top
+        anchors.right: parent.right
+        anchors.rightMargin: 30
+        anchors.topMargin: 30
     }
     
     BorderImage {
@@ -287,7 +295,7 @@ Item {
     }
     
     Component.onCompleted: {
-        player.source = source;
+        player.questID = questID;
     }
     
     function changeSkin(number) {

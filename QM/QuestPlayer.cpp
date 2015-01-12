@@ -83,6 +83,12 @@ QM::Location QuestPlayer::currentLocation() const
     return d->m_currentLocation;
 }
 
+QM::Transition QuestPlayer::currentTransition() const
+{
+    Q_D(const QuestPlayer);
+    return d->m_currentTransition;
+}
+
 QString QuestPlayerPrivate::substituteValues(const QString &str) const
 {
     //TODO: Better tags handling (<format>, <fix>, etc)

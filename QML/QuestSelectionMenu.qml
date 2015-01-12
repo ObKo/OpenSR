@@ -4,7 +4,7 @@ import QtGraphicalEffects 1.0
 import OpenSR 1.0
 
 Item {    
-    signal questSelected(string url)
+    signal questSelected(string id)
     
     id: questSelectionDialog
     implicitWidth: questSelectionBG.width
@@ -78,8 +78,7 @@ Item {
         
         onClicked: {
             var questID = questListModel.get(questList.currentIndex).id;
-            var url = "res:/" + engine.datValue("PlanetQuest.PlanetQuest")[questID].replace(/\\/g, "/");
-            parent.questSelected(url);
+            parent.questSelected(questID);
             parent.destroy()
         }
     }

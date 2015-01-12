@@ -162,8 +162,8 @@ Item {
         }
     }
     
-    function startQuest(url){
-        changeScreen("qrc:/OpenSR/QuestPlayer.qml", {"source": url});
+    function startQuest(id){
+        changeScreen("qrc:/OpenSR/QuestPlayer.qml", {"questID": id});
         menu.destroy()
     }
     

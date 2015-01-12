@@ -47,6 +47,7 @@ public:
     ~QuestPlayer();
 
     QM::Location currentLocation() const;
+    QM::Transition currentTransition() const;
 
     QString locationText() const;
     QStringList visibleParameters() const;

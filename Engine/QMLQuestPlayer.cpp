@@ -28,12 +28,12 @@ QMLQuestPlayer::QMLQuestPlayer(QObject *parent): QObject(parent)
     connect(&m_player, SIGNAL(locationChanged()), this, SLOT(updateLocation()));
     connect(&m_player, SIGNAL(transitionText(QString)), this, SLOT(showTransitionText(QString)));
     connect(&m_player, SIGNAL(questCompleted(QString)), this, SLOT(showQuestCompleted(QString)));
-    connect(&m_player, SIGNAL(questFailed(QString,bool)), this, SLOT(showQuestFailed(QString,bool)));
+    connect(&m_player, SIGNAL(questFailed(QString, bool)), this, SLOT(showQuestFailed(QString, bool)));
 }
 
-QUrl QMLQuestPlayer::source() const
+QString QMLQuestPlayer::questID() const
 {
-    return m_source;
+    return m_questID;
 }
 
 QString QMLQuestPlayer::currentText() const
@@ -50,7 +50,7 @@ QVariantList QMLQuestPlayer::transitions() const
 {
     QVariantList result;
     QList<QM::QuestPlayer::TransitionItem> trans = m_player.visibleTransitions();
-    for(const QM::QuestPlayer::TransitionItem& t : trans)
+    for (const QM::QuestPlayer::TransitionItem& t : trans)
     {
         QVariantMap tres;
         tres["id"] = t.id;
@@ -61,31 +61,62 @@ QVariantList QMLQuestPlayer::transitions() const
     return result;
 }
 
-void QMLQuestPlayer::setSource(const QUrl& source)
+QUrl QMLQuestPlayer::image() const
 {
-    m_source = source;
-    emit(sourceChanged());
+    return m_image;
+}
+
+void QMLQuestPlayer::setQuestID(const QString& id)
+{
+    m_questID = id;
+    emit(questIDChanged());
     resetQuest();
 }
 
 void QMLQuestPlayer::resetQuest()
 {
     m_player.resetQuest();
-    
+    m_locationsImages.clear();
+    m_transitionsImages.clear();
+
+    Engine *engine = ((Engine*)qApp);
+
     //m_currentText = QString();
     //emit(currentTextChanged());
-    
-    QIODevice *dev = ((Engine*)qApp)->resources()->getIODevice(m_source);
-    
-    if(!dev)
+    QString path = engine->datValue(QString("PlanetQuest.PlanetQuest.%1").arg(m_questID)).toString().replace("\\", "/");
+    QIODevice *dev = engine->resources()->getIODevice(path);
+
+    if (!dev)
         return;
-    
-    if(!dev->isOpen())
+
+    if (!dev->isOpen())
     {
         delete dev;
         return;
     }
-    
+
+    QVariantMap images = engine->datValue("Data.PQI").toMap();
+    auto end = images.end();
+    for (auto i = images.begin(); i != end; ++i)
+    {
+        QStringList img = i.key().split(',');
+        QString id = img.takeAt(0);
+        if (id != m_questID)
+            continue;
+        QString type = img.takeAt(0);
+        QString path = i.value().toString();
+        if (type == "L")
+        {
+            for (const QString& lid : img)
+                m_locationsImages[lid.toUInt()] = path;
+        }
+        else if (type == "P")
+        {
+            for (const QString& pid : img)
+                m_transitionsImages[pid.toUInt()] = path;
+        }
+    }
+
     m_player.loadQuest(dev);
 }
 
@@ -105,6 +136,16 @@ void QMLQuestPlayer::updateLocation()
     emit(currentTextChanged());
     emit(parametersChanged());
     emit(transitionsChanged());
+
+    auto it = m_locationsImages.find(m_player.currentLocation().id);
+    if (it != m_locationsImages.end())
+    {
+        QString path = it.value();
+        path = "res:/DATA/" + path.replace("Bm.", "").replace(".", "/") + ".jpg";
+        m_image = QUrl(path);
+        emit(imageChanged());
+    }
+
     emit(questLocation());
 }
 
@@ -113,6 +154,16 @@ void QMLQuestPlayer::showTransitionText(const QString &text)
     m_currentText = text;
     emit(currentTextChanged());
     emit(parametersChanged());
+
+    auto it = m_transitionsImages.find(m_player.currentTransition().id);
+    if (it != m_transitionsImages.end())
+    {
+        QString path = it.value();
+        path = "res:/DATA/" + path.replace("Bm.", "").replace(".", "/") + ".jpg";
+        m_image = QUrl(path);
+        emit(imageChanged());
+    }
+
     emit(questTransition());
 }
 

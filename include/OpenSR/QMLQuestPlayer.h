@@ -32,20 +32,22 @@ namespace OpenSR
 class ENGINE_API QMLQuestPlayer: public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QUrl source READ source WRITE setSource NOTIFY sourceChanged)
+    Q_PROPERTY(QString questID READ questID WRITE setQuestID NOTIFY questIDChanged)
     Q_PROPERTY(QString currentText READ currentText NOTIFY currentTextChanged)
     Q_PROPERTY(QStringList parameters READ parameters NOTIFY parametersChanged)
     Q_PROPERTY(QVariantList transitions READ transitions NOTIFY transitionsChanged)
+    Q_PROPERTY(QUrl image READ image NOTIFY imageChanged)
 
 public:
     QMLQuestPlayer(QObject *parent = 0);
 
-    QUrl source() const;
+    QString questID() const;
     QString currentText() const;
     QStringList parameters() const;
     QVariantList transitions() const;
+    QUrl image() const;
 
-    void setSource(const QUrl& source);
+    void setQuestID(const QString& id);
 
 public Q_SLOTS:
     void resetQuest();
@@ -53,16 +55,17 @@ public Q_SLOTS:
     void finishTransition();
 
 Q_SIGNALS:
-    void sourceChanged();
+    void questIDChanged();
     void currentTextChanged();
     void parametersChanged();
     void transitionsChanged();
-    
+    void imageChanged();
+
     void questLocation();
     void questTransition();
     void questFailed(bool death);
     void questCompleted();
-    
+
 private Q_SLOTS:
     void updateLocation();
     void showTransitionText(const QString &text);
@@ -70,9 +73,12 @@ private Q_SLOTS:
     void showQuestFailed(const QString &text, bool death);
 
 private:
-    QUrl m_source;
+    QString m_questID;
     QM::QuestPlayer m_player;
     QString m_currentText;
+    QMap<quint32, QString> m_locationsImages;
+    QMap<quint32, QString> m_transitionsImages;
+    QUrl m_image;
 };
 }
 
