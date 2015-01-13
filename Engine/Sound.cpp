@@ -25,25 +25,39 @@
 
 namespace OpenSR
 {
-Sound::Sound(QObject *parent): QObject(parent), m_volume(1.0)
+Sound::Sound(QObject *parent): QObject(parent), m_volume(1.0), m_alSource(0)
 {
+    alGenSources((ALuint)1, &m_alSource);
+
+    alSourcef(m_alSource, AL_PITCH, 1);
+    alSourcef(m_alSource, AL_GAIN, 1);
+    alSource3f(m_alSource, AL_POSITION, 0, 0, 0);
+    alSource3f(m_alSource, AL_VELOCITY, 0, 0, 0);
+    alSourcei(m_alSource, AL_LOOPING, AL_FALSE);
+}
+
+Sound::~Sound()
+{
+    alDeleteSources(1, &m_alSource);
 }
 
 void Sound::play()
 {
-    Engine *e = static_cast<Engine*>(qApp);
-    Sample sample(m_source, e->sound());
-    sample.setVolume(m_volume);
-    e->sound()->playSample(sample);
+    alSourcePlay(m_alSource);
 }
 
 void Sound::setSource(const QUrl& source)
 {
     m_source = source;
 
-    if (!m_source.isLocalFile() && m_source.scheme().compare("qrc", Qt::CaseInsensitive) &&
-            m_source.scheme().compare("res", Qt::CaseInsensitive))
+    if (!source.isLocalFile() && source.scheme().compare("qrc", Qt::CaseInsensitive) &&
+            source.scheme().compare("res", Qt::CaseInsensitive))
         qWarning() << "Non-local sound is not supported";
+
+
+    m_sample = ((Engine *)qApp)->sound()->loadSample(source);
+
+    alSourcei(m_alSource, AL_BUFFER, m_sample.openALBufferID());
 
     emit(sourceChanged());
 }
@@ -56,6 +70,7 @@ QUrl Sound::source() const
 void Sound::setVolume(float volume)
 {
     m_volume = volume;
+    alSourcef(m_alSource, AL_GAIN, m_volume);
     emit(volumeChanged());
 }
 

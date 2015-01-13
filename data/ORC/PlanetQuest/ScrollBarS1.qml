@@ -3,8 +3,8 @@ import QtQuick.Controls 1.3
 import QtQuick.Controls.Styles 1.3
 
 ScrollViewStyle {
-    corner : null
-    frame: null
+    corner : Item {}
+    frame: Item {}
     
     incrementControl: Image {
         source: styleData.pressed ? "res:/DATA/FormPQuest2/2S1BDownD.gi" :

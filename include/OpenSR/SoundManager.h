@@ -20,42 +20,30 @@
 #define OPENSR_SOUNDMANAGER_H
 
 #include <OpenSR/OpenSR.h>
+#include <AL/al.h>
 
 #include <QObject>
-#include <QByteArray>
 #include <QSharedPointer>
 
 namespace OpenSR
 {
 class SoundManagerPrivate;
 class SoundManager;
-class SampleData;
-
-struct SoundData
-{
-    int channelCount;
-    int sampleCount;
-    QByteArray samples;
-};
+struct SampleData;
 
 class Sample
 {
 public:
-    Sample(const QUrl &url, SoundManager *manager);
+    Sample();
     virtual ~Sample();
-    //Argh, M$VC is so M$VC, it can't handle QSHDP without explicit copy constructor..
-    Sample(const Sample& other);
 
-    QSharedPointer<SoundData> data() const;
-    int processed() const;
-    float volume() const;
-    bool done() const;
-
-    void processSamples(int count);
-    void setVolume(float volume);
+    ALuint openALBufferID() const;
 
 private:
-    QSharedDataPointer<SampleData> d;
+    Sample(QSharedPointer<SampleData> data);
+
+    QSharedPointer<SampleData> d;
+    friend class SoundManager;
 };
 
 class SoundManager : public QObject
@@ -64,14 +52,11 @@ class SoundManager : public QObject
     OPENSR_DECLARE_PRIVATE(SoundManager)
 
 public:
-    class DataIODev;
-
     SoundManager(QObject *parent = 0);
     virtual ~SoundManager();
 
+    Sample loadSample(const QUrl& url);
     void start();
-    QSharedPointer<SoundData> loadSound(const QUrl& url);
-    void playSample(const Sample& sample);
 
 protected:
     OPENSR_DECLARE_DPOINTER(SoundManager)

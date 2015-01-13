@@ -21,54 +21,29 @@
 
 #include "OpenSR/SoundManager.h"
 
-#include <QByteArray>
+#include <AL/alc.h>
+
 #include <QSharedPointer>
-#include <QAudioOutput>
-#include <QList>
 #include <QMap>
-#include <QSharedData>
+#include <QIODevice>
 
 namespace OpenSR
 {
-class SampleData: public QSharedData
+struct SampleData
 {
-public:
     SampleData();
     virtual ~SampleData();
 
-    QSharedPointer<SoundData> samples;
-    int processed;
-    float volume;
+    ALuint m_alID;
 };
 
 class SoundManagerPrivate
 {
 public:
-    class DataIODev: public QIODevice
-    {
-    public:
-        DataIODev(SoundManagerPrivate *p, SoundManager *parent);
-
-        int size;
-        int offset;
-        float *buffer;
-        SoundManagerPrivate *manager;
-
-    protected:
-        virtual qint64 readData(char *data, qint64 maxSize);
-        virtual qint64 writeData(const char *data, qint64 maxSize);
-    };
-
-    void refreshBuffer();
-    void mixSample(Sample& sound);
-    QByteArray resample(const QByteArray& floatData, int &sampleCount, int srcRate, int destRate, int channels);
-    QSharedPointer<SoundData> loadWAVFile(QIODevice *d);
-
-    QAudioOutput *m_outputDevice;
-    DataIODev *m_bufferDev;
-
-    QList<Sample> m_currentSamples;
-    QMap<QString, QSharedPointer<SoundData> > m_soundCache;
+    QSharedPointer<SampleData> loadWAVFile(QIODevice* d);
+    ALCdevice *device;
+    ALCcontext *context;
+    QMap<QUrl, QSharedPointer<SampleData> > m_soundCache;
 };
 }
 

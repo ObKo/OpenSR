@@ -20,6 +20,7 @@
 #define OPENSR_SOUND_H
 
 #include <OpenSR/OpenSR.h>
+#include <OpenSR/SoundManager.h>
 #include <QObject>
 #include <QUrl>
 
@@ -33,6 +34,7 @@ class ENGINE_API Sound: public QObject
 
 public:
     Sound(QObject *parent = 0);
+    virtual ~Sound();
 
     QUrl source() const;
     float volume() const;
@@ -49,6 +51,8 @@ Q_SIGNALS:
 
 private:
     QUrl m_source;
+    Sample m_sample;
+    ALuint m_alSource;
     float m_volume;
 };
 }
