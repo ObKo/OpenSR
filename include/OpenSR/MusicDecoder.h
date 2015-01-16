@@ -16,20 +16,34 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "QMLPlugin.h"
+#ifndef OPENSR_MUSICDECODER_H
+#define OPENSR_MUSICDECODER_H
 
-#include <OpenSR/Sound.h>
-#include <OpenSR/GAIAnimatedImage.h>
-#include <OpenSR/QMLQuestPlayer.h>
-#include <OpenSR/Music.h>
+#include <OpenSR/OpenSR.h>
 
-#include <QtQml>
+#include <QObject>
+#include <QByteArray>
 
-void OpenSRPlugin::registerTypes(const char* uri)
+class QIODevice;
+
+namespace OpenSR
 {
-    using namespace OpenSR;
-    qmlRegisterType<Sound>(uri, 1, 0, "Sound");
-    qmlRegisterType<GAIAnimatedImage>(uri, 1, 0, "GAIAnimatedImage");
-    qmlRegisterType<QMLQuestPlayer>(uri, 1, 0, "QuestPlayer");
-    qmlRegisterType<Music>(uri, 1, 0, "Music");
+class MusicDecoder: public QObject
+{
+    Q_OBJECT
+public:
+    MusicDecoder(QObject *parent = 0): QObject(parent) {}
+    virtual ~MusicDecoder() {}
+
+    virtual bool valid() const = 0;
+
+    virtual QByteArray decode(int ms) = 0;
+
+    virtual int sampleRate() const = 0;
+    virtual int channels() const = 0;
+    virtual int bps() const = 0;
+    virtual bool done() const = 0;
+};
 }
+
+#endif // OPENSR_MUSICDECODER_H

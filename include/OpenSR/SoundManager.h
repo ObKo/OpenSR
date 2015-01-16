@@ -30,6 +30,7 @@ namespace OpenSR
 class SoundManagerPrivate;
 class SoundManager;
 struct SampleData;
+class MusicDecoder;
 
 class Sample
 {
@@ -57,6 +58,8 @@ public:
 
     Sample loadSample(const QUrl& url);
     void start();
+
+    MusicDecoder *getMusicDecoder(const QUrl& url, QObject *parent = 0);
 
 protected:
     OPENSR_DECLARE_DPOINTER(SoundManager)

@@ -29,6 +29,8 @@
 #include <OpenSR/Engine.h>
 #include <OpenSR/ResourceManager.h>
 
+#include "MPG123MusicDecoder.h"
+
 namespace OpenSR
 {
 namespace
@@ -198,6 +200,21 @@ Sample SoundManager::loadSample(const QUrl& url)
 
     d->m_soundCache[url] = data;
     return Sample(data);
+}
+
+MusicDecoder *SoundManager::getMusicDecoder(const QUrl& url, QObject *parent)
+{
+    QString path = url.path();
+
+    if (!QFileInfo(path).suffix().compare("mp3", Qt::CaseInsensitive))
+    {
+        QIODevice *dev = ((Engine *)qApp)->resources()->getIODevice(url);
+        if (!dev)
+            return 0;
+        return new MPG123MusicDecoder(dev, parent);
+    }
+    qWarning() << "Unsupported music format: " << QFileInfo(path).suffix();
+    return 0;
 }
 
 }

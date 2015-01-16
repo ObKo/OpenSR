@@ -10,6 +10,8 @@ SET(SOURCES
     GAITexture.cpp
     ResourceManager.cpp
     QMLQuestPlayer.cpp
+    Music.cpp
+    MPG123MusicDecoder.cpp
 )
 
 SET(HEADERS 
@@ -20,11 +22,14 @@ SET(HEADERS
     ${CMAKE_SOURCE_DIR}/include/OpenSR/GAITexture.h
     ${CMAKE_SOURCE_DIR}/include/OpenSR/ResourceManager.h
     ${CMAKE_SOURCE_DIR}/include/OpenSR/QMLQuestPlayer.h
+    ${CMAKE_SOURCE_DIR}/include/OpenSR/Music.h
+    ${CMAKE_SOURCE_DIR}/include/OpenSR/MusicDecoder.h
 )
 
 SET(PRIVATE_HEADERS 
     ResourceManager_p.h
     SoundManager_p.h
+    MPG123MusicDecoder.h
 )
 
 INCLUDE_DIRECTORIES(
@@ -42,7 +47,7 @@ QT5_WRAP_CPP(MOC_SOURCES ${HEADERS} ${PRIVATE_HEADERS})
 QT5_ADD_RESOURCES(QRC_QML_SOURCES ${CMAKE_SOURCE_DIR}/QML/qml.qrc)
 
 ADD_LIBRARY(engine SHARED ${SOURCES} ${MOC_SOURCES})
-TARGET_LINK_LIBRARIES(engine RangerQt QM Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Quick ${OPENAL_LIBRARY})
+TARGET_LINK_LIBRARIES(engine RangerQt QM Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Quick ${OPENAL_LIBRARY} mpg123)
 SET_TARGET_PROPERTIES(engine PROPERTIES COMPILE_DEFINITIONS "OPENSR_ENGINE_BUILD")
 
 ADD_EXECUTABLE(opensr main.cpp ${QRC_QML_SOURCES})
