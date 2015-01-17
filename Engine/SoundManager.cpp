@@ -30,6 +30,7 @@
 #include <OpenSR/ResourceManager.h>
 
 #include "MPG123MusicDecoder.h"
+#include "VorbisMusicDecoder.h"
 
 namespace OpenSR
 {
@@ -212,6 +213,13 @@ MusicDecoder *SoundManager::getMusicDecoder(const QUrl& url, QObject *parent)
         if (!dev)
             return 0;
         return new MPG123MusicDecoder(dev, parent);
+    }
+    else if (!QFileInfo(path).suffix().compare("ogg", Qt::CaseInsensitive))
+    {
+        QIODevice *dev = ((Engine *)qApp)->resources()->getIODevice(url);
+        if (!dev)
+            return 0;
+        return new VorbisMusicDecoder(dev, parent);
     }
     qWarning() << "Unsupported music format: " << QFileInfo(path).suffix();
     return 0;

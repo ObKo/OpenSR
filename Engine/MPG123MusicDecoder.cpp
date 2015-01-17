@@ -18,8 +18,6 @@
 
 #include "MPG123MusicDecoder.h"
 
-#include "mpg123.h"
-
 #include <QIODevice>
 #include <QDebug>
 #include <QLibrary>
@@ -216,7 +214,7 @@ QByteArray MPG123MusicDecoder::decode(int ms)
     if (!m_mpgHandle)
         return QByteArray();
 
-    quint32 size = m_rate / 1000 * ms * m_channels;
+    quint32 size = (bps() / 8) * m_rate * ms * m_channels / 1000;
 
     QByteArray result(size, 0);
     int err;

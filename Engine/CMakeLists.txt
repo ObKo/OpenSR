@@ -12,6 +12,7 @@ SET(SOURCES
     QMLQuestPlayer.cpp
     Music.cpp
     MPG123MusicDecoder.cpp
+    VorbisMusicDecoder.cpp
 )
 
 SET(HEADERS 
@@ -30,6 +31,7 @@ SET(PRIVATE_HEADERS
     ResourceManager_p.h
     SoundManager_p.h
     MPG123MusicDecoder.h
+    VorbisMusicDecoder.h
 )
 
 INCLUDE_DIRECTORIES(

@@ -16,13 +16,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef OPENSR_MPG123MUSICDECODER_H
-#define OPENSR_MPG123MUSICDECODER_H
+#ifndef OPENSR_VORBISMUSICDECODER_H
+#define OPENSR_VORBISMUSICDECODER_H
 
 #include <OpenSR/OpenSR.h>
 #include <OpenSR/MusicDecoder.h>
 
-#include "3rdparty/mpg123.h"
+#include "3rdparty/vorbisfile.h"
 
 #include <QByteArray>
 
@@ -30,11 +30,11 @@ class QIODevice;
 
 namespace OpenSR
 {
-class MPG123MusicDecoder: public MusicDecoder
+class VorbisMusicDecoder: public MusicDecoder
 {
 public:
-    MPG123MusicDecoder(QIODevice *dev, QObject *parent = 0);
-    virtual ~MPG123MusicDecoder();
+    VorbisMusicDecoder(QIODevice *dev, QObject *parent = 0);
+    virtual ~VorbisMusicDecoder();
 
     virtual bool valid() const;
 
@@ -48,15 +48,14 @@ public:
 
 private:
     QIODevice *m_device;
-    mpg123_handle *m_mpgHandle;
-    long m_rate;
-    int m_channels, m_encoding;
+    OggVorbis_File *m_vfFile;
+    vorbis_info *m_vfInfo;
     int m_length;
     bool m_done;
 
-    static bool m_mpgInited;
-    static bool m_mpgInitFailed;
+    static bool m_vfInited;
+    static bool m_vfInitFailed;
 };
 }
 
-#endif // OPENSR_MPG123MUSICDECODER_H
+#endif // OPENSR_VORBISMUSICDECODER_H
