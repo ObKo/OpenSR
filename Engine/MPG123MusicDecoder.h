@@ -22,7 +22,7 @@
 #include <OpenSR/OpenSR.h>
 #include <OpenSR/MusicDecoder.h>
 
-#include <mpg123.h>
+#include "mpg123.h"
 
 #include <QByteArray>
 
