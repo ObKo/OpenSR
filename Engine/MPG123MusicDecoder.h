@@ -55,6 +55,7 @@ private:
     bool m_done;
 
     static bool m_mpgInited;
+    static bool m_mpgInitFailed;
 };
 }
 
