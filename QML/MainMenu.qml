@@ -164,7 +164,7 @@ Item {
     
     Music {
         id: music
-        source: "res:/test.ogg"
+        source: "res:/Music/SPECIAL/SpaceIsCalling.dat"
     }
     
     Component.onCompleted: {

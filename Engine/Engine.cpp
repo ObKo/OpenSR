@@ -20,9 +20,10 @@
 
 #include <OpenSR/libRangerQt.h>
 
-#include <OpenSR/SoundManager.h>
-#include <OpenSR/ResourceManager.h>
-#include <OpenSR/Sound.h>
+#include "OpenSR/SoundManager.h"
+#include "OpenSR/ResourceManager.h"
+#include "OpenSR/Sound.h"
+#include "OpenSR/PluginInterface.h"
 
 #include <QQuickView>
 #include <QBoxLayout>
@@ -34,6 +35,7 @@
 #include <QDebug>
 #include <QQuickItem>
 #include <QDir>
+#include <QPluginLoader>
 
 namespace OpenSR
 {
@@ -131,6 +133,16 @@ ResourceManager* Engine::resources() const
     return m_resources;
 }
 
+QQmlEngine* Engine::qmlEngine()
+{
+    return m_qmlEngine;
+}
+
+QJSEngine* Engine::scriptEngine()
+{
+    return m_scriptEngine;
+}
+
 void Engine::addDATFile(const QUrl& source)
 {
     QIODevice *dev = m_resources->getIODevice(source);
@@ -167,6 +179,31 @@ QVariant Engine::datValue(const QString& path) const
     return result;
 }
 
+void Engine::loadPlugin(const QString& name)
+{
+    QPluginLoader loader(name);
+    if (!loader.load())
+    {
+        qWarning().noquote() << QString("Cannot load plugin \"%1\": %2").arg(name, loader.errorString());
+        return;
+    }
+    //TODO: Unloading
+    PluginInterface *plugin = qobject_cast<PluginInterface*>(loader.instance());
+    if (!plugin)
+    {
+        qWarning().noquote() << QString("Cannot load plugin \"%1\": %2").arg(name, tr("seems not a plugin."));
+        loader.unload();
+        return;
+    }
+    if (!plugin->initPlugin(this))
+    {
+        qWarning().noquote() << QString("Cannot load plugin \"%1\"").arg(name);
+        loader.unload();
+        return;
+    }
+    loader.instance()->setParent(this);
+}
+
 QMLQMExporter::QMLQMExporter(QObject* parent): QObject(parent)
 {
 
@@ -201,5 +238,4 @@ QVariant QMLQMExporter::convertQuestInfoToJS(const QM::QuestInfo& info)
 
     return map;
 }
-
 }

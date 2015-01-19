@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2014 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2014 - 2015 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -45,6 +45,9 @@ public:
     SoundManager *sound() const;
     ResourceManager *resources() const;
 
+    QQmlEngine *qmlEngine();
+    QJSEngine *scriptEngine();
+
     Q_INVOKABLE QVariantMap datRoot() const;
     Q_INVOKABLE QVariant datValue(const QString& path) const;
 
@@ -52,6 +55,7 @@ public Q_SLOTS:
     void addRCCArchive(const QString& path);
     void showQMLComponent(const QUrl& source);
     void addDATFile(const QUrl& source);
+    void loadPlugin(const QString& name);
 
 private:
     QQuickView *m_qmlView;
