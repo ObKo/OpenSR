@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2012 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2015 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,63 +17,31 @@
 */
 
 #include "SpaceObject.h"
-#include "WorldHelper.h"
-#include <map>
 
-namespace Rangers
+#include <QHash>
+
+namespace OpenSR
 {
 namespace World
 {
-SpaceObject::SpaceObject(uint64_t id): WorldObject(id)
+const uint32_t SpaceObject::staticTypeId = qHash(SpaceObject::staticMetaObject.className());
+
+SpaceObject::SpaceObject(uint32_t id, WorldObject *parent): WorldObject(id, parent)
 {
-    m_position.x = 0;
-    m_position.y = 0;
 }
 
-bool SpaceObject::deserialize(std::istream& stream)
+SpaceObject::~SpaceObject()
 {
-    if (!WorldObject::deserialize(stream))
-        return false;
-
-    stream.read((char *)&m_position, sizeof(Point));
-
-    if (!stream.good())
-        return false;
-
-    return true;
 }
 
-Point SpaceObject::position() const
+uint32_t SpaceObject::typeId() const
 {
-    return m_position;
+    return SpaceObject::staticTypeId;
 }
 
-bool SpaceObject::serialize(std::ostream& stream) const
+QString SpaceObject::namePrefix() const
 {
-    if (!WorldObject::serialize(stream))
-        return false;
-
-    stream.write((const char *)&m_position, sizeof(Point));
-
-    if (!stream.good())
-        return false;
-
-    return true;
-}
-
-uint32_t SpaceObject::type() const
-{
-    return WorldHelper::TYPE_SPACEOBJECT;
-}
-
-void SpaceObject::setPosition(const Point& point)
-{
-    m_position = point;
-}
-
-Trajectory SpaceObject::trajectory() const
-{
-    return m_trajectory;
+    return tr("Space object");
 }
 }
 }

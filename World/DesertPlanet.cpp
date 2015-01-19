@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2012 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2015 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,29 +17,31 @@
 */
 
 #include "DesertPlanet.h"
-#include "WorldHelper.h"
 
-namespace Rangers
+#include <QHash>
+
+namespace OpenSR
 {
 namespace World
 {
-DesertPlanet::DesertPlanet(uint64_t id): Planet(id)
+const uint32_t DesertPlanet::staticTypeId = qHash(DesertPlanet::staticMetaObject.className());
+
+DesertPlanet::DesertPlanet(uint32_t id, WorldObject *parent): Planet(id, parent)
 {
 }
 
-bool DesertPlanet::deserialize(std::istream& stream)
+DesertPlanet::~DesertPlanet()
 {
-    return Planet::deserialize(stream);
 }
 
-bool DesertPlanet::serialize(std::ostream& stream) const
+uint32_t DesertPlanet::typeId() const
 {
-    return Planet::serialize(stream);
+    return DesertPlanet::staticTypeId;
 }
 
-uint32_t DesertPlanet::type() const
+QString DesertPlanet::namePrefix() const
 {
-    return WorldHelper::TYPE_DESERTPLANET;
+    return tr("Desert planet");
 }
 }
 }

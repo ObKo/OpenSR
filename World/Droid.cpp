@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2012 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2015 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,29 +17,31 @@
 */
 
 #include "Droid.h"
-#include "WorldHelper.h"
 
-namespace Rangers
+#include <QHash>
+
+namespace OpenSR
 {
 namespace World
 {
-Droid::Droid(uint64_t id): Equipment(id)
+const uint32_t Droid::staticTypeId = qHash(Droid::staticMetaObject.className());
+
+Droid::Droid(uint32_t id, WorldObject *parent): Equipment(id, parent)
 {
 }
 
-bool Droid::deserialize(std::istream& stream)
+Droid::~Droid()
 {
-    return Equipment::deserialize(stream);
 }
 
-bool Droid::serialize(std::ostream& stream) const
+uint32_t Droid::typeId() const
 {
-    return Equipment::serialize(stream);
+    return Droid::staticTypeId;
 }
 
-uint32_t Droid::type() const
+QString Droid::namePrefix() const
 {
-    return WorldHelper::TYPE_DROID;
+    return tr("Droid");
 }
 }
 }

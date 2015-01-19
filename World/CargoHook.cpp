@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2012 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2015 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,29 +17,31 @@
 */
 
 #include "CargoHook.h"
-#include "WorldHelper.h"
 
-namespace Rangers
+#include <QHash>
+
+namespace OpenSR
 {
 namespace World
 {
-CargoHook::CargoHook(uint64_t id): Equipment(id)
+const uint32_t CargoHook::staticTypeId = qHash(CargoHook::staticMetaObject.className());
+
+CargoHook::CargoHook(uint32_t id, WorldObject *parent): Equipment(id, parent)
 {
 }
 
-bool CargoHook::deserialize(std::istream& stream)
+CargoHook::~CargoHook()
 {
-    return Equipment::deserialize(stream);
 }
 
-bool CargoHook::serialize(std::ostream& stream) const
+uint32_t CargoHook::typeId() const
 {
-    return Equipment::serialize(stream);
+    return CargoHook::staticTypeId;
 }
 
-uint32_t CargoHook::type() const
+QString CargoHook::namePrefix() const
 {
-    return WorldHelper::TYPE_CARGOHOOK;
+    return tr("Cargo hook");
 }
 }
 }

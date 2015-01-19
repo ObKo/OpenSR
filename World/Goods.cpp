@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2012 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2015 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,67 +17,31 @@
 */
 
 #include "Goods.h"
-#include "WorldHelper.h"
 
-namespace Rangers
+#include <QHash>
+
+namespace OpenSR
 {
 namespace World
 {
-Goods::Goods(uint64_t id): Item(id)
+const uint32_t Goods::staticTypeId = qHash(Goods::staticMetaObject.className());
+
+Goods::Goods(uint32_t id, WorldObject *parent): Item(id, parent)
 {
 }
 
-bool Goods::deserialize(std::istream& stream)
+Goods::~Goods()
 {
-    if (!Item::deserialize(stream))
-        return false;
-
-    stream.read((char *)&m_quantity, sizeof(uint32_t));
-    stream.read((char *)&m_price, sizeof(uint32_t));
-
-    if (!stream.good())
-        return false;
-
-    return true;
 }
 
-uint32_t Goods::price() const
+uint32_t Goods::typeId() const
 {
-    return m_price;
+    return Goods::staticTypeId;
 }
 
-uint32_t Goods::quantity() const
+QString Goods::namePrefix() const
 {
-    return m_quantity;
-}
-
-bool Goods::serialize(std::ostream& stream) const
-{
-    if (!Item::serialize(stream))
-        return false;
-
-    stream.write((const char *)&m_quantity, sizeof(uint32_t));
-    stream.write((const char *)&m_price, sizeof(uint32_t));
-
-    if (!stream.good())
-        return false;
-
-    return true;
-}
-
-uint32_t Goods::type() const
-{
-    return WorldHelper::TYPE_GOODS;
-}
-
-void Goods::setPrice(uint32_t price)
-{
-    m_price = price;
-}
-
-void Goods::setQuantity(uint32_t quantity)
-{
-    m_quantity = quantity;
+    return tr("Goods");
 }
 }
 }

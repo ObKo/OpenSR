@@ -207,7 +207,8 @@ MusicDecoder *SoundManager::getMusicDecoder(const QUrl& url, QObject *parent)
 {
     QString path = url.path();
 
-    if (!QFileInfo(path).suffix().compare("mp3", Qt::CaseInsensitive))
+    if (!QFileInfo(path).suffix().compare("mp3", Qt::CaseInsensitive) ||
+            !QFileInfo(path).suffix().compare("dat", Qt::CaseInsensitive))
     {
         QIODevice *dev = ((Engine *)qApp)->resources()->getIODevice(url);
         if (!dev)

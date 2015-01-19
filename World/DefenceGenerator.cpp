@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2012 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2015 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,29 +17,31 @@
 */
 
 #include "DefenceGenerator.h"
-#include "WorldHelper.h"
 
-namespace Rangers
+#include <QHash>
+
+namespace OpenSR
 {
 namespace World
 {
-DefenceGenerator::DefenceGenerator(uint64_t id): Equipment(id)
+const uint32_t DefenceGenerator::staticTypeId = qHash(DefenceGenerator::staticMetaObject.className());
+
+DefenceGenerator::DefenceGenerator(uint32_t id, WorldObject *parent): Equipment(id, parent)
 {
 }
 
-bool DefenceGenerator::deserialize(std::istream& stream)
+DefenceGenerator::~DefenceGenerator()
 {
-    return Equipment::deserialize(stream);
 }
 
-bool DefenceGenerator::serialize(std::ostream& stream) const
+uint32_t DefenceGenerator::typeId() const
 {
-    return Equipment::serialize(stream);
+    return DefenceGenerator::staticTypeId;
 }
 
-uint32_t DefenceGenerator::type() const
+QString DefenceGenerator::namePrefix() const
 {
-    return WorldHelper::TYPE_DEFENCEGENERATOR;
+    return tr("Defence generator");
 }
 }
 }

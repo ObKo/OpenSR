@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2012 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2015 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,96 +17,31 @@
 */
 
 #include "Item.h"
-#include "WorldHelper.h"
 
-namespace Rangers
+#include <QHash>
+
+namespace OpenSR
 {
 namespace World
 {
+const uint32_t Item::staticTypeId = qHash(Item::staticMetaObject.className());
 
-Item::Item(uint64_t id): WorldObject(id)
+Item::Item(uint32_t id, WorldObject *parent): WorldObject(id, parent)
 {
-    m_size = 0;
-    m_cost = 0;
 }
 
-uint32_t Item::cost() const
+Item::~Item()
 {
-    return m_cost;
 }
 
-bool Item::deserialize(std::istream& stream)
+uint32_t Item::typeId() const
 {
-    if (!WorldObject::deserialize(stream))
-        return false;
-
-    uint32_t nameLength;
-
-    stream.read((char *)&m_size, sizeof(uint32_t));
-    stream.read((char *)&m_cost, sizeof(uint32_t));
-    stream.read((char *)&nameLength, sizeof(uint32_t));
-
-    if (!stream.good())
-        return false;
-
-    char *str = new char[nameLength + 1];
-    stream.read(str, nameLength);
-    str[nameLength] = '\0';
-
-    m_name = std::string(str);
-    delete[] str;
-
-    if (!stream.good())
-        return false;
-
-    return true;
+    return Item::staticTypeId;
 }
 
-std::string Item::name() const
+QString Item::namePrefix() const
 {
-    return m_name;
-}
-
-bool Item::serialize(std::ostream& stream) const
-{
-    if (!WorldObject::serialize(stream))
-        return false;
-    uint32_t nameLength = m_name.length();
-
-    stream.write((const char *)&m_size, sizeof(uint32_t));
-    stream.write((const char *)&m_cost, sizeof(uint32_t));
-    stream.write((const char *)&nameLength, sizeof(uint32_t));
-    stream.write(m_name.c_str(), m_name.length());
-
-    if (!stream.good())
-        return false;
-
-    return true;
-}
-
-uint32_t Item::size() const
-{
-    return m_size;
-}
-
-uint32_t Item::type() const
-{
-    return WorldHelper::TYPE_ITEM;
-}
-
-void Item::setName(const std::string& name)
-{
-    m_name = name;
-}
-
-void Item::setSize(uint32_t size)
-{
-    m_size = size;
-}
-
-void Item::setCost(uint32_t cost)
-{
-    m_cost = cost;
+    return tr("Item");
 }
 }
 }

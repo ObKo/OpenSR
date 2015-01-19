@@ -162,6 +162,15 @@ Item {
         }
     }
     
+    Music {
+        id: music
+        source: "res:/test.ogg"
+    }
+    
+    Component.onCompleted: {
+        music.play();
+    }
+    
     function startQuest(id){
         changeScreen("qrc:/OpenSR/QuestPlayer.qml", {"questID": id});
         menu.destroy()

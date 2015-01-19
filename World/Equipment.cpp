@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2012 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2015 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,55 +17,31 @@
 */
 
 #include "Equipment.h"
-#include "WorldHelper.h"
 
-namespace Rangers
+#include <QHash>
+
+namespace OpenSR
 {
 namespace World
 {
-Equipment::Equipment(uint64_t id): Item(id)
+const uint32_t Equipment::staticTypeId = qHash(Equipment::staticMetaObject.className());
+
+Equipment::Equipment(uint32_t id, WorldObject *parent): Item(id, parent)
 {
 }
 
-bool Equipment::deserialize(std::istream& stream)
+Equipment::~Equipment()
 {
-    if (!Item::deserialize(stream))
-        return false;
-
-    stream.read((char *)&m_race, sizeof(uint32_t));
-
-    if (!stream.good())
-        return false;
-
-    return true;
 }
 
-uint32_t Equipment::race() const
+uint32_t Equipment::typeId() const
 {
-    return m_race;
+    return Equipment::staticTypeId;
 }
 
-bool Equipment::serialize(std::ostream& stream) const
+QString Equipment::namePrefix() const
 {
-    if (!Item::serialize(stream))
-        return false;
-
-    stream.write((const char *)&m_race, sizeof(uint32_t));
-
-    if (!stream.good())
-        return false;
-
-    return true;
-}
-
-uint32_t Equipment::type() const
-{
-    return WorldHelper::TYPE_EQUIPMENT;
-}
-
-void Equipment::setRace(uint32_t race)
-{
-    m_race = race;
+    return tr("Equipment");
 }
 }
 }
