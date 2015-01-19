@@ -24,9 +24,9 @@ namespace OpenSR
 {
 namespace World
 {
-const uint32_t SpaceStation::staticTypeId = qHash(SpaceStation::staticMetaObject.className());
+const quint32 SpaceStation::staticTypeId = qHash(SpaceStation::staticMetaObject.className());
 
-SpaceStation::SpaceStation(uint32_t id, WorldObject *parent): MannedObject(id, parent)
+SpaceStation::SpaceStation(quint32 id, WorldObject *parent): MannedObject(id, parent)
 {
 }
 
@@ -34,7 +34,7 @@ SpaceStation::~SpaceStation()
 {
 }
 
-uint32_t SpaceStation::typeId() const
+quint32 SpaceStation::typeId() const
 {
     return SpaceStation::staticTypeId;
 }

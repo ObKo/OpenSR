@@ -24,9 +24,9 @@ namespace OpenSR
 {
 namespace World
 {
-const uint32_t DefenceGenerator::staticTypeId = qHash(DefenceGenerator::staticMetaObject.className());
+const quint32 DefenceGenerator::staticTypeId = qHash(DefenceGenerator::staticMetaObject.className());
 
-DefenceGenerator::DefenceGenerator(uint32_t id, WorldObject *parent): Equipment(id, parent)
+DefenceGenerator::DefenceGenerator(quint32 id, WorldObject *parent): Equipment(id, parent)
 {
 }
 
@@ -34,7 +34,7 @@ DefenceGenerator::~DefenceGenerator()
 {
 }
 
-uint32_t DefenceGenerator::typeId() const
+quint32 DefenceGenerator::typeId() const
 {
     return DefenceGenerator::staticTypeId;
 }

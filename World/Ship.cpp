@@ -24,9 +24,9 @@ namespace OpenSR
 {
 namespace World
 {
-const uint32_t Ship::staticTypeId = qHash(Ship::staticMetaObject.className());
+const quint32 Ship::staticTypeId = qHash(Ship::staticMetaObject.className());
 
-Ship::Ship(uint32_t id, WorldObject *parent): MannedObject(id, parent)
+Ship::Ship(quint32 id, WorldObject *parent): MannedObject(id, parent)
 {
 }
 
@@ -34,7 +34,7 @@ Ship::~Ship()
 {
 }
 
-uint32_t Ship::typeId() const
+quint32 Ship::typeId() const
 {
     return Ship::staticTypeId;
 }

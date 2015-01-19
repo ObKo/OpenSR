@@ -32,10 +32,10 @@ class OPENSR_WORLD_API Artefact: public Equipment
     OPENSR_WORLD_OBJECT
 
 public:
-    Q_INVOKABLE Artefact(uint32_t id = 0, WorldObject *parent = 0);
+    Q_INVOKABLE Artefact(quint32 id = 0, WorldObject *parent = 0);
     virtual ~Artefact();
 
-    virtual uint32_t typeId() const;
+    virtual quint32 typeId() const;
     virtual QString namePrefix() const;
 
     bool save(QDataStream &stream) const;

@@ -32,10 +32,10 @@ class OPENSR_WORLD_API Ship: public MannedObject
     OPENSR_WORLD_OBJECT
 
 public:
-    Q_INVOKABLE Ship(uint32_t id = 0, WorldObject *parent = 0);
+    Q_INVOKABLE Ship(quint32 id = 0, WorldObject *parent = 0);
     virtual ~Ship();
 
-    virtual uint32_t typeId() const;
+    virtual quint32 typeId() const;
     virtual QString namePrefix() const;
 
     bool save(QDataStream &stream) const;

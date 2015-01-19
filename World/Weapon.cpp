@@ -24,9 +24,9 @@ namespace OpenSR
 {
 namespace World
 {
-const uint32_t Weapon::staticTypeId = qHash(Weapon::staticMetaObject.className());
+const quint32 Weapon::staticTypeId = qHash(Weapon::staticMetaObject.className());
 
-Weapon::Weapon(uint32_t id, WorldObject *parent): Equipment(id, parent)
+Weapon::Weapon(quint32 id, WorldObject *parent): Equipment(id, parent)
 {
 }
 
@@ -34,7 +34,7 @@ Weapon::~Weapon()
 {
 }
 
-uint32_t Weapon::typeId() const
+quint32 Weapon::typeId() const
 {
     return Weapon::staticTypeId;
 }

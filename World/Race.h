@@ -43,13 +43,13 @@ class OPENSR_WORLD_API Race: public WorldObject
     Q_PROPERTY(RaceStyle style READ style WRITE setStyle NOTIFY styleChanged)
 
 public:
-    Q_INVOKABLE Race(uint32_t id = 0, WorldObject *parent = 0);
+    Q_INVOKABLE Race(quint32 id = 0, WorldObject *parent = 0);
     virtual ~Race();
 
     RaceStyle style() const;
     void setStyle(const RaceStyle& style);
 
-    virtual uint32_t typeId() const;
+    virtual quint32 typeId() const;
     virtual QString namePrefix() const;
 
 Q_SIGNALS:

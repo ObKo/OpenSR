@@ -24,9 +24,9 @@ namespace OpenSR
 {
 namespace World
 {
-const uint32_t CargoHook::staticTypeId = qHash(CargoHook::staticMetaObject.className());
+const quint32 CargoHook::staticTypeId = qHash(CargoHook::staticMetaObject.className());
 
-CargoHook::CargoHook(uint32_t id, WorldObject *parent): Equipment(id, parent)
+CargoHook::CargoHook(quint32 id, WorldObject *parent): Equipment(id, parent)
 {
 }
 
@@ -34,7 +34,7 @@ CargoHook::~CargoHook()
 {
 }
 
-uint32_t CargoHook::typeId() const
+quint32 CargoHook::typeId() const
 {
     return CargoHook::staticTypeId;
 }

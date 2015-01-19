@@ -24,9 +24,9 @@ namespace OpenSR
 {
 namespace World
 {
-const uint32_t Asteroid::staticTypeId = qHash(Asteroid::staticMetaObject.className());
+const quint32 Asteroid::staticTypeId = qHash(Asteroid::staticMetaObject.className());
 
-Asteroid::Asteroid(uint32_t id, WorldObject *parent): SpaceObject(id, parent)
+Asteroid::Asteroid(quint32 id, WorldObject *parent): SpaceObject(id, parent)
 {
 }
 
@@ -34,7 +34,7 @@ Asteroid::~Asteroid()
 {
 }
 
-uint32_t Asteroid::typeId() const
+quint32 Asteroid::typeId() const
 {
     return Asteroid::staticTypeId;
 }

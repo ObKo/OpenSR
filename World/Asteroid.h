@@ -32,10 +32,10 @@ class OPENSR_WORLD_API Asteroid: public SpaceObject
     OPENSR_WORLD_OBJECT
 
 public:
-    Q_INVOKABLE Asteroid(uint32_t id = 0, WorldObject *parent = 0);
+    Q_INVOKABLE Asteroid(quint32 id = 0, WorldObject *parent = 0);
     virtual ~Asteroid();
 
-    virtual uint32_t typeId() const;
+    virtual quint32 typeId() const;
     virtual QString namePrefix() const;
 
     bool save(QDataStream &stream) const;

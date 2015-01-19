@@ -24,9 +24,9 @@ namespace OpenSR
 {
 namespace World
 {
-const uint32_t Goods::staticTypeId = qHash(Goods::staticMetaObject.className());
+const quint32 Goods::staticTypeId = qHash(Goods::staticMetaObject.className());
 
-Goods::Goods(uint32_t id, WorldObject *parent): Item(id, parent)
+Goods::Goods(quint32 id, WorldObject *parent): Item(id, parent)
 {
 }
 
@@ -34,7 +34,7 @@ Goods::~Goods()
 {
 }
 
-uint32_t Goods::typeId() const
+quint32 Goods::typeId() const
 {
     return Goods::staticTypeId;
 }

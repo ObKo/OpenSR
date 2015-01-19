@@ -24,9 +24,9 @@ namespace OpenSR
 {
 namespace World
 {
-const uint32_t Tank::staticTypeId = qHash(Tank::staticMetaObject.className());
+const quint32 Tank::staticTypeId = qHash(Tank::staticMetaObject.className());
 
-Tank::Tank(uint32_t id, WorldObject *parent): Equipment(id, parent)
+Tank::Tank(quint32 id, WorldObject *parent): Equipment(id, parent)
 {
 }
 
@@ -34,7 +34,7 @@ Tank::~Tank()
 {
 }
 
-uint32_t Tank::typeId() const
+quint32 Tank::typeId() const
 {
     return Tank::staticTypeId;
 }

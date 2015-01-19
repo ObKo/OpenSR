@@ -24,9 +24,9 @@ namespace OpenSR
 {
 namespace World
 {
-const uint32_t Engine::staticTypeId = qHash(Engine::staticMetaObject.className());
+const quint32 Engine::staticTypeId = qHash(Engine::staticMetaObject.className());
 
-Engine::Engine(uint32_t id, WorldObject *parent): Equipment(id, parent)
+Engine::Engine(quint32 id, WorldObject *parent): Equipment(id, parent)
 {
 }
 
@@ -34,7 +34,7 @@ Engine::~Engine()
 {
 }
 
-uint32_t Engine::typeId() const
+quint32 Engine::typeId() const
 {
     return Engine::staticTypeId;
 }

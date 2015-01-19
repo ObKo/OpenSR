@@ -24,9 +24,9 @@ namespace OpenSR
 {
 namespace World
 {
-const uint32_t Radar::staticTypeId = qHash(Radar::staticMetaObject.className());
+const quint32 Radar::staticTypeId = qHash(Radar::staticMetaObject.className());
 
-Radar::Radar(uint32_t id, WorldObject *parent): Equipment(id, parent)
+Radar::Radar(quint32 id, WorldObject *parent): Equipment(id, parent)
 {
 }
 
@@ -34,7 +34,7 @@ Radar::~Radar()
 {
 }
 
-uint32_t Radar::typeId() const
+quint32 Radar::typeId() const
 {
     return Radar::staticTypeId;
 }

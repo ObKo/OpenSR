@@ -32,17 +32,17 @@ class OPENSR_WORLD_API WorldObject: public QObject
     Q_OBJECT
     OPENSR_WORLD_OBJECT
 
-    Q_PROPERTY(uint32_t id READ id)
-    Q_PROPERTY(uint32_t typeId READ typeId)
+    Q_PROPERTY(quint32 id READ id)
+    Q_PROPERTY(quint32 typeId READ typeId)
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
     Q_PROPERTY(QString namePrefix READ namePrefix)
 
 public:
-    Q_INVOKABLE WorldObject(uint32_t id = 0, WorldObject *parent = 0);
+    Q_INVOKABLE WorldObject(quint32 id = 0, WorldObject *parent = 0);
     virtual ~WorldObject();
 
-    uint32_t id() const;
-    virtual uint32_t typeId() const;
+    quint32 id() const;
+    virtual quint32 typeId() const;
     QString name() const;
     virtual QString namePrefix() const;
 
@@ -55,7 +55,7 @@ Q_SIGNALS:
     void nameChanged();
 
 private:
-    uint32_t m_id;
+    quint32 m_id;
     QString m_name;
 };
 }

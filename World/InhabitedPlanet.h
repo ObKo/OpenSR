@@ -32,10 +32,10 @@ class OPENSR_WORLD_API InhabitedPlanet: public Planet
     OPENSR_WORLD_OBJECT
 
 public:
-    Q_INVOKABLE InhabitedPlanet(uint32_t id = 0, WorldObject *parent = 0);
+    Q_INVOKABLE InhabitedPlanet(quint32 id = 0, WorldObject *parent = 0);
     virtual ~InhabitedPlanet();
 
-    virtual uint32_t typeId() const;
+    virtual quint32 typeId() const;
     virtual QString namePrefix() const;
 
     bool save(QDataStream &stream) const;

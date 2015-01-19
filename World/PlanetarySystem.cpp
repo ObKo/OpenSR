@@ -24,9 +24,9 @@ namespace OpenSR
 {
 namespace World
 {
-const uint32_t PlanetarySystem::staticTypeId = qHash(PlanetarySystem::staticMetaObject.className());
+const quint32 PlanetarySystem::staticTypeId = qHash(PlanetarySystem::staticMetaObject.className());
 
-PlanetarySystem::PlanetarySystem(uint32_t id, WorldObject *parent): WorldObject(id, parent)
+PlanetarySystem::PlanetarySystem(quint32 id, WorldObject *parent): WorldObject(id, parent)
 {
 }
 
@@ -34,7 +34,7 @@ PlanetarySystem::~PlanetarySystem()
 {
 }
 
-uint32_t PlanetarySystem::typeId() const
+quint32 PlanetarySystem::typeId() const
 {
     return PlanetarySystem::staticTypeId;
 }

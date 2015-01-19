@@ -24,9 +24,9 @@ namespace OpenSR
 {
 namespace World
 {
-const uint32_t DesertPlanet::staticTypeId = qHash(DesertPlanet::staticMetaObject.className());
+const quint32 DesertPlanet::staticTypeId = qHash(DesertPlanet::staticMetaObject.className());
 
-DesertPlanet::DesertPlanet(uint32_t id, WorldObject *parent): Planet(id, parent)
+DesertPlanet::DesertPlanet(quint32 id, WorldObject *parent): Planet(id, parent)
 {
 }
 
@@ -34,7 +34,7 @@ DesertPlanet::~DesertPlanet()
 {
 }
 
-uint32_t DesertPlanet::typeId() const
+quint32 DesertPlanet::typeId() const
 {
     return DesertPlanet::staticTypeId;
 }

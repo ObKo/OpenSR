@@ -24,9 +24,9 @@ namespace OpenSR
 {
 namespace World
 {
-const uint32_t Micromodulus::staticTypeId = qHash(Micromodulus::staticMetaObject.className());
+const quint32 Micromodulus::staticTypeId = qHash(Micromodulus::staticMetaObject.className());
 
-Micromodulus::Micromodulus(uint32_t id, WorldObject *parent): Item(id, parent)
+Micromodulus::Micromodulus(quint32 id, WorldObject *parent): Item(id, parent)
 {
 }
 
@@ -34,7 +34,7 @@ Micromodulus::~Micromodulus()
 {
 }
 
-uint32_t Micromodulus::typeId() const
+quint32 Micromodulus::typeId() const
 {
     return Micromodulus::staticTypeId;
 }

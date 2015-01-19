@@ -24,9 +24,9 @@ namespace OpenSR
 {
 namespace World
 {
-const uint32_t WorldContext::staticTypeId = qHash(WorldContext::staticMetaObject.className());
+const quint32 WorldContext::staticTypeId = qHash(WorldContext::staticMetaObject.className());
 
-WorldContext::WorldContext(uint32_t id, WorldObject *parent): WorldObject(id, parent)
+WorldContext::WorldContext(quint32 id, WorldObject *parent): WorldObject(id, parent)
 {
 }
 
@@ -34,7 +34,7 @@ WorldContext::~WorldContext()
 {
 }
 
-uint32_t WorldContext::typeId() const
+quint32 WorldContext::typeId() const
 {
     return WorldContext::staticTypeId;
 }

@@ -32,10 +32,10 @@ class OPENSR_WORLD_API Container: public SpaceObject
     OPENSR_WORLD_OBJECT
 
 public:
-    Q_INVOKABLE Container(uint32_t id = 0, WorldObject *parent = 0);
+    Q_INVOKABLE Container(quint32 id = 0, WorldObject *parent = 0);
     virtual ~Container();
 
-    virtual uint32_t typeId() const;
+    virtual quint32 typeId() const;
     virtual QString namePrefix() const;
 
     bool save(QDataStream &stream) const;

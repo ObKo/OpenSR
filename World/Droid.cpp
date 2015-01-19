@@ -24,9 +24,9 @@ namespace OpenSR
 {
 namespace World
 {
-const uint32_t Droid::staticTypeId = qHash(Droid::staticMetaObject.className());
+const quint32 Droid::staticTypeId = qHash(Droid::staticMetaObject.className());
 
-Droid::Droid(uint32_t id, WorldObject *parent): Equipment(id, parent)
+Droid::Droid(quint32 id, WorldObject *parent): Equipment(id, parent)
 {
 }
 
@@ -34,7 +34,7 @@ Droid::~Droid()
 {
 }
 
-uint32_t Droid::typeId() const
+quint32 Droid::typeId() const
 {
     return Droid::staticTypeId;
 }
