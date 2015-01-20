@@ -16,53 +16,47 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "WorldManager.h"
+#ifndef OPENSR_WORLD_WORLDMANAGER_H
+#define OPENSR_WORLD_WORLDMANAGER_H
 
-#include <QHash>
+#include "World.h"
+
+#include "WorldContext.h"
+
+#include <QObject>
 
 namespace OpenSR
 {
 namespace World
 {
-WorldManager* WorldManager::m_staticInstance = 0;
-quint32 WorldManager::m_idPool = 0;
-
-WorldManager::WorldManager(QObject *parent): QObject(parent)
+class OPENSR_WORLD_API WorldManager: public QObject
 {
-    if (WorldManager::m_staticInstance)
-        throw std::runtime_error("WorldManager constructed twice");
+    Q_OBJECT
+    Q_PROPERTY(WorldContext* context READ context NOTIFY contextChanged)
+public:
+    WorldManager(QObject *parent = 0);
+    virtual ~WorldManager();
 
-    WorldManager::m_staticInstance = this;
-}
+    WorldContext* context() const;
+    quint32 getNextId() const;
 
-WorldManager::~WorldManager()
-{
-    WorldManager::m_staticInstance = 0;
-}
+    static WorldManager *instance();
 
-WorldContext* WorldManager::context() const
-{
-    return m_context;
-}
+    Q_INVOKABLE bool saveWorld(const QString& path);
+    Q_INVOKABLE bool loadWorld(const QString& path);
 
-WorldManager* WorldManager::instance()
-{
-    return WorldManager::m_staticInstance;
-}
+Q_SIGNALS:
+    void contextChanged();
 
-quint32 WorldManager::getNextId() const
-{
-    return ++WorldManager::m_idPool;
-}
+private:
+    WorldContext* m_context;
 
-bool WorldManager::loadWorld(const QString& path)
-{
+    static WorldManager* m_staticInstance;
+    static quint32 m_idPool;
 
-}
-
-bool WorldManager::saveWorld(const QString& path)
-{
-
+    Q_DISABLE_COPY(WorldManager)
+};
 }
 }
-}
+
+#endif // OPENSR_WORLD_WORLDMANAGER_H

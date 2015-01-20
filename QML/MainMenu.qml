@@ -5,8 +5,7 @@ Item {
     id: menu
     anchors.fill: parent
     
-    function updateBackgroundAnim()
-    {
+    function updateBackgroundAnim() {
         bgToAnim.to = - background.width + menu.width
         bgFromAnim.from = - background.width + menu.width
         bgAnim.restart()
@@ -124,7 +123,7 @@ Item {
             anchors.topMargin: 10
             onClicked: {
                 menu.destroy()
-                engine.quit()
+                Engine.quit()
             }
         }
         anchors.verticalCenter: parent.verticalCenter

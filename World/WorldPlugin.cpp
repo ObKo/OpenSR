@@ -18,13 +18,27 @@
 
 #include "WorldPlugin.h"
 
+#include <QQmlEngine>
+#include <QtQml>
+
+#include "WorldObject.h"
+#include "WorldManager.h"
+
 namespace OpenSR
 {
 namespace World
 {
+static QJSValue managerSingletonProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
+{
+    QJSValue manager = scriptEngine->newQObject(WorldManager::instance());
+    return manager;
+}
+
 bool WorldPlugin::initPlugin(Engine* engine)
 {
-    //engine->
+    WorldManager *manager = new WorldManager(engine);
+
+    qmlRegisterSingletonType("OpenSR.World", 1, 0, "WorldManager", managerSingletonProvider);
     return true;
 }
 }

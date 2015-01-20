@@ -17,6 +17,7 @@
 */
 
 #include "WorldObject.h"
+#include "WorldManager.h"
 
 #include <QHash>
 
@@ -29,6 +30,8 @@ const quint32 WorldObject::staticTypeId = qHash(WorldObject::staticMetaObject.cl
 WorldObject::WorldObject(quint32 id, WorldObject *parent): QObject(parent),
     m_id(id)
 {
+    if (!m_id)
+        m_id = WorldManager::instance()->getNextId();
 }
 
 WorldObject::~WorldObject()
