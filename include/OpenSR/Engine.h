@@ -67,19 +67,6 @@ private:
 
     Q_DISABLE_COPY(Engine);
 };
-
-
-class QMLQMExporter: public QObject
-{
-    Q_OBJECT
-public:
-    QMLQMExporter(QObject *parent = 0);
-
-    Q_INVOKABLE QVariant loadQuestInfo(const QUrl& url);
-
-private:
-    QVariant convertQuestInfoToJS(const QM::QuestInfo& info);
-};
 }
 
 #endif

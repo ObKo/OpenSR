@@ -20,6 +20,8 @@
 #define OPENSR_QMLPLUGIN_H
 
 #include <QQmlExtensionPlugin>
+#include <QVariant>
+#include <OpenSR/QM/QM.h>
 
 class OpenSRPlugin : public QQmlExtensionPlugin
 {
@@ -29,5 +31,24 @@ class OpenSRPlugin : public QQmlExtensionPlugin
 public:
     void registerTypes(const char *uri);
 };
+
+//TODO: Separate this
+namespace OpenSR
+{
+namespace QML
+{
+class QMLQMExporter: public QObject
+{
+    Q_OBJECT
+public:
+    QMLQMExporter(QObject *parent = 0);
+
+    Q_INVOKABLE QVariant loadQuestInfo(const QUrl& url);
+
+private:
+    QVariant convertQuestInfoToJS(const QM::QuestInfo& info);
+};
+}
+}
 
 #endif // OPENSR_QMLPLUGIN_H

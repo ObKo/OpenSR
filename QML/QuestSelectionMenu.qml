@@ -197,7 +197,7 @@ Item {
     }
     
     Component.onCompleted: {
-        var questList = engine.datValue("PlanetQuest.List");
+        var questList = Engine.datValue("PlanetQuest.List");
         for(var key in questList)
         {
             var q = questList[key]
@@ -211,9 +211,9 @@ Item {
     function updateQuestInfo()
     {
         var questID = questListModel.get(questList.currentIndex).id;
-        var path = "res:/" + engine.datValue("PlanetQuest.PlanetQuest")[questID].replace(/\\/g, "/");
+        var path = "res:/" + Engine.datValue("PlanetQuest.PlanetQuest")[questID].replace(/\\/g, "/");
         var questInfo = QM.loadQuestInfo(path);
-        var imageID = engine.datValue("PlanetQuest.List")[questID]["Image"]
+        var imageID = Engine.datValue("PlanetQuest.List")[questID]["Image"]
         var imagePath = imageID.replace("Bm.", "").replace(".", "/");
         imagePath = "res:/DATA/" + imagePath + ".jpg";
         questImage.source = imagePath;

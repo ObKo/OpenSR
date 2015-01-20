@@ -62,18 +62,17 @@ Engine::Engine(int argc, char** argv): QApplication(argc, argv)
     m_qmlView = new QQuickView();
     m_qmlEngine = m_qmlView->engine();
     m_qmlEngine->addImportPath(":/");
-    m_qmlEngine->rootContext()->setContextProperty("engine", this);
-    m_qmlEngine->rootContext()->setContextProperty("QM", new QMLQMExporter(this));
+    //m_qmlEngine->rootContext()->setContextProperty("engine", this);
+    //m_qmlEngine->rootContext()->setContextProperty("QM", new QMLQMExporter(this));
 
     // "QQmlContext does not take ownership of value." they said....
     // QTBUG-18732
-    m_qmlEngine->setObjectOwnership(this, QQmlEngine::CppOwnership);
+    //m_qmlEngine->setObjectOwnership(this, QQmlEngine::CppOwnership);
 
     m_qmlEngine->setNetworkAccessManagerFactory(m_resources->qmlNAMFactory());
 
     m_scriptEngine = new QJSEngine(this);
     m_scriptEngine->globalObject().setProperty("engine", m_scriptEngine->newQObject(this));
-    m_scriptEngine->globalObject().setProperty("resources", m_scriptEngine->newQObject(m_resources));
 }
 
 Engine::~Engine()
@@ -202,40 +201,5 @@ void Engine::loadPlugin(const QString& name)
         return;
     }
     loader.instance()->setParent(this);
-}
-
-QMLQMExporter::QMLQMExporter(QObject* parent): QObject(parent)
-{
-
-}
-
-QVariant QMLQMExporter::loadQuestInfo(const QUrl& url)
-{
-    QIODevice *d = ((Engine *)qApp)->resources()->getIODevice(url);
-    if (!d || !d->isOpen())
-        return QVariant();
-
-    QVariant result = convertQuestInfoToJS(QM::readQuestInfo(d));
-
-    delete d;
-
-    return result;
-}
-
-QVariant QMLQMExporter::convertQuestInfoToJS(const QM::QuestInfo& info)
-{
-    QVariantMap map;
-
-    map["races"] = info.races;
-    map["doneImmediately"] = info.doneImmediately;
-    map["planetRaces"] = info.planetRaces;
-    map["playerTypes"] = info.playerTypes;
-    map["playerRaces"] = info.playerRaces;
-    map["relation"] = info.relation;
-    map["difficulty"] = info.difficulty;
-    map["winnerText"] = info.winnerText;
-    map["descriptionText"] = info.descriptionText;
-
-    return map;
 }
 }
