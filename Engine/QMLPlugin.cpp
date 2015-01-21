@@ -30,23 +30,23 @@
 #include <QtQml>
 #include <QVariant>
 
-static QJSValue engineSingletonProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
+static QObject* engineSingletonProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
 {
-    QJSValue eng = scriptEngine->newQObject(qobject_cast<OpenSR::Engine*>(qApp));
-    return eng;
+    OpenSR::Engine *e = qobject_cast<OpenSR::Engine*>(qApp);
+    QQmlEngine::setObjectOwnership(e, QQmlEngine::CppOwnership);
+    return e;
 }
 
-static QJSValue qmSingletonProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
+static QObject* qmSingletonProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
 {
-    QJSValue qm = scriptEngine->newQObject(new OpenSR::QML::QMLQMExporter(scriptEngine));
-    return qm;
+    return new OpenSR::QML::QMLQMExporter(engine);
 }
 
 void OpenSRPlugin::registerTypes(const char* uri)
 {
     using namespace OpenSR;
-    qmlRegisterSingletonType(uri, 1, 0, "Engine", engineSingletonProvider);
-    qmlRegisterSingletonType(uri, 1, 0, "QM", qmSingletonProvider);
+    qmlRegisterSingletonType<Engine>(uri, 1, 0, "Engine", engineSingletonProvider);
+    qmlRegisterSingletonType<OpenSR::QML::QMLQMExporter>(uri, 1, 0, "QM", qmSingletonProvider);
     qmlRegisterType<Sound>(uri, 1, 0, "Sound");
     qmlRegisterType<GAIAnimatedImage>(uri, 1, 0, "GAIAnimatedImage");
     qmlRegisterType<QMLQuestPlayer>(uri, 1, 0, "QuestPlayer");

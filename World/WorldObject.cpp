@@ -70,7 +70,7 @@ bool WorldObject::save(QDataStream &stream) const
     return true;
 }
 
-bool WorldObject::load(QDataStream &stream)
+bool WorldObject::load(QDataStream &stream, const QMap<quint32, WorldObject*>& objects)
 {
     QString name;
     stream >> name;

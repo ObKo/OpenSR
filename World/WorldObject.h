@@ -49,7 +49,7 @@ public:
     void setName(const QString& name);
 
     bool save(QDataStream &stream) const;
-    bool load(QDataStream &stream);
+    bool load(QDataStream &stream, const QMap<quint32, WorldObject*>& objects);
 
 Q_SIGNALS:
     void nameChanged();
