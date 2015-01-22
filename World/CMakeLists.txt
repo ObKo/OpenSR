@@ -1,76 +1,79 @@
-SET(WORLD_SOURCES
-    Artifact.cpp
+SET(SOURCES
+    Artefact.cpp
+    Asteroid.cpp
     CargoHook.cpp
+    Container.cpp
     DefenceGenerator.cpp
     DesertPlanet.cpp
     Droid.cpp
     Engine.cpp
     Equipment.cpp
     Goods.cpp
-    HabitablePlanet.cpp
     Hull.cpp
-    InteractionContext.cpp
+    InhabitedPlanet.cpp
     Item.cpp
-    LandContext.cpp
-    Asteroid.cpp
+    MannedObject.cpp
     Micromodulus.cpp
     Planet.cpp
-    PlanetManager.cpp
+    PlanetarySystem.cpp
+    Race.cpp
     Radar.cpp
     Scanner.cpp
+    Sector.cpp
     Ship.cpp
-    ShipContext.cpp
-    PlanetarySystem.cpp
-    SpaceBase.cpp
-    InfoWidget.cpp
-    InfoWidgetProvider.cpp
-    InteractionWidget.cpp
     SpaceObject.cpp
-    SystemObject.cpp
-    SystemPlanetWidget.cpp
+    SpaceStation.cpp
     Tank.cpp
-    Types.cpp
     Weapon.cpp
-    WorldGenHook.cpp
-    WorldHelper.cpp
+    WorldContext.cpp
     WorldObject.cpp
-    GameInterface.cpp
+    WorldPlugin.cpp
     WorldManager.cpp
-    SystemWidget.cpp
-    SkinManager.cpp
-    RaceManager.cpp
-    SystemManager.cpp
-    StyleManager.cpp
-    SpaceObjectWidget.cpp
-    QuestPlayer.cpp
+)
+
+SET(HEADERS 
+    Artefact.h
+    Asteroid.h
+    CargoHook.h
+    Container.h
+    DefenceGenerator.h
+    DesertPlanet.h
+    Droid.h
+    Engine.h
+    Equipment.h
+    Goods.h
+    Hull.h
+    InhabitedPlanet.h
+    Item.h
+    MannedObject.h
+    Micromodulus.h
+    Planet.h
+    PlanetarySystem.h
+    Race.h
+    Radar.h
+    Scanner.h
+    Sector.h
+    Ship.h
+    SpaceObject.h
+    SpaceStation.h
+    Tank.h
+    Weapon.h
+    WorldContext.h
+    WorldObject.h
+    WorldPlugin.h
+    WorldManager.h
 )
 
 INCLUDE_DIRECTORIES(
-    ${SDL2_INCLUDE_DIR}
     ${OPENGL_INCLUDE_DIR}
-    ${Boost_INCLUDE_DIRS}
-    ${FREETYPE_INCLUDE_DIRS}
-    ${ICONV_INCLUDE_DIR}
-    ${Boost_INCLUDE_DIRS}
-    ${JSONCPP_INCLUDE_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_BINARY_DIR}
-    ${SDLMIXER_INCLUDE_DIR}
-    ${PYTHON_INCLUDE_DIRS}
-    ${CMAKE_SOURCE_DIR}/include/
-    ${CMAKE_BINARY_DIR}/include/
-    ${CMAKE_SOURCE_DIR}/include/OpenSR/World/
-    ${CMAKE_BINARY_DIR}/include/OpenSR/World/
-    ${CMAKE_SOURCE_DIR}/libRanger
+    ${CMAKE_SOURCE_DIR}/include
+    ${CMAKE_BINARY_DIR}/include
+    ${Qt5Gui_INCLUDE_DIRS}
+    ${Qt5Core_INCLUDE_DIRS}
 )
 
-ADD_LIBRARY(world SHARED ${WORLD_SOURCES})
-TARGET_LINK_LIBRARIES(world engine qm)
-IF(MSVC)
-    SET_TARGET_PROPERTIES(world PROPERTIES COMPILE_FLAGS "-DRANGERS_WORLD_API=__declspec(dllexport)")
-ELSE(MSVC)
-    SET_TARGET_PROPERTIES(world PROPERTIES COMPILE_FLAGS "-DRANGERS_WORLD_API=")
-ENDIF(MSVC)
+QT5_WRAP_CPP(MOC_SOURCES ${HEADERS})
 
-INSTALL(TARGETS world LIBRARY DESTINATION lib/opensr ARCHIVE DESTINATION lib/opensr RUNTIME DESTINATION bin)
-
+ADD_LIBRARY(world SHARED ${SOURCES} ${MOC_SOURCES})
+TARGET_LINK_LIBRARIES(world engine)
+SET_TARGET_PROPERTIES(engine PROPERTIES COMPILE_DEFINITIONS "OPENSR_WORLD_BUILD")
