@@ -26,7 +26,7 @@ namespace World
 {
 const quint32 Scanner::staticTypeId = qHash(Scanner::staticMetaObject.className());
 
-Scanner::Scanner(quint32 id, WorldObject *parent): Equipment(id, parent)
+Scanner::Scanner(WorldObject *parent, quint32 id): Equipment(parent, id)
 {
 }
 

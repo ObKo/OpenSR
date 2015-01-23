@@ -32,14 +32,11 @@ class OPENSR_WORLD_API Tank: public Equipment
     OPENSR_WORLD_OBJECT
 
 public:
-    Q_INVOKABLE Tank(quint32 id = 0, WorldObject *parent = 0);
+    Q_INVOKABLE Tank(WorldObject *parent = 0, quint32 id = 0);
     virtual ~Tank();
 
     virtual quint32 typeId() const;
     virtual QString namePrefix() const;
-
-    bool save(QDataStream &stream) const;
-    bool load(QDataStream &stream);
 };
 }
 }

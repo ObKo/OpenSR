@@ -26,7 +26,7 @@ namespace World
 {
 const quint32 DesertPlanet::staticTypeId = qHash(DesertPlanet::staticMetaObject.className());
 
-DesertPlanet::DesertPlanet(quint32 id, WorldObject *parent): Planet(id, parent)
+DesertPlanet::DesertPlanet(WorldObject *parent, quint32 id): Planet(parent, id)
 {
 }
 

@@ -16,32 +16,18 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "Engine.h"
+#ifndef OPENSR_WORLD_WORLDBINDINGS_H
+#define OPENSR_WORLD_WORLDBINDINGS_H
 
-#include <QHash>
+class QScriptEngine;
+class QQmlEngine;
 
 namespace OpenSR
 {
 namespace World
 {
-const quint32 Engine::staticTypeId = qHash(Engine::staticMetaObject.className());
-
-Engine::Engine(WorldObject *parent, quint32 id): Equipment(parent, id)
-{
+void bindWorldTypes(QScriptEngine *script, QQmlEngine *qml);
+}
 }
 
-Engine::~Engine()
-{
-}
-
-quint32 Engine::typeId() const
-{
-    return Engine::staticTypeId;
-}
-
-QString Engine::namePrefix() const
-{
-    return tr("Engine");
-}
-}
-}
+#endif // OPENSR_WORLD_WORLDBINDINGS_H

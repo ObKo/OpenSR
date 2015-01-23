@@ -26,7 +26,7 @@ namespace World
 {
 const quint32 PlanetarySystem::staticTypeId = qHash(PlanetarySystem::staticMetaObject.className());
 
-PlanetarySystem::PlanetarySystem(quint32 id, WorldObject *parent): WorldObject(id, parent)
+PlanetarySystem::PlanetarySystem(WorldObject *parent, quint32 id): WorldObject(parent, id)
 {
 }
 

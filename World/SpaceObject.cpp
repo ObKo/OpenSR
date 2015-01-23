@@ -26,7 +26,7 @@ namespace World
 {
 const quint32 SpaceObject::staticTypeId = qHash(SpaceObject::staticMetaObject.className());
 
-SpaceObject::SpaceObject(quint32 id, WorldObject *parent): WorldObject(id, parent)
+SpaceObject::SpaceObject(WorldObject *parent, quint32 id): WorldObject(parent, id)
 {
 }
 

@@ -26,7 +26,7 @@ namespace World
 {
 const quint32 Asteroid::staticTypeId = qHash(Asteroid::staticMetaObject.className());
 
-Asteroid::Asteroid(quint32 id, WorldObject *parent): SpaceObject(id, parent)
+Asteroid::Asteroid(WorldObject *parent, quint32 id): SpaceObject(parent, id)
 {
 }
 

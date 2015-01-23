@@ -31,7 +31,7 @@ class OPENSR_WORLD_API WorldContext: public WorldObject
     OPENSR_WORLD_OBJECT
 
 public:
-    Q_INVOKABLE WorldContext(quint32 id = 0, WorldObject *parent = 0);
+    Q_INVOKABLE WorldContext(WorldObject *parent = 0, quint32 id = 0);
     virtual ~WorldContext();
 
     virtual quint32 typeId() const;

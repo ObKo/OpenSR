@@ -26,7 +26,7 @@ namespace World
 {
 const quint32 Sector::staticTypeId = qHash(Sector::staticMetaObject.className());
 
-Sector::Sector(quint32 id, WorldObject *parent): WorldObject(id, parent)
+Sector::Sector(WorldObject *parent, quint32 id): WorldObject(parent, id)
 {
 }
 

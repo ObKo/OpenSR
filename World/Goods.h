@@ -32,14 +32,11 @@ class OPENSR_WORLD_API Goods: public Item
     OPENSR_WORLD_OBJECT
 
 public:
-    Q_INVOKABLE Goods(quint32 id = 0, WorldObject *parent = 0);
+    Q_INVOKABLE Goods(WorldObject *parent = 0, quint32 id = 0);
     virtual ~Goods();
 
     virtual quint32 typeId() const;
     virtual QString namePrefix() const;
-
-    bool save(QDataStream &stream) const;
-    bool load(QDataStream &stream);
 };
 }
 }

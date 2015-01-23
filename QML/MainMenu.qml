@@ -1,5 +1,6 @@
 import QtQuick 2.3
 import OpenSR 1.0
+import OpenSR.World 1.0 as World
 
 Item {
     id: menu
@@ -81,6 +82,10 @@ Item {
             normalImage: "res:/DATA/FormMain2/2ButNewN.gi"
             hoveredImage: "res:/DATA/FormMain2/2ButNewA.gi"
             downImage: "res:/DATA/FormMain2/2ButNewD.gi"
+	    
+	    onClicked: {
+                World.WorldManager.generateWorld("res:/World/DefaultWorldGen.qs");
+	    }
         }
         Button {
             id: loadButton

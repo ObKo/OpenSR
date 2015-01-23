@@ -29,6 +29,7 @@ SET(SOURCES
     WorldObject.cpp
     WorldPlugin.cpp
     WorldManager.cpp
+    WorldBindings.cpp
 )
 
 SET(HEADERS 

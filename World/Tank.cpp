@@ -26,7 +26,7 @@ namespace World
 {
 const quint32 Tank::staticTypeId = qHash(Tank::staticMetaObject.className());
 
-Tank::Tank(quint32 id, WorldObject *parent): Equipment(id, parent)
+Tank::Tank(WorldObject *parent, quint32 id): Equipment(parent, id)
 {
 }
 

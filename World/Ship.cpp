@@ -26,7 +26,7 @@ namespace World
 {
 const quint32 Ship::staticTypeId = qHash(Ship::staticMetaObject.className());
 
-Ship::Ship(quint32 id, WorldObject *parent): MannedObject(id, parent)
+Ship::Ship(WorldObject *parent, quint32 id): MannedObject(parent, id)
 {
 }
 

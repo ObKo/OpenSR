@@ -26,7 +26,7 @@ namespace World
 {
 const quint32 DefenceGenerator::staticTypeId = qHash(DefenceGenerator::staticMetaObject.className());
 
-DefenceGenerator::DefenceGenerator(quint32 id, WorldObject *parent): Equipment(id, parent)
+DefenceGenerator::DefenceGenerator(WorldObject *parent, quint32 id): Equipment(parent, id)
 {
 }
 

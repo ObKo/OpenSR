@@ -32,14 +32,11 @@ class OPENSR_WORLD_API MannedObject: public SpaceObject
     OPENSR_WORLD_OBJECT
 
 public:
-    Q_INVOKABLE MannedObject(quint32 id = 0, WorldObject *parent = 0);
+    Q_INVOKABLE MannedObject(WorldObject *parent = 0, quint32 id = 0);
     virtual ~MannedObject();
 
     virtual quint32 typeId() const;
     virtual QString namePrefix() const;
-
-    bool save(QDataStream &stream) const;
-    bool load(QDataStream &stream);
 };
 }
 }

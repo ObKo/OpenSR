@@ -6,7 +6,6 @@ Item
     id: screen
     anchors.fill: parent
     
-    
     function createObjectFromURL(url, parent, id, properties) {
         properties = (typeof properties === 'undefined') ? {} : properties;
         ScreenLoaderScript.createObjectFromURL(url, parent, id, properties);

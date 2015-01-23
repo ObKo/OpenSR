@@ -26,7 +26,7 @@ namespace World
 {
 const quint32 Artefact::staticTypeId = qHash(Artefact::staticMetaObject.className());
 
-Artefact::Artefact(quint32 id, WorldObject *parent): Equipment(id, parent)
+Artefact::Artefact(WorldObject *parent, quint32 id): Equipment(parent, id)
 {
 }
 

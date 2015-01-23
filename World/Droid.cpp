@@ -26,7 +26,7 @@ namespace World
 {
 const quint32 Droid::staticTypeId = qHash(Droid::staticMetaObject.className());
 
-Droid::Droid(quint32 id, WorldObject *parent): Equipment(id, parent)
+Droid::Droid(WorldObject *parent, quint32 id): Equipment(parent, id)
 {
 }
 

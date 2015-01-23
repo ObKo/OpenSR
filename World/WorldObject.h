@@ -38,7 +38,7 @@ class OPENSR_WORLD_API WorldObject: public QObject
     Q_PROPERTY(QString namePrefix READ namePrefix)
 
 public:
-    Q_INVOKABLE WorldObject(quint32 id = 0, WorldObject *parent = 0);
+    Q_INVOKABLE WorldObject(WorldObject *parent = 0, quint32 id = 0);
     virtual ~WorldObject();
 
     quint32 id() const;
@@ -48,8 +48,8 @@ public:
 
     void setName(const QString& name);
 
-    bool save(QDataStream &stream) const;
-    bool load(QDataStream &stream, const QMap<quint32, WorldObject*>& objects);
+    virtual bool save(QDataStream &stream) const;
+    virtual bool load(QDataStream &stream, const QMap<quint32, WorldObject*>& objects);
 
 Q_SIGNALS:
     void nameChanged();

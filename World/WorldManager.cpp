@@ -23,6 +23,8 @@
 #include <QFile>
 #include <QDebug>
 
+#include <OpenSR/Engine.h>
+
 #include "WorldObject.h"
 #include "WorldContext.h"
 #include "Race.h"
@@ -106,7 +108,7 @@ WorldObject* createObject(QMap<quint32, WorldObject*>& objects, QMap<quint32, Ob
         return 0;
     }
     const QMetaObject *meta = *metai;
-    WorldObject *obj = qobject_cast<WorldObject*>(meta->newInstance(Q_ARG(quint32, header.id), Q_ARG(WorldObject*, parent)));
+    WorldObject *obj = qobject_cast<WorldObject*>(meta->newInstance(Q_ARG(WorldObject*, parent), Q_ARG(quint32, header.id)));
     if (obj)
         objects.insert(obj->id(), obj);
     return obj;
@@ -131,7 +133,8 @@ void countObjects(QList<WorldObject*>& objects, WorldObject* current)
 WorldManager* WorldManager::m_staticInstance = 0;
 quint32 WorldManager::m_idPool = 0;
 
-WorldManager::WorldManager(QObject *parent): QObject(parent)
+WorldManager::WorldManager(QObject *parent): QObject(parent),
+    m_context(0)
 {
     if (WorldManager::m_staticInstance)
         throw std::runtime_error("WorldManager constructed twice");
@@ -170,6 +173,8 @@ WorldManager::WorldManager(QObject *parent): QObject(parent)
 
 WorldManager::~WorldManager()
 {
+    if (m_context)
+        delete m_context;
     WorldManager::m_staticInstance = 0;
 }
 
@@ -223,11 +228,16 @@ bool WorldManager::loadWorld(const QString& path)
         return false;
     }
 
+    if (m_context)
+        delete m_context;
+
     ObjectHeader h;
 
     // Context is always first
     stream >> h;
     m_context = qobject_cast<WorldContext*>(createObject(objects, headersMap, h));
+    m_context->setParent(this);
+    emit(contextChanged());
 
     if (!m_context)
     {
@@ -324,6 +334,21 @@ bool WorldManager::saveWorld(const QString& path)
 
     f.close();
     return true;
+}
+
+
+void WorldManager::generateWorld(const QString& genScriptUrl)
+{
+    if (m_context)
+    {
+        delete m_context;
+        m_context = 0;
+    }
+
+    m_context = new WorldContext();
+    m_context->setParent(this);
+    qobject_cast<OpenSR::Engine*>(qApp)->execScript(genScriptUrl);
+    emit(contextChanged());
 }
 }
 }

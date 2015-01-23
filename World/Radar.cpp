@@ -26,7 +26,7 @@ namespace World
 {
 const quint32 Radar::staticTypeId = qHash(Radar::staticMetaObject.className());
 
-Radar::Radar(quint32 id, WorldObject *parent): Equipment(id, parent)
+Radar::Radar(WorldObject *parent, quint32 id): Equipment(parent, id)
 {
 }
 

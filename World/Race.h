@@ -43,7 +43,7 @@ class OPENSR_WORLD_API Race: public WorldObject
     Q_PROPERTY(RaceStyle style READ style WRITE setStyle NOTIFY styleChanged)
 
 public:
-    Q_INVOKABLE Race(quint32 id = 0, WorldObject *parent = 0);
+    Q_INVOKABLE Race(WorldObject *parent = 0, quint32 id = 0);
     virtual ~Race();
 
     RaceStyle style() const;

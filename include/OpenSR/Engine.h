@@ -22,12 +22,9 @@
 #include <QApplication>
 #include <OpenSR/OpenSR.h>
 
-#include <OpenSR/QM/QM.h>
-#include <QJSValue>
-
 class QQuickView;
 class QQmlEngine;
-class QJSEngine;
+class QScriptEngine;
 
 namespace OpenSR
 {
@@ -46,21 +43,23 @@ public:
     ResourceManager *resources() const;
 
     QQmlEngine *qmlEngine();
-    QJSEngine *scriptEngine();
+    QScriptEngine *scriptEngine();
 
     Q_INVOKABLE QVariantMap datRoot() const;
     Q_INVOKABLE QVariant datValue(const QString& path) const;
 
+    Q_INVOKABLE void execScript(const QUrl& url);
+
 public Q_SLOTS:
-    void addRCCArchive(const QString& path);
-    void showQMLComponent(const QUrl& source);
-    void addDATFile(const QUrl& source);
+    void addRCCArchive(const QString& source);
+    void showQMLComponent(const QString& url);
+    void addDATFile(const QString& url);
     void loadPlugin(const QString& name);
 
 private:
     QQuickView *m_qmlView;
     QQmlEngine *m_qmlEngine;
-    QJSEngine *m_scriptEngine;
+    QScriptEngine *m_scriptEngine;
     SoundManager *m_sound;
     ResourceManager *m_resources;
     QVariantMap m_datRoot;

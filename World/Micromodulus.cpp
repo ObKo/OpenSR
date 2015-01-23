@@ -26,7 +26,7 @@ namespace World
 {
 const quint32 Micromodulus::staticTypeId = qHash(Micromodulus::staticMetaObject.className());
 
-Micromodulus::Micromodulus(quint32 id, WorldObject *parent): Item(id, parent)
+Micromodulus::Micromodulus(WorldObject *parent, quint32 id): Item(parent, id)
 {
 }
 

@@ -26,7 +26,7 @@ namespace World
 {
 const quint32 CargoHook::staticTypeId = qHash(CargoHook::staticMetaObject.className());
 
-CargoHook::CargoHook(quint32 id, WorldObject *parent): Equipment(id, parent)
+CargoHook::CargoHook(WorldObject *parent, quint32 id): Equipment(parent, id)
 {
 }
 

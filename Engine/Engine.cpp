@@ -36,6 +36,8 @@
 #include <QQuickItem>
 #include <QDir>
 #include <QPluginLoader>
+#include <QString>
+#include <QScriptEngine>
 
 namespace OpenSR
 {
@@ -60,6 +62,7 @@ Engine::Engine(int argc, char** argv): QApplication(argc, argv)
     m_resources = new ResourceManager(this);
 
     m_qmlView = new QQuickView();
+    m_qmlView->setResizeMode(QQuickView::SizeRootObjectToView);
     m_qmlEngine = m_qmlView->engine();
     m_qmlEngine->addImportPath(":/");
     //m_qmlEngine->rootContext()->setContextProperty("engine", this);
@@ -71,7 +74,7 @@ Engine::Engine(int argc, char** argv): QApplication(argc, argv)
 
     m_qmlEngine->setNetworkAccessManagerFactory(m_resources->qmlNAMFactory());
 
-    m_scriptEngine = new QJSEngine(this);
+    m_scriptEngine = new QScriptEngine(this);
     m_scriptEngine->globalObject().setProperty("engine", m_scriptEngine->newQObject(this));
 }
 
@@ -89,18 +92,14 @@ int Engine::run()
     QUrl qmlMainUrl(settings.value("engine/mainQML", "qrc:/OpenSR/ScreenLoader.qml").toString());
     m_qmlView->setSource(qmlMainUrl);
 
-    QString scriptPath = settings.value("engine/startupScript", "data/startup.qs").toString();
-    QFile sf(scriptPath);
-    sf.open(QIODevice::ReadOnly);
-    QString script = QString::fromUtf8(sf.readAll());
-    sf.close();
-    m_scriptEngine->evaluate(script, scriptPath);
-
     int width = settings.value("graphics/width", 1024).toInt();
     int height = settings.value("graphics/height", 768).toInt();
 
     m_qmlView->setWidth(width);
     m_qmlView->setHeight(height);
+
+    QString scriptPath = settings.value("engine/startupScript", "res:/startup.qs").toString();
+    execScript(scriptPath);
 
     m_qmlView->show();
 
@@ -114,12 +113,12 @@ void Engine::addRCCArchive(const QString& path)
     QResource::registerResource(path);
 }
 
-void Engine::showQMLComponent(const QUrl& source)
+void Engine::showQMLComponent(const QString& url)
 {
     if (!m_qmlView->rootObject())
         return;
 
-    QMetaObject::invokeMethod(m_qmlView->rootObject(), "changeScreen", Q_ARG(QVariant, source), Q_ARG(QVariant, QVariantMap()));
+    QMetaObject::invokeMethod(m_qmlView->rootObject(), "changeScreen", Q_ARG(QVariant, QUrl(url)), Q_ARG(QVariant, QVariantMap()));
 }
 
 SoundManager* Engine::sound() const
@@ -137,14 +136,14 @@ QQmlEngine* Engine::qmlEngine()
     return m_qmlEngine;
 }
 
-QJSEngine* Engine::scriptEngine()
+QScriptEngine* Engine::scriptEngine()
 {
     return m_scriptEngine;
 }
 
-void Engine::addDATFile(const QUrl& source)
+void Engine::addDATFile(const QString& url)
 {
-    QIODevice *dev = m_resources->getIODevice(source);
+    QIODevice *dev = m_resources->getIODevice(QUrl(url));
     if (!dev || !dev->isOpen())
         return;
     QVariantMap dat = loadDAT(dev);
@@ -201,5 +200,25 @@ void Engine::loadPlugin(const QString& name)
         return;
     }
     loader.instance()->setParent(this);
+}
+
+void Engine::execScript(const QUrl& url)
+{
+    QIODevice *dev = resources()->getIODevice(url);
+    if (!dev)
+    {
+        qWarning().noquote() << QString("Cannot exec script %1: file not found.").arg(url.toString());
+        return;
+    }
+
+    QString script = QString::fromUtf8(dev->readAll());
+    dev->close();
+    delete dev;
+    QScriptValue result = m_scriptEngine->evaluate(script, url.toString());
+    if (m_scriptEngine->hasUncaughtException())
+    {
+        int line = m_scriptEngine->uncaughtExceptionLineNumber();
+        qWarning().noquote() << QString("%1(%2): %3").arg(url.toString(), QString::number(line), result.toString());
+    }
 }
 }

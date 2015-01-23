@@ -32,16 +32,17 @@ namespace World
 class OPENSR_WORLD_API WorldManager: public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(WorldContext* context READ context NOTIFY contextChanged)
+    Q_PROPERTY(QObject* context READ context NOTIFY contextChanged)
 public:
     WorldManager(QObject *parent = 0);
     virtual ~WorldManager();
 
-    WorldContext* context() const;
     quint32 getNextId() const;
 
     static WorldManager *instance();
 
+    WorldContext* context() const;
+    Q_INVOKABLE void generateWorld(const QString& genScriptUrl);
     Q_INVOKABLE bool saveWorld(const QString& path);
     Q_INVOKABLE bool loadWorld(const QString& path);
 
