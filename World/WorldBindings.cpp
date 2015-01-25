@@ -21,6 +21,7 @@
 #include <QScriptEngine>
 #include <QQmlEngine>
 #include <QtQml>
+#include <QScriptable>
 
 #include "WorldManager.h"
 
@@ -82,10 +83,13 @@ Q_SCRIPT_DECLARE_QMETAOBJECT(OpenSR::World::DesertPlanet, OpenSR::World::WorldOb
 Q_SCRIPT_DECLARE_QMETAOBJECT(OpenSR::World::Ship, OpenSR::World::WorldObject*);
 Q_SCRIPT_DECLARE_QMETAOBJECT(OpenSR::World::SpaceStation, OpenSR::World::WorldObject*);
 
+#include "ScriptPrototypes.h"
+
 namespace OpenSR
 {
 namespace World
 {
+
 QScriptValue raceStyleToScriptValue(QScriptEngine *engine, const RaceStyle &s)
 {
     QScriptValue obj = engine->newObject();
@@ -173,7 +177,9 @@ void bindWorldTypes(QScriptEngine *script, QQmlEngine *qml)
     world.setProperty("Ship", script->scriptValueFromQMetaObject<Ship>());
     world.setProperty("SpaceStation", script->scriptValueFromQMetaObject<SpaceStation>());
 
-    qScriptRegisterMetaType(script, raceStyleToScriptValue, raceStyleFromScriptValue);
+    //qScriptRegisterMetaType(script, raceStyleToScriptValue, raceStyleFromScriptValue);
+    script->setDefaultPrototype(qMetaTypeId<OpenSR::World::RaceStyle>(), script->newQObject(new RaceStylePrototype(script)));
+    world.setProperty("RaceStyle", script->newFunction(RaceStylePrototype::ctor));
 
     script->globalObject().setProperty("World", world);
 }
