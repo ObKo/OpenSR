@@ -19,6 +19,7 @@
 #include "Race.h"
 
 #include <QHash>
+#include <QDataStream>
 
 namespace OpenSR
 {
@@ -53,6 +54,37 @@ void Race::setStyle(const RaceStyle& style)
 RaceStyle Race::style() const
 {
     return m_style;
+}
+
+bool Race::load(QDataStream& stream, const QMap< quint32, WorldObject* >& objects)
+{
+    if (!WorldObject::load(stream, objects))
+        return false;
+
+    stream >> m_style;
+    emit(styleChanged());
+
+    return stream.status() == QDataStream::Ok;
+}
+
+bool Race::save(QDataStream& stream) const
+{
+    if (!WorldObject::save(stream))
+        return false;
+
+    stream << m_style;
+
+    return stream.status() == QDataStream::Ok;
+}
+
+QDataStream& operator<<(QDataStream& stream, const RaceStyle& style)
+{
+    return stream << style.color << style.icon << style.sound;
+}
+
+QDataStream& operator>>(QDataStream& stream, RaceStyle& style)
+{
+    return stream >> style.color >> style.icon >> style.sound;
 }
 }
 }

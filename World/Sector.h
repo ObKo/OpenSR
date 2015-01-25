@@ -22,6 +22,8 @@
 #include "World.h"
 #include "WorldObject.h"
 
+#include <QPointF>
+
 namespace OpenSR
 {
 namespace World
@@ -31,12 +33,26 @@ class OPENSR_WORLD_API Sector: public WorldObject
     Q_OBJECT
     OPENSR_WORLD_OBJECT
 
+    Q_PROPERTY(QPointF position READ position WRITE setPosition NOTIFY positionChanged)
+
 public:
     Q_INVOKABLE Sector(WorldObject *parent = 0, quint32 id = 0);
     virtual ~Sector();
 
+    QPointF position() const;
+    void setPosition(const QPointF& position);
+
     virtual quint32 typeId() const;
     virtual QString namePrefix() const;
+
+    virtual bool save(QDataStream &stream) const;
+    virtual bool load(QDataStream &stream, const QMap<quint32, WorldObject*>& objects);
+
+Q_SIGNALS:
+    void positionChanged();
+
+private:
+    QPointF m_position;
 };
 }
 }

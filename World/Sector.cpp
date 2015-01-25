@@ -19,6 +19,7 @@
 #include "Sector.h"
 
 #include <QHash>
+#include <QDataStream>
 
 namespace OpenSR
 {
@@ -34,6 +35,17 @@ Sector::~Sector()
 {
 }
 
+QPointF Sector::position() const
+{
+    return m_position;
+}
+
+void Sector::setPosition(const QPointF& position)
+{
+    m_position = position;
+    emit(positionChanged());
+}
+
 quint32 Sector::typeId() const
 {
     return Sector::staticTypeId;
@@ -42,6 +54,27 @@ quint32 Sector::typeId() const
 QString Sector::namePrefix() const
 {
     return tr("Sector");
+}
+
+bool Sector::load(QDataStream& stream, const QMap< quint32, WorldObject* >& objects)
+{
+    if (!WorldObject::load(stream, objects))
+        return false;
+
+    stream >> m_position;
+    emit(positionChanged());
+
+    return stream.status() == QDataStream::Ok;
+}
+
+bool Sector::save(QDataStream& stream) const
+{
+    if (!WorldObject::save(stream))
+        return false;
+
+    stream << m_position;
+
+    return stream.status() == QDataStream::Ok;
 }
 }
 }

@@ -30,17 +30,20 @@ namespace World
 {
 struct RaceStyle
 {
-    QUrl icon;
+    QString icon;
     QColor color;
-    QUrl sound;
+    QString sound;
 };
+
+QDataStream& operator<<(QDataStream & stream, const RaceStyle & string);
+QDataStream& operator>>(QDataStream & stream, RaceStyle & string);
 
 class OPENSR_WORLD_API Race: public WorldObject
 {
     Q_OBJECT
     OPENSR_WORLD_OBJECT
 
-    Q_PROPERTY(RaceStyle style READ style WRITE setStyle NOTIFY styleChanged)
+    Q_PROPERTY(OpenSR::World::RaceStyle style READ style WRITE setStyle NOTIFY styleChanged)
 
 public:
     Q_INVOKABLE Race(WorldObject *parent = 0, quint32 id = 0);
@@ -51,6 +54,9 @@ public:
 
     virtual quint32 typeId() const;
     virtual QString namePrefix() const;
+
+    virtual bool save(QDataStream &stream) const;
+    virtual bool load(QDataStream &stream, const QMap<quint32, WorldObject*>& objects);
 
 Q_SIGNALS:
     void styleChanged();

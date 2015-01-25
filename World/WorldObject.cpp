@@ -20,6 +20,7 @@
 #include "WorldManager.h"
 
 #include <QHash>
+#include <QDataStream>
 
 namespace OpenSR
 {
@@ -67,7 +68,7 @@ void WorldObject::setName(const QString& name)
 bool WorldObject::save(QDataStream &stream) const
 {
     stream << m_name;
-    return true;
+    return stream.status() == QDataStream::Ok;
 }
 
 bool WorldObject::load(QDataStream &stream, const QMap<quint32, WorldObject*>& objects)
@@ -75,7 +76,8 @@ bool WorldObject::load(QDataStream &stream, const QMap<quint32, WorldObject*>& o
     QString name;
     stream >> name;
     setName(name);
-    return true;
+    emit(nameChanged());
+    return stream.status() == QDataStream::Ok;
 }
 }
 }

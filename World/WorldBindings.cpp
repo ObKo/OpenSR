@@ -86,6 +86,21 @@ namespace OpenSR
 {
 namespace World
 {
+QScriptValue raceStyleToScriptValue(QScriptEngine *engine, const RaceStyle &s)
+{
+    QScriptValue obj = engine->newObject();
+    obj.setProperty("icon", s.icon);
+    obj.setProperty("color", s.color.name());
+    obj.setProperty("sound", s.sound);
+    return obj;
+}
+
+void raceStyleFromScriptValue(const QScriptValue &obj, RaceStyle &s)
+{
+    s.color = QColor(obj.property("color").toString());
+    s.icon = obj.property("icon").toString();
+    s.sound = obj.property("sound").toString();
+}
 
 static QObject* managerSingletonProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
 {
@@ -157,6 +172,8 @@ void bindWorldTypes(QScriptEngine *script, QQmlEngine *qml)
     world.setProperty("DesertPlanet", script->scriptValueFromQMetaObject<DesertPlanet>());
     world.setProperty("Ship", script->scriptValueFromQMetaObject<Ship>());
     world.setProperty("SpaceStation", script->scriptValueFromQMetaObject<SpaceStation>());
+
+    qScriptRegisterMetaType(script, raceStyleToScriptValue, raceStyleFromScriptValue);
 
     script->globalObject().setProperty("World", world);
 }
