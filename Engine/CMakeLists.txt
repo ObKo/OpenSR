@@ -14,6 +14,7 @@ SET(SOURCES
     Music.cpp
     MPG123MusicDecoder.cpp
     VorbisMusicDecoder.cpp
+    TexturedPolyline.cpp
 )
 
 SET(HEADERS 
@@ -26,6 +27,7 @@ SET(HEADERS
     ${CMAKE_SOURCE_DIR}/include/OpenSR/QMLQuestPlayer.h
     ${CMAKE_SOURCE_DIR}/include/OpenSR/Music.h
     ${CMAKE_SOURCE_DIR}/include/OpenSR/MusicDecoder.h
+    ${CMAKE_SOURCE_DIR}/include/OpenSR/TexturedPolyline.h
 )
 
 SET(PRIVATE_HEADERS 

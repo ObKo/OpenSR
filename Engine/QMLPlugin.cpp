@@ -25,6 +25,7 @@
 #include <OpenSR/Sound.h>
 #include <OpenSR/GAIAnimatedImage.h>
 #include <OpenSR/QMLQuestPlayer.h>
+#include <OpenSR/TexturedPolyline.h>
 #include <OpenSR/Music.h>
 
 #include <QtQml>
@@ -51,6 +52,7 @@ void OpenSRPlugin::registerTypes(const char* uri)
     qmlRegisterType<GAIAnimatedImage>(uri, 1, 0, "GAIAnimatedImage");
     qmlRegisterType<QMLQuestPlayer>(uri, 1, 0, "QuestPlayer");
     qmlRegisterType<Music>(uri, 1, 0, "Music");
+    qmlRegisterType<TexturedPolyline>(uri, 1, 0, "TexturedPolyline");
 }
 
 namespace OpenSR
