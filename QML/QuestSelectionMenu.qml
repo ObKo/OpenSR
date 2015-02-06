@@ -212,7 +212,7 @@ Item {
     {
         var questID = questListModel.get(questList.currentIndex).id;
         var path = "res:/" + Engine.datValue("PlanetQuest.PlanetQuest")[questID].replace(/\\/g, "/");
-        var questInfo = QM.loadQuestInfo(path);
+        var questInfo = OSR.questInfo(path);
         var imageID = Engine.datValue("PlanetQuest.List")[questID]["Image"]
         var imagePath = imageID.replace("Bm.", "").replace(".", "/");
         imagePath = "res:/DATA/" + imagePath + ".jpg";

@@ -172,7 +172,10 @@ Item {
     }
     
     Component.onCompleted: {
-        music.play();
+        //music.play();
+        console.log(OSR.bezierCurve(0, 0, 0, 0, 0, 0, 0, 0).p0);
+	var p = Qt.point(0, 0);
+        console.log(typeof(p));
     }
     
     function startQuest(id){

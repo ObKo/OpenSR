@@ -16,18 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef OPENSR_QMLPLUGIN_H
-#define OPENSR_QMLPLUGIN_H
+#include "OpenSR/Types.h"
 
-#include <QQmlExtensionPlugin>
-
-class OpenSRPlugin : public QQmlExtensionPlugin
+namespace OpenSR
 {
-    Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QQmlExtensionInterface")
-
-public:
-    void registerTypes(const char *uri);
-};
-
-#endif // OPENSR_QMLPLUGIN_H
+}

@@ -16,18 +16,21 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef OPENSR_QMLPLUGIN_H
-#define OPENSR_QMLPLUGIN_H
+#ifndef OPENSR_TYPES_H
+#define OPENSR_TYPES_H
 
-#include <QQmlExtensionPlugin>
+#include <OpenSR/OpenSR.h>
+#include <QPointF>
+#include <QMetaType>
 
-class OpenSRPlugin : public QQmlExtensionPlugin
+namespace OpenSR
 {
-    Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QQmlExtensionInterface")
-
-public:
-    void registerTypes(const char *uri);
+struct BezierCurve
+{
+    QPointF p0, p1, p2, p3;
 };
+}
 
-#endif // OPENSR_QMLPLUGIN_H
+Q_DECLARE_METATYPE(OpenSR::BezierCurve);
+
+#endif // OPENSR_TYPES_H

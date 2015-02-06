@@ -15,6 +15,7 @@ SET(SOURCES
     MPG123MusicDecoder.cpp
     VorbisMusicDecoder.cpp
     TexturedPolyline.cpp
+    Types.cpp
 )
 
 SET(HEADERS 
@@ -28,6 +29,7 @@ SET(HEADERS
     ${CMAKE_SOURCE_DIR}/include/OpenSR/Music.h
     ${CMAKE_SOURCE_DIR}/include/OpenSR/MusicDecoder.h
     ${CMAKE_SOURCE_DIR}/include/OpenSR/TexturedPolyline.h
+    ${CMAKE_SOURCE_DIR}/include/OpenSR/Types.h
 )
 
 SET(PRIVATE_HEADERS 
@@ -60,10 +62,12 @@ TARGET_LINK_LIBRARIES(opensr engine)
 
 SET(QML_SOURCES
     QMLPlugin.cpp
+    QMLHelper.cpp
 )
 
 SET(QML_HEADERS 
     QMLPlugin.h
+    QMLHelper.h
 )
 
 QT5_WRAP_CPP(QML_MOC_SOURCES ${QML_HEADERS})

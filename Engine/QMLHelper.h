@@ -16,18 +16,34 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef OPENSR_QMLPLUGIN_H
-#define OPENSR_QMLPLUGIN_H
+#ifndef OPENSR_QMLHELPER_H
+#define OPENSR_QMLHELPER_H
 
-#include <QQmlExtensionPlugin>
+#include <OpenSR/OpenSR.h>
+#include <OpenSR/Types.h>
+#include <OpenSR/QM/QM.h>
+#include <QObject>
+#include <QVariant>
 
-class OpenSRPlugin : public QQmlExtensionPlugin
+namespace OpenSR
+{
+namespace QML
+{
+class QMLHelper: public QObject
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QQmlExtensionInterface")
-
 public:
-    void registerTypes(const char *uri);
-};
+    QMLHelper(QObject *parent = 0);
 
-#endif // OPENSR_QMLPLUGIN_H
+    Q_INVOKABLE QVariant questInfo(const QUrl& url);
+    Q_INVOKABLE QVariant bezierCurve(const QPointF& p0, const QPointF& p1, const QPointF& p2, const QPointF& p3);
+    Q_INVOKABLE QVariant bezierCurve(float p0x, float p0y, float p1x, float p1y, float p2x, float p2y, float p3x, float p3y);
+
+private:
+    QVariant convertQuestInfoToJS(const QM::QuestInfo& info);
+    QVariant convertBezierCurveToJS(const BezierCurve& curve);
+};
+}
+}
+
+#endif // OPENSR_QMLHELPER_H

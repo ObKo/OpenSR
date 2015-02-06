@@ -18,6 +18,8 @@
 
 #include "QMLPlugin.h"
 
+#include "QMLHelper.h"
+
 #include <OpenSR/QM/QM.h>
 
 #include <OpenSR/Engine.h>
@@ -38,16 +40,16 @@ static QObject* engineSingletonProvider(QQmlEngine *engine, QJSEngine *scriptEng
     return e;
 }
 
-static QObject* qmSingletonProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
+static QObject* osrSingletonProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
 {
-    return new OpenSR::QML::QMLQMExporter(engine);
+    return new OpenSR::QML::QMLHelper(engine);
 }
 
 void OpenSRPlugin::registerTypes(const char* uri)
 {
     using namespace OpenSR;
     qmlRegisterSingletonType<Engine>(uri, 1, 0, "Engine", engineSingletonProvider);
-    qmlRegisterSingletonType<OpenSR::QML::QMLQMExporter>(uri, 1, 0, "QM", qmSingletonProvider);
+    qmlRegisterSingletonType<OpenSR::QML::QMLHelper>(uri, 1, 0, "OSR", osrSingletonProvider);
     qmlRegisterType<Sound>(uri, 1, 0, "Sound");
     qmlRegisterType<GAIAnimatedImage>(uri, 1, 0, "GAIAnimatedImage");
     qmlRegisterType<QMLQuestPlayer>(uri, 1, 0, "QuestPlayer");
@@ -55,44 +57,4 @@ void OpenSRPlugin::registerTypes(const char* uri)
     qmlRegisterType<TexturedPolyline>(uri, 1, 0, "TexturedPolyline");
 }
 
-namespace OpenSR
-{
-namespace QML
-{
-QMLQMExporter::QMLQMExporter(QObject* parent): QObject(parent)
-{
-
-}
-
-QVariant QMLQMExporter::loadQuestInfo(const QUrl& url)
-{
-    QIODevice *d = qobject_cast<Engine*>(qApp)->resources()->getIODevice(url);
-    if (!d || !d->isOpen())
-        return QVariant();
-
-    QVariant result = convertQuestInfoToJS(QM::readQuestInfo(d));
-
-    delete d;
-
-    return result;
-}
-
-QVariant QMLQMExporter::convertQuestInfoToJS(const QM::QuestInfo& info)
-{
-    QVariantMap map;
-
-    map["races"] = info.races;
-    map["doneImmediately"] = info.doneImmediately;
-    map["planetRaces"] = info.planetRaces;
-    map["playerTypes"] = info.playerTypes;
-    map["playerRaces"] = info.playerRaces;
-    map["relation"] = info.relation;
-    map["difficulty"] = info.difficulty;
-    map["winnerText"] = info.winnerText;
-    map["descriptionText"] = info.descriptionText;
-
-    return map;
-}
-}
-}
 
