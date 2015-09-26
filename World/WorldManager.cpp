@@ -22,6 +22,7 @@
 #include <QMap>
 #include <QFile>
 #include <QDebug>
+#include <QDataStream>
 
 #include <OpenSR/Engine.h>
 

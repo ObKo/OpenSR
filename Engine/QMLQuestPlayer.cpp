@@ -20,6 +20,7 @@
 
 #include <OpenSR/Engine.h>
 #include <OpenSR/ResourceManager.h>
+#include <QIODevice>
 
 namespace OpenSR
 {

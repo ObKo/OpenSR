@@ -76,7 +76,7 @@ void TexturedBezierCurve::setCurve(const QVariant& curve)
     QList<QPointF> points = d->curve.calcPolyline(d->minStep);
     QVariantList vpoints;
 
-    for(const QPointF& p: points)
+    for (const QPointF& p : points)
         vpoints.append(QVariant(p));
 
     setPoints(vpoints);

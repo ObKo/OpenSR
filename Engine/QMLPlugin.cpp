@@ -18,16 +18,16 @@
 
 #include "QMLPlugin.h"
 
-#include "QMLHelper.h"
-
 #include <OpenSR/QM/QM.h>
 
 #include <OpenSR/Engine.h>
+#include <OpenSR/QMLHelper.h>
 #include <OpenSR/ResourceManager.h>
 #include <OpenSR/Sound.h>
 #include <OpenSR/GAIAnimatedImage.h>
 #include <OpenSR/QMLQuestPlayer.h>
 #include <OpenSR/TexturedPolyline.h>
+#include <OpenSR/TexturedBezierCurve.h>
 #include <OpenSR/Music.h>
 
 #include <QtQml>
@@ -55,6 +55,7 @@ void OpenSRPlugin::registerTypes(const char* uri)
     qmlRegisterType<QMLQuestPlayer>(uri, 1, 0, "QuestPlayer");
     qmlRegisterType<Music>(uri, 1, 0, "Music");
     qmlRegisterType<TexturedPolyline>(uri, 1, 0, "TexturedPolyline");
+    qmlRegisterType<TexturedBezierCurve>(uri, 1, 0, "TexturedBezierCurve");
 }
 
 

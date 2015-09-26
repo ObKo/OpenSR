@@ -171,13 +171,6 @@ Item {
         source: "res:/Music/SPECIAL/SpaceIsCalling.dat"
     }
     
-    Component.onCompleted: {
-        //music.play();
-        console.log(OSR.bezierCurve(0, 0, 0, 0, 0, 0, 0, 0).p0);
-	var p = Qt.point(0, 0);
-        console.log(typeof(p));
-    }
-    
     function startQuest(id){
         changeScreen("qrc:/OpenSR/QuestPlayer.qml", {"questID": id});
         menu.destroy()

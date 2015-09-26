@@ -16,9 +16,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "QMLHelper.h"
+#include "OpenSR/QMLHelper.h"
+
 #include <OpenSR/Engine.h>
 #include <OpenSR/ResourceManager.h>
+#include <QIODevice>
 
 namespace OpenSR
 {
@@ -83,6 +85,19 @@ QVariant QMLHelper::bezierCurve(const QPointF& p0, const QPointF& p1, const QPoi
     curve.p2 = p2;
     curve.p3 = p3;
     return convertBezierCurveToJS(curve);
+}
+
+BezierCurve QMLHelper::convertBezierCurveFromJS(const QVariant& curve)
+{
+    BezierCurve result;
+    QVariantMap obj = curve.toMap();
+
+    result.p0 = obj["p0"].toPointF();
+    result.p1 = obj["p1"].toPointF();
+    result.p2 = obj["p2"].toPointF();
+    result.p3 = obj["p3"].toPointF();
+
+    return result;
 }
 }
 }

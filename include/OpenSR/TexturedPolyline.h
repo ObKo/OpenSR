@@ -50,7 +50,7 @@ Q_SIGNALS:
     void sourceChanged();
 
 protected:
-    OPENSR_DECLARE_DPOINTER(TexturedPolyline);
+    OPENSR_DECLARE_DPOINTER(TexturedPolyline)
     virtual QSGNode *updatePaintNode(QSGNode * oldNode, UpdatePaintNodeData *updatePaintNodeData);
 };
 }

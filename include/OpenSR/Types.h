@@ -22,15 +22,18 @@
 #include <OpenSR/OpenSR.h>
 #include <QPointF>
 #include <QMetaType>
+#include <QList>
 
 namespace OpenSR
 {
 struct BezierCurve
 {
     QPointF p0, p1, p2, p3;
+
+    QList<QPointF> calcPolyline(int minStep = 1);
 };
 }
 
-Q_DECLARE_METATYPE(OpenSR::BezierCurve);
+Q_DECLARE_METATYPE(OpenSR::BezierCurve)
 
 #endif // OPENSR_TYPES_H
