@@ -7,5 +7,6 @@
         <file>QuestSelectionMenu.qml</file>
         <file>ScreenLoader.js</file>
         <file>QuestPlayer.qml</file>
+        <file>SpaceView.qml</file>
     </qresource>
 </RCC>
