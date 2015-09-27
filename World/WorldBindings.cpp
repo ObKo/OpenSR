@@ -18,10 +18,9 @@
 
 #include "WorldBindings.h"
 
-#include <QScriptEngine>
+#include <QJSEngine>
 #include <QQmlEngine>
 #include <QtQml>
-#include <QScriptable>
 
 #include "WorldManager.h"
 
@@ -54,69 +53,24 @@
 #include "Ship.h"
 #include "SpaceStation.h"
 
-Q_SCRIPT_DECLARE_QMETAOBJECT(OpenSR::World::WorldObject, OpenSR::World::WorldObject*);
-Q_SCRIPT_DECLARE_QMETAOBJECT(OpenSR::World::WorldContext, OpenSR::World::WorldObject*);
-Q_SCRIPT_DECLARE_QMETAOBJECT(OpenSR::World::Race, OpenSR::World::WorldObject*);
-Q_SCRIPT_DECLARE_QMETAOBJECT(OpenSR::World::Item, OpenSR::World::WorldObject*);
-Q_SCRIPT_DECLARE_QMETAOBJECT(OpenSR::World::Goods, OpenSR::World::WorldObject*);
-Q_SCRIPT_DECLARE_QMETAOBJECT(OpenSR::World::Equipment, OpenSR::World::WorldObject*);
-Q_SCRIPT_DECLARE_QMETAOBJECT(OpenSR::World::Micromodulus, OpenSR::World::WorldObject*);
-Q_SCRIPT_DECLARE_QMETAOBJECT(OpenSR::World::Artefact, OpenSR::World::WorldObject*);
-Q_SCRIPT_DECLARE_QMETAOBJECT(OpenSR::World::Hull, OpenSR::World::WorldObject*);
-Q_SCRIPT_DECLARE_QMETAOBJECT(OpenSR::World::Engine, OpenSR::World::WorldObject*);
-Q_SCRIPT_DECLARE_QMETAOBJECT(OpenSR::World::Tank, OpenSR::World::WorldObject*);
-Q_SCRIPT_DECLARE_QMETAOBJECT(OpenSR::World::Droid, OpenSR::World::WorldObject*);
-Q_SCRIPT_DECLARE_QMETAOBJECT(OpenSR::World::CargoHook, OpenSR::World::WorldObject*);
-Q_SCRIPT_DECLARE_QMETAOBJECT(OpenSR::World::DefenceGenerator, OpenSR::World::WorldObject*);
-Q_SCRIPT_DECLARE_QMETAOBJECT(OpenSR::World::Radar, OpenSR::World::WorldObject*);
-Q_SCRIPT_DECLARE_QMETAOBJECT(OpenSR::World::Scanner, OpenSR::World::WorldObject*);
-Q_SCRIPT_DECLARE_QMETAOBJECT(OpenSR::World::Weapon, OpenSR::World::WorldObject*);
-Q_SCRIPT_DECLARE_QMETAOBJECT(OpenSR::World::Sector, OpenSR::World::WorldObject*);
-Q_SCRIPT_DECLARE_QMETAOBJECT(OpenSR::World::PlanetarySystem, OpenSR::World::WorldObject*);
-Q_SCRIPT_DECLARE_QMETAOBJECT(OpenSR::World::SpaceObject, OpenSR::World::WorldObject*);
-Q_SCRIPT_DECLARE_QMETAOBJECT(OpenSR::World::Container, OpenSR::World::WorldObject*);
-Q_SCRIPT_DECLARE_QMETAOBJECT(OpenSR::World::Asteroid, OpenSR::World::WorldObject*);
-Q_SCRIPT_DECLARE_QMETAOBJECT(OpenSR::World::Planet, OpenSR::World::WorldObject*);
-Q_SCRIPT_DECLARE_QMETAOBJECT(OpenSR::World::MannedObject, OpenSR::World::WorldObject*);
-Q_SCRIPT_DECLARE_QMETAOBJECT(OpenSR::World::InhabitedPlanet, OpenSR::World::WorldObject*);
-Q_SCRIPT_DECLARE_QMETAOBJECT(OpenSR::World::DesertPlanet, OpenSR::World::WorldObject*);
-Q_SCRIPT_DECLARE_QMETAOBJECT(OpenSR::World::Ship, OpenSR::World::WorldObject*);
-Q_SCRIPT_DECLARE_QMETAOBJECT(OpenSR::World::SpaceStation, OpenSR::World::WorldObject*);
-
-#include "ScriptPrototypes.h"
+//#include "ScriptPrototypes.h"
 
 namespace OpenSR
 {
 namespace World
 {
-
-QScriptValue raceStyleToScriptValue(QScriptEngine *engine, const RaceStyle &s)
-{
-    QScriptValue obj = engine->newObject();
-    obj.setProperty("icon", s.icon);
-    obj.setProperty("color", s.color.name());
-    obj.setProperty("sound", s.sound);
-    return obj;
-}
-
-void raceStyleFromScriptValue(const QScriptValue &obj, RaceStyle &s)
-{
-    s.color = QColor(obj.property("color").toString());
-    s.icon = obj.property("icon").toString();
-    s.sound = obj.property("sound").toString();
-}
-
 static QObject* managerSingletonProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
 {
     QQmlEngine::setObjectOwnership(WorldManager::instance(), QQmlEngine::CppOwnership);
     return WorldManager::instance();
 }
 
-void bindWorldTypes(QScriptEngine *script, QQmlEngine *qml)
+void bindWorldTypes(QJSEngine *script, QQmlEngine *qml)
 {
     qmlRegisterSingletonType<WorldManager>("OpenSR.World", 1, 0, "WorldManager", managerSingletonProvider);
     qmlRegisterType<WorldObject>("OpenSR.World", 1, 0, "WorldObject");
     qmlRegisterType<WorldContext>("OpenSR.World", 1, 0, "WorldContext");
+    qRegisterMetaType<RaceStyle>();
     qmlRegisterType<Race>("OpenSR.World", 1, 0, "Race");
     qmlRegisterType<Item>("OpenSR.World", 1, 0, "Item");
     qmlRegisterType<Goods>("OpenSR.World", 1, 0, "Goods");
@@ -144,44 +98,41 @@ void bindWorldTypes(QScriptEngine *script, QQmlEngine *qml)
     qmlRegisterType<Ship>("OpenSR.World", 1, 0, "Ship");
     qmlRegisterType<SpaceStation>("OpenSR.World", 1, 0, "SpaceStation");
 
-    QScriptValue world = script->newObject();
-
-    world.setProperty("Manager", script->newQObject(WorldManager::instance()));
-
-    world.setProperty("WorldObject", script->scriptValueFromQMetaObject<WorldObject>());
-    world.setProperty("WorldContext", script->scriptValueFromQMetaObject<WorldContext>());
-    world.setProperty("Race", script->scriptValueFromQMetaObject<Race>());
-    world.setProperty("Item", script->scriptValueFromQMetaObject<Item>());
-    world.setProperty("Goods", script->scriptValueFromQMetaObject<Goods>());
-    world.setProperty("Equipment", script->scriptValueFromQMetaObject<Equipment>());
-    world.setProperty("Micromodulus", script->scriptValueFromQMetaObject<Micromodulus>());
-    world.setProperty("Artefact", script->scriptValueFromQMetaObject<Artefact>());
-    world.setProperty("Hull", script->scriptValueFromQMetaObject<Hull>());
-    world.setProperty("Engine", script->scriptValueFromQMetaObject<Engine>());
-    world.setProperty("Tank", script->scriptValueFromQMetaObject<Tank>());
-    world.setProperty("Droid", script->scriptValueFromQMetaObject<Droid>());
-    world.setProperty("CargoHook", script->scriptValueFromQMetaObject<CargoHook>());
-    world.setProperty("DefenceGenerator", script->scriptValueFromQMetaObject<DefenceGenerator>());
-    world.setProperty("Radar", script->scriptValueFromQMetaObject<Radar>());
-    world.setProperty("Scanner", script->scriptValueFromQMetaObject<Scanner>());
-    world.setProperty("Weapon", script->scriptValueFromQMetaObject<Weapon>());
-    world.setProperty("Sector", script->scriptValueFromQMetaObject<Sector>());
-    world.setProperty("PlanetarySystem", script->scriptValueFromQMetaObject<PlanetarySystem>());
-    world.setProperty("SpaceObject", script->scriptValueFromQMetaObject<SpaceObject>());
-    world.setProperty("Container", script->scriptValueFromQMetaObject<Container>());
-    world.setProperty("Asteroid", script->scriptValueFromQMetaObject<Asteroid>());
-    world.setProperty("Planet", script->scriptValueFromQMetaObject<Planet>());
-    world.setProperty("MannedObject", script->scriptValueFromQMetaObject<MannedObject>());
-    world.setProperty("InhabitedPlanet", script->scriptValueFromQMetaObject<InhabitedPlanet>());
-    world.setProperty("DesertPlanet", script->scriptValueFromQMetaObject<DesertPlanet>());
-    world.setProperty("Ship", script->scriptValueFromQMetaObject<Ship>());
-    world.setProperty("SpaceStation", script->scriptValueFromQMetaObject<SpaceStation>());
-
-    //qScriptRegisterMetaType(script, raceStyleToScriptValue, raceStyleFromScriptValue);
-    script->setDefaultPrototype(qMetaTypeId<OpenSR::World::RaceStyle>(), script->newQObject(new RaceStylePrototype(script)));
-    world.setProperty("RaceStyle", script->newFunction(RaceStylePrototype::ctor));
-
-    script->globalObject().setProperty("World", world);
+    script->globalObject().setProperty("world", script->newQObject(WorldManager::instance()));
+    script->globalObject().setProperty("World", script->newQObject(new WorldJSFactory(script)));
 }
+
+WorldJSFactory::WorldJSFactory(QObject *parent): QObject(parent)
+{
+}
+
+WORLD_JS_DEFAULT_GADGET_CONSTRUCTOR(WorldJSFactory, RaceStyle)
+
+WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldJSFactory, Race)
+WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldJSFactory, Item)
+WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldJSFactory, Goods)
+WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldJSFactory, Equipment)
+WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldJSFactory, Micromodulus)
+WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldJSFactory, Artefact)
+WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldJSFactory, Hull)
+WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldJSFactory, Engine)
+WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldJSFactory, Tank)
+WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldJSFactory, Droid)
+WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldJSFactory, CargoHook)
+WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldJSFactory, DefenceGenerator)
+WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldJSFactory, Radar)
+WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldJSFactory, Scanner)
+WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldJSFactory, Weapon)
+WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldJSFactory, Sector)
+WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldJSFactory, PlanetarySystem)
+WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldJSFactory, SpaceObject)
+WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldJSFactory, Container)
+WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldJSFactory, Asteroid)
+WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldJSFactory, Planet)
+WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldJSFactory, MannedObject)
+WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldJSFactory, InhabitedPlanet)
+WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldJSFactory, DesertPlanet)
+WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldJSFactory, Ship)
+WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldJSFactory, SpaceStation)
 }
 }

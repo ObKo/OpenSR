@@ -1,14 +1,19 @@
-var context = World.Manager.context;
+var context = world.context;
 
 function genRace(name, icon, color, sound) {
-    var race = new World.Race(context);
+    var race = World.Race(context);
     race.name = name;
-    race.style = World.RaceStyle(icon, color, sound);
+    race.style = World.RaceStyle();
+
+    race.style.icon = icon;
+    race.style.color = color;
+    race.style.sound = sound;
+
     return race
 }
 
 function genSector(name, position) {
-    var sector = new World.Sector(context);
+    var sector = World.Sector(context);
     sector.name = name;
     return sector;
 }
@@ -24,10 +29,10 @@ genRace("Terron", "res:/DATA/Race/2EmTerron.png", "#44BBA1", "")
 
 sector = genSector("Caragon")
 
-var system = new World.PlanetarySystem(sector);
+var system = World.PlanetarySystem(sector);
 system.name = "Solar"
 
-var planet = new World.InhabitedPlanet(system);
+var planet = World.InhabitedPlanet(system);
 planet.name = "Earth"
 
-World.Manager.saveWorld("/tmp/test.osr");
+world.saveWorld("/tmp/test.osr");

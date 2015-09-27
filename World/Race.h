@@ -28,8 +28,15 @@ namespace OpenSR
 {
 namespace World
 {
-struct RaceStyle
+class RaceStyle
 {
+    Q_GADGET
+
+    Q_PROPERTY(QString icon MEMBER icon)
+    Q_PROPERTY(QColor color MEMBER color)
+    Q_PROPERTY(QString sound MEMBER sound)
+
+public:
     QString icon;
     QColor color;
     QString sound;

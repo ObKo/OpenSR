@@ -24,7 +24,7 @@
 
 class QQuickView;
 class QQmlEngine;
-class QScriptEngine;
+class QJSEngine;
 
 namespace OpenSR
 {
@@ -43,7 +43,7 @@ public:
     ResourceManager *resources() const;
 
     QQmlEngine *qmlEngine();
-    QScriptEngine *scriptEngine();
+    QJSEngine *scriptEngine();
 
     Q_INVOKABLE QVariantMap datRoot() const;
     Q_INVOKABLE QVariant datValue(const QString& path) const;
@@ -59,13 +59,25 @@ public Q_SLOTS:
 private:
     QQuickView *m_qmlView;
     QQmlEngine *m_qmlEngine;
-    QScriptEngine *m_scriptEngine;
+    QJSEngine *m_scriptEngine;
     SoundManager *m_sound;
     ResourceManager *m_resources;
     QVariantMap m_datRoot;
 
     Q_DISABLE_COPY(Engine);
 };
+
+//FIXME: In Qt 5.6 QJSEngine will have console object QTBUG-40772
+class JSConsole: public QObject
+{
+    Q_OBJECT
+public:
+    JSConsole(QObject *parent = 0);
+
+public Q_SLOTS:
+    void log(QString msg);
+};
+
 }
 
 #endif

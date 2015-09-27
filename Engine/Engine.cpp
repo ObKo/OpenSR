@@ -37,7 +37,7 @@
 #include <QDir>
 #include <QPluginLoader>
 #include <QString>
-#include <QScriptEngine>
+#include <QJSEngine>
 
 namespace OpenSR
 {
@@ -74,8 +74,9 @@ Engine::Engine(int argc, char** argv): QApplication(argc, argv)
 
     m_qmlEngine->setNetworkAccessManagerFactory(m_resources->qmlNAMFactory());
 
-    m_scriptEngine = new QScriptEngine(this);
+    m_scriptEngine = new QJSEngine(this);
     m_scriptEngine->globalObject().setProperty("engine", m_scriptEngine->newQObject(this));
+    m_scriptEngine->globalObject().setProperty("console", m_scriptEngine->newQObject(new JSConsole(this)));
 }
 
 Engine::~Engine()
@@ -136,7 +137,7 @@ QQmlEngine* Engine::qmlEngine()
     return m_qmlEngine;
 }
 
-QScriptEngine* Engine::scriptEngine()
+QJSEngine* Engine::scriptEngine()
 {
     return m_scriptEngine;
 }
@@ -214,11 +215,22 @@ void Engine::execScript(const QUrl& url)
     QString script = QString::fromUtf8(dev->readAll());
     dev->close();
     delete dev;
-    QScriptValue result = m_scriptEngine->evaluate(script, url.toString());
-    if (m_scriptEngine->hasUncaughtException())
+
+    QJSValue result = m_scriptEngine->evaluate(script, url.toString());
+    if (result.isError())
     {
-        int line = m_scriptEngine->uncaughtExceptionLineNumber();
-        qWarning().noquote() << QString("%1(%2): %3").arg(url.toString(), QString::number(line), result.toString());
+        qWarning().noquote() << QString("%1:%2: %3").arg(url.toString(),
+                             result.property("lineNumber").toString(), result.toString());
     }
+}
+
+JSConsole::JSConsole(QObject *parent) :
+    QObject(parent)
+{
+}
+
+void JSConsole::log(QString msg)
+{
+    qDebug().noquote() << msg;
 }
 }
