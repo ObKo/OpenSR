@@ -64,7 +64,7 @@ private:
     ResourceManager *m_resources;
     QVariantMap m_datRoot;
 
-    Q_DISABLE_COPY(Engine);
+    Q_DISABLE_COPY(Engine)
 };
 }
 

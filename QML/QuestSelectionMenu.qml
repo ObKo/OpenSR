@@ -64,8 +64,9 @@ Item {
         normalImage: "res:/DATA/FormSave2/2SaveN.gi"
         hoveredImage: ""
         downImage: "res:/DATA/FormSave2/2SaveD.gi"
-        
-        text: qsTr("Start")
+
+        //% "Start"
+        text: qsTrId("FormLoadQuest.Start")
         textColor: "#002842"
         textStyle: Text.Raised
         textStyleColor: "#21AEB5"
@@ -88,7 +89,8 @@ Item {
         hoveredImage: ""
         downImage: "res:/DATA/FormSave2/2CancelD.gi"
         
-        text: qsTr("Cancel")
+        //% "Cancel"
+        text: qsTrId("FormLoadQuest.Cancel")
         textColor: "#002842"
         textStyle: Text.Raised
         textStyleColor: "#21AEB5"

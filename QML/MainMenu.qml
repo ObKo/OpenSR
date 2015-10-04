@@ -152,7 +152,8 @@ Item {
         downImage: "res:/DATA/FormLoadRobot/2LoadQuestD.gi"
         Text {
             id: questButtonText
-            text: qsTr("Planetary Quests")
+            //% "Text quests"
+            text: qsTrId("FormMain.LQuest")
             color: "#FFC710"
             anchors.top: questButton.bottom
             anchors.horizontalCenter: questButton.horizontalCenter

@@ -18,6 +18,7 @@ SET(SOURCES
     TexturedBezierCurve.cpp
     Types.cpp
     QMLHelper.cpp
+    DATTranslator.cpp
 )
 
 SET(HEADERS 
@@ -34,6 +35,7 @@ SET(HEADERS
     ${CMAKE_SOURCE_DIR}/include/OpenSR/TexturedBezierCurve.h
     ${CMAKE_SOURCE_DIR}/include/OpenSR/Types.h
     ${CMAKE_SOURCE_DIR}/include/OpenSR/QMLHelper.h
+    ${CMAKE_SOURCE_DIR}/include/OpenSR/DATTranslator.h
 )
 
 SET(PRIVATE_HEADERS 
