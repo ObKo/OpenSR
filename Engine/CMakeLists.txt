@@ -19,6 +19,7 @@ SET(SOURCES
     Types.cpp
     QMLHelper.cpp
     DATTranslator.cpp
+    SpaceMouseArea.cpp
 )
 
 SET(HEADERS 
@@ -36,6 +37,7 @@ SET(HEADERS
     ${CMAKE_SOURCE_DIR}/include/OpenSR/Types.h
     ${CMAKE_SOURCE_DIR}/include/OpenSR/QMLHelper.h
     ${CMAKE_SOURCE_DIR}/include/OpenSR/DATTranslator.h
+    ${CMAKE_SOURCE_DIR}/include/OpenSR/SpaceMouseArea.h
 )
 
 SET(PRIVATE_HEADERS 
