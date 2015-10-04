@@ -19,6 +19,7 @@
 #include "PlanetarySystem.h"
 
 #include <QHash>
+#include <QDataStream>
 
 namespace OpenSR
 {
@@ -41,7 +42,64 @@ quint32 PlanetarySystem::typeId() const
 
 QString PlanetarySystem::namePrefix() const
 {
-    return tr("Sector");
+    return tr("System");
 }
+
+QDataStream& operator<<(QDataStream & stream, const PlanetarySystemStyle & style)
+{
+    return stream << style.background << style.star << style.starColor;
+}
+
+QDataStream& operator>>(QDataStream & stream, PlanetarySystemStyle & style)
+{
+    return stream >> style.background >> style.star >> style.starColor;
+}
+
+PlanetarySystemStyle PlanetarySystem::style() const
+{
+    return m_style;
+}
+
+int PlanetarySystem::size() const
+{
+    return m_size;
+}
+
+void PlanetarySystem::setStyle(PlanetarySystemStyle& style)
+{
+    m_style = style;
+    emit(styleChanged());
+}
+
+void PlanetarySystem::setSize(int size)
+{
+    if (m_size != size)
+    {
+        m_size = size;
+        emit(sizeChanged());
+    }
+}
+
+bool PlanetarySystem::save(QDataStream &stream) const
+{
+    if (!WorldObject::save(stream))
+        return false;
+
+    stream << m_style;
+
+    return stream.status() == QDataStream::Ok;
+}
+
+bool PlanetarySystem::load(QDataStream &stream, const QMap<quint32, WorldObject*>& objects)
+{
+    if (!WorldObject::load(stream, objects))
+        return false;
+
+    stream >> m_style;
+    emit(styleChanged());
+
+    return stream.status() == QDataStream::Ok;
+}
+
 }
 }

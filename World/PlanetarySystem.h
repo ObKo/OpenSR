@@ -22,14 +22,36 @@
 #include "World.h"
 #include "WorldObject.h"
 
+#include <QColor>
+
 namespace OpenSR
 {
 namespace World
 {
+class PlanetarySystemStyle
+{
+    Q_GADGET
+
+    Q_PROPERTY(QString background MEMBER background)
+    Q_PROPERTY(QString star MEMBER star)
+    Q_PROPERTY(QColor starColor MEMBER starColor)
+
+public:
+    QString background;
+    QString star;
+    QColor starColor;
+};
+
+QDataStream& operator<<(QDataStream & stream, const PlanetarySystemStyle & style);
+QDataStream& operator>>(QDataStream & stream, PlanetarySystemStyle & style);
+
 class OPENSR_WORLD_API PlanetarySystem: public WorldObject
 {
     Q_OBJECT
     OPENSR_WORLD_OBJECT
+
+    Q_PROPERTY(OpenSR::World::PlanetarySystemStyle style READ style WRITE setStyle NOTIFY styleChanged)
+    Q_PROPERTY(int size READ size WRITE setSize NOTIFY sizeChanged)
 
 public:
     Q_INVOKABLE PlanetarySystem(WorldObject *parent = 0, quint32 id = 0);
@@ -37,8 +59,27 @@ public:
 
     virtual quint32 typeId() const;
     virtual QString namePrefix() const;
+
+    PlanetarySystemStyle style() const;
+    int size() const;
+
+    void setStyle(PlanetarySystemStyle& style);
+    void setSize(int size);
+
+    virtual bool save(QDataStream &stream) const;
+    virtual bool load(QDataStream &stream, const QMap<quint32, WorldObject*>& objects);
+
+Q_SIGNALS:
+    void styleChanged();
+    void sizeChanged();
+
+private:
+    PlanetarySystemStyle m_style;
+    int m_size;
 };
 }
 }
+
+Q_DECLARE_METATYPE(OpenSR::World::PlanetarySystemStyle)
 
 #endif // OPENSR_WORLD_PLANETARYSYSTEM_H

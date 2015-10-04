@@ -1,8 +1,9 @@
 import QtQuick 2.3
 import OpenSR 1.0
+import OpenSR.World 1.0
 
 Item {
-    property string bgImage: "res:/DATA/BGObj/bg00.gai"
+    property PlanetarySystem system
     property int speed: 500
     property int bgSpeed: 10
     property int scrollSize: 10
@@ -15,26 +16,22 @@ Item {
         color: "black"
     }
 
-
     Item {
         x: parent.width / 2
         y: parent.height / 2
 
         Image {
             id: bg
-            source: bgImage
+            source: system ? system.style.background : ""
             x: -width / 2
             y: -height / 2
         }
 
         Item {
             id: spaceNode
-            Text {
-                color: "red"
-                x: -width / 2
-                y: -height / 2
-                font.pixelSize: 100
-                text: "System\ncontent"
+
+            SpaceObjectItem {
+                object : system
             }
         }
     }

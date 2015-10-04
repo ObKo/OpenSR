@@ -243,3 +243,5 @@ void JSConsole::log(QString msg)
     qDebug().noquote() << msg;
 }
 }
+
+#include "Engine.moc"

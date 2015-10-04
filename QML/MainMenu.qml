@@ -179,7 +179,7 @@ Item {
 
     function newGame() {
         World.WorldManager.generateWorld("res:/World/DefaultWorldGen.js");
-        changeScreen("qrc:/OpenSR/SpaceView.qml");
+        changeScreen("qrc:/OpenSR/SpaceView.qml", {"system": World.WorldManager.currentSystem});
         menu.destroy()
     }
 

@@ -21,9 +21,10 @@
 
 #include "World.h"
 
-#include "WorldContext.h"
-
 #include <QObject>
+
+#include "WorldContext.h"
+#include "PlanetarySystem.h"
 
 namespace OpenSR
 {
@@ -32,7 +33,9 @@ namespace World
 class OPENSR_WORLD_API WorldManager: public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QObject* context READ context NOTIFY contextChanged)
+    Q_PROPERTY(WorldContext* context READ context NOTIFY contextChanged)
+    Q_PROPERTY(PlanetarySystem* currentSystem READ currentSystem WRITE setCurrentSystem NOTIFY currentSystemChanged)
+
 public:
     WorldManager(QObject *parent = 0);
     virtual ~WorldManager();
@@ -42,15 +45,24 @@ public:
     static WorldManager *instance();
 
     WorldContext* context() const;
+    PlanetarySystem* currentSystem() const;
+
+    void setCurrentSystem(PlanetarySystem *system);
+
+    Q_INVOKABLE QString typeName(quint32 type) const;
+
     Q_INVOKABLE void generateWorld(const QString& genScriptUrl);
     Q_INVOKABLE bool saveWorld(const QString& path);
     Q_INVOKABLE bool loadWorld(const QString& path);
 
 Q_SIGNALS:
     void contextChanged();
+    void currentSystemChanged();
 
 private:
     WorldContext* m_context;
+
+    PlanetarySystem *m_currentSystem;
 
     static WorldManager* m_staticInstance;
     static quint32 m_idPool;

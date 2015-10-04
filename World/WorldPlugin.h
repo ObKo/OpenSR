@@ -35,7 +35,7 @@ class WorldPlugin: public QObject,
 public:
     virtual ~WorldPlugin() {};
 
-    virtual bool initPlugin(Engine *engine);
+    virtual bool initPlugin(OpenSR::Engine *engine);
 };
 }
 }

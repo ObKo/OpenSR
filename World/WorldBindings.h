@@ -20,6 +20,7 @@
 #define OPENSR_WORLD_WORLDBINDINGS_H
 
 #include "Race.h"
+#include "PlanetarySystem.h"
 
 class QJSEngine;
 class QQmlEngine;
@@ -55,6 +56,7 @@ public:
     WorldJSFactory(QObject *parent = 0);
 
     WORLD_DECLARE_JS_GADGET_CONSTRUCTOR_ARGS(RaceStyle)
+    WORLD_DECLARE_JS_GADGET_CONSTRUCTOR_ARGS(PlanetarySystemStyle)
 
     WORLD_DECLARE_JS_CONSTRUCTOR(Race)
     WORLD_DECLARE_JS_CONSTRUCTOR(Item)

@@ -135,7 +135,7 @@ WorldManager* WorldManager::m_staticInstance = 0;
 quint32 WorldManager::m_idPool = 0;
 
 WorldManager::WorldManager(QObject *parent): QObject(parent),
-    m_context(0)
+    m_context(0), m_currentSystem(0)
 {
     if (WorldManager::m_staticInstance)
         throw std::runtime_error("WorldManager constructed twice");
@@ -170,6 +170,16 @@ WorldManager::WorldManager(QObject *parent): QObject(parent),
     metaMap.insert(DesertPlanet::staticTypeId, &DesertPlanet::staticMetaObject);
     metaMap.insert(Ship::staticTypeId, &Ship::staticMetaObject);
     metaMap.insert(SpaceStation::staticTypeId, &SpaceStation::staticMetaObject);
+}
+
+QString WorldManager::typeName(quint32 type) const
+{
+    auto metai = metaMap.find(type);
+
+    if (metai == metaMap.end())
+        return QString();
+
+    return metai.value()->className();
 }
 
 WorldManager::~WorldManager()
@@ -351,5 +361,21 @@ void WorldManager::generateWorld(const QString& genScriptUrl)
     qobject_cast<OpenSR::Engine*>(qApp)->execScript(genScriptUrl);
     emit(contextChanged());
 }
+
+PlanetarySystem* WorldManager::currentSystem() const
+{
+    return m_currentSystem;
+}
+
+void WorldManager::setCurrentSystem(PlanetarySystem *system)
+{
+    //PlanetarySystem *sys = qobject_cast<PlanetarySystem*>(system);
+    if (m_currentSystem != system)
+    {
+        m_currentSystem = system;
+        emit(currentSystemChanged());
+    }
+}
+
 }
 }

@@ -8,5 +8,6 @@
         <file>ScreenLoader.js</file>
         <file>QuestPlayer.qml</file>
         <file>SpaceView.qml</file>
+        <file>SpaceObjectItem.qml</file>
     </qresource>
 </RCC>

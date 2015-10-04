@@ -72,7 +72,8 @@ void bindWorldTypes(QJSEngine *script, QQmlEngine *qml)
     qmlRegisterType<WorldContext>("OpenSR.World", 1, 0, "WorldContext");
     qRegisterMetaType<RaceStyle>();
     qmlRegisterType<Race>("OpenSR.World", 1, 0, "Race");
-    qmlRegisterType<Item>("OpenSR.World", 1, 0, "Item");
+    // Have to rename Item, because there is bug in namespaces: QTBUG-10822
+    qmlRegisterType<Item>("OpenSR.World", 1, 0, "WorldItem");
     qmlRegisterType<Goods>("OpenSR.World", 1, 0, "Goods");
     qmlRegisterType<Equipment>("OpenSR.World", 1, 0, "Equipment");
     qmlRegisterType<Micromodulus>("OpenSR.World", 1, 0, "Micromodulus");
@@ -87,6 +88,7 @@ void bindWorldTypes(QJSEngine *script, QQmlEngine *qml)
     qmlRegisterType<Scanner>("OpenSR.World", 1, 0, "Scanner");
     qmlRegisterType<Weapon>("OpenSR.World", 1, 0, "Weapon");
     qmlRegisterType<Sector>("OpenSR.World", 1, 0, "Sector");
+    qRegisterMetaType<PlanetarySystemStyle>();
     qmlRegisterType<PlanetarySystem>("OpenSR.World", 1, 0, "PlanetarySystem");
     qmlRegisterType<SpaceObject>("OpenSR.World", 1, 0, "SpaceObject");
     qmlRegisterType<Container>("OpenSR.World", 1, 0, "Container");
@@ -107,6 +109,7 @@ WorldJSFactory::WorldJSFactory(QObject *parent): QObject(parent)
 }
 
 WORLD_JS_DEFAULT_GADGET_CONSTRUCTOR(WorldJSFactory, RaceStyle)
+WORLD_JS_DEFAULT_GADGET_CONSTRUCTOR(WorldJSFactory, PlanetarySystemStyle)
 
 WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldJSFactory, Race)
 WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldJSFactory, Item)
