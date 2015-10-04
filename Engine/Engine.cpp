@@ -24,6 +24,7 @@
 #include "OpenSR/ResourceManager.h"
 #include "OpenSR/Sound.h"
 #include "OpenSR/PluginInterface.h"
+#include "OpenSR/DATTranslator.h"
 
 #include <QQuickView>
 #include <QBoxLayout>
@@ -43,6 +44,9 @@ namespace OpenSR
 {
 namespace
 {
+static const QString SETTINGS_ORGANIZATION = "OpenSR";
+static const QString SETTINGS_APPLICATION = "OpenSR";
+
 void mergeMap(QVariantMap &source, const QVariantMap &append)
 {
     auto end = append.end();
@@ -58,6 +62,11 @@ void mergeMap(QVariantMap &source, const QVariantMap &append)
 }
 Engine::Engine(int argc, char** argv): QApplication(argc, argv)
 {
+    QApplication::setOrganizationName(SETTINGS_ORGANIZATION);
+    QApplication::setApplicationName(SETTINGS_APPLICATION);
+
+    installTranslator(new DATTranslator(this));
+
     m_sound = new SoundManager(this);
     m_resources = new ResourceManager(this);
 

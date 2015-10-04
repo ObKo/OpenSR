@@ -83,9 +83,9 @@ Item {
             hoveredImage: "res:/DATA/FormMain2/2ButNewA.gi"
             downImage: "res:/DATA/FormMain2/2ButNewD.gi"
 	    
-	    onClicked: {
-                World.WorldManager.generateWorld("res:/World/DefaultWorldGen.qs");
-	    }
+            onClicked: {
+                newGame();
+            }
         }
         Button {
             id: loadButton
@@ -152,7 +152,8 @@ Item {
         downImage: "res:/DATA/FormLoadRobot/2LoadQuestD.gi"
         Text {
             id: questButtonText
-            text: qsTr("Planetary Quests")
+            //% "Text quests"
+            text: qsTrId("FormMain.LQuest")
             color: "#FFC710"
             anchors.top: questButton.bottom
             anchors.horizontalCenter: questButton.horizontalCenter
@@ -171,11 +172,17 @@ Item {
         source: "res:/Music/SPECIAL/SpaceIsCalling.dat"
     }
     
-    function startQuest(id){
+    function startQuest(id) {
         changeScreen("qrc:/OpenSR/QuestPlayer.qml", {"questID": id});
         menu.destroy()
     }
-    
+
+    function newGame() {
+        World.WorldManager.generateWorld("res:/World/DefaultWorldGen.js");
+        changeScreen("qrc:/OpenSR/SpaceView.qml");
+        menu.destroy()
+    }
+
     function componentObjectCreated(object, id)
     {
         if(id == "questSelectionRequest"){

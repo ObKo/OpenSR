@@ -29,6 +29,7 @@
 #include <OpenSR/TexturedPolyline.h>
 #include <OpenSR/TexturedBezierCurve.h>
 #include <OpenSR/Music.h>
+#include <OpenSR/SpaceMouseArea.h>
 
 #include <QtQml>
 #include <QVariant>
@@ -56,6 +57,7 @@ void OpenSRPlugin::registerTypes(const char* uri)
     qmlRegisterType<Music>(uri, 1, 0, "Music");
     qmlRegisterType<TexturedPolyline>(uri, 1, 0, "TexturedPolyline");
     qmlRegisterType<TexturedBezierCurve>(uri, 1, 0, "TexturedBezierCurve");
+    qmlRegisterType<SpaceMouseArea>(uri, 1, 0, "SpaceMouseArea");
 }
 
 

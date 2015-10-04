@@ -64,7 +64,7 @@ private:
     ResourceManager *m_resources;
     QVariantMap m_datRoot;
 
-    Q_DISABLE_COPY(Engine);
+    Q_DISABLE_COPY(Engine)
 };
 
 //FIXME: In Qt 5.6 QJSEngine will have console object QTBUG-40772
