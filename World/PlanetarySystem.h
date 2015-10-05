@@ -63,7 +63,7 @@ public:
     PlanetarySystemStyle style() const;
     int size() const;
 
-    void setStyle(PlanetarySystemStyle& style);
+    void setStyle(const PlanetarySystemStyle& style);
     void setSize(int size);
 
     virtual bool save(QDataStream &stream) const;

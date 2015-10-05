@@ -65,7 +65,7 @@ int PlanetarySystem::size() const
     return m_size;
 }
 
-void PlanetarySystem::setStyle(PlanetarySystemStyle& style)
+void PlanetarySystem::setStyle(const PlanetarySystemStyle& style)
 {
     m_style = style;
     emit(styleChanged());
