@@ -32,10 +32,10 @@ class OPENSR_WORLD_API WorldObject: public QObject
     Q_OBJECT
     OPENSR_WORLD_OBJECT
 
-    Q_PROPERTY(quint32 id READ id)
-    Q_PROPERTY(quint32 typeId READ typeId)
+    Q_PROPERTY(quint32 id READ id STORED false)
+    Q_PROPERTY(quint32 typeId READ typeId STORED false)
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
-    Q_PROPERTY(QString namePrefix READ namePrefix)
+    Q_PROPERTY(QString namePrefix READ namePrefix STORED false)
 
 public:
     Q_INVOKABLE WorldObject(WorldObject *parent = 0, quint32 id = 0);
@@ -48,8 +48,12 @@ public:
 
     void setName(const QString& name);
 
+    /*! This function called during world save after all storable properties saved */
     virtual bool save(QDataStream &stream) const;
+    /*! This function called during world load after all storable properties loaded */
     virtual bool load(QDataStream &stream, const QMap<quint32, WorldObject*>& objects);
+
+    static quint32 typeIdFromClassName(const QString& className);
 
 Q_SIGNALS:
     void nameChanged();

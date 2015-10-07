@@ -18,13 +18,11 @@
 
 #include "Container.h"
 
-#include <QHash>
-
 namespace OpenSR
 {
 namespace World
 {
-const quint32 Container::staticTypeId = qHash(Container::staticMetaObject.className());
+const quint32 Container::staticTypeId = typeIdFromClassName(Container::staticMetaObject.className());
 
 Container::Container(WorldObject *parent, quint32 id): SpaceObject(parent, id)
 {

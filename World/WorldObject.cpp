@@ -19,14 +19,11 @@
 #include "WorldObject.h"
 #include "WorldManager.h"
 
-#include <QHash>
-#include <QDataStream>
-
 namespace OpenSR
 {
 namespace World
 {
-const quint32 WorldObject::staticTypeId = qHash(WorldObject::staticMetaObject.className());
+const quint32 WorldObject::staticTypeId = typeIdFromClassName(WorldObject::staticMetaObject.className());
 
 WorldObject::WorldObject(WorldObject *parent, quint32 id): QObject(parent),
     m_id(id)
@@ -61,23 +58,40 @@ QString WorldObject::namePrefix() const
 
 void WorldObject::setName(const QString& name)
 {
-    m_name = name;
-    emit(nameChanged());
+    if (m_name != name)
+    {
+        m_name = name;
+        emit(nameChanged());
+    }
 }
 
 bool WorldObject::save(QDataStream &stream) const
 {
-    stream << m_name;
-    return stream.status() == QDataStream::Ok;
+    return true;
 }
 
 bool WorldObject::load(QDataStream &stream, const QMap<quint32, WorldObject*>& objects)
 {
-    QString name;
-    stream >> name;
-    setName(name);
-    emit(nameChanged());
-    return stream.status() == QDataStream::Ok;
+    return true;
+}
+
+/*!
+ * \brief Generate type ID from class name
+ * \param className class name (usually, metaObject()->className)
+ * \return type ID for class
+ */
+quint32 WorldObject::typeIdFromClassName(const QString& className)
+{
+    quint32 h = 0;
+    int n = className.length();
+
+    while (n--)
+    {
+        h = (h << 4) + className[n].unicode();
+        h ^= (h & 0xf0000000) >> 23;
+        h &= 0x0fffffff;
+    }
+    return h;
 }
 }
 }

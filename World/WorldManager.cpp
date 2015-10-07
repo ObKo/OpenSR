@@ -23,6 +23,7 @@
 #include <QFile>
 #include <QDebug>
 #include <QDataStream>
+#include <QMetaProperty>
 
 #include <OpenSR/Engine.h>
 
@@ -115,6 +116,41 @@ WorldObject* createObject(QMap<quint32, WorldObject*>& objects, QMap<quint32, Ob
     return obj;
 }
 
+bool writeObject(const WorldObject* object, QDataStream& stream)
+{
+    const QMetaObject *meta = object->metaObject();
+    for (int i = 0; i < meta->propertyCount(); ++i)
+    {
+        QMetaProperty p = meta->property(i);
+        //FIXME: Save property id?
+        if (p.isReadable() && p.isStored())
+            stream << p.read(object);
+
+        if (stream.status() != QDataStream::Ok)
+            return false;
+    }
+    return object->save(stream);
+}
+
+bool readObject(WorldObject* object, QDataStream& stream, const QMap<quint32, WorldObject*>& objects)
+{
+    const QMetaObject *meta = object->metaObject();
+    for (int i = 0; i < meta->propertyCount(); ++i)
+    {
+        QMetaProperty p = meta->property(i);
+        if (p.isWritable() && p.isStored())
+        {
+            QVariant value;
+            stream >> value;
+            p.write(object, value);
+        }
+
+        if (stream.status() != QDataStream::Ok)
+            return false;
+    }
+    return object->load(stream, objects);
+}
+
 void countObjects(QList<WorldObject*>& objects, WorldObject* current)
 {
     if (!current)
@@ -135,7 +171,7 @@ WorldManager* WorldManager::m_staticInstance = 0;
 quint32 WorldManager::m_idPool = 0;
 
 WorldManager::WorldManager(QObject *parent): QObject(parent),
-    m_context(0), m_currentSystem(0)
+    m_context(0)
 {
     if (WorldManager::m_staticInstance)
         throw std::runtime_error("WorldManager constructed twice");
@@ -287,7 +323,7 @@ bool WorldManager::loadWorld(const QString& path)
         }
         stream >> id;
         auto oi = objects.find(id);
-        if (oi == objects.end() || !oi.value()->load(stream, objects))
+        if (oi == objects.end() || !readObject(oi.value(), stream, objects))
         {
             qWarning() << "Invalid object in save file.";
             f.close();
@@ -336,7 +372,7 @@ bool WorldManager::saveWorld(const QString& path)
     {
         stream << OBJECT_SIGNATURE;
         stream << o->id();
-        if (!o->save(stream))
+        if (!writeObject(o, stream))
         {
             f.close();
             return false;
@@ -361,21 +397,5 @@ void WorldManager::generateWorld(const QString& genScriptUrl)
     qobject_cast<OpenSR::Engine*>(qApp)->execScript(genScriptUrl);
     emit(contextChanged());
 }
-
-PlanetarySystem* WorldManager::currentSystem() const
-{
-    return m_currentSystem;
-}
-
-void WorldManager::setCurrentSystem(PlanetarySystem *system)
-{
-    //PlanetarySystem *sys = qobject_cast<PlanetarySystem*>(system);
-    if (m_currentSystem != system)
-    {
-        m_currentSystem = system;
-        emit(currentSystemChanged());
-    }
-}
-
 }
 }

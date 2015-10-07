@@ -18,13 +18,11 @@
 
 #include "Asteroid.h"
 
-#include <QHash>
-
 namespace OpenSR
 {
 namespace World
 {
-const quint32 Asteroid::staticTypeId = qHash(Asteroid::staticMetaObject.className());
+const quint32 Asteroid::staticTypeId = typeIdFromClassName(Asteroid::staticMetaObject.className());
 
 Asteroid::Asteroid(WorldObject *parent, quint32 id): SpaceObject(parent, id)
 {

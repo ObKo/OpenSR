@@ -18,13 +18,11 @@
 
 #include "Item.h"
 
-#include <QHash>
-
 namespace OpenSR
 {
 namespace World
 {
-const quint32 Item::staticTypeId = qHash(Item::staticMetaObject.className());
+const quint32 Item::staticTypeId = typeIdFromClassName(Item::staticMetaObject.className());
 
 Item::Item(WorldObject *parent, quint32 id): WorldObject(parent, id)
 {

@@ -18,14 +18,11 @@
 
 #include "PlanetarySystem.h"
 
-#include <QHash>
-#include <QDataStream>
-
 namespace OpenSR
 {
 namespace World
 {
-const quint32 PlanetarySystem::staticTypeId = qHash(PlanetarySystem::staticMetaObject.className());
+const quint32 PlanetarySystem::staticTypeId = typeIdFromClassName(PlanetarySystem::staticMetaObject.className());
 
 PlanetarySystem::PlanetarySystem(WorldObject *parent, quint32 id): WorldObject(parent, id)
 {
@@ -79,27 +76,5 @@ void PlanetarySystem::setSize(int size)
         emit(sizeChanged());
     }
 }
-
-bool PlanetarySystem::save(QDataStream &stream) const
-{
-    if (!WorldObject::save(stream))
-        return false;
-
-    stream << m_style;
-
-    return stream.status() == QDataStream::Ok;
-}
-
-bool PlanetarySystem::load(QDataStream &stream, const QMap<quint32, WorldObject*>& objects)
-{
-    if (!WorldObject::load(stream, objects))
-        return false;
-
-    stream >> m_style;
-    emit(styleChanged());
-
-    return stream.status() == QDataStream::Ok;
-}
-
 }
 }

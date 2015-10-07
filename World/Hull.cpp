@@ -18,13 +18,11 @@
 
 #include "Hull.h"
 
-#include <QHash>
-
 namespace OpenSR
 {
 namespace World
 {
-const quint32 Hull::staticTypeId = qHash(Hull::staticMetaObject.className());
+const quint32 Hull::staticTypeId = typeIdFromClassName(Hull::staticMetaObject.className());
 
 Hull::Hull(WorldObject *parent, quint32 id): Equipment(parent, id)
 {

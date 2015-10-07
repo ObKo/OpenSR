@@ -18,13 +18,11 @@
 
 #include "Engine.h"
 
-#include <QHash>
-
 namespace OpenSR
 {
 namespace World
 {
-const quint32 Engine::staticTypeId = qHash(Engine::staticMetaObject.className());
+const quint32 Engine::staticTypeId = typeIdFromClassName(Engine::staticMetaObject.className());
 
 Engine::Engine(WorldObject *parent, quint32 id): Equipment(parent, id)
 {

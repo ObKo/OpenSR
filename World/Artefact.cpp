@@ -18,13 +18,11 @@
 
 #include "Artefact.h"
 
-#include <QHash>
-
 namespace OpenSR
 {
 namespace World
 {
-const quint32 Artefact::staticTypeId = qHash(Artefact::staticMetaObject.className());
+const quint32 Artefact::staticTypeId = typeIdFromClassName(Artefact::staticMetaObject.className());
 
 Artefact::Artefact(WorldObject *parent, quint32 id): Equipment(parent, id)
 {

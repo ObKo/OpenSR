@@ -18,13 +18,11 @@
 
 #include "Radar.h"
 
-#include <QHash>
-
 namespace OpenSR
 {
 namespace World
 {
-const quint32 Radar::staticTypeId = qHash(Radar::staticMetaObject.className());
+const quint32 Radar::staticTypeId = typeIdFromClassName(Radar::staticMetaObject.className());
 
 Radar::Radar(WorldObject *parent, quint32 id): Equipment(parent, id)
 {

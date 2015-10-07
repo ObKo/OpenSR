@@ -18,13 +18,11 @@
 
 #include "Weapon.h"
 
-#include <QHash>
-
 namespace OpenSR
 {
 namespace World
 {
-const quint32 Weapon::staticTypeId = qHash(Weapon::staticMetaObject.className());
+const quint32 Weapon::staticTypeId = typeIdFromClassName(Weapon::staticMetaObject.className());
 
 Weapon::Weapon(WorldObject *parent, quint32 id): Equipment(parent, id)
 {

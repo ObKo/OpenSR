@@ -49,6 +49,6 @@ var system = genSystem(sector, "Solar", 10000, "res:/DATA/Star/Star00.gai", "#FF
 var planet = World.InhabitedPlanet(system);
 planet.name = "Earth"
 
-world.currentSystem = system
+context.currentSystem = system
 
 world.saveWorld("/tmp/test.osr");

@@ -18,15 +18,16 @@
 
 #include "WorldContext.h"
 
-#include <QHash>
+#include <QMap>
+#include <QDataStream>
 
 namespace OpenSR
 {
 namespace World
 {
-const quint32 WorldContext::staticTypeId = qHash(WorldContext::staticMetaObject.className());
+const quint32 WorldContext::staticTypeId = typeIdFromClassName(WorldContext::staticMetaObject.className());
 
-WorldContext::WorldContext(WorldObject *parent, quint32 id): WorldObject(parent, id)
+WorldContext::WorldContext(WorldObject *parent, quint32 id): WorldObject(parent, id), m_currentSystem(0)
 {
 }
 
@@ -42,6 +43,43 @@ quint32 WorldContext::typeId() const
 QString WorldContext::namePrefix() const
 {
     return tr("World");
+}
+
+
+PlanetarySystem* WorldContext::currentSystem() const
+{
+    return m_currentSystem;
+}
+
+void WorldContext::setCurrentSystem(PlanetarySystem *system)
+{
+    if (m_currentSystem != system)
+    {
+        m_currentSystem = system;
+        emit(currentSystemChanged());
+    }
+}
+
+bool WorldContext::save(QDataStream &stream) const
+{
+    quint32 id = 0;
+
+    if (m_currentSystem)
+        id = m_currentSystem->id();
+
+    stream << id;
+    return stream.status() == QDataStream::Ok;
+}
+
+bool WorldContext::load(QDataStream &stream, const QMap<quint32, WorldObject*>& objects)
+{
+    quint32 id;
+    stream >> id;
+    auto it = objects.find(id);
+    if (it != objects.end())
+        setCurrentSystem(qobject_cast<PlanetarySystem*>(it.value()));
+
+    return stream.status() == QDataStream::Ok;
 }
 }
 }

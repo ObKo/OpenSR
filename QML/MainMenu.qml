@@ -82,10 +82,7 @@ Item {
             normalImage: "res:/DATA/FormMain2/2ButNewN.gi"
             hoveredImage: "res:/DATA/FormMain2/2ButNewA.gi"
             downImage: "res:/DATA/FormMain2/2ButNewD.gi"
-	    
-            onClicked: {
-                newGame();
-            }
+            onClicked: newGame()
         }
         Button {
             id: loadButton
@@ -94,6 +91,7 @@ Item {
             downImage: "res:/DATA/FormMain2/2ButLoadD.gi"
             anchors.top: newButton.bottom
             anchors.topMargin: 10
+            onClicked: loadGame()
         }
         Button {
             id: settingsButton
@@ -179,7 +177,13 @@ Item {
 
     function newGame() {
         World.WorldManager.generateWorld("res:/World/DefaultWorldGen.js");
-        changeScreen("qrc:/OpenSR/SpaceView.qml", {"system": World.WorldManager.currentSystem});
+        changeScreen("qrc:/OpenSR/SpaceView.qml", {"system": World.WorldManager.context.currentSystem});
+        menu.destroy()
+    }
+
+    function loadGame() {
+        World.WorldManager.loadWorld("/tmp/test.osr");
+        changeScreen("qrc:/OpenSR/SpaceView.qml", {"system": World.WorldManager.context.currentSystem});
         menu.destroy()
     }
 

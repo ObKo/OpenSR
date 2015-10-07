@@ -18,13 +18,11 @@
 
 #include "DesertPlanet.h"
 
-#include <QHash>
-
 namespace OpenSR
 {
 namespace World
 {
-const quint32 DesertPlanet::staticTypeId = qHash(DesertPlanet::staticMetaObject.className());
+const quint32 DesertPlanet::staticTypeId = typeIdFromClassName(DesertPlanet::staticMetaObject.className());
 
 DesertPlanet::DesertPlanet(WorldObject *parent, quint32 id): Planet(parent, id)
 {

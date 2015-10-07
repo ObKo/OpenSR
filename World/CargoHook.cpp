@@ -18,13 +18,11 @@
 
 #include "CargoHook.h"
 
-#include <QHash>
-
 namespace OpenSR
 {
 namespace World
 {
-const quint32 CargoHook::staticTypeId = qHash(CargoHook::staticMetaObject.className());
+const quint32 CargoHook::staticTypeId = typeIdFromClassName(CargoHook::staticMetaObject.className());
 
 CargoHook::CargoHook(WorldObject *parent, quint32 id): Equipment(parent, id)
 {

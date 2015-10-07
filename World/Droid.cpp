@@ -18,13 +18,11 @@
 
 #include "Droid.h"
 
-#include <QHash>
-
 namespace OpenSR
 {
 namespace World
 {
-const quint32 Droid::staticTypeId = qHash(Droid::staticMetaObject.className());
+const quint32 Droid::staticTypeId = typeIdFromClassName(Droid::staticMetaObject.className());
 
 Droid::Droid(WorldObject *parent, quint32 id): Equipment(parent, id)
 {

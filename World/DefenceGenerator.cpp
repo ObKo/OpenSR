@@ -18,13 +18,11 @@
 
 #include "DefenceGenerator.h"
 
-#include <QHash>
-
 namespace OpenSR
 {
 namespace World
 {
-const quint32 DefenceGenerator::staticTypeId = qHash(DefenceGenerator::staticMetaObject.className());
+const quint32 DefenceGenerator::staticTypeId = typeIdFromClassName(DefenceGenerator::staticMetaObject.className());
 
 DefenceGenerator::DefenceGenerator(WorldObject *parent, quint32 id): Equipment(parent, id)
 {

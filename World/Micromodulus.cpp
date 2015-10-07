@@ -18,13 +18,11 @@
 
 #include "Micromodulus.h"
 
-#include <QHash>
-
 namespace OpenSR
 {
 namespace World
 {
-const quint32 Micromodulus::staticTypeId = qHash(Micromodulus::staticMetaObject.className());
+const quint32 Micromodulus::staticTypeId = typeIdFromClassName(Micromodulus::staticMetaObject.className());
 
 Micromodulus::Micromodulus(WorldObject *parent, quint32 id): Item(parent, id)
 {

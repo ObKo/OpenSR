@@ -24,7 +24,6 @@
 #include <QObject>
 
 #include "WorldContext.h"
-#include "PlanetarySystem.h"
 
 namespace OpenSR
 {
@@ -34,7 +33,6 @@ class OPENSR_WORLD_API WorldManager: public QObject
 {
     Q_OBJECT
     Q_PROPERTY(WorldContext* context READ context NOTIFY contextChanged)
-    Q_PROPERTY(PlanetarySystem* currentSystem READ currentSystem WRITE setCurrentSystem NOTIFY currentSystemChanged)
 
 public:
     WorldManager(QObject *parent = 0);
@@ -45,9 +43,6 @@ public:
     static WorldManager *instance();
 
     WorldContext* context() const;
-    PlanetarySystem* currentSystem() const;
-
-    void setCurrentSystem(PlanetarySystem *system);
 
     Q_INVOKABLE QString typeName(quint32 type) const;
 
@@ -57,12 +52,9 @@ public:
 
 Q_SIGNALS:
     void contextChanged();
-    void currentSystemChanged();
 
 private:
     WorldContext* m_context;
-
-    PlanetarySystem *m_currentSystem;
 
     static WorldManager* m_staticInstance;
     static quint32 m_idPool;

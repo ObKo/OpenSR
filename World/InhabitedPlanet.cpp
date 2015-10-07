@@ -18,13 +18,11 @@
 
 #include "InhabitedPlanet.h"
 
-#include <QHash>
-
 namespace OpenSR
 {
 namespace World
 {
-const quint32 InhabitedPlanet::staticTypeId = qHash(InhabitedPlanet::staticMetaObject.className());
+const quint32 InhabitedPlanet::staticTypeId = typeIdFromClassName(InhabitedPlanet::staticMetaObject.className());
 
 InhabitedPlanet::InhabitedPlanet(WorldObject *parent, quint32 id): Planet(parent, id)
 {

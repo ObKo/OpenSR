@@ -18,13 +18,11 @@
 
 #include "Tank.h"
 
-#include <QHash>
-
 namespace OpenSR
 {
 namespace World
 {
-const quint32 Tank::staticTypeId = qHash(Tank::staticMetaObject.className());
+const quint32 Tank::staticTypeId = typeIdFromClassName(Tank::staticMetaObject.className());
 
 Tank::Tank(WorldObject *parent, quint32 id): Equipment(parent, id)
 {

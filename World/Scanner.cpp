@@ -18,13 +18,11 @@
 
 #include "Scanner.h"
 
-#include <QHash>
-
 namespace OpenSR
 {
 namespace World
 {
-const quint32 Scanner::staticTypeId = qHash(Scanner::staticMetaObject.className());
+const quint32 Scanner::staticTypeId = typeIdFromClassName(Scanner::staticMetaObject.className());
 
 Scanner::Scanner(WorldObject *parent, quint32 id): Equipment(parent, id)
 {

@@ -18,13 +18,11 @@
 
 #include "Ship.h"
 
-#include <QHash>
-
 namespace OpenSR
 {
 namespace World
 {
-const quint32 Ship::staticTypeId = qHash(Ship::staticMetaObject.className());
+const quint32 Ship::staticTypeId = typeIdFromClassName(Ship::staticMetaObject.className());
 
 Ship::Ship(WorldObject *parent, quint32 id): MannedObject(parent, id)
 {

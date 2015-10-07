@@ -66,9 +66,6 @@ public:
     void setStyle(const PlanetarySystemStyle& style);
     void setSize(int size);
 
-    virtual bool save(QDataStream &stream) const;
-    virtual bool load(QDataStream &stream, const QMap<quint32, WorldObject*>& objects);
-
 Q_SIGNALS:
     void styleChanged();
     void sizeChanged();

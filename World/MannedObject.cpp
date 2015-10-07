@@ -18,13 +18,11 @@
 
 #include "MannedObject.h"
 
-#include <QHash>
-
 namespace OpenSR
 {
 namespace World
 {
-const quint32 MannedObject::staticTypeId = qHash(MannedObject::staticMetaObject.className());
+const quint32 MannedObject::staticTypeId = typeIdFromClassName(MannedObject::staticMetaObject.className());
 
 MannedObject::MannedObject(WorldObject *parent, quint32 id): SpaceObject(parent, id)
 {

@@ -71,6 +71,7 @@ void bindWorldTypes(QJSEngine *script, QQmlEngine *qml)
     qmlRegisterType<WorldObject>("OpenSR.World", 1, 0, "WorldObject");
     qmlRegisterType<WorldContext>("OpenSR.World", 1, 0, "WorldContext");
     qRegisterMetaType<RaceStyle>();
+    qRegisterMetaTypeStreamOperators<RaceStyle>();
     qmlRegisterType<Race>("OpenSR.World", 1, 0, "Race");
     // Have to rename Item, because there is bug in namespaces: QTBUG-10822
     qmlRegisterType<Item>("OpenSR.World", 1, 0, "WorldItem");
@@ -89,6 +90,7 @@ void bindWorldTypes(QJSEngine *script, QQmlEngine *qml)
     qmlRegisterType<Weapon>("OpenSR.World", 1, 0, "Weapon");
     qmlRegisterType<Sector>("OpenSR.World", 1, 0, "Sector");
     qRegisterMetaType<PlanetarySystemStyle>();
+    qRegisterMetaTypeStreamOperators<PlanetarySystemStyle>();
     qmlRegisterType<PlanetarySystem>("OpenSR.World", 1, 0, "PlanetarySystem");
     qmlRegisterType<SpaceObject>("OpenSR.World", 1, 0, "SpaceObject");
     qmlRegisterType<Container>("OpenSR.World", 1, 0, "Container");
