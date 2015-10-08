@@ -24,7 +24,7 @@ namespace OpenSR
 {
 namespace World
 {
-const quint32 Tank::staticTypeId = typeIdFromClassName(Tank::staticMetaObject.className());
+const quint32 Tank::m_staticTypeId = typeIdFromClassName(Tank::staticMetaObject.className());
 
 template<>
 void WorldObject::registerType<Tank>()
@@ -38,6 +38,18 @@ Tank* WorldObject::createObject(WorldObject *parent, quint32 id)
     return new Tank(parent, id);
 }
 
+template<>
+quint32 WorldObject::staticTypeId<Tank>()
+{
+    return Tank::m_staticTypeId;
+}
+
+template<>
+const QMetaObject* WorldObject::staticTypeMeta<Tank>()
+{
+    return &Tank::staticMetaObject;
+}
+
 Tank::Tank(WorldObject *parent, quint32 id): Equipment(parent, id)
 {
 }
@@ -48,7 +60,7 @@ Tank::~Tank()
 
 quint32 Tank::typeId() const
 {
-    return Tank::staticTypeId;
+    return Tank::m_staticTypeId;
 }
 
 QString Tank::namePrefix() const

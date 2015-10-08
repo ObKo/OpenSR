@@ -24,7 +24,7 @@ namespace OpenSR
 {
 namespace World
 {
-const quint32 Micromodulus::staticTypeId = typeIdFromClassName(Micromodulus::staticMetaObject.className());
+const quint32 Micromodulus::m_staticTypeId = typeIdFromClassName(Micromodulus::staticMetaObject.className());
 
 template<>
 void WorldObject::registerType<Micromodulus>()
@@ -38,6 +38,18 @@ Micromodulus* WorldObject::createObject(WorldObject *parent, quint32 id)
     return new Micromodulus(parent, id);
 }
 
+template<>
+quint32 WorldObject::staticTypeId<Micromodulus>()
+{
+    return Micromodulus::m_staticTypeId;
+}
+
+template<>
+const QMetaObject* WorldObject::staticTypeMeta<Micromodulus>()
+{
+    return &Micromodulus::staticMetaObject;
+}
+
 Micromodulus::Micromodulus(WorldObject *parent, quint32 id): Item(parent, id)
 {
 }
@@ -48,7 +60,7 @@ Micromodulus::~Micromodulus()
 
 quint32 Micromodulus::typeId() const
 {
-    return Micromodulus::staticTypeId;
+    return Micromodulus::m_staticTypeId;
 }
 
 QString Micromodulus::namePrefix() const

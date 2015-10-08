@@ -24,7 +24,7 @@ namespace OpenSR
 {
 namespace World
 {
-const quint32 Asteroid::staticTypeId = typeIdFromClassName(Asteroid::staticMetaObject.className());
+const quint32 Asteroid::m_staticTypeId = typeIdFromClassName(Asteroid::staticMetaObject.className());
 
 template<>
 void WorldObject::registerType<Asteroid>()
@@ -38,6 +38,18 @@ Asteroid* WorldObject::createObject(WorldObject *parent, quint32 id)
     return new Asteroid(parent, id);
 }
 
+template<>
+quint32 WorldObject::staticTypeId<Asteroid>()
+{
+    return Asteroid::m_staticTypeId;
+}
+
+template<>
+const QMetaObject* WorldObject::staticTypeMeta<Asteroid>()
+{
+    return &Asteroid::staticMetaObject;
+}
+
 Asteroid::Asteroid(WorldObject *parent, quint32 id): SpaceObject(parent, id)
 {
 }
@@ -48,7 +60,7 @@ Asteroid::~Asteroid()
 
 quint32 Asteroid::typeId() const
 {
-    return Asteroid::staticTypeId;
+    return Asteroid::m_staticTypeId;
 }
 
 QString Asteroid::namePrefix() const

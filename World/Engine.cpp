@@ -24,7 +24,7 @@ namespace OpenSR
 {
 namespace World
 {
-const quint32 Engine::staticTypeId = typeIdFromClassName(Engine::staticMetaObject.className());
+const quint32 Engine::m_staticTypeId = typeIdFromClassName(Engine::staticMetaObject.className());
 
 template<>
 void WorldObject::registerType<Engine>()
@@ -38,6 +38,18 @@ Engine* WorldObject::createObject(WorldObject *parent, quint32 id)
     return new Engine(parent, id);
 }
 
+template<>
+quint32 WorldObject::staticTypeId<Engine>()
+{
+    return Engine::m_staticTypeId;
+}
+
+template<>
+const QMetaObject* WorldObject::staticTypeMeta<Engine>()
+{
+    return &Engine::staticMetaObject;
+}
+
 Engine::Engine(WorldObject *parent, quint32 id): Equipment(parent, id)
 {
 }
@@ -48,7 +60,7 @@ Engine::~Engine()
 
 quint32 Engine::typeId() const
 {
-    return Engine::staticTypeId;
+    return Engine::m_staticTypeId;
 }
 
 QString Engine::namePrefix() const

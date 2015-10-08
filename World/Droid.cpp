@@ -24,7 +24,7 @@ namespace OpenSR
 {
 namespace World
 {
-const quint32 Droid::staticTypeId = typeIdFromClassName(Droid::staticMetaObject.className());
+const quint32 Droid::m_staticTypeId = typeIdFromClassName(Droid::staticMetaObject.className());
 
 template<>
 void WorldObject::registerType<Droid>()
@@ -38,6 +38,18 @@ Droid* WorldObject::createObject(WorldObject *parent, quint32 id)
     return new Droid(parent, id);
 }
 
+template<>
+quint32 WorldObject::staticTypeId<Droid>()
+{
+    return Droid::m_staticTypeId;
+}
+
+template<>
+const QMetaObject* WorldObject::staticTypeMeta<Droid>()
+{
+    return &Droid::staticMetaObject;
+}
+
 Droid::Droid(WorldObject *parent, quint32 id): Equipment(parent, id)
 {
 }
@@ -48,7 +60,7 @@ Droid::~Droid()
 
 quint32 Droid::typeId() const
 {
-    return Droid::staticTypeId;
+    return Droid::m_staticTypeId;
 }
 
 QString Droid::namePrefix() const

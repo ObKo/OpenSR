@@ -24,7 +24,7 @@ namespace OpenSR
 {
 namespace World
 {
-const quint32 DefenceGenerator::staticTypeId = typeIdFromClassName(DefenceGenerator::staticMetaObject.className());
+const quint32 DefenceGenerator::m_staticTypeId = typeIdFromClassName(DefenceGenerator::staticMetaObject.className());
 
 template<>
 void WorldObject::registerType<DefenceGenerator>()
@@ -38,6 +38,18 @@ DefenceGenerator* WorldObject::createObject(WorldObject *parent, quint32 id)
     return new DefenceGenerator(parent, id);
 }
 
+template<>
+quint32 WorldObject::staticTypeId<DefenceGenerator>()
+{
+    return DefenceGenerator::m_staticTypeId;
+}
+
+template<>
+const QMetaObject* WorldObject::staticTypeMeta<DefenceGenerator>()
+{
+    return &DefenceGenerator::staticMetaObject;
+}
+
 DefenceGenerator::DefenceGenerator(WorldObject *parent, quint32 id): Equipment(parent, id)
 {
 }
@@ -48,7 +60,7 @@ DefenceGenerator::~DefenceGenerator()
 
 quint32 DefenceGenerator::typeId() const
 {
-    return DefenceGenerator::staticTypeId;
+    return DefenceGenerator::m_staticTypeId;
 }
 
 QString DefenceGenerator::namePrefix() const

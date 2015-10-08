@@ -24,7 +24,7 @@ namespace OpenSR
 {
 namespace World
 {
-const quint32 Artefact::staticTypeId = typeIdFromClassName(Artefact::staticMetaObject.className());
+const quint32 Artefact::m_staticTypeId = typeIdFromClassName(Artefact::staticMetaObject.className());
 
 template<>
 void WorldObject::registerType<Artefact>()
@@ -38,6 +38,18 @@ Artefact* WorldObject::createObject(WorldObject *parent, quint32 id)
     return new Artefact(parent, id);
 }
 
+template<>
+quint32 WorldObject::staticTypeId<Artefact>()
+{
+    return Artefact::m_staticTypeId;
+}
+
+template<>
+const QMetaObject* WorldObject::staticTypeMeta<Artefact>()
+{
+    return &Artefact::staticMetaObject;
+}
+
 Artefact::Artefact(WorldObject *parent, quint32 id): Equipment(parent, id)
 {
 }
@@ -48,7 +60,7 @@ Artefact::~Artefact()
 
 quint32 Artefact::typeId() const
 {
-    return Artefact::staticTypeId;
+    return Artefact::m_staticTypeId;
 }
 
 QString Artefact::namePrefix() const

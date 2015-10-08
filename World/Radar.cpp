@@ -24,7 +24,7 @@ namespace OpenSR
 {
 namespace World
 {
-const quint32 Radar::staticTypeId = typeIdFromClassName(Radar::staticMetaObject.className());
+const quint32 Radar::m_staticTypeId = typeIdFromClassName(Radar::staticMetaObject.className());
 
 template<>
 void WorldObject::registerType<Radar>()
@@ -38,6 +38,18 @@ Radar* WorldObject::createObject(WorldObject *parent, quint32 id)
     return new Radar(parent, id);
 }
 
+template<>
+quint32 WorldObject::staticTypeId<Radar>()
+{
+    return Radar::m_staticTypeId;
+}
+
+template<>
+const QMetaObject* WorldObject::staticTypeMeta<Radar>()
+{
+    return &Radar::staticMetaObject;
+}
+
 Radar::Radar(WorldObject *parent, quint32 id): Equipment(parent, id)
 {
 }
@@ -48,7 +60,7 @@ Radar::~Radar()
 
 quint32 Radar::typeId() const
 {
-    return Radar::staticTypeId;
+    return Radar::m_staticTypeId;
 }
 
 QString Radar::namePrefix() const

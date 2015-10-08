@@ -55,10 +55,33 @@ public:
 
     static quint32 typeIdFromClassName(const QString& className);
 
+    /*!
+     * @brief Function to register class in meta & QML systems.
+     * @note All subclasses should provide specialized version of this function.
+     */
     template<class T>
     static void registerType();
+    /*!
+     * @brief Function to create object of class T.
+     * Used in object factory for JavaScript & QML.
+     * @note All subclasses should provide specialized version of this function.
+     */
     template<class T>
     static T* createObject(WorldObject* parent = 0, quint32 id = 0);
+    /*!
+     * @brief Function to get type id
+     * Used in world serialization.
+     * @note All subclasses should provide specialized version of this function.
+     */
+    template<class T>
+    static quint32 staticTypeId();
+    /*!
+     * @brief Function to get type meta object
+     * Used in world serialization.
+     * @note All subclasses should provide specialized version of this function.
+     */
+    template<class T>
+    static const QMetaObject* staticTypeMeta();
 
 Q_SIGNALS:
     void nameChanged();

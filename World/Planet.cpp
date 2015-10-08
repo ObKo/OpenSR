@@ -24,7 +24,7 @@ namespace OpenSR
 {
 namespace World
 {
-const quint32 Planet::staticTypeId = typeIdFromClassName(Planet::staticMetaObject.className());
+const quint32 Planet::m_staticTypeId = typeIdFromClassName(Planet::staticMetaObject.className());
 
 template<>
 void WorldObject::registerType<Planet>()
@@ -38,6 +38,18 @@ Planet* WorldObject::createObject(WorldObject *parent, quint32 id)
     return new Planet(parent, id);
 }
 
+template<>
+quint32 WorldObject::staticTypeId<Planet>()
+{
+    return Planet::m_staticTypeId;
+}
+
+template<>
+const QMetaObject* WorldObject::staticTypeMeta<Planet>()
+{
+    return &Planet::staticMetaObject;
+}
+
 Planet::Planet(WorldObject *parent, quint32 id): SpaceObject(parent, id)
 {
 }
@@ -48,7 +60,7 @@ Planet::~Planet()
 
 quint32 Planet::typeId() const
 {
-    return Planet::staticTypeId;
+    return Planet::m_staticTypeId;
 }
 
 QString Planet::namePrefix() const

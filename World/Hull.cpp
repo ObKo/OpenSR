@@ -24,7 +24,7 @@ namespace OpenSR
 {
 namespace World
 {
-const quint32 Hull::staticTypeId = typeIdFromClassName(Hull::staticMetaObject.className());
+const quint32 Hull::m_staticTypeId = typeIdFromClassName(Hull::staticMetaObject.className());
 
 template<>
 void WorldObject::registerType<Hull>()
@@ -38,6 +38,18 @@ Hull* WorldObject::createObject(WorldObject *parent, quint32 id)
     return new Hull(parent, id);
 }
 
+template<>
+quint32 WorldObject::staticTypeId<Hull>()
+{
+    return Hull::m_staticTypeId;
+}
+
+template<>
+const QMetaObject* WorldObject::staticTypeMeta<Hull>()
+{
+    return &Hull::staticMetaObject;
+}
+
 Hull::Hull(WorldObject *parent, quint32 id): Equipment(parent, id)
 {
 }
@@ -48,7 +60,7 @@ Hull::~Hull()
 
 quint32 Hull::typeId() const
 {
-    return Hull::staticTypeId;
+    return Hull::m_staticTypeId;
 }
 
 QString Hull::namePrefix() const

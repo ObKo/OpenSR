@@ -24,7 +24,7 @@ namespace OpenSR
 {
 namespace World
 {
-const quint32 Sector::staticTypeId = typeIdFromClassName(Sector::staticMetaObject.className());
+const quint32 Sector::m_staticTypeId = typeIdFromClassName(Sector::staticMetaObject.className());
 
 template<>
 void WorldObject::registerType<Sector>()
@@ -36,6 +36,18 @@ template<>
 Sector* WorldObject::createObject(WorldObject *parent, quint32 id)
 {
     return new Sector(parent, id);
+}
+
+template<>
+quint32 WorldObject::staticTypeId<Sector>()
+{
+    return Sector::m_staticTypeId;
+}
+
+template<>
+const QMetaObject* WorldObject::staticTypeMeta<Sector>()
+{
+    return &Sector::staticMetaObject;
 }
 
 Sector::Sector(WorldObject *parent, quint32 id): WorldObject(parent, id)
@@ -59,7 +71,7 @@ void Sector::setPosition(const QPointF& position)
 
 quint32 Sector::typeId() const
 {
-    return Sector::staticTypeId;
+    return Sector::m_staticTypeId;
 }
 
 QString Sector::namePrefix() const

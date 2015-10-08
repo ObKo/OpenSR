@@ -24,7 +24,7 @@ namespace OpenSR
 {
 namespace World
 {
-const quint32 Ship::staticTypeId = typeIdFromClassName(Ship::staticMetaObject.className());
+const quint32 Ship::m_staticTypeId = typeIdFromClassName(Ship::staticMetaObject.className());
 
 template<>
 void WorldObject::registerType<Ship>()
@@ -38,6 +38,18 @@ Ship* WorldObject::createObject(WorldObject *parent, quint32 id)
     return new Ship(parent, id);
 }
 
+template<>
+quint32 WorldObject::staticTypeId<Ship>()
+{
+    return Ship::m_staticTypeId;
+}
+
+template<>
+const QMetaObject* WorldObject::staticTypeMeta<Ship>()
+{
+    return &Ship::staticMetaObject;
+}
+
 Ship::Ship(WorldObject *parent, quint32 id): MannedObject(parent, id)
 {
 }
@@ -48,7 +60,7 @@ Ship::~Ship()
 
 quint32 Ship::typeId() const
 {
-    return Ship::staticTypeId;
+    return Ship::m_staticTypeId;
 }
 
 QString Ship::namePrefix() const

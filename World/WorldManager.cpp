@@ -24,44 +24,46 @@
 #include <QDebug>
 #include <QDataStream>
 #include <QMetaProperty>
+#include <QUrl>
 
 #include <OpenSR/Engine.h>
 
 #include "WorldObject.h"
 #include "WorldContext.h"
-#include "Race.h"
-#include "Item.h"
-#include "Goods.h"
-#include "Equipment.h"
-#include "Micromodulus.h"
-#include "Artefact.h"
-#include "Hull.h"
-#include "Engine.h"
-#include "Tank.h"
-#include "Droid.h"
-#include "CargoHook.h"
-#include "DefenceGenerator.h"
-#include "Radar.h"
-#include "Scanner.h"
-#include "Weapon.h"
-#include "Sector.h"
-#include "PlanetarySystem.h"
-#include "SpaceObject.h"
-#include "Container.h"
-#include "Asteroid.h"
-#include "Planet.h"
-#include "MannedObject.h"
-#include "InhabitedPlanet.h"
-#include "DesertPlanet.h"
-#include "Ship.h"
-#include "SpaceStation.h"
 
 namespace OpenSR
 {
 namespace World
 {
+class Race;
+class Item;
+class Goods;
+class Equipment;
+class Micromodulus;
+class Artefact;
+class Hull;
+class Engine;
+class Tank;
+class Droid;
+class CargoHook;
+class DefenceGenerator;
+class Radar;
+class Scanner;
+class Weapon;
+class Sector;
+class SpaceObject;
+class Container;
+class Asteroid;
+class Planet;
+class MannedObject;
+class InhabitedPlanet;
+class DesertPlanet;
+class Ship;
+class SpaceStation;
+
 namespace
 {
+
 static QMap<quint32, const QMetaObject*> metaMap;
 const quint32 SAVE_FILE_SIGNATURE = 0x5352534F;
 const quint32 OBJECT_SIGNATURE = 0x4F575253;
@@ -178,34 +180,34 @@ WorldManager::WorldManager(QObject *parent): QObject(parent),
 
     WorldManager::m_staticInstance = this;
 
-    metaMap.insert(WorldObject::staticTypeId, &WorldObject::staticMetaObject);
-    metaMap.insert(WorldContext::staticTypeId, &WorldContext::staticMetaObject);
-    metaMap.insert(Race::staticTypeId, &Race::staticMetaObject);
-    metaMap.insert(Item::staticTypeId, &Item::staticMetaObject);
-    metaMap.insert(Goods::staticTypeId, &Goods::staticMetaObject);
-    metaMap.insert(Equipment::staticTypeId, &Equipment::staticMetaObject);
-    metaMap.insert(Micromodulus::staticTypeId, &Micromodulus::staticMetaObject);
-    metaMap.insert(Artefact::staticTypeId, &Artefact::staticMetaObject);
-    metaMap.insert(Hull::staticTypeId, &Hull::staticMetaObject);
-    metaMap.insert(Engine::staticTypeId, &Engine::staticMetaObject);
-    metaMap.insert(Tank::staticTypeId, &Tank::staticMetaObject);
-    metaMap.insert(Droid::staticTypeId, &Droid::staticMetaObject);
-    metaMap.insert(CargoHook::staticTypeId, &CargoHook::staticMetaObject);
-    metaMap.insert(DefenceGenerator::staticTypeId, &DefenceGenerator::staticMetaObject);
-    metaMap.insert(Radar::staticTypeId, &Radar::staticMetaObject);
-    metaMap.insert(Scanner::staticTypeId, &Scanner::staticMetaObject);
-    metaMap.insert(Weapon::staticTypeId, &Weapon::staticMetaObject);
-    metaMap.insert(Sector::staticTypeId, &Sector::staticMetaObject);
-    metaMap.insert(PlanetarySystem::staticTypeId, &PlanetarySystem::staticMetaObject);
-    metaMap.insert(SpaceObject::staticTypeId, &SpaceObject::staticMetaObject);
-    metaMap.insert(Container::staticTypeId, &Container::staticMetaObject);
-    metaMap.insert(Asteroid::staticTypeId, &Asteroid::staticMetaObject);
-    metaMap.insert(Planet::staticTypeId, &Planet::staticMetaObject);
-    metaMap.insert(MannedObject::staticTypeId, &MannedObject::staticMetaObject);
-    metaMap.insert(InhabitedPlanet::staticTypeId, &InhabitedPlanet::staticMetaObject);
-    metaMap.insert(DesertPlanet::staticTypeId, &DesertPlanet::staticMetaObject);
-    metaMap.insert(Ship::staticTypeId, &Ship::staticMetaObject);
-    metaMap.insert(SpaceStation::staticTypeId, &SpaceStation::staticMetaObject);
+    metaMap.insert(WorldObject::staticTypeId<WorldObject>(), WorldObject::staticTypeMeta<WorldObject>());
+    metaMap.insert(WorldObject::staticTypeId<WorldContext>(), WorldObject::staticTypeMeta<WorldContext>());
+    metaMap.insert(WorldObject::staticTypeId<Race>(), WorldObject::staticTypeMeta<Race>());
+    metaMap.insert(WorldObject::staticTypeId<Item>(), WorldObject::staticTypeMeta<Item>());
+    metaMap.insert(WorldObject::staticTypeId<Goods>(), WorldObject::staticTypeMeta<Goods>());
+    metaMap.insert(WorldObject::staticTypeId<Equipment>(), WorldObject::staticTypeMeta<Equipment>());
+    metaMap.insert(WorldObject::staticTypeId<Micromodulus>(), WorldObject::staticTypeMeta<Micromodulus>());
+    metaMap.insert(WorldObject::staticTypeId<Artefact>(), WorldObject::staticTypeMeta<Artefact>());
+    metaMap.insert(WorldObject::staticTypeId<Hull>(), WorldObject::staticTypeMeta<Hull>());
+    metaMap.insert(WorldObject::staticTypeId<World::Engine>(), WorldObject::staticTypeMeta<World::Engine>());
+    metaMap.insert(WorldObject::staticTypeId<Tank>(), WorldObject::staticTypeMeta<Tank>());
+    metaMap.insert(WorldObject::staticTypeId<Droid>(), WorldObject::staticTypeMeta<Droid>());
+    metaMap.insert(WorldObject::staticTypeId<CargoHook>(), WorldObject::staticTypeMeta<CargoHook>());
+    metaMap.insert(WorldObject::staticTypeId<DefenceGenerator>(), WorldObject::staticTypeMeta<DefenceGenerator>());
+    metaMap.insert(WorldObject::staticTypeId<Radar>(), WorldObject::staticTypeMeta<Radar>());
+    metaMap.insert(WorldObject::staticTypeId<Scanner>(), WorldObject::staticTypeMeta<Scanner>());
+    metaMap.insert(WorldObject::staticTypeId<Weapon>(), WorldObject::staticTypeMeta<Weapon>());
+    metaMap.insert(WorldObject::staticTypeId<Sector>(), WorldObject::staticTypeMeta<Sector>());
+    metaMap.insert(WorldObject::staticTypeId<PlanetarySystem>(), WorldObject::staticTypeMeta<PlanetarySystem>());
+    metaMap.insert(WorldObject::staticTypeId<SpaceObject>(), WorldObject::staticTypeMeta<SpaceObject>());
+    metaMap.insert(WorldObject::staticTypeId<Container>(), WorldObject::staticTypeMeta<Container>());
+    metaMap.insert(WorldObject::staticTypeId<Asteroid>(), WorldObject::staticTypeMeta<Asteroid>());
+    metaMap.insert(WorldObject::staticTypeId<Planet>(), WorldObject::staticTypeMeta<Planet>());
+    metaMap.insert(WorldObject::staticTypeId<MannedObject>(), WorldObject::staticTypeMeta<MannedObject>());
+    metaMap.insert(WorldObject::staticTypeId<InhabitedPlanet>(), WorldObject::staticTypeMeta<InhabitedPlanet>());
+    metaMap.insert(WorldObject::staticTypeId<DesertPlanet>(), WorldObject::staticTypeMeta<DesertPlanet>());
+    metaMap.insert(WorldObject::staticTypeId<Ship>(), WorldObject::staticTypeMeta<Ship>());
+    metaMap.insert(WorldObject::staticTypeId<SpaceStation>(), WorldObject::staticTypeMeta<SpaceStation>());
 }
 
 QString WorldManager::typeName(quint32 type) const

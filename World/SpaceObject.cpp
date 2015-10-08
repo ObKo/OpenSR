@@ -24,7 +24,7 @@ namespace OpenSR
 {
 namespace World
 {
-const quint32 SpaceObject::staticTypeId = typeIdFromClassName(SpaceObject::staticMetaObject.className());
+const quint32 SpaceObject::m_staticTypeId = typeIdFromClassName(SpaceObject::staticMetaObject.className());
 
 template<>
 void WorldObject::registerType<SpaceObject>()
@@ -38,6 +38,18 @@ SpaceObject* WorldObject::createObject(WorldObject *parent, quint32 id)
     return new SpaceObject(parent, id);
 }
 
+template<>
+quint32 WorldObject::staticTypeId<SpaceObject>()
+{
+    return SpaceObject::m_staticTypeId;
+}
+
+template<>
+const QMetaObject* WorldObject::staticTypeMeta<SpaceObject>()
+{
+    return &SpaceObject::staticMetaObject;
+}
+
 SpaceObject::SpaceObject(WorldObject *parent, quint32 id): WorldObject(parent, id)
 {
 }
@@ -48,7 +60,7 @@ SpaceObject::~SpaceObject()
 
 quint32 SpaceObject::typeId() const
 {
-    return SpaceObject::staticTypeId;
+    return SpaceObject::m_staticTypeId;
 }
 
 QString SpaceObject::namePrefix() const

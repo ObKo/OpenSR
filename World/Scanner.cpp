@@ -24,7 +24,7 @@ namespace OpenSR
 {
 namespace World
 {
-const quint32 Scanner::staticTypeId = typeIdFromClassName(Scanner::staticMetaObject.className());
+const quint32 Scanner::m_staticTypeId = typeIdFromClassName(Scanner::staticMetaObject.className());
 
 template<>
 void WorldObject::registerType<Scanner>()
@@ -38,6 +38,18 @@ Scanner* WorldObject::createObject(WorldObject *parent, quint32 id)
     return new Scanner(parent, id);
 }
 
+template<>
+quint32 WorldObject::staticTypeId<Scanner>()
+{
+    return Scanner::m_staticTypeId;
+}
+
+template<>
+const QMetaObject* WorldObject::staticTypeMeta<Scanner>()
+{
+    return &Scanner::staticMetaObject;
+}
+
 Scanner::Scanner(WorldObject *parent, quint32 id): Equipment(parent, id)
 {
 }
@@ -48,7 +60,7 @@ Scanner::~Scanner()
 
 quint32 Scanner::typeId() const
 {
-    return Scanner::staticTypeId;
+    return Scanner::m_staticTypeId;
 }
 
 QString Scanner::namePrefix() const

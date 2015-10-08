@@ -24,7 +24,7 @@ namespace OpenSR
 {
 namespace World
 {
-const quint32 Weapon::staticTypeId = typeIdFromClassName(Weapon::staticMetaObject.className());
+const quint32 Weapon::m_staticTypeId = typeIdFromClassName(Weapon::staticMetaObject.className());
 
 template<>
 void WorldObject::registerType<Weapon>()
@@ -38,6 +38,18 @@ Weapon* WorldObject::createObject(WorldObject *parent, quint32 id)
     return new Weapon(parent, id);
 }
 
+template<>
+quint32 WorldObject::staticTypeId<Weapon>()
+{
+    return Weapon::m_staticTypeId;
+}
+
+template<>
+const QMetaObject* WorldObject::staticTypeMeta<Weapon>()
+{
+    return &Weapon::staticMetaObject;
+}
+
 Weapon::Weapon(WorldObject *parent, quint32 id): Equipment(parent, id)
 {
 }
@@ -48,7 +60,7 @@ Weapon::~Weapon()
 
 quint32 Weapon::typeId() const
 {
-    return Weapon::staticTypeId;
+    return Weapon::m_staticTypeId;
 }
 
 QString Weapon::namePrefix() const

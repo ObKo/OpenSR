@@ -31,7 +31,6 @@ namespace OpenSR
 {
 namespace World
 {
-class Race;
 class Item;
 class Goods;
 class Equipment;
@@ -45,10 +44,8 @@ class CargoHook;
 class DefenceGenerator;
 class Radar;
 class Scanner;
-class Micromodulus;
 class Weapon;
 class Sector;
-class PlanetarySystem;
 class SpaceObject;
 class Container;
 class Asteroid;

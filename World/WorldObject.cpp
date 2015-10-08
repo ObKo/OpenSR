@@ -25,7 +25,7 @@ namespace OpenSR
 {
 namespace World
 {
-const quint32 WorldObject::staticTypeId = typeIdFromClassName(WorldObject::staticMetaObject.className());
+const quint32 WorldObject::m_staticTypeId = typeIdFromClassName(WorldObject::staticMetaObject.className());
 
 template<>
 void WorldObject::registerType<WorldObject>()
@@ -37,6 +37,18 @@ template<>
 WorldObject* WorldObject::createObject(WorldObject *parent, quint32 id)
 {
     return new WorldObject(parent, id);
+}
+
+template<>
+quint32 WorldObject::staticTypeId<WorldObject>()
+{
+    return WorldObject::m_staticTypeId;
+}
+
+template<>
+const QMetaObject* WorldObject::staticTypeMeta<WorldObject>()
+{
+    return &WorldObject::staticMetaObject;
 }
 
 WorldObject::WorldObject(WorldObject *parent, quint32 id): QObject(parent),
@@ -57,7 +69,7 @@ quint32 WorldObject::id() const
 
 quint32 WorldObject::typeId() const
 {
-    return WorldObject::staticTypeId;
+    return WorldObject::m_staticTypeId;
 }
 
 QString WorldObject::name() const

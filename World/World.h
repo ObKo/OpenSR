@@ -33,7 +33,7 @@
 # endif
 #endif
 
-#define OPENSR_WORLD_OBJECT public: static const quint32 staticTypeId;
+#define OPENSR_WORLD_OBJECT public: static const quint32 m_staticTypeId;
 
 #include <stdint.h>
 

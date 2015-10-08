@@ -24,7 +24,7 @@ namespace OpenSR
 {
 namespace World
 {
-const quint32 Race::staticTypeId = typeIdFromClassName(Race::staticMetaObject.className());
+const quint32 Race::m_staticTypeId = typeIdFromClassName(Race::staticMetaObject.className());
 
 template<>
 void WorldObject::registerType<Race>()
@@ -40,6 +40,18 @@ Race* WorldObject::createObject(WorldObject *parent, quint32 id)
     return new Race(parent, id);
 }
 
+template<>
+quint32 WorldObject::staticTypeId<Race>()
+{
+    return Race::m_staticTypeId;
+}
+
+template<>
+const QMetaObject* WorldObject::staticTypeMeta<Race>()
+{
+    return &Race::staticMetaObject;
+}
+
 Race::Race(WorldObject *parent, quint32 id): WorldObject(parent, id)
 {
 }
@@ -50,7 +62,7 @@ Race::~Race()
 
 quint32 Race::typeId() const
 {
-    return Race::staticTypeId;
+    return Race::m_staticTypeId;
 }
 
 QString Race::namePrefix() const
