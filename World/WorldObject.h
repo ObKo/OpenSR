@@ -55,6 +55,11 @@ public:
 
     static quint32 typeIdFromClassName(const QString& className);
 
+    template<class T>
+    static void registerType();
+    template<class T>
+    static T* createObject(WorldObject* parent = 0, quint32 id = 0);
+
 Q_SIGNALS:
     void nameChanged();
 

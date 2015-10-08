@@ -19,11 +19,25 @@
 #include "WorldObject.h"
 #include "WorldManager.h"
 
+#include <QtQml>
+
 namespace OpenSR
 {
 namespace World
 {
 const quint32 WorldObject::staticTypeId = typeIdFromClassName(WorldObject::staticMetaObject.className());
+
+template<>
+void WorldObject::registerType<WorldObject>()
+{
+    qmlRegisterType<WorldObject>("OpenSR.World", 1, 0, "WorldObject");
+}
+
+template<>
+WorldObject* WorldObject::createObject(WorldObject *parent, quint32 id)
+{
+    return new WorldObject(parent, id);
+}
 
 WorldObject::WorldObject(WorldObject *parent, quint32 id): QObject(parent),
     m_id(id)

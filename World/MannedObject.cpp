@@ -18,11 +18,25 @@
 
 #include "MannedObject.h"
 
+#include <QtQml>
+
 namespace OpenSR
 {
 namespace World
 {
 const quint32 MannedObject::staticTypeId = typeIdFromClassName(MannedObject::staticMetaObject.className());
+
+template<>
+void WorldObject::registerType<MannedObject>()
+{
+    qmlRegisterType<MannedObject>("OpenSR.World", 1, 0, "MannedObject");
+}
+
+template<>
+MannedObject* WorldObject::createObject(WorldObject *parent, quint32 id)
+{
+    return new MannedObject(parent, id);
+}
 
 MannedObject::MannedObject(WorldObject *parent, quint32 id): SpaceObject(parent, id)
 {

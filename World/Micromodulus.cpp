@@ -18,11 +18,25 @@
 
 #include "Micromodulus.h"
 
+#include <QtQml>
+
 namespace OpenSR
 {
 namespace World
 {
 const quint32 Micromodulus::staticTypeId = typeIdFromClassName(Micromodulus::staticMetaObject.className());
+
+template<>
+void WorldObject::registerType<Micromodulus>()
+{
+    qmlRegisterType<Micromodulus>("OpenSR.World", 1, 0, "Micromodulus");
+}
+
+template<>
+Micromodulus* WorldObject::createObject(WorldObject *parent, quint32 id)
+{
+    return new Micromodulus(parent, id);
+}
 
 Micromodulus::Micromodulus(WorldObject *parent, quint32 id): Item(parent, id)
 {

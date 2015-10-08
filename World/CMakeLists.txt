@@ -1,3 +1,7 @@
+FIND_PACKAGE(Qt5Core REQUIRED)
+FIND_PACKAGE(Qt5Widgets REQUIRED)
+FIND_PACKAGE(Qt5Quick REQUIRED)
+
 SET(SOURCES
     Artefact.cpp
     Asteroid.cpp
@@ -71,6 +75,7 @@ INCLUDE_DIRECTORIES(
     ${CMAKE_SOURCE_DIR}/include
     ${CMAKE_BINARY_DIR}/include
     ${Qt5Gui_INCLUDE_DIRS}
+    ${Qt5Widgets_INCLUDE_DIRS}
     ${Qt5Core_INCLUDE_DIRS}
 )
 

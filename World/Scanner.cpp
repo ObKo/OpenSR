@@ -18,11 +18,25 @@
 
 #include "Scanner.h"
 
+#include <QtQml>
+
 namespace OpenSR
 {
 namespace World
 {
 const quint32 Scanner::staticTypeId = typeIdFromClassName(Scanner::staticMetaObject.className());
+
+template<>
+void WorldObject::registerType<Scanner>()
+{
+    qmlRegisterType<Scanner>("OpenSR.World", 1, 0, "Scanner");
+}
+
+template<>
+Scanner* WorldObject::createObject(WorldObject *parent, quint32 id)
+{
+    return new Scanner(parent, id);
+}
 
 Scanner::Scanner(WorldObject *parent, quint32 id): Equipment(parent, id)
 {

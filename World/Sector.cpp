@@ -18,11 +18,25 @@
 
 #include "Sector.h"
 
+#include <QtQml>
+
 namespace OpenSR
 {
 namespace World
 {
 const quint32 Sector::staticTypeId = typeIdFromClassName(Sector::staticMetaObject.className());
+
+template<>
+void WorldObject::registerType<Sector>()
+{
+    qmlRegisterType<Sector>("OpenSR.World", 1, 0, "Sector");
+}
+
+template<>
+Sector* WorldObject::createObject(WorldObject *parent, quint32 id)
+{
+    return new Sector(parent, id);
+}
 
 Sector::Sector(WorldObject *parent, quint32 id): WorldObject(parent, id)
 {

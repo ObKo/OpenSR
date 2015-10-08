@@ -18,11 +18,25 @@
 
 #include "Ship.h"
 
+#include <QtQml>
+
 namespace OpenSR
 {
 namespace World
 {
 const quint32 Ship::staticTypeId = typeIdFromClassName(Ship::staticMetaObject.className());
+
+template<>
+void WorldObject::registerType<Ship>()
+{
+    qmlRegisterType<Ship>("OpenSR.World", 1, 0, "Ship");
+}
+
+template<>
+Ship* WorldObject::createObject(WorldObject *parent, quint32 id)
+{
+    return new Ship(parent, id);
+}
 
 Ship::Ship(WorldObject *parent, quint32 id): MannedObject(parent, id)
 {

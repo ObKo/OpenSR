@@ -18,11 +18,25 @@
 
 #include "Asteroid.h"
 
+#include <QtQml>
+
 namespace OpenSR
 {
 namespace World
 {
 const quint32 Asteroid::staticTypeId = typeIdFromClassName(Asteroid::staticMetaObject.className());
+
+template<>
+void WorldObject::registerType<Asteroid>()
+{
+    qmlRegisterType<Asteroid>("OpenSR.World", 1, 0, "Asteroid");
+}
+
+template<>
+Asteroid* WorldObject::createObject(WorldObject *parent, quint32 id)
+{
+    return new Asteroid(parent, id);
+}
 
 Asteroid::Asteroid(WorldObject *parent, quint32 id): SpaceObject(parent, id)
 {

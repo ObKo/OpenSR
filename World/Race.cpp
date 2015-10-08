@@ -18,11 +18,27 @@
 
 #include "Race.h"
 
+#include <QtQml>
+
 namespace OpenSR
 {
 namespace World
 {
 const quint32 Race::staticTypeId = typeIdFromClassName(Race::staticMetaObject.className());
+
+template<>
+void WorldObject::registerType<Race>()
+{
+    qRegisterMetaType<RaceStyle>();
+    qRegisterMetaTypeStreamOperators<RaceStyle>();
+    qmlRegisterType<Race>("OpenSR.World", 1, 0, "Race");
+}
+
+template<>
+Race* WorldObject::createObject(WorldObject *parent, quint32 id)
+{
+    return new Race(parent, id);
+}
 
 Race::Race(WorldObject *parent, quint32 id): WorldObject(parent, id)
 {

@@ -18,11 +18,25 @@
 
 #include "Goods.h"
 
+#include <QtQml>
+
 namespace OpenSR
 {
 namespace World
 {
 const quint32 Goods::staticTypeId = typeIdFromClassName(Goods::staticMetaObject.className());
+
+template<>
+void WorldObject::registerType<Goods>()
+{
+    qmlRegisterType<Goods>("OpenSR.World", 1, 0, "Goods");
+}
+
+template<>
+Goods* WorldObject::createObject(WorldObject *parent, quint32 id)
+{
+    return new Goods(parent, id);
+}
 
 Goods::Goods(WorldObject *parent, quint32 id): Item(parent, id)
 {

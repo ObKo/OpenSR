@@ -21,11 +21,25 @@
 #include <QMap>
 #include <QDataStream>
 
+#include <QtQml>
+
 namespace OpenSR
 {
 namespace World
 {
 const quint32 WorldContext::staticTypeId = typeIdFromClassName(WorldContext::staticMetaObject.className());
+
+template<>
+void WorldObject::registerType<WorldContext>()
+{
+    qmlRegisterType<WorldContext>("OpenSR.World", 1, 0, "WorldContext");
+}
+
+template<>
+WorldContext* WorldObject::createObject(WorldObject *parent, quint32 id)
+{
+    return new WorldContext(parent, id);
+}
 
 WorldContext::WorldContext(WorldObject *parent, quint32 id): WorldObject(parent, id), m_currentSystem(0)
 {

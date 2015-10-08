@@ -18,11 +18,25 @@
 
 #include "CargoHook.h"
 
+#include <QtQml>
+
 namespace OpenSR
 {
 namespace World
 {
 const quint32 CargoHook::staticTypeId = typeIdFromClassName(CargoHook::staticMetaObject.className());
+
+template<>
+void WorldObject::registerType<CargoHook>()
+{
+    qmlRegisterType<CargoHook>("OpenSR.World", 1, 0, "CargoHook");
+}
+
+template<>
+CargoHook* WorldObject::createObject(WorldObject *parent, quint32 id)
+{
+    return new CargoHook(parent, id);
+}
 
 CargoHook::CargoHook(WorldObject *parent, quint32 id): Equipment(parent, id)
 {

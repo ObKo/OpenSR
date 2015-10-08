@@ -18,11 +18,25 @@
 
 #include "Equipment.h"
 
+#include <QtQml>
+
 namespace OpenSR
 {
 namespace World
 {
 const quint32 Equipment::staticTypeId = typeIdFromClassName(Equipment::staticMetaObject.className());
+
+template<>
+void WorldObject::registerType<Equipment>()
+{
+    qmlRegisterType<Equipment>("OpenSR.World", 1, 0, "Equipment");
+}
+
+template<>
+Equipment* WorldObject::createObject(WorldObject *parent, quint32 id)
+{
+    return new Equipment(parent, id);
+}
 
 Equipment::Equipment(WorldObject *parent, quint32 id): Item(parent, id)
 {

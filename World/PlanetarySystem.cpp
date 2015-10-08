@@ -18,11 +18,27 @@
 
 #include "PlanetarySystem.h"
 
+#include <QtQml>
+
 namespace OpenSR
 {
 namespace World
 {
 const quint32 PlanetarySystem::staticTypeId = typeIdFromClassName(PlanetarySystem::staticMetaObject.className());
+
+template<>
+void WorldObject::registerType<PlanetarySystem>()
+{
+    qRegisterMetaType<PlanetarySystemStyle>();
+    qRegisterMetaTypeStreamOperators<PlanetarySystemStyle>();
+    qmlRegisterType<PlanetarySystem>("OpenSR.World", 1, 0, "PlanetarySystem");
+}
+
+template<>
+PlanetarySystem* WorldObject::createObject(WorldObject *parent, quint32 id)
+{
+    return new PlanetarySystem(parent, id);
+}
 
 PlanetarySystem::PlanetarySystem(WorldObject *parent, quint32 id): WorldObject(parent, id)
 {

@@ -24,41 +24,41 @@
 
 #include "WorldManager.h"
 
-#include "WorldObject.h"
-#include "WorldContext.h"
-#include "Race.h"
-#include "Item.h"
-#include "Goods.h"
-#include "Equipment.h"
-#include "Micromodulus.h"
-#include "Artefact.h"
-#include "Hull.h"
-#include "Engine.h"
-#include "Tank.h"
-#include "Droid.h"
-#include "CargoHook.h"
-#include "DefenceGenerator.h"
-#include "Radar.h"
-#include "Scanner.h"
-#include "Weapon.h"
-#include "Sector.h"
 #include "PlanetarySystem.h"
-#include "SpaceObject.h"
-#include "Container.h"
-#include "Asteroid.h"
-#include "Planet.h"
-#include "MannedObject.h"
-#include "InhabitedPlanet.h"
-#include "DesertPlanet.h"
-#include "Ship.h"
-#include "SpaceStation.h"
-
-//#include "ScriptPrototypes.h"
+#include "Race.h"
 
 namespace OpenSR
 {
 namespace World
 {
+class Race;
+class Item;
+class Goods;
+class Equipment;
+class Micromodulus;
+class Artefact;
+class Hull;
+class Engine;
+class Tank;
+class Droid;
+class CargoHook;
+class DefenceGenerator;
+class Radar;
+class Scanner;
+class Micromodulus;
+class Weapon;
+class Sector;
+class PlanetarySystem;
+class SpaceObject;
+class Container;
+class Asteroid;
+class Planet;
+class MannedObject;
+class InhabitedPlanet;
+class DesertPlanet;
+class Ship;
+class SpaceStation;
+
 static QObject* managerSingletonProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
 {
     QQmlEngine::setObjectOwnership(WorldManager::instance(), QQmlEngine::CppOwnership);
@@ -68,39 +68,34 @@ static QObject* managerSingletonProvider(QQmlEngine *engine, QJSEngine *scriptEn
 void bindWorldTypes(QJSEngine *script, QQmlEngine *qml)
 {
     qmlRegisterSingletonType<WorldManager>("OpenSR.World", 1, 0, "WorldManager", managerSingletonProvider);
-    qmlRegisterType<WorldObject>("OpenSR.World", 1, 0, "WorldObject");
-    qmlRegisterType<WorldContext>("OpenSR.World", 1, 0, "WorldContext");
-    qRegisterMetaType<RaceStyle>();
-    qRegisterMetaTypeStreamOperators<RaceStyle>();
-    qmlRegisterType<Race>("OpenSR.World", 1, 0, "Race");
-    // Have to rename Item, because there is bug in namespaces: QTBUG-10822
-    qmlRegisterType<Item>("OpenSR.World", 1, 0, "WorldItem");
-    qmlRegisterType<Goods>("OpenSR.World", 1, 0, "Goods");
-    qmlRegisterType<Equipment>("OpenSR.World", 1, 0, "Equipment");
-    qmlRegisterType<Micromodulus>("OpenSR.World", 1, 0, "Micromodulus");
-    qmlRegisterType<Artefact>("OpenSR.World", 1, 0, "Artefact");
-    qmlRegisterType<Hull>("OpenSR.World", 1, 0, "Hull");
-    qmlRegisterType<OpenSR::World::Engine>("OpenSR.World", 1, 0, "Engine");
-    qmlRegisterType<Tank>("OpenSR.World", 1, 0, "Tank");
-    qmlRegisterType<Droid>("OpenSR.World", 1, 0, "Droid");
-    qmlRegisterType<CargoHook>("OpenSR.World", 1, 0, "CargoHook");
-    qmlRegisterType<DefenceGenerator>("OpenSR.World", 1, 0, "DefenceGenerator");
-    qmlRegisterType<Radar>("OpenSR.World", 1, 0, "Radar");
-    qmlRegisterType<Scanner>("OpenSR.World", 1, 0, "Scanner");
-    qmlRegisterType<Weapon>("OpenSR.World", 1, 0, "Weapon");
-    qmlRegisterType<Sector>("OpenSR.World", 1, 0, "Sector");
-    qRegisterMetaType<PlanetarySystemStyle>();
-    qRegisterMetaTypeStreamOperators<PlanetarySystemStyle>();
-    qmlRegisterType<PlanetarySystem>("OpenSR.World", 1, 0, "PlanetarySystem");
-    qmlRegisterType<SpaceObject>("OpenSR.World", 1, 0, "SpaceObject");
-    qmlRegisterType<Container>("OpenSR.World", 1, 0, "Container");
-    qmlRegisterType<Asteroid>("OpenSR.World", 1, 0, "Asteroid");
-    qmlRegisterType<Planet>("OpenSR.World", 1, 0, "Planet");
-    qmlRegisterType<MannedObject>("OpenSR.World", 1, 0, "MannedObject");
-    qmlRegisterType<InhabitedPlanet>("OpenSR.World", 1, 0, "InhabitedPlanet");
-    qmlRegisterType<DesertPlanet>("OpenSR.World", 1, 0, "DesertPlanet");
-    qmlRegisterType<Ship>("OpenSR.World", 1, 0, "Ship");
-    qmlRegisterType<SpaceStation>("OpenSR.World", 1, 0, "SpaceStation");
+    WorldObject::registerType<WorldObject>();
+    WorldObject::registerType<WorldContext>();
+    WorldObject::registerType<Race>();
+    WorldObject::registerType<Item>();
+    WorldObject::registerType<Goods>();
+    WorldObject::registerType<Equipment>();
+    WorldObject::registerType<Micromodulus>();
+    WorldObject::registerType<Artefact>();
+    WorldObject::registerType<Hull>();
+    WorldObject::registerType<OpenSR::World::Engine>();
+    WorldObject::registerType<Tank>();
+    WorldObject::registerType<Droid>();
+    WorldObject::registerType<CargoHook>();
+    WorldObject::registerType<DefenceGenerator>();
+    WorldObject::registerType<Radar>();
+    WorldObject::registerType<Scanner>();
+    WorldObject::registerType<Weapon>();
+    WorldObject::registerType<Sector>();
+    WorldObject::registerType<PlanetarySystem>();
+    WorldObject::registerType<SpaceObject>();
+    WorldObject::registerType<Container>();
+    WorldObject::registerType<Asteroid>();
+    WorldObject::registerType<Planet>();
+    WorldObject::registerType<MannedObject>();
+    WorldObject::registerType<InhabitedPlanet>();
+    WorldObject::registerType<DesertPlanet>();
+    WorldObject::registerType<Ship>();
+    WorldObject::registerType<SpaceStation>();
 
     script->globalObject().setProperty("world", script->newQObject(WorldManager::instance()));
     script->globalObject().setProperty("World", script->newQObject(new WorldJSFactory(script)));

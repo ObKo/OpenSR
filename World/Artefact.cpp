@@ -18,11 +18,25 @@
 
 #include "Artefact.h"
 
+#include <QtQml>
+
 namespace OpenSR
 {
 namespace World
 {
 const quint32 Artefact::staticTypeId = typeIdFromClassName(Artefact::staticMetaObject.className());
+
+template<>
+void WorldObject::registerType<Artefact>()
+{
+    qmlRegisterType<Artefact>("OpenSR.World", 1, 0, "Artefact");
+}
+
+template<>
+Artefact* WorldObject::createObject(WorldObject *parent, quint32 id)
+{
+    return new Artefact(parent, id);
+}
 
 Artefact::Artefact(WorldObject *parent, quint32 id): Equipment(parent, id)
 {

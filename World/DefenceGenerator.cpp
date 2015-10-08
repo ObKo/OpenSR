@@ -18,11 +18,25 @@
 
 #include "DefenceGenerator.h"
 
+#include <QtQml>
+
 namespace OpenSR
 {
 namespace World
 {
 const quint32 DefenceGenerator::staticTypeId = typeIdFromClassName(DefenceGenerator::staticMetaObject.className());
+
+template<>
+void WorldObject::registerType<DefenceGenerator>()
+{
+    qmlRegisterType<DefenceGenerator>("OpenSR.World", 1, 0, "DefenceGenerator");
+}
+
+template<>
+DefenceGenerator* WorldObject::createObject(WorldObject *parent, quint32 id)
+{
+    return new DefenceGenerator(parent, id);
+}
 
 DefenceGenerator::DefenceGenerator(WorldObject *parent, quint32 id): Equipment(parent, id)
 {

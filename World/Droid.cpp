@@ -18,11 +18,25 @@
 
 #include "Droid.h"
 
+#include <QtQml>
+
 namespace OpenSR
 {
 namespace World
 {
 const quint32 Droid::staticTypeId = typeIdFromClassName(Droid::staticMetaObject.className());
+
+template<>
+void WorldObject::registerType<Droid>()
+{
+    qmlRegisterType<Droid>("OpenSR.World", 1, 0, "Droid");
+}
+
+template<>
+Droid* WorldObject::createObject(WorldObject *parent, quint32 id)
+{
+    return new Droid(parent, id);
+}
 
 Droid::Droid(WorldObject *parent, quint32 id): Equipment(parent, id)
 {

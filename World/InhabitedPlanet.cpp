@@ -18,11 +18,25 @@
 
 #include "InhabitedPlanet.h"
 
+#include <QtQml>
+
 namespace OpenSR
 {
 namespace World
 {
 const quint32 InhabitedPlanet::staticTypeId = typeIdFromClassName(InhabitedPlanet::staticMetaObject.className());
+
+template<>
+void WorldObject::registerType<InhabitedPlanet>()
+{
+    qmlRegisterType<InhabitedPlanet>("OpenSR.World", 1, 0, "InhabitedPlanet");
+}
+
+template<>
+InhabitedPlanet* WorldObject::createObject(WorldObject *parent, quint32 id)
+{
+    return new InhabitedPlanet(parent, id);
+}
 
 InhabitedPlanet::InhabitedPlanet(WorldObject *parent, quint32 id): Planet(parent, id)
 {

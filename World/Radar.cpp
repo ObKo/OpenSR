@@ -18,11 +18,25 @@
 
 #include "Radar.h"
 
+#include <QtQml>
+
 namespace OpenSR
 {
 namespace World
 {
 const quint32 Radar::staticTypeId = typeIdFromClassName(Radar::staticMetaObject.className());
+
+template<>
+void WorldObject::registerType<Radar>()
+{
+    qmlRegisterType<Radar>("OpenSR.World", 1, 0, "Radar");
+}
+
+template<>
+Radar* WorldObject::createObject(WorldObject *parent, quint32 id)
+{
+    return new Radar(parent, id);
+}
 
 Radar::Radar(WorldObject *parent, quint32 id): Equipment(parent, id)
 {

@@ -18,11 +18,25 @@
 
 #include "Hull.h"
 
+#include <QtQml>
+
 namespace OpenSR
 {
 namespace World
 {
 const quint32 Hull::staticTypeId = typeIdFromClassName(Hull::staticMetaObject.className());
+
+template<>
+void WorldObject::registerType<Hull>()
+{
+    qmlRegisterType<Hull>("OpenSR.World", 1, 0, "Hull");
+}
+
+template<>
+Hull* WorldObject::createObject(WorldObject *parent, quint32 id)
+{
+    return new Hull(parent, id);
+}
 
 Hull::Hull(WorldObject *parent, quint32 id): Equipment(parent, id)
 {

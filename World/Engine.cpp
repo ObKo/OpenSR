@@ -18,11 +18,25 @@
 
 #include "Engine.h"
 
+#include <QtQml>
+
 namespace OpenSR
 {
 namespace World
 {
 const quint32 Engine::staticTypeId = typeIdFromClassName(Engine::staticMetaObject.className());
+
+template<>
+void WorldObject::registerType<Engine>()
+{
+    qmlRegisterType<Engine>("OpenSR.World", 1, 0, "Engine");
+}
+
+template<>
+Engine* WorldObject::createObject(WorldObject *parent, quint32 id)
+{
+    return new Engine(parent, id);
+}
 
 Engine::Engine(WorldObject *parent, quint32 id): Equipment(parent, id)
 {
