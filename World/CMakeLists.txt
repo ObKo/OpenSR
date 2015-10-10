@@ -34,6 +34,8 @@ SET(SOURCES
     WorldPlugin.cpp
     WorldManager.cpp
     WorldBindings.cpp
+    ResourceManager.cpp
+    Resource.cpp
 )
 
 SET(HEADERS 
@@ -68,6 +70,8 @@ SET(HEADERS
     WorldPlugin.h
     WorldManager.h
     WorldBindings.h
+    ResourceManager.h
+    Resource.h
 )
 
 INCLUDE_DIRECTORIES(

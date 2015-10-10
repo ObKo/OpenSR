@@ -17,6 +17,7 @@
 */
 
 #include "Race.h"
+#include "ResourceManager.h"
 
 #include <QtQml>
 
@@ -31,6 +32,8 @@ void WorldObject::registerType<Race>()
 {
     qRegisterMetaType<RaceStyle>();
     qRegisterMetaTypeStreamOperators<RaceStyle>();
+    qRegisterMetaType<RaceStyle::Data>();
+    qRegisterMetaTypeStreamOperators<RaceStyle::Data>();
     qmlRegisterType<Race>("OpenSR.World", 1, 0, "Race");
 }
 
@@ -50,6 +53,42 @@ template<>
 const QMetaObject* WorldObject::staticTypeMeta<Race>()
 {
     return &Race::staticMetaObject;
+}
+
+QString RaceStyle::icon() const
+{
+    return getData<Data>().icon;
+}
+
+QColor RaceStyle::color() const
+{
+    return getData<Data>().color;
+}
+
+QString RaceStyle::sound() const
+{
+    return getData<Data>().sound;
+}
+
+void RaceStyle::setIcon(const QString& icon)
+{
+    auto d = getData<Data>();
+    d.icon = icon;
+    setData(d);
+}
+
+void RaceStyle::setColor(const QColor& color)
+{
+    auto d = getData<Data>();
+    d.color = color;
+    setData(d);
+}
+
+void RaceStyle::setSound(QString& sound)
+{
+    auto d = getData<Data>();
+    d.sound = sound;
+    setData(d);
 }
 
 Race::Race(WorldObject *parent, quint32 id): WorldObject(parent, id)
@@ -81,14 +120,34 @@ RaceStyle Race::style() const
     return m_style;
 }
 
-QDataStream& operator<<(QDataStream& stream, const RaceStyle& style)
+void Race::prepareSave()
 {
-    return stream << style.color << style.icon << style.sound;
+    m_style.registerResource();
 }
 
-QDataStream& operator>>(QDataStream& stream, RaceStyle& style)
+QDataStream& operator<<(QDataStream & stream, const RaceStyle& style)
 {
-    return stream >> style.color >> style.icon >> style.sound;
+    return stream << style.id();
+}
+
+QDataStream& operator>>(QDataStream & stream, RaceStyle& style)
+{
+    quint32 id;
+    stream >> id;
+    ResourceManager *m = ResourceManager::instance();
+    Q_ASSERT(m != 0);
+    Resource::replaceData(style, m->getResource(id));
+    return stream;
+}
+
+QDataStream& operator<<(QDataStream & stream, const RaceStyle::Data& data)
+{
+    return stream << data.color << data.icon << data.sound;
+}
+
+QDataStream& operator>>(QDataStream & stream, RaceStyle::Data& data)
+{
+    return stream >> data.color >> data.icon >> data.sound;
 }
 }
 }

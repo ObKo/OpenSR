@@ -55,6 +55,7 @@ class InhabitedPlanet;
 class DesertPlanet;
 class Ship;
 class SpaceStation;
+class ResourceManager;
 
 static QObject* managerSingletonProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
 {
@@ -93,6 +94,7 @@ void bindWorldTypes(QJSEngine *script, QQmlEngine *qml)
     WorldObject::registerType<DesertPlanet>();
     WorldObject::registerType<Ship>();
     WorldObject::registerType<SpaceStation>();
+    WorldObject::registerType<ResourceManager>();
 
     script->globalObject().setProperty("world", script->newQObject(WorldManager::instance()));
     script->globalObject().setProperty("World", script->newQObject(new WorldJSFactory(script)));

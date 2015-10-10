@@ -21,6 +21,7 @@
 
 #include "World.h"
 #include "WorldObject.h"
+#include "Resource.h"
 
 #include <QColor>
 
@@ -28,22 +29,35 @@ namespace OpenSR
 {
 namespace World
 {
-class PlanetarySystemStyle
+class OPENSR_WORLD_API PlanetarySystemStyle: public Resource
 {
     Q_GADGET
 
-    Q_PROPERTY(QString background MEMBER background)
-    Q_PROPERTY(QString star MEMBER star)
-    Q_PROPERTY(QColor starColor MEMBER starColor)
+    Q_PROPERTY(QString background READ background WRITE setBackground)
+    Q_PROPERTY(QString star READ star WRITE setStar)
+    Q_PROPERTY(QColor starColor READ starColor WRITE setStarColor)
 
 public:
-    QString background;
-    QString star;
-    QColor starColor;
+    struct Data
+    {
+        QString background;
+        QString star;
+        QColor starColor;
+    };
+
+    QString background() const;
+    QString star() const;
+    QColor starColor() const;
+
+    void setBackground(const QString& bg);
+    void setStar(QString& star);
+    void setStarColor(const QColor& color);
 };
 
-QDataStream& operator<<(QDataStream & stream, const PlanetarySystemStyle & style);
-QDataStream& operator>>(QDataStream & stream, PlanetarySystemStyle & style);
+QDataStream& operator<<(QDataStream & stream, const PlanetarySystemStyle& style);
+QDataStream& operator>>(QDataStream & stream, PlanetarySystemStyle& style);
+QDataStream& operator<<(QDataStream & stream, const PlanetarySystemStyle::Data& data);
+QDataStream& operator>>(QDataStream & stream, PlanetarySystemStyle::Data& data);
 
 class OPENSR_WORLD_API PlanetarySystem: public WorldObject
 {
@@ -66,6 +80,8 @@ public:
     void setStyle(const PlanetarySystemStyle& style);
     void setSize(int size);
 
+    virtual void prepareSave();
+
 Q_SIGNALS:
     void styleChanged();
     void sizeChanged();
@@ -77,6 +93,7 @@ private:
 }
 }
 
+Q_DECLARE_METATYPE(OpenSR::World::PlanetarySystemStyle::Data)
 Q_DECLARE_METATYPE(OpenSR::World::PlanetarySystemStyle)
 
 #endif // OPENSR_WORLD_PLANETARYSYSTEM_H

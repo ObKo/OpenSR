@@ -91,6 +91,11 @@ void WorldObject::setName(const QString& name)
     }
 }
 
+void WorldObject::prepareSave()
+{
+    return;
+}
+
 bool WorldObject::save(QDataStream &stream) const
 {
     return true;

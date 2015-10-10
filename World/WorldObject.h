@@ -48,6 +48,8 @@ public:
 
     void setName(const QString& name);
 
+    /*! This function called before world saving */
+    virtual void prepareSave();
     /*! This function called during world save after all storable properties saved */
     virtual bool save(QDataStream &stream) const;
     /*! This function called during world load after all storable properties loaded */

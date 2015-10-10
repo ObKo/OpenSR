@@ -208,6 +208,7 @@ WorldManager::WorldManager(QObject *parent): QObject(parent),
     metaMap.insert(WorldObject::staticTypeId<DesertPlanet>(), WorldObject::staticTypeMeta<DesertPlanet>());
     metaMap.insert(WorldObject::staticTypeId<Ship>(), WorldObject::staticTypeMeta<Ship>());
     metaMap.insert(WorldObject::staticTypeId<SpaceStation>(), WorldObject::staticTypeMeta<SpaceStation>());
+    metaMap.insert(WorldObject::staticTypeId<ResourceManager>(), WorldObject::staticTypeMeta<ResourceManager>());
 }
 
 QString WorldManager::typeName(quint32 type) const
@@ -358,6 +359,8 @@ bool WorldManager::saveWorld(const QString& path)
 
     for (WorldObject* o : objects)
     {
+        o->prepareSave();
+
         ObjectHeader h;
         h.id = o->id();
         WorldObject *p = qobject_cast<WorldObject*>(o->parent());

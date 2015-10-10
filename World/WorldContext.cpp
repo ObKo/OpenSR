@@ -55,6 +55,7 @@ const QMetaObject* WorldObject::staticTypeMeta<WorldContext>()
 
 WorldContext::WorldContext(WorldObject *parent, quint32 id): WorldObject(parent, id), m_currentSystem(0)
 {
+    m_resources = new ResourceManager(this);
 }
 
 WorldContext::~WorldContext()
@@ -93,7 +94,7 @@ bool WorldContext::save(QDataStream &stream) const
     if (m_currentSystem)
         id = m_currentSystem->id();
 
-    stream << id;
+    stream << id << m_resources->id();
     return stream.status() == QDataStream::Ok;
 }
 
@@ -105,7 +106,25 @@ bool WorldContext::load(QDataStream &stream, const QMap<quint32, WorldObject*>& 
     if (it != objects.end())
         setCurrentSystem(qobject_cast<PlanetarySystem*>(it.value()));
 
+    stream >> id;
+    it = objects.find(id);
+    if (it != objects.end())
+    {
+        ResourceManager *m = qobject_cast<ResourceManager*>(it.value());
+        if (m)
+        {
+            delete m_resources;
+            m_resources = m;
+            emit(resourcesChanged());
+        }
+    }
+
     return stream.status() == QDataStream::Ok;
+}
+
+ResourceManager* WorldContext::resources() const
+{
+    return m_resources;
 }
 }
 }

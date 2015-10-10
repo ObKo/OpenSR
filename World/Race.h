@@ -20,6 +20,7 @@
 #define OPENSR_WORLD_RACE_H
 
 #include "WorldObject.h"
+#include "Resource.h"
 
 #include <QColor>
 #include <QUrl>
@@ -28,22 +29,35 @@ namespace OpenSR
 {
 namespace World
 {
-class RaceStyle
+class OPENSR_WORLD_API RaceStyle: public Resource
 {
     Q_GADGET
 
-    Q_PROPERTY(QString icon MEMBER icon)
-    Q_PROPERTY(QColor color MEMBER color)
-    Q_PROPERTY(QString sound MEMBER sound)
+    Q_PROPERTY(QString icon READ icon WRITE setIcon)
+    Q_PROPERTY(QColor color READ color WRITE setColor)
+    Q_PROPERTY(QString sound READ sound WRITE setSound)
 
 public:
-    QString icon;
-    QColor color;
-    QString sound;
+    struct Data
+    {
+        QString icon;
+        QColor color;
+        QString sound;
+    };
+
+    QString icon() const;
+    QColor color() const;
+    QString sound() const;
+
+    void setIcon(const QString& icon);
+    void setColor(const QColor& color);
+    void setSound(QString& sound);
 };
 
-QDataStream& operator<<(QDataStream & stream, const RaceStyle & string);
-QDataStream& operator>>(QDataStream & stream, RaceStyle & string);
+QDataStream& operator<<(QDataStream & stream, const RaceStyle::Data & data);
+QDataStream& operator>>(QDataStream & stream, RaceStyle::Data & dat);
+QDataStream& operator<<(QDataStream & stream, const RaceStyle & style);
+QDataStream& operator>>(QDataStream & stream, RaceStyle & style);
 
 class OPENSR_WORLD_API Race: public WorldObject
 {
@@ -62,6 +76,8 @@ public:
     virtual quint32 typeId() const;
     virtual QString namePrefix() const;
 
+    virtual void prepareSave();
+
 Q_SIGNALS:
     void styleChanged();
 
@@ -72,5 +88,6 @@ private:
 }
 
 Q_DECLARE_METATYPE(OpenSR::World::RaceStyle)
+Q_DECLARE_METATYPE(OpenSR::World::RaceStyle::Data)
 
 #endif // OPENSR_WORLD_RACE_H

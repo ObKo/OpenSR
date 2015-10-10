@@ -16,50 +16,50 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef OPENSR_WORLD_WORLDCONTEXT_H
-#define OPENSR_WORLD_WORLDCONTEXT_H
+#ifndef OPENSR_WORLD_RESOURCEMANAGER_H
+#define OPENSR_WORLD_RESOURCEMANAGER_H
 
+#include "World.h"
 #include "WorldObject.h"
-
-#include "PlanetarySystem.h"
-#include "ResourceManager.h"
+#include "Resource.h"
 
 namespace OpenSR
 {
 namespace World
 {
-class OPENSR_WORLD_API WorldContext: public WorldObject
+class OPENSR_WORLD_API ResourceManager: public WorldObject
 {
     Q_OBJECT
     OPENSR_WORLD_OBJECT
 
-    Q_PROPERTY(PlanetarySystem* currentSystem READ currentSystem WRITE setCurrentSystem NOTIFY currentSystemChanged STORED false)
-    Q_PROPERTY(ResourceManager* resources READ resources NOTIFY resourcesChanged STORED false)
-
 public:
-    Q_INVOKABLE WorldContext(WorldObject *parent = 0, quint32 id = 0);
-    virtual ~WorldContext();
-
-    PlanetarySystem* currentSystem() const;
-    ResourceManager* resources() const;
-
-    void setCurrentSystem(PlanetarySystem *system);
+    Q_INVOKABLE ResourceManager(WorldObject *parent = 0, quint32 id = 0);
+    virtual ~ResourceManager();
 
     virtual quint32 typeId() const;
     virtual QString namePrefix() const;
 
+    static ResourceManager *instance();
+
+    Resource getResource(quint32 id) const;
+
+    //! Forget about all resources.
+    void clearResources();
+
+    virtual void prepareSave();
     virtual bool save(QDataStream &stream) const;
     virtual bool load(QDataStream &stream, const QMap<quint32, WorldObject*>& objects);
 
-Q_SIGNALS:
-    void currentSystemChanged();
-    void resourcesChanged();
-
 private:
-    PlanetarySystem *m_currentSystem;
-    ResourceManager *m_resources;
+    quint32 registerResource(const Resource& res);
+    quint32 getNextId();
+
+    quint32 m_idPool;
+    QMap<quint32, Resource> m_resources;
+
+    friend class Resource;
 };
 }
 }
 
-#endif // OPENSR_WORLD_WORLDCONTEXT_H
+#endif // OPENSR_WORLD_RESOURCEMANAGER_H
