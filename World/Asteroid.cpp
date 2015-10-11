@@ -18,6 +18,8 @@
 
 #include "Asteroid.h"
 
+#include "ResourceManager.h"
+
 #include <QtQml>
 
 namespace OpenSR
@@ -29,6 +31,10 @@ const quint32 Asteroid::m_staticTypeId = typeIdFromClassName(Asteroid::staticMet
 template<>
 void WorldObject::registerType<Asteroid>()
 {
+    qRegisterMetaType<AsteroidStyle>();
+    qRegisterMetaTypeStreamOperators<AsteroidStyle>();
+    qRegisterMetaType<AsteroidStyle::Data>();
+    qRegisterMetaTypeStreamOperators<AsteroidStyle::Data>();
     qmlRegisterType<Asteroid>("OpenSR.World", 1, 0, "Asteroid");
 }
 
@@ -50,12 +56,72 @@ const QMetaObject* WorldObject::staticTypeMeta<Asteroid>()
     return &Asteroid::staticMetaObject;
 }
 
+QString AsteroidStyle::texture() const
+{
+    return getData<Data>().texture;
+}
+
+QColor AsteroidStyle::color() const
+{
+    return getData<Data>().color;
+}
+
+void AsteroidStyle::setTexture(const QString& texture)
+{
+    auto d = getData<Data>();
+    d.texture = texture;
+    setData(d);
+}
+
+void AsteroidStyle::setColor(const QColor& color)
+{
+    auto d = getData<Data>();
+    d.color = color;
+    setData(d);
+}
+
+QDataStream& operator<<(QDataStream & stream, const AsteroidStyle& style)
+{
+    return stream << style.id();
+}
+
+QDataStream& operator>>(QDataStream & stream, AsteroidStyle& style)
+{
+    quint32 id;
+    stream >> id;
+    ResourceManager *m = ResourceManager::instance();
+    Q_ASSERT(m != 0);
+    Resource::replaceData(style, m->getResource(id));
+    return stream;
+}
+
+QDataStream& operator<<(QDataStream & stream, const AsteroidStyle::Data& data)
+{
+    return stream << data.color << data.texture;
+}
+
+QDataStream& operator>>(QDataStream & stream, AsteroidStyle::Data& data)
+{
+    return stream >> data.color >> data.texture;
+}
+
 Asteroid::Asteroid(WorldObject *parent, quint32 id): SpaceObject(parent, id)
 {
 }
 
 Asteroid::~Asteroid()
 {
+}
+
+AsteroidStyle Asteroid::style() const
+{
+    return m_style;
+}
+
+void Asteroid::setStyle(const AsteroidStyle& style)
+{
+    m_style = style;
+    emit(styleChanged());
 }
 
 quint32 Asteroid::typeId() const
@@ -66,6 +132,11 @@ quint32 Asteroid::typeId() const
 QString Asteroid::namePrefix() const
 {
     return tr("Asteroid");
+}
+
+void Asteroid::prepareSave()
+{
+    m_style.registerResource();
 }
 }
 }

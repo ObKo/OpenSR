@@ -58,6 +58,20 @@ SpaceObject::~SpaceObject()
 {
 }
 
+QPointF SpaceObject::position()
+{
+    return m_position;
+}
+
+void SpaceObject::setPosition(const QPointF& pos)
+{
+    if (pos != m_position)
+    {
+        m_position = pos;
+        emit(positionChanged());
+    }
+}
+
 quint32 SpaceObject::typeId() const
 {
     return SpaceObject::m_staticTypeId;

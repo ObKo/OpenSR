@@ -91,9 +91,23 @@ void WorldObject::setName(const QString& name)
     }
 }
 
+static QObject* childrenAtF(QQmlListProperty<QObject> *property, int index)
+{
+    return property->object->children().at(index);
+}
+
+static int childrenCountF(QQmlListProperty<QObject> *property)
+{
+    return property->object->children().count();
+}
+
+QQmlListProperty<QObject> WorldObject::getChildren()
+{
+    return QQmlListProperty<QObject>(this, 0, childrenCountF, childrenAtF);
+}
+
 void WorldObject::prepareSave()
 {
-    return;
 }
 
 bool WorldObject::save(QDataStream &stream) const

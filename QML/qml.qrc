@@ -9,5 +9,6 @@
         <file>QuestPlayer.qml</file>
         <file>SpaceView.qml</file>
         <file>SpaceObjectItem.qml</file>
+        <file>DebugTooltip.qml</file>
     </qresource>
 </RCC>

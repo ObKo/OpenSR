@@ -22,6 +22,8 @@
 #include "World.h"
 #include "WorldObject.h"
 
+#include <QPointF>
+
 namespace OpenSR
 {
 namespace World
@@ -31,12 +33,24 @@ class OPENSR_WORLD_API SpaceObject: public WorldObject
     Q_OBJECT
     OPENSR_WORLD_OBJECT
 
+    Q_PROPERTY(QPointF position READ position WRITE setPosition NOTIFY positionChanged)
+
 public:
     Q_INVOKABLE SpaceObject(WorldObject *parent = 0, quint32 id = 0);
     virtual ~SpaceObject();
 
+    QPointF position();
+
+    void setPosition(const QPointF& pos);
+
     virtual quint32 typeId() const;
     virtual QString namePrefix() const;
+
+Q_SIGNALS:
+    void positionChanged();
+
+private:
+    QPointF m_position;
 };
 }
 }

@@ -22,6 +22,7 @@
 #include "World.h"
 
 #include <QObject>
+#include <QQmlListProperty>
 
 namespace OpenSR
 {
@@ -36,6 +37,8 @@ class OPENSR_WORLD_API WorldObject: public QObject
     Q_PROPERTY(quint32 typeId READ typeId STORED false)
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
     Q_PROPERTY(QString namePrefix READ namePrefix STORED false)
+    //TODO: Use WorldObject instead of QObject
+    Q_PROPERTY(QQmlListProperty<QObject> children READ getChildren STORED false)
 
 public:
     Q_INVOKABLE WorldObject(WorldObject *parent = 0, quint32 id = 0);
@@ -45,6 +48,8 @@ public:
     virtual quint32 typeId() const;
     QString name() const;
     virtual QString namePrefix() const;
+
+    QQmlListProperty<QObject> getChildren();
 
     void setName(const QString& name);
 

@@ -26,6 +26,7 @@
 
 #include "PlanetarySystem.h"
 #include "Race.h"
+#include "Asteroid.h"
 
 namespace OpenSR
 {
@@ -48,7 +49,6 @@ class Weapon;
 class Sector;
 class SpaceObject;
 class Container;
-class Asteroid;
 class Planet;
 class MannedObject;
 class InhabitedPlanet;
@@ -106,6 +106,7 @@ WorldJSFactory::WorldJSFactory(QObject *parent): QObject(parent)
 
 WORLD_JS_DEFAULT_GADGET_CONSTRUCTOR(WorldJSFactory, RaceStyle)
 WORLD_JS_DEFAULT_GADGET_CONSTRUCTOR(WorldJSFactory, PlanetarySystemStyle)
+WORLD_JS_DEFAULT_GADGET_CONSTRUCTOR(WorldJSFactory, AsteroidStyle)
 
 WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldJSFactory, Race)
 WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldJSFactory, Item)

@@ -25,15 +25,46 @@ Item {
             source: system ? system.style.background : ""
             x: -width / 2
             y: -height / 2
+            cache: false
         }
 
         Item {
             id: spaceNode
-
-            SpaceObjectItem {
-                object : system
-            }
         }
+    }
+
+    onSystemChanged: {
+        for(var i in spaceNode.children) {
+            spaceNode.children[i].destroy();
+        }
+
+        if (!system)
+            return;
+
+        var component = Qt.createComponent("SpaceObjectItem.qml");
+
+        var o = component.createObject(spaceNode, {object: system, mouseDelta: 50});
+        o.entered.connect(showDebugTooltip);
+        o.exited.connect(hideDebugTooltip);
+        for (var c in system.children) {
+            o = component.createObject(spaceNode, {object: system.children[c]});
+            o.entered.connect(showDebugTooltip);
+            o.exited.connect(hideDebugTooltip);
+        }
+    }
+
+    DebugTooltip {
+        id: debug
+        visible: false
+    }
+
+    function showDebugTooltip(object) {
+        debug.object = object;
+        debug.visible = true;
+    }
+    function hideDebugTooltip() {
+        debug.object = null;
+        debug.visible = false;
     }
 
     ParallelAnimation {
