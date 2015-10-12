@@ -61,25 +61,56 @@ class OPENSR_WORLD_API Asteroid: public SpaceObject
     OPENSR_WORLD_OBJECT
 
     Q_PROPERTY(OpenSR::World::AsteroidStyle style READ style WRITE setStyle NOTIFY styleChanged)
+    Q_PROPERTY(QPointF semiAxis READ semiAxis WRITE setSemiAxis NOTIFY semiAxisChanged)
+    Q_PROPERTY(float angle READ angle WRITE setAngle NOTIFY angleChanged)
+    Q_PROPERTY(float period READ period WRITE setPeriod NOTIFY periodChanged)
+    Q_PROPERTY(float time READ time WRITE setTime NOTIFY timeChanged)
 
 public:
     Q_INVOKABLE Asteroid(WorldObject *parent = 0, quint32 id = 0);
     virtual ~Asteroid();
 
     AsteroidStyle style() const;
+    QPointF semiAxis() const;
+    float angle() const;
+    float period() const;
+    float time() const;
 
     void setStyle(const AsteroidStyle& style);
+    void setSemiAxis(const QPointF& axis);
+    void setAngle(float angle);
+    void setPeriod(float period);
+    void setTime(float time);
 
     virtual quint32 typeId() const;
     virtual QString namePrefix() const;
 
     virtual void prepareSave();
 
+    virtual void startTurn();
+    virtual void processTurn(float time);
+    virtual void finishTurn();
+
 Q_SIGNALS:
     void styleChanged();
+    void semiAxisChanged();
+    void angleChanged();
+    void periodChanged();
+    void timeChanged();
 
 private:
+    void calcEccentricity();
+    void calcPosition(float dt = 0.0f);
+    float solveKepler(float t);
+    QPointF E(float eta);
+
     AsteroidStyle m_style;
+    QPointF m_semiAxis;
+    float m_angle;
+    float m_period;
+    float m_time;
+
+    float m_e;
 };
 }
 }

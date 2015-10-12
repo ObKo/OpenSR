@@ -73,8 +73,12 @@ for(var i = 0; i < asteroidStyles.length; i++)
 {
     var asteroid = World.Asteroid(system);
     asteroid.style = asteroidStyles[i];
-    asteroid.position.x = (Math.floor(i % 9) - 4) * 50;
-    asteroid.position.y = (Math.floor(i / 9) - 3) * 50;
+    asteroid.period = 15;
+    asteroid.semiAxis.x = 1500;
+    asteroid.semiAxis.y = 1000;
+    asteroid.angle = (i / asteroidStyles.length) * 2 * 3.1415;
+    //asteroid.position.x = (Math.floor(i % 9) - 4) * 50;
+    //asteroid.position.y = (Math.floor(i / 9) - 3) * 50;
 }
 
 var planet = World.InhabitedPlanet(system);

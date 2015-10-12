@@ -26,6 +26,11 @@ namespace OpenSR
 {
 namespace World
 {
+namespace
+{
+const int ITERATION_COUNTS = 10;
+}
+
 const quint32 Asteroid::m_staticTypeId = typeIdFromClassName(Asteroid::staticMetaObject.className());
 
 template<>
@@ -105,7 +110,8 @@ QDataStream& operator>>(QDataStream & stream, AsteroidStyle::Data& data)
     return stream >> data.color >> data.texture;
 }
 
-Asteroid::Asteroid(WorldObject *parent, quint32 id): SpaceObject(parent, id)
+Asteroid::Asteroid(WorldObject *parent, quint32 id): SpaceObject(parent, id),
+    m_angle(0), m_period(0), m_time(0)
 {
 }
 
@@ -118,10 +124,79 @@ AsteroidStyle Asteroid::style() const
     return m_style;
 }
 
+QPointF Asteroid::semiAxis() const
+{
+    return m_semiAxis;
+}
+
+float Asteroid::angle() const
+{
+    return m_angle;
+}
+
+float Asteroid::period() const
+{
+    return m_period;
+}
+
+float Asteroid::time() const
+{
+    return m_time;
+}
+
 void Asteroid::setStyle(const AsteroidStyle& style)
 {
     m_style = style;
     emit(styleChanged());
+}
+
+void Asteroid::setSemiAxis(const QPointF& axis)
+{
+    if (axis != m_semiAxis)
+    {
+        if (axis.x() < axis.y())
+        {
+            qWarning() << "Asteroid: semi-major axis is less than semi-minor, axis will be swapped";
+            m_semiAxis.setX(axis.y());
+            m_semiAxis.setY(axis.x());
+        }
+        else
+            m_semiAxis = axis;
+
+        calcEccentricity();
+        calcPosition();
+        emit(semiAxisChanged());
+    }
+}
+
+void Asteroid::setAngle(float angle)
+{
+    if (angle != m_angle)
+    {
+        m_angle = angle;
+        calcPosition();
+        emit(angleChanged());
+    }
+}
+
+void Asteroid::setPeriod(float period)
+{
+    if (period != m_period)
+    {
+        m_period = period;
+        calcPosition();
+        emit(periodChanged());
+    }
+}
+
+void Asteroid::setTime(float time)
+{
+    if (time != m_time)
+    {
+        m_time = time;
+        calcPosition();
+        emit(timeChanged());
+    }
 }
 
 quint32 Asteroid::typeId() const
@@ -137,6 +212,49 @@ QString Asteroid::namePrefix() const
 void Asteroid::prepareSave()
 {
     m_style.registerResource();
+}
+
+void Asteroid::calcEccentricity()
+{
+    m_e = sqrt(1 - (m_semiAxis.y() * m_semiAxis.y()) / (m_semiAxis.x() * m_semiAxis.x()));
+}
+
+void Asteroid::calcPosition(float dt)
+{
+    QPointF next = E(solveKepler(m_time + dt));
+    setPosition(next);
+}
+
+float Asteroid::solveKepler(float t)
+{
+    // http://en.wikipedia.org/wiki/Kepler's_equation
+    float M = 2.0f * M_PI / m_period * t;
+    float E = M;
+    for (int j = 0; j < ITERATION_COUNTS; j++)
+        E = m_e * sin(E) + M;
+    return E;
+}
+
+QPointF Asteroid::E(float eta)
+{
+    QPointF p;
+    p.setX(-(m_semiAxis.x() * m_e) * cos(m_angle) + m_semiAxis.x() * cos(m_angle) * cos(eta) - m_semiAxis.y() * sin(m_angle) * sin(eta));
+    p.setY(-(m_semiAxis.x() * m_e) * sin(m_angle) + m_semiAxis.x() * sin(m_angle) * cos(eta) + m_semiAxis.y() * cos(m_angle) * sin(eta));
+    return p;
+}
+
+void Asteroid::startTurn()
+{
+}
+
+void Asteroid::processTurn(float time)
+{
+    calcPosition(time);
+}
+
+void Asteroid::finishTurn()
+{
+    setTime(m_time + 1.0);
 }
 }
 }
