@@ -21,6 +21,10 @@
 
 #include "WorldObject.h"
 
+#include "PlanetarySystem.h"
+#include "Race.h"
+#include "Asteroid.h"
+
 class QJSEngine;
 class QQmlEngine;
 
@@ -43,10 +47,6 @@ namespace OpenSR
 {
 namespace World
 {
-class RaceStyle;
-class PlanetarySystemStyle;
-class AsteroidStyle;
-
 void bindWorldTypes(QJSEngine *script, QQmlEngine *qml);
 
 class WorldJSFactory : public QObject
