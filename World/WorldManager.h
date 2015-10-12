@@ -22,6 +22,7 @@
 #include "World.h"
 
 #include <QObject>
+#include <QAbstractAnimation>
 
 #include "WorldContext.h"
 
@@ -29,6 +30,16 @@ namespace OpenSR
 {
 namespace World
 {
+class OPENSR_WORLD_API TurnAnimation: public QAbstractAnimation
+{
+    Q_OBJECT
+public:
+    TurnAnimation(QObject *parent = 0);
+
+    virtual int	duration() const;
+    virtual void updateCurrentTime(int currentTime);
+};
+
 class OPENSR_WORLD_API WorldManager: public QObject
 {
     Q_OBJECT
@@ -46,6 +57,7 @@ public:
 
     Q_INVOKABLE QString typeName(quint32 type) const;
 
+
     Q_INVOKABLE void generateWorld(const QString& genScriptUrl);
     Q_INVOKABLE bool saveWorld(const QString& path);
     Q_INVOKABLE bool loadWorld(const QString& path);
@@ -53,8 +65,13 @@ public:
 Q_SIGNALS:
     void contextChanged();
 
+public Q_SLOTS:
+    void startTurn();
+    void finishTurn();
+
 private:
     WorldContext* m_context;
+    TurnAnimation *m_animation;
 
     static WorldManager* m_staticInstance;
     static quint32 m_idPool;

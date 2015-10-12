@@ -121,6 +121,55 @@ bool WorldObject::load(QDataStream &stream, const QMap<quint32, WorldObject*>& o
 }
 
 /*!
+ * \brief start next turn.
+ * This function is called when next turn is requested.
+ * Object must calculate all future action in turn.
+ * \note All subclasses must call startTurn() from super-class.
+ */
+void WorldObject::startTurn()
+{
+    for (auto o : children())
+    {
+        WorldObject *wo = qobject_cast<WorldObject*>(o);
+        if (wo)
+            wo->startTurn();
+    }
+}
+
+/*!
+ * \brief process turn.
+ * \param time - turn time, from 0.0f to 1.0f
+ * This function is called during turn animation.
+ * Normally, this function is called only for objects visible by player.
+ * Object must "play" planned actions.
+ * \note All subclasses must call processTurn() from super-class.
+ */
+void WorldObject::processTurn(float time)
+{
+    for (auto o : children())
+    {
+        WorldObject *wo = qobject_cast<WorldObject*>(o);
+        if (wo)
+            wo->processTurn(time);
+    }
+}
+/*!
+ * \brief finsh turn.
+ * This function is called when turn is finished.
+ * Object must complete all actions planned for turn.
+ * \note All subclasses must call finishTurn() from super-class.
+ */
+void WorldObject::finishTurn()
+{
+    for (auto o : children())
+    {
+        WorldObject *wo = qobject_cast<WorldObject*>(o);
+        if (wo)
+            wo->finishTurn();
+    }
+}
+
+/*!
  * \brief Generate type ID from class name
  * \param className class name (usually, metaObject()->className)
  * \return type ID for class

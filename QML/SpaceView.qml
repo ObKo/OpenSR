@@ -262,4 +262,12 @@ Item {
         }
         onExited: { hAnim.stop(); vAnim.stop() }
     }
+
+    Button {
+        id: turnButton
+        anchors.bottom: parent.bottom
+        anchors.right: parent.right
+        text: "Turn"
+        onClicked: WorldManager.startTurn()
+    }
 } 

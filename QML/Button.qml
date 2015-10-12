@@ -9,9 +9,9 @@ Item {
     property color textStyleColor: "black"
     property font textFont
     
-    property string normalImage: "res:/DATA/FormPlanet2/QuestButN.sci"
-    property string hoveredImage: "res:/DATA/FormPlanet2/QuestButA.sci"
-    property string downImage: "res:/DATA/FormPlanet2/QuestButD.sci"
+    property string normalImage: "res:/ORC/ButtonN.sci"
+    property string hoveredImage: "res:/ORC/ButtonA.sci"
+    property string downImage: "res:/ORC/ButtonD.sci"
     property string enterSound: "res:/Sound/ButtonEnter.wav"
     property string leaveSound: "res:/Sound/ButtonLeave.WAV"
     property string clickSound: "res:/Sound/ButtonClick.wav"

@@ -60,6 +60,13 @@ public:
     /*! This function called during world load after all storable properties loaded */
     virtual bool load(QDataStream &stream, const QMap<quint32, WorldObject*>& objects);
 
+    /*! This function is called when new turn started */
+    virtual void startTurn();
+    /*! Process turn */
+    virtual void processTurn(float time);
+    /*! This function is called when turn finished */
+    virtual void finishTurn();
+
     static quint32 typeIdFromClassName(const QString& className);
 
     /*!

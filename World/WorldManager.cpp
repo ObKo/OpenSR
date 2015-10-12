@@ -169,6 +169,25 @@ void countObjects(QList<WorldObject*>& objects, WorldObject* current)
 }
 }
 
+TurnAnimation::TurnAnimation(QObject *parent): QAbstractAnimation(parent)
+{
+}
+
+int	TurnAnimation::duration() const
+{
+    return 2000;
+}
+
+void TurnAnimation::updateCurrentTime(int currentTime)
+{
+    if (state() != TurnAnimation::Running)
+        return;
+
+    WorldContext *ctx = WorldManager::instance()->context();
+    if (ctx && ctx->currentSystem())
+        ctx->currentSystem()->processTurn((float)currentTime / (float)duration());
+}
+
 WorldManager* WorldManager::m_staticInstance = 0;
 quint32 WorldManager::m_idPool = 0;
 
@@ -209,6 +228,9 @@ WorldManager::WorldManager(QObject *parent): QObject(parent),
     metaMap.insert(WorldObject::staticTypeId<Ship>(), WorldObject::staticTypeMeta<Ship>());
     metaMap.insert(WorldObject::staticTypeId<SpaceStation>(), WorldObject::staticTypeMeta<SpaceStation>());
     metaMap.insert(WorldObject::staticTypeId<ResourceManager>(), WorldObject::staticTypeMeta<ResourceManager>());
+
+    m_animation = new TurnAnimation(this);
+    connect(m_animation, SIGNAL(finished()), this, SLOT(finishTurn()));
 }
 
 QString WorldManager::typeName(quint32 type) const
@@ -225,6 +247,7 @@ WorldManager::~WorldManager()
 {
     if (m_context)
         delete m_context;
+    delete m_animation;
     WorldManager::m_staticInstance = 0;
 }
 
@@ -241,6 +264,29 @@ WorldManager* WorldManager::instance()
 quint32 WorldManager::getNextId() const
 {
     return ++WorldManager::m_idPool;
+}
+
+void WorldManager::startTurn()
+{
+    if (!m_context)
+        return;
+
+    if (m_animation->state() == TurnAnimation::Running)
+        return;
+
+    m_context->startTurn();
+
+    m_animation->setLoopCount(1);
+    m_animation->setCurrentTime(0);
+    m_animation->start();
+}
+
+void WorldManager::finishTurn()
+{
+    if (m_animation->state() == TurnAnimation::Running)
+        m_animation->stop();
+
+    m_context->finishTurn();
 }
 
 bool WorldManager::loadWorld(const QString& path)
