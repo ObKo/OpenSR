@@ -89,6 +89,8 @@ public:
 
     virtual void prepareSave();
 
+    virtual void updateTrajectory();
+
     virtual void startTurn();
     virtual void processTurn(float time);
     virtual void finishTurn();
@@ -107,6 +109,7 @@ private:
     void calcSpeed(float dt = 0.0f);
     float solveKepler(float t);
     QPointF E(float eta);
+    QPointF Ederiv(float eta);
 
     AsteroidStyle m_style;
     QPointF m_semiAxis;

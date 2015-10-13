@@ -168,10 +168,11 @@ void Asteroid::setSemiAxis(const QPointF& axis)
         else
             m_semiAxis = axis;
 
+        emit(semiAxisChanged());
         calcEccentricity();
         calcPosition();
         calcSpeed();
-        emit(semiAxisChanged());
+        updateTrajectory();
     }
 }
 
@@ -180,9 +181,10 @@ void Asteroid::setAngle(float angle)
     if (angle != m_angle)
     {
         m_angle = angle;
+        emit(angleChanged());
         calcPosition();
         calcSpeed();
-        emit(angleChanged());
+        updateTrajectory();
     }
 }
 
@@ -191,9 +193,10 @@ void Asteroid::setPeriod(float period)
     if (period != m_period)
     {
         m_period = period;
+        emit(periodChanged());
         calcPosition();
         calcSpeed();
-        emit(periodChanged());
+        updateTrajectory();
     }
 }
 
@@ -202,9 +205,10 @@ void Asteroid::setTime(float time)
     if (time != m_time)
     {
         m_time = time;
+        emit(timeChanged());
         calcPosition();
         calcSpeed();
-        emit(timeChanged());
+        updateTrajectory();
     }
 }
 
@@ -261,18 +265,70 @@ QPointF Asteroid::E(float eta)
     return p;
 }
 
+QPointF Asteroid::Ederiv(float eta)
+{
+    QPointF p;
+    p.setX(- m_semiAxis.x() * cos(m_angle) * sin(eta) - m_semiAxis.y() * sin(m_angle) * cos(eta));
+    p.setY(- m_semiAxis.x() * sin(m_angle) * sin(eta) + m_semiAxis.y() * cos(m_angle) * cos(eta));
+    return p;
+}
+
+void Asteroid::updateTrajectory()
+{
+    QList<BezierCurve> trajectory;
+
+    float prev = solveKepler(m_time);
+
+    for (int i = 1; i < int(round(m_period / 2)); i++)
+    {
+        float t = m_time + i;
+        if (fabs(t) > m_period)
+            t = fmod(t, m_period);
+
+        if (t < 0)
+            t = m_period + t;
+
+        float eta = solveKepler(t);
+
+        QPointF p;
+        BezierCurve c;
+
+        // http://www.spaceroots.org/documents/ellipse/elliptical-arc.pdf
+        p = E(prev);
+        c.p0 = QPointF(p.x(), p.y());
+        p = E(eta);
+        c.p3 = QPointF(p.x(), p.y());
+
+        float tangent = tan((eta - prev) / 2.0f);
+        float k = sin(eta - prev) * (sqrt(4.0f + 3.0f * tangent * tangent) - 1.0f) / 3.0f;
+
+        p = Ederiv(prev);
+        c.p1 = c.p0 + k * QPointF(p.x(), p.y());
+        p = Ederiv(eta);
+        c.p2 = c.p3 - k * QPointF(p.x(), p.y());
+
+        trajectory.push_back(c);
+
+        prev = eta;
+    }
+    setTrajectory(trajectory);
+}
+
 void Asteroid::startTurn()
 {
+    SpaceObject::startTurn();
 }
 
 void Asteroid::processTurn(float time)
 {
     calcPosition(time);
+    SpaceObject::processTurn(time);
 }
 
 void Asteroid::finishTurn()
 {
     setTime(m_time + 1.0);
+    SpaceObject::finishTurn();
 }
 }
 }

@@ -36,13 +36,8 @@ public:
     QMLHelper(QObject *parent = 0);
 
     Q_INVOKABLE QVariant questInfo(const QUrl& url);
-    Q_INVOKABLE QVariant bezierCurve(const QPointF& p0, const QPointF& p1, const QPointF& p2, const QPointF& p3);
-    Q_INVOKABLE QVariant bezierCurve(float p0x, float p0y, float p1x, float p1y, float p2x, float p2y, float p3x, float p3y);
-
-    static BezierCurve convertBezierCurveFromJS(const QVariant& curve);
 
     static QVariant convertQuestInfoToJS(const QM::QuestInfo& info);
-    static QVariant convertBezierCurveToJS(const BezierCurve& curve);
 };
 }
 }

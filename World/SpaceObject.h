@@ -22,6 +22,8 @@
 #include "World.h"
 #include "WorldObject.h"
 
+#include <OpenSR/Types.h>
+
 #include <QPointF>
 
 namespace OpenSR
@@ -34,23 +36,32 @@ class OPENSR_WORLD_API SpaceObject: public WorldObject
     OPENSR_WORLD_OBJECT
 
     Q_PROPERTY(QPointF position READ position WRITE setPosition NOTIFY positionChanged)
+    Q_PROPERTY(QVariantList trajectory READ trajectory NOTIFY trajectoryChanged STORED false)
 
 public:
     Q_INVOKABLE SpaceObject(WorldObject *parent = 0, quint32 id = 0);
     virtual ~SpaceObject();
 
-    QPointF position();
+    QPointF position() const;
+    QVariantList trajectory() const;
 
     void setPosition(const QPointF& pos);
+
+    virtual void updateTrajectory();
 
     virtual quint32 typeId() const;
     virtual QString namePrefix() const;
 
+protected:
+    void setTrajectory(const QList<BezierCurve>& trajectory);
+
 Q_SIGNALS:
     void positionChanged();
+    void trajectoryChanged();
 
 private:
     QPointF m_position;
+    QList<BezierCurve> m_trajectory;
 };
 }
 }

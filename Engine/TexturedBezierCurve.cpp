@@ -61,17 +61,17 @@ TexturedBezierCurve::~TexturedBezierCurve()
     Q_D(TexturedBezierCurve);
 }
 
-QVariant TexturedBezierCurve::curve() const
+BezierCurve TexturedBezierCurve::curve() const
 {
     Q_D(const TexturedBezierCurve);
-    return QVariant::fromValue(d->curve);
+    return d->curve;
 }
 
-void TexturedBezierCurve::setCurve(const QVariant& curve)
+void TexturedBezierCurve::setCurve(const BezierCurve& curve)
 {
     Q_D(TexturedBezierCurve);
 
-    d->curve = QML::QMLHelper::convertBezierCurveFromJS(curve);
+    d->curve = curve;
 
     QList<QPointF> points = d->curve.calcPolyline(d->minStep);
     QVariantList vpoints;
@@ -95,6 +95,6 @@ void TexturedBezierCurve::setMinStep(int minStep)
     d->minStep = minStep;
     emit(minStepChanged());
 
-    setCurve(QML::QMLHelper::convertBezierCurveToJS(d->curve));
+    setCurve(d->curve);
 }
 }

@@ -23,11 +23,20 @@
 #include <QPointF>
 #include <QMetaType>
 #include <QList>
+#include <QObject>
 
 namespace OpenSR
 {
-struct BezierCurve
+class BezierCurve
 {
+    Q_GADGET
+
+    Q_PROPERTY(QPointF p0 MEMBER p0)
+    Q_PROPERTY(QPointF p1 MEMBER p1)
+    Q_PROPERTY(QPointF p2 MEMBER p2)
+    Q_PROPERTY(QPointF p3 MEMBER p3)
+
+public:
     QPointF p0, p1, p2, p3;
 
     QList<QPointF> calcPolyline(int minStep = 1);

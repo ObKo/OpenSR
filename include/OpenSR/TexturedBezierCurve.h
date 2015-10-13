@@ -31,17 +31,17 @@ class ENGINE_API TexturedBezierCurve: public TexturedPolyline
     Q_OBJECT
     OPENSR_DECLARE_PRIVATE(TexturedBezierCurve)
 
-    Q_PROPERTY(QVariant curve READ curve WRITE setCurve NOTIFY curveChanged)
+    Q_PROPERTY(OpenSR::BezierCurve curve READ curve WRITE setCurve NOTIFY curveChanged)
     Q_PROPERTY(int minStep READ minStep WRITE setMinStep NOTIFY minStepChanged)
 
 public:
     TexturedBezierCurve(QQuickItem * parent = 0);
     virtual ~TexturedBezierCurve();
 
-    QVariant curve() const;
+    BezierCurve curve() const;
     int minStep() const;
 
-    void setCurve(const QVariant& curve);
+    void setCurve(const BezierCurve& curve);
     void setMinStep(int minStep);
 
 Q_SIGNALS:

@@ -60,45 +60,6 @@ QVariant QMLHelper::convertQuestInfoToJS(const QM::QuestInfo& info)
 
     return map;
 }
-
-QVariant QMLHelper::convertBezierCurveToJS(const BezierCurve& curve)
-{
-    QVariantMap map;
-
-    map["p0"] = curve.p0;
-    map["p1"] = curve.p1;
-    map["p2"] = curve.p2;
-    map["p3"] = curve.p3;
-    return map;
-}
-
-QVariant QMLHelper::bezierCurve(float p0x, float p0y, float p1x, float p1y, float p2x, float p2y, float p3x, float p3y)
-{
-    return bezierCurve(QPointF(p0x, p0y), QPointF(p1x, p1y), QPointF(p2x, p2y), QPointF(p3x, p3y));
-}
-
-QVariant QMLHelper::bezierCurve(const QPointF& p0, const QPointF& p1, const QPointF& p2, const QPointF& p3)
-{
-    BezierCurve curve;
-    curve.p0 = p0;
-    curve.p1 = p1;
-    curve.p2 = p2;
-    curve.p3 = p3;
-    return convertBezierCurveToJS(curve);
-}
-
-BezierCurve QMLHelper::convertBezierCurveFromJS(const QVariant& curve)
-{
-    BezierCurve result;
-    QVariantMap obj = curve.toMap();
-
-    result.p0 = obj["p0"].toPointF();
-    result.p1 = obj["p1"].toPointF();
-    result.p2 = obj["p2"].toPointF();
-    result.p3 = obj["p3"].toPointF();
-
-    return result;
-}
 }
 }
 

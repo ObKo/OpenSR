@@ -9,6 +9,8 @@ Item {
     property int scrollSize: 10
     property int maxScrollTime: 600
 
+    property var trajectoryView
+
     anchors.fill: parent
 
     Rectangle {
@@ -41,6 +43,7 @@ Item {
         if (!system)
             return;
 
+
         var component = Qt.createComponent("SpaceObjectItem.qml");
 
         var o = component.createObject(spaceNode, {object: system, mouseDelta: 50});
@@ -50,12 +53,26 @@ Item {
             o = component.createObject(spaceNode, {object: system.children[c]});
             o.entered.connect(showDebugTooltip);
             o.exited.connect(hideDebugTooltip);
+            o.entered.connect(showTrajectory);
+            o.exited.connect(hideTrajectory);
         }
+
+        var trajComponent = Qt.createComponent("TrajectoryItem.qml");
+        trajectoryView = trajComponent.createObject(spaceNode, {object: system.children[0], visible: false});
     }
 
     DebugTooltip {
         id: debug
         visible: false
+    }
+
+    function showTrajectory(object) {
+        if (trajectoryView.object !== object)
+            trajectoryView.object = object;
+        trajectoryView.visible = true;
+    }
+    function hideTrajectory() {
+        trajectoryView.visible = false;
     }
 
     function showDebugTooltip(object) {

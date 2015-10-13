@@ -58,7 +58,7 @@ SpaceObject::~SpaceObject()
 {
 }
 
-QPointF SpaceObject::position()
+QPointF SpaceObject::position() const
 {
     return m_position;
 }
@@ -80,6 +80,24 @@ quint32 SpaceObject::typeId() const
 QString SpaceObject::namePrefix() const
 {
     return tr("Space object");
+}
+
+QVariantList SpaceObject::trajectory() const
+{
+    QVariantList result;
+    for (auto curve : m_trajectory)
+        result.append(QVariant::fromValue(curve));
+    return result;
+}
+
+void SpaceObject::setTrajectory(const QList<BezierCurve>& trajectory)
+{
+    m_trajectory = trajectory;
+    emit(trajectoryChanged());
+}
+
+void SpaceObject::updateTrajectory()
+{
 }
 }
 }

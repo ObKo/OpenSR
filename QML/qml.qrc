@@ -10,5 +10,6 @@
         <file>SpaceView.qml</file>
         <file>SpaceObjectItem.qml</file>
         <file>DebugTooltip.qml</file>
+        <file>TrajectoryItem.qml</file>
     </qresource>
 </RCC>

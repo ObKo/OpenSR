@@ -19,7 +19,7 @@ Item {
     onObjectChanged: {
         var text = "";
         for (var key in object) {
-            if (key == "objectName" || key == "children")
+            if (key == "objectName" || key == "children" || key == "trajectory")
                 continue;
 
             if(typeof object[key] == "function")
