@@ -111,7 +111,7 @@ QDataStream& operator>>(QDataStream & stream, AsteroidStyle::Data& data)
 }
 
 Asteroid::Asteroid(WorldObject *parent, quint32 id): SpaceObject(parent, id),
-    m_angle(0), m_period(0), m_time(0)
+    m_angle(0), m_period(0), m_time(0), m_speed(0)
 {
 }
 
@@ -144,6 +144,11 @@ float Asteroid::time() const
     return m_time;
 }
 
+float Asteroid::speed() const
+{
+    return m_speed;
+}
+
 void Asteroid::setStyle(const AsteroidStyle& style)
 {
     m_style = style;
@@ -165,6 +170,7 @@ void Asteroid::setSemiAxis(const QPointF& axis)
 
         calcEccentricity();
         calcPosition();
+        calcSpeed();
         emit(semiAxisChanged());
     }
 }
@@ -175,6 +181,7 @@ void Asteroid::setAngle(float angle)
     {
         m_angle = angle;
         calcPosition();
+        calcSpeed();
         emit(angleChanged());
     }
 }
@@ -185,6 +192,7 @@ void Asteroid::setPeriod(float period)
     {
         m_period = period;
         calcPosition();
+        calcSpeed();
         emit(periodChanged());
     }
 }
@@ -195,6 +203,7 @@ void Asteroid::setTime(float time)
     {
         m_time = time;
         calcPosition();
+        calcSpeed();
         emit(timeChanged());
     }
 }
@@ -223,6 +232,15 @@ void Asteroid::calcPosition(float dt)
 {
     QPointF next = E(solveKepler(m_time + dt));
     setPosition(next);
+}
+
+void Asteroid::calcSpeed(float dt)
+{
+    QPointF nextPos = E(solveKepler(m_time + dt + 1.0f));
+    float dx = nextPos.x() - position().x();
+    float dy = nextPos.y() - position().y();
+    m_speed = sqrt(dx * dx + dy * dy);
+    emit(speedChanged());
 }
 
 float Asteroid::solveKepler(float t)

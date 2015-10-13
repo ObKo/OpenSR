@@ -65,6 +65,7 @@ class OPENSR_WORLD_API Asteroid: public SpaceObject
     Q_PROPERTY(float angle READ angle WRITE setAngle NOTIFY angleChanged)
     Q_PROPERTY(float period READ period WRITE setPeriod NOTIFY periodChanged)
     Q_PROPERTY(float time READ time WRITE setTime NOTIFY timeChanged)
+    Q_PROPERTY(float speed READ speed NOTIFY speedChanged STORED false)
 
 public:
     Q_INVOKABLE Asteroid(WorldObject *parent = 0, quint32 id = 0);
@@ -75,6 +76,7 @@ public:
     float angle() const;
     float period() const;
     float time() const;
+    float speed() const;
 
     void setStyle(const AsteroidStyle& style);
     void setSemiAxis(const QPointF& axis);
@@ -97,10 +99,12 @@ Q_SIGNALS:
     void angleChanged();
     void periodChanged();
     void timeChanged();
+    void speedChanged();
 
 private:
     void calcEccentricity();
     void calcPosition(float dt = 0.0f);
+    void calcSpeed(float dt = 0.0f);
     float solveKepler(float t);
     QPointF E(float eta);
 
@@ -109,6 +113,7 @@ private:
     float m_angle;
     float m_period;
     float m_time;
+    float m_speed;
 
     float m_e;
 };
