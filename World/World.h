@@ -20,13 +20,13 @@
 #define OPENSR_WORLD_H
 
 #ifdef OPENSR_WORLD_BUILD
-# ifdef Q_OS_WIN32
+# ifdef Q_CC_MSVC
 #  define OPENSR_WORLD_API __declspec(dllexport)
 # else
 #  define OPENSR_WORLD_API
 # endif
 #else
-# ifdef Q_OS_WIN32
+# ifdef Q_CC_MSVC
 #  define OPENSR_WORLD_API __declspec(dllimport)
 # else
 #  define OPENSR_WORLD_API

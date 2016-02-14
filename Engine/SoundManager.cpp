@@ -20,7 +20,6 @@
 #include "SoundManager_p.h"
 
 #include <AL/alc.h>
-#include <AL/alext.h>
 
 #include <QtEndian>
 #include <QFileInfo>

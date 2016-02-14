@@ -22,13 +22,13 @@
 #include <QtGlobal>
 
 #ifdef OPENSR_ENGINE_BUILD
-# ifdef Q_OS_WIN32
+# ifdef Q_CC_MSVC
 #  define ENGINE_API __declspec(dllexport)
 # else
 #  define ENGINE_API
 # endif
 #else
-# ifdef Q_OS_WIN32
+# ifdef Q_CC_MSVC
 #  define ENGINE_API __declspec(dllimport)
 # else
 #  define ENGINE_API
