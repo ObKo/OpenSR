@@ -1,0 +1,8 @@
+*.cmake
+moc_*.cpp*
+ui_*.h
+Makefile
+CMakeFiles
+*.user
+CMakeCache.txt
+
