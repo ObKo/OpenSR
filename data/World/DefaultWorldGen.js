@@ -80,7 +80,28 @@ for(var k in asteroidStyles)
 
 var planet = World.InhabitedPlanet(system);
 planet.name = "PlanetName.Solar.2"
+planet.style = World.PlanetStyle();
+planet.style.texture = "res:/DATA/Star/StarBlue.gai";
+planet.period = 15;
+planet.angle = 3.1415 / 4;
+planet.position = Qt.point(55, -222);
 
-context.currentSystem = system
+function initStation(obj, kind) {
+    switch (kind) {
+    case "ranger":
+    case "rangerCenter":
+    case "rc":
+        obj.StationKind = 1;
+        obj.style = World.StationStyle();
+        obj.style.texture = "res:/DATA/Ruins/RC.gai";
+    }
+}
+
+var rangerCenter1 = World.SpaceStation(system);
+initStation(rangerCenter1, "ranger")
+//console.log("rangerCenter1.style = " + rangerCenter1.style);
+rangerCenter1.position = Qt.point(-111, -222);
+
+context.currentSystem = system;
 
 World.saveWorld("/tmp/test.osr");

@@ -25,6 +25,7 @@
 #include "Race.h"
 #include "Asteroid.h"
 #include "Planet.h"
+#include "SpaceStation.h"
 
 class QJSEngine;
 class QQmlEngine;

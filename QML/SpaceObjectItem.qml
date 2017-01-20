@@ -44,6 +44,9 @@ Item {
         } else if(WorldManager.typeName(object.typeId) === "OpenSR::World::InhabitedPlanet") {
             image.source = object.style.texture
             positioning = true;
+        } else if(WorldManager.typeName(object.typeId) === "OpenSR::World::SpaceStation") {
+            image.source = object.style.texture
+            positioning = true;
         }
     }
 

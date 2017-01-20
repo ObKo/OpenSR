@@ -46,7 +46,6 @@ Item {
         if (!system)
             return;
 
-
         var component = Qt.createComponent("SpaceObjectItem.qml");
 
         var o = component.createObject(spaceNode, {object: system, mouseDelta: 50});
@@ -291,4 +290,4 @@ Item {
         text: "Turn"
         onClicked: WorldManager.startTurn()
     }
-} 
+}

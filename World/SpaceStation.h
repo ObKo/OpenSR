@@ -21,15 +21,48 @@
 
 #include "World.h"
 #include "MannedObject.h"
+#include "Resource.h"
 
 namespace OpenSR
 {
 namespace World
 {
+
+class OPENSR_WORLD_API StationStyle: public Resource
+{
+    Q_GADGET
+    Q_PROPERTY(QString texture READ texture WRITE setTexture)
+
+public:
+    struct Data {
+        QString texture;
+    };
+
+    QString texture() const;
+    void setTexture(const QString& texture);
+};
+
+bool operator==(const StationStyle& one, const StationStyle& another);
+
+QDataStream& operator<<(QDataStream & stream, const StationStyle& style);
+QDataStream& operator>>(QDataStream & stream, StationStyle& style);
+QDataStream& operator<<(QDataStream & stream, const StationStyle::Data& data);
+QDataStream& operator>>(QDataStream & stream, StationStyle::Data& data);
+
 class OPENSR_WORLD_API SpaceStation: public MannedObject
 {
     Q_OBJECT
     OPENSR_WORLD_OBJECT
+
+    Q_PROPERTY(int StationKind READ Kind WRITE setStationKind NOTIFY StationKindChanged)
+    Q_PROPERTY(OpenSR::World::StationStyle style READ style WRITE setStyle NOTIFY styleChanged)
+
+public:
+    enum class StationKind {
+        Unspecified = 0,
+        RangerCenter, ScienceBase, MilitaryBase, BusinessCenter, MedicalCenter
+    };
+    Q_ENUM(StationKind)
 
 public:
     Q_INVOKABLE SpaceStation(WorldObject *parent = 0, quint32 id = 0);
@@ -37,8 +70,29 @@ public:
 
     virtual quint32 typeId() const;
     virtual QString namePrefix() const;
+
+    int Kind() const;
+    OpenSR::World::StationStyle style() const;
+
+public slots:
+    void setStationKind(int kind);
+    void setStyle(OpenSR::World::StationStyle style);
+
+signals:
+    void StationKindChanged(int kind);
+    void styleChanged(OpenSR::World::StationStyle style);
+
+private:
+    // TODO: the m_stationKind should be of type StationKind but to fix saving these
+    // values we need to resolve issues with forward declarations and registering
+    // metatypes in the WorldManager class.
+    int m_StationKind;
+    OpenSR::World::StationStyle m_style;
 };
 }
 }
+
+Q_DECLARE_METATYPE(OpenSR::World::StationStyle)
+Q_DECLARE_METATYPE(OpenSR::World::StationStyle::Data)
 
 #endif // OPENSR_WORLD_SPACESTATION_H

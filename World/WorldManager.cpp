@@ -31,6 +31,7 @@
 
 #include "WorldObject.h"
 #include "WorldContext.h"
+#include "SpaceStation.h"
 
 namespace OpenSR
 {
@@ -430,6 +431,7 @@ WORLD_JS_DEFAULT_GADGET_CONSTRUCTOR(WorldManager, RaceStyle)
 WORLD_JS_DEFAULT_GADGET_CONSTRUCTOR(WorldManager, PlanetarySystemStyle)
 WORLD_JS_DEFAULT_GADGET_CONSTRUCTOR(WorldManager, AsteroidStyle)
 WORLD_JS_DEFAULT_GADGET_CONSTRUCTOR(WorldManager, PlanetStyle)
+WORLD_JS_DEFAULT_GADGET_CONSTRUCTOR(WorldManager, StationStyle)
 
 WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldManager, Race)
 WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldManager, Item)
