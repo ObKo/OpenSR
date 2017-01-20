@@ -41,6 +41,9 @@ Item {
         else if(WorldManager.typeName(object.typeId) === "OpenSR::World::Asteroid") {
             image.source = object.style.texture
             positioning = true;
+        } else if(WorldManager.typeName(object.typeId) === "OpenSR::World::InhabitedPlanet") {
+            image.source = object.style.texture
+            positioning = true;
         }
     }
 
@@ -52,4 +55,4 @@ Item {
     function mouseExited() {
         exited(object);
     }
-} 
+}

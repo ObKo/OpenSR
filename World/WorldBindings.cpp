@@ -27,6 +27,7 @@
 #include "PlanetarySystem.h"
 #include "Race.h"
 #include "Asteroid.h"
+#include "Planet.h"
 
 namespace OpenSR
 {
