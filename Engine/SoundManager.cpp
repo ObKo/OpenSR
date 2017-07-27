@@ -172,12 +172,12 @@ Sample SoundManager::loadSample(const QUrl& url)
     if (it != d->m_soundCache.end())
         return Sample(it.value());
 
-    QFileInfo fi(url.path());
+    /*QFileInfo fi(url.path());
     if (fi.suffix().toLower() != "wav")
     {
         qCritical() << "Unsupported sound format: " << fi.suffix();
         return Sample(QSharedPointer<SampleData>());
-    }
+    }*/
 
     QIODevice *f = ((Engine *)qApp)->resources()->getIODevice(url, this);
 

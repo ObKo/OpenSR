@@ -51,7 +51,8 @@ void Sound::setSource(const QUrl& source)
     m_source = source;
 
     if (!source.isLocalFile() && source.scheme().compare("qrc", Qt::CaseInsensitive) &&
-            source.scheme().compare("res", Qt::CaseInsensitive))
+            source.scheme().compare("res", Qt::CaseInsensitive) &&
+            source.scheme().compare("dat", Qt::CaseInsensitive))
         qWarning() << "Non-local sound is not supported";
 
 

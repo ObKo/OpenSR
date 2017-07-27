@@ -279,7 +279,7 @@ void Asteroid::updateTrajectory()
 
     float prev = solveKepler(m_time);
 
-    for (int i = 1; i < int(round(m_period / 2)); i++)
+    for (int i = 1; i < int(round(m_period)) + 1; i++)
     {
         float t = m_time + i;
         if (fabs(t) > m_period)

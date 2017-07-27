@@ -168,6 +168,9 @@ Item {
     Music {
         id: music
         source: "res:/Music/SPECIAL/SpaceIsCalling.dat"
+        Component.onCompleted: {
+            play();
+        }
     }
     
     function startQuest(id) {

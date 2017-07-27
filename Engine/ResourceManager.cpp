@@ -133,27 +133,21 @@ QNetworkReply* ResourceManagerNAM::createRequest(Operation op, const QNetworkReq
 {
     QUrl url = req.url();
     QString scheme = url.scheme();
-    QString path = req.url().adjusted(QUrl::NormalizePathSegments).path();
-    if ((scheme.compare("dat", Qt::CaseInsensitive) == 0) && (op == QNetworkAccessManager::GetOperation))
+    if ((scheme.compare("res", Qt::CaseInsensitive) == 0) ||
+        (scheme.compare("dat", Qt::CaseInsensitive) == 0) &&
+            (op == QNetworkAccessManager::GetOperation))
     {
-        if (path.at(0) == "/")
-            path.remove(0, 1);
-        path = qobject_cast<Engine*>(qApp)->datValue(path).toString();
-        path = path.replace("\\", "/");
+        QIODevice *dev = m_manger->getIODevice(url);
+        ResourceReply *reply = new ResourceReply(url, dev, this);
+        connect(reply, SIGNAL(finished()), this, SLOT(emitReplyFinished()));
+        reply->setOperation(op);
+        reply->setRequest(req);
+        reply->setUrl(url);
+        reply->open(QIODevice::ReadOnly);
+        return reply;
     }
-    else if ((scheme.compare("res", Qt::CaseInsensitive) == 0) && (op == QNetworkAccessManager::GetOperation))
-        ;
     else
         return QNetworkAccessManager::createRequest(op, req, outgoingData);
-
-    QIODevice *dev = m_manger->getIODevice(path);
-    ResourceReply *reply = new ResourceReply(req.url(), dev, this);
-    connect(reply, SIGNAL(finished()), this, SLOT(emitReplyFinished()));
-    reply->setOperation(op);
-    reply->setRequest(req);
-    reply->setUrl(req.url());
-    reply->open(QIODevice::ReadOnly);
-    return reply;
 }
 
 void ResourceManagerNAM::emitReplyFinished()
@@ -324,9 +318,19 @@ QIODevice *ResourceManager::getIODevice(const QString& path, QObject *parent)
 
 QIODevice *ResourceManager::getIODevice(const QUrl& path, QObject *parent)
 {
-    if (path.scheme().compare("res", Qt::CaseInsensitive))
+    if (path.scheme().compare("res", Qt::CaseInsensitive) &&
+        path.scheme().compare("dat", Qt::CaseInsensitive))
         return 0;
-    return getIODevice(path.path(), parent);
+
+    QString p = path.path();
+    if (!path.scheme().compare("dat", Qt::CaseInsensitive))
+    {
+        if (p.at(0) == "/")
+            p.remove(0, 1);
+        p = qobject_cast<Engine*>(qApp)->datValue(p).toString();
+        p = p.replace("\\", "/");
+    }
+    return getIODevice(p, parent);
 }
 
 void ResourceManager::addFileSystemPath(const QString& path)

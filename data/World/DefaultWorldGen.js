@@ -69,10 +69,10 @@ var i = 0
 for(var k in asteroidStyles)
 {
     var asteroid = World.Asteroid(system);
-    asteroid.objectName = "Asteroid." + asteroid;
+    asteroid.objectName = "Asteroid." + k;
     asteroid.style = asteroidStyles[k];
     asteroid.period = 15;
-    asteroid.semiAxis.x = 1500;
+    asteroid.semiAxis.x = 1500 + i * 10;
     asteroid.semiAxis.y = 1000;
     asteroid.angle = (i / styleCount) * 2 * 3.1415;
     i++

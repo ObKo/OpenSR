@@ -12,7 +12,9 @@ Item {
     property var trajectoryView
 
     anchors.fill: parent
-
+    
+    id: view
+    
     Rectangle {
         anchors.fill: parent
         color: "black"
@@ -32,6 +34,7 @@ Item {
 
         Item {
             id: spaceNode
+            //transform: Scale {xScale: 0.25; yScale: 0.25}
         }
     }
 
@@ -67,6 +70,7 @@ Item {
     }
 
     function showTrajectory(object) {
+        trajectoryView.visibleRect = spaceNode.mapFromItem(view, 0, 0, view.width, view.height)
         if (trajectoryView.object !== object)
             trajectoryView.object = object;
         trajectoryView.visible = true;
