@@ -20,6 +20,7 @@
 
 #include <QDebug>
 #include <QStack>
+#include <cmath>
 
 namespace OpenSR
 {

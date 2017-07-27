@@ -4,6 +4,8 @@ import OpenSR.World 1.0
 
 Item {
     property WorldObject object
+    enabled: false
+    opacity: 0.8
     
     Rectangle {
         anchors.fill: info
@@ -19,7 +21,7 @@ Item {
     onObjectChanged: {
         var text = "";
         for (var key in object) {
-            if (key == "objectName" || key == "children" || key == "trajectory")
+            if (key == "children" || key == "trajectory")
                 continue;
 
             if(typeof object[key] == "function")
@@ -31,8 +33,8 @@ Item {
                 key = "type";
                 value = WorldManager.typeName(value)
             }
-
-            text += "<b>" + key + "</b>" + ": " + value + "<br/>\n";
+                        
+            text += "<b>" + key + "</b>" + ": " + value + "<br/>\n";                
         }
         info.text = text;
     }

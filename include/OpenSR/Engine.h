@@ -53,7 +53,7 @@ public:
 public Q_SLOTS:
     void addRCCArchive(const QString& source);
     void showQMLComponent(const QString& url);
-    void addDATFile(const QString& url);
+    void addDATFile(const QString& url, bool isCache = false);
     void loadPlugin(const QString& name);
 
 private:
@@ -65,17 +65,6 @@ private:
     QVariantMap m_datRoot;
 
     Q_DISABLE_COPY(Engine)
-};
-
-//FIXME: In Qt 5.6 QJSEngine will have console object QTBUG-40772
-class JSConsole: public QObject
-{
-    Q_OBJECT
-public:
-    JSConsole(QObject *parent = 0);
-
-public Q_SLOTS:
-    void log(QString msg);
 };
 
 }

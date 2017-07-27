@@ -1,5 +1,0 @@
-SET(WORLD_PYTHON_HEADERS
-    WorldObjectWrap.h
-)
-
-INSTALL(FILES ${WORLD_PYTHON_HEADERS} DESTINATION include/OpenSR/World/python)

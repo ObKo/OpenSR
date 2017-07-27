@@ -1,9 +1,0 @@
-{
-    "@type": "radio-button-style",
-    "normal": {"@type": "texture", "texture": "DATA/FormOptions2/2SwitchN.gi"},
-    "hovered": {"@type": "texture", "texture": "DATA/FormOptions2/2SwitchA.gi"},
-    "selected-normal": {"@type": "texture", "texture": "DATA/FormOptions2/2SwitchD.gi"},
-    "selected-hovered": {"@type": "texture", "texture": "DATA/FormOptions2/2SwitchD.gi"},
-    "font": "/fonts/default", 
-    "color": "#FFFFFF"
-} 

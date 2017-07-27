@@ -126,5 +126,10 @@ ResourceManager* WorldContext::resources() const
 {
     return m_resources;
 }
+
+QObject* WorldContext::findObject(const QString& name) const
+{
+    return findChild<QObject*>(name);
+}
 }
 }

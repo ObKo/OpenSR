@@ -1,6 +1,0 @@
-{
-    "@type": "directory",
-    "styles": ":ORC/styles.json",
-    "skins": ":ORC/skins.json",
-    "fonts": ":ORC/fonts.json"
-}

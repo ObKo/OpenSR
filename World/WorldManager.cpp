@@ -72,17 +72,18 @@ struct ObjectHeader
 {
     quint32 type;
     quint32 id;
+    QString idName;
     quint32 parentId;
 };
 
 QDataStream& operator<<(QDataStream& stream, const ObjectHeader& h)
 {
-    return stream << h.type << h.id << h.parentId;
+    return stream << h.type << h.id << h.idName << h.parentId;
 }
 
 QDataStream& operator>>(QDataStream& stream, ObjectHeader& h)
 {
-    return stream >> h.type >> h.id >> h.parentId;
+    return stream >> h.type >> h.id >> h.idName >> h.parentId;
 }
 
 WorldObject* createObject(QMap<quint32, WorldObject*>& objects, QMap<quint32, ObjectHeader>& headers, const ObjectHeader& header)
@@ -113,6 +114,7 @@ WorldObject* createObject(QMap<quint32, WorldObject*>& objects, QMap<quint32, Ob
     }
     const QMetaObject *meta = *metai;
     WorldObject *obj = qobject_cast<WorldObject*>(meta->newInstance(Q_ARG(WorldObject*, parent), Q_ARG(quint32, header.id)));
+    obj->setObjectName(header.idName);
     if (obj)
         objects.insert(obj->id(), obj);
     return obj;
@@ -409,6 +411,7 @@ bool WorldManager::saveWorld(const QString& path)
 
         ObjectHeader h;
         h.id = o->id();
+        h.idName = o->objectName();
         WorldObject *p = qobject_cast<WorldObject*>(o->parent());
         if (p)
             h.parentId = p->id();

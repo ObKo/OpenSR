@@ -24,6 +24,8 @@
 #include <QSGSimpleTextureNode>
 #include <QQuickWindow>
 
+#include <cmath>
+
 namespace OpenSR
 {
 namespace

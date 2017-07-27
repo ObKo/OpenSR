@@ -24,6 +24,7 @@
 #include <QDebug>
 #include <QRegularExpression>
 #include <QFile>
+#include <cmath>
 
 namespace OpenSR
 {

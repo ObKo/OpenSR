@@ -1,7 +1,0 @@
-{
-    "@type": "directory",
-    
-    "default": {"@type": "font", "file": "DroidSans.ttf", "size": 14},
-    "ranger": {"@type": "font", "file": "DATA/FONT/ranger_5.aft"},
-    "ranger-bold": {"@type": "font", "file": "DATA/FONT/ranger_6.aft"}
-}

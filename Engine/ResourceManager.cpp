@@ -19,6 +19,8 @@
 #include "OpenSR/ResourceManager.h"
 #include "ResourceManager_p.h"
 
+#include "OpenSR/Engine.h"
+
 #include <QQmlNetworkAccessManagerFactory>
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
@@ -129,21 +131,29 @@ ResourceManagerNAM::~ResourceManagerNAM()
 
 QNetworkReply* ResourceManagerNAM::createRequest(Operation op, const QNetworkRequest & req, QIODevice *outgoingData)
 {
-    qDebug() << op << req.url();
-    if ((req.url().scheme().compare("res", Qt::CaseInsensitive) == 0) && (op == QNetworkAccessManager::GetOperation))
+    QUrl url = req.url();
+    QString scheme = url.scheme();
+    QString path = req.url().adjusted(QUrl::NormalizePathSegments).path();
+    if ((scheme.compare("dat", Qt::CaseInsensitive) == 0) && (op == QNetworkAccessManager::GetOperation))
     {
-        QString path = req.url().adjusted(QUrl::NormalizePathSegments).path();
-        QIODevice *dev = m_manger->getIODevice(path);
-        ResourceReply *reply = new ResourceReply(req.url(), dev, this);
-        connect(reply, SIGNAL(finished()), this, SLOT(emitReplyFinished()));
-        reply->setOperation(op);
-        reply->setRequest(req);
-        reply->setUrl(req.url());
-        reply->open(QIODevice::ReadOnly);
-        return reply;
+        if (path.at(0) == "/")
+            path.remove(0, 1);
+        path = qobject_cast<Engine*>(qApp)->datValue(path).toString();
+        path = path.replace("\\", "/");
     }
+    else if ((scheme.compare("res", Qt::CaseInsensitive) == 0) && (op == QNetworkAccessManager::GetOperation))
+        ;
     else
         return QNetworkAccessManager::createRequest(op, req, outgoingData);
+
+    QIODevice *dev = m_manger->getIODevice(path);
+    ResourceReply *reply = new ResourceReply(req.url(), dev, this);
+    connect(reply, SIGNAL(finished()), this, SLOT(emitReplyFinished()));
+    reply->setOperation(op);
+    reply->setRequest(req);
+    reply->setUrl(req.url());
+    reply->open(QIODevice::ReadOnly);
+    return reply;
 }
 
 void ResourceManagerNAM::emitReplyFinished()

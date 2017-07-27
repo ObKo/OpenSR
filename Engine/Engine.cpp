@@ -84,8 +84,8 @@ Engine::Engine(int argc, char** argv): QApplication(argc, argv)
     m_qmlEngine->setNetworkAccessManagerFactory(m_resources->qmlNAMFactory());
 
     m_scriptEngine = new QJSEngine(this);
+    m_scriptEngine->installExtensions(QJSEngine::AllExtensions);
     m_scriptEngine->globalObject().setProperty("engine", m_scriptEngine->newQObject(this));
-    m_scriptEngine->globalObject().setProperty("console", m_scriptEngine->newQObject(new JSConsole(this)));
 }
 
 Engine::~Engine()
@@ -151,12 +151,12 @@ QJSEngine* Engine::scriptEngine()
     return m_scriptEngine;
 }
 
-void Engine::addDATFile(const QString& url)
+void Engine::addDATFile(const QString& url, bool isCache)
 {
     QIODevice *dev = m_resources->getIODevice(QUrl(url));
     if (!dev || !dev->isOpen())
         return;
-    QVariantMap dat = loadDAT(dev);
+    QVariantMap dat = loadDAT(dev, isCache);
     mergeMap(m_datRoot, dat);
 }
 
@@ -231,15 +231,5 @@ void Engine::execScript(const QUrl& url)
         qWarning().noquote() << QString("%1:%2: %3").arg(url.toString(),
                              result.property("lineNumber").toString(), result.toString());
     }
-}
-
-JSConsole::JSConsole(QObject *parent) :
-    QObject(parent)
-{
-}
-
-void JSConsole::log(QString msg)
-{
-    qDebug().noquote() << msg;
 }
 }

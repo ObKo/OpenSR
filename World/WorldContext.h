@@ -42,6 +42,8 @@ public:
 
     PlanetarySystem* currentSystem() const;
     ResourceManager* resources() const;
+    
+    Q_INVOKABLE QObject* findObject(const QString& name) const;
 
     void setCurrentSystem(PlanetarySystem *system);
 
