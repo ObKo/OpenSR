@@ -42,7 +42,7 @@ Item {
             TexturedBezierCurve {\
                source: \"dat:/Bm.PI.Path2\";\
                minStep: 20;\
-            }";
+            }"
             
         var visibleCurves = []
         var firstIncluded = false

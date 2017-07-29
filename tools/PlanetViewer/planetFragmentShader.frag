@@ -70,8 +70,8 @@ void calcLight(in sampler2D tex, in vec2 texCoord, in vec3 pos, in bool bump, in
         k = max(dot(l, n), 0.0);
     }
 
-    light.rgb = vec3(1.0, 1.0, 1.0) * k * 0.7 + 0.3 * ambient;
-    light.a = k * 0.6 + 0.4;
+    light.rgb = vec3(1.0, 1.0, 1.0) * k * 0.85 + 0.15;
+    light.a = 1.0;//k * 0.6 + 0.4;
 }
 
 vec4 getPlanetColor()
@@ -126,7 +126,7 @@ vec4 getAtmosphereColor()
 void calcColor(out vec4 color)
 {
     color = getPlanetColor();
-    color = blend(color, getAtmosphereColor());
+    //color = blend(color, getAtmosphereColor());
 }
 
 void main()

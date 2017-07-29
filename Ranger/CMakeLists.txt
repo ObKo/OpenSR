@@ -2,6 +2,7 @@ SET(RANGER_QT_SOURCES
     GAILoader.cpp
     GILoader.cpp
     HAILoader.cpp
+    PSDLoader.cpp
     PKG.cpp
     ZLib.cpp
     DAT.cpp

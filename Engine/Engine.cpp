@@ -60,7 +60,7 @@ void mergeMap(QVariantMap &source, const QVariantMap &append)
     }
 }
 }
-Engine::Engine(int argc, char** argv): QApplication(argc, argv)
+Engine::Engine(int& argc, char** argv): QApplication(argc, argv)
 {
     QApplication::setOrganizationName(SETTINGS_ORGANIZATION);
     QApplication::setApplicationName(SETTINGS_APPLICATION);

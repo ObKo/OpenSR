@@ -24,6 +24,7 @@
 #include <QColorDialog>
 #include <QMessageBox>
 #include <QDebug>
+#include <cmath>
 
 namespace OpenSR
 {

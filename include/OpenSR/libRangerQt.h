@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2014 - 2015 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2014 - 2017 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -47,6 +47,7 @@ namespace OpenSR
 const uint32_t GI_FRAME_SIGNATURE = 0x00006967;
 const uint32_t GAI_SIGNATURE = 0x00696167;
 const uint32_t HAI_SIGNATURE = 0x04210420;
+const uint32_t PSD_SIGNATURE = 0x53504238;
 const uint32_t ZL02_SIGNATURE = 0x32304c5a;
 const uint32_t ZL01_SIGNATURE = 0x31304c5a;
 //FIXME: Check this
@@ -160,6 +161,17 @@ struct Animation
     QVector<int> times;
 };
 
+struct PSDHeader
+{
+    uint32_t signature;
+    uint16_t version;
+    uint16_t numChannels;
+    uint32_t height;
+    uint32_t width;
+    uint16_t depth;
+    uint16_t colorMode;
+};
+
 LIBRANGER_API bool checkHAIHeader(QIODevice *dev);
 LIBRANGER_API HAIHeader peekHAIHeader(QIODevice *dev);
 LIBRANGER_API HAIHeader readHAIHeader(QIODevice *dev);
@@ -184,6 +196,13 @@ LIBRANGER_API GIFrameHeader readGIHeader(QIODevice *dev);
 
 LIBRANGER_API QImage loadGIFrame(QIODevice *dev, bool animation = false, const QImage &background = QImage(), int startX = 0, int startY = 0, int finishX = 0, int finishY = 0);
 LIBRANGER_API void decodeGAIDeltaFrame(QImage &dest, int x, int y, QIODevice *dev);
+
+LIBRANGER_API bool checkPSDHeader(QIODevice *dev);
+LIBRANGER_API QImage::Format getPSDFormat(const PSDHeader& header);
+LIBRANGER_API PSDHeader peekPSDHeader(QIODevice *dev);
+LIBRANGER_API PSDHeader readPSDHeader(QIODevice *dev);
+
+LIBRANGER_API QImage loadPSDFrame(QIODevice *dev);
 
 LIBRANGER_API PKGItem *loadPKG(QIODevice *dev);
 LIBRANGER_API QByteArray extractFile(const PKGItem &item, QIODevice *dev);

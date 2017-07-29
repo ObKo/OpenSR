@@ -1,6 +1,7 @@
 SET(IMAGE_PLUGIN_SOURCES
     GAIAnimationIO.cpp
     GIImageIO.cpp
+    PSDImageIO.cpp
     HAIAnimationIO.cpp
     QtOpenSRImagePlugin.cpp
 )
@@ -8,6 +9,7 @@ SET(IMAGE_PLUGIN_SOURCES
 SET(IMAGE_PLUGIN_HEADERS
     GAIAnimationIO.h
     GIImageIO.h
+    PSDImageIO.h
     HAIAnimationIO.h
     QtOpenSRImagePlugin.h
 )
