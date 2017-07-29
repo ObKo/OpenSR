@@ -24,6 +24,7 @@
 
 class QQuickView;
 class QQmlEngine;
+class QQmlApplicationEngine;
 class QJSEngine;
 
 namespace OpenSR
@@ -57,8 +58,7 @@ public Q_SLOTS:
     void loadPlugin(const QString& name);
 
 private:
-    QQuickView *m_qmlView;
-    QQmlEngine *m_qmlEngine;
+    QQmlApplicationEngine *m_qmlEngine;
     QJSEngine *m_scriptEngine;
     SoundManager *m_sound;
     ResourceManager *m_resources;

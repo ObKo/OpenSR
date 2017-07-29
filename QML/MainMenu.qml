@@ -161,7 +161,7 @@ Item {
         anchors.bottomMargin: questButtonText.height + 10
         anchors.leftMargin: 200
         onClicked: {
-            screen.createObjectFromURL("qrc:/OpenSR/QuestSelectionMenu.qml", menu, "questSelectionRequest")
+            gameScreen.createObjectFromURL("qrc:/OpenSR/QuestSelectionMenu.qml", menu, "questSelectionRequest")
         }
     }
     
@@ -175,24 +175,21 @@ Item {
     
     function startQuest(id) {
         changeScreen("qrc:/OpenSR/QuestPlayer.qml", {"questID": id});
-        menu.destroy()
     }
 
     function newGame() {
         World.WorldManager.generateWorld("res:/World/DefaultWorldGen.js");
         changeScreen("qrc:/OpenSR/SpaceView.qml", {"system": World.WorldManager.context.currentSystem});
-        menu.destroy()
     }
 
     function loadGame() {
         World.WorldManager.loadWorld("/tmp/test.osr");
         changeScreen("qrc:/OpenSR/SpaceView.qml", {"system": World.WorldManager.context.currentSystem});
-        menu.destroy()
     }
 
     function componentObjectCreated(object, id)
     {
-        if(id == "questSelectionRequest"){
+        if(id === "questSelectionRequest"){
             object.anchors.horizontalCenter = menu.horizontalCenter
             object.anchors.verticalCenter = menu.verticalCenter
             object.questSelected.connect(startQuest)

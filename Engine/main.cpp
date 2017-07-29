@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2014 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2014 - 2017 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,9 +18,18 @@
 
 #include <OpenSR/Engine.h>
 
+namespace
+{
+static const QString SETTINGS_ORGANIZATION = "OpenSR";
+static const QString SETTINGS_APPLICATION = "OpenSR";
+}
+
 int main(int argc, char **argv)
 {
     OpenSR::Engine engine(argc, argv);
+
+    QApplication::setOrganizationName(SETTINGS_ORGANIZATION);
+    QApplication::setApplicationName(SETTINGS_APPLICATION);
 
     return engine.run();
 }

@@ -28,7 +28,7 @@
 
 #include <QQuickView>
 #include <QBoxLayout>
-#include <QQmlEngine>
+#include <QQmlApplicationEngine>
 #include <QQmlComponent>
 #include <QQmlContext>
 #include <QSettings>
@@ -42,11 +42,7 @@
 
 namespace OpenSR
 {
-namespace
-{
-static const QString SETTINGS_ORGANIZATION = "OpenSR";
-static const QString SETTINGS_APPLICATION = "OpenSR";
-
+namespace {
 void mergeMap(QVariantMap &source, const QVariantMap &append)
 {
     auto end = append.end();
@@ -62,17 +58,12 @@ void mergeMap(QVariantMap &source, const QVariantMap &append)
 }
 Engine::Engine(int& argc, char** argv): QApplication(argc, argv)
 {
-    QApplication::setOrganizationName(SETTINGS_ORGANIZATION);
-    QApplication::setApplicationName(SETTINGS_APPLICATION);
-
     installTranslator(new DATTranslator(this));
 
     m_sound = new SoundManager(this);
     m_resources = new ResourceManager(this);
 
-    m_qmlView = new QQuickView();
-    m_qmlView->setResizeMode(QQuickView::SizeRootObjectToView);
-    m_qmlEngine = m_qmlView->engine();
+    m_qmlEngine = new QQmlApplicationEngine();
     m_qmlEngine->addImportPath(":/");
     //m_qmlEngine->rootContext()->setContextProperty("engine", this);
     //m_qmlEngine->rootContext()->setContextProperty("QM", new QMLQMExporter(this));
@@ -98,20 +89,13 @@ int Engine::run()
     QSettings settings;
 
     m_resources->addFileSystemPath(settings.value("engine/mainDataDir", QDir::current().absolutePath() + "/data").toString());
+    m_resources->addFileSystemPath(":/");
 
-    QUrl qmlMainUrl(settings.value("engine/mainQML", "qrc:/OpenSR/ScreenLoader.qml").toString());
-    m_qmlView->setSource(qmlMainUrl);
-
-    int width = settings.value("graphics/width", 1024).toInt();
-    int height = settings.value("graphics/height", 768).toInt();
-
-    m_qmlView->setWidth(width);
-    m_qmlView->setHeight(height);
+    QUrl qmlMainUrl(settings.value("engine/mainQML", "qrc:/OpenSR/GameWindow.qml").toString());
+    m_qmlEngine->load(qmlMainUrl);
 
     QString scriptPath = settings.value("engine/startupScript", "res:/startup.qs").toString();
     execScript(scriptPath);
-
-    m_qmlView->show();
 
     m_sound->start();
 
@@ -125,10 +109,10 @@ void Engine::addRCCArchive(const QString& path)
 
 void Engine::showQMLComponent(const QString& url)
 {
-    if (!m_qmlView->rootObject())
-        return;
-
-    QMetaObject::invokeMethod(m_qmlView->rootObject(), "changeScreen", Q_ARG(QVariant, QUrl(url)), Q_ARG(QVariant, QVariantMap()));
+    for (auto root : m_qmlEngine->rootObjects())
+    {
+        QMetaObject::invokeMethod(root, "changeScreen", Q_ARG(QVariant, QUrl(url)), Q_ARG(QVariant, QVariantMap()));
+    }
 }
 
 SoundManager* Engine::sound() const
