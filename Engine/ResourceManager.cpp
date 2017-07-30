@@ -325,7 +325,7 @@ QIODevice *ResourceManager::getIODevice(const QUrl& path, QObject *parent)
     QString p = path.path();
     if (!path.scheme().compare("dat", Qt::CaseInsensitive))
     {
-        if (p.at(0) == "/")
+        if (p.at(0) == '/')
             p.remove(0, 1);
         p = qobject_cast<Engine*>(qApp)->datValue(p).toString();
         p = p.replace("\\", "/");
