@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2015 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2015 - 2017 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -156,7 +156,7 @@ public:
 };
 }
 
-class TexturedPolylinePrivate
+class TexturedPolyline::TexturedPolylinePrivate
 {
     TexturedPolyline *q_ptr;
     Q_DECLARE_PUBLIC(TexturedPolyline)
@@ -169,7 +169,7 @@ class TexturedPolylinePrivate
     bool sourceChanged;
 };
 
-TexturedPolylinePrivate::TexturedPolylinePrivate(TexturedPolyline *q)
+TexturedPolyline::TexturedPolylinePrivate::TexturedPolylinePrivate(TexturedPolyline *q)
 {
     q_ptr = q;
 }

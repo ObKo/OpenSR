@@ -65,12 +65,8 @@ Engine::Engine(int& argc, char** argv): QApplication(argc, argv)
 
     m_qmlEngine = new QQmlApplicationEngine();
     m_qmlEngine->addImportPath(":/");
-    //m_qmlEngine->rootContext()->setContextProperty("engine", this);
-    //m_qmlEngine->rootContext()->setContextProperty("QM", new QMLQMExporter(this));
-
-    // "QQmlContext does not take ownership of value." they said....
-    // QTBUG-18732
-    //m_qmlEngine->setObjectOwnership(this, QQmlEngine::CppOwnership);
+    m_qmlEngine->rootContext()->setContextProperty("engine", this);
+    m_qmlEngine->setObjectOwnership(this, QQmlEngine::CppOwnership);
 
     m_qmlEngine->setNetworkAccessManagerFactory(m_resources->qmlNAMFactory());
 

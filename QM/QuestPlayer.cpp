@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2013 - 2015 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2013 - 2017 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ namespace OpenSR
 {
 namespace QM
 {
-struct QuestPlayerPrivate
+struct QuestPlayer::QuestPlayerPrivate
 {
 public:
     QuestPlayerPrivate(QuestPlayer *q);
@@ -63,11 +63,11 @@ public:
 };
 
 QuestPlayer::QuestPlayer(QObject *parent): QObject(parent),
-    d_osr_ptr(new QuestPlayerPrivate(this))
+    d_osr_ptr(new QuestPlayer::QuestPlayerPrivate(this))
 {
 }
 
-QuestPlayerPrivate::QuestPlayerPrivate(QuestPlayer *q_)
+QuestPlayer::QuestPlayerPrivate::QuestPlayerPrivate(QuestPlayer *q_)
 {
     q = q_;
     m_questLoaded = false;
@@ -90,7 +90,7 @@ QM::Transition QuestPlayer::currentTransition() const
     return d->m_currentTransition;
 }
 
-QString QuestPlayerPrivate::substituteValues(const QString &str) const
+QString QuestPlayer::QuestPlayerPrivate::substituteValues(const QString &str) const
 {
     //TODO: Better tags handling (<format>, <fix>, etc)
     if (str.isEmpty())
@@ -173,7 +173,7 @@ void QuestPlayer::resetQuest()
     d->setLocation(d->m_quest.startLocation);
 }
 
-void QuestPlayerPrivate::setLocation(uint32_t location)
+void QuestPlayer::QuestPlayerPrivate::setLocation(uint32_t location)
 {
     auto loc = m_quest.locations.find(location);
     if (loc == m_quest.locations.end())
@@ -246,7 +246,7 @@ void QuestPlayerPrivate::setLocation(uint32_t location)
         emit(q->locationChanged());
 }
 
-bool QuestPlayerPrivate::checkCriticalParameters()
+bool QuestPlayer::QuestPlayerPrivate::checkCriticalParameters()
 {
     auto end = m_parameters.end();
     for (auto i = m_parameters.begin(); i != end; ++i)
@@ -316,7 +316,7 @@ QStringList QuestPlayer::visibleParameters() const
     return params;
 }
 
-bool QuestPlayerPrivate::checkCondition(const QM::Transition::Condition& c) const
+bool QuestPlayer::QuestPlayerPrivate::checkCondition(const QM::Transition::Condition& c) const
 {
     float param = m_parameters.value(c.param);
 
@@ -353,7 +353,7 @@ bool QuestPlayerPrivate::checkCondition(const QM::Transition::Condition& c) cons
     return true;
 }
 
-void QuestPlayerPrivate::checkTransitions()
+void QuestPlayer::QuestPlayerPrivate::checkTransitions()
 {
     m_possibleTransitions.clear();
     m_alwaysVisibleTransitions.clear();
@@ -410,7 +410,7 @@ QList<QuestPlayer::TransitionItem> QuestPlayer::visibleTransitions() const
     return r;
 }
 
-void QuestPlayerPrivate::applyModifier(const QM::Modifier& m)
+void QuestPlayer::QuestPlayerPrivate::applyModifier(const QM::Modifier& m)
 {
     switch (m.visibility)
     {
@@ -499,7 +499,7 @@ void QuestPlayer::finishTransition()
 }
 
 //FIXME: Optimize
-void QuestPlayerPrivate::reduceTransitions()
+void QuestPlayer::QuestPlayerPrivate::reduceTransitions()
 {
     QMap<QString, QList<uint32_t> > transitions;
     QMap<QString, uint32_t> alwaysVisibleTransitions;

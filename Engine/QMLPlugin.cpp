@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2015 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2015 - 2017 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@
 #include <OpenSR/TexturedBezierCurve.h>
 #include <OpenSR/Music.h>
 #include <OpenSR/SpaceMouseArea.h>
+#include <OpenSR/PlanetDrawer.h>
 
 #include <QtQml>
 #include <QVariant>
@@ -58,6 +59,7 @@ void OpenSRPlugin::registerTypes(const char* uri)
     qmlRegisterType<TexturedPolyline>(uri, 1, 0, "TexturedPolyline");
     qmlRegisterType<TexturedBezierCurve>(uri, 1, 0, "TexturedBezierCurve");
     qmlRegisterType<SpaceMouseArea>(uri, 1, 0, "SpaceMouseArea");
+    qmlRegisterType<PlanetDrawer>(uri, 1, 0, "PlanetDrawer");
 }
 
 

@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2014 - 2015 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2014 - 2017 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -79,7 +79,8 @@ ALuint Sample::openALBufferID() const
     return d->m_alID;
 }
 
-SoundManager::SoundManager(QObject *parent): QObject(parent), d_osr_ptr(new SoundManagerPrivate())
+SoundManager::SoundManager(QObject *parent):
+    QObject(parent), d_osr_ptr(new SoundManager::SoundManagerPrivate())
 {
     Q_D(SoundManager);
     d->device = alcOpenDevice(alcGetString(NULL, ALC_DEFAULT_DEVICE_SPECIFIER));
@@ -104,7 +105,7 @@ void SoundManager::start()
     alListenerfv(AL_ORIENTATION, direction);
 }
 
-QSharedPointer<SampleData> SoundManagerPrivate::loadWAVFile(QIODevice* d)
+QSharedPointer<SampleData> SoundManager::SoundManagerPrivate::loadWAVFile(QIODevice* d)
 {
     quint32 header[3];
     d->read((char *)header, 3 * 4);

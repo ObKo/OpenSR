@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2014 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2014 - 2017 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,16 +16,27 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <QApplication>
-#include "MainWindow.h"
+#include <OpenSR/Engine.h>
+#include <QSettings>
 
-int main(int argc, char *argv[])
+namespace
 {
-    QApplication a(argc, argv);
-    QApplication::setOrganizationName("OpenSR");
-    QApplication::setApplicationName("PlanetViewer");
-    OpenSR::MainWindow w;
-    w.show();
+static const QString SETTINGS_ORGANIZATION = "OpenSR";
+static const QString SETTINGS_APPLICATION = "PlanetViewer";
+}
 
-    return a.exec();
+int main(int argc, char **argv)
+{
+    OpenSR::Engine engine(argc, argv);
+
+    QApplication::setOrganizationName(SETTINGS_ORGANIZATION);
+    QApplication::setApplicationName(SETTINGS_APPLICATION);
+
+    QSettings settings;
+    QString scriptPath = settings.value("engine/startupScript", "res:/PlanetViewer/PlanetViewer.js").toString();
+    QString qmlPath = settings.value("engine/mainQML", "res:/PlanetViewer/PlanetViewer.qml").toString();
+    settings.setValue("engine/startupScript", scriptPath);
+    settings.setValue("engine/mainQML", qmlPath);
+
+    return engine.run();
 }

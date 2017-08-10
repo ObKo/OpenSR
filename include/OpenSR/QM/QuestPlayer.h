@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2013 - 2015 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2013 - 2017 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -30,7 +30,6 @@ namespace OpenSR
 {
 namespace QM
 {
-class QuestPlayerPrivate;
 class QM_API QuestPlayer: public QObject
 {
     Q_OBJECT

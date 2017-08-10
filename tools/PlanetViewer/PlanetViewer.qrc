@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/PlanetViewer">
+        <file>PlanetViewer.qml</file>
+        <file>PlanetViewer.js</file>
+    </qresource>
+</RCC>
+ 

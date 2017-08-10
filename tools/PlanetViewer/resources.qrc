@@ -1,5 +1,0 @@
-<RCC>
-    <qresource prefix="/">
-        <file>planetFragmentShader.frag</file>
-    </qresource>
-</RCC>

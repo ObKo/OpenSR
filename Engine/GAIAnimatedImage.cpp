@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2015 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2015 - 2017 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -132,7 +132,7 @@ public:
 };
 }
 
-class GAIAnimatedImagePrivate
+class GAIAnimatedImage::GAIAnimatedImagePrivate
 {
     GAIAnimatedImage *q_ptr;
     Q_DECLARE_PUBLIC(GAIAnimatedImage)
@@ -164,7 +164,7 @@ class GAIAnimatedImagePrivate
     float m_speed;
 };
 
-GAIAnimatedImagePrivate::GAIAnimatedImagePrivate(GAIAnimatedImage *q):
+GAIAnimatedImage::GAIAnimatedImagePrivate::GAIAnimatedImagePrivate(GAIAnimatedImage *q):
     m_sourceChanged(false), m_loaded(false), m_currentFrame(0), m_currentFile(0),
     m_fileChanged(false), m_playing(true), m_speed(1.0f)
 {
@@ -265,7 +265,7 @@ QSGNode* GAIAnimatedImage::updatePaintNode(QSGNode* oldNode, QQuickItem::UpdateP
     return n;
 }
 
-void GAIAnimatedImagePrivate::loadGAI(const QUrl& source)
+void GAIAnimatedImage::GAIAnimatedImagePrivate::loadGAI(const QUrl& source)
 {
     if (!source.isLocalFile() && source.scheme() != "qrc" && source.scheme() != "res")
     {
@@ -376,7 +376,7 @@ void GAIAnimatedImagePrivate::loadGAI(const QUrl& source)
     m_loaded = true;
 }
 
-void GAIAnimatedImagePrivate::loadGIFrame(QIODevice* dev, int i, const GAIHeader &header,
+void GAIAnimatedImage::GAIAnimatedImagePrivate::loadGIFrame(QIODevice* dev, int i, const GAIHeader &header,
         QVector<QByteArray>& frames, QVector<QPoint>& offsets)
 {
     GIFrameHeader image;

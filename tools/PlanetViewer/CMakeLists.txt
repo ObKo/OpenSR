@@ -1,36 +1,25 @@
-FIND_PACKAGE(Qt5OpenGL REQUIRED)
-FIND_PACKAGE(OpenGL REQUIRED)
-
-SET(PV_SOURCES
-    main.cpp
-    MainWindow.cpp
-    PlanetViewer.cpp
-    PlanetModel.cpp
-)
-
-SET(PV_HEADERS
-    MainWindow.h
-    PlanetViewer.h
-    PlanetModel.h
-)
-
-SET(PV_UI
-    MainWindow.ui
-)
+FIND_PACKAGE(Qt5Widgets REQUIRED)
+FIND_PACKAGE(Qt5Quick REQUIRED)
 
 INCLUDE_DIRECTORIES(
-  ${CMAKE_SOURCE_DIR}/include
-  ${Qt5Widgets_INCLUDE_DIRS}
-  ${Qt5Core_INCLUDE_DIRS}
-  ${Qt5OpenGL_INCLUDE_DIRS}
+    ${OPENGL_INCLUDE_DIR}
+    ${CMAKE_SOURCE_DIR}/include
+    ${CMAKE_BINARY_DIR}/include
+    ${Qt5Gui_INCLUDE_DIRS}
+    ${Qt5Widgets_INCLUDE_DIRS}
+    ${Qt5Core_INCLUDE_DIRS}
+    ${Qt5Quick_INCLUDE_DIRS}
 )
 
-QT5_WRAP_CPP(PV_MOC_SOURCES ${PV_HEADERS})
-QT5_WRAP_UI(PV_UI_SOURCES ${PV_UI})
-QT5_ADD_RESOURCES(PV_RES_SOURCES resources.qrc)
+SET(PV_QML_SOURCES
+    PlanetViewer.qml
+)
 
-ADD_EXECUTABLE(opensr-planetviewer ${PV_SOURCES} ${PV_UI_SOURCES} ${PV_RES_SOURCES} ${PV_MOC_SOURCES})
-TARGET_LINK_LIBRARIES(opensr-planetviewer Qt5::Core Qt5::Widgets Qt5::OpenGL ${OPENGL_LIBRARIES})
-SET_TARGET_PROPERTIES(opensr-planetviewer PROPERTIES COMPILE_FLAGS -DGL_GLEXT_PROTOTYPES)
+SET(PV_JS_SOURCES
+    PlanetViewer.js
+)
 
-INSTALL(TARGETS opensr-planetviewer RUNTIME DESTINATION bin)
+QT5_ADD_RESOURCES(PV_RESOURCES ${CMAKE_SOURCE_DIR}/QML/qml.qrc PlanetViewer.qrc)
+
+ADD_EXECUTABLE(opensr-planet-viewer main.cpp ${PV_RESOURCES})
+TARGET_LINK_LIBRARIES(opensr-planet-viewer engine)

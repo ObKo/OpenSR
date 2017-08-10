@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2014 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2014 - 2017 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -36,9 +36,12 @@
 #endif
 
 #define OPENSR_DECLARE_PRIVATE(Class) \
-    inline Class##Private* d_func() { return reinterpret_cast<Class##Private *>(qGetPtrHelper(d_osr_ptr)); } \
-    inline const Class##Private* d_func() const { return reinterpret_cast<const Class##Private *>(qGetPtrHelper(d_osr_ptr)); } \
-    friend class Class##Private;
+    protected: \
+        class Class##Private; \
+    private: \
+        inline Class##Private* d_func() { return reinterpret_cast<Class##Private *>(qGetPtrHelper(d_osr_ptr)); } \
+        inline const Class##Private* d_func() const { return reinterpret_cast<const Class##Private *>(qGetPtrHelper(d_osr_ptr)); } \
+        friend class Class##Private;
 
 #define OPENSR_DECLARE_DPOINTER(Class) \
     QScopedPointer<Class##Private> d_osr_ptr;

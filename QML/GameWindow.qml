@@ -19,7 +19,6 @@ Window
         var screens = gameScreen.children
         for(s in screens)
             screens[s].destroy();
-        gc();
         properties = (typeof properties === 'undefined') ? {} : properties;
         createObjectFromURL(url, gameScreen, "screenRequest", properties);
     }
