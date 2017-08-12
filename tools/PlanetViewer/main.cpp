@@ -23,6 +23,7 @@ namespace
 {
 static const QString SETTINGS_ORGANIZATION = "OpenSR";
 static const QString SETTINGS_APPLICATION = "PlanetViewer";
+static const QString MAIN_QML = "res:/PlanetViewer/PlanetViewer.qml";
 }
 
 int main(int argc, char **argv)
@@ -32,11 +33,7 @@ int main(int argc, char **argv)
     QApplication::setOrganizationName(SETTINGS_ORGANIZATION);
     QApplication::setApplicationName(SETTINGS_APPLICATION);
 
-    QSettings settings;
-    QString scriptPath = settings.value("engine/startupScript", "res:/PlanetViewer/PlanetViewer.js").toString();
-    QString qmlPath = settings.value("engine/mainQML", "res:/PlanetViewer/PlanetViewer.qml").toString();
-    settings.setValue("engine/startupScript", scriptPath);
-    settings.setValue("engine/mainQML", qmlPath);
+    engine.setMainQML(MAIN_QML);
 
     return engine.run();
 }

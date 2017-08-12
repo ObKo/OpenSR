@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2014 - 2015 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2014 - 2017 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -56,44 +56,101 @@ void mergeMap(QVariantMap &source, const QVariantMap &append)
     }
 }
 }
-Engine::Engine(int& argc, char** argv): QApplication(argc, argv)
+
+class Engine::EnginePrivate
 {
+public:
+    EnginePrivate()
+    {
+        qmlEngine = nullptr;
+        scriptEngine = nullptr;
+        sound = nullptr;
+        resources = nullptr;
+        running = false;
+    }
+
+    QQmlApplicationEngine *qmlEngine;
+    QJSEngine *scriptEngine;
+    SoundManager *sound;
+    ResourceManager *resources;
+    QVariantMap datRoot;
+    QString dataDir;
+    QUrl startupScript;
+    QUrl mainQML;
+    bool running;
+};
+
+Engine::Engine(int& argc, char** argv): QApplication(argc, argv),
+    d_osr_ptr(new EnginePrivate())
+{
+    Q_D(Engine);
+
     installTranslator(new DATTranslator(this));
 
-    m_sound = new SoundManager(this);
-    m_resources = new ResourceManager(this);
+    d->sound = new SoundManager(this);
+    d->resources = new ResourceManager(this);
 
-    m_qmlEngine = new QQmlApplicationEngine();
-    m_qmlEngine->addImportPath(":/");
-    m_qmlEngine->rootContext()->setContextProperty("engine", this);
-    m_qmlEngine->setObjectOwnership(this, QQmlEngine::CppOwnership);
+    d->qmlEngine = new QQmlApplicationEngine();
+    d->qmlEngine->rootContext()->setContextProperty("engine", this);
+    d->qmlEngine->setObjectOwnership(this, QQmlEngine::CppOwnership);
 
-    m_qmlEngine->setNetworkAccessManagerFactory(m_resources->qmlNAMFactory());
+    d->qmlEngine->setNetworkAccessManagerFactory(d->resources->qmlNAMFactory());
 
-    m_scriptEngine = new QJSEngine(this);
-    m_scriptEngine->installExtensions(QJSEngine::AllExtensions);
-    m_scriptEngine->globalObject().setProperty("engine", m_scriptEngine->newQObject(this));
+    d->scriptEngine = new QJSEngine(this);
+    d->scriptEngine->installExtensions(QJSEngine::AllExtensions);
+    d->scriptEngine->globalObject().setProperty("engine", d->scriptEngine->newQObject(this));
 }
 
 Engine::~Engine()
 {
-    qDebug() << "~Engine";
 }
 
 int Engine::run()
 {
+    Q_D(Engine);
+
     QSettings settings;
 
-    m_resources->addFileSystemPath(settings.value("engine/mainDataDir", QDir::current().absolutePath() + "/data").toString());
-    m_resources->addFileSystemPath(":/");
+    QString dataDir = settings.value("engine/mainDataDir").toString();
+    if (!dataDir.isEmpty())
+        setDataDir(dataDir);
+    else if (d->dataDir.isEmpty())
+        setDataDir(QDir::current().absolutePath() + "/data");
 
-    QUrl qmlMainUrl(settings.value("engine/mainQML", "qrc:/OpenSR/GameWindow.qml").toString());
-    m_qmlEngine->load(qmlMainUrl);
+    d->qmlEngine->addImportPath(d->dataDir);
+    d->qmlEngine->addImportPath(":/");
 
-    QString scriptPath = settings.value("engine/startupScript", "res:/startup.qs").toString();
-    execScript(scriptPath);
+    d->qmlEngine->addPluginPath(QDir::current().absolutePath());
 
-    m_sound->start();
+    d->resources->addFileSystemPath(d->dataDir);
+    d->resources->addFileSystemPath(":/");
+
+    QUrl qml = settings.value("engine/mainQML").toString();
+    if (!qml.isEmpty())
+        setMainQML(qml);
+
+    QUrl startup = settings.value("engine/startupScript").toString();
+    if (!startup.isEmpty())
+        setStartupScript(startup);
+
+    d->sound->start();
+
+    auto scriptExec = [this]
+    {
+        Q_D(Engine);
+        if (!d->startupScript.isEmpty())
+            execScript(d->startupScript);
+    };
+
+    if (!d->mainQML.isEmpty())
+    {
+        d->qmlEngine->load(d->mainQML);
+        connect(d->qmlEngine, &QQmlApplicationEngine::objectCreated, scriptExec);
+    }
+    else
+        scriptExec();
+
+    d->running = true;
 
     return exec();
 }
@@ -105,7 +162,9 @@ void Engine::addRCCArchive(const QString& path)
 
 void Engine::showQMLComponent(const QString& url)
 {
-    for (auto root : m_qmlEngine->rootObjects())
+    Q_D(Engine);
+
+    for (auto root : d->qmlEngine->rootObjects())
     {
         QMetaObject::invokeMethod(root, "changeScreen", Q_ARG(QVariant, QUrl(url)), Q_ARG(QVariant, QVariantMap()));
     }
@@ -113,43 +172,48 @@ void Engine::showQMLComponent(const QString& url)
 
 SoundManager* Engine::sound() const
 {
-    return m_sound;
+    Q_D(const Engine);
+    return d->sound;
 }
 
 ResourceManager* Engine::resources() const
 {
-    return m_resources;
+    Q_D(const Engine);
+    return d->resources;
 }
 
-QQmlEngine* Engine::qmlEngine()
+QQmlEngine* Engine::qmlEngine() const
 {
-    return m_qmlEngine;
+    Q_D(const Engine);
+    return d->qmlEngine;
 }
 
-QJSEngine* Engine::scriptEngine()
+QJSEngine* Engine::scriptEngine() const
 {
-    return m_scriptEngine;
+    Q_D(const Engine);
+    return d->scriptEngine;
 }
 
 void Engine::addDATFile(const QString& url, bool isCache)
 {
-    QIODevice *dev = m_resources->getIODevice(QUrl(url));
+    Q_D(Engine);
+    QIODevice *dev = d->resources->getIODevice(QUrl(url));
     if (!dev || !dev->isOpen())
         return;
     QVariantMap dat = loadDAT(dev, isCache);
-    mergeMap(m_datRoot, dat);
-}
-
-QVariantMap Engine::datRoot() const
-{
-    return m_datRoot;
+    mergeMap(d->datRoot, dat);
 }
 
 QVariant Engine::datValue(const QString& path) const
 {
+    Q_D(const Engine);
+
+    if (path.isEmpty())
+        return QVariant();
+
     QList<QString> pathes = path.split('.', QString::SkipEmptyParts);
-    QVariantMap current = m_datRoot;
-    QVariant result;
+    QVariantMap current = d->datRoot;
+    QVariant result = current;
 
     for (const QString& p : pathes)
     {
@@ -194,6 +258,8 @@ void Engine::loadPlugin(const QString& name)
 
 void Engine::execScript(const QUrl& url)
 {
+    Q_D(Engine);
+
     QIODevice *dev = resources()->getIODevice(url);
     if (!dev)
     {
@@ -205,11 +271,76 @@ void Engine::execScript(const QUrl& url)
     dev->close();
     delete dev;
 
-    QJSValue result = m_scriptEngine->evaluate(script, url.toString());
+    QJSValue result = d->scriptEngine->evaluate(script, url.toString());
     if (result.isError())
     {
         qWarning().noquote() << QString("%1:%2: %3").arg(url.toString(),
                              result.property("lineNumber").toString(), result.toString());
     }
+}
+
+QString Engine::dataDir() const
+{
+    Q_D(const Engine);
+    return d->dataDir;
+}
+
+void Engine::setDataDir(const QString& dir)
+{
+    Q_D(Engine);
+    if (d->running)
+    {
+        qWarning() << "Cannot set data dir while Engine is running";
+        return;
+    }
+    if (dir != d->dataDir)
+    {
+        d->dataDir = dir;
+        emit(dataDirChanged());
+    }
+}
+
+QUrl Engine::startupScript() const
+{
+    Q_D(const Engine);
+    return d->startupScript;
+}
+
+void Engine::setStartupScript(const QUrl& script)
+{
+    Q_D(Engine);
+    if (d->running)
+    {
+        qWarning() << "Cannot set startup script while Engine is running";
+        return;
+    }
+    if (script != d->startupScript)
+    {
+        d->startupScript = script;
+        emit(startupScriptChanged());
+    }
+
+}
+
+QUrl Engine::mainQML() const
+{
+    Q_D(const Engine);
+    return d->mainQML;
+}
+
+void Engine::setMainQML(const QUrl& qml)
+{
+    Q_D(Engine);
+    if (d->running)
+    {
+        qWarning() << "Cannot set main QML component while Engine is running";
+        return;
+    }
+    if (qml != d->mainQML)
+    {
+        d->mainQML = qml;
+        emit(mainQMLChanged());
+    }
+
 }
 }

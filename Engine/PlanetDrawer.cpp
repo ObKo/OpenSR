@@ -378,6 +378,7 @@ public:
 PlanetDrawer::PlanetDrawer(QQuickItem* parent): QQuickFramebufferObject(parent),
     d_osr_ptr(new PlanetDrawerPrivate())
 {
+    qApp;
     Q_D(PlanetDrawer);
 }
 

@@ -20,12 +20,15 @@
 #define OPENSR_ENGINE_H
 
 #include <QApplication>
+#include <QUrl>
 #include <OpenSR/OpenSR.h>
 
 class QQuickView;
 class QQmlEngine;
 class QQmlApplicationEngine;
 class QJSEngine;
+
+#define osrEngine (static_cast<OpenSR::Engine *>(QApplication::instance()))
 
 namespace OpenSR
 {
@@ -34,6 +37,12 @@ class ResourceManager;
 class ENGINE_API Engine: public QApplication
 {
     Q_OBJECT
+    OPENSR_DECLARE_PRIVATE(Engine)
+
+    Q_PROPERTY(QString dataDir READ dataDir WRITE setDataDir NOTIFY dataDirChanged)
+    Q_PROPERTY(QUrl startupScript READ startupScript WRITE setStartupScript NOTIFY startupScriptChanged)
+    Q_PROPERTY(QUrl mainQML READ mainQML WRITE setMainQML NOTIFY mainQMLChanged)
+
 public:
     Engine(int& argc, char **argv);
     virtual ~Engine();
@@ -43,13 +52,20 @@ public:
     SoundManager *sound() const;
     ResourceManager *resources() const;
 
-    QQmlEngine *qmlEngine();
-    QJSEngine *scriptEngine();
+    QQmlEngine *qmlEngine() const;
+    QJSEngine *scriptEngine() const;
 
-    Q_INVOKABLE QVariantMap datRoot() const;
     Q_INVOKABLE QVariant datValue(const QString& path) const;
 
     Q_INVOKABLE void execScript(const QUrl& url);
+
+    QString dataDir() const;
+    QUrl startupScript() const;
+    QUrl mainQML() const;
+
+    void setDataDir(const QString& dir);
+    void setStartupScript(const QUrl& script);
+    void setMainQML(const QUrl& qml);
 
 public Q_SLOTS:
     void addRCCArchive(const QString& source);
@@ -57,13 +73,13 @@ public Q_SLOTS:
     void addDATFile(const QString& url, bool isCache = false);
     void loadPlugin(const QString& name);
 
-private:
-    QQmlApplicationEngine *m_qmlEngine;
-    QJSEngine *m_scriptEngine;
-    SoundManager *m_sound;
-    ResourceManager *m_resources;
-    QVariantMap m_datRoot;
+Q_SIGNALS:
+    void dataDirChanged();
+    void startupScriptChanged();
+    void mainQMLChanged();
 
+private:
+    OPENSR_DECLARE_DPOINTER(Engine)
     Q_DISABLE_COPY(Engine)
 };
 

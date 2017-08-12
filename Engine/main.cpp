@@ -22,6 +22,8 @@ namespace
 {
 static const QString SETTINGS_ORGANIZATION = "OpenSR";
 static const QString SETTINGS_APPLICATION = "OpenSR";
+static const QString STARTUP_SCRIPT = "res:/opensr.js";
+static const QString MAIN_QML = "res:/OpenSR/GameWindow.qml";
 }
 
 int main(int argc, char **argv)
@@ -30,6 +32,9 @@ int main(int argc, char **argv)
 
     QApplication::setOrganizationName(SETTINGS_ORGANIZATION);
     QApplication::setApplicationName(SETTINGS_APPLICATION);
+
+    engine.setStartupScript(STARTUP_SCRIPT);
+    engine.setMainQML(MAIN_QML);
 
     return engine.run();
 }
