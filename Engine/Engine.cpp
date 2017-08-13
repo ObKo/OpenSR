@@ -91,8 +91,6 @@ Engine::Engine(int& argc, char** argv): QApplication(argc, argv),
     d->resources = new ResourceManager(this);
 
     d->qmlEngine = new QQmlApplicationEngine();
-    d->qmlEngine->rootContext()->setContextProperty("engine", this);
-    d->qmlEngine->setObjectOwnership(this, QQmlEngine::CppOwnership);
 
     d->qmlEngine->setNetworkAccessManagerFactory(d->resources->qmlNAMFactory());
 
@@ -108,6 +106,8 @@ Engine::~Engine()
 int Engine::run()
 {
     Q_D(Engine);
+    
+    QString libraryPath = QDir::current().absolutePath();
 
     QSettings settings;
 
@@ -117,10 +117,12 @@ int Engine::run()
     else if (d->dataDir.isEmpty())
         setDataDir(QDir::current().absolutePath() + "/data");
 
+    addLibraryPath(libraryPath);
+    
     d->qmlEngine->addImportPath(d->dataDir);
     d->qmlEngine->addImportPath(":/");
 
-    d->qmlEngine->addPluginPath(QDir::current().absolutePath());
+    d->qmlEngine->addPluginPath(libraryPath);
 
     d->resources->addFileSystemPath(d->dataDir);
     d->resources->addFileSystemPath(":/");
@@ -165,9 +167,7 @@ void Engine::showQMLComponent(const QString& url)
     Q_D(Engine);
 
     for (auto root : d->qmlEngine->rootObjects())
-    {
         QMetaObject::invokeMethod(root, "changeScreen", Q_ARG(QVariant, QUrl(url)), Q_ARG(QVariant, QVariantMap()));
-    }
 }
 
 SoundManager* Engine::sound() const

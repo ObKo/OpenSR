@@ -160,11 +160,12 @@ ApplicationWindow {
     }
 
     Component.onCompleted: {
-        engine.addDATFile("res:/main.dat")
-        engine.addDATFile("res:/rus.dat")
-        engine.addDATFile("res:/CacheData.dat", true)
+        Engine.addDATFile("res:/main.dat")
+        Engine.addDATFile("res:/rus.dat")
+        Engine.addDATFile("res:/CacheData.dat", true)
+        Engine.resources.addPKGArchive(Engine.dataDir + "/common.pkg")
 
-        var planets = engine.datValue("Data.SE.Planet")
+        var planets = Engine.datValue("Data.SE.Planet")
 
         for (var n in planets) {
             var planet = planets[n]

@@ -52,6 +52,7 @@ void OpenSRPlugin::registerTypes(const char* uri)
     using namespace OpenSR;
     qmlRegisterSingletonType<Engine>(uri, 1, 0, "Engine", engineSingletonProvider);
     qmlRegisterSingletonType<OpenSR::QML::QMLHelper>(uri, 1, 0, "OSR", osrSingletonProvider);
+    qmlRegisterUncreatableType<ResourceManager>(uri, 1, 0, "ResourceManager", "ResourceManager is not instantiable");
     qmlRegisterType<Sound>(uri, 1, 0, "Sound");
     qmlRegisterType<GAIAnimatedImage>(uri, 1, 0, "GAIAnimatedImage");
     qmlRegisterType<QMLQuestPlayer>(uri, 1, 0, "QuestPlayer");

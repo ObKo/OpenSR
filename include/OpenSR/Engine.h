@@ -42,6 +42,8 @@ class ENGINE_API Engine: public QApplication
     Q_PROPERTY(QString dataDir READ dataDir WRITE setDataDir NOTIFY dataDirChanged)
     Q_PROPERTY(QUrl startupScript READ startupScript WRITE setStartupScript NOTIFY startupScriptChanged)
     Q_PROPERTY(QUrl mainQML READ mainQML WRITE setMainQML NOTIFY mainQMLChanged)
+    Q_PROPERTY(OpenSR::ResourceManager* resources READ resources)
+    Q_PROPERTY(OpenSR::SoundManager* sound READ sound)
 
 public:
     Engine(int& argc, char **argv);
