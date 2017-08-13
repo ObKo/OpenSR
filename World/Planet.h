@@ -31,17 +31,27 @@ class OPENSR_WORLD_API PlanetStyle: public Resource
 {
     Q_GADGET
 
-    Q_PROPERTY(QString texture READ texture WRITE setTexture)
+    Q_PROPERTY(QString image   READ image   WRITE setImage  )
+    Q_PROPERTY(QString cloud0  READ cloud0  WRITE setCloud0 )
+    Q_PROPERTY(QString cloud1  READ cloud1  WRITE setCloud1 )
+    Q_PROPERTY(int     radius  READ radius  WRITE setRadius )
 
 public:
     struct Data
     {
-        QString texture;
+        QString image, cloud0, cloud1;
+        int radius;
     };
 
-    QString texture() const;
+    QString image() const;
+    QString cloud0() const;
+    QString cloud1() const;
+    int radius() const;
 
-    void setTexture(const QString& texture);
+    void setImage(const QString&);
+    void setCloud0(const QString&);
+    void setCloud1(const QString&);
+    void setRadius(int);
 };
 
 bool operator==(const PlanetStyle& one, const PlanetStyle& another);
