@@ -25,6 +25,7 @@
 #include "OpenSR/Sound.h"
 #include "OpenSR/PluginInterface.h"
 #include "OpenSR/DATTranslator.h"
+#include "OpenSR/QMLHelper.h"
 
 #include <QQuickView>
 #include <QBoxLayout>
@@ -92,11 +93,11 @@ Engine::Engine(int& argc, char** argv): QApplication(argc, argv),
 
     d->qmlEngine = new QQmlApplicationEngine();
 
+    QML::QMLHelper::registerQMLTypes("OpenSR");
     d->qmlEngine->setNetworkAccessManagerFactory(d->resources->qmlNAMFactory());
 
-    d->scriptEngine = new QJSEngine(this);
-    d->scriptEngine->installExtensions(QJSEngine::AllExtensions);
-    d->scriptEngine->globalObject().setProperty("engine", d->scriptEngine->newQObject(this));
+    d->scriptEngine = d->qmlEngine;
+    d->scriptEngine->globalObject().setProperty("Engine", d->scriptEngine->newQObject(this));
 }
 
 Engine::~Engine()

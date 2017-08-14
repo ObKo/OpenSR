@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2015 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2015 - 2017 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,7 +19,20 @@
 #include "OpenSR/QMLHelper.h"
 
 #include <OpenSR/Engine.h>
+#include <OpenSR/QMLHelper.h>
 #include <OpenSR/ResourceManager.h>
+#include <OpenSR/Sound.h>
+#include <OpenSR/GAIAnimatedImage.h>
+#include <OpenSR/QMLQuestPlayer.h>
+#include <OpenSR/TexturedPolyline.h>
+#include <OpenSR/TexturedBezierCurve.h>
+#include <OpenSR/Music.h>
+#include <OpenSR/SpaceMouseArea.h>
+#include <OpenSR/PlanetDrawer.h>
+
+#include <QtQml>
+#include <QVariant>
+
 #include <QIODevice>
 
 namespace OpenSR
@@ -59,6 +72,34 @@ QVariant QMLHelper::convertQuestInfoToJS(const QM::QuestInfo& info)
     map["descriptionText"] = info.descriptionText;
 
     return map;
+}
+
+static QObject* engineSingletonProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
+{
+    OpenSR::Engine *e = qobject_cast<OpenSR::Engine*>(qApp);
+    QQmlEngine::setObjectOwnership(e, QQmlEngine::CppOwnership);
+    return e;
+}
+
+static QObject* osrSingletonProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
+{
+    return new OpenSR::QML::QMLHelper(engine);
+}
+
+void QMLHelper::registerQMLTypes(const char* uri)
+{
+    using namespace OpenSR;
+    qmlRegisterSingletonType<Engine>(uri, 1, 0, "Engine", engineSingletonProvider);
+    qmlRegisterSingletonType<OpenSR::QML::QMLHelper>(uri, 1, 0, "OSR", osrSingletonProvider);
+    qmlRegisterUncreatableType<ResourceManager>(uri, 1, 0, "ResourceManager", "ResourceManager is not instantiable");
+    qmlRegisterType<Sound>(uri, 1, 0, "Sound");
+    qmlRegisterType<GAIAnimatedImage>(uri, 1, 0, "GAIAnimatedImage");
+    qmlRegisterType<QMLQuestPlayer>(uri, 1, 0, "QuestPlayer");
+    qmlRegisterType<Music>(uri, 1, 0, "Music");
+    qmlRegisterType<TexturedPolyline>(uri, 1, 0, "TexturedPolyline");
+    qmlRegisterType<TexturedBezierCurve>(uri, 1, 0, "TexturedBezierCurve");
+    qmlRegisterType<SpaceMouseArea>(uri, 1, 0, "SpaceMouseArea");
+    qmlRegisterType<PlanetDrawer>(uri, 1, 0, "PlanetDrawer");
 }
 }
 }

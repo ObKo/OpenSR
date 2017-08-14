@@ -96,43 +96,7 @@ void bindWorldTypes(QJSEngine *script, QQmlEngine *qml)
     WorldObject::registerType<SpaceStation>();
     WorldObject::registerType<ResourceManager>();
 
-    script->globalObject().setProperty("world", script->newQObject(WorldManager::instance()));
-    script->globalObject().setProperty("World", script->newQObject(new WorldJSFactory(script)));
+    script->globalObject().setProperty("World", script->newQObject(WorldManager::instance()));
 }
-
-WorldJSFactory::WorldJSFactory(QObject *parent): QObject(parent)
-{
-}
-
-WORLD_JS_DEFAULT_GADGET_CONSTRUCTOR(WorldJSFactory, RaceStyle)
-WORLD_JS_DEFAULT_GADGET_CONSTRUCTOR(WorldJSFactory, PlanetarySystemStyle)
-WORLD_JS_DEFAULT_GADGET_CONSTRUCTOR(WorldJSFactory, AsteroidStyle)
-
-WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldJSFactory, Race)
-WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldJSFactory, Item)
-WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldJSFactory, Goods)
-WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldJSFactory, Equipment)
-WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldJSFactory, Micromodulus)
-WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldJSFactory, Artefact)
-WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldJSFactory, Hull)
-WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldJSFactory, Engine)
-WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldJSFactory, Tank)
-WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldJSFactory, Droid)
-WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldJSFactory, CargoHook)
-WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldJSFactory, DefenceGenerator)
-WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldJSFactory, Radar)
-WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldJSFactory, Scanner)
-WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldJSFactory, Weapon)
-WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldJSFactory, Sector)
-WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldJSFactory, PlanetarySystem)
-WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldJSFactory, SpaceObject)
-WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldJSFactory, Container)
-WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldJSFactory, Asteroid)
-WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldJSFactory, Planet)
-WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldJSFactory, MannedObject)
-WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldJSFactory, InhabitedPlanet)
-WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldJSFactory, DesertPlanet)
-WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldJSFactory, Ship)
-WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldJSFactory, SpaceStation)
 }
 }

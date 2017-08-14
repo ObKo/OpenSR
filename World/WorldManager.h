@@ -25,6 +25,7 @@
 #include <QAbstractAnimation>
 
 #include "WorldContext.h"
+#include "WorldBindings.h"
 
 namespace OpenSR
 {
@@ -39,6 +40,32 @@ public:
     virtual int	duration() const;
     virtual void updateCurrentTime(int currentTime);
 };
+
+class Race;
+class Item;
+class Goods;
+class Equipment;
+class Micromodulus;
+class Artefact;
+class Hull;
+class Engine;
+class Tank;
+class Droid;
+class CargoHook;
+class DefenceGenerator;
+class Radar;
+class Scanner;
+class Weapon;
+class Sector;
+class SpaceObject;
+class Container;
+class Asteroid;
+class Planet;
+class MannedObject;
+class InhabitedPlanet;
+class DesertPlanet;
+class Ship;
+class SpaceStation;
 
 class OPENSR_WORLD_API WorldManager: public QObject
 {
@@ -57,10 +84,40 @@ public:
 
     Q_INVOKABLE QString typeName(quint32 type) const;
 
-
     Q_INVOKABLE void generateWorld(const QString& genScriptUrl);
     Q_INVOKABLE bool saveWorld(const QString& path);
     Q_INVOKABLE bool loadWorld(const QString& path);
+
+    WORLD_DECLARE_JS_GADGET_CONSTRUCTOR(RaceStyle)
+    WORLD_DECLARE_JS_GADGET_CONSTRUCTOR(PlanetarySystemStyle)
+    WORLD_DECLARE_JS_GADGET_CONSTRUCTOR(AsteroidStyle)
+
+    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(Race)
+    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(Item)
+    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(Goods)
+    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(Equipment)
+    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(Micromodulus)
+    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(Artefact)
+    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(Hull)
+    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(Engine)
+    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(Tank)
+    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(Droid)
+    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(CargoHook)
+    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(DefenceGenerator)
+    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(Radar)
+    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(Scanner)
+    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(Weapon)
+    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(Sector)
+    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(PlanetarySystem)
+    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(SpaceObject)
+    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(Container)
+    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(Asteroid)
+    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(Planet)
+    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(MannedObject)
+    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(InhabitedPlanet)
+    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(DesertPlanet)
+    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(Ship)
+    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(SpaceStation)
 
 Q_SIGNALS:
     void contextChanged();

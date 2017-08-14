@@ -1,6 +1,6 @@
-engine.addDATFile("res:/main.dat")
-engine.addDATFile("res:/rus.dat")
-engine.addDATFile("res:/CacheData.dat", true)
-engine.loadPlugin("world")
-engine.showQMLComponent("qrc:/OpenSR/MainMenu.qml")
+Engine.addDATFile("res:/main.dat")
+Engine.addDATFile("res:/rus.dat")
+Engine.addDATFile("res:/CacheData.dat", true)
+Engine.loadPlugin("world")
+Engine.showQMLComponent("qrc:/OpenSR/MainMenu.qml")
 

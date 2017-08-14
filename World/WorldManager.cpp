@@ -25,6 +25,7 @@
 #include <QDataStream>
 #include <QMetaProperty>
 #include <QUrl>
+#include <QQmlEngine>
 
 #include <OpenSR/Engine.h>
 
@@ -35,35 +36,8 @@ namespace OpenSR
 {
 namespace World
 {
-class Race;
-class Item;
-class Goods;
-class Equipment;
-class Micromodulus;
-class Artefact;
-class Hull;
-class Engine;
-class Tank;
-class Droid;
-class CargoHook;
-class DefenceGenerator;
-class Radar;
-class Scanner;
-class Weapon;
-class Sector;
-class SpaceObject;
-class Container;
-class Asteroid;
-class Planet;
-class MannedObject;
-class InhabitedPlanet;
-class DesertPlanet;
-class Ship;
-class SpaceStation;
-
 namespace
 {
-
 static QMap<quint32, const QMetaObject*> metaMap;
 const quint32 SAVE_FILE_SIGNATURE = 0x5352534F;
 const quint32 OBJECT_SIGNATURE = 0x4F575253;
@@ -201,35 +175,35 @@ WorldManager::WorldManager(QObject *parent): QObject(parent),
 
     WorldManager::m_staticInstance = this;
 
-    metaMap.insert(WorldObject::staticTypeId<WorldObject>(), WorldObject::staticTypeMeta<WorldObject>());
-    metaMap.insert(WorldObject::staticTypeId<WorldContext>(), WorldObject::staticTypeMeta<WorldContext>());
-    metaMap.insert(WorldObject::staticTypeId<Race>(), WorldObject::staticTypeMeta<Race>());
-    metaMap.insert(WorldObject::staticTypeId<Item>(), WorldObject::staticTypeMeta<Item>());
-    metaMap.insert(WorldObject::staticTypeId<Goods>(), WorldObject::staticTypeMeta<Goods>());
-    metaMap.insert(WorldObject::staticTypeId<Equipment>(), WorldObject::staticTypeMeta<Equipment>());
-    metaMap.insert(WorldObject::staticTypeId<Micromodulus>(), WorldObject::staticTypeMeta<Micromodulus>());
-    metaMap.insert(WorldObject::staticTypeId<Artefact>(), WorldObject::staticTypeMeta<Artefact>());
-    metaMap.insert(WorldObject::staticTypeId<Hull>(), WorldObject::staticTypeMeta<Hull>());
+    metaMap.insert(WorldObject::staticTypeId<World::WorldObject>(), WorldObject::staticTypeMeta<World::WorldObject>());
+    metaMap.insert(WorldObject::staticTypeId<World::WorldContext>(), WorldObject::staticTypeMeta<World::WorldContext>());
+    metaMap.insert(WorldObject::staticTypeId<World::Race>(), WorldObject::staticTypeMeta<World::Race>());
+    metaMap.insert(WorldObject::staticTypeId<World::Item>(), WorldObject::staticTypeMeta<World::Item>());
+    metaMap.insert(WorldObject::staticTypeId<World::Goods>(), WorldObject::staticTypeMeta<World::Goods>());
+    metaMap.insert(WorldObject::staticTypeId<World::Equipment>(), WorldObject::staticTypeMeta<World::Equipment>());
+    metaMap.insert(WorldObject::staticTypeId<World::Micromodulus>(), WorldObject::staticTypeMeta<World::Micromodulus>());
+    metaMap.insert(WorldObject::staticTypeId<World::Artefact>(), WorldObject::staticTypeMeta<World::Artefact>());
+    metaMap.insert(WorldObject::staticTypeId<World::Hull>(), WorldObject::staticTypeMeta<World::Hull>());
     metaMap.insert(WorldObject::staticTypeId<World::Engine>(), WorldObject::staticTypeMeta<World::Engine>());
-    metaMap.insert(WorldObject::staticTypeId<Tank>(), WorldObject::staticTypeMeta<Tank>());
-    metaMap.insert(WorldObject::staticTypeId<Droid>(), WorldObject::staticTypeMeta<Droid>());
-    metaMap.insert(WorldObject::staticTypeId<CargoHook>(), WorldObject::staticTypeMeta<CargoHook>());
-    metaMap.insert(WorldObject::staticTypeId<DefenceGenerator>(), WorldObject::staticTypeMeta<DefenceGenerator>());
-    metaMap.insert(WorldObject::staticTypeId<Radar>(), WorldObject::staticTypeMeta<Radar>());
-    metaMap.insert(WorldObject::staticTypeId<Scanner>(), WorldObject::staticTypeMeta<Scanner>());
-    metaMap.insert(WorldObject::staticTypeId<Weapon>(), WorldObject::staticTypeMeta<Weapon>());
-    metaMap.insert(WorldObject::staticTypeId<Sector>(), WorldObject::staticTypeMeta<Sector>());
-    metaMap.insert(WorldObject::staticTypeId<PlanetarySystem>(), WorldObject::staticTypeMeta<PlanetarySystem>());
-    metaMap.insert(WorldObject::staticTypeId<SpaceObject>(), WorldObject::staticTypeMeta<SpaceObject>());
-    metaMap.insert(WorldObject::staticTypeId<Container>(), WorldObject::staticTypeMeta<Container>());
-    metaMap.insert(WorldObject::staticTypeId<Asteroid>(), WorldObject::staticTypeMeta<Asteroid>());
-    metaMap.insert(WorldObject::staticTypeId<Planet>(), WorldObject::staticTypeMeta<Planet>());
-    metaMap.insert(WorldObject::staticTypeId<MannedObject>(), WorldObject::staticTypeMeta<MannedObject>());
-    metaMap.insert(WorldObject::staticTypeId<InhabitedPlanet>(), WorldObject::staticTypeMeta<InhabitedPlanet>());
-    metaMap.insert(WorldObject::staticTypeId<DesertPlanet>(), WorldObject::staticTypeMeta<DesertPlanet>());
-    metaMap.insert(WorldObject::staticTypeId<Ship>(), WorldObject::staticTypeMeta<Ship>());
-    metaMap.insert(WorldObject::staticTypeId<SpaceStation>(), WorldObject::staticTypeMeta<SpaceStation>());
-    metaMap.insert(WorldObject::staticTypeId<ResourceManager>(), WorldObject::staticTypeMeta<ResourceManager>());
+    metaMap.insert(WorldObject::staticTypeId<World::Tank>(), WorldObject::staticTypeMeta<World::Tank>());
+    metaMap.insert(WorldObject::staticTypeId<World::Droid>(), WorldObject::staticTypeMeta<World::Droid>());
+    metaMap.insert(WorldObject::staticTypeId<World::CargoHook>(), WorldObject::staticTypeMeta<World::CargoHook>());
+    metaMap.insert(WorldObject::staticTypeId<World::DefenceGenerator>(), WorldObject::staticTypeMeta<World::DefenceGenerator>());
+    metaMap.insert(WorldObject::staticTypeId<World::Radar>(), WorldObject::staticTypeMeta<World::Radar>());
+    metaMap.insert(WorldObject::staticTypeId<World::Scanner>(), WorldObject::staticTypeMeta<World::Scanner>());
+    metaMap.insert(WorldObject::staticTypeId<World::Weapon>(), WorldObject::staticTypeMeta<World::Weapon>());
+    metaMap.insert(WorldObject::staticTypeId<World::Sector>(), WorldObject::staticTypeMeta<World::Sector>());
+    metaMap.insert(WorldObject::staticTypeId<World::PlanetarySystem>(), WorldObject::staticTypeMeta<World::PlanetarySystem>());
+    metaMap.insert(WorldObject::staticTypeId<World::SpaceObject>(), WorldObject::staticTypeMeta<World::SpaceObject>());
+    metaMap.insert(WorldObject::staticTypeId<World::Container>(), WorldObject::staticTypeMeta<World::Container>());
+    metaMap.insert(WorldObject::staticTypeId<World::Asteroid>(), WorldObject::staticTypeMeta<World::Asteroid>());
+    metaMap.insert(WorldObject::staticTypeId<World::Planet>(), WorldObject::staticTypeMeta<World::Planet>());
+    metaMap.insert(WorldObject::staticTypeId<World::MannedObject>(), WorldObject::staticTypeMeta<World::MannedObject>());
+    metaMap.insert(WorldObject::staticTypeId<World::InhabitedPlanet>(), WorldObject::staticTypeMeta<World::InhabitedPlanet>());
+    metaMap.insert(WorldObject::staticTypeId<World::DesertPlanet>(), WorldObject::staticTypeMeta<World::DesertPlanet>());
+    metaMap.insert(WorldObject::staticTypeId<World::Ship>(), WorldObject::staticTypeMeta<World::Ship>());
+    metaMap.insert(WorldObject::staticTypeId<World::SpaceStation>(), WorldObject::staticTypeMeta<World::SpaceStation>());
+    metaMap.insert(WorldObject::staticTypeId<World::ResourceManager>(), WorldObject::staticTypeMeta<World::ResourceManager>());
 
     m_animation = new TurnAnimation(this);
     connect(m_animation, SIGNAL(finished()), this, SLOT(finishTurn()));
@@ -451,5 +425,37 @@ void WorldManager::generateWorld(const QString& genScriptUrl)
     qobject_cast<OpenSR::Engine*>(qApp)->execScript(genScriptUrl);
     emit(contextChanged());
 }
+
+WORLD_JS_DEFAULT_GADGET_CONSTRUCTOR(WorldManager, RaceStyle)
+WORLD_JS_DEFAULT_GADGET_CONSTRUCTOR(WorldManager, PlanetarySystemStyle)
+WORLD_JS_DEFAULT_GADGET_CONSTRUCTOR(WorldManager, AsteroidStyle)
+
+WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldManager, Race)
+WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldManager, Item)
+WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldManager, Goods)
+WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldManager, Equipment)
+WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldManager, Micromodulus)
+WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldManager, Artefact)
+WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldManager, Hull)
+WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldManager, Engine)
+WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldManager, Tank)
+WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldManager, Droid)
+WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldManager, CargoHook)
+WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldManager, DefenceGenerator)
+WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldManager, Radar)
+WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldManager, Scanner)
+WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldManager, Weapon)
+WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldManager, Sector)
+WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldManager, PlanetarySystem)
+WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldManager, SpaceObject)
+WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldManager, Container)
+WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldManager, Asteroid)
+WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldManager, Planet)
+WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldManager, MannedObject)
+WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldManager, InhabitedPlanet)
+WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldManager, DesertPlanet)
+WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldManager, Ship)
+WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(WorldManager, SpaceStation)
+
 }
 }

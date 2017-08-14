@@ -1,4 +1,4 @@
-var context = world.context;
+var context = World.context;
 
 function genRace(idName, name, icon, color, sound) {
     var style = World.RaceStyle();
@@ -40,7 +40,7 @@ function genSystem(idName, sector, name, size, star, starColor, bg) {
 var asteroidStyles = {};
 
 function createAsteroidStyles() {
-    var datStyles = engine.datValue("Data.SE.Asteroid");
+    var datStyles = Engine.datValue("Data.SE.Asteroid");
     for (var k in datStyles)
     {
         style = World.AsteroidStyle();
@@ -83,4 +83,4 @@ planet.name = "PlanetName.Solar.2"
 
 context.currentSystem = system
 
-world.saveWorld("/tmp/test.osr");
+World.saveWorld("/tmp/test.osr");

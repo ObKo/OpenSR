@@ -28,13 +28,13 @@
 class QJSEngine;
 class QQmlEngine;
 
-#define WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(Class) Q_INVOKABLE QObject* Class(WorldObject *parent = 0);
+#define WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(Class) Q_INVOKABLE OpenSR::World::Class* Class(WorldObject *parent = 0);
 #define WORLD_DECLARE_JS_GADGET_CONSTRUCTOR(Class) Q_INVOKABLE OpenSR::World::Class Class();
 
 #define WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(Factory, Class)\
-    QObject* Factory::Class(WorldObject *parent) {\
-        QObject *obj = (QObject*)WorldObject::createObject<World::Class>(parent);\
-        QQmlEngine::setObjectOwnership(obj, QQmlEngine::JavaScriptOwnership);\
+    OpenSR::World::Class* Factory::Class(WorldObject *parent) {\
+        OpenSR::World::Class *obj = WorldObject::createObject<World::Class>(parent);\
+        QQmlEngine::setObjectOwnership((QObject*)obj, QQmlEngine::JavaScriptOwnership);\
         return obj;\
     }
 
@@ -48,44 +48,6 @@ namespace OpenSR
 namespace World
 {
 void bindWorldTypes(QJSEngine *script, QQmlEngine *qml);
-
-class WorldJSFactory : public QObject
-{
-    Q_OBJECT
-public:
-    WorldJSFactory(QObject *parent = 0);
-
-    WORLD_DECLARE_JS_GADGET_CONSTRUCTOR(RaceStyle)
-    WORLD_DECLARE_JS_GADGET_CONSTRUCTOR(PlanetarySystemStyle)
-    WORLD_DECLARE_JS_GADGET_CONSTRUCTOR(AsteroidStyle)
-
-    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(Race)
-    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(Item)
-    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(Goods)
-    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(Equipment)
-    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(Micromodulus)
-    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(Artefact)
-    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(Hull)
-    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(Engine)
-    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(Tank)
-    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(Droid)
-    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(CargoHook)
-    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(DefenceGenerator)
-    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(Radar)
-    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(Scanner)
-    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(Weapon)
-    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(Sector)
-    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(PlanetarySystem)
-    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(SpaceObject)
-    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(Container)
-    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(Asteroid)
-    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(Planet)
-    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(MannedObject)
-    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(InhabitedPlanet)
-    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(DesertPlanet)
-    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(Ship)
-    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(SpaceStation)
-};
 }
 }
 

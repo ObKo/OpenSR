@@ -36,6 +36,7 @@ SET(HEADERS
     ${CMAKE_SOURCE_DIR}/include/OpenSR/TexturedBezierCurve.h
     ${CMAKE_SOURCE_DIR}/include/OpenSR/Types.h
     ${CMAKE_SOURCE_DIR}/include/OpenSR/QMLHelper.h
+    ${CMAKE_SOURCE_DIR}/include/OpenSR/PlanetDrawer.h
     ${CMAKE_SOURCE_DIR}/include/OpenSR/DATTranslator.h
     ${CMAKE_SOURCE_DIR}/include/OpenSR/SpaceMouseArea.h
     ${CMAKE_SOURCE_DIR}/include/OpenSR/PlanetDrawer.h
@@ -72,22 +73,5 @@ ENDIF()
 
 ADD_EXECUTABLE(opensr main.cpp ${QRC_QML_SOURCES})
 TARGET_LINK_LIBRARIES(opensr engine)
-
-SET(QML_SOURCES
-    QMLPlugin.cpp
-)
-
-SET(QML_HEADERS 
-    QMLPlugin.h
-)
-
-QT5_WRAP_CPP(QML_MOC_SOURCES ${QML_HEADERS})
-
-ADD_LIBRARY(QMLOpenSR SHARED ${QML_SOURCES} ${QML_MOC_SOURCES})
-TARGET_LINK_LIBRARIES(QMLOpenSR engine)
-
-IF(WIN32)
-    SET_TARGET_PROPERTIES(QMLOpenSR PROPERTIES PREFIX "")
-ENDIF()
 
 INSTALL(TARGETS opensr RUNTIME DESTINATION bin)
