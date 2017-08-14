@@ -50,8 +50,7 @@ Next you have to decode several .dat files using previously built DATTools
 
 Also, OpenSR requires that some libraries should be available in working directory:
     
-    ln -s build/World/libworld.so 
-    ln -s build/Engine/libQMLOpenSR.so
+    ln -s build/World/libworld.so
     mkdir imageformats
     ln -s ../build/ImagePlugin/libQtOpenSRImagePlugin.so imageformats/libQtOpenSRImagePlugin.so
 
