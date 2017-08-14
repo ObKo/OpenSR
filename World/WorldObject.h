@@ -40,6 +40,7 @@ class OPENSR_WORLD_API WorldObject: public QObject
     //TODO: Use WorldObject instead of QObject
     Q_PROPERTY(QQmlListProperty<QObject> children READ getChildren STORED false)
 
+public: static const quint32 m_StationKindStaticTypeId;
 public:
     Q_INVOKABLE WorldObject(WorldObject *parent = 0, quint32 id = 0);
     virtual ~WorldObject();
