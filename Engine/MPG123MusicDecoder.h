@@ -32,6 +32,7 @@ namespace OpenSR
 {
 class MPG123MusicDecoder: public MusicDecoder
 {
+    Q_OBJECT
 public:
     MPG123MusicDecoder(QIODevice *dev, QObject *parent = 0);
     virtual ~MPG123MusicDecoder();

@@ -195,8 +195,4 @@ Item {
             object.questSelected.connect(startQuest)
         }
     }
-
-    Component.onCompleted: {
-        newGame()
-    }
 }

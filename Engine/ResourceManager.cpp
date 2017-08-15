@@ -378,7 +378,7 @@ PKGIODevice::~PKGIODevice()
     {
         m_buffer->close();
         delete m_buffer;
-        m_buffer = 0;
+        m_buffer = nullptr;
     }
 }
 
@@ -451,6 +451,7 @@ PKGProvider::~PKGProvider()
 {
     if (m_root)
         cleanup(m_root);
+    delete m_root;
 }
 
 void PKGProvider::load(ResourceNode& root)

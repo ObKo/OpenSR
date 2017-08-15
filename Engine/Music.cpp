@@ -55,7 +55,7 @@ Music::~Music()
 {
     alDeleteSources(1, &m_alSource);
     alDeleteBuffers(BUFFER_COUNT, m_alBuffers);
-    delete m_alBuffers;
+    delete[] m_alBuffers;
 }
 
 void Music::setSource(const QUrl& source)

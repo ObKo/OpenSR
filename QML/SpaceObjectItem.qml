@@ -38,8 +38,7 @@ Item {
         if(WorldManager.typeName(object.typeId) === "OpenSR::World::PlanetarySystem") {
             image.source = object.style.star
             positioning = false
-        }
-        else if(WorldManager.typeName(object.typeId) === "OpenSR::World::Asteroid") {
+        } else if(WorldManager.typeName(object.typeId) === "OpenSR::World::Asteroid") {
             image.source = object.style.texture
             positioning = true;
         } else if(WorldManager.typeName(object.typeId) === "OpenSR::World::InhabitedPlanet") {

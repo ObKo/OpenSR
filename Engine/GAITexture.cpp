@@ -28,10 +28,17 @@
 namespace OpenSR
 {
 GAITexture::GAITexture(const GAIHeader& header, const QImage& background): QSGTexture(),
-    m_texID(0), m_header(header), m_needDraw(false), m_pbo(0), m_bg(background)
+    m_texID(0), m_header(header), m_needDraw(false), m_pbo(nullptr), m_bg(background)
 {
     m_size = QSize(m_header.finishX - m_header.startX, m_header.finishY - m_header.startY);
     reset();
+}
+
+GAITexture::~GAITexture()
+{
+    if(m_pbo)
+        delete m_pbo;
+    m_pbo = nullptr;
 }
 
 void GAITexture::drawNextFrame(const QByteArray& frameData, const QPoint& start)

@@ -360,7 +360,7 @@ void GAIAnimatedImage::GAIAnimatedImagePrivate::loadGAI(const QUrl& source)
         }
     }
 
-    delete seekSizes;
+    delete[] seekSizes;
     delete dev;
 
     m_headers.push_back(header);
@@ -421,7 +421,7 @@ void GAIAnimatedImage::GAIAnimatedImagePrivate::loadGIFrame(QIODevice* dev, int 
     {
         frames[i] = QByteArray();
     }
-    delete layers;
+    delete[] layers;
 }
 
 int GAIAnimatedImage::currentFrame() const

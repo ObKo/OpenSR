@@ -202,6 +202,7 @@ void Engine::addDATFile(const QString& url, bool isCache)
     if (!dev || !dev->isOpen())
         return;
     QVariantMap dat = loadDAT(dev, isCache);
+    delete dev;
     mergeMap(d->datRoot, dat);
 }
 

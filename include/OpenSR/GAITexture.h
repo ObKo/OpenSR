@@ -32,6 +32,7 @@ class ENGINE_API GAITexture: public QSGTexture
 {
 public:
     GAITexture(const GAIHeader& header, const QImage& background);
+    virtual ~GAITexture();
 
     virtual void bind();
     virtual bool hasAlphaChannel() const;

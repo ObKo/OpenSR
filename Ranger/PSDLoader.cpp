@@ -175,7 +175,7 @@ static void psdReadIndexed(QImage& image, QIODevice *dev, const PSDHeader& heade
         }
     }
     if (rleSizes)
-        delete rleSizes;
+        delete[] rleSizes;
 }
 
 static void psdReadByte(QImage& image, QIODevice *dev, const PSDHeader& header,
