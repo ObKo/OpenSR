@@ -24,6 +24,8 @@
 #include <QObject>
 #include <QQmlListProperty>
 
+class QJSEngine;
+
 namespace OpenSR
 {
 namespace World
@@ -75,7 +77,7 @@ public:
      * @note All subclasses should provide specialized version of this function.
      */
     template<class T>
-    static void registerType();
+    static void registerType(QQmlEngine *qml, QJSEngine *script);
     /*!
      * @brief Function to create object of class T.
      * Used in object factory for JavaScript & QML.

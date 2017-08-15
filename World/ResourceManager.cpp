@@ -28,7 +28,7 @@ namespace World
 const quint32 ResourceManager::m_staticTypeId = typeIdFromClassName(ResourceManager::staticMetaObject.className());
 
 template<>
-void WorldObject::registerType<ResourceManager>()
+void WorldObject::registerType<ResourceManager>(QQmlEngine *qml, QJSEngine *script)
 {
     qRegisterMetaType<Resource>();
     qRegisterMetaTypeStreamOperators<Resource>();

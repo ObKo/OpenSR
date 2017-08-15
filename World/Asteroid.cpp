@@ -34,7 +34,7 @@ const int ITERATION_COUNTS = 10;
 const quint32 Asteroid::m_staticTypeId = typeIdFromClassName(Asteroid::staticMetaObject.className());
 
 template<>
-void WorldObject::registerType<Asteroid>()
+void WorldObject::registerType<Asteroid>(QQmlEngine *qml, QJSEngine *script)
 {
     qRegisterMetaType<AsteroidStyle>();
     qRegisterMetaTypeStreamOperators<AsteroidStyle>();

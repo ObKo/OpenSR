@@ -196,5 +196,7 @@ Item {
         }
     }
 
-    Component.onCompleted: newGame()
+    Component.onCompleted: {
+        newGame()
+    }
 }

@@ -1,6 +1,6 @@
 /*
     OpenSR - opensource multi-genre game based upon "Space Rangers 2: Dominators"
-    Copyright (C) 2015 Kosyak <ObKo@mail.ru>
+    Copyright (C) 2015 - 2017 Kosyak <ObKo@mail.ru>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 #include "ResourceManager.h"
 #include "SpaceStation.h"
+#include "WorldBindings.h"
 
 #include <QtQml>
 
@@ -26,19 +27,15 @@ namespace OpenSR
 namespace World
 {
 const quint32 SpaceStation::m_staticTypeId = typeIdFromClassName(SpaceStation::staticMetaObject.className());
-const quint32 SpaceStation::m_StationKindStaticTypeId =
-        typeIdFromClassName("SpaceStation::StationKind");
 
 template<>
-void WorldObject::registerType<SpaceStation>()
+void WorldObject::registerType<SpaceStation>(QQmlEngine *qml, QJSEngine *script)
 {
     qRegisterMetaType<StationStyle>();
     qRegisterMetaTypeStreamOperators<StationStyle>();
     qRegisterMetaType<StationStyle::Data>();
     qRegisterMetaTypeStreamOperators<StationStyle::Data>();
-    // It will be great to be able to use the enum in the script but I don't know how
-    // At the moment it works only in .qml files
-    qRegisterMetaType<SpaceStation::StationKind>("StationKind");
+    bindEnumsToJS<SpaceStation>(script);
     qmlRegisterType<SpaceStation>("OpenSR.World", 1, 0, "SpaceStation");
 }
 
@@ -61,7 +58,7 @@ const QMetaObject* WorldObject::staticTypeMeta<SpaceStation>()
 }
 
 SpaceStation::SpaceStation(WorldObject *parent, quint32 id): MannedObject(parent, id)
-  , m_StationKind(StationKind::Unspecified)
+  , m_stationKind(StationKind::Unspecified)
 {
 }
 
@@ -79,9 +76,9 @@ QString SpaceStation::namePrefix() const
     return tr("Space station");
 }
 
-SpaceStation::StationKind SpaceStation::Kind() const
+SpaceStation::StationKind SpaceStation::stationKind() const
 {
-    return m_StationKind;
+    return m_stationKind;
 }
 
 StationStyle SpaceStation::style() const
@@ -97,14 +94,14 @@ void SpaceStation::prepareSave()
 
 void SpaceStation::setStationKind(StationKind kind)
 {
-    if (m_StationKind == kind)
+    if (m_stationKind == kind)
         return;
 
-    m_StationKind = kind;
-    emit StationKindChanged(kind);
+    m_stationKind = kind;
+    emit stationKindChanged(kind);
 }
 
-void SpaceStation::setStyle(StationStyle style)
+void SpaceStation::setStyle(const StationStyle& style)
 {
     if (m_style == style)
         return;

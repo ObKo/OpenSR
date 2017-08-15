@@ -27,6 +27,14 @@
 #include "WorldContext.h"
 #include "WorldBindings.h"
 
+// TODO: Move Constructors to Separate factory?
+
+#include "PlanetarySystem.h"
+#include "Race.h"
+#include "Asteroid.h"
+#include "Planet.h"
+#include "SpaceStation.h"
+
 namespace OpenSR
 {
 namespace World
@@ -88,38 +96,39 @@ public:
     Q_INVOKABLE bool saveWorld(const QString& path);
     Q_INVOKABLE bool loadWorld(const QString& path);
 
-    WORLD_DECLARE_JS_GADGET_CONSTRUCTOR(RaceStyle)
-    WORLD_DECLARE_JS_GADGET_CONSTRUCTOR(PlanetarySystemStyle)
-    WORLD_DECLARE_JS_GADGET_CONSTRUCTOR(AsteroidStyle)
-    WORLD_DECLARE_JS_GADGET_CONSTRUCTOR(PlanetStyle)
-    WORLD_DECLARE_JS_GADGET_CONSTRUCTOR(StationStyle)
+    // TODO: Move Constructors to Separate factory?
+    Q_INVOKABLE OpenSR::World::RaceStyle            newRaceStyle();
+    Q_INVOKABLE OpenSR::World::PlanetarySystemStyle newPlanetarySystemStyle();
+    Q_INVOKABLE OpenSR::World::AsteroidStyle        newAsteroidStyle();
+    Q_INVOKABLE OpenSR::World::PlanetStyle          newPlanetStyle();
+    Q_INVOKABLE OpenSR::World::StationStyle         newStationStyle();
 
-    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(Race)
-    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(Item)
-    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(Goods)
-    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(Equipment)
-    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(Micromodulus)
-    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(Artefact)
-    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(Hull)
-    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(Engine)
-    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(Tank)
-    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(Droid)
-    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(CargoHook)
-    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(DefenceGenerator)
-    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(Radar)
-    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(Scanner)
-    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(Weapon)
-    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(Sector)
-    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(PlanetarySystem)
-    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(SpaceObject)
-    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(Container)
-    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(Asteroid)
-    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(Planet)
-    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(MannedObject)
-    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(InhabitedPlanet)
-    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(DesertPlanet)
-    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(Ship)
-    WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(SpaceStation)
+    Q_INVOKABLE OpenSR::World::Race*                newRace(OpenSR::World::WorldObject *parent = 0);
+    Q_INVOKABLE OpenSR::World::Item*                newItem(OpenSR::World::WorldObject *parent = 0);
+    Q_INVOKABLE OpenSR::World::Goods*               newGoods(OpenSR::World::WorldObject *parent = 0);
+    Q_INVOKABLE OpenSR::World::Equipment*           newEquipment(OpenSR::World::WorldObject *parent = 0);
+    Q_INVOKABLE OpenSR::World::Micromodulus*        newMicromodulus(OpenSR::World::WorldObject *parent = 0);
+    Q_INVOKABLE OpenSR::World::Artefact*            newArtefact(OpenSR::World::WorldObject *parent = 0);
+    Q_INVOKABLE OpenSR::World::Hull*                newHull(OpenSR::World::WorldObject *parent = 0);
+    Q_INVOKABLE OpenSR::World::Engine*              newEngine(OpenSR::World::WorldObject *parent = 0);
+    Q_INVOKABLE OpenSR::World::Tank*                newTank(OpenSR::World::WorldObject *parent = 0);
+    Q_INVOKABLE OpenSR::World::Droid*               newDroid(OpenSR::World::WorldObject *parent = 0);
+    Q_INVOKABLE OpenSR::World::CargoHook*           newCargoHook(OpenSR::World::WorldObject *parent = 0);
+    Q_INVOKABLE OpenSR::World::DefenceGenerator*    newDefenceGenerator(OpenSR::World::WorldObject *parent = 0);
+    Q_INVOKABLE OpenSR::World::Radar*               newRadar(OpenSR::World::WorldObject *parent = 0);
+    Q_INVOKABLE OpenSR::World::Scanner*             newScanner(OpenSR::World::WorldObject *parent = 0);
+    Q_INVOKABLE OpenSR::World::Weapon*              newWeapon(OpenSR::World::WorldObject *parent = 0);
+    Q_INVOKABLE OpenSR::World::Sector*              newSector(OpenSR::World::WorldObject *parent = 0);
+    Q_INVOKABLE OpenSR::World::PlanetarySystem*     newPlanetarySystem(OpenSR::World::WorldObject *parent = 0);
+    Q_INVOKABLE OpenSR::World::SpaceObject*         newSpaceObject(OpenSR::World::WorldObject *parent = 0);
+    Q_INVOKABLE OpenSR::World::Container*           newContainer(OpenSR::World::WorldObject *parent = 0);
+    Q_INVOKABLE OpenSR::World::Asteroid*            newAsteroid(OpenSR::World::WorldObject *parent = 0);
+    Q_INVOKABLE OpenSR::World::Planet*              newPlanet(OpenSR::World::WorldObject *parent = 0);
+    Q_INVOKABLE OpenSR::World::MannedObject*        newMannedObject(OpenSR::World::WorldObject *parent = 0);
+    Q_INVOKABLE OpenSR::World::InhabitedPlanet*     newInhabitedPlanet(OpenSR::World::WorldObject *parent = 0);
+    Q_INVOKABLE OpenSR::World::DesertPlanet*        newDesertPlanet(OpenSR::World::WorldObject *parent = 0);
+    Q_INVOKABLE OpenSR::World::Ship*                newShip(OpenSR::World::WorldObject *parent = 0);
+    Q_INVOKABLE OpenSR::World::SpaceStation*        newSpaceStation(OpenSR::World::WorldObject *parent = 0);
 
 Q_SIGNALS:
     void contextChanged();

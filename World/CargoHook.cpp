@@ -27,7 +27,7 @@ namespace World
 const quint32 CargoHook::m_staticTypeId = typeIdFromClassName(CargoHook::staticMetaObject.className());
 
 template<>
-void WorldObject::registerType<CargoHook>()
+void WorldObject::registerType<CargoHook>(QQmlEngine *qml, QJSEngine *script)
 {
     qmlRegisterType<CargoHook>("OpenSR.World", 1, 0, "CargoHook");
 }

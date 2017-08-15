@@ -27,7 +27,7 @@ namespace World
 const quint32 Scanner::m_staticTypeId = typeIdFromClassName(Scanner::staticMetaObject.className());
 
 template<>
-void WorldObject::registerType<Scanner>()
+void WorldObject::registerType<Scanner>(QQmlEngine *qml, QJSEngine *script)
 {
     qmlRegisterType<Scanner>("OpenSR.World", 1, 0, "Scanner");
 }

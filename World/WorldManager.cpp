@@ -31,7 +31,6 @@
 
 #include "WorldObject.h"
 #include "WorldContext.h"
-#include "SpaceStation.h"
 
 namespace OpenSR
 {
@@ -205,10 +204,6 @@ WorldManager::WorldManager(QObject *parent): QObject(parent),
     metaMap.insert(WorldObject::staticTypeId<World::Ship>(), WorldObject::staticTypeMeta<World::Ship>());
     metaMap.insert(WorldObject::staticTypeId<World::SpaceStation>(), WorldObject::staticTypeMeta<World::SpaceStation>());
     metaMap.insert(WorldObject::staticTypeId<World::ResourceManager>(), WorldObject::staticTypeMeta<World::ResourceManager>());
-
-    metaMap.insert(World::SpaceStation::m_StationKindStaticTypeId,
-                   QMetaType::metaObjectForType(1477)
-                   );
 
     m_animation = new TurnAnimation(this);
     connect(m_animation, SIGNAL(finished()), this, SLOT(finishTurn()));

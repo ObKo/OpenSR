@@ -27,7 +27,7 @@ namespace World
 const quint32 DefenceGenerator::m_staticTypeId = typeIdFromClassName(DefenceGenerator::staticMetaObject.className());
 
 template<>
-void WorldObject::registerType<DefenceGenerator>()
+void WorldObject::registerType<DefenceGenerator>(QQmlEngine *qml, QJSEngine *script)
 {
     qmlRegisterType<DefenceGenerator>("OpenSR.World", 1, 0, "DefenceGenerator");
 }

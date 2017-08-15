@@ -27,7 +27,7 @@ namespace World
 const quint32 DesertPlanet::m_staticTypeId = typeIdFromClassName(DesertPlanet::staticMetaObject.className());
 
 template<>
-void WorldObject::registerType<DesertPlanet>()
+void WorldObject::registerType<DesertPlanet>(QQmlEngine *qml, QJSEngine *script)
 {
     qmlRegisterType<DesertPlanet>("OpenSR.World", 1, 0, "DesertPlanet");
 }

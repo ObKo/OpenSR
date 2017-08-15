@@ -54,7 +54,7 @@ class OPENSR_WORLD_API SpaceStation: public MannedObject
     Q_OBJECT
     OPENSR_WORLD_OBJECT
 
-    Q_PROPERTY(StationKind StationKind READ Kind WRITE setStationKind NOTIFY StationKindChanged)
+    Q_PROPERTY(StationKind stationKind READ stationKind WRITE setStationKind NOTIFY stationKindChanged)
     Q_PROPERTY(OpenSR::World::StationStyle style READ style WRITE setStyle NOTIFY styleChanged)
 
 public:
@@ -63,7 +63,6 @@ public:
         RangerCenter, ScienceBase, MilitaryBase, BusinessCenter, MedicalCenter
     };
     Q_ENUM(StationKind)
-    static const quint32 m_StationKindStaticTypeId;
 
 public:
     Q_INVOKABLE SpaceStation(WorldObject *parent = 0, quint32 id = 0);
@@ -72,24 +71,21 @@ public:
     virtual quint32 typeId() const;
     virtual QString namePrefix() const;
 
-    StationKind Kind() const;
-    OpenSR::World::StationStyle style() const;
+    StationKind stationKind() const;
+    StationStyle style() const;
 
     virtual void prepareSave();
 
 public slots:
     void setStationKind(StationKind kind);
-    void setStyle(OpenSR::World::StationStyle style);
+    void setStyle(const StationStyle& style);
 
 signals:
-    void StationKindChanged(StationKind kind);
-    void styleChanged(OpenSR::World::StationStyle style);
+    void stationKindChanged(StationKind kind);
+    void styleChanged(const StationStyle& style);
 
 private:
-    // TODO: the m_stationKind should be of type StationKind but to fix saving these
-    // values we need to resolve issues with forward declarations and registering
-    // metatypes in the WorldManager class.
-    StationKind m_StationKind;
+    StationKind m_stationKind;
     OpenSR::World::StationStyle m_style;
 };
 }
@@ -97,6 +93,5 @@ private:
 
 Q_DECLARE_METATYPE(OpenSR::World::StationStyle)
 Q_DECLARE_METATYPE(OpenSR::World::StationStyle::Data)
-Q_DECLARE_METATYPE(OpenSR::World::SpaceStation::StationKind)
 
 #endif // OPENSR_WORLD_SPACESTATION_H

@@ -27,7 +27,7 @@ namespace World
 const quint32 Goods::m_staticTypeId = typeIdFromClassName(Goods::staticMetaObject.className());
 
 template<>
-void WorldObject::registerType<Goods>()
+void WorldObject::registerType<Goods>(QQmlEngine *qml, QJSEngine *script)
 {
     qmlRegisterType<Goods>("OpenSR.World", 1, 0, "Goods");
 }

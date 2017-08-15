@@ -28,7 +28,7 @@ namespace World
 const quint32 Race::m_staticTypeId = typeIdFromClassName(Race::staticMetaObject.className());
 
 template<>
-void WorldObject::registerType<Race>()
+void WorldObject::registerType<Race>(QQmlEngine *qml, QJSEngine *script)
 {
     qRegisterMetaType<RaceStyle>();
     qRegisterMetaTypeStreamOperators<RaceStyle>();

@@ -29,7 +29,7 @@ namespace World
 const quint32 Planet::m_staticTypeId = typeIdFromClassName(Planet::staticMetaObject.className());
 
 template<>
-void WorldObject::registerType<Planet>()
+void WorldObject::registerType<Planet>(QQmlEngine *qml, QJSEngine *script)
 {
     qRegisterMetaType<PlanetStyle>();
     qRegisterMetaTypeStreamOperators<PlanetStyle>();

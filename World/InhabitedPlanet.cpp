@@ -27,7 +27,7 @@ namespace World
 const quint32 InhabitedPlanet::m_staticTypeId = typeIdFromClassName(InhabitedPlanet::staticMetaObject.className());
 
 template<>
-void WorldObject::registerType<InhabitedPlanet>()
+void WorldObject::registerType<InhabitedPlanet>(QQmlEngine *qml, QJSEngine *script)
 {
     qmlRegisterType<InhabitedPlanet>("OpenSR.World", 1, 0, "InhabitedPlanet");
 }
