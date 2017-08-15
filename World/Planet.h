@@ -23,6 +23,8 @@
 #include "SpaceObject.h"
 #include "Resource.h"
 
+#include <QColor>
+
 namespace OpenSR
 {
 namespace World
@@ -31,27 +33,31 @@ class OPENSR_WORLD_API PlanetStyle: public Resource
 {
     Q_GADGET
 
-    Q_PROPERTY(QString image   READ image   WRITE setImage  )
+    Q_PROPERTY(QString surface READ surface WRITE setSurface)
     Q_PROPERTY(QString cloud0  READ cloud0  WRITE setCloud0 )
     Q_PROPERTY(QString cloud1  READ cloud1  WRITE setCloud1 )
     Q_PROPERTY(int     radius  READ radius  WRITE setRadius )
+    Q_PROPERTY(QColor  atmosphere READ atmosphere WRITE setAtmosphere)
 
 public:
     struct Data
     {
-        QString image, cloud0, cloud1;
+        QString surface, cloud0, cloud1;
         int radius;
+        QColor atmosphere;
     };
 
-    QString image() const;
+    QString surface() const;
     QString cloud0() const;
     QString cloud1() const;
     int radius() const;
+    QColor atmosphere() const;
 
-    void setImage(const QString&);
+    void setSurface(const QString&);
     void setCloud0(const QString&);
     void setCloud1(const QString&);
     void setRadius(int);
+    void setAtmosphere(const QColor&);
 };
 
 bool operator==(const PlanetStyle& one, const PlanetStyle& another);

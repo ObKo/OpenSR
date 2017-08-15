@@ -21,7 +21,7 @@ Item {
     onObjectChanged: {
         var text = "";
         for (var key in object) {
-            if (key == "children" || key == "trajectory")
+            if (key === "children" || key == "trajectory")
                 continue;
 
             if(typeof object[key] == "function")
@@ -29,10 +29,13 @@ Item {
 
             var value = object[key];
 
-            if (key == "typeId") {
+            if (key === "typeId") {
                 key = "type";
                 value = WorldManager.typeName(value)
             }
+
+            if (key === "name")
+                value += " (" + qsTrId(value) + ")"
                         
             text += "<b>" + key + "</b>" + ": " + value + "<br/>\n";                
         }

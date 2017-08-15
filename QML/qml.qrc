@@ -11,5 +11,6 @@
         <file>SpaceObjectItem.qml</file>
         <file>DebugTooltip.qml</file>
         <file>TrajectoryItem.qml</file>
+        <file>PlanetItem.qml</file>
     </qresource>
 </RCC>

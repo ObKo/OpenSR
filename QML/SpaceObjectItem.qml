@@ -14,11 +14,22 @@ Item {
     x: positioning && object ? object.position.x : 0
     y: positioning && object ? object.position.y : 0
 
-    AnimatedImage {
-        id: image
+    Loader {
         anchors.centerIn: parent
-        cache: false
+        id: objectLoader
+        asynchronous: false
 
+        onLoaded: {
+            if(WorldManager.typeName(object.typeId) === "OpenSR::World::PlanetarySystem") {
+                item.source = object.style.star
+            } else if(WorldManager.typeName(object.typeId) === "OpenSR::World::Asteroid") {
+                item.source = object.style.texture
+            } else if(WorldManager.typeName(object.typeId) === "OpenSR::World::InhabitedPlanet") {
+                item.planet = object
+            } else if(WorldManager.typeName(object.typeId) === "OpenSR::World::SpaceStation") {
+                item.source = object.style.texture
+            }
+        }
         SpaceMouseArea {
             id: mouse
             anchors.fill: parent
@@ -28,44 +39,39 @@ Item {
         }
     }
 
+    Component {
+        id: defaultComponent
+        AnimatedImage {
+            cache: false
+        }
+    }
+    Component {
+        id: planetComponent
+        PlanetItem {
+        }
+    }
+
     onObjectChanged: {
+        objectLoader.source = ""
+        objectLoader.sourceComponent = undefined
+
         if(!object) {
-            image.source = "";
             positioning = false;
             return;
         }
 
         if(WorldManager.typeName(object.typeId) === "OpenSR::World::PlanetarySystem") {
-            image.source = object.style.star
+            objectLoader.sourceComponent = defaultComponent
             positioning = false
         } else if(WorldManager.typeName(object.typeId) === "OpenSR::World::Asteroid") {
-            image.source = object.style.texture
-            positioning = true;
+            objectLoader.sourceComponent = defaultComponent
+            positioning = true
         } else if(WorldManager.typeName(object.typeId) === "OpenSR::World::InhabitedPlanet") {
-            image.visible = false;
-            positioning = true;
-            var drawer = Qt.createQmlObject("import OpenSR 1.0
-                PlanetDrawer {}",
-                self,
-                "dynamicSnippet1");
-
-            drawer.width = drawer.height = object.style.radius * 2;
-            drawer.surface = object.style.image;
-            drawer.cloud0  = object.style.cloud0;
-            drawer.cloud1  = object.style.cloud1;
-
-            var phaseAnim = Qt.createQmlObject("import QtQuick 2.3
-                    PropertyAnimation {
-                        loops: Animation.Infinite
-                        property: 'phase'
-                        from: 0.0; to: 1.0; duration: 36000
-                    }",
-                self);
-            phaseAnim.target = drawer;
-            phaseAnim.running = true;
+            objectLoader.sourceComponent = planetComponent
+            positioning = true
         } else if(WorldManager.typeName(object.typeId) === "OpenSR::World::SpaceStation") {
-            image.source = object.style.texture
-            positioning = true;
+            objectLoader.sourceComponent = defaultComponent
+            positioning = true
         }
     }
 

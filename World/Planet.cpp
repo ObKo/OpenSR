@@ -88,15 +88,15 @@ void Planet::setStyle(const PlanetStyle& style)
     emit styleChanged(style);
 }
 
-QString PlanetStyle::image() const
+QString PlanetStyle::surface() const
 {
-    return getData<Data>().image;
+    return getData<Data>().surface;
 }
 
-void PlanetStyle::setImage(const QString &texture)
+void PlanetStyle::setSurface(const QString &texture)
 {
     auto d = getData<Data>();
-    d.image = texture;
+    d.surface = texture;
     setData(d);
 }
 
@@ -136,12 +136,25 @@ void PlanetStyle::setRadius(const int r)
     setData(d);
 }
 
+QColor PlanetStyle::atmosphere() const
+{
+    return getData<Data>().atmosphere;
+}
+
+void PlanetStyle::setAtmosphere(const QColor& c)
+{
+    auto d = getData<Data>();
+    d.atmosphere = c;
+    setData(d);
+}
+
 bool operator==(const PlanetStyle& one, const PlanetStyle& another)
 {
-    return  (one.image()  == another.image() ) &&
+    return  (one.surface()  == another.surface() ) &&
             (one.cloud0() == another.cloud0()) &&
             (one.cloud1() == another.cloud1()) &&
-            (one.radius() == another.radius())
+            (one.radius() == another.radius()) &&
+            (one.atmosphere() == another.atmosphere())
             ;
 }
 
@@ -163,12 +176,12 @@ QDataStream& operator>>(QDataStream & stream, PlanetStyle& style)
 
 QDataStream& operator<<(QDataStream & stream, const PlanetStyle::Data& data)
 {
-    return stream << data.image << data.cloud0 << data.cloud1 << data.radius;
+    return stream << data.surface << data.cloud0 << data.cloud1 << data.radius << data.atmosphere;
 }
 
 QDataStream& operator>>(QDataStream & stream, PlanetStyle::Data& data)
 {
-    return stream >> data.image >> data.cloud0 >> data.cloud1 >> data.radius;
+    return stream >> data.surface >> data.cloud0 >> data.cloud1 >> data.radius << data.atmosphere;
 }
 
 }

@@ -4,3 +4,4 @@ ScreenLoader 1.0 ScreenLoader.js
 Button 1.0 Button.qml
 MainMenu 1.0 MainMenu.qml
 SpaceObjectItem 1.0 SpaceObjectItem.qml
+PlanetItem 1.0 PlanetItem.qml

@@ -50,6 +50,38 @@ function createAsteroidStyles() {
     }
 }
 
+function getPlanetStyleFromDat(id) {
+    var planet = Engine.datValue("Data.SE.Planet." + id)
+    var color;
+    if ("AtmColor" in planet) {
+        var rgb = planet["AtmColor"].split(',')
+        color = Qt.rgba(rgb[0] / 255.0, rgb[1] / 255.0, rgb[2] / 255.0, 1.0).toString()
+    }
+    else
+        color = Qt.rgba(1.0, 1.0, 1.0, 1.0).toString()
+
+    var splitted, cloud0 = "", cloud1 = "", cloud0Speed = 1.0, cloud1Speed = 1.0
+    if ("Cloud0" in planet) {
+        splitted = planet["Cloud0"].split(',')
+        cloud0 = "dat:/" + splitted[1]
+        cloud0Speed = parseFloat(splitted[0])
+    }
+    if ("Cloud1" in planet) {
+        splitted = planet["Cloud1"].split(',')
+        cloud1 = "dat:/" + splitted[1]
+        cloud1Speed = parseFloat(splitted[0])
+    }
+    
+    var style = World.newPlanetStyle();
+    style.surface  = "dat:/" + planet["Image"];
+    style.cloud0 = cloud0;
+    style.cloud1 = cloud1;
+    style.atmosphere = color
+    style.radius = planet["Radius"];
+    
+    return style
+}
+
 genRace("Race.People", "Race.Name.People", "dat:/Bm.Race.Emblem.2People", "#0030BD", "")
 genRace("Race.Feyan", "Race.Name.Fei", "dat:/Bm.Race.Emblem.2Fei", "#E03BFF", "")
 genRace("Race.Gaal", "Race.Name.Gaal", "dat:/Bm.Race.Emblem.2Gaal", "#FFDB0A", "")
@@ -80,10 +112,7 @@ for(var k in asteroidStyles)
 
 var planet = World.newInhabitedPlanet(system);
 planet.name = "PlanetName.Solar.2"
-planet.style = World.newPlanetStyle();
-planet.style.cloud0 = "dat:/Bm.Planet2.C.160.r01";
-planet.style.image  = "dat:/Bm.Planet2.T.160.13x160";
-planet.style.radius = 80;
+planet.style = getPlanetStyleFromDat("200")
 planet.period = 15;
 planet.angle = 3.1415 / 4;
 planet.position = Qt.point(355, -222);
