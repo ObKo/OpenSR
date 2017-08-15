@@ -1,8 +1,0 @@
-msgid ""
-msgstr ""
-
-msgid "Planet"
-msgstr ""
-
-msgid "System"
-msgstr ""
