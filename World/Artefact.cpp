@@ -27,7 +27,7 @@ namespace World
 const quint32 Artefact::m_staticTypeId = typeIdFromClassName(Artefact::staticMetaObject.className());
 
 template<>
-void WorldObject::registerType<Artefact>()
+void WorldObject::registerType<Artefact>(QQmlEngine *qml, QJSEngine *script)
 {
     qmlRegisterType<Artefact>("OpenSR.World", 1, 0, "Artefact");
 }

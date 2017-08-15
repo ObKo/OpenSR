@@ -17,16 +17,7 @@
 */
 
 #include "WorldBindings.h"
-
-#include <QJSEngine>
-#include <QQmlEngine>
-#include <QtQml>
-
 #include "WorldManager.h"
-
-#include "PlanetarySystem.h"
-#include "Race.h"
-#include "Asteroid.h"
 
 namespace OpenSR
 {
@@ -65,38 +56,38 @@ static QObject* managerSingletonProvider(QQmlEngine *engine, QJSEngine *scriptEn
 
 void bindWorldTypes(QJSEngine *script, QQmlEngine *qml)
 {
-    qmlRegisterSingletonType<WorldManager>("OpenSR.World", 1, 0, "WorldManager", managerSingletonProvider);
-    WorldObject::registerType<WorldObject>();
-    WorldObject::registerType<WorldContext>();
-    WorldObject::registerType<Race>();
-    WorldObject::registerType<Item>();
-    WorldObject::registerType<Goods>();
-    WorldObject::registerType<Equipment>();
-    WorldObject::registerType<Micromodulus>();
-    WorldObject::registerType<Artefact>();
-    WorldObject::registerType<Hull>();
-    WorldObject::registerType<OpenSR::World::Engine>();
-    WorldObject::registerType<Tank>();
-    WorldObject::registerType<Droid>();
-    WorldObject::registerType<CargoHook>();
-    WorldObject::registerType<DefenceGenerator>();
-    WorldObject::registerType<Radar>();
-    WorldObject::registerType<Scanner>();
-    WorldObject::registerType<Weapon>();
-    WorldObject::registerType<Sector>();
-    WorldObject::registerType<PlanetarySystem>();
-    WorldObject::registerType<SpaceObject>();
-    WorldObject::registerType<Container>();
-    WorldObject::registerType<Asteroid>();
-    WorldObject::registerType<Planet>();
-    WorldObject::registerType<MannedObject>();
-    WorldObject::registerType<InhabitedPlanet>();
-    WorldObject::registerType<DesertPlanet>();
-    WorldObject::registerType<Ship>();
-    WorldObject::registerType<SpaceStation>();
-    WorldObject::registerType<ResourceManager>();
-
     script->globalObject().setProperty("World", script->newQObject(WorldManager::instance()));
+
+    qmlRegisterSingletonType<WorldManager>("OpenSR.World", 1, 0, "WorldManager", managerSingletonProvider);
+    WorldObject::registerType<WorldObject>(qml, script);
+    WorldObject::registerType<WorldContext>(qml, script);
+    WorldObject::registerType<Race>(qml, script);
+    WorldObject::registerType<Item>(qml, script);
+    WorldObject::registerType<Goods>(qml, script);
+    WorldObject::registerType<Equipment>(qml, script);
+    WorldObject::registerType<Micromodulus>(qml, script);
+    WorldObject::registerType<Artefact>(qml, script);
+    WorldObject::registerType<Hull>(qml, script);
+    WorldObject::registerType<OpenSR::World::Engine>(qml, script);
+    WorldObject::registerType<Tank>(qml, script);
+    WorldObject::registerType<Droid>(qml, script);
+    WorldObject::registerType<CargoHook>(qml, script);
+    WorldObject::registerType<DefenceGenerator>(qml, script);
+    WorldObject::registerType<Radar>(qml, script);
+    WorldObject::registerType<Scanner>(qml, script);
+    WorldObject::registerType<Weapon>(qml, script);
+    WorldObject::registerType<Sector>(qml, script);
+    WorldObject::registerType<PlanetarySystem>(qml, script);
+    WorldObject::registerType<SpaceObject>(qml, script);
+    WorldObject::registerType<Container>(qml, script);
+    WorldObject::registerType<Asteroid>(qml, script);
+    WorldObject::registerType<Planet>(qml, script);
+    WorldObject::registerType<MannedObject>(qml, script);
+    WorldObject::registerType<InhabitedPlanet>(qml, script);
+    WorldObject::registerType<DesertPlanet>(qml, script);
+    WorldObject::registerType<Ship>(qml, script);
+    WorldObject::registerType<SpaceStation>(qml, script);
+    WorldObject::registerType<ResourceManager>(qml, script);
 }
 }
 }

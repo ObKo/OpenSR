@@ -27,7 +27,7 @@ namespace World
 const quint32 Radar::m_staticTypeId = typeIdFromClassName(Radar::staticMetaObject.className());
 
 template<>
-void WorldObject::registerType<Radar>()
+void WorldObject::registerType<Radar>(QQmlEngine *qml, QJSEngine *script)
 {
     qmlRegisterType<Radar>("OpenSR.World", 1, 0, "Radar");
 }

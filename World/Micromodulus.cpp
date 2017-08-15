@@ -27,7 +27,7 @@ namespace World
 const quint32 Micromodulus::m_staticTypeId = typeIdFromClassName(Micromodulus::staticMetaObject.className());
 
 template<>
-void WorldObject::registerType<Micromodulus>()
+void WorldObject::registerType<Micromodulus>(QQmlEngine *qml, QJSEngine *script)
 {
     qmlRegisterType<Micromodulus>("OpenSR.World", 1, 0, "Micromodulus");
 }

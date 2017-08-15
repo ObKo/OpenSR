@@ -17,8 +17,10 @@
 */
 
 #include "Planet.h"
+#include "ResourceManager.h"
 
 #include <QtQml>
+
 
 namespace OpenSR
 {
@@ -27,8 +29,12 @@ namespace World
 const quint32 Planet::m_staticTypeId = typeIdFromClassName(Planet::staticMetaObject.className());
 
 template<>
-void WorldObject::registerType<Planet>()
+void WorldObject::registerType<Planet>(QQmlEngine *qml, QJSEngine *script)
 {
+    qRegisterMetaType<PlanetStyle>();
+    qRegisterMetaTypeStreamOperators<PlanetStyle>();
+    qRegisterMetaType<PlanetStyle::Data>();
+    qRegisterMetaTypeStreamOperators<PlanetStyle::Data>();
     qmlRegisterType<Planet>("OpenSR.World", 1, 0, "Planet");
 }
 
@@ -67,5 +73,103 @@ QString Planet::namePrefix() const
 {
     return tr("Planet");
 }
+
+PlanetStyle Planet::style() const
+{
+    return m_style;
+}
+
+void Planet::setStyle(const PlanetStyle& style)
+{
+    if (m_style == style)
+        return;
+
+    m_style = style;
+    emit styleChanged(style);
+}
+
+QString PlanetStyle::image() const
+{
+    return getData<Data>().image;
+}
+
+void PlanetStyle::setImage(const QString &texture)
+{
+    auto d = getData<Data>();
+    d.image = texture;
+    setData(d);
+}
+
+QString PlanetStyle::cloud0() const
+{
+    return getData<Data>().cloud0;
+}
+
+void PlanetStyle::setCloud0(const QString &texture)
+{
+    auto d = getData<Data>();
+    d.cloud0 = texture;
+    setData(d);
+}
+
+QString PlanetStyle::cloud1() const
+{
+    return getData<Data>().cloud1;
+}
+
+void PlanetStyle::setCloud1(const QString &texture)
+{
+    auto d = getData<Data>();
+    d.cloud1 = texture;
+    setData(d);
+}
+
+int PlanetStyle::radius() const
+{
+    return getData<Data>().radius;
+}
+
+void PlanetStyle::setRadius(const int r)
+{
+    auto d = getData<Data>();
+    d.radius = r;
+    setData(d);
+}
+
+bool operator==(const PlanetStyle& one, const PlanetStyle& another)
+{
+    return  (one.image()  == another.image() ) &&
+            (one.cloud0() == another.cloud0()) &&
+            (one.cloud1() == another.cloud1()) &&
+            (one.radius() == another.radius())
+            ;
+}
+
+// PlanetStyle Streaming
+QDataStream& operator<<(QDataStream & stream, const PlanetStyle& style)
+{
+    return stream << style.id();
+}
+
+QDataStream& operator>>(QDataStream & stream, PlanetStyle& style)
+{
+    quint32 id;
+    stream >> id;
+    ResourceManager *m = ResourceManager::instance();
+    Q_ASSERT(m != 0);
+    Resource::replaceData(style, m->getResource(id));
+    return stream;
+}
+
+QDataStream& operator<<(QDataStream & stream, const PlanetStyle::Data& data)
+{
+    return stream << data.image << data.cloud0 << data.cloud1 << data.radius;
+}
+
+QDataStream& operator>>(QDataStream & stream, PlanetStyle::Data& data)
+{
+    return stream >> data.image >> data.cloud0 >> data.cloud1 >> data.radius;
+}
+
 }
 }

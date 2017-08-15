@@ -21,25 +21,21 @@
 
 #include "WorldObject.h"
 
-#include "PlanetarySystem.h"
-#include "Race.h"
-#include "Asteroid.h"
+#include <QJSEngine>
+#include <QMetaObject>
+#include <QQmlEngine>
 
-class QJSEngine;
 class QQmlEngine;
 
-#define WORLD_DECLARE_JS_OBJECT_CONSTRUCTOR(Class) Q_INVOKABLE OpenSR::World::Class* Class(WorldObject *parent = 0);
-#define WORLD_DECLARE_JS_GADGET_CONSTRUCTOR(Class) Q_INVOKABLE OpenSR::World::Class Class();
-
 #define WORLD_JS_DEFAULT_OBJECT_CONSTRUCTOR(Factory, Class)\
-    OpenSR::World::Class* Factory::Class(WorldObject *parent) {\
+    OpenSR::World::Class* Factory::new##Class(WorldObject *parent) {\
         OpenSR::World::Class *obj = WorldObject::createObject<World::Class>(parent);\
         QQmlEngine::setObjectOwnership((QObject*)obj, QQmlEngine::JavaScriptOwnership);\
         return obj;\
     }
 
 #define WORLD_JS_DEFAULT_GADGET_CONSTRUCTOR(Factory, Class)\
-    Class Factory::Class() {\
+    Class Factory::new##Class() {\
         return World::Class();\
     }
 
@@ -48,6 +44,42 @@ namespace OpenSR
 namespace World
 {
 void bindWorldTypes(QJSEngine *script, QQmlEngine *qml);
+
+template<class T>
+static void bindEnumsToJS(QJSEngine *script)
+{
+    QJSValue world = script->globalObject().property("World");
+
+    if (world.isUndefined())
+        return;
+
+    const QMetaObject *obj = &T::staticMetaObject;
+    int enumCount = obj->enumeratorCount();
+
+    if (!enumCount)
+        return;
+
+    QString className = QString(obj->className()).replace("OpenSR::World::", QString());
+
+    QJSValue p;
+    if (world.hasProperty(className))
+        p = world.property(className);
+    else
+    {
+        p = script->newObject();
+        world.setProperty(className, p);
+    }
+
+    for (int i = 0; i < enumCount; i++)
+    {
+        QMetaEnum e = obj->enumerator(i);
+
+        int ec = e.keyCount();
+        for (int j = 0; j < ec; j++)
+            p.setProperty(e.key(j), e.value(j));
+    }
+}
+
 }
 }
 

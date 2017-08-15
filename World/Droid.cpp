@@ -27,7 +27,7 @@ namespace World
 const quint32 Droid::m_staticTypeId = typeIdFromClassName(Droid::staticMetaObject.className());
 
 template<>
-void WorldObject::registerType<Droid>()
+void WorldObject::registerType<Droid>(QQmlEngine *qml, QJSEngine *script)
 {
     qmlRegisterType<Droid>("OpenSR.World", 1, 0, "Droid");
 }

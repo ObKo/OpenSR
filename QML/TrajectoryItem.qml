@@ -86,4 +86,4 @@ Item {
             o.y = visibleCurves[i].p3.y
         }
     }
-} 
+}

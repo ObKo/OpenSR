@@ -189,7 +189,7 @@ ApplicationWindow {
                 cloud1Speed = parseFloat(splitted[0])
             }
 
-            planetListModel.append({
+            var repr = {
                 "name": n,
                 "image": "dat:/" + planet["Image"],
                 "radius": planet["Radius"],
@@ -198,7 +198,9 @@ ApplicationWindow {
                 "cloud1": cloud1,
                 "cloud0Speed": cloud0Speed,
                 "cloud1Speed": cloud1Speed
-            })
+            };
+            console.log("planet representation is ", JSON.stringify(repr) )
+            planetListModel.append(repr);
         }
     }
 }

@@ -24,6 +24,8 @@
 #include <QObject>
 #include <QQmlListProperty>
 
+class QJSEngine;
+
 namespace OpenSR
 {
 namespace World
@@ -40,6 +42,7 @@ class OPENSR_WORLD_API WorldObject: public QObject
     //TODO: Use WorldObject instead of QObject
     Q_PROPERTY(QQmlListProperty<QObject> children READ getChildren STORED false)
 
+public: static const quint32 m_StationKindStaticTypeId;
 public:
     Q_INVOKABLE WorldObject(WorldObject *parent = 0, quint32 id = 0);
     virtual ~WorldObject();
@@ -74,7 +77,7 @@ public:
      * @note All subclasses should provide specialized version of this function.
      */
     template<class T>
-    static void registerType();
+    static void registerType(QQmlEngine *qml, QJSEngine *script);
     /*!
      * @brief Function to create object of class T.
      * Used in object factory for JavaScript & QML.

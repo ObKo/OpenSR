@@ -27,7 +27,7 @@ namespace World
 const quint32 Hull::m_staticTypeId = typeIdFromClassName(Hull::staticMetaObject.className());
 
 template<>
-void WorldObject::registerType<Hull>()
+void WorldObject::registerType<Hull>(QQmlEngine *qml, QJSEngine *script)
 {
     qmlRegisterType<Hull>("OpenSR.World", 1, 0, "Hull");
 }

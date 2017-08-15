@@ -21,15 +21,52 @@
 
 #include "World.h"
 #include "SpaceObject.h"
+#include "Resource.h"
 
 namespace OpenSR
 {
 namespace World
 {
+class OPENSR_WORLD_API PlanetStyle: public Resource
+{
+    Q_GADGET
+
+    Q_PROPERTY(QString image   READ image   WRITE setImage  )
+    Q_PROPERTY(QString cloud0  READ cloud0  WRITE setCloud0 )
+    Q_PROPERTY(QString cloud1  READ cloud1  WRITE setCloud1 )
+    Q_PROPERTY(int     radius  READ radius  WRITE setRadius )
+
+public:
+    struct Data
+    {
+        QString image, cloud0, cloud1;
+        int radius;
+    };
+
+    QString image() const;
+    QString cloud0() const;
+    QString cloud1() const;
+    int radius() const;
+
+    void setImage(const QString&);
+    void setCloud0(const QString&);
+    void setCloud1(const QString&);
+    void setRadius(int);
+};
+
+bool operator==(const PlanetStyle& one, const PlanetStyle& another);
+
+QDataStream& operator<<(QDataStream & stream, const PlanetStyle& style);
+QDataStream& operator>>(QDataStream & stream, PlanetStyle& style);
+QDataStream& operator<<(QDataStream & stream, const PlanetStyle::Data& data);
+QDataStream& operator>>(QDataStream & stream, PlanetStyle::Data& data);
+
 class OPENSR_WORLD_API Planet: public SpaceObject
 {
     Q_OBJECT
     OPENSR_WORLD_OBJECT
+
+    Q_PROPERTY(OpenSR::World::PlanetStyle style READ style WRITE setStyle NOTIFY styleChanged)
 
 public:
     Q_INVOKABLE Planet(WorldObject *parent = 0, quint32 id = 0);
@@ -37,8 +74,22 @@ public:
 
     virtual quint32 typeId() const;
     virtual QString namePrefix() const;
+
+    PlanetStyle style() const;
+
+public slots:
+    void setStyle(const PlanetStyle& style);
+
+signals:
+    void styleChanged(const PlanetStyle& style);
+
+private:
+    PlanetStyle m_style;
 };
 }
 }
+
+Q_DECLARE_METATYPE(OpenSR::World::PlanetStyle)
+Q_DECLARE_METATYPE(OpenSR::World::PlanetStyle::Data)
 
 #endif // OPENSR_WORLD_PLANET_H

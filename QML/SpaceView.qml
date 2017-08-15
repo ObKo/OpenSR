@@ -7,6 +7,7 @@ Item {
     property int speed: 500
     property int bgSpeed: 10
     property int scrollSize: 10
+    property int radarViewWidth: 150
     property int maxScrollTime: 600
 
     property var trajectoryView
@@ -38,6 +39,30 @@ Item {
         }
     }
 
+    Item {
+        id: radarView
+        anchors.right: parent.right
+        anchors.top: parent.top
+
+        width: radarViewWidth
+        height: width
+
+        Image {
+            source: "res:/DATA/PanelSpace2/1RadarA.gi";
+            anchors.fill: parent
+            cache: true
+        }
+        Button {
+            id: radarCenterButton
+            anchors.bottom: parent.bottom
+            anchors.right: parent.right
+            normalImage:  "res:/DATA/PanelSpace2/1CenterN.gi"
+            hoveredImage: "res:/DATA/PanelSpace2/1CenterA.gi"
+            downImage:    "res:/DATA/PanelSpace2/1CenterD.gi"
+            onClicked: console.log("Centering not implemented")
+        }
+    }
+
     onSystemChanged: {
         for(var i in spaceNode.children) {
             spaceNode.children[i].destroy();
@@ -45,7 +70,6 @@ Item {
 
         if (!system)
             return;
-
 
         var component = Qt.createComponent("SpaceObjectItem.qml");
 
@@ -291,4 +315,4 @@ Item {
         text: "Turn"
         onClicked: WorldManager.startTurn()
     }
-} 
+}
